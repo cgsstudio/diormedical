@@ -221,3 +221,21 @@
  .dior-doctor-wrap .dior-source-panel .action-buttons { margin-left:auto; }
  .dior-doctor-wrap .dior-source-panel .search-container { min-width:0; }
 }
+
+/* Settings page repair: the pill navigation must reserve space for icon, title and
+   helper text instead of letting inline Bootstrap rules overlap both columns. */
+.dior-doctor-wrap .dior-source-panel .profile-cover-gradient { height:80px; background:linear-gradient(135deg,#2c6cb1,#174e87); border-radius:14px 14px 0 0; }
+.dior-doctor-wrap .dior-source-panel .profile-header-card { overflow:hidden !important; }
+.dior-doctor-wrap .dior-source-panel .profile-avatar-img { width:92px; height:92px; object-fit:cover; background:#fff; }
+.dior-doctor-wrap .dior-source-panel .profile-user-name { font-size:22px; color:#172033; }
+.dior-doctor-wrap .dior-source-panel .settings-nav-card { padding:12px !important; }
+.dior-doctor-wrap .dior-source-panel .custom-settings-pills { display:flex; flex-direction:column; gap:7px; }
+.dior-doctor-wrap .dior-source-panel .custom-settings-pills .nav-link { width:100%; min-height:66px; display:flex; align-items:center; gap:12px; text-align:left; white-space:normal; border:0; border-radius:10px; padding:12px 14px; background:#2c6cb1; color:#fff; box-sizing:border-box; }
+.dior-doctor-wrap .dior-source-panel .custom-settings-pills .nav-link .icon-tab { flex:0 0 22px; width:22px; text-align:center; margin:0 !important; color:#fff !important; }
+.dior-doctor-wrap .dior-source-panel .custom-settings-pills .nav-link > div { min-width:0; flex:1; line-height:1.25; }
+.dior-doctor-wrap .dior-source-panel .custom-settings-pills .tab-title { display:block; font-size:13px; font-weight:750; white-space:normal; }
+.dior-doctor-wrap .dior-source-panel .custom-settings-pills .tab-subtext { display:block; margin-top:4px; color:rgba(255,255,255,.78); font-size:10px; line-height:1.3; white-space:normal; }
+.dior-doctor-wrap .dior-source-panel .custom-settings-pills .nav-link:hover,
+.dior-doctor-wrap .dior-source-panel .custom-settings-pills .nav-link.active { background:#174e87; color:#fff; }
+@media (max-width: 991px) { .dior-doctor-wrap .dior-source-panel .col-xl-3,.dior-doctor-wrap .dior-source-panel .col-xl-9,.dior-doctor-wrap .dior-source-panel .col-lg-3,.dior-doctor-wrap .dior-source-panel .col-lg-9 { flex:0 0 100%; max-width:100%; } }
+@media (max-width: 575px) { .dior-doctor-wrap .dior-source-panel .col-md-4,.dior-doctor-wrap .dior-source-panel .col-md-6 { flex:0 0 100%; max-width:100%; } .dior-doctor-wrap .dior-source-panel .profile-user-name { font-size:18px; } }
