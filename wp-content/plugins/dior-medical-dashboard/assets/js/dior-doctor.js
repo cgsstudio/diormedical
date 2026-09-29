@@ -588,10 +588,21 @@ window.diorDocClearSignatureUI = function() {
 };
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initDoctorDashboard);
+    document.addEventListener('DOMContentLoaded', initDoctorDashboard, { once: true });
 } else {
-    initDoctorDashboard();
+    // The script can be loaded after DOM ready; wait one tick so all functions
+    // below this point (including diorDocSwitchTab) are defined first.
+    window.setTimeout(initDoctorDashboard, 0);
 }
+
+// Delegated navigation fallback: works even if another script has replaced a
+// direct click handler and keeps Doctor tab navigation resilient.
+document.addEventListener('click', function (event) {
+    const btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
+    if (!btn || typeof window.diorDocSwitchTab !== 'function') return;
+    event.preventDefault();
+    window.diorDocSwitchTab(btn.getAttribute('data-tab'));
+}, false);
 
 // Universal Table Pagination (5 entries per page)
 window.diorInitTablePagination = function(tableEl, pageSize) {
@@ -714,6 +725,102 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 };
 
 // Tab Switching logic
+
+    /**
+     * Hydrate the existing source-table DOM with live dashboard data.
+     * The surrounding markup/classes are intentionally preserved.
+     */
+    function diorHydrateDoctorSourceTables() {
+        const payload = (window.dior_doctor_vars && window.dior_doctor_vars.dashboard_data) || {};
+        const appointments = Array.isArray(payload.appointments) ? payload.appointments : [];
+        const patients = Array.isArray(payload.patients) ? payload.patients : [];
+        const prescriptions = Array.isArray(payload.prescriptions) ? payload.prescriptions : [];
+        const encounters = Array.isArray(payload.encounters) ? payload.encounters : [];
+        const documents = Array.isArray(payload.documents) ? payload.documents : [];
+
+        const esc = value => {
+            const div = document.createElement('div');
+            div.textContent = value == null ? '' : String(value);
+            return div.innerHTML;
+        };
+        const badgeClass = status => {
+            const value = String(status || '').toLowerCase();
+            if (value.includes('cancel') || value.includes('unpaid') || value.includes('failed')) return 'col-red';
+            if (value.includes('pending') || value.includes('queue')) return 'col-orange';
+            if (value.includes('complete') || value.includes('paid') || value.includes('active')) return 'col-green';
+            return 'col-indigo';
+        };
+        const cell = html => `<div class="datatable-body-cell sort-active" role="cell" tabindex="-1"><div class="datatable-body-cell-label">${html}</div></div>`;
+        const textCell = value => cell(`<div class="cell-content"><span>${esc(value || '—')}</span></div>`);
+        const iconCell = (icon, value) => cell(`<div class="cell-content cell-icon-text"><i class="material-icons-outlined cell-icon">${icon}</i><span class="cell-text">${esc(value || '—')}</span></div>`);
+        const actionCell = id => cell(`<div class="cell-actions"><button type="button" aria-label="View record" class="action-icon-btn edit-btn" data-patient-id="${esc(id || '')}"><i class="fas fa-eye"></i></button></div>`);
+        const row = (cells, index) => `<div class="datatable-row-wrapper"><div class="datatable-body-row datatable-row-${index % 2 ? 'odd' : 'even'}" draggable="false" role="row" tabindex="-1"><div class="datatable-row-group datatable-row-left"></div><div class="datatable-row-center datatable-row-group">${cells.join('')}<div class="datatable-row-group datatable-row-right"></div></div></div></div>`;
+        const renderTable = (rootSelector, records, mapper, emptyText) => {
+            const root = document.querySelector(rootSelector);
+            if (!root) return;
+            const body = root.querySelector('.datatable-body .datatable-scroll');
+            if (!body) return;
+            body.innerHTML = records.length ? records.map((item, i) => row(mapper(item), i)).join('') : `<div class="dior-source-empty-row">${esc(emptyText)}</div>`;
+            const count = root.querySelector('.page-count');
+            if (count) count.textContent = `0 selected / ${records.length} total`;
+        };
+
+        renderTable('#source-all-patients', patients, p => [
+            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'),
+            cell(`<div class="cell-content cell-image-name"><img alt="User avatar" class="cell-avatar" src="${esc(p.avatar_url || (window.dior_doctor_vars && window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.avatar_url) || '')}"><div class="cell-text-wrapper"><div class="cell-text">${esc(p.full_name)}</div></div></div>`),
+            textCell(p.next_appt_condition || '—'),
+            textCell(p.gender || '—'),
+            iconCell('phone', p.phone),
+            iconCell('calendar_today', p.registered),
+            textCell(p.blood_group || '—'),
+            textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Attending Physician'),
+            iconCell('location_on', p.address),
+            cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(p.next_appt_status || (p.has_active_appt ? 'Confirmed' : 'Active'))}">${esc(p.next_appt_status || (p.has_active_appt ? 'Confirmed' : 'Active'))}</div></div>`),
+            actionCell(p.user_id)
+        ], 'No patients are currently assigned to this provider.');
+
+        renderTable('#source-view-appointment', appointments, a => [
+            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'),
+            cell(`<div class="cell-content cell-image-name"><div class="cell-text-wrapper"><div class="cell-text">${esc(a.patient_name)}</div></div></div>`),
+            textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Attending Physician'),
+            textCell(a.condition || a.condition_name),
+            textCell(a.gender || '—'),
+            iconCell('calendar_today', a.date || a.appt_date),
+            textCell(a.time || a.appt_time),
+            iconCell('phone', a.phone),
+            cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(a.status)}">${esc(a.status || 'Confirmed')}</div></div>`),
+            actionCell(a.patient_id)
+        ], 'No appointments are currently assigned to this provider.');
+
+        renderTable('#source-e-prescriptions', prescriptions, r => [
+            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'),
+            textCell(r.id || r.order_id), textCell(r.patient_name), iconCell('calendar_today', r.date || r.date_prescribed),
+            textCell(r.medication || r.name), textCell(r.dosage || r.dose), textCell(r.frequency || 'As directed'), textCell(r.duration || 'As prescribed'),
+            textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Doctor'),
+            cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(r.status)}">${esc(r.status || 'Active')}</div></div>`), actionCell(r.patient_user_id)
+        ], 'No prescriptions have been issued for your patients.');
+
+        renderTable('#source-consultation-notes', encounters, n => [
+            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'), textCell(n.encounter_uid || n.id), textCell(n.patient_name), iconCell('calendar_today', n.created_at || n.date), textCell(n.created_time || n.time), textCell(n.chief_complaint || n.subjective || '—'), textCell(n.diagnosis || n.assessment || '—'), textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Doctor'), cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(n.status)}">${esc(n.status || 'finalized')}</div></div>`), actionCell(n.patient_user_id)
+        ], 'No consultation notes are available.');
+
+        renderTable('#source-documents-reports', documents, d => [
+            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'), textCell(d.id), textCell(d.patient_name), textCell(d.title), textCell(d.category), iconCell('calendar_today', d.date || d.created_at), iconCell('calendar_today', d.date || d.created_at), textCell(d.author || 'Doctor'), cell(`<div class="cell-content"><div class="badge-solid col-indigo">${esc(d.priority || 'Normal')}</div></div>`), cell('<div class="cell-content"><div class="badge-solid col-green">Available</div></div>'), actionCell(d.patient_user_id)
+        ], 'No medical reports are available.');
+
+        renderTable('#source-telemedicine', appointments, a => [
+            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'), textCell(a.id || a.appt_uid), textCell(a.patient_name), iconCell('calendar_today', a.date || a.appt_date), textCell(a.time || a.appt_time), textCell(a.duration || '30 minutes'), textCell(a.type || a.visit_type || 'Video Visit'), textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Doctor'), cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(a.status)}">${esc(a.status || 'Confirmed')}</div></div>`), actionCell(a.patient_id)
+        ], 'No telemedicine sessions are available.');
+
+        // Update the dashboard's existing stat cards without changing their layout.
+        const overview = document.querySelector('#tab-doc-overview');
+        if (overview) {
+            const stats = overview.querySelectorAll('.dior-dash-stat-card h3');
+            if (stats[0]) stats[0].textContent = String(patients.length);
+            if (stats[1]) stats[1].textContent = String(appointments.filter(a => String(a.status || '').toLowerCase() === 'completed').length);
+            if (stats[2]) stats[2].textContent = String(appointments.filter(a => ['confirmed','scheduled','pending','in-queue'].includes(String(a.status || '').toLowerCase())).length);
+        }
+    }
 window.diorDocSwitchTab = function(tabId) {
     if (!tabId) return;
 
@@ -744,12 +851,13 @@ window.diorDocSwitchTab = function(tabId) {
     }
 
     // Update panels
-    const panels = document.querySelectorAll('#dior-doc-content .dior-tab-panel');
+    const panels = document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
     panels.forEach(p => p.classList.remove('active'));
     
     const activePanel = document.getElementById(`tab-${tabId}`);
     if (activePanel) {
         activePanel.classList.add('active');
+        activePanel.removeAttribute('hidden');
         // Refresh table pagination inside activated tab
         activePanel.querySelectorAll('.dior-doc-table').forEach(table => {
             if (table._diorRenderPage) {
@@ -2714,3 +2822,66 @@ window.diorDocDeleteDocument = function(docId, btn) {
 };
 
 
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.dior_doctor_vars && window.dior_doctor_vars.dashboard_data) {
+        diorHydrateDoctorSourceTables();
+    }
+});
+
+/* -------------------------------------------------------------------------
+ * Static dashboard navigation safety layer.
+ * Keeps Doctor Dashboard tabs usable even if an optional widget script fails.
+ * ------------------------------------------------------------------------- */
+(function () {
+    function bootStaticDoctorNavigation() {
+        var app = document.getElementById('dior-doctor-app');
+        if (!app) return;
+
+        function switchTab(tabId) {
+            if (!tabId) return;
+
+            var buttons = app.querySelectorAll('#dior-doc-sidebar .dior-nav-btn[data-tab]');
+            buttons.forEach(function (btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+            });
+
+            var panels = app.querySelectorAll('#dior-doc-content > .dior-tab-panel');
+            panels.forEach(function (panel) {
+                var active = panel.id === 'tab-' + tabId;
+                panel.classList.toggle('active', active);
+                if (active) {
+                    panel.removeAttribute('hidden');
+                } else {
+                    panel.setAttribute('hidden', 'hidden');
+                }
+            });
+
+            try {
+                history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
+            } catch (e) {}
+        }
+
+        window.diorDocSwitchTab = switchTab;
+
+        app.addEventListener('click', function (event) {
+            var btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
+            if (!btn) return;
+            event.preventDefault();
+            event.stopPropagation();
+            switchTab(btn.getAttribute('data-tab'));
+        }, true);
+
+        var hash = window.location.hash.match(/^#tab=([^&]+)/);
+        var initial = hash ? decodeURIComponent(hash[1]) : null;
+        var fallback = app.querySelector('#dior-doc-sidebar .dior-nav-btn.active[data-tab]') || app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab]');
+        switchTab(initial && app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initial) + '"]') ? initial : (fallback ? fallback.getAttribute('data-tab') : 'doc-overview'));
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootStaticDoctorNavigation, { once: true });
+    } else {
+        bootStaticDoctorNavigation();
+    }
+})();

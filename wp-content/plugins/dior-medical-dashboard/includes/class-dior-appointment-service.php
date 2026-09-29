@@ -413,11 +413,24 @@ class Dior_Appointment_Service
             $r['type'] = $r['visit_type'];
 
             $doc_id = (int)$r['doctor_id'];
-            $doc_user = $doc_id ? get_userdata($doc_id) : null;
-            $doc_name = $doc_user ? 'Dr. ' . (trim($doc_user->first_name . ' ' . $doc_user->last_name) ?: $doc_user->display_name) : 'Dr. Evelyn Vance, MD';
+            $doc_user_id = 0;
+            if ($doc_id) {
+                $candidate = get_userdata($doc_id);
+                if ($candidate && (in_array('doctor', (array)$candidate->roles, true) || in_array('administrator', (array)$candidate->roles, true))) {
+                    $doc_user_id = $candidate->ID;
+                } elseif (class_exists('Dior_Doctor_Resolver')) {
+                    $doctor_post = get_post($doc_id);
+                    if ($doctor_post && $doctor_post->post_type === 'wpddb_doctor') {
+                        $doc_user_id = (int)Dior_Doctor_Resolver::resolve_doctor_user_id($doc_id);
+                    }
+                }
+            }
+            $doc_user = $doc_user_id ? get_userdata($doc_user_id) : null;
+            $doc_name = $doc_user ? 'Dr. ' . (trim($doc_user->first_name . ' ' . $doc_user->last_name) ?: $doc_user->display_name) : 'Attending Physician';
+            $r['doctor_user_id'] = $doc_user_id;
             $r['provider'] = $doc_name;
             $r['doctor_name'] = $doc_name;
-            $r['provider_spec'] = 'Board Certified Urgent Care Physician';
+            $r['provider_spec'] = $doc_user ? (get_user_meta($doc_user->ID, 'doctor_specialty', true) ?: 'Telehealth Physician') : 'Telehealth Physician';
 
             $status = $r['status'] ?? 'Confirmed';
             $r['can_reschedule'] = in_array($status, ['Confirmed', 'Pending', 'Scheduled', 'In-Queue'], true);

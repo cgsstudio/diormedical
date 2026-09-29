@@ -722,11 +722,9 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         window.diorPromptCompleteProfile = promptCompleteProfile;
 
         function switchTab(tabId) {
-            // Block questionnaire/intake and appointment booking if personal profile is incomplete
-            if ((tabId === 'appointments' || tabId === 'questionnaire') && window.dior_vars && window.dior_vars.is_logged_in && parseInt(window.dior_vars.is_profile_complete, 10) !== 1) {
-                promptCompleteProfile(tabId === 'appointments' ? 'book telehealth doctor appointments' : 'fill clinical intake questionnaires');
-                return;
-            }
+            // Navigation must always work. Profile completeness is validated when the
+            // patient actually submits an appointment/intake action, not when opening a tab.
+            // This keeps every dashboard section accessible and preserves the existing UI.
 
             if (!document.getElementById('tab-' + tabId)) {
                 tabId = 'overview';
@@ -824,6 +822,16 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         });
 
         window.diorSwitchTab = switchTab;
+
+        // Robust delegated navigation fallback. This also covers dynamically rendered
+        // buttons and prevents a missing direct listener from breaking tab navigation.
+        appWrap.addEventListener('click', function(e) {
+            const btn = e.target.closest('.dior-nav-btn[data-tab]');
+            if (!btn || !appWrap.contains(btn)) return;
+            if (btn.closest('.dior-nav-item-has-children')) return;
+            e.preventDefault();
+            switchTab(btn.getAttribute('data-tab'));
+        });
 
         // Deep linking via URL hash & hashchange listener
         function handleUrlHash() {

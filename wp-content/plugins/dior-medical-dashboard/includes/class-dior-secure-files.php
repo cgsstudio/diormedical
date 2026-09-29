@@ -156,6 +156,76 @@ class Dior_Medical_Secure_Files
     }
 
     /**
+     * Store a validated uploaded medical document for a patient.
+     * Returns the normalized document array or WP_Error.
+     */
+    public static function store_uploaded_document($patient_id, $file, $title = '', $category = 'Lab Report', $author_id = 0)
+    {
+        $patient_id = (int)$patient_id;
+        $author_id = (int)($author_id ?: Dior_Auth_Service::get_current_user_id());
+        if (!$patient_id || !$author_id || empty($file) || !is_array($file)) {
+            return new WP_Error('invalid_upload', 'Invalid document upload.');
+        }
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            return new WP_Error('upload_error', 'Upload error code: ' . (int)$file['error']);
+        }
+        if ((int)$file['size'] > 25 * 1024 * 1024) {
+            return new WP_Error('file_too_large', 'File size exceeds maximum 25MB limit.');
+        }
+
+        $allowed_exts = ['pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowed_exts, true)) {
+            return new WP_Error('invalid_extension', 'Invalid file extension. Allowed: PDF, PNG, JPG, DOC, DOCX.');
+        }
+
+        $allowed_mimes = [
+            'pdf' => ['application/pdf', 'application/x-pdf'],
+            'png' => ['image/png'],
+            'jpg' => ['image/jpeg', 'image/pjpeg'],
+            'jpeg' => ['image/jpeg', 'image/pjpeg'],
+            'doc' => ['application/msword'],
+            'docx' => ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip'],
+        ];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $detected_mime = $finfo ? finfo_file($finfo, $file['tmp_name']) : '';
+        if ($finfo) finfo_close($finfo);
+
+        $valid_mime = !empty($detected_mime) && in_array($detected_mime, $allowed_mimes[$ext] ?? [], true);
+        if (!$valid_mime && function_exists('wp_check_filetype_and_ext')) {
+            $wp_check = wp_check_filetype_and_ext($file['tmp_name'], $file['name']);
+            $valid_mime = !empty($wp_check['ext']) && in_array(strtolower($wp_check['ext']), $allowed_exts, true);
+        }
+        if (!$valid_mime) {
+            Dior_Audit_Service::log('document_upload', 'document', 'mime_fail', $patient_id, 'failed', ['detected_mime' => $detected_mime, 'extension' => $ext]);
+            return new WP_Error('invalid_mime', 'File content does not match its declared extension.');
+        }
+
+        self::ensure_secure_directory();
+        $safe_filename = 'med_' . $patient_id . '_' . time() . '_' . wp_generate_password(8, false) . '.' . $ext;
+        $target_path = self::$secure_dir . $safe_filename;
+        if (!move_uploaded_file($file['tmp_name'], $target_path)) {
+            return new WP_Error('storage_error', 'Could not store the document securely.');
+        }
+
+        $title = sanitize_text_field($title ?: pathinfo($file['name'], PATHINFO_FILENAME));
+        $category = sanitize_text_field($category ?: 'Lab Report');
+        $doc = self::add_document($patient_id, [
+            'title' => $title,
+            'category' => $category,
+            'file_name' => $safe_filename,
+            'file_path' => $target_path,
+            'file_type' => strtoupper($ext),
+            'file_size' => (int)$file['size'],
+            'size' => size_format($file['size']),
+            'author_id' => $author_id,
+        ]);
+
+        Dior_Audit_Service::log('document_upload', 'document', $doc['id'], $patient_id, 'success', ['file_name' => $safe_filename, 'size' => size_format($file['size'])]);
+        return $doc;
+    }
+
+    /**
      * Handle AJAX Document Upload with Deep Binary MIME Validation
      */
     public static function ajax_upload_document()

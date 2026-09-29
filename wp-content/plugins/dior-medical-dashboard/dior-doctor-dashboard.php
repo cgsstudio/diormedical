@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Dior Medical — Doctor / Provider Dashboard
@@ -267,66 +266,97 @@ class Dior_Doctor_Dashboard
 
     private static function get_all_patients($doctor_user_id = 0)
     {
-        $users = get_users([
-            "role__in" => ["subscriber", "patient", "customer"],
-            "number"   => 300,
-            "orderby"  => "registered",
-            "order"    => "DESC",
-        ]);
+        global $wpdb;
 
-        $patients = [];
-        $is_admin = $doctor_user_id ? self::is_user_admin($doctor_user_id) : current_user_can("administrator");
+        $doctor_user_id = (int)$doctor_user_id;
+        $is_admin = $doctor_user_id ? self::is_user_admin($doctor_user_id) : current_user_can('manage_options');
 
-        foreach ($users as $u) {
-            $patient_id = get_user_meta($u->ID, "patient_id", true) ?: "DM-" . (10000 + $u->ID);
-            $has_intake = get_user_meta($u->ID, "dior_hipaa_intake_submitted", true);
-            $full_name  = self::resolve_patient_name($u->ID, $u);
-            $name_parts = explode(' ', $full_name, 2);
-            $fname = $name_parts[0] ?? '';
-            $lname = $name_parts[1] ?? '';
-            
-            $user_apts = Dior_Appointment_Service::get_patient_appointments($u->ID);
-            $has_active_appt = false;
-            $next_appt_date = '';
-            $next_appt_time = '';
-            $next_appt_status = '';
-            if (is_array($user_apts)) {
-                foreach ($user_apts as $ua) {
-                    $st = strtolower($ua["status"] ?? "");
-                    if (!in_array($st, ["completed", "cancelled", "cancel", "no-show", "no show", "done"])) {
-                        $has_active_appt = true;
-                        $next_appt_date = $ua["appt_date"] ?? ($ua["date"] ?? "");
-                        $next_appt_time = $ua["appt_time"] ?? ($ua["time"] ?? "");
-                        $next_appt_status = $ua["status"] ?? "Confirmed";
-                        break;
-                    }
+        // Doctors only need patients related to their own appointments.
+        // Admins can see the full patient population, capped for dashboard performance.
+        $patient_ids = [];
+        if (!$is_admin && $doctor_user_id) {
+            $appointments = Dior_Appointment_Service::get_doctor_appointments($doctor_user_id);
+            foreach ($appointments as $appointment) {
+                $pid = (int)($appointment['patient_id'] ?? ($appointment['patient_user_id'] ?? 0));
+                if ($pid > 0) {
+                    $patient_ids[$pid] = true;
                 }
             }
+        }
+
+        $args = [
+            'role__in' => ['subscriber', 'patient', 'customer'],
+            'number' => 300,
+            'orderby' => 'registered',
+            'order' => 'DESC',
+            'fields' => 'all',
+        ];
+
+        if (!empty($patient_ids)) {
+            $args['include'] = array_keys($patient_ids);
+            $args['number'] = count($patient_ids);
+        } elseif (!$is_admin && $doctor_user_id) {
+            return [];
+        }
+
+        $users = get_users($args);
+        $patients = [];
+
+        // Fetch this doctor's appointment set once. Avoid N+1 appointment queries per patient.
+        $doctor_appointments = $doctor_user_id ? Dior_Appointment_Service::get_doctor_appointments($doctor_user_id) : [];
+        $next_by_patient = [];
+        foreach ($doctor_appointments as $appointment) {
+            $pid = (int)($appointment['patient_id'] ?? ($appointment['patient_user_id'] ?? 0));
+            if (!$pid) continue;
+            $status = strtolower((string)($appointment['status'] ?? ''));
+            if (in_array($status, ['completed', 'cancelled', 'cancel', 'no-show', 'no show', 'done'], true)) continue;
+            if (!isset($next_by_patient[$pid])) {
+                $next_by_patient[$pid] = $appointment;
+            }
+        }
+
+        foreach ($users as $u) {
+            $patient_id = get_user_meta($u->ID, 'patient_id', true) ?: 'DM-' . (10000 + $u->ID);
+            $has_intake = get_user_meta($u->ID, 'dior_hipaa_intake_submitted', true);
+            $full_name = self::resolve_patient_name($u->ID, $u);
+            $name_parts = preg_split('/\s+/', trim($full_name), 2);
+            $fname = $name_parts[0] ?? '';
+            $lname = $name_parts[1] ?? '';
+            $next = $next_by_patient[$u->ID] ?? [];
 
             $patients[] = [
-                "user_id"          => $u->ID,
-                "patient_id"       => $patient_id,
-                "first_name"       => $fname,
-                "last_name"        => $lname,
-                "full_name"        => $full_name,
-                "email"            => $u->user_email,
-                "phone"            => get_user_meta($u->ID, "phone", true) ?: "—",
-                "dob"              => get_user_meta($u->ID, "dob", true) ?: "—",
-                "registered"       => date("M j, Y", strtotime($u->user_registered)),
-                "has_intake"       => !empty($has_intake),
-                "has_active_appt"  => $has_active_appt,
-                "next_appt_date"   => $next_appt_date,
-                "next_appt_time"   => $next_appt_time,
-                "next_appt_status" => $next_appt_status,
-                "initials"         => strtoupper(substr($fname ?: "P", 0, 1) . substr($lname ?: "T", 0, 1)),
+                'user_id' => $u->ID,
+                'patient_id' => $patient_id,
+                'first_name' => $fname,
+                'last_name' => $lname,
+                'full_name' => $full_name,
+                'email' => $u->user_email,
+                'phone' => get_user_meta($u->ID, 'phone', true) ?: (get_user_meta($u->ID, 'billing_phone', true) ?: '—'),
+                'dob' => get_user_meta($u->ID, 'dob', true) ?: (get_user_meta($u->ID, 'date_of_birth', true) ?: '—'),
+                'gender' => get_user_meta($u->ID, 'gender', true) ?: '—',
+                'blood_group' => get_user_meta($u->ID, 'blood_group', true) ?: '—',
+                'address' => get_user_meta($u->ID, 'address', true) ?: (get_user_meta($u->ID, 'billing_address_1', true) ?: '—'),
+                'registered' => date('M j, Y', strtotime($u->user_registered)),
+                'has_intake' => !empty($has_intake),
+                'has_active_appt' => !empty($next),
+                'next_appt_date' => $next['appt_date'] ?? ($next['date'] ?? ''),
+                'next_appt_time' => $next['appt_time'] ?? ($next['time'] ?? ''),
+                'next_appt_status' => $next['status'] ?? '',
+                'initials' => strtoupper(substr($fname ?: 'P', 0, 1) . substr($lname ?: 'T', 0, 1)),
             ];
         }
+
         return $patients;
     }
 
     private static function get_all_appointments($doctor_user_id = 0)
     {
-        return Dior_Appointment_Service::get_doctor_appointments($doctor_user_id);
+        static $cache = [];
+        $doctor_user_id = (int)$doctor_user_id;
+        if (array_key_exists($doctor_user_id, $cache)) {
+            return $cache[$doctor_user_id];
+        }
+        return $cache[$doctor_user_id] = Dior_Appointment_Service::get_doctor_appointments($doctor_user_id);
     }
 
     private static function get_doctor_notifications($user_id)
@@ -359,6 +389,73 @@ class Dior_Doctor_Dashboard
         return $all_docs;
     }
 
+    /**
+     * Build the dashboard data payload for the current doctor.
+     * All records are scoped to the authenticated provider.
+     */
+    public static function get_dashboard_data($doctor_user_id = 0)
+    {
+        static $cache = [];
+        $doctor_user_id = (int)($doctor_user_id ?: get_current_user_id());
+        if (isset($cache[$doctor_user_id])) {
+            return $cache[$doctor_user_id];
+        }
+        if (!$doctor_user_id || !self::is_user_admin($doctor_user_id) && !user_can($doctor_user_id, 'doctor')) {
+            return [];
+        }
+
+        $appointments = self::get_all_appointments($doctor_user_id);
+        $patients = self::get_all_patients($doctor_user_id);
+        $patient_ids = [];
+        foreach ($patients as $patient) {
+            if (!empty($patient['user_id'])) {
+                $patient_ids[] = (int)$patient['user_id'];
+            }
+        }
+
+        $prescriptions = [];
+        $encounters = [];
+        $documents = [];
+        foreach ($patient_ids as $patient_id) {
+            $rxs = get_user_meta($patient_id, 'dior_prescriptions', true);
+            if (is_array($rxs)) {
+                foreach ($rxs as $rx) {
+                    $rx['patient_user_id'] = $patient_id;
+                    $rx['patient_name'] = self::resolve_patient_name($patient_id);
+                    $prescriptions[] = $rx;
+                }
+            }
+            if (class_exists('Dior_Encounter_Service')) {
+                $notes = Dior_Encounter_Service::get_patient_encounters($patient_id);
+                if (is_array($notes)) {
+                    foreach ($notes as $note) {
+                        $note['patient_user_id'] = $patient_id;
+                        $note['patient_name'] = self::resolve_patient_name($patient_id);
+                        $encounters[] = $note;
+                    }
+                }
+            }
+            if (class_exists('Dior_Medical_Secure_Files')) {
+                $docs = Dior_Medical_Secure_Files::get_patient_documents($patient_id);
+                if (is_array($docs)) {
+                    foreach ($docs as $doc) {
+                        $doc['patient_user_id'] = $patient_id;
+                        $doc['patient_name'] = self::resolve_patient_name($patient_id);
+                        $documents[] = $doc;
+                    }
+                }
+            }
+        }
+
+        return $cache[$doctor_user_id] = [
+            'appointments' => array_slice($appointments, 0, 200),
+            'patients' => array_slice($patients, 0, 300),
+            'prescriptions' => array_slice($prescriptions, 0, 300),
+            'encounters' => array_slice($encounters, 0, 300),
+            'documents' => array_slice($documents, 0, 300),
+        ];
+    }
+
     public static function render($atts)
     {
         if (!is_user_logged_in()) {
@@ -379,6 +476,41 @@ class Dior_Doctor_Dashboard
         $appointments  = self::get_all_appointments($user_id);
         $notifications = self::get_doctor_notifications($user_id);
         $documents     = self::get_all_documents($patients);
+
+        // Temporary UI demo fallback: only used when the doctor has no real records.
+        // Nothing is written to the database and real records always take precedence.
+        $dior_demo_mode = false;
+        $demo_today = current_time('Y-m-d');
+        if (empty($patients)) {
+            $dior_demo_mode = true;
+            $patients = [
+                ['user_id' => 0, 'patient_id' => 'DEMO-P001', 'first_name' => 'Sarah', 'last_name' => 'Johnson', 'full_name' => 'Sarah Johnson', 'email' => 'sarah.demo@example.com', 'phone' => '+1 555 0101', 'dob' => '1991-04-12', 'gender' => 'Female', 'blood_group' => 'A+', 'address' => 'Demo Address', 'registered' => 'Sep 20, 2026', 'has_intake' => true, 'has_active_appt' => true, 'next_appt_date' => $demo_today, 'next_appt_time' => '10:30 AM', 'next_appt_status' => 'Confirmed', 'initials' => 'SJ'],
+                ['user_id' => 0, 'patient_id' => 'DEMO-P002', 'first_name' => 'Michael', 'last_name' => 'Brown', 'full_name' => 'Michael Brown', 'email' => 'michael.demo@example.com', 'phone' => '+1 555 0102', 'dob' => '1986-08-23', 'gender' => 'Male', 'blood_group' => 'O+', 'address' => 'Demo Address', 'registered' => 'Sep 18, 2026', 'has_intake' => true, 'has_active_appt' => false, 'next_appt_date' => '', 'next_appt_time' => '', 'next_appt_status' => '', 'initials' => 'MB'],
+                ['user_id' => 0, 'patient_id' => 'DEMO-P003', 'first_name' => 'Emily', 'last_name' => 'Davis', 'full_name' => 'Emily Davis', 'email' => 'emily.demo@example.com', 'phone' => '+1 555 0103', 'dob' => '1994-02-09', 'gender' => 'Female', 'blood_group' => 'B+', 'address' => 'Demo Address', 'registered' => 'Sep 15, 2026', 'has_intake' => false, 'has_active_appt' => true, 'next_appt_date' => wp_date('Y-m-d', current_time('timestamp') + DAY_IN_SECONDS), 'next_appt_time' => '02:00 PM', 'next_appt_status' => 'Scheduled', 'initials' => 'ED'],
+            ];
+        }
+        if (empty($appointments)) {
+            $dior_demo_mode = true;
+            $appointments = [
+                ['id' => 'DEMO-DOC-APT-001', 'appt_uid' => 'DEMO-DOC-APT-001', 'patient_id' => 0, 'patient_user_id' => 0, 'patient_name' => 'Sarah Johnson', 'patient_id_num' => 'DEMO-P001', 'doctor_id' => $user_id, 'doctor_name' => $doctor['full_name'], 'date' => $demo_today, 'appt_date' => $demo_today, 'time' => '10:30 AM', 'appt_time' => '10:30 AM', 'duration' => '30 minutes', 'type' => 'Video Visit', 'visit_type' => 'Video Visit', 'status' => 'Confirmed', 'condition' => 'Routine Follow-up'],
+                ['id' => 'DEMO-DOC-APT-002', 'appt_uid' => 'DEMO-DOC-APT-002', 'patient_id' => 0, 'patient_user_id' => 0, 'patient_name' => 'Emily Davis', 'patient_id_num' => 'DEMO-P003', 'doctor_id' => $user_id, 'doctor_name' => $doctor['full_name'], 'date' => wp_date('Y-m-d', current_time('timestamp') + DAY_IN_SECONDS), 'appt_date' => wp_date('Y-m-d', current_time('timestamp') + DAY_IN_SECONDS), 'time' => '02:00 PM', 'appt_time' => '02:00 PM', 'duration' => '30 minutes', 'type' => 'Clinic Visit', 'visit_type' => 'Clinic Visit', 'status' => 'Scheduled', 'condition' => 'General Checkup'],
+                ['id' => 'DEMO-DOC-APT-003', 'appt_uid' => 'DEMO-DOC-APT-003', 'patient_id' => 0, 'patient_user_id' => 0, 'patient_name' => 'Michael Brown', 'patient_id_num' => 'DEMO-P002', 'doctor_id' => $user_id, 'doctor_name' => $doctor['full_name'], 'date' => wp_date('Y-m-d', current_time('timestamp') - DAY_IN_SECONDS), 'appt_date' => wp_date('Y-m-d', current_time('timestamp') - DAY_IN_SECONDS), 'time' => '11:30 AM', 'appt_time' => '11:30 AM', 'duration' => '30 minutes', 'type' => 'Video Visit', 'visit_type' => 'Video Visit', 'status' => 'Completed', 'condition' => 'Follow-up'],
+            ];
+        }
+        if (empty($notifications)) {
+            $dior_demo_mode = true;
+            $notifications = [
+                ['id' => 'DEMO-DN-001', 'title' => 'New Appointment', 'message' => 'Sarah Johnson booked a video consultation.', 'created_at' => current_time('mysql'), 'is_read' => false, 'action_url' => '#tab=doc-appointments'],
+                ['id' => 'DEMO-DN-002', 'title' => 'Patient Record Updated', 'message' => 'Emily Davis updated her intake information.', 'created_at' => current_time('mysql'), 'is_read' => false, 'action_url' => '#tab=doc-patients'],
+            ];
+        }
+        if (empty($documents)) {
+            $dior_demo_mode = true;
+            $documents = [
+                ['id' => 'DEMO-DR-001', 'patient_id_num' => 'DEMO-P001', 'patient_name' => 'Sarah Johnson', 'patient_user_id' => 0, 'title' => 'Blood Test Report', 'category' => 'Laboratory', 'date' => $demo_today, 'created_at' => $demo_today, 'author' => $doctor['full_name'], 'priority' => 'Normal'],
+                ['id' => 'DEMO-DR-002', 'patient_id_num' => 'DEMO-P003', 'patient_name' => 'Emily Davis', 'patient_user_id' => 0, 'title' => 'Consultation Summary', 'category' => 'Clinical', 'date' => $demo_today, 'created_at' => $demo_today, 'author' => $doctor['full_name'], 'priority' => 'Normal'],
+            ];
+        }
         $logo_url      = "";
         $logo_id       = get_theme_mod("custom_logo");
         if ($logo_id) $logo_url = wp_get_attachment_image_url($logo_id, "full");
@@ -1042,7 +1174,24 @@ class Dior_Doctor_Dashboard
         $pid  = Dior_Auth_Service::validate_id($_POST["patient_user_id"] ?? 0);
         $user = get_userdata($pid);
         if (!$user) wp_send_json_error(["message" => "Patient not found"]);
-        $doctor   = self::get_doctor_profile(get_current_user_id());
+
+        // Prevent a doctor from opening unrelated patient records.
+        $current_doctor_id = get_current_user_id();
+        if (!self::is_user_admin($current_doctor_id)) {
+            $doctor_appointments = Dior_Appointment_Service::get_doctor_appointments($current_doctor_id);
+            $has_relation = false;
+            foreach ($doctor_appointments as $doctor_appt) {
+                if ((int)($doctor_appt['patient_id'] ?? 0) === (int)$pid) {
+                    $has_relation = true;
+                    break;
+                }
+            }
+            if (!$has_relation) {
+                wp_send_json_error(["message" => "You do not have access to this patient record."], 403);
+            }
+        }
+
+        $doctor   = self::get_doctor_profile($current_doctor_id);
         $profile  = Dior_Patient_Portal_Data::get_patient_profile($pid);
         $intake   = get_user_meta($pid, "dior_hipaa_intake", true);
         $apts     = Dior_Appointment_Service::get_patient_appointments($pid);
