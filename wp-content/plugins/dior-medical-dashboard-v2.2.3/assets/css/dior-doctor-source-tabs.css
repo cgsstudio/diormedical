@@ -186,3 +186,38 @@
   .dior-doctor-wrap .dior-source-subtabs { margin-left:16px; margin-right:16px; }
   .dior-doctor-wrap .dior-source-subcontent { padding:16px; }
 }
+
+/* Reference implementation: provider pages use the same proportions as the supplied
+ * Angular dashboard while remaining plain PHP/HTML and preserving existing handlers. */
+.dior-doctor-wrap .dior-source-panel .main-content { max-width:none; }
+.dior-doctor-wrap .dior-source-panel .breadcrumb-title { padding-top:2px; }
+.dior-doctor-wrap .dior-source-panel .breadcrumb-icon svg { width:16px; height:16px; stroke:#64748b; fill:none; stroke-width:2; }
+.dior-doctor-wrap .dior-source-panel .section-body > .row { margin-left:-10px; margin-right:-10px; }
+.dior-doctor-wrap .dior-source-panel .section-body > .row > [class*="col-"] { padding-left:10px; padding-right:10px; }
+.dior-doctor-wrap .dior-source-panel .master-table-wrapper,
+.dior-doctor-wrap .dior-source-panel .master-table-container { width:100%; }
+.dior-doctor-wrap .dior-source-panel .master-table-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
+.dior-doctor-wrap .dior-source-panel .master-table-header { padding:18px 20px; }
+.dior-doctor-wrap .dior-source-panel .header-content { display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; }
+.dior-doctor-wrap .dior-source-panel .table-title-section { display:flex; align-items:center; gap:10px; }
+.dior-doctor-wrap .dior-source-panel .table-title { font-size:18px; font-weight:750; }
+.dior-doctor-wrap .dior-source-panel .title-accent { width:4px; height:25px; order:-1; }
+.dior-doctor-wrap .dior-source-panel .header-actions-group { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.dior-doctor-wrap .dior-source-panel .search-container { position:relative; min-width:220px; }
+.dior-doctor-wrap .dior-source-panel .search-icon { position:absolute; left:11px; top:10px; color:#94a3b8; }
+.dior-doctor-wrap .dior-source-panel .search-input { padding-left:34px; }
+.dior-doctor-wrap .dior-source-panel .action-buttons { display:flex; gap:7px; }
+.dior-doctor-wrap .dior-source-panel .action-btn { width:36px; height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center; }
+.dior-doctor-wrap .dior-source-panel .table-content { overflow-x:auto; }
+.dior-doctor-wrap .dior-source-panel .datatable-header { background:#f8fafc; }
+.dior-doctor-wrap .dior-source-panel .datatable-header-cell { color:#64748b; font-size:11px; font-weight:750; text-transform:uppercase; letter-spacing:.02em; padding:0 12px; }
+.dior-doctor-wrap .dior-source-panel .datatable-body-cell { color:#334155; font-size:13px; padding:0 12px; }
+.dior-doctor-wrap .dior-source-panel .cell-content { min-height:48px; display:flex; align-items:center; gap:7px; }
+.dior-doctor-wrap .dior-source-panel .cell-avatar { width:30px; height:30px; border-radius:50%; object-fit:cover; }
+.dior-doctor-wrap .dior-source-panel .cell-text { white-space:nowrap; }
+.dior-doctor-wrap .dior-source-panel .cell-actions { display:flex; gap:5px; }
+@media (max-width:640px) {
+ .dior-doctor-wrap .dior-source-panel .header-actions-group,.dior-doctor-wrap .dior-source-panel .search-container { width:100%; }
+ .dior-doctor-wrap .dior-source-panel .action-buttons { margin-left:auto; }
+ .dior-doctor-wrap .dior-source-panel .search-container { min-width:0; }
+}
