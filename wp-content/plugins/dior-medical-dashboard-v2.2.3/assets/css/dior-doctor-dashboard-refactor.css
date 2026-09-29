@@ -4162,3 +4162,13 @@
 .dior-status-completed { background:#D1FAE5 !important; color:#059669 !important; }
 .dior-status-cancelled { background:#FEE2E2 !important; color:#DC2626 !important; }
 .dior-status-upcoming { background:#DBEAFE !important; color:#2563EB !important; }
+
+/* Provider dashboard visual cleanup */
+.dior-doctor-wrap .dior-tab-panel { max-width: 1440px; margin: 0 auto; }
+.dior-doctor-wrap .dior-side-nav .dior-nav-btn { min-height: 44px; margin: 3px 12px; border-radius: 10px; transition: background .2s ease, color .2s ease, transform .2s ease; }
+.dior-doctor-wrap .dior-side-nav .dior-nav-btn:hover { background: rgba(255,255,255,.12); transform: translateX(2px); }
+.dior-doctor-wrap .dior-side-nav .dior-nav-btn.active { background: #fff; color: #00346c; box-shadow: 0 5px 16px rgba(0,0,0,.14); }
+.dior-doctor-wrap .dior-side-nav .dior-nav-btn.active span,
+.dior-doctor-wrap .dior-side-nav .dior-nav-btn.active i { color: #00346c !important; }
+.dior-doctor-wrap .dior-box, .dior-doctor-wrap .dior-card { border: 1px solid #e6edf5; border-radius: 14px; box-shadow: 0 5px 18px rgba(15, 42, 70, .06); }
+@media (max-width: 760px) { .dior-doctor-wrap .dior-tab-content { padding: 16px; } }

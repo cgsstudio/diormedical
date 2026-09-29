@@ -3528,3 +3528,31 @@ window.diorToggleReminderOptin = function(channel, value) {
     }
 };
 
+
+/* Dior dashboard navigation safety net.
+ * Keeps navigation functional even when optional dashboard data/AJAX fails. */
+(function () {
+    function bindDiorPatientNavigation() {
+        var app = document.getElementById('dior-patient-portal-app');
+        if (!app || app.dataset.diorNavReady === '1') return;
+        app.dataset.diorNavReady = '1';
+        function activate(tab) {
+            var panel = document.getElementById('tab-' + tab);
+            if (!panel) return;
+            app.querySelectorAll('.dior-nav-btn[data-tab]').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === tab); });
+            app.querySelectorAll('.dior-tab-panel').forEach(function (p) { p.classList.toggle('active', p === panel); });
+            if (history.replaceState) history.replaceState(null, '', '#tab=' + tab);
+        }
+        app.addEventListener('click', function (event) {
+            var button = event.target.closest('.dior-nav-btn[data-tab]');
+            if (!button || button.closest('.dior-nav-item-has-children')) return;
+            event.preventDefault();
+            activate(button.dataset.tab);
+        });
+        var initial = (location.hash.match(/^#tab=([^&]+)/) || [])[1] || 'overview';
+        activate(initial);
+        window.addEventListener('hashchange', function () { activate((location.hash.match(/^#tab=([^&]+)/) || [])[1] || 'overview'); });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindDiorPatientNavigation);
+    else bindDiorPatientNavigation();
+})();

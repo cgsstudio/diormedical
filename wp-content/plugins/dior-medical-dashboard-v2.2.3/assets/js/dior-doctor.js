@@ -2829,3 +2829,30 @@ document.addEventListener('DOMContentLoaded', function () {
         diorHydrateDoctorSourceTables();
     }
 });
+
+/* Resilient provider navigation: tab switching must not depend on AJAX/table hydration. */
+(function () {
+    function bindDiorDoctorNavigation() {
+        var app = document.getElementById('dior-doctor-app');
+        if (!app || app.dataset.diorNavReady === '1') return;
+        app.dataset.diorNavReady = '1';
+        function activate(tab) {
+            var panel = document.getElementById('tab-' + tab);
+            if (!panel) return;
+            app.querySelectorAll('.dior-nav-btn[data-tab]').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === tab); });
+            app.querySelectorAll('.dior-tab-panel').forEach(function (p) { p.classList.toggle('active', p === panel); });
+            if (history.replaceState) history.replaceState(null, '', '#tab=' + tab);
+        }
+        app.addEventListener('click', function (event) {
+            var button = event.target.closest('.dior-nav-btn[data-tab]');
+            if (!button) return;
+            event.preventDefault();
+            activate(button.dataset.tab);
+        });
+        var initial = (location.hash.match(/^#tab=([^&]+)/) || [])[1] || 'doc-overview';
+        activate(initial);
+        window.addEventListener('hashchange', function () { activate((location.hash.match(/^#tab=([^&]+)/) || [])[1] || 'doc-overview'); });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindDiorDoctorNavigation);
+    else bindDiorDoctorNavigation();
+})();

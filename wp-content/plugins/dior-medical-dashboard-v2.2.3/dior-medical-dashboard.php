@@ -797,6 +797,16 @@ class Dior_Medical_Auth
             true
         );
 
+        // Independent fallback so dashboard navigation still works if an optional
+        // AJAX/table script throws an error during page initialization.
+        wp_enqueue_script(
+            'dior-tab-navigation',
+            DIOR_PORTAL_URL . 'assets/js/dior-tab-navigation.js',
+            [],
+            filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-tab-navigation.js'),
+            true
+        );
+
         $portal_url = home_url('/patient-dashboard/');
         $login_url = home_url('/diro-login/');
         $reg_url = home_url('/diro-registration/');
