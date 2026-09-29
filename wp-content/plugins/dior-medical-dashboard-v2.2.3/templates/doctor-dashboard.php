@@ -25,7 +25,20 @@
                 </button>
             </div>
 
-            <!-- Doctor Identity Card Removed -->
+            <!-- Provider identity card (matches the Patient Dashboard sidebar language) -->
+            <div class="dior-sidebar-bottom-profile dior-doctor-sidebar-profile">
+                <div class="dior-sidebar-avatar-wrap">
+                    <?php if (!empty($doctor['avatar_url'])): ?>
+                        <img src="<?php echo esc_url($doctor['avatar_url']); ?>" alt="<?php echo esc_attr($doctor['full_name']); ?>">
+                    <?php else: ?>
+                        <span class="dior-doctor-initials"><?php echo esc_html(!empty($doctor['initials']) ? $doctor['initials'] : 'DR'); ?></span>
+                    <?php endif; ?>
+                </div>
+                <div class="dior-sidebar-user-info">
+                    <strong class="dior-sidebar-user-name"><?php echo esc_html($doctor['full_name']); ?></strong>
+                    <span class="dior-sidebar-user-status">Provider account</span>
+                </div>
+            </div>
 
             <!-- Nav -->
             <nav class="dior-side-nav">

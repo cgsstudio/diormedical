@@ -4172,3 +4172,19 @@
 .dior-doctor-wrap .dior-side-nav .dior-nav-btn.active i { color: #00346c !important; }
 .dior-doctor-wrap .dior-box, .dior-doctor-wrap .dior-card { border: 1px solid #e6edf5; border-radius: 14px; box-shadow: 0 5px 18px rgba(15, 42, 70, .06); }
 @media (max-width: 760px) { .dior-doctor-wrap .dior-tab-content { padding: 16px; } }
+
+/* Doctor portal follows the Patient Dashboard visual system: blue rail,
+   compact identity card, quiet workspace and rounded white surfaces. */
+.dior-doctor-wrap .dior-doctor-sidebar-profile { display:flex !important; align-items:center !important; gap:10px !important; margin:14px 16px 22px !important; padding:10px !important; border-radius:12px !important; background:rgba(255,255,255,.10) !important; }
+.dior-doctor-wrap .dior-doctor-sidebar-profile .dior-sidebar-avatar-wrap { width:42px !important; height:42px !important; flex:0 0 42px !important; border-radius:50% !important; display:flex !important; align-items:center !important; justify-content:center !important; overflow:hidden !important; background:#fff !important; }
+.dior-doctor-wrap .dior-doctor-sidebar-profile .dior-sidebar-avatar-wrap img { width:100% !important; height:100% !important; object-fit:cover !important; }
+.dior-doctor-wrap .dior-doctor-initials { color:#00346c !important; font-weight:800 !important; font-size:14px !important; }
+.dior-doctor-wrap .dior-doctor-sidebar-profile .dior-sidebar-user-info { min-width:0 !important; text-align:left !important; }
+.dior-doctor-wrap .dior-doctor-sidebar-profile .dior-sidebar-user-name { display:block !important; max-width:145px !important; overflow:hidden !important; text-overflow:ellipsis !important; white-space:nowrap !important; font-size:12px !important; }
+.dior-doctor-wrap .dior-doctor-sidebar-profile .dior-sidebar-user-status { color:rgba(255,255,255,.68) !important; font-size:10px !important; }
+.dior-doctor-wrap .dior-side-nav { padding-top:0 !important; }
+.dior-doctor-wrap .dior-side-nav .dior-nav-btn { border-radius:8px !important; margin:3px 12px !important; width:calc(100% - 24px) !important; }
+.dior-doctor-wrap .dior-main-content { min-width:0 !important; }
+.dior-doctor-wrap .dior-topbar { min-height:68px !important; border-bottom:1px solid #e8eef5 !important; }
+.dior-doctor-wrap .dior-top-search { border:1px solid #e2e8f0 !important; border-radius:9px !important; background:#fff !important; }
+@media (max-width:768px){ .dior-doctor-wrap .dior-doctor-sidebar-profile{margin-left:12px !important;margin-right:12px !important;} }
