@@ -1,0 +1,3106 @@
+# Copyright (C) 2026 Wp Dreamers
+# This file is distributed under the GPLv3.
+msgid ""
+msgstr ""
+"Project-Id-Version: DocBooker - Doctor Appointment & Hospital Management 2.1.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/doc-booker\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-12T14:30:28+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: doc-booker\n"
+
+#. Plugin Name of the plugin
+#: D:\wordpress local website\doc-booker\app\public\wp-content\plugins\doc-booker\doc-booker.php
+msgid "DocBooker - Doctor Appointment & Hospital Management"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: D:\wordpress local website\doc-booker\app\public\wp-content\plugins\doc-booker\doc-booker.php
+msgid "https://docbooker.wpdreamers.com/"
+msgstr ""
+
+#. Description of the plugin
+#: D:\wordpress local website\doc-booker\app\public\wp-content\plugins\doc-booker\doc-booker.php
+msgid "The Doctor Booking & Hospital Management System."
+msgstr ""
+
+#. Author of the plugin
+#: D:\wordpress local website\doc-booker\app\public\wp-content\plugins\doc-booker\doc-booker.php
+msgid "Wp Dreamers"
+msgstr ""
+
+#. Author URI of the plugin
+#: D:\wordpress local website\doc-booker\app\public\wp-content\plugins\doc-booker\doc-booker.php
+msgid "https://wpdreamers.com/"
+msgstr ""
+
+#: app/Controllers/Admin/Api/RestApi.php:325
+#: app/Controllers/Admin/Api/RestApi.php:355
+msgid "You are not allowed to access this endpoint."
+msgstr ""
+
+#: app/Controllers/Admin/Notice/ProBlockNotice.php:59
+msgid "Activate DocBooker Pro"
+msgstr ""
+
+#: app/Controllers/Admin/Notice/ProBlockNotice.php:62
+msgid "Open Plugins"
+msgstr ""
+
+#: app/Controllers/Admin/Notice/ProBlockNotice.php:67
+msgid "DocBooker Pro is inactive"
+msgstr ""
+
+#: app/Controllers/Admin/Notice/ProBlockNotice.php:68
+msgid "One or more published pages use DocBooker Pro blocks (e.g. the Booking Form). While Pro is inactive those blocks render as nothing, so booking and payment will not appear on the front end."
+msgstr ""
+
+#: app/Controllers/Admin/PluginRow.php:38
+#: app/Controllers/Admin/SubMenu.php:20
+#: app/Controllers/Admin/SubMenu.php:21
+msgid "Settings"
+msgstr ""
+
+#: app/Controllers/Admin/PluginRow.php:39
+msgid "Demo"
+msgstr ""
+
+#: app/Controllers/Admin/PluginRow.php:40
+msgid "Documentation"
+msgstr ""
+
+#: app/Controllers/Admin/PluginRow.php:43
+#: src/js/admin/components/settings-page/MainHeader.jsx:78
+msgid "Get Pro"
+msgstr ""
+
+#: app/Controllers/Admin/PluginRow.php:66
+msgid "Facing issue?"
+msgstr ""
+
+#: app/Controllers/Admin/PluginRow.php:67
+msgid "Please open a support ticket."
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:71
+msgid "Before you go…"
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:72
+msgid "Mind sharing why you're deactivating DocBooker? It helps us fix issues and improve."
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:82
+msgid "Bug or issue detected"
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:88
+msgid "I no longer need the plugin"
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:94
+msgid "I found a better plugin"
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:96
+msgid "Which plugin? (optional)"
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:102
+msgid "I couldn't set up the booking form / schedule"
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:108
+msgid "It is missing a feature I need"
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:114
+msgid "It's a temporary deactivation"
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:121
+msgid "Anything else? How can we improve DocBooker?"
+msgstr ""
+
+#: app/Controllers/Admin/PluginSurvey.php:123
+msgid "Write something here…"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:108
+msgid "Online Payments"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:108
+msgid "Stripe & Razorpay checkout at booking"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:109
+msgid "Multi-Clinic & Staff"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:109
+msgid "Multiple clinics + Manager / Receptionist roles"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:110
+msgid "Patients & Visits"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:110
+msgid "OPD / IPD visits, beds & discharge records"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:111
+msgid "Billing & Invoices"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:111
+msgid "Itemised running bills + printable invoices"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:112
+msgid "Lab Tests & Portal"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:112
+msgid "Test catalog, report uploads & patient OTP portal"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:113
+msgid "Page Builder"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:113
+msgid "21 Gutenberg blocks + 10 ready-made templates"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:114
+msgid "Design & Layouts"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:114
+msgid "Extra layouts, AJAX pagination & dynamic CSS"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:115
+msgid "More Pro Power"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:115
+msgid "Advanced filtering, branded prints & priority support"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:140
+msgid "DOCBOOKER PRO"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:142
+msgid "Turn DocBooker into a full hospital management system"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:153
+#: app/Controllers/Admin/TemplatesPage.php:115
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: app/Controllers/Admin/PostMeta.php:154
+msgid "30-day money-back guarantee · terms & conditions apply"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:51
+msgctxt "Taxonomy General Name"
+msgid "Doctor Department"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:52
+msgctxt "Taxonomy Singular Name"
+msgid "Department"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:53
+#: src/js/public/components/DepartmentsSelection.jsx:9
+msgid "Departments"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:54
+msgid "All Departments"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:55
+msgid "Parent Department"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:56
+msgid "Parent Department:"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:57
+msgid "New Department Name"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:58
+msgid "Add New Department"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:59
+msgid "Edit Department"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:60
+msgid "Update Department"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:61
+msgid "View Department"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:62
+msgid "Separate Departments with commas"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:63
+msgid "Add or remove Departments"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:64
+msgid "Choose from the most used"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:66
+msgid "Search Departments"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:67
+msgid "Not Found"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:123
+msgctxt "post type general name"
+msgid "DocBooker"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:124
+msgctxt "post type singular name"
+msgid "DocBooker"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:125
+msgctxt "post"
+msgid "Add New"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:126
+msgid "Add New Doctor"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:127
+msgid "Edit Doctor"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:128
+msgid "New Doctor"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:129
+msgid "All Doctors"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:130
+msgid "View Doctor"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:131
+msgid "Search Doctor"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:132
+msgid "No Doctors found"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:133
+msgid "No Doctor found in the Trash"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:134
+#: src/js/admin/components/BookingFilters.jsx:185
+#: src/js/admin/components/BookingFilters.jsx:325
+#: src/js/public/components/ProgressBar.jsx:7
+msgid "Doctor"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:135
+msgid "Update Doctor"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:137
+msgid "DocBooker"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:169
+#: app/Controllers/Installation.php:65
+#: src/js/admin/components/BookingFilters.jsx:156
+#: src/js/admin/components/BookingFilters.jsx:293
+msgid "Clinic"
+msgstr ""
+
+#. Translators: %s is the post type name (e.g., "Clinic").
+#: app/Controllers/Admin/RegisterPostType.php:174
+msgctxt "post type general name"
+msgid "%s"
+msgstr ""
+
+#. Translators: %s is the post type name (e.g., "Clinic").
+#: app/Controllers/Admin/RegisterPostType.php:176
+msgctxt "post type singular name"
+msgid "%s"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:179
+msgid "s"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:180
+msgid "Add New "
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:181
+msgid "Add New"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:182
+msgid "New "
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:183
+msgid "Edit "
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:184
+msgid "Update "
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:185
+msgid "View "
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:186
+msgid "Search "
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:187
+#: app/Controllers/Admin/RegisterPostType.php:188
+msgid "No "
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:187
+msgid "s found"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:188
+msgid "s found in Trash"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:193
+msgid "Description"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:216
+#: app/Controllers/Admin/RegisterPostType.php:217
+#: app/Controllers/Admin/RegisterPostType.php:228
+msgid "Doctor Shortcode"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:218
+#: app/Controllers/Admin/RegisterPostType.php:250
+#: app/Controllers/Admin/Shortcode/ShortcodeInit.php:27
+#: app/Controllers/Admin/Shortcode/ShortcodeInit.php:32
+msgid "Shortcode"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:219
+#: app/Controllers/Admin/RegisterPostType.php:251
+msgid "Edit Shortcode"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:220
+#: app/Controllers/Admin/RegisterPostType.php:252
+msgid "New Shortcode"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:221
+#: app/Controllers/Admin/RegisterPostType.php:253
+msgid "Add New Shortcode"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:222
+#: app/Controllers/Admin/RegisterPostType.php:254
+msgid "View Shortcode"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:223
+#: app/Controllers/Admin/RegisterPostType.php:255
+msgid "Shortcode Locations"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:224
+#: app/Controllers/Admin/RegisterPostType.php:256
+msgid "No Shortcode found."
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:225
+#: app/Controllers/Admin/RegisterPostType.php:257
+msgid "No Shortcode found in trash."
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:229
+msgid "Doctor Shortcode Generator"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:248
+#: app/Controllers/Admin/RegisterPostType.php:249
+#: app/Controllers/Admin/RegisterPostType.php:260
+msgid "Clinic Shortcode"
+msgstr ""
+
+#: app/Controllers/Admin/RegisterPostType.php:261
+msgid "Clinic Shortcode Generator"
+msgstr ""
+
+#: app/Controllers/Admin/SubMenu.php:30
+#: app/Controllers/Admin/SubMenu.php:31
+msgid "Booking Management"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:37
+#: app/Controllers/Admin/TemplatesPage.php:38
+msgid "Prebuilt Templates"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:81
+msgid "Validating template"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:82
+msgid "Loading block markup"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:83
+msgid "Processing images"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:84
+msgid "Creating draft page"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:85
+msgid "Finalising"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:88
+msgid "10 medical niche templates"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:89
+msgid "One click. "
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:90
+msgid "A whole site."
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:91
+msgid "Pick a niche, click Import, and a fully-editable draft page is created from the DocBooker block library. Doctors, clinics and departments pull your real content; everything else uses curated demo imagery."
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:92
+msgid "Import template"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:93
+msgid "Hover to preview"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:94
+#: src/js/admin/components/BookingFilters.jsx:20
+#: src/js/admin/components/BookingManagement.jsx:362
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:229
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:55
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:115
+msgid "Pro"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:95
+msgid "Cancel"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:96
+msgid "Close"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:97
+msgid "Try again"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:98
+msgid "Start import"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:99
+msgid "Download demo images into the media library (slower)"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:100
+msgid "Importing"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:101
+msgid "Please keep this tab open until all steps complete."
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:102
+msgid "Building your page"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:103
+msgid "Template imported"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:104
+msgid "A draft page was created with every block ready to edit."
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:105
+msgid "Edit the page"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:106
+msgid "Preview"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:107
+msgid "Import another template"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:108
+msgid "Import failed"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:109
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:110
+msgid "Unlock page templates with Pro"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:111
+msgid "Page templates are a DocBooker Pro feature. Upgrade to import polished, niche-specific landing pages built from the DocBooker block library — then customise everything in the editor."
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:112
+msgid "10 ready-made medical niche pages"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:113
+msgid "One-click import — a real, editable draft page"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:114
+msgid "Built from the full DocBooker Pro block library"
+msgstr ""
+
+#: app/Controllers/Admin/TemplatesPage.php:116
+msgid "Maybe later"
+msgstr ""
+
+#: app/Controllers/AjaxControllers.php:41
+msgid "Settings Save Successfully."
+msgstr ""
+
+#: app/Controllers/AjaxControllers.php:186
+msgid "Booking cancel successfully."
+msgstr ""
+
+#: app/Controllers/AjaxControllers.php:188
+msgid "Failed to booking cancel."
+msgstr ""
+
+#: app/Controllers/AjaxControllers.php:205
+msgid "Booking delete successfully."
+msgstr ""
+
+#: app/Controllers/AjaxControllers.php:207
+msgid "Failed to delete booking."
+msgstr ""
+
+#: app/Controllers/Frontend/DocShortcode.php:92
+msgid "No posts found."
+msgstr ""
+
+#: app/Controllers/Frontend/DocShortcode.php:107
+msgid "Book Your Appointment"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:305
+msgid "More Doctors"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:327
+msgid "More Clinics"
+msgstr ""
+
+#. translators: %s: search query
+#: app/Controllers/Helper/Helper.php:484
+#: app/Traits/TemplateTraits.php:17
+msgid "Search results: &ldquo;%s&rdquo;"
+msgstr ""
+
+#. translators: %s: page number
+#: app/Controllers/Helper/Helper.php:488
+#: app/Traits/TemplateTraits.php:21
+msgid "&nbsp;&ndash; Page %s"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:536
+msgid "Doctors"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:540
+msgid "Clinics"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:772
+msgid "Your appointment booking confirmation"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:773
+msgid ""
+"Dear %s,\n"
+"\n"
+"Thank you for booking an appointment with Dr. %s.\n"
+"\n"
+"Appointment Details:\n"
+"Booking ID: %s\n"
+"Day: %s\n"
+"Time: %s\n"
+"Clinic: %s\n"
+"\n"
+"If you need to cancel or reschedule, please contact us at least 24 hours before your appointment.\n"
+"\n"
+"Best regards,\n"
+"%s"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:774
+msgid "New appointment booking"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:775
+msgid ""
+"Dear Dr. %s,\n"
+"\n"
+"A new appointment has been booked with you.\n"
+"\n"
+"Appointment Details:\n"
+"Patient: %s\n"
+"Phone: %s\n"
+"%sDay: %s\n"
+"Time: %s\n"
+"Clinic: %s\n"
+"%s"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:776
+msgid "New doctor appointment booking"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:777
+msgid ""
+"A new appointment has been booked.\n"
+"\n"
+"Booking ID: %s\n"
+"\n"
+"Doctor: %s\n"
+"Patient: %s\n"
+"Phone: %s\n"
+"%sDay: %s\n"
+"Time: %s\n"
+"Clinic: %s\n"
+"%s"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:780
+msgid "Your appointment booking has been canceled"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:781
+msgid ""
+"Dear %s,\n"
+"\n"
+"Sorry, your appointment booking with Dr. %s has been canceled.\n"
+"\n"
+"%s"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:782
+msgid "Canceling booking"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:783
+msgid ""
+"Dear Dr. %s,\n"
+"\n"
+"An appointment has been canceled with you.\n"
+"\n"
+"Appointment Details:\n"
+"Patient: %s\n"
+"Phone: %s\n"
+"%sDay: %s\n"
+"Time: %s\n"
+"Clinic: %s\n"
+"%s"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:784
+msgid "A doctor appointment booking cancel"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:785
+msgid ""
+"An appointment has been canceled.\n"
+"\n"
+"Booking ID: %s\n"
+"\n"
+"Doctor: %s\n"
+"Patient: %s\n"
+"Phone: %s\n"
+"%sDay: %s\n"
+"Time: %s\n"
+"Clinic: %s\n"
+"%s"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:853
+#: src/js/admin/components/DoctorSchedule.jsx:8
+#: src/js/public/components/CalendarPicker.jsx:14
+msgid "Monday"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:854
+#: src/js/admin/components/DoctorSchedule.jsx:9
+#: src/js/public/components/CalendarPicker.jsx:15
+msgid "Tuesday"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:855
+#: src/js/admin/components/DoctorSchedule.jsx:10
+#: src/js/public/components/CalendarPicker.jsx:16
+msgid "Wednesday"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:856
+#: src/js/admin/components/DoctorSchedule.jsx:11
+#: src/js/public/components/CalendarPicker.jsx:17
+msgid "Thursday"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:857
+#: src/js/admin/components/DoctorSchedule.jsx:12
+#: src/js/public/components/CalendarPicker.jsx:18
+msgid "Friday"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:858
+#: src/js/admin/components/DoctorSchedule.jsx:13
+#: src/js/public/components/CalendarPicker.jsx:19
+msgid "Saturday"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:859
+#: src/js/admin/components/DoctorSchedule.jsx:14
+#: src/js/public/components/CalendarPicker.jsx:20
+msgid "Sunday"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:49
+msgid "No schedule available"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:91
+msgid "Doctor Schedule"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:129
+msgid "Call For Booking:"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:147
+msgid "Clinic Holiday Schedule"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:154
+msgid "is on Holiday from"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:156
+msgid "to"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:204
+msgid "Our Hotline:"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:211
+msgid "Our Email:"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:240
+msgid "Our Address:"
+msgstr ""
+
+#: app/Controllers/Hooks/FilterHooks.php:55
+msgid "Page"
+msgstr ""
+
+#: app/Controllers/Hooks/TemplateHooks.php:137
+#: app/Controllers/Model/Clinic.php:56
+msgid "Hotline:"
+msgstr ""
+
+#: app/Traits/SingletonTrait.php:27
+#: app/Traits/SingletonTrait.php:33
+msgid "Cheatin&#8217; huh?"
+msgstr ""
+
+#: app/Widgets/DoctorFilterWidget.php:16
+msgid "DocBooker: Doctor Filter"
+msgstr ""
+
+#: app/Widgets/DoctorFilterWidget.php:18
+msgid "DocBooker Doctor Filter widget."
+msgstr ""
+
+#: app/Widgets/DoctorFilterWidget.php:36
+#: app/Widgets/DoctorFilterWidget.php:38
+msgid "Select Doctor Department"
+msgstr ""
+
+#: app/Widgets/DoctorFilterWidget.php:59
+#: app/Widgets/DoctorFilterWidget.php:61
+#: src/js/admin/components/DoctorClinicInfo.jsx:111
+msgid "Select Clinic"
+msgstr ""
+
+#: app/Widgets/DoctorFilterWidget.php:96
+#: app/Widgets/DoctorFilterWidget.php:98
+#: src/js/public/components/DoctorSelection.jsx:7
+msgid "Select Doctor"
+msgstr ""
+
+#: app/Widgets/DoctorFilterWidget.php:136
+#: src/js/admin/components/BookingManagement.jsx:349
+msgid "Filter"
+msgstr ""
+
+#: app/Widgets/DoctorFilterWidget.php:163
+msgid "Title"
+msgstr ""
+
+#: app/Widgets/DoctorFilterWidget.php:167
+msgid "Widget Style"
+msgstr ""
+
+#: app/Widgets/Widgets.php:25
+msgid "DocBooker - Doctor Single Sidebar"
+msgstr ""
+
+#: app/Widgets/Widgets.php:27
+msgid "Add widgets on doctor single page"
+msgstr ""
+
+#: app/Widgets/Widgets.php:36
+msgid "DocBooker - Doctor Archive Sidebar"
+msgstr ""
+
+#: app/Widgets/Widgets.php:38
+msgid "Add widgets on doctor archive page"
+msgstr ""
+
+#: app/Widgets/Widgets.php:47
+msgid "DocBooker - Clinic Single Sidebar"
+msgstr ""
+
+#: app/Widgets/Widgets.php:49
+msgid "Add widgets on clinic single page"
+msgstr ""
+
+#: app/Widgets/Widgets.php:58
+msgid "DocBooker - Clinic Archive Sidebar"
+msgstr ""
+
+#: app/Widgets/Widgets.php:60
+msgid "Add widgets on clinic archive page"
+msgstr ""
+
+#: templates/archive_wpddb_doctor.php:67
+msgid "No doctors were found."
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:143
+msgid "When"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:144
+msgid "Date range"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:155
+msgid "Where"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:159
+#: src/js/admin/components/BookingFilters.jsx:296
+msgid "All clinics"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:171
+#: src/js/admin/components/BookingFilters.jsx:309
+#: src/js/public/components/ProgressBar.jsx:6
+msgid "Department"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:174
+#: src/js/admin/components/BookingFilters.jsx:312
+msgid "All departments"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:188
+#: src/js/admin/components/BookingFilters.jsx:328
+msgid "All doctors"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:202
+#: src/js/admin/utils/data.js:354
+msgid "Status"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:204
+msgid "Booking status"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:207
+#: src/js/admin/components/BookingFilters.jsx:344
+msgid "All statuses"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:215
+msgid "Present status"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:218
+#: src/js/admin/components/BookingFilters.jsx:357
+msgid "Upcoming + expired"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:229
+msgid "Payment"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:231
+msgid "Payment status"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:234
+#: src/js/admin/components/BookingFilters.jsx:370
+msgid "All payment states"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:242
+msgid "Payment gateway"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:245
+#: src/js/admin/components/BookingFilters.jsx:383
+msgid "All gateways"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:254
+msgid "Amount range"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:259
+#: src/js/admin/components/BookingFilters.jsx:399
+msgid "Min"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:267
+#: src/js/admin/components/BookingFilters.jsx:409
+msgid "Max"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:282
+msgid "Date Range"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:341
+msgid "Booking Status"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:354
+#: src/js/admin/utils/data.js:361
+msgid "Present Status"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:367
+msgid "Payment Status"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:380
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:139
+msgid "Payment Gateway"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:393
+msgid "Amount Range"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:423
+msgid "Reset"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:428
+msgid "Apply Filters"
+msgstr ""
+
+#: src/js/admin/components/BookingFilters.jsx:446
+msgid "Booking Filters"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:77
+msgid "Network response was not ok."
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:88
+msgid "No results"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:89
+msgid "No bookings match the current filters."
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:95
+#: src/js/admin/components/BookingManagement.jsx:158
+#: src/js/admin/components/BookingManagement.jsx:165
+#: src/js/admin/components/BookingManagement.jsx:191
+#: src/js/admin/components/BookingManagement.jsx:197
+#: src/js/admin/components/BookingManagement.jsx:228
+#: src/js/admin/components/DoctorClinicInfo.jsx:44
+#: src/js/admin/components/settings-page/SettingsPageApp.jsx:70
+#: src/js/admin/components/settings-page/SettingsPageApp.jsx:76
+#: src/js/admin/components/settings-page/SettingsPageApp.jsx:113
+msgid "Error"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:96
+msgid "An error occurred while fetching booking data."
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:155
+#: src/js/admin/components/BookingManagement.jsx:189
+#: src/js/admin/components/settings-page/SettingsPageApp.jsx:107
+msgid "Success"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:166
+msgid "An error occurred while canceling the booking."
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:198
+msgid "An error occurred while deleting booking."
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:215
+msgid "Bulk cancel complete"
+msgstr ""
+
+#. translators: 1: success count, 2: failed count
+#: src/js/admin/components/BookingManagement.jsx:218
+msgid "%1$d cancelled, %2$d skipped."
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:229
+msgid "Bulk cancel failed."
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:259
+msgid "Search booking ID, name, email, phone"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:260
+msgid "Search"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:276
+msgid "Filters & Sorting"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:279
+msgid "active"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:302
+msgid "Sort"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:307
+msgid "Order by date"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:314
+msgid "Newest first (descending)"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:315
+msgid "Oldest first (ascending)"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:329
+msgid "Reset all"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:336
+msgid "Apply"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:361
+msgid "Export CSV"
+msgstr ""
+
+#. translators: %d: count
+#: src/js/admin/components/BookingManagement.jsx:372
+msgid "%d booking selected"
+msgid_plural "%d bookings selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/components/BookingManagement.jsx:378
+msgid "Export selected"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:381
+msgid "Cancel the selected bookings?"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:382
+msgid "This will set their status to cancelled and notify patients."
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:383
+msgid "Yes, cancel them"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:384
+msgid "Keep"
+msgstr ""
+
+#: src/js/admin/components/BookingManagement.jsx:388
+msgid "Cancel selected"
+msgstr ""
+
+#: src/js/admin/components/ClinicGalleryImages.jsx:12
+#: src/js/admin/components/DoctorAwards.jsx:10
+msgid "WordPress media library is not available."
+msgstr ""
+
+#: src/js/admin/components/ClinicGalleryImages.jsx:68
+msgid "Add Image"
+msgstr ""
+
+#: src/js/admin/components/ClinicInfo.jsx:26
+msgid "Clinic Hotline"
+msgstr ""
+
+#: src/js/admin/components/ClinicInfo.jsx:32
+msgid "Clinic Email"
+msgstr ""
+
+#: src/js/admin/components/ClinicInfo.jsx:38
+msgid "Clinic Social Icons"
+msgstr ""
+
+#: src/js/admin/components/ClinicInfo.jsx:48
+msgid "Clinic Gallery Images"
+msgstr ""
+
+#: src/js/admin/components/ClinicLocationMap.jsx:114
+#: src/js/admin/components/ClinicMetaApp.jsx:38
+msgid "Clinic Location"
+msgstr ""
+
+#: src/js/admin/components/ClinicMetaApp.jsx:37
+#: src/js/admin/components/DoctorClinicInfo.jsx:90
+#: src/js/admin/components/DoctorMetaApp.jsx:43
+msgid "Clinic Info"
+msgstr ""
+
+#: src/js/admin/components/ClinicMetaApp.jsx:39
+msgid "Clinic Profile"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:84
+msgid "Clinic Type"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:89
+msgid "Tagline"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:89
+msgid "One-line specialty focus, shown under the clinic name."
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:98
+msgid "Founded Year"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:101
+msgid "Patient Capacity"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:104
+msgid "Specialist Count Override"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:104
+msgid "0 = auto-count linked doctors."
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:109
+msgid "24/7 Emergency"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:114
+msgid "Services"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:114
+msgid "Pick from the list or type your own and press Enter. Service lines offered at this location."
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:117
+msgid "Select or type a service…"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:121
+msgid "Accreditations"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:124
+msgid "Name (e.g. Level I Trauma Center)"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:125
+msgid "Issuer"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:126
+msgid "Year"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:130
+msgid "Add accreditation"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:134
+msgid "Clinic Hours"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:141
+msgid "Closed"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:158
+msgid "Architect Credit"
+msgstr ""
+
+#: src/js/admin/components/ClinicProfileExtended.jsx:161
+msgid "Photographer Credit"
+msgstr ""
+
+#: src/js/admin/components/ClinicShortcodeMeta.jsx:155
+#: src/js/admin/components/DoctorShortcodeMeta.jsx:178
+msgid "General Settings"
+msgstr ""
+
+#: src/js/admin/components/ClinicShortcodeMeta.jsx:156
+#: src/js/admin/components/DoctorShortcodeMeta.jsx:179
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:16
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:16
+msgid "Image Settings"
+msgstr ""
+
+#: src/js/admin/components/ClinicShortcodeMeta.jsx:157
+#: src/js/admin/components/DoctorShortcodeMeta.jsx:180
+msgid "Filtering Settings"
+msgstr ""
+
+#: src/js/admin/components/ClinicShortcodeMeta.jsx:158
+#: src/js/admin/components/DoctorShortcodeMeta.jsx:181
+#: src/js/admin/components/settings-page/MainHeader.jsx:60
+msgid "Style Settings"
+msgstr ""
+
+#: src/js/admin/components/DoctorAwards.jsx:34
+msgid "Doctor Awards"
+msgstr ""
+
+#: src/js/admin/components/DoctorAwards.jsx:120
+msgid "Add Award"
+msgstr ""
+
+#: src/js/admin/components/DoctorClinicInfo.jsx:45
+msgid "This clinic is already added!."
+msgstr ""
+
+#: src/js/admin/components/DoctorClinicInfo.jsx:93
+msgid "At least one clinic is required to add clinic info."
+msgstr ""
+
+#: src/js/admin/components/DoctorClinicInfo.jsx:124
+msgid "Enter clinic booking phone number"
+msgstr ""
+
+#: src/js/admin/components/DoctorClinicInfo.jsx:132
+msgid "Set as Holiday:"
+msgstr ""
+
+#: src/js/admin/components/DoctorClinicInfo.jsx:161
+msgid "Remove Clinic"
+msgstr ""
+
+#: src/js/admin/components/DoctorClinicInfo.jsx:168
+msgid "Add Clinic Info"
+msgstr ""
+
+#: src/js/admin/components/DoctorDetails.jsx:24
+#: src/js/admin/components/settings-page/StyleSettings.jsx:175
+msgid "Doctor Designation"
+msgstr ""
+
+#: src/js/admin/components/DoctorDetails.jsx:30
+#: src/js/admin/components/settings-page/StyleSettings.jsx:206
+msgid "Doctor Speciality"
+msgstr ""
+
+#: src/js/admin/components/DoctorDetails.jsx:36
+msgid "Doctor Work Place"
+msgstr ""
+
+#: src/js/admin/components/DoctorDetails.jsx:42
+#: src/js/admin/components/settings-page/StyleSettings.jsx:269
+msgid "Doctor Degree"
+msgstr ""
+
+#: src/js/admin/components/DoctorDetails.jsx:49
+msgid "Doctor Booking Fee"
+msgstr ""
+
+#: src/js/admin/components/DoctorMetaApp.jsx:41
+msgid "Doctor Details"
+msgstr ""
+
+#: src/js/admin/components/DoctorMetaApp.jsx:42
+#: src/js/public/components/ProgressBar.jsx:8
+msgid "Schedule"
+msgstr ""
+
+#: src/js/admin/components/DoctorMetaApp.jsx:209
+msgid "Doctor Social Icons"
+msgstr ""
+
+#: src/js/admin/components/DoctorMetaApp.jsx:220
+msgid "Doctor Services"
+msgstr ""
+
+#: src/js/admin/components/DoctorMetaApp.jsx:225
+msgid "Separate each service with a comma."
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:54
+msgid "Years of Experience"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:65
+msgid "Languages Spoken"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:71
+msgid "Select or type a language…"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:74
+msgid "Pick from the list or type your own and press Enter. Saved to this doctor only."
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:81
+msgid "Featured Label"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:87
+msgid "Optional one-line accolade shown as a ribbon."
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:93
+msgid "Post-nominal Credentials"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:99
+msgid "Select or type a credential…"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:102
+msgid "Pick from the list or type your own and press Enter. Shown as chips next to the name."
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:109
+msgid "Alma Mater"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:120
+msgid "Rating"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:126
+msgid "Rating and reviews both display only when rating is above 0."
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:132
+msgid "Review Count"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:143
+msgid "Patient Count"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:154
+msgid "Doctor Quote"
+msgstr ""
+
+#: src/js/admin/components/DoctorProfileExtended.jsx:160
+msgid "One sentence in the physician’s voice."
+msgstr ""
+
+#: src/js/admin/components/DoctorSchedule.jsx:147
+msgid "Select time"
+msgstr ""
+
+#: src/js/admin/components/ExpandedRowRender.jsx:18
+msgid "Phone:"
+msgstr ""
+
+#: src/js/admin/components/ExpandedRowRender.jsx:23
+msgid "Email:"
+msgstr ""
+
+#: src/js/admin/components/ExpandedRowRender.jsx:34
+msgid "Payment Status:"
+msgstr ""
+
+#: src/js/admin/components/ExpandedRowRender.jsx:39
+msgid "Transaction ID:"
+msgstr ""
+
+#: src/js/admin/components/ExpandedRowRender.jsx:44
+msgid "Amount Paid:"
+msgstr ""
+
+#: src/js/admin/components/ExpandedRowRender.jsx:49
+msgid "Gateway:"
+msgstr ""
+
+#: src/js/admin/components/fields/StyleControlRow.jsx:57
+#: src/js/admin/components/settings-page/SettingsStyleControlRowtest.jsx:47
+msgid "Color"
+msgstr ""
+
+#: src/js/admin/components/fields/StyleControlRow.jsx:96
+#: src/js/admin/components/settings-page/SettingsStyleControlRowtest.jsx:62
+msgid "Font Size"
+msgstr ""
+
+#: src/js/admin/components/fields/StyleControlRow.jsx:118
+#: src/js/admin/components/settings-page/SettingsStyleControlRowtest.jsx:80
+msgid "Font Weight"
+msgstr ""
+
+#: src/js/admin/components/fields/StyleControlRow.jsx:140
+#: src/js/admin/components/settings-page/SettingsStyleControlRowtest.jsx:98
+msgid "Alignment"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/FilteringSettings.jsx:75
+msgid "Clinic Filtering"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/FilteringSettings.jsx:77
+msgid "Include Clinic"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/FilteringSettings.jsx:90
+msgid "Select the classes that you want to display on Clinic archive page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/FilteringSettings.jsx:95
+msgid "Exclude Clinic"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/FilteringSettings.jsx:108
+msgid "Select the classes that you don't want to display on Clinic archive page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/FilteringSettings.jsx:113
+msgid "Clinic Order By"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/FilteringSettings.jsx:136
+msgid "Clinic Order"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:18
+msgid "Clinic Thumbnail Width"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:64
+msgid "you can set clinic post thumbnail image width"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:69
+msgid "Clinic Thumbnail Height"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:115
+msgid "you can set clinic post thumbnail image height"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:120
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:119
+msgid "Image Hard Crop"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:141
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:140
+msgid "you can set image hard crop"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:146
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:145
+msgid "Image Border"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:195
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:194
+msgid "Image Border Color"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:196
+msgid "This color is set for clinic image border color"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:203
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:202
+msgid "Image Border Radius"
+msgstr ""
+
+#: src/js/admin/components/settings-page/clinic/ImageSettings.jsx:223
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:222
+#: src/js/admin/components/shortcode/ImageSettings.jsx:150
+msgid "Image Border Radius. Example: 0 15px 15px 15px"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:64
+#: src/js/admin/components/settings-page/MainHeader.jsx:54
+msgid "Clinic Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:66
+msgid "Clinic Archive Style"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:101
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:112
+msgid "Posts Per Page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:118
+msgid "you can select clinic post item per page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:123
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:134
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:116
+msgid "Grid Columns"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:144
+msgid "you can select clinic archive page grid columns"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:149
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:160
+msgid "Page Layout"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:173
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:184
+msgid "Visibility Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:175
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:186
+msgid "Show Content"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:176
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:187
+msgid "Switch on to show content"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:183
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:194
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:371
+msgid "Content Limit"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:206
+msgid "you can set clinic content limit"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:213
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:391
+msgid "Show Map Button"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:214
+msgid "Switch on to show google map button"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:221
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:149
+msgid "Button Text"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:243
+msgid "you can add map button text"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:253
+msgid "Clinic Single Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:255
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:266
+msgid "Single Page Layout"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:276
+msgid "you can select clinic single page page layout"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:281
+msgid "Clinic Gallery View"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:310
+msgid "Slider Autoplay"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:333
+msgid "you can set slider autoplay. Default:True"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:338
+msgid "Slider Loop"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:361
+msgid "you can set slider loop play. Default:True"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:366
+msgid "Centered Slider"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:389
+msgid "you can set slider position. Default:False"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:394
+msgid "Slides Per View"
+msgstr ""
+
+#: src/js/admin/components/settings-page/ClinicSettings.jsx:413
+msgid "you can set slides per view."
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/RazorpaySettings.jsx:28
+msgid "Razorpay Mode"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/RazorpaySettings.jsx:36
+msgid "Test Mode"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/RazorpaySettings.jsx:37
+msgid "Live Mode"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/RazorpaySettings.jsx:48
+msgid "Razorpay Test Key ID"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/RazorpaySettings.jsx:63
+msgid "Razorpay Test Secret Key"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/RazorpaySettings.jsx:81
+msgid "Razorpay Live Key ID"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/RazorpaySettings.jsx:96
+msgid "Razorpay Live Secret Key"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/StripeSettings.jsx:29
+msgid "Stripe Mode"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/StripeSettings.jsx:41
+msgid "Use test mode for development and live mode for production"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/StripeSettings.jsx:48
+msgid "Stripe Test Publishable Key"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/StripeSettings.jsx:60
+msgid "Stripe Test Secret Key"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/StripeSettings.jsx:75
+msgid "Stripe Live Publishable Key"
+msgstr ""
+
+#: src/js/admin/components/settings-page/components/StripeSettings.jsx:87
+msgid "Stripe Live Secret Key"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/FilteringSettings.jsx:108
+msgid "Doctor Filtering"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/FilteringSettings.jsx:110
+msgid "Include Doctor"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/FilteringSettings.jsx:123
+msgid "Select the doctors that you want to display on doctor archive page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/FilteringSettings.jsx:128
+msgid "Exclude Doctor"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/FilteringSettings.jsx:141
+msgid "Select the doctors that you don't want to display on doctor archive page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/FilteringSettings.jsx:146
+msgid "Doctor Categories"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/FilteringSettings.jsx:159
+msgid "Select the categories that  want to filter doctors on doctor archive page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/FilteringSettings.jsx:164
+msgid "Doctor Order By"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/FilteringSettings.jsx:187
+msgid "Doctor Order"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:18
+msgid "Doctor Thumbnail Width"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:63
+msgid "you can set doctor post thumbnail image width"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:68
+msgid "Doctor Thumbnail Height"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:114
+msgid "you can set doctor post thumbnail image height"
+msgstr ""
+
+#: src/js/admin/components/settings-page/doctor/ImageSettings.jsx:195
+msgid "This color is set for doctor image border color"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:75
+#: src/js/admin/components/settings-page/MainHeader.jsx:48
+msgid "Doctor Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:77
+msgid "Doctor Archive Style"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:129
+msgid "you can select doctor post item per page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:155
+msgid "you can select doctor archive page grid columns"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:217
+msgid "you can doctor content limit"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:224
+msgid "Show Department"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:225
+msgid "Switch on to show doctor department"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:230
+msgid "Show Designation"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:231
+msgid "Switch on to show doctor designation"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:236
+msgid "Show Speciality"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:237
+msgid "Switch on to show doctor speciality"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:242
+msgid "Show Workplace"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:243
+msgid "Switch on to show doctor workplace"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:248
+msgid "Show Degree"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:249
+msgid "Switch on to show doctor degree"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:254
+msgid "Show Social Icons"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:255
+msgid "Switch on to show doctor doctor social icons"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:264
+msgid "Doctor Single Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:287
+msgid "you can select doctor single page page layout"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:292
+msgid "Display Doctor Schedule"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:313
+msgid "you can enable for display doctor schedule on doctor details page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:320
+msgid "Showing Bookable Text"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:341
+msgid "you can enable for display bookable text on doctor schedule  doctor details page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:351
+msgid "Call For Booking"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:372
+msgid "you can enable call for booking number on  doctor details page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:379
+msgid "Pre-Booking Window"
+msgstr ""
+
+#: src/js/admin/components/settings-page/DoctorSettings.jsx:399
+msgid "Maximum number of days customers can schedule bookings in advance. The checkout calendar will only allow selecting dates within this range. Set to 0 for no limit."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:88
+#: src/js/admin/components/settings-page/MainHeader.jsx:66
+msgid "Global Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:90
+msgid "Doctor Booking Shortcode"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:108
+msgid "Online Booking Payment"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:131
+msgid "you can enable online booking payment"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:173
+msgid "Currency"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:199
+msgid "Currency Position"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:228
+msgid "OTP / SMS Provider"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:232
+msgid "Configure the HTTP endpoint that delivers OTP codes for the Patient Report Portal login. Use {{phone}} and {{code}} placeholders inside the payload template — they are substituted at send time."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:239
+msgid "Enable SMS sending"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:250
+msgid "Active. OTP codes are sent through the provider below."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:251
+msgid "Off. OTP codes are written to the PHP error log instead (useful for dev)."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:259
+msgid "Provider URL"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:268
+msgid "Endpoint that receives the OTP request."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:273
+msgid "HTTP Method"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:286
+msgid "Payload template is parsed as a query string."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:287
+msgid "Payload template is sent as the request body."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:293
+msgid "Headers (JSON)"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:304
+msgid "Invalid JSON"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:307
+msgid "Object of HTTP headers sent with every OTP request."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:313
+msgid "Payload Template"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:323
+msgid "Use {{phone}} for the recipient and {{message}} for the SMS body. {{code}} is supported as a legacy alias for {{message}} (kept for backward compatibility)."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:329
+msgid "OTP Message Body"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:339
+msgid "The text sent for OTP verification. Use {{code}} for the 6-digit code."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:345
+msgid "Booking Confirmation Body"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:355
+msgid "Sent right after a booking is created. Placeholders: {{patient}}, {{doctor}}, {{time}}, {{order_code}}, {{clinic}}, {{clinic_address}}."
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:361
+msgid "Success Path"
+msgstr ""
+
+#: src/js/admin/components/settings-page/GlobalSettings.jsx:371
+msgid "Dot-notation path to a truthy value in the JSON response (leave blank to treat any 2xx as success)."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MainHeader.jsx:36
+#: src/js/admin/components/settings-page/PageSettings.jsx:102
+msgid "Page Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/MainHeader.jsx:42
+msgid "Permalinks Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/MainHeader.jsx:72
+msgid "Multi-Clinic"
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:52
+msgid "Multi-Clinic Manager"
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:60
+msgid "Enable per-clinic admin access for staff. When ON, you can assign WordPress users to individual clinics; each manager gets a scoped front-end dashboard limited to their clinic's doctors, bookings, and info."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:68
+msgid "Enable Multiple Clinic Manage"
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:80
+msgid "Install and activate Doc-Booker Pro to use this feature."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:82
+msgid "Active. The \"Clinic Managers\" admin submenu is visible."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:83
+msgid "Off. No new role or submenu is registered."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:95
+msgid "Dashboard page is configured."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:96
+msgid "Pick a dashboard page in Page Settings."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:100
+msgid "Clinic managers will be redirected to the selected page after login."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:104
+msgid "Open the \"Page Settings\" tab and choose which existing page should host the front-end Clinic Dashboard. Until then, clinic managers will see a placeholder message after login."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:113
+msgid "Receptionist (Front-desk Staff)"
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:119
+msgid "Enable a dedicated front-desk dashboard for receptionists — managing patients, visits, test orders and (in single-clinic mode) uploading lab reports."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:126
+msgid "Enable Receptionist Management"
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:138
+msgid "Active. Receptionists land on their dashboard after login."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:139
+msgid "Off. No receptionist role or dashboard available."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:150
+msgid "Receptionist Dashboard page is configured."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:151
+msgid "Pick a Receptionist Dashboard page in Page Settings."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:156
+msgid "Lab Report Retention"
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:159
+msgid "Auto-delete after (days)"
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:169
+msgid "Uploaded lab reports are automatically deleted this many days after upload."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:179
+msgid "Patient Report Portal page is configured."
+msgstr ""
+
+#: src/js/admin/components/settings-page/MultiClinicSettings.jsx:180
+msgid "Pick a Patient Report Portal page in Page Settings to expose the online-report login form."
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:104
+msgid "Doctors Page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:114
+msgid "you can select doctors archive page from dropbox"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:119
+msgid "Clinics Page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:129
+msgid "you can select clinics archive page from dropbox"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:135
+msgid "Clinic Dashboard Page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:144
+msgid "Pick a page that will host the front-end Clinic Dashboard. Clinic managers will be redirected here after login."
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:151
+msgid "Receptionist Dashboard Page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:160
+msgid "Pick a page that will host the Receptionist Dashboard."
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:166
+msgid "Patient Report Portal Page"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PageSettings.jsx:175
+msgid "Public page where patients can enter their mobile + invoice code to view reports."
+msgstr ""
+
+#: src/js/admin/components/settings-page/PermalinkSettings.jsx:17
+msgid "Permalink Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PermalinkSettings.jsx:19
+msgid "Doctor Base"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PermalinkSettings.jsx:42
+msgid "you can change your doctor post type base name"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PermalinkSettings.jsx:47
+msgid "Doctor Category Base"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PermalinkSettings.jsx:70
+msgid "you can change your doctor post type category base name"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PermalinkSettings.jsx:75
+msgid "Clinic Base"
+msgstr ""
+
+#: src/js/admin/components/settings-page/PermalinkSettings.jsx:98
+msgid "you can change your clinic post type  base name"
+msgstr ""
+
+#: src/js/admin/components/settings-page/SettingsPageApp.jsx:71
+msgid "Resource not found (404)."
+msgstr ""
+
+#: src/js/admin/components/settings-page/SettingsPageApp.jsx:77
+msgid "Something is Wrong."
+msgstr ""
+
+#: src/js/admin/components/settings-page/SettingsPageApp.jsx:122
+msgid "An error occurred while save settings."
+msgstr ""
+
+#: src/js/admin/components/settings-page/SettingsPageApp.jsx:187
+msgid "Save Settings"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:33
+msgid "Global Style"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:35
+msgid "Primary Color"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:36
+msgid "This color is set for all primary color in this plugin"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:42
+msgid "Secondary Color"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:43
+msgid "This color is set for all secondary color in this plugin"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:49
+msgid "Border Color"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:50
+msgid "This color is set for all border color in this plugin"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:57
+msgid "Doctor Style"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:59
+msgid "Doctor Background"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:60
+msgid "This color is set for doctor background color"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:67
+msgid "Doctor Title"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:107
+msgid "Doctor Content"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:141
+msgid "Doctor Department"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:237
+msgid "Doctor Workplace"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:294
+msgid "Clinic Style"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:296
+msgid "Clinic Background"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:297
+msgid "This color is set for clinic background color"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:310
+msgid "Clinic Title"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:342
+msgid "Clinic Content"
+msgstr ""
+
+#: src/js/admin/components/settings-page/StyleSettings.jsx:366
+msgid "Clinic Map Button"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:101
+msgid "Posts Limit"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:131
+msgid "More Button"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:159
+msgid "Button URL"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:165
+msgid "Enter a valid URL"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:173
+msgid "Please enter a valid URL (starting with http or https)"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:221
+msgid "Show Doctor Designation"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:239
+msgid "Show Doctor Speciality"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:257
+msgid "Show Doctor WorkPlace"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:275
+msgid "Show Doctor Degree"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:293
+msgid "Show Doctor Department"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:311
+msgid "Show Doctor Social Icons"
+msgstr ""
+
+#: src/js/admin/components/shortcode/GeneralSettings.jsx:329
+msgid "Show Filtering"
+msgstr ""
+
+#: src/js/admin/components/SocialsRepeater.jsx:88
+msgid "Please enter a valid URL"
+msgstr ""
+
+#: src/js/admin/components/SocialsRepeater.jsx:112
+msgid "Add Social"
+msgstr ""
+
+#: src/js/admin/utils/data.js:71
+msgid "Approved"
+msgstr ""
+
+#: src/js/admin/utils/data.js:72
+msgid "Cancelled"
+msgstr ""
+
+#: src/js/admin/utils/data.js:76
+msgid "Upcoming"
+msgstr ""
+
+#: src/js/admin/utils/data.js:77
+msgid "Expired"
+msgstr ""
+
+#: src/js/admin/utils/data.js:81
+msgid "Paid"
+msgstr ""
+
+#: src/js/admin/utils/data.js:82
+msgid "Pending"
+msgstr ""
+
+#: src/js/admin/utils/data.js:83
+msgid "Failed"
+msgstr ""
+
+#: src/js/admin/utils/data.js:84
+msgid "Refunded"
+msgstr ""
+
+#: src/js/admin/utils/data.js:85
+msgid "Free / no payment"
+msgstr ""
+
+#: src/js/admin/utils/data.js:97
+msgid "Left ($99.99)"
+msgstr ""
+
+#: src/js/admin/utils/data.js:101
+msgid "Right (99.99$)"
+msgstr ""
+
+#: src/js/admin/utils/data.js:105
+msgid "Left with space ($ 99.99)"
+msgstr ""
+
+#: src/js/admin/utils/data.js:109
+msgid "Right with space (99.99 $)"
+msgstr ""
+
+#: src/js/admin/utils/data.js:115
+msgid "Stripe"
+msgstr ""
+
+#: src/js/admin/utils/data.js:119
+msgid "Razorpay"
+msgstr ""
+
+#: src/js/admin/utils/data.js:161
+msgid "Full Width"
+msgstr ""
+
+#: src/js/admin/utils/data.js:165
+msgid "Left Sidebar"
+msgstr ""
+
+#: src/js/admin/utils/data.js:169
+msgid "Right Sidebar"
+msgstr ""
+
+#: src/js/admin/utils/data.js:175
+msgid "No Order"
+msgstr ""
+
+#: src/js/admin/utils/data.js:179
+msgid "Order by Title"
+msgstr ""
+
+#: src/js/admin/utils/data.js:183
+msgid "Order by Post Id"
+msgstr ""
+
+#: src/js/admin/utils/data.js:187
+msgid "Order by Post Name"
+msgstr ""
+
+#: src/js/admin/utils/data.js:191
+msgid "Order by Date"
+msgstr ""
+
+#: src/js/admin/utils/data.js:195
+msgid "Random Order"
+msgstr ""
+
+#: src/js/admin/utils/data.js:199
+msgid "Order by Page Order"
+msgstr ""
+
+#: src/js/admin/utils/data.js:205
+msgid "Ascending"
+msgstr ""
+
+#: src/js/admin/utils/data.js:209
+msgid "Descending"
+msgstr ""
+
+#: src/js/admin/utils/data.js:215
+msgid "None"
+msgstr ""
+
+#: src/js/admin/utils/data.js:219
+msgid "Ajax Number Pagination"
+msgstr ""
+
+#: src/js/admin/utils/data.js:223
+msgid "Load More Button"
+msgstr ""
+
+#: src/js/admin/utils/data.js:227
+msgid "Load More Scroll"
+msgstr ""
+
+#: src/js/admin/utils/data.js:233
+msgid "1 line"
+msgstr ""
+
+#: src/js/admin/utils/data.js:237
+msgid "2 lines"
+msgstr ""
+
+#: src/js/admin/utils/data.js:241
+msgid "3 lines"
+msgstr ""
+
+#: src/js/admin/utils/data.js:245
+msgid "4 lines"
+msgstr ""
+
+#: src/js/admin/utils/data.js:249
+msgid "5 lines"
+msgstr ""
+
+#: src/js/admin/utils/data.js:255
+msgid "100"
+msgstr ""
+
+#: src/js/admin/utils/data.js:259
+msgid "200"
+msgstr ""
+
+#: src/js/admin/utils/data.js:263
+msgid "300"
+msgstr ""
+
+#: src/js/admin/utils/data.js:267
+msgid "400"
+msgstr ""
+
+#: src/js/admin/utils/data.js:271
+msgid "500"
+msgstr ""
+
+#: src/js/admin/utils/data.js:275
+msgid "600"
+msgstr ""
+
+#: src/js/admin/utils/data.js:279
+msgid "700"
+msgstr ""
+
+#: src/js/admin/utils/data.js:283
+msgid "800"
+msgstr ""
+
+#: src/js/admin/utils/data.js:287
+msgid "900"
+msgstr ""
+
+#: src/js/admin/utils/data.js:293
+msgid "Default"
+msgstr ""
+
+#: src/js/admin/utils/data.js:297
+msgid "Left"
+msgstr ""
+
+#: src/js/admin/utils/data.js:301
+msgid "Center"
+msgstr ""
+
+#: src/js/admin/utils/data.js:305
+msgid "Right"
+msgstr ""
+
+#: src/js/admin/utils/data.js:311
+msgid "Booking ID"
+msgstr ""
+
+#: src/js/admin/utils/data.js:317
+msgid "Patient Name"
+msgstr ""
+
+#: src/js/admin/utils/data.js:324
+msgid "Clinic Name"
+msgstr ""
+
+#: src/js/admin/utils/data.js:330
+msgid "Doctor Name"
+msgstr ""
+
+#: src/js/admin/utils/data.js:336
+msgid "Day / Date"
+msgstr ""
+
+#: src/js/admin/utils/data.js:348
+msgid "Time"
+msgstr ""
+
+#: src/js/admin/utils/data.js:368
+msgid "Patient Note"
+msgstr ""
+
+#: src/js/admin/utils/data.js:374
+msgid "Actions"
+msgstr ""
+
+#: src/js/admin/utils/data.js:379
+msgid "Are you sure to cancel this Booking?"
+msgstr ""
+
+#: src/js/admin/utils/data.js:389
+msgid "Are you sure to delete this booking?"
+msgstr ""
+
+#: src/js/public/components/Booking/BookingSummary.jsx:17
+msgid "Booking Summary"
+msgstr ""
+
+#: src/js/public/components/Booking/BookingSummary.jsx:22
+msgid "Booking Fee"
+msgstr ""
+
+#: src/js/public/components/Booking/BookingSummary.jsx:38
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:161
+msgid "Doctor:"
+msgstr ""
+
+#: src/js/public/components/Booking/BookingSummary.jsx:47
+msgid "Department:"
+msgstr ""
+
+#: src/js/public/components/Booking/BookingSummary.jsx:56
+#: src/js/public/components/DoctorDetailsBooking.jsx:600
+msgid "Clinic:"
+msgstr ""
+
+#: src/js/public/components/Booking/BookingSummary.jsx:65
+#: src/js/public/components/DoctorDetailsBooking.jsx:597
+msgid "Time:"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:25
+#: src/js/public/components/DoctorDetailsBooking.jsx:411
+msgid "Full Name *"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:32
+msgid "Enter your full name"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:41
+msgid "Email Address *"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:48
+msgid "Enter your email"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:57
+#: src/js/public/components/DoctorDetailsBooking.jsx:428
+msgid "Phone Number *"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:64
+msgid "Enter your phone number"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:73
+msgid "Notes (Optional)"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:80
+msgid "Any additional information"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:94
+#: src/js/public/components/DoctorDetailsBooking.jsx:502
+msgid "Processing..."
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:101
+#: src/js/public/components/DoctorDetailsBooking.jsx:507
+msgid "Proceed to Payment"
+msgstr ""
+
+#: src/js/public/components/Booking/PatientDetailsForm.jsx:106
+#: src/js/public/components/BookingForm.jsx:252
+#: src/js/public/components/DoctorDetailsBooking.jsx:511
+msgid "Confirm Booking"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:34
+msgid "Payment system not loaded. Please refresh the page."
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:91
+msgid "Stripe is not loaded yet. Please wait and try again."
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:96
+#: src/js/public/components/PaymentForm.jsx:29
+msgid "Please enter cardholder name"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:121
+msgid "Failed to create payment method"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:130
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:76
+#: src/js/public/components/PaymentForm.jsx:58
+msgid "Booking for Dr. "
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:156
+#: src/js/public/components/PaymentForm.jsx:82
+msgid "Payment processing failed"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:163
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:132
+#: src/js/public/components/PaymentForm.jsx:90
+msgid "Failed to process payment.  Please try again."
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:175
+#: src/js/public/components/PaymentForm.jsx:101
+msgid "Secured by Stripe - Your payment information is encrypted"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:182
+#: src/js/public/components/PaymentForm.jsx:106
+msgid "Test Mode Active - Use test card:  4242 4242 4242 4242"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:193
+#: src/js/public/components/PaymentForm.jsx:115
+msgid "Cardholder Name *"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:209
+msgid "Card Details *"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:224
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:176
+#: src/js/public/components/PaymentForm.jsx:159
+msgid "Total Amount:"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:240
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:192
+msgid "Processing Payment..."
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:244
+msgid "Loading... "
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:249
+#: src/js/public/components/PaymentForm.jsx:179
+msgid "Pay"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:249
+#: src/js/public/components/PaymentForm.jsx:179
+msgid "& Confirm"
+msgstr ""
+
+#: src/js/public/components/Booking/PaymentForm.jsx:256
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:204
+#: src/js/public/components/PaymentForm.jsx:185
+msgid "By confirming your booking, you agree to our terms and conditions"
+msgstr ""
+
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:32
+msgid "Razorpay not loaded.  Please refresh the page."
+msgstr ""
+
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:67
+msgid "Failed to create order"
+msgstr ""
+
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:108
+msgid "Payment verification failed"
+msgstr ""
+
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:143
+msgid "Secured by Razorpay - Your payment information is encrypted"
+msgstr ""
+
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:150
+msgid "Test Mode Active"
+msgstr ""
+
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:158
+#: src/js/public/components/BookingForm.jsx:252
+#: src/js/public/components/DoctorDetailsBooking.jsx:588
+msgid "Payment Details"
+msgstr ""
+
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:165
+msgid "Booking Fee:"
+msgstr ""
+
+#: src/js/public/components/Booking/RazorpayPaymentForm.jsx:197
+msgid "Pay with Razorpay"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:67
+msgid "Failed to fetch Stripe configuration"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:73
+msgid "Failed to load payment configuration.  Please contact support."
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:99
+msgid "Name, phone number and email are required"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:105
+#: src/js/public/components/DoctorDetailsBooking.jsx:189
+msgid "Please enter a valid email address"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:155
+#: src/js/public/components/BookingForm.jsx:195
+#: src/js/public/components/DoctorDetailsBooking.jsx:222
+msgid "Failed to create booking"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:161
+msgid "Failed to create booking.  Please try again."
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:203
+#: src/js/public/components/DoctorDetailsBooking.jsx:256
+msgid "Invalid payment intent ID"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:212
+msgid "Payment succeeded but booking failed.  Please contact support."
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:231
+msgid "Configuration Error"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:234
+msgid "Unable to load payment configuration. Please contact support."
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:237
+msgid "Go Back"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:256
+msgid "Secure payment powered by Stripe"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:257
+msgid "Live"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:257
+msgid "Test"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:258
+msgid "Mode"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:259
+msgid "Please confirm your booking details"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:270
+#: src/js/public/components/DoctorDetailsBooking.jsx:583
+msgid "Back to Details"
+msgstr ""
+
+#: src/js/public/components/BookingForm.jsx:270
+msgid "Back to Schedule"
+msgstr ""
+
+#: src/js/public/components/CalendarPicker.jsx:164
+#: src/js/public/components/CalendarPicker.jsx:180
+msgid "Holiday"
+msgstr ""
+
+#: src/js/public/components/CalendarPicker.jsx:176
+msgid "Available"
+msgstr ""
+
+#: src/js/public/components/CalendarPicker.jsx:184
+msgid "Selected"
+msgstr ""
+
+#: src/js/public/components/CalendarPicker.jsx:188
+msgid "Unavailable"
+msgstr ""
+
+#: src/js/public/components/DepartmentsSelection.jsx:10
+msgid "Select a department to book a doctor"
+msgstr ""
+
+#: src/js/public/components/DepartmentsSelection.jsx:15
+msgid "No Departments Found"
+msgstr ""
+
+#: src/js/public/components/DepartmentsSelection.jsx:28
+msgid "Doctors available"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:105
+#: src/js/public/components/GlobalDoctorBooking.jsx:95
+msgid "Failed to fetch doctor schedule"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:180
+msgid "Please select a time slot"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:184
+msgid "Name and phone number and email are required"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:247
+msgid "Failed to book appointment. Please try again."
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:265
+msgid "Payment succeeded but booking failed. Please contact support."
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:290
+msgid "Doctor Appointment Booking"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:301
+msgid "Select Date"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:323
+msgid "Available Clinics"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:337
+#: src/js/public/components/ScheduleSelection.jsx:147
+msgid "On holiday"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:387
+#: src/js/public/components/ScheduleSelection.jsx:190
+msgid "Slot Booked"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:400
+msgid "Patient Information"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:445
+msgid "Email *"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:461
+msgid "Notes"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:482
+msgid "Selected:"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:487
+#: src/js/public/components/DoctorDetailsBooking.jsx:544
+msgid "at"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:518
+#: src/js/public/components/DoctorDetailsBooking.jsx:604
+msgid "Booking fee:"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:533
+msgid "Booking Successful!"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:539
+msgid "Your appointment has been booked for"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:548
+msgid "A confirmation has been sent to your contact information."
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:564
+#: src/js/public/components/SuccessMessage.jsx:45
+msgid "Book Another Appointment"
+msgstr ""
+
+#: src/js/public/components/DoctorDetailsBooking.jsx:593
+msgid "Date:"
+msgstr ""
+
+#: src/js/public/components/DoctorSelection.jsx:8
+msgid "Choose from our qualified"
+msgstr ""
+
+#: src/js/public/components/DoctorSelection.jsx:8
+msgid "specialists"
+msgstr ""
+
+#: src/js/public/components/DoctorSelection.jsx:18
+msgid "Back to Departments"
+msgstr ""
+
+#: src/js/public/components/DoctorSelection.jsx:45
+msgid "Image Not Available"
+msgstr ""
+
+#: src/js/public/components/GlobalDoctorBooking.jsx:42
+msgid "Failed to fetch doctor departments"
+msgstr ""
+
+#: src/js/public/components/GlobalDoctorBooking.jsx:63
+msgid "Failed to fetch doctors"
+msgstr ""
+
+#: src/js/public/components/PaymentForm.jsx:129
+msgid "Card Number *"
+msgstr ""
+
+#: src/js/public/components/PaymentForm.jsx:139
+msgid "Expiry Date *"
+msgstr ""
+
+#: src/js/public/components/PaymentForm.jsx:148
+msgid "CVC *"
+msgstr ""
+
+#: src/js/public/components/PaymentForm.jsx:174
+msgid "Processing Payment... "
+msgstr ""
+
+#: src/js/public/components/ProgressBar.jsx:9
+msgid "Details"
+msgstr ""
+
+#: src/js/public/components/ScheduleSelection.jsx:63
+msgid "No availability found for this date."
+msgstr ""
+
+#: src/js/public/components/ScheduleSelection.jsx:66
+msgid "Failed to load availability. Please try again."
+msgstr ""
+
+#: src/js/public/components/ScheduleSelection.jsx:77
+msgid "Select Schedule"
+msgstr ""
+
+#: src/js/public/components/ScheduleSelection.jsx:80
+msgid "Select your preferred appointment date with"
+msgstr ""
+
+#: src/js/public/components/ScheduleSelection.jsx:92
+msgid "Back to Doctors"
+msgstr ""
+
+#: src/js/public/components/ScheduleSelection.jsx:208
+msgid "This doctor currently has no available schedules."
+msgstr ""
+
+#: src/js/public/components/SuccessMessage.jsx:19
+msgid "Booking Confirmed!"
+msgstr ""
+
+#: src/js/public/components/SuccessMessage.jsx:21
+msgid "Thank You! Your appointment has been successfully scheduled."
+msgstr ""
+
+#: src/js/public/components/SuccessMessage.jsx:25
+msgid "Appointment Details:"
+msgstr ""
+
+#: src/js/public/components/SuccessMessage.jsx:33
+msgid "Date & Time:"
+msgstr ""

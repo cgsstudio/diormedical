@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="52" height="42" viewBox="0 0 52 42">
+  <defs>
+    <filter id="New" x="0" y="0" width="52" height="40" filterUnits="userSpaceOnUse">
+      <feOffset dy="-1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.122"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="beta" transform="translate(-50.623 3)">
+    <path id="Path_1011" data-name="Path 1011" d="M112.977,0H83.914c-5.107,0-9.248,2.546-9.248,5.688v32.5c0,.329.322.625.816.751a2.037,2.037,0,0,0,.5.062,1.82,1.82,0,0,0,.935-.237L91.84,29.575c5.839,3.544,13.885,8.45,14.748,9.054a1.884,1.884,0,0,0,1.832.227,1.064,1.064,0,0,0,.491-.368.349.349,0,0,0,.1-.3V4.062c0-1.346,1.774-2.437,3.963-2.437.73,0,1.321-.364,1.321-.813S113.707,0,112.977,0Z" transform="translate(-15.257)" fill="#3538b7"/>
+    <path id="Path_1012" data-name="Path 1012" d="M356.27,0h0c2.358,0,4.27,1.455,4.27,3.25V5.688a.967.967,0,0,1-1.068.813H352V3.25C352,1.455,353.912,0,356.27,0Z" transform="translate(-258.25)" fill="#8086d1"/>
+    <g transform="matrix(1, 0, 0, 1, 50.62, -3)" filter="url(#New)">
+      <text id="New-2" data-name="New" transform="translate(26 27)" fill="#fff" font-size="16" font-family="OpenSans, Open Sans"><tspan x="-16" y="0">New</tspan></text>
+    </g>
+  </g>
+</svg>

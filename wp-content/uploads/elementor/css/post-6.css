@@ -1,0 +1,86 @@
+.elementor-kit-6{--e-global-color-primary:#2C6CB1;--e-global-color-secondary:#0B1030;--e-global-color-text:#000000;--e-global-color-accent:#FFFFFF;--e-global-color-3807307:#FDF8EE;--e-global-color-68cc7da:#1A528E;--e-global-typography-primary-font-family:"DMSans";--e-global-typography-primary-font-weight:600;--e-global-typography-secondary-font-family:"Roboto Slab";--e-global-typography-secondary-font-weight:400;--e-global-typography-text-font-family:"Montserrat";--e-global-typography-text-font-weight:400;--e-global-typography-accent-font-family:"Roboto";--e-global-typography-accent-font-weight:500;color:var( --e-global-color-text );font-family:"Montserrat", Sans-serif;font-size:clamp(14px, 1.25vw, 18px);font-weight:500;line-height:1.4;}.elementor-kit-6 button,.elementor-kit-6 input[type="button"],.elementor-kit-6 input[type="submit"],.elementor-kit-6 .elementor-button{background-color:var( --e-global-color-primary );font-family:"Montserrat", Sans-serif;font-size:clamp(12px, 1.05vw, 15px);font-weight:500;line-height:15px;color:var( --e-global-color-accent );border-radius:30px 30px 30px 30px;padding:18px 33px 18px 33px;}.elementor-kit-6 e-page-transition{background-color:#FFBC7D;}.elementor-kit-6 a{color:var( --e-global-color-text );font-family:"DMSans", Sans-serif;font-size:clamp(40px, 5.2vw, 78px);font-weight:700;line-height:78px;}.elementor-kit-6 h1{color:#2C6CB1;font-family:"DMSans", Sans-serif;font-size:clamp(30px, 4vw, 76px);font-weight:600;line-height:78px;}.elementor-kit-6 h2{color:var( --e-global-color-primary );font-family:"DMSans", Sans-serif;font-size:clamp(1.9rem, 4vw, 3.4rem);font-weight:600;line-height:70px;}.elementor-kit-6 h3{color:var( --e-global-color-primary );font-family:"DMSans", Sans-serif;font-size:clamp(22px, 1.7vw, 25px);font-weight:600;line-height:27.41px;}.elementor-kit-6 h5{color:#2C6CB1;}.elementor-kit-6 h6{color:var( --e-global-color-primary );}.elementor-section.elementor-section-boxed > .elementor-container{max-width:1400px;}.e-con{--container-max-width:1400px;}.elementor-widget:not(:last-child){--kit-widget-spacing:20px;}.elementor-element{--widgets-spacing:20px 20px;--widgets-spacing-row:20px;--widgets-spacing-column:20px;}{}h1.entry-title{display:var(--page-title-display);}.site-header .site-branding{flex-direction:column;align-items:stretch;}.site-header{padding-inline-end:0px;padding-inline-start:0px;}.site-footer .site-branding{flex-direction:column;align-items:stretch;}@media(max-width:1366px){.elementor-kit-6 h2{line-height:52px;}}@media(max-width:1200px){.elementor-kit-6 h2{line-height:40px;}}@media(max-width:1024px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:1024px;}.e-con{--container-max-width:1024px;}}@media(max-width:767px){.elementor-section.elementor-section-boxed > .elementor-container{max-width:767px;}.e-con{--container-max-width:767px;}}/* Start Custom Fonts CSS */@font-face {
+	font-family: 'DMSans';
+	font-style: normal;
+	font-weight: 300;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/DMSans-Light.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'DMSans';
+	font-style: normal;
+	font-weight: 400;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'DMSans';
+	font-style: normal;
+	font-weight: 500;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'DMSans';
+	font-style: normal;
+	font-weight: 600;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'DMSans';
+	font-style: normal;
+	font-weight: 700;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'DMSans';
+	font-style: normal;
+	font-weight: 800;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/DMSans-ExtraBold.woff2') format('woff2');
+}
+/* End Custom Fonts CSS */
+/* Start Custom Fonts CSS */@font-face {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 300;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/Montserrat-Light.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 400;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/Montserrat-Regular.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 500;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/Montserrat-Medium.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 600;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/Montserrat-SemiBold.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 700;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/Montserrat-Bold.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 800;
+	font-display: auto;
+	src: url('http://localhost/diormedical/wp-content/uploads/2026/08/Montserrat-ExtraBold.woff2') format('woff2');
+}
+/* End Custom Fonts CSS */

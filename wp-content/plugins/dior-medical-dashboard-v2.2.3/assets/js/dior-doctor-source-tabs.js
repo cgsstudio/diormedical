@@ -1,0 +1,37 @@
+/**
+ * Doctor Dashboard nested/source tabs.
+ * Keeps tab state local to each top-level Doctor Dashboard section.
+ */
+function diorInitDoctorSourceTabs() {
+    document.querySelectorAll('.dior-source-group').forEach(function (group) {
+        const buttons = group.querySelectorAll('.dior-source-subtabs .dior-source-subtab-btn');
+        const content = group.querySelector('.dior-source-subcontent');
+        const panels = content ? content.querySelectorAll('.dior-tab-panel[id^="source-"]') : [];
+        if (!buttons.length || !panels.length) return;
+
+        function activate(target) {
+            if (!target) return;
+            buttons.forEach(function (btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-source-target') === target);
+            });
+            panels.forEach(function (panel) {
+                panel.classList.toggle('active', panel.id === 'source-' + target);
+            });
+        }
+
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                activate(btn.getAttribute('data-source-target'));
+            });
+        });
+
+        const initial = group.querySelector('.dior-source-subtab-btn.active');
+        activate(initial ? initial.getAttribute('data-source-target') : buttons[0].getAttribute('data-source-target'));
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', diorInitDoctorSourceTabs, { once: true });
+} else {
+    diorInitDoctorSourceTabs();
+}

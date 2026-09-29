@@ -1,0 +1,1967 @@
+/* Dior Medical - Luxury Telehealth Frontend Forms & Modals CSS
+   Scoped strictly to modal dialogs and form wrappers to prevent any theme interference */
+
+.dior-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(11, 16, 48, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s ease, visibility 0.28s ease;
+}
+
+.dior-modal-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+  display: flex !important;
+}
+
+.dior-modal-dialog {
+  background: #FFFFFF;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(11, 16, 48, 0.35);
+  border: 1px solid rgba(44, 108, 177, 0.25);
+  box-sizing: border-box;
+  padding: 36px 40px;
+  font-family: 'Montserrat', 'DMSans', 'DM Sans', sans-serif !important;
+  color: #000000;
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dior-modal-backdrop.open .dior-modal-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.dior-modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #E2E8F0;
+  background: #FDF8EE;
+  color: #0B1030;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.dior-modal-close-btn:hover {
+  background: #0B1030;
+  color: #FFFFFF;
+  border-color: #0B1030;
+}
+
+/* Header & Brand Badge */
+.dior-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FDF8EE;
+  color: #2C6CB1;
+  border: 1px solid #2C6CB1;
+  padding: 4px 14px;
+  border-radius: 30px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.dior-gold-star {
+  color: #2C6CB1;
+  font-size: 14px;
+}
+
+.dior-booking-header h2,
+.dior-portal-header h2,
+.dior-intake-head h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0B1030;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.dior-booking-header p,
+.dior-portal-header p,
+.dior-intake-head p {
+  color: #64748B;
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 24px;
+}
+
+/* Stepper */
+.dior-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #EEF2F6;
+}
+
+.dior-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dior-step .step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #F1F5F9;
+  color: #94A3B8;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dior-step .step-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #94A3B8;
+}
+
+.dior-step.active .step-num {
+  background: #2C6CB1;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(44, 108, 177, 0.35);
+}
+
+.dior-step.active .step-label {
+  color: #0B1030;
+}
+
+.dior-step.completed .step-num {
+  background: #1E7A5F;
+  color: #FFFFFF;
+}
+
+.dior-step-line {
+  flex: 1;
+  height: 2px;
+  background: #EEF2F6;
+  margin: 0 10px;
+}
+
+/* Step Content */
+.dior-step-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0B1030;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Consultation Type Selector */
+.dior-type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+@media (max-width: 600px) {
+  .dior-type-selector {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dior-type-card {
+  position: relative;
+  display: block;
+  border: 2px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #FAFCFE;
+}
+
+.dior-type-card input {
+  position: absolute;
+  opacity: 0;
+}
+
+.dior-type-card:hover {
+  border-color: #93C5FD;
+}
+
+.dior-type-card.active {
+  border-color: #2C6CB1;
+  background: #F0F7FF;
+  box-shadow: 0 4px 14px rgba(44, 108, 177, 0.12);
+}
+
+.dior-type-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dior-type-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: #2C6CB1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.dior-type-info h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0B1030;
+}
+
+.dior-type-info p {
+  margin: 0;
+  font-size: 12px;
+  color: #64748B;
+  line-height: 1.4;
+}
+
+.dior-type-price {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #2C6CB1;
+}
+
+/* Form Fields */
+.dior-field-group {
+  margin-bottom: 18px;
+}
+
+.dior-field-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.dior-field-group label .req {
+  color: #B3382C;
+}
+
+.dior-field-group input,
+.dior-field-group select,
+.dior-field-group textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #0B1030;
+  background: #FFFFFF;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.dior-field-group input:focus,
+.dior-field-group select:focus,
+.dior-field-group textarea:focus {
+  outline: none;
+  border-color: #2C6CB1;
+  box-shadow: 0 0 0 3px rgba(44, 108, 177, 0.15);
+}
+
+.dior-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .dior-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Provider List */
+.dior-provider-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.dior-provider-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #FFFFFF;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.dior-provider-card input {
+  position: absolute;
+  opacity: 0;
+}
+
+.dior-provider-card:hover {
+  border-color: #93C5FD;
+}
+
+.dior-provider-card.selected {
+  border-color: #2C6CB1;
+  background: #F8FAFF;
+  box-shadow: 0 2px 10px rgba(44, 108, 177, 0.1);
+}
+
+.dior-provider-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #0B1030;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dior-provider-meta .dior-prov-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0B1030;
+}
+
+.dior-provider-meta .dior-prov-title {
+  font-size: 12px;
+  color: #64748B;
+}
+
+.dior-provider-meta .dior-prov-sched {
+  font-size: 11.5px;
+  color: #2C6CB1;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* Payment Bypass Banner */
+.dior-payment-bypass-notice {
+  background: #FDF8EE;
+  border: 1px solid #2C6CB1;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 18px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #0B1030;
+}
+
+.dior-bypass-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #2C6CB1;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  flex-shrink: 0;
+  font-size: 13px;
+}
+
+/* Buttons */
+.dior-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #2C6CB1;
+  color: #FFFFFF !important;
+  font-size: 14.5px;
+  font-weight: 600;
+  padding: 12px 28px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px rgba(44, 108, 177, 0.25);
+  box-sizing: border-box;
+}
+
+.dior-btn-primary:hover {
+  background: #1B508C;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(44, 108, 177, 0.35);
+}
+
+.dior-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #F1F5F9;
+  color: #475569 !important;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: 30px;
+  border: 1px solid #E2E8F0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dior-btn-secondary:hover {
+  background: #E2E8F0;
+  color: #0B1030 !important;
+}
+
+.dior-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.dior-actions-split {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+/* Step 4: Confirmed Card */
+.dior-confirmed-card {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.dior-confirmed-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #EAF6F0;
+  color: #1E7A5F;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.dior-confirmed-card h3 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0B1030;
+  margin: 0 0 6px;
+}
+
+.dior-confirmed-subtitle {
+  color: #64748B;
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+
+.dior-receipt-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 16px 20px;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #EEF2F6;
+  font-size: 13.5px;
+}
+
+.receipt-row:last-child {
+  border-bottom: none;
+}
+
+.receipt-row span {
+  color: #64748B;
+}
+
+.receipt-row strong {
+  color: #0B1030;
+  text-align: right;
+}
+
+.receipt-row strong a {
+  color: #2C6CB1 !important;
+  text-decoration: underline !important;
+}
+
+.dior-next-step-prompt {
+  background: #FDF8EE;
+  border: 1.5px dashed #2C6CB1;
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+}
+
+.dior-next-step-prompt h4 {
+  margin: 0 0 6px;
+  color: #0B1030;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dior-next-step-prompt p {
+  margin: 0 0 16px;
+  color: #64748B;
+  font-size: 13.5px;
+}
+
+/* Patient Portal Modal & Search */
+.dior-lookup-bar {
+  margin-bottom: 24px;
+}
+
+.dior-lookup-input-wrap {
+  display: flex;
+  gap: 10px;
+}
+
+.dior-lookup-input-wrap input {
+  flex: 1;
+  padding: 12px 18px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 30px;
+  font-size: 14.5px;
+  font-family: inherit;
+}
+
+.dior-lookup-input-wrap input:focus {
+  outline: none;
+  border-color: #2C6CB1;
+}
+
+.dior-portal-record-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(11, 16, 48, 0.05);
+}
+
+.portal-badge-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.portal-badge-status.Confirmed {
+  background: #EAF6F0;
+  color: #1E7A5F;
+}
+
+.portal-badge-status.In-Progress {
+  background: #EFF6FF;
+  color: #2C6CB1;
+}
+
+.portal-badge-status.Completed {
+  background: #F1F5F9;
+  color: #475569;
+}
+
+/* Standalone HIPAA Intake Page Styling */
+.dior-intake-wrapper {
+  max-width: 780px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dior-intake-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(11, 16, 48, 0.08);
+  border: 1px solid #E2E8F0;
+}
+
+.dior-hipaa-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #EAF6F0;
+  color: #1E7A5F;
+  border: 1px solid rgba(30, 122, 95, 0.3);
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.dior-linked-appt-badge {
+  background: #EFF6FF;
+  border-left: 4px solid #2C6CB1;
+  padding: 10px 16px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 24px;
+  font-size: 13.5px;
+  color: #1E40AF;
+}
+
+.dior-intake-section {
+  padding: 20px 0;
+  border-bottom: 1px solid #EEF2F6;
+}
+
+.dior-intake-section:last-of-type {
+  border-bottom: none;
+}
+
+.dior-intake-section h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0B1030;
+  margin: 0 0 16px;
+}
+
+.dior-consent-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.dior-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.dior-checkbox-label input {
+  margin-top: 3px;
+  accent-color: #2C6CB1;
+}
+
+/* Standalone Patient Portal Page Wrap */
+.dior-portal-page-wrap {
+  max-width: 680px;
+  margin: 50px auto;
+  padding: 0 20px;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dior-portal-page-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(11, 16, 48, 0.08);
+  border: 1px solid #E2E8F0;
+}
+
+/* ==========================================================================
+   DEDICATED LUXURY PATIENT DASHBOARD & PORTAL
+   ========================================================================== */
+.dior-patient-portal-container {
+  max-width: 1140px;
+  margin: 40px auto 70px;
+  padding: 0 20px;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1E293B;
+  box-sizing: border-box;
+}
+
+/* Force Reset on all theme/Elementor link font sizes inside portal */
+.dior-patient-portal-container a,
+.entry-content .dior-patient-portal-container a,
+.elementor .dior-patient-portal-container a,
+body .dior-patient-portal-container a {
+  font-size: 13.5px !important;
+  line-height: 1.4 !important;
+}
+
+/* Patient Header Card */
+.dior-patient-header-card {
+  background: linear-gradient(135deg, #0B1030 0%, #151D4A 100%);
+  border-radius: 22px;
+  padding: 32px 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  box-shadow: 0 15px 35px rgba(11, 16, 48, 0.25);
+  border: 1px solid rgba(217, 185, 106, 0.3);
+  margin-bottom: 28px;
+}
+
+.dior-patient-avatar-box {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.dior-pt-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #0B1030;
+  color: #FFFFFF;
+  font-size: 26px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #2C6CB1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.dior-pt-badges {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.dior-badge-gold {
+  background: rgba(44, 108, 177, 0.12);
+  color: #2C6CB1;
+  border: 1px solid rgba(44, 108, 177, 0.35);
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dior-badge-verified {
+  background: rgba(30, 122, 95, 0.2);
+  color: #4ADE80;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dior-pt-main-info h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #FFFFFF !important;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.dior-pt-sub-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #94A3B8;
+  flex-wrap: wrap;
+}
+
+.dior-pt-sub-meta strong {
+  color: #F1F5F9;
+}
+
+.dior-pt-sub-meta .dot {
+  color: #475569;
+}
+
+/* Patient Switcher */
+.dior-pt-switcher {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 16px 20px;
+  min-width: 260px;
+}
+
+.dior-pt-switcher label {
+  display: block;
+  font-size: 11.5px;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.dior-pt-switcher select {
+  width: 100%;
+  padding: 8px 12px;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0B1030;
+  cursor: pointer;
+}
+
+/* Stats Row */
+.dior-pt-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 900px) {
+  .dior-pt-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .dior-pt-stats-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dior-pt-stat-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 20px 22px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 14px rgba(11, 16, 48, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dior-pt-stat-card .stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dior-pt-stat-card .stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0B1030;
+}
+
+.dior-pt-stat-card .stat-title {
+  font-size: 12.5px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+/* Dashboard Tabs */
+.dior-pt-tabs {
+  display: flex;
+  gap: 8px;
+  background: #F1F5F9;
+  padding: 6px;
+  border-radius: 14px;
+  margin-bottom: 28px;
+  overflow-x: auto;
+}
+
+.dior-pt-tab-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.dior-pt-tab-btn:hover {
+  color: #0B1030;
+}
+
+.dior-pt-tab-btn.active {
+  background: #FFFFFF;
+  color: #2C6CB1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Live Visit Box */
+.dior-live-consult-box {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 36px;
+  border: 2px solid #2C6CB1;
+  box-shadow: 0 10px 30px rgba(44, 108, 177, 0.12);
+  position: relative;
+}
+
+.consult-badge-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.dior-status-pill {
+  padding: 4px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.dior-status-pill.confirmed {
+  background: #EAF6F0;
+  color: #1E7A5F;
+}
+
+.dior-service-pill {
+  background: #EFF6FF;
+  color: #2C6CB1;
+  padding: 4px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dior-type-pill {
+  background: #FDF8EE;
+  color: #A8842F;
+  padding: 4px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.consult-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #EEF2F6;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 700px) {
+  .consult-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.consult-doc-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.consult-doc-info .doc-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #0B1030;
+  color: #FFFFFF;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #2C6CB1;
+  flex-shrink: 0;
+}
+
+.doc-label {
+  font-size: 12px;
+  color: #64748B;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.doc-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0B1030;
+  margin: 2px 0 4px;
+}
+
+.doc-meta {
+  font-size: 12.5px;
+  color: #64748B;
+  margin: 0;
+}
+
+.consult-time-info .time-label {
+  font-size: 12px;
+  color: #64748B;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.consult-time-info .time-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: #2C6CB1;
+  margin: 2px 0 4px;
+}
+
+.consult-time-info .time-sub {
+  font-size: 13px;
+  color: #1E7A5F;
+  font-weight: 600;
+}
+
+/* Video Room Banner */
+/* Clinical Care Journey Stepper */
+.dior-journey-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 16px 24px;
+}
+
+.journey-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.j-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #E2E8F0;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.journey-step.done .j-icon {
+  background: #EAF6F0;
+  color: #1E7A5F;
+}
+
+.journey-step.active .j-icon {
+  background: #2563EB;
+  color: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+  animation: pulseDot 2s infinite;
+}
+
+.j-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.journey-step.done .j-label {
+  color: #1E7A5F;
+}
+
+.journey-step.active .j-label {
+  color: #1D4ED8;
+}
+
+.journey-line {
+  flex: 1;
+  height: 2px;
+  background: #E2E8F0;
+  margin: 0 12px;
+}
+
+.journey-line.done {
+  background: #1E7A5F;
+}
+
+@media (max-width: 650px) {
+  .dior-journey-stepper {
+    display: none;
+  }
+}
+
+/* Video Room Banner (High-Tech Telehealth Room) */
+.consult-action-banner {
+  background: linear-gradient(135deg, #0B1030 0%, #151F54 50%, #1E3A8A 100%);
+  border: 1px solid rgba(217, 185, 106, 0.35);
+  border-radius: 20px;
+  padding: 30px 34px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+  box-shadow: 0 16px 36px rgba(11, 16, 48, 0.28);
+}
+
+.live-pulse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: #4ADE80;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ADE80;
+  box-shadow: 0 0 8px #4ADE80;
+  animation: livePulse 1.8s infinite;
+}
+
+@keyframes livePulse {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  100% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+}
+
+.banner-text h4 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #FFFFFF !important;
+  margin: 0 0 6px;
+}
+
+.banner-text p {
+  font-size: 13.5px;
+  color: #CBD5E1;
+  margin: 0;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+.banner-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+  .banner-btns {
+    align-items: flex-start;
+    width: 100%;
+  }
+}
+
+.dior-patient-portal-container a.dior-btn-video-enter,
+.entry-content a.dior-btn-video-enter,
+body .dior-btn-video-enter,
+.dior-btn-video-enter {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: #2C6CB1 !important;
+  color: #FFFFFF !important;
+  padding: 13px 26px !important;
+  border-radius: 35px !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  box-shadow: 0 8px 24px rgba(44, 108, 177, 0.35) !important;
+  transition: all 0.25s ease !important;
+  letter-spacing: -0.01em !important;
+}
+
+.dior-btn-video-enter:hover {
+  background: #0B1030 !important;
+  color: #FFFFFF !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 12px 30px rgba(11, 16, 48, 0.45) !important;
+}
+
+.dior-patient-portal-container a.dior-btn-doxy-alt,
+.entry-content a.dior-btn-doxy-alt,
+body .dior-btn-doxy-alt,
+.dior-btn-doxy-alt {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  color: #93C5FD !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  transition: color 0.2s !important;
+  padding: 4px 8px !important;
+}
+
+.dior-btn-doxy-alt:hover {
+  color: #FFFFFF !important;
+  text-decoration: underline !important;
+}
+
+.intake-visit-notice {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 13.5px;
+}
+
+.intake-visit-notice .notice-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.intake-visit-notice .notice-icon {
+  font-size: 18px;
+}
+
+/* Content Cards for Tabs */
+.dior-content-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 6px 20px rgba(11, 16, 48, 0.05);
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #EEF2F6;
+}
+
+.card-head h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0B1030;
+  margin: 0;
+}
+
+/* Prescriptions Grid */
+.rx-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.rx-card {
+  border: 1.5px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 22px;
+  background: #FAFCFE;
+}
+
+.rx-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #EEF2F6;
+}
+
+.rx-icon {
+  font-size: 24px;
+}
+
+.rx-top h4 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0B1030;
+  margin: 0;
+}
+
+.rx-dosage {
+  font-size: 13px;
+  color: #2C6CB1;
+  font-weight: 600;
+}
+
+.rx-status-pill {
+  margin-left: auto;
+  background: #EAF6F0;
+  color: #1E7A5F;
+  border: 1px solid #A7F3D0;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.rx-body {
+  font-size: 13.5px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.rx-line {
+  margin-bottom: 4px;
+}
+
+/* Portal Tables */
+.qns-table-wrap {
+  overflow-x: auto;
+}
+
+.dior-portal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.dior-portal-table th {
+  background: #F8FAFC;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  color: #475569;
+  border-bottom: 2px solid #E2E8F0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dior-portal-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #EEF2F6;
+  color: #334155;
+}
+
+.dior-patient-portal-container a.dior-room-link-btn,
+.entry-content a.dior-room-link-btn,
+body .dior-room-link-btn,
+.dior-room-link-btn {
+  display: inline-block !important;
+  padding: 6px 14px !important;
+  background: #EFF6FF !important;
+  color: #2C6CB1 !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+
+.dior-room-link-btn:hover {
+  background: #2C6CB1 !important;
+  color: #FFFFFF !important;
+}
+
+/* Profile Grid */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.prof-item {
+  background: #F8FAFC;
+  border: 1px solid #EEF2F6;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.prof-label {
+  display: block;
+  font-size: 12px;
+  color: #64748B;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.prof-val {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0B1030;
+}
+
+.dior-empty-card {
+  text-align: center;
+  padding: 40px 20px;
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px dashed #CBD5E1;
+}
+
+/* ==========================================================================
+   DIOR MEDICAL LUXURY AUTHENTICATION & REGISTRATION PORTAL
+   Strictly adheres to the 5 Global Colors (#2C6CB1, #0B1030, #000000, #FFFFFF, #FDF8EE)
+   ========================================================================== */
+.dior-auth-wrapper {
+  width: 100%;
+  max-width: 620px;
+  margin: 30px auto;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #000000;
+}
+
+.dior-auth-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(44, 108, 177, 0.2);
+  border-radius: 24px;
+  padding: 42px 46px;
+  box-shadow: 0 20px 55px rgba(11, 16, 48, 0.08);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .dior-auth-card {
+    padding: 30px 22px;
+    border-radius: 18px;
+  }
+}
+
+.dior-auth-head {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.dior-auth-head h2 {
+  font-size: 25px;
+  font-weight: 700;
+  color: #0B1030;
+  margin: 10px 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.dior-auth-head p {
+  color: #4A5568;
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Auth Nav Tabs */
+.dior-auth-tabs-nav {
+  display: flex;
+  background: #FDF8EE;
+  padding: 5px;
+  border-radius: 35px;
+  border: 1px solid rgba(44, 108, 177, 0.18);
+  margin-bottom: 28px;
+  gap: 4px;
+}
+
+.dior-auth-tab-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 30px;
+  border: none;
+  background: transparent;
+  color: #0B1030;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.dior-auth-tab-btn:hover {
+  color: #2C6CB1;
+}
+
+.dior-auth-tab-btn.active {
+  background: #2C6CB1;
+  color: #FFFFFF;
+  box-shadow: 0 3px 12px rgba(44, 108, 177, 0.35);
+}
+
+/* Auth Panes */
+.dior-auth-tab-pane {
+  display: none;
+  animation: diorFadeIn 0.3s ease;
+}
+
+.dior-auth-tab-pane.active {
+  display: block;
+}
+
+@keyframes diorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form Fields */
+.dior-auth-card .dior-field-group {
+  margin-bottom: 18px;
+}
+
+.dior-auth-card .dior-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.dior-auth-card label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0B1030;
+  margin-bottom: 7px;
+}
+
+.dior-auth-card label .req {
+  color: #2C6CB1;
+}
+
+.dior-auth-card input[type="text"],
+.dior-auth-card input[type="email"],
+.dior-auth-card input[type="tel"],
+.dior-auth-card input[type="password"] {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1.5px solid #E2E8F0;
+  background: #FFFFFF;
+  color: #000000;
+  font-size: 14.5px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.dior-auth-card input:focus {
+  border-color: #2C6CB1;
+  box-shadow: 0 0 0 4px rgba(44, 108, 177, 0.12);
+}
+
+/* Password eye wrap */
+.dior-pwd-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dior-pwd-wrap input {
+  padding-right: 48px !important;
+}
+
+.dior-toggle-pwd {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #4A5568;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.dior-toggle-pwd:hover {
+  color: #2C6CB1;
+}
+
+.dior-forgot-trigger {
+  font-size: 12.5px;
+  color: #2C6CB1;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.dior-forgot-trigger:hover {
+  color: #0B1030;
+  text-decoration: underline;
+}
+
+/* Checkboxes */
+.dior-checkbox-row {
+  margin: 16px 0 22px;
+}
+
+.dior-chk-label {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #4A5568 !important;
+  line-height: 1.45;
+}
+
+.dior-chk-label input[type="checkbox"] {
+  width: 17px !important;
+  height: 17px !important;
+  accent-color: #2C6CB1 !important;
+  margin-top: 2px !important;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* Submit Buttons */
+.dior-auth-submit-btn {
+  width: 100% !important;
+  height: 50px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  background: #2C6CB1 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: all 0.25s ease !important;
+  box-shadow: 0 4px 14px rgba(44, 108, 177, 0.3) !important;
+}
+
+.dior-auth-submit-btn:hover {
+  background: #0B1030 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(11, 16, 48, 0.25) !important;
+}
+
+.dior-btn-text {
+  background: transparent;
+  border: none;
+  color: #2C6CB1;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: color 0.2s;
+}
+
+.dior-btn-text:hover {
+  color: #0B1030;
+  text-decoration: underline;
+}
+
+/* Spinner */
+.btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: diorSpin 0.7s linear infinite;
+}
+
+@keyframes diorSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Auth Alerts */
+.dior-auth-alert {
+  padding: 13px 18px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dior-auth-alert.success {
+  background: #FDF8EE;
+  border: 1px solid #2C6CB1;
+  color: #2C6CB1;
+  font-weight: 600;
+}
+
+.dior-auth-alert.error {
+  background: #FDF8EE;
+  border: 1.5px solid #0B1030;
+  color: #0B1030;
+  font-weight: 600;
+}
+
+/* Logged In State Card */
+.dior-auth-logged-in {
+  text-align: left;
+}
+
+.dior-auth-user-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 18px 0 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #EEF2F6;
+}
+
+.dior-pt-avatar-sm {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #0B1030;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #2C6CB1;
+  flex-shrink: 0;
+}
+
+.dior-auth-user-header h3 {
+  margin: 0 0 4px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #0B1030;
+}
+
+.dior-auth-user-header p {
+  margin: 0;
+  font-size: 13px;
+  color: #4A5568;
+}
+
+.dior-auth-logged-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.dior-auth-card-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: #FDF8EE;
+  border: 1px solid rgba(44, 108, 177, 0.2);
+  color: #000000;
+  text-decoration: none !important;
+  transition: all 0.25s ease;
+}
+
+.dior-auth-card-link:hover {
+  background: #FFFFFF;
+  border-color: #2C6CB1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(44, 108, 177, 0.12);
+}
+
+.dior-auth-card-link .link-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #2C6CB1;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dior-auth-card-link strong {
+  display: block;
+  font-size: 14.5px;
+  color: #0B1030;
+  margin-bottom: 2px;
+}
+
+.dior-auth-card-link span {
+  font-size: 12px;
+  color: #4A5568;
+}
+
+.dior-auth-card-link .arr {
+  margin-left: auto;
+  font-size: 18px;
+  color: #2C6CB1;
+  transition: transform 0.2s ease;
+}
+
+.dior-auth-card-link:hover .arr {
+  transform: translateX(4px);
+}
+
+.dior-auth-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 14px;
+  border-top: 1px solid #EEF2F6;
+}
+
+.dior-btn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #0B1030;
+  text-decoration: none !important;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #FDF8EE;
+  border: 1px solid rgba(11, 16, 48, 0.12);
+  transition: all 0.2s ease;
+}
+
+.dior-btn-logout:hover {
+  background: #0B1030;
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   HIPAA FORM EMBED - EXACT WEBSITE FONTS (Montserrat & DMSans)
+   Strictly typography & clean embed matching site theme
+   ========================================================================== */
+.hipaa-form-embed {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  font-family: 'Montserrat', 'DMSans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  color: var(--e-global-color-text, #000000) !important;
+}
+
+.hipaa-form-embed h1,
+.hipaa-form-embed h2,
+.hipaa-form-embed h3,
+.hipaa-form-embed h4,
+.hipaa-form-embed h5 {
+  font-family: 'DMSans', 'Montserrat', sans-serif !important;
+  color: var(--e-global-color-secondary, #0B1030) !important;
+}
+
+.hipaa-form-embed p,
+.hipaa-form-embed span,
+.hipaa-form-embed label,
+.hipaa-form-embed input,
+.hipaa-form-embed button {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.hipaa-form-embed iframe {
+  width: 100% !important;
+  min-height: 720px;
+  border: none !important;
+  background: transparent !important;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .hipaa-form-embed iframe {
+    min-height: 800px;
+  }
+}

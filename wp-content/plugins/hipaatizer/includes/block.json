@@ -1,0 +1,35 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "hipaatizer/hipaa-form",
+	"title": "HIPAAtizer form",
+	"icon": "index-card",
+	"category": "layout",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"source": "html",
+			"selector": "h2"
+		},
+		"mediaID": {
+			"type": "number"
+		},
+		"mediaURL": {
+			"type": "string",
+			"source": "attribute",
+			"selector": "img",
+			"attribute": "src"
+		},
+		"ingredients": {
+			"type": "string",
+			"source": "html",
+			"selector": ".ingredients"
+		},
+		"instructions": {
+			"type": "string",
+			"source": "html",
+			"selector": ".steps"
+		}
+	},
+	"editorScript": "file:./js/hipaa-form.js"
+}

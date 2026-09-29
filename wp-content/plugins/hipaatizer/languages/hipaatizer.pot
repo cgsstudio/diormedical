@@ -1,0 +1,879 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2024-10-28 15:43+0200\n"
+"PO-Revision-Date: 2019-05-31 15:54+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_x;_n;_ex;_nx;esc_attr__;esc_attr_e;esc_html__;"
+"esc_html_e;_n_noop;_nx_noop;esc_html_x\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: css\n"
+"X-Poedit-SearchPathExcluded-1: fonts\n"
+"X-Poedit-SearchPathExcluded-2: images\n"
+"X-Poedit-SearchPathExcluded-3: js\n"
+"X-Poedit-SearchPathExcluded-4: languages\n"
+
+#: admin/class-hipaatizer-admin.php:244 admin/class-hipaatizer-admin.php:245
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:107
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:108
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:170
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:171
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:213
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:214
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:219
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:220
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:219
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:220
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:243
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:244
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:243
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:244
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:244
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:245
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:244
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:245
+msgid "HIPAAtizer"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:258 admin/class-hipaatizer-admin.php:259
+#: admin/class-hipaatizer-admin.php:840
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:121
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:122
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:261
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:184
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:185
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:474
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:227
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:228
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:555
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:233
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:234
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:625
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:233
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:234
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:626
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:257
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:258
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:738
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:257
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:258
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:738
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:258
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:259
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:840
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:258
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:259
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:840
+msgid "HIPAAtizer Dashboard"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:268 admin/class-hipaatizer-admin.php:269
+#: admin/class-hipaatizer-admin.php:843
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:195
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:476
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:237
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:238
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:557
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:243
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:244
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:628
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:243
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:244
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:629
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:267
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:268
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:741
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:267
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:268
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:741
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:268
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:269
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:843
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:268
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:269
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:843
+msgid "Import CF7 Forms"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:302 admin/class-hipaatizer-admin.php:303
+#: admin/class-hipaatizer-admin.php:844 admin/class-hipaatizer-admin.php:847
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:247
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:248
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:559
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:253
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:254
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:629
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:632
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:253
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:254
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:630
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:633
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:289
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:290
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:742
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:745
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:289
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:290
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:742
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:745
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:302
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:303
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:844
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:847
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:302
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:303
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:844
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:847
+msgid "Create Form"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:310 admin/class-hipaatizer-admin.php:311
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:255
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:256
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:261
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:262
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:261
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:262
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:297
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:298
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:297
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:298
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:310
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:311
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:310
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:311
+msgid "Create HIPAAsign form"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:318 admin/class-hipaatizer-admin.php:319
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:318
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:319
+msgid "Create Form Packet"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:326 admin/class-hipaatizer-admin.php:327
+#: admin/class-hipaatizer-admin.php:873
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:138
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:139
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:267
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:212
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:213
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:488
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:271
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:272
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:576
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:277
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:278
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:652
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:277
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:278
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:653
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:313
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:314
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:768
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:313
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:314
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:768
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:326
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:327
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:873
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:326
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:327
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:873
+msgid "Link another HIPAAtizer account"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:553
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:168
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:302
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:358
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:394
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:394
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:483
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:483
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:553
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:553
+msgid "Title"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:554
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:395
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:395
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:484
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:484
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:554
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:554
+msgid "Status"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:555
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:169
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:303
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:359
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:396
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:396
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:485
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:485
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:555
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:555
+msgid "Shortcode"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:556
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:360
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:397
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:397
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:486
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:486
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:556
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:556
+msgid "Type"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:557
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:170
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:304
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:361
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:398
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:398
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:487
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:487
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:557
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:557
+msgid "Submissions"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:558
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:171
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:305
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:362
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:399
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:399
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:488
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:488
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:558
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:558
+msgid "Actions"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:593
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:436
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:436
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:523
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:523
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:593
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:593
+msgid "Draft"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:594
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:437
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:437
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:524
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:524
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:594
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:594
+msgid "Archived"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:595
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:438
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:438
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:525
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:525
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:595
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:595
+msgid "Pending"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:596
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:439
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:439
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:526
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:526
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:596
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:596
+msgid "Published"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:604
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:187
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:337
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:398
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:447
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:447
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:534
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:534
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:604
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:604
+msgid "Get Shortcode"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:604
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:187
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:337
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:398
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:447
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:447
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:534
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:534
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:604
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:604
+msgid "Сopied to clipboard"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:617
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:191
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:341
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:403
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:460
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:460
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:547
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:547
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:617
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:617
+msgid "View Submissions"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:620
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:406
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:463
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:463
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:550
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:550
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:620
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:620
+msgid "View"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:622
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:193
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:343
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:408
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:465
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:465
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:552
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:552
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:622
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:622
+msgid "Edit"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:630
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:473
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:473
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:560
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:560
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:630
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:630
+msgid "There are no forms in this folder"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:670
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:388
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:456
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:516
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:516
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:600
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:600
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:670
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:670
+msgid "Hello! Let's start HIPAAtizing your forms!"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:671
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:389
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:457
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:517
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:517
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:601
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:601
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:671
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:671
+msgid ""
+"We found the following Contact Form 7 forms.  Please select the form(s) you "
+"want to work with in HIPAAtizer."
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:679 admin/class-hipaatizer-admin.php:711
+#: admin/class-hipaatizer-admin.php:741 admin/class-hipaatizer-admin.php:769
+#: admin/class-hipaatizer-admin.php:942 admin/class-hipaatizer-admin.php:961
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:294
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:309
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:397
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:430
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:534
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:555
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:465
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:499
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:623
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:644
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:525
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:558
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:725
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:746
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:525
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:558
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:726
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:747
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:609
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:641
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:670
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:837
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:856
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:609
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:641
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:670
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:837
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:856
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:679
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:711
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:741
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:769
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:942
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:961
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:679
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:711
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:741
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:769
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:942
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:961
+msgid "Continue"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:685
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:404
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:472
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:532
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:532
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:615
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:615
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:685
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:685
+msgid "Go to Sign Up without import"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:686
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:405
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:473
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:533
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:533
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:616
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:616
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:686
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:686
+msgid "Already have an account?"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:686 admin/class-hipaatizer-admin.php:915
+#: admin/class-hipaatizer-admin.php:944
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:296
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:405
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:503
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:536
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:473
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:592
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:625
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:533
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:694
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:727
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:533
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:695
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:728
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:616
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:810
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:839
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:616
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:810
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:839
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:686
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:915
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:944
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:686
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:915
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:944
+msgid "Log in"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:705 admin/class-hipaatizer-admin.php:733
+#: admin/class-hipaatizer-admin.php:761
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:422
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:491
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:550
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:550
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:635
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:662
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:635
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:662
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:705
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:733
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:761
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:705
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:733
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:761
+msgid "Select forms you want to import into HIPAAtizer:"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:711 admin/class-hipaatizer-admin.php:741
+#: admin/class-hipaatizer-admin.php:769
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:430
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:499
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:558
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:558
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:641
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:670
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:641
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:670
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:711
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:741
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:769
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:711
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:741
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:769
+msgid "Cancel"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:782
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:230
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:442
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:512
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:570
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:570
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:681
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:681
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:782
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:782
+msgid "My Account"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:823
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:606
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:607
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:721
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:721
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:823
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:823
+msgid "HIPAAsign forms"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:824
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:607
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:624
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:608
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:625
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:722
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:737
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:722
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:737
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:824
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:839
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:824
+msgid "Workflows"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:825 admin/class-hipaatizer-admin.php:837
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:266
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:487
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:574
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:608
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:622
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:609
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:623
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:723
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:735
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:723
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:735
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:825
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:837
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:825
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:837
+msgid "My Forms"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:838
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:623
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:624
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:736
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:736
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:838
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:838
+msgid "HIPAAsign"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:839
+msgid "Form Packets"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:866
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:645
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:646
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:761
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:761
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:866
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:866
+#, php-format
+msgid "You are viewing the forms belonging to %s"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:871
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:266
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:487
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:574
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:650
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:651
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:766
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:766
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:871
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:871
+msgid "Refresh"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:882
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:661
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:662
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:777
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:777
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:882
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:882
+msgid "All"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:897
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:676
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:677
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:792
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:792
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:897
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:897
+msgid "Archive"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:927
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:285
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:520
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:609
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:711
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:712
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:822
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:822
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:927
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:927
+msgid "Activation Code"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:937
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:289
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:529
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:618
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:720
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:721
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:832
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:832
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:937
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:937
+msgid "Code"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:944
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:296
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:536
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:625
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:727
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:728
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:839
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:839
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:944
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:944
+msgid "Don't have an activation code?"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:944
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:296
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:536
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:625
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:727
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:728
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:839
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:839
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:944
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:944
+msgid "Sign Up"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:944
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:296
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:536
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:625
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:727
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:728
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:839
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:839
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:944
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:944
+msgid "or"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:948
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:301
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:541
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:630
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:732
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:733
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:843
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:843
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:948
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:948
+msgid "Welcome to HIPAAtizer!"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:949
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:302
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:542
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:631
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:733
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:734
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:844
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:844
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:949
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:949
+msgid "Make Any Website HIPAA Compliant"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:957
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:742
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:743
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:852
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:852
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:957
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:957
+msgid "I want to Create an account"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:958
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:306
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:552
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:641
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:743
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:744
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:853
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:853
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:958
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:958
+msgid "I already have an account"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:959
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:307
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:553
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:642
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:744
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:745
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:854
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:854
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:959
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:959
+msgid "I have an activation code"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:968
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:562
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:651
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:753
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:754
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:863
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:863
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:968
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:968
+msgid "Forms have been successfully imported"
+msgstr ""
+
+#: admin/class-hipaatizer-admin.php:970
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:564
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:653
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:755
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:756
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:865
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:865
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:970
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:970
+msgid "Forms have not imported. Please try again."
+msgstr ""
+
+#: includes/class-hipaatizer-activator.php:68
+#, php-format
+msgid ""
+"Plugin activation error: here was an issue activating your HIPAAtizer "
+"plugin. Please try reinstalling and reactivating the plugin. If the problem "
+"persists, contact HIPAAtizer Support at <a href=\"mailto:support@hipaatizer."
+"com\">support@hipaatizer.com</a> and provide the following error code: "
+"<strong>%s</strong><br><br><a href=\"%s/wp-admin/plugins.php\">&lt; Back</a>"
+msgstr ""
+
+#: includes/class-hipaatizer-loader.php:77
+#: wordpress-plugin-store/tags/1.0.0/includes/class-hipaatizer-loader.php:77
+#: wordpress-plugin-store/tags/1.1.12/includes/class-hipaatizer-loader.php:77
+#: wordpress-plugin-store/tags/1.2.5/includes/class-hipaatizer-loader.php:77
+#: wordpress-plugin-store/tags/1.3.0/includes/class-hipaatizer-loader.php:77
+#: wordpress-plugin-store/tags/1.3.1/includes/class-hipaatizer-loader.php:77
+#: wordpress-plugin-store/tags/1.3.2/includes/class-hipaatizer-loader.php:77
+#: wordpress-plugin-store/tags/1.3.3/includes/class-hipaatizer-loader.php:77
+#: wordpress-plugin-store/tags/1.3.4/includes/class-hipaatizer-loader.php:77
+#: wordpress-plugin-store/trunk/includes/class-hipaatizer-loader.php:77
+msgid "Hipaatizer"
+msgstr ""
+
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:130
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:131
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:262
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:194
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:204
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:205
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:478
+msgid "Create a Form"
+msgstr ""
+
+#: wordpress-plugin-store/tags/1.0.0/admin/class-hipaatizer-admin.php:305
+#: wordpress-plugin-store/tags/1.1.12/admin/class-hipaatizer-admin.php:551
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:640
+msgid "I want to create an account"
+msgstr ""
+
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:263
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:264
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:269
+#: wordpress-plugin-store/tags/1.3.0/admin/class-hipaatizer-admin.php:270
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:269
+#: wordpress-plugin-store/tags/1.3.1/admin/class-hipaatizer-admin.php:270
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:305
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:306
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:305
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:306
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:318
+#: wordpress-plugin-store/tags/1.3.4/admin/class-hipaatizer-admin.php:319
+msgid "Create Workflow"
+msgstr ""
+
+#: wordpress-plugin-store/tags/1.2.5/admin/class-hipaatizer-admin.php:569
+#, php-format
+msgid "You are viewing forms belonging to %s"
+msgstr ""
+
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:279
+#: wordpress-plugin-store/tags/1.3.2/admin/class-hipaatizer-admin.php:280
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:279
+#: wordpress-plugin-store/tags/1.3.3/admin/class-hipaatizer-admin.php:280
+msgid "Import WPForms"
+msgstr ""
+
+#: wordpress-plugin-store/trunk/admin/class-hipaatizer-admin.php:839
+msgid "Form Packet"
+msgstr ""
