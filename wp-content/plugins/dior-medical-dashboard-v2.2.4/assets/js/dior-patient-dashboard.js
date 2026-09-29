@@ -2245,6 +2245,111 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
 
 
 
+// Robust Patient Dashboard main-tab navigation fallback.
+// This is intentionally independent from the larger dashboard controller so that
+// one unrelated widget error can never disable the sidebar navigation.
+(function () {
+    'use strict';
+
+    function initPatientMainTabNavigation() {
+        var app = document.getElementById('dior-patient-portal-app');
+        if (!app) return;
+
+        function switchPatientTab(tabId, updateHash) {
+            var panel = document.getElementById('tab-' + tabId);
+            if (!panel) {
+                return false;
+            }
+
+            app.querySelectorAll('.dior-nav-btn[data-tab]').forEach(function (btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+            });
+
+            app.querySelectorAll('.dior-tab-panel').forEach(function (item) {
+                item.classList.toggle('active', item.id === 'tab-' + tabId);
+            });
+
+            var title = document.getElementById('dior-current-page-title');
+            var titles = {
+                overview: 'Patient Overview',
+                appointments: 'Telehealth Appointments',
+                docs_meds: 'Medical Docs & Prescriptions',
+                telemedicine: 'Telemedicine',
+                medical_record: 'Medical Record',
+                payments: 'Billing & Payment Statements',
+                insurance: 'Insurance Claim',
+                documents: 'Documents & Reports',
+                emergency: 'Emergency Support',
+                feedback: 'Feedback & Support',
+                notifications: 'Notification Inbox',
+                consultation: 'Consultation Room',
+                settings: 'Settings',
+                questionnaire: 'Clinical Intake Questionnaires'
+            };
+            if (title && titles[tabId]) title.textContent = titles[tabId];
+
+            if (updateHash !== false && window.history && window.history.replaceState) {
+                window.history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
+            }
+
+            return true;
+        }
+
+        // Expose one canonical function for existing buttons/links.
+        window.diorSwitchTab = switchPatientTab;
+
+        // Delegated listener means dynamically rendered buttons also work.
+        if (!app.__diorPatientNavBound) {
+            app.__diorPatientNavBound = true;
+            app.addEventListener('click', function (event) {
+                var btn = event.target.closest('.dior-nav-btn[data-tab]');
+                if (!btn || !app.contains(btn)) return;
+
+                // Appointments has its own dropdown but must still open its main panel.
+                var tabId = btn.getAttribute('data-tab');
+                if (!tabId) return;
+
+                event.preventDefault();
+                event.stopPropagation();
+                switchPatientTab(tabId);
+
+                if (tabId === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
+                    window.diorSwitchApptSubTab('today');
+                }
+            }, true);
+        }
+
+        // Direct support for submenu links.
+        app.querySelectorAll('[data-appt-subtab]').forEach(function (link) {
+            if (link.__diorPatientSubtabBound) return;
+            link.__diorPatientSubtabBound = true;
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                switchPatientTab('appointments');
+                if (typeof window.diorSwitchApptSubTab === 'function') {
+                    window.diorSwitchApptSubTab(link.getAttribute('data-appt-subtab'));
+                }
+            });
+        });
+
+        // Restore hash only when it points to an actual panel.
+        var hash = window.location.hash || '';
+        if (hash.indexOf('#tab=') === 0) {
+            var requested = decodeURIComponent(hash.substring(5));
+            if (document.getElementById('tab-' + requested)) {
+                switchPatientTab(requested, false);
+            }
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPatientMainTabNavigation);
+    } else {
+        initPatientMainTabNavigation();
+    }
+}());
+
 // Appointment submenu fallback for Patient Dashboard.
 document.addEventListener('click', function (event) {
     const link = event.target.closest('[data-appt-subtab]');
