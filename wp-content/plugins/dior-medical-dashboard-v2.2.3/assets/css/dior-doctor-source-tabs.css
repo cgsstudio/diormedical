@@ -239,3 +239,14 @@
 .dior-doctor-wrap .dior-source-panel .custom-settings-pills .nav-link.active { background:#174e87; color:#fff; }
 @media (max-width: 991px) { .dior-doctor-wrap .dior-source-panel .col-xl-3,.dior-doctor-wrap .dior-source-panel .col-xl-9,.dior-doctor-wrap .dior-source-panel .col-lg-3,.dior-doctor-wrap .dior-source-panel .col-lg-9 { flex:0 0 100%; max-width:100%; } }
 @media (max-width: 575px) { .dior-doctor-wrap .dior-source-panel .col-md-4,.dior-doctor-wrap .dior-source-panel .col-md-6 { flex:0 0 100%; max-width:100%; } .dior-doctor-wrap .dior-source-panel .profile-user-name { font-size:18px; } }
+
+/* settings-source.php is a legacy source document without the source-panel
+   wrapper; keep the same repairs scoped to the nested source content itself. */
+.dior-doctor-wrap .dior-source-subcontent .custom-settings-pills { display:flex !important; flex-direction:column !important; gap:7px !important; }
+.dior-doctor-wrap .dior-source-subcontent .custom-settings-pills .nav-link { width:100% !important; min-height:66px !important; height:auto !important; display:flex !important; align-items:center !important; gap:12px !important; text-align:left !important; white-space:normal !important; border:0 !important; border-radius:10px !important; padding:12px 14px !important; box-sizing:border-box !important; }
+.dior-doctor-wrap .dior-source-subcontent .custom-settings-pills .nav-link .icon-tab { flex:0 0 22px !important; width:22px !important; margin:0 !important; text-align:center !important; }
+.dior-doctor-wrap .dior-source-subcontent .custom-settings-pills .nav-link > div { min-width:0 !important; flex:1 !important; line-height:1.25 !important; }
+.dior-doctor-wrap .dior-source-subcontent .custom-settings-pills .tab-title { display:block !important; font-size:13px !important; white-space:normal !important; }
+.dior-doctor-wrap .dior-source-subcontent .custom-settings-pills .tab-subtext { display:block !important; margin-top:4px !important; font-size:10px !important; line-height:1.3 !important; white-space:normal !important; }
+.dior-doctor-wrap .dior-source-subcontent .settings-nav-card { padding:12px !important; }
+.dior-doctor-wrap .dior-source-subcontent .profile-cover-gradient { height:80px !important; }
