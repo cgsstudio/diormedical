@@ -1123,8 +1123,9 @@ class Dior_Medical_Auth
         } else if (is_singular('page')) {
             if (
                 $post && (
-                    has_shortcode($post->post_content, 'dior_patient_dashboard') ||
-                    in_array($post->post_name, ['patient-dashboard', 'doctor-dashboard'])
+has_shortcode($post->post_content, 'dior_patient_dashboard') ||
+                has_shortcode($post->post_content, 'dior_doctor_dashboard') ||
+                in_array($post->post_name, ['patient-dashboard', 'doctor-dashboard', 'doctor-portal', 'dior-doctor-dashboard'])
                 )
             ) {
                 $is_portal = true;
