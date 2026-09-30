@@ -264,3 +264,26 @@
 .all-patients-wrapper .btn-page:hover:not(.active):not(.disabled) {
     background: #F1F5F9;
 }
+
+.all-patients-wrapper,
+.all-patients-wrapper * {
+    font-family: 'Montserrat', 'DMSans', 'DM Sans', sans-serif;
+}
+.all-patients-wrapper i[class*="fa-"] {
+    font-family: "Font Awesome 6 Free" !important;
+    font-style: normal !important;
+}
+
+@media (max-width: 1280px) {
+    .all-patients-wrapper .table-title { font-size: 20px; }
+}
+@media (max-width: 1200px) {
+    .all-patients-wrapper .table-title { font-size: 18px; }
+    .all-patients-wrapper .custom-table thead th { font-size: 10px; }
+    .all-patients-wrapper .custom-table tbody td { font-size: 12px; }
+}
+@media (max-width: 768px) {
+    .all-patients-wrapper .table-title { font-size: 16px; }
+    .all-patients-wrapper .card-header { padding: 16px; }
+    .all-patients-wrapper .custom-table tbody td { font-size: 11px; }
+}

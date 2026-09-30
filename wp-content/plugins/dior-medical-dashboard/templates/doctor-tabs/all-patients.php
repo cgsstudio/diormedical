@@ -35,6 +35,7 @@
                         <input type="text" placeholder="Search records...">
                     </div>
                     <div class="va-actions-group">
+                        <button class="va-icon-btn va-btn-danger" id="ap-bulk-delete" aria-label="Delete selected records" style="display: none;"><i class="fa-solid fa-trash-can"></i></button>
                         <button class="va-icon-btn va-btn-primary" aria-label="Add new record"><i class="fa-solid fa-plus"></i></button>
                         <button class="va-icon-btn va-btn-success" aria-label="Export to Excel"><i class="fa-solid fa-file-arrow-down"></i></button>
                         <button class="va-icon-btn va-btn-info" aria-label="Refresh data"><i class="fa-solid fa-rotate-right"></i></button>
@@ -235,22 +236,37 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
-            <div class="va-footer">
-                <div class="va-pagination-text">
-                    <span>0 selected / 16 total</span>
-                </div>
-                
-                <ul class="va-pagination-nav">
-                    <li class="disabled"><a href="#" aria-label="First"><i class="fa-solid fa-backward-step"></i></a></li>
-                    <li class="disabled"><a href="#" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></a></li>
-                    <li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></a></li>
-                    <li><a href="#" aria-label="Last"><i class="fa-solid fa-forward-step"></i></a></li>
-                </ul>
-            </div>
+
 
         </div>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const table = document.querySelector('#tab-doc-patients-all .va-table');
+    const selectAllCheckbox = table.querySelector('thead .va-checkbox');
+    const rowCheckboxes = table.querySelectorAll('tbody .va-checkbox');
+    const bulkDeleteBtn = document.getElementById('ap-bulk-delete');
+
+    function updateBulkDelete() {
+        const anyChecked = Array.from(rowCheckboxes).some(cb => cb.checked);
+        if (anyChecked) {
+            bulkDeleteBtn.style.display = 'flex';
+        } else {
+            bulkDeleteBtn.style.display = 'none';
+        }
+    }
+
+    selectAllCheckbox.addEventListener('change', function() {
+        rowCheckboxes.forEach(cb => {
+            cb.checked = selectAllCheckbox.checked;
+        });
+        updateBulkDelete();
+    });
+
+    rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateBulkDelete);
+    });
+});
+</script>

@@ -5,18 +5,15 @@ $doc_ov_p = static function($index) use ($doc_ov_patients) { return $doc_ov_pati
 $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$index] ?? []; };
 ?>
 <style>
-/* Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
-
-.dior-tab-panel {
-    font-family: 'Outfit', sans-serif;
+#tab-doc-overview {
+    font-family: 'Montserrat', 'DMSans', 'DM Sans', sans-serif;
     color: #334155;
     background: #F4F7FE;
-    padding: 24px;
+    padding: 0;
 }
-.dior-tab-panel h3, .dior-tab-panel h4 {
+#tab-doc-overview h3, #tab-doc-overview h4 {
     margin: 0;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Montserrat', 'DMSans', 'DM Sans', sans-serif;
     font-weight: 700;
     color: #1E293B;
 }
@@ -308,6 +305,24 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
 .review-user h4 { font-size: 14px; }
 .stars { color: #F59E0B; font-size: 12px; }
 .review-text { font-size: 13px; color: #475569; margin: 0; }
+
+@media (max-width: 1280px) {
+    .doc-stats-row { gap: 14px; }
+    .doc-stat-card { padding: 18px; }
+    .doc-stat-icon { width: 44px; height: 44px; font-size: 18px; }
+    .doc-main-layout { gap: 16px; }
+}
+@media (max-width: 1200px) {
+    .doc-stats-row { gap: 12px; }
+    .doc-stat-card { padding: 16px; }
+    .doc-stat-info h3 { font-size: 24px; }
+    .doc-stat-info p { font-size: 12px; }
+}
+@media (max-width: 768px) {
+    .doc-stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .doc-main-layout { grid-template-columns: 1fr; }
+    .doc-stat-info h3 { font-size: 20px; }
+}
 
 </style>
 

@@ -499,14 +499,6 @@ let diorUpcomingCurrentPage = 1;
                                 diorUpdateUpcomingSelectedCount();
                             }
 
-                            function diorDeleteUpcomingRow(btn) {
-                                const row = btn.closest('tr');
-                                if (row) {
-                                    row.remove();
-                                    diorRenderUpcomingPagination();
-                                }
-                            }
-
                             function diorBulkDeleteUpcomingRows() {
                                 const checkedBoxes = document.querySelectorAll('.upcoming-row-checkbox:checked');
                                 checkedBoxes.forEach(function(cb) {

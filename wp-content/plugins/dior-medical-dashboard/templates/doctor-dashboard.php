@@ -57,7 +57,7 @@
                             class="fa-solid fa-gauge-high"></i><span class="nav-label">Dashboard</span></button>
                     
                     <div class="dior-nav-item has-submenu active" id="appointments-menu-item">
-                        <button type="button" class="dior-nav-btn" onclick="document.getElementById('appointments-menu-item').classList.toggle('active')">
+                        <button type="button" class="dior-nav-btn" onclick="diorToggleSubmenu(event, 'appointments-menu-item')">
                             <i class="fa-regular fa-calendar"></i><span class="nav-label">Appointments</span>
                             <i class="fa-solid fa-minus submenu-icon"></i>
                         </button>
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                     <div class="dior-nav-item has-submenu" id="patients-menu-item">
-                        <button type="button" class="dior-nav-btn" onclick="document.getElementById('patients-menu-item').classList.toggle('active')">
+                        <button type="button" class="dior-nav-btn" onclick="diorToggleSubmenu(event, 'patients-menu-item')">
                             <i class="fa-solid fa-users"></i><span class="nav-label">Patients</span>
                             <i class="fa-solid fa-minus submenu-icon"></i>
                         </button>
@@ -101,8 +101,32 @@
                     </div>
                     <button type="button" class="dior-nav-btn" data-tab="doc-analytics"><i
                             class="fa-solid fa-chart-line"></i><span class="nav-label">Analytics</span></button>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-accounts"><i
-                            class="fa-solid fa-wallet"></i><span class="nav-label">Accounts</span></button>
+                    <div class="dior-nav-item has-submenu" id="accounts-menu-item">
+                        <button type="button" class="dior-nav-btn" onclick="diorToggleSubmenu(event, 'accounts-menu-item')">
+                            <i class="fa-solid fa-wallet"></i><span class="nav-label">Accounts</span>
+                            <i class="fa-solid fa-minus submenu-icon"></i>
+                        </button>
+                        <div class="dior-submenu">
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-bill-list">
+                                <i class="fa-solid fa-chevron-right"></i> Bill List
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-add-bill">
+                                <i class="fa-solid fa-chevron-right"></i> Add Bill
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-income">
+                                <i class="fa-solid fa-chevron-right"></i> Income
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-expenses">
+                                <i class="fa-solid fa-chevron-right"></i> Expenses
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-income-report">
+                                <i class="fa-solid fa-chevron-right"></i> Income Report
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-invoice">
+                                <i class="fa-solid fa-chevron-right"></i> Invoice
+                            </button>
+                        </div>
+                    </div>
                     <button type="button" class="dior-nav-btn" data-tab="doc-consultation-notes"><i
                             class="fa-solid fa-notes-medical"></i><span class="nav-label">Consultations
                             Notes</span></button>
@@ -126,6 +150,17 @@
                             class="fa-solid fa-gear"></i><span class="nav-label">Settings</span></button>
                 </div>
             </nav>
+            <script>
+            function diorToggleSubmenu(e, menuId) {
+                if (e) e.preventDefault();
+                document.querySelectorAll('.dior-nav-item.has-submenu').forEach(item => {
+                    if (item.id !== menuId) {
+                        item.classList.remove('active');
+                    }
+                });
+                document.getElementById(menuId).classList.toggle('active');
+            }
+            </script>
         </aside>
 
         <!-- ============================================================ -->
@@ -234,11 +269,17 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/view-appointment.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/book-appointment.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/all-patients.php'; ?>
-
-
-
-
-
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/edit-patient.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-records.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-profile.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/analytics.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/bill-list.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/add-bill.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/income.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/expenses.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/income-report.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/invoice.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/consultation-notes.php'; ?>
             </div><!-- /tab-content -->
         </main>
     </div><!-- /dior-app -->

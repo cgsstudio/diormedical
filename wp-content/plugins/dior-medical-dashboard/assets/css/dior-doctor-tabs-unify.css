@@ -1,0 +1,264 @@
+/**
+ * Doctor dashboard: shared type, shared Font Awesome icons,
+ * and text-scale at 1280 / 1200 / tablet / mobile.
+ * Layout, colors, and card design are left as-is.
+ */
+
+.dior-doctor-wrap,
+.dior-doctor-wrap .dior-tab-panel,
+.dior-doctor-wrap .dior-tab-panel h1,
+.dior-doctor-wrap .dior-tab-panel h2,
+.dior-doctor-wrap .dior-tab-panel h3,
+.dior-doctor-wrap .dior-tab-panel h4,
+.dior-doctor-wrap .dior-tab-panel h5,
+.dior-doctor-wrap .dior-tab-panel h6,
+.dior-doctor-wrap .dior-tab-panel p,
+.dior-doctor-wrap .dior-tab-panel span,
+.dior-doctor-wrap .dior-tab-panel a,
+.dior-doctor-wrap .dior-tab-panel label,
+.dior-doctor-wrap .dior-tab-panel li,
+.dior-doctor-wrap .dior-tab-panel th,
+.dior-doctor-wrap .dior-tab-panel td,
+.dior-doctor-wrap .dior-tab-panel button,
+.dior-doctor-wrap .dior-tab-panel input,
+.dior-doctor-wrap .dior-tab-panel select,
+.dior-doctor-wrap .dior-tab-panel textarea,
+.dior-doctor-wrap .dior-nav-btn,
+.dior-doctor-wrap .dior-nav-btn .nav-label,
+.dior-doctor-wrap .dior-topbar {
+    font-family: 'Montserrat', 'DMSans', 'DM Sans', sans-serif !important;
+}
+
+.dior-doctor-wrap i.fa,
+.dior-doctor-wrap i.fas,
+.dior-doctor-wrap i.far,
+.dior-doctor-wrap i.fab,
+.dior-doctor-wrap i.fal,
+.dior-doctor-wrap i[class*="fa-"],
+.dior-doctor-wrap .fa-solid,
+.dior-doctor-wrap .fa-regular,
+.dior-doctor-wrap .fa-brands,
+.dior-doctor-wrap .fa-light {
+    font-family: "Font Awesome 6 Free" !important;
+    font-style: normal !important;
+    -webkit-font-smoothing: antialiased;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.dior-doctor-wrap .fa-brands,
+.dior-doctor-wrap i.fab {
+    font-family: "Font Awesome 6 Brands" !important;
+}
+
+.dior-doctor-wrap .fa-solid,
+.dior-doctor-wrap i.fas,
+.dior-doctor-wrap i.fa-solid {
+    font-weight: 900 !important;
+}
+
+.dior-doctor-wrap .fa-regular,
+.dior-doctor-wrap i.far,
+.dior-doctor-wrap i.fa-regular {
+    font-weight: 400 !important;
+}
+
+.dior-doctor-wrap .dior-side-nav .dior-nav-btn > i:first-of-type {
+    width: 18px;
+    font-size: 15px !important;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.dior-doctor-wrap .dior-submenu .submenu-btn i {
+    width: 12px;
+    font-size: 10px !important;
+}
+
+.dior-doctor-wrap .va-breadcrumb-list i,
+.dior-doctor-wrap .app-breadcrumb i,
+.dior-doctor-wrap .breadcrumb-list i {
+    font-size: 13px !important;
+}
+
+.dior-doctor-wrap .va-icon-btn i,
+.dior-doctor-wrap .va-action-btn i,
+.dior-doctor-wrap .action-btn i {
+    font-size: 14px !important;
+}
+
+.dior-doctor-wrap #dior-doc-content {
+    padding: 32px 36px !important;
+    box-sizing: border-box !important;
+    width: 100%;
+    max-width: 100%;
+}
+
+.dior-doctor-wrap #dior-doc-content > .dior-tab-panel {
+    color: #334155;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.dior-doctor-wrap .va-table-wrapper,
+.dior-doctor-wrap .table-content,
+.dior-doctor-wrap .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ----- 1280 laptop: shrink type, keep layout ----- */
+@media (max-width: 1280px) {
+
+    .dior-doctor-wrap .va-title-box h2,
+    .dior-doctor-wrap .app-page-title,
+    .dior-doctor-wrap .table-title,
+    .dior-doctor-wrap .page-title {
+        font-size: 20px !important;
+    }
+
+    .dior-doctor-wrap .doc-stat-info h3 {
+        font-size: 28px !important;
+    }
+
+    .dior-doctor-wrap .pp-info h3 {
+        font-size: 22px !important;
+    }
+
+    .dior-doctor-wrap .va-header-container,
+    .dior-doctor-wrap .appointment-form-wrapper .card-header,
+    .dior-doctor-wrap .edit-patient-wrapper .card-header,
+    .dior-doctor-wrap .all-patients-wrapper .card-header {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+}
+
+/* ----- 1200 laptop ----- */
+@media (max-width: 1200px) {
+
+    .dior-doctor-wrap .va-title-box h2,
+    .dior-doctor-wrap .app-page-title,
+    .dior-doctor-wrap .table-title,
+    .dior-doctor-wrap .page-title {
+        font-size: 18px !important;
+    }
+
+    .dior-doctor-wrap .doc-stat-info h3 {
+        font-size: 24px !important;
+    }
+
+    .dior-doctor-wrap .doc-stat-info p,
+    .dior-doctor-wrap .va-table td,
+    .dior-doctor-wrap .va-search-box input,
+    .dior-doctor-wrap .form-control,
+    .dior-doctor-wrap .va-form-control {
+        font-size: 13px !important;
+    }
+
+    .dior-doctor-wrap .va-table th {
+        font-size: 11px !important;
+    }
+
+    .dior-doctor-wrap .va-search-box {
+        width: 210px;
+    }
+
+    .dior-doctor-wrap .app-calendar-layout {
+        grid-template-columns: 240px 1fr;
+    }
+}
+
+/* ----- Tablet ----- */
+@media (max-width: 1024px) {
+    .dior-doctor-wrap #dior-doc-content {
+        padding: 24px 28px !important;
+    }
+
+    .dior-doctor-wrap .dior-side-nav .dior-nav-btn,
+    .dior-doctor-wrap .dior-submenu .submenu-btn {
+        font-size: 13px !important;
+    }
+
+    .dior-doctor-wrap .va-breadcrumb-list,
+    .dior-doctor-wrap .breadcrumb-list li,
+    .dior-doctor-wrap .app-breadcrumb {
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .dior-doctor-wrap #dior-doc-content {
+        padding: 20px 16px !important;
+    }
+
+    .dior-doctor-wrap .va-title-box h2,
+    .dior-doctor-wrap .app-page-title,
+    .dior-doctor-wrap .table-title {
+        font-size: 16px !important;
+        line-height: 1.3 !important;
+    }
+
+    .dior-doctor-wrap .doc-stat-info h3 {
+        font-size: 20px !important;
+    }
+
+    .dior-doctor-wrap .doc-stat-info p,
+    .dior-doctor-wrap .va-table td,
+    .dior-doctor-wrap .card-inside-title,
+    .dior-doctor-wrap label {
+        font-size: 12px !important;
+    }
+
+    .dior-doctor-wrap .va-table th,
+    .dior-doctor-wrap .va-table-stats,
+    .dior-doctor-wrap .va-page-btn {
+        font-size: 11px !important;
+    }
+
+    .dior-doctor-wrap .va-header-container {
+        gap: 12px;
+        padding: 10px 16px;
+    }
+
+    .dior-doctor-wrap .va-search-box {
+        width: 180px;
+        max-width: 100%;
+    }
+
+    .dior-doctor-wrap .pp-info h3 {
+        font-size: 18px !important;
+    }
+
+    .dior-doctor-wrap .pp-banner {
+        padding: 16px 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dior-doctor-wrap #dior-doc-content {
+        padding: 16px 14px !important;
+    }
+
+    .dior-doctor-wrap .va-title-box h2,
+    .dior-doctor-wrap .app-page-title {
+        font-size: 15px !important;
+    }
+
+    .dior-doctor-wrap .doc-stat-info h3 {
+        font-size: 18px !important;
+    }
+
+    .dior-doctor-wrap .va-search-box {
+        width: 100%;
+    }
+
+    .dior-doctor-wrap .va-actions-wrapper {
+        width: 100%;
+    }
+}

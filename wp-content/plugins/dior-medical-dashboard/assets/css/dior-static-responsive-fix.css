@@ -273,3 +273,183 @@
         flex-basis: 36px !important;
     }
 }
+
+/* ==========================================================================
+   FINAL RESPONSIVE LAYOUT FIX
+   - Native 100% browser scale at 1280px; no CSS zoom.
+   - Prevents header/content compression and accidental horizontal page scroll.
+   - Keeps wide data tables scrollable inside their own containers.
+   ========================================================================== */
+.dior-doctor-wrap,
+.dior-patient-portal-wrap,
+.dior-doctor-wrap .dior-app,
+.dior-patient-portal-wrap .dior-app {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+.dior-doctor-wrap .dior-main-content,
+.dior-patient-portal-wrap .dior-main-content {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+.dior-doctor-wrap #dior-doc-content,
+.dior-patient-portal-wrap .dior-tab-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* 1280px and below: use the available viewport naturally, never zoom panels. */
+@media (max-width: 1280px) {
+    .dior-doctor-wrap .dior-topbar,
+    .dior-patient-portal-wrap .dior-topbar {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+
+    .dior-doctor-wrap .dior-content-pad,
+    .dior-patient-portal-wrap .dior-content-pad {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+
+    .dior-doctor-wrap .va-table-wrapper,
+    .dior-doctor-wrap .table-content,
+    .dior-doctor-wrap .table-responsive,
+    .dior-patient-portal-wrap .dior-table-responsive {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* Tablet / mobile navigation and header. */
+@media (max-width: 1024px) {
+    .dior-doctor-wrap .dior-main-content,
+    .dior-patient-portal-wrap .dior-main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .dior-doctor-wrap .dior-topbar,
+    .dior-patient-portal-wrap .dior-topbar {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .dior-doctor-wrap .dior-topbar,
+    .dior-patient-portal-wrap .dior-topbar {
+        height: auto !important;
+        min-height: 60px !important;
+        padding: 10px 12px !important;
+        gap: 8px !important;
+    }
+
+    .dior-doctor-wrap .dior-topbar-left,
+    .dior-patient-portal-wrap .dior-topbar-left {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        gap: 8px !important;
+    }
+
+    .dior-doctor-wrap .dior-top-search,
+    .dior-patient-portal-wrap .dior-top-search {
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        flex: 1 1 auto !important;
+        margin: 0 !important;
+        height: 42px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .dior-doctor-wrap .dior-top-search input,
+    .dior-patient-portal-wrap .dior-top-search input {
+        min-width: 0 !important;
+        font-size: 12px !important;
+    }
+
+    .dior-doctor-wrap .dior-topbar-right,
+    .dior-patient-portal-wrap .dior-topbar-right {
+        flex: 0 0 auto !important;
+        gap: 6px !important;
+    }
+
+    .dior-doctor-wrap .dior-tab-content,
+    .dior-patient-portal-wrap .dior-tab-content {
+        overflow: visible !important;
+    }
+
+    .dior-doctor-wrap .dior-content-pad,
+    .dior-patient-portal-wrap .dior-content-pad,
+    .dior-doctor-wrap #dior-doc-content,
+    .dior-patient-portal-wrap .dior-tab-container {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    /* Data tables remain readable and scroll only inside their table area. */
+    .dior-doctor-wrap .ngx-datatable,
+    .dior-doctor-wrap .ngx-datatable .datatable-header-inner,
+    .dior-doctor-wrap .ngx-datatable .datatable-body-row,
+    .dior-doctor-wrap .ngx-datatable .datatable-row-center {
+        min-width: 760px !important;
+    }
+
+    .dior-doctor-wrap .va-table,
+    .dior-patient-portal-wrap .va-table {
+        min-width: 720px !important;
+    }
+
+    .dior-doctor-wrap .master-table-card,
+    .dior-patient-portal-wrap .dior-card,
+    .dior-patient-portal-wrap .dior-box {
+        max-width: 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .dior-doctor-wrap .dior-topbar,
+    .dior-patient-portal-wrap .dior-topbar {
+        padding: 8px 10px !important;
+    }
+
+    .dior-doctor-wrap .dior-mobile-menu-toggle,
+    .dior-patient-portal-wrap .dior-mobile-menu-toggle {
+        width: 38px !important;
+        min-width: 38px !important;
+        height: 38px !important;
+        padding: 0 !important;
+    }
+
+    .dior-doctor-wrap .dior-top-search,
+    .dior-patient-portal-wrap .dior-top-search {
+        height: 40px !important;
+    }
+
+    .dior-doctor-wrap .dior-topbar-right,
+    .dior-patient-portal-wrap .dior-topbar-right {
+        gap: 4px !important;
+    }
+
+    .dior-doctor-wrap .dior-content-pad,
+    .dior-patient-portal-wrap .dior-content-pad,
+    .dior-doctor-wrap #dior-doc-content,
+    .dior-patient-portal-wrap .dior-tab-container {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+

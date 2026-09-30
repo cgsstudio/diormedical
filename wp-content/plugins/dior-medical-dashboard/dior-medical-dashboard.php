@@ -729,6 +729,12 @@ class Dior_Medical_Auth
             ['dior-doctor-source-tabs'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') : DIOR_PORTAL_VERSION
         );
+        wp_enqueue_style(
+            'dior-doctor-tabs-unify',
+            DIOR_PORTAL_URL . 'assets/css/dior-doctor-tabs-unify.css',
+            ['dior-static-responsive-fix', 'font-awesome-6'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-tabs-unify.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-tabs-unify.css') : DIOR_PORTAL_VERSION
+        );
 
         wp_enqueue_script(
             'sweetalert2',
@@ -809,6 +815,21 @@ class Dior_Medical_Auth
             DIOR_PORTAL_URL . 'assets/js/dior-doctor-source-tabs.js',
             ['dior-doctor-js'],
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-source-tabs.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-source-tabs.js') : DIOR_PORTAL_VERSION,
+            true
+        );
+
+        // Unified static dashboard table interactions (pagination + edit/delete).
+        wp_enqueue_style(
+            'dior-static-table-interactions',
+            DIOR_PORTAL_URL . 'assets/css/dior-static-table-interactions.css',
+            ['dior-doctor-tabs-unify'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-static-table-interactions.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-static-table-interactions.css') : DIOR_PORTAL_VERSION
+        );
+        wp_enqueue_script(
+            'dior-static-table-interactions',
+            DIOR_PORTAL_URL . 'assets/js/dior-static-table-interactions.js',
+            ['dior-patient-dashboard-page-js', 'dior-doctor-dashboard-page-js', 'dior-doctor-source-tabs-js'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-static-table-interactions.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-static-table-interactions.js') : DIOR_PORTAL_VERSION,
             true
         );
 

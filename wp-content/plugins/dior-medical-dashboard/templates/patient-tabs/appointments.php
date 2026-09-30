@@ -422,7 +422,7 @@
                                                         <td class="dior-ic-d5c209e67c">
                                                             <div class="cell-actions">
                                                                 <button type="button" class="action-icon-btn edit-btn" title="Edit Record"><i class="fa-solid fa-pen"></i></button>
-                                                                <button type="button" class="action-icon-btn delete-btn" title="Delete Record" onclick="diorDeleteUpcomingRow(this)"><i class="fa-regular fa-trash-can"></i></button>
+                                                                <button type="button" class="action-icon-btn delete-btn" title="Delete Record"><i class="fa-regular fa-trash-can"></i></button>
                                                             </div>
                                                         </td>
                                                     </tr>

@@ -1,9 +1,9 @@
 <style>
 /* Appointments Calendar CSS */
-.dior-tab-panel {
-    font-family: 'Outfit', sans-serif;
+#tab-doc-appointments {
+    font-family: 'Montserrat', 'DMSans', 'DM Sans', sans-serif;
     color: #334155;
-    background: #F8FAFC; /* slightly lighter than overview for variety, or match it */
+    background: #F8FAFC;
 }
 
 /* Breadcrumb Header */
@@ -221,6 +221,22 @@
     background: #4F46E5;
     color: #FFF;
 }
+@media (max-width: 1280px) {
+    .app-page-title { font-size: 20px; }
+    .app-calendar-layout { grid-template-columns: 250px 1fr; gap: 16px; }
+}
+@media (max-width: 1200px) {
+    .app-page-title { font-size: 18px; }
+    .app-calendar-layout { grid-template-columns: 220px 1fr; }
+    .cal-date-num { width: 24px; height: 24px; font-size: 12px; }
+}
+@media (max-width: 768px) {
+    .app-page-header { flex-wrap: wrap; gap: 8px; }
+    .app-page-title { font-size: 16px; }
+    .app-breadcrumb { font-size: 12px; }
+    .app-calendar-layout { grid-template-columns: 1fr; }
+}
+
 </style>
 
 <section class="dior-tab-panel" id="tab-doc-appointments" style="display: none;">

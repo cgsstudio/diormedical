@@ -272,24 +272,7 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
-            <div class="va-footer">
-                <div class="va-pagination-text">
-                    <span>0 selected / 80 total</span>
-                </div>
-                
-                <ul class="va-pagination-nav">
-                    <li class="disabled"><a href="#" aria-label="First"><i class="fa-solid fa-backward-step"></i></a></li>
-                    <li class="disabled"><a href="#" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></a></li>
-                    <li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></a></li>
-                    <li><a href="#" aria-label="Last"><i class="fa-solid fa-forward-step"></i></a></li>
-                </ul>
-            </div>
+
 
         </div>
     </div>

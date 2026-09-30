@@ -224,7 +224,7 @@
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <label class="mb-0">Reason for Visit <span class="text-danger">*</span></label>
                                         <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-0 font-11">
-                                            <i class="material-icons font-14 align-middle">auto_awesome</i> AI Auto-Match Department
+                                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Auto-Match Department
                                         </button>
                                     </div>
                                     <textarea rows="2" placeholder="Describe symptoms or primary reason for consultation..." class="form-control"></textarea>
@@ -294,7 +294,7 @@
                                     <div class="file-upload-wrapper">
                                         <input type="file" class="file-input" accept="*">
                                         <div class="file-upload-area">
-                                            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                                            <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
                                             <div class="upload-text">
                                                 <p class="mb-1">Drag &amp; drop files here or <span class="browse-link">browse</span></p>
                                                 <small class="text-muted">Choose file</small>

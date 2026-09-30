@@ -289,7 +289,7 @@
                                     <div class="file-upload-wrapper">
                                         <input type="file" class="file-input" accept="*">
                                         <div class="file-upload-area">
-                                            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                                            <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
                                             <div class="upload-text">
                                                 <p class="mb-1">Drag &amp; drop files here or <span class="browse-link">browse</span></p>
                                                 <small class="text-muted">Choose file</small>

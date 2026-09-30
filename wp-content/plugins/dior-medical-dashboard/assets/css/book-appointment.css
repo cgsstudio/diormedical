@@ -192,3 +192,32 @@
     color: #1E293B;
     margin-bottom: 12px;
 }
+
+.appointment-form-wrapper,
+.appointment-form-wrapper * {
+    font-family: 'Montserrat', 'DMSans', 'DM Sans', sans-serif;
+}
+.appointment-form-wrapper i[class*="fa-"] {
+    font-family: "Font Awesome 6 Free" !important;
+    font-style: normal !important;
+}
+
+@media (max-width: 1280px) {
+    .appointment-form-wrapper .card-header h4 { font-size: 18px; }
+    .appointment-form-wrapper .card-body { padding: 24px; }
+}
+@media (max-width: 1200px) {
+    .appointment-form-wrapper .card-header { padding: 18px 22px; }
+    .appointment-form-wrapper .card-header h4 { font-size: 17px; }
+    .appointment-form-wrapper .card-inside-title { font-size: 14px !important; }
+    .appointment-form-wrapper label,
+    .appointment-form-wrapper .form-control,
+    .appointment-form-wrapper h6 { font-size: 13px; }
+}
+@media (max-width: 768px) {
+    .appointment-form-wrapper .card-header h4 { font-size: 16px; }
+    .appointment-form-wrapper .card-body { padding: 16px; }
+    .appointment-form-wrapper label,
+    .appointment-form-wrapper .form-control,
+    .appointment-form-wrapper h6 { font-size: 12px; }
+}

@@ -48,7 +48,7 @@ function initDoctorDashboard() {
 
     // Initialize Pagination for all Doctor Dashboard Tables (5 rows max per page)
     document.querySelectorAll('.dior-doc-table, .dior-table, .dior-clean-table').forEach(table => {
-        diorInitTablePagination(table, 5);
+        diorDoctorInitTablePagination(table, 5);
     });
 
     // Check doctor profile completion on initial load (ONLY on doctor dashboard, for doctors)
@@ -605,7 +605,7 @@ document.addEventListener('click', function (event) {
 }, false);
 
 // Universal Table Pagination (5 entries per page)
-window.diorInitTablePagination = function(tableEl, pageSize) {
+window.diorDoctorInitTablePagination = function(tableEl, pageSize) {
     if (!tableEl) return;
     pageSize = pageSize || 5;
     const tbody = tableEl.querySelector('tbody');
@@ -863,7 +863,7 @@ window.diorDocSwitchTab = function(tabId) {
             if (table._diorRenderPage) {
                 table._diorRenderPage(1);
             } else {
-                diorInitTablePagination(table, 5);
+                diorDoctorInitTablePagination(table, 5);
             }
         });
     }
@@ -886,14 +886,23 @@ window.diorDocSwitchTab = function(tabId) {
 
 // Mobile menu toggle
 window.diorDocOpenMobile = function() {
-    document.getElementById('dior-doc-sidebar').classList.add('open');
-    document.getElementById('dior-doc-backdrop').classList.add('active');
+    const sidebar = document.getElementById('dior-doc-sidebar');
+    const backdrop = document.getElementById('dior-doc-backdrop');
+    const isMobile = window.innerWidth <= 1024;
+    
+    if (sidebar.classList.contains('mobile-open')) {
+        sidebar.classList.remove('mobile-open');
+        if (isMobile && backdrop) backdrop.classList.remove('active');
+    } else {
+        sidebar.classList.add('mobile-open');
+        if (isMobile && backdrop) backdrop.classList.add('active');
+    }
 };
 
 window.diorDocCloseMobile = function() {
     const sidebar = document.getElementById('dior-doc-sidebar');
     const backdrop = document.getElementById('dior-doc-backdrop');
-    if (sidebar) sidebar.classList.remove('open');
+    if (sidebar) sidebar.classList.remove('mobile-open');
     if (backdrop) backdrop.classList.remove('active');
 };
 
