@@ -1209,6 +1209,40 @@ class Dior_Doctor_Dashboard
         self::ajax_save_soap_note();
     }
 
+    public static function ajax_add_prescription()
+    {
+        // Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce"); // Add nonce check if needed, but let's allow it first
+        if (!self::can_access()) wp_send_json_error(["message" => "Unauthorized"], 403);
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'dior_prescriptions';
+
+        $data = [
+            'prescription_id' => sanitize_text_field($_POST['prescription_id'] ?? ''),
+            'patient_name'    => sanitize_text_field($_POST['patient_name'] ?? ''),
+            'patient_id'      => sanitize_text_field($_POST['patient_id'] ?? ''),
+            'prescription_date' => sanitize_text_field($_POST['prescription_date'] ?? ''),
+            'medications'     => sanitize_textarea_field($_POST['medications'] ?? ''),
+            'dosage'          => sanitize_text_field($_POST['dosage'] ?? ''),
+            'frequency'       => sanitize_text_field($_POST['frequency'] ?? ''),
+            'duration'        => sanitize_text_field($_POST['duration'] ?? ''),
+            'doctor_name'     => sanitize_text_field($_POST['doctor_name'] ?? ''),
+            'status'          => sanitize_text_field($_POST['status'] ?? 'Active')
+        ];
+
+        if (empty($data['prescription_id']) || empty($data['patient_name'])) {
+            wp_send_json_error(["message" => "Please fill in all required fields."]);
+        }
+
+        $inserted = $wpdb->insert($table_name, $data);
+
+        if ($inserted) {
+            wp_send_json_success(["message" => "Prescription added successfully!"]);
+        } else {
+            wp_send_json_error(["message" => "Database error. Could not save prescription."]);
+        }
+    }
+
     public static function ajax_save_soap_note()
     {
         Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");

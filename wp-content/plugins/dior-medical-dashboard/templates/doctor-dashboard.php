@@ -133,17 +133,67 @@
                     <button type="button" class="dior-nav-btn" data-tab="doc-e-prescriptions"><i
                             class="fa-solid fa-prescription-bottle-medical"></i><span class="nav-label">E -
                             Prescriptions</span></button>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-pharmacy"><i
-                            class="fa-solid fa-pills"></i><span class="nav-label">Pharmacy</span></button>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-documents-reports"><i
-                            class="fa-solid fa-file-medical"></i><span class="nav-label">Documents &amp;
-                            Report</span></button>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-telemedicine"><i
-                            class="fa-solid fa-video"></i><span class="nav-label">Telemedicine</span></button>
+                    <div class="dior-nav-item has-submenu" id="pharmacy-menu-item">
+                        <button type="button" class="dior-nav-btn" onclick="diorToggleSubmenu(event, 'pharmacy-menu-item')">
+                            <i class="fa-solid fa-pills"></i><span class="nav-label">Pharmacy</span>
+                            <i class="fa-solid fa-minus submenu-icon"></i>
+                        </button>
+                        <div class="dior-submenu">
+                            <button type="button" class="dior-nav-btn submenu-btn active" data-tab="doc-pharmacy-list">
+                                <i class="fa-solid fa-chevron-right"></i> Medicine List
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-pharmacy-add">
+                                <i class="fa-solid fa-chevron-right"></i> Add Medicine
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dior-nav-item has-submenu" id="documents-menu-item">
+                        <button type="button" class="dior-nav-btn" onclick="diorToggleSubmenu(event, 'documents-menu-item')">
+                            <i class="fa-solid fa-file-medical"></i><span class="nav-label">Documents & Report</span>
+                            <i class="fa-solid fa-minus submenu-icon"></i>
+                        </button>
+                        <div class="dior-submenu">
+                            <button type="button" class="dior-nav-btn submenu-btn active" data-tab="doc-documents-upload">
+                                <i class="fa-solid fa-chevron-right"></i> Upload Documents
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-documents-templates">
+                                <i class="fa-solid fa-chevron-right"></i> Consent Templates
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-documents-signed">
+                                <i class="fa-solid fa-chevron-right"></i> Signed Consent
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dior-nav-item has-submenu" id="telemedicine-menu-item">
+                        <button type="button" class="dior-nav-btn" onclick="diorToggleSubmenu(event, 'telemedicine-menu-item')">
+                            <i class="fa-solid fa-video"></i><span class="nav-label">Telemedicine</span>
+                            <i class="fa-solid fa-minus submenu-icon"></i>
+                        </button>
+                        <div class="dior-submenu">
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-telemed-video">
+                                <i class="fa-solid fa-chevron-right"></i> Video Consultation
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-telemed-records">
+                                <i class="fa-solid fa-chevron-right"></i> Virtual Visit Records
+                            </button>
+                        </div>
+                    </div>
                     <button type="button" class="dior-nav-btn" data-tab="doc-patient-review"><i
                             class="fa-solid fa-star"></i><span class="nav-label">Patient Review</span></button>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-notifications"><i
-                            class="fa-solid fa-bell"></i><span class="nav-label">Notification</span></button>
+                    <div class="dior-nav-item has-submenu" id="notifications-menu-item">
+                        <button type="button" class="dior-nav-btn" onclick="diorToggleSubmenu(event, 'notifications-menu-item')">
+                            <i class="fa-solid fa-bell"></i><span class="nav-label">Notification</span>
+                            <i class="fa-solid fa-minus submenu-icon"></i>
+                        </button>
+                        <div class="dior-submenu">
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-notifications-alerts">
+                                <i class="fa-solid fa-chevron-right"></i> Alerts & Announcements
+                            </button>
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-notifications-system">
+                                <i class="fa-solid fa-chevron-right"></i> System Notifications
+                            </button>
+                        </div>
+                    </div>
                     <button type="button" class="dior-nav-btn" data-tab="doc-consultation"><i
                             class="fa-solid fa-door-open"></i><span class="nav-label">Consultation Room</span></button>
                     <button type="button" class="dior-nav-btn" data-tab="doc-settings"><i
@@ -280,6 +330,16 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/income-report.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/invoice.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/consultation-notes.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/pharmacy.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/digital-prescriptions.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/documents.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/telemedicine-video.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/telemedicine-records.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-review.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/notifications-alerts.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/notifications-system.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/consultation-room.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/settings.php'; ?>
             </div><!-- /tab-content -->
         </main>
     </div><!-- /dior-app -->

@@ -164,14 +164,14 @@
         modal.innerHTML =
             '<div class="dior-static-edit-dialog" role="dialog" aria-modal="true" aria-labelledby="dior-static-edit-title">' +
                 '<div class="dior-static-edit-header">' +
-                    '<div><h3 id="dior-static-edit-title">Edit Record</h3><p>Update the record details below.</p></div>' +
-                    '<button type="button" class="dior-static-edit-close" data-edit-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>' +
+                    '<h3 id="dior-static-edit-title">Edit Record</h3>' +
+                    '<button type="button" class="dior-static-edit-close" data-edit-close aria-label="Close">&times;</button>' +
                 '</div>' +
                 '<form id="dior-static-edit-form">' +
                     '<div class="dior-static-edit-fields"></div>' +
                     '<div class="dior-static-edit-footer">' +
-                        '<button type="button" class="dior-static-cancel" data-edit-close>Cancel</button>' +
-                        '<button type="submit" class="dior-static-submit">Save Changes</button>' +
+                        '<button type="submit" class="dior-static-submit">Save</button>' +
+                        '<button type="button" class="dior-static-cancel" data-edit-close>Close</button>' +
                     '</div>' +
                 '</form>' +
             '</div>';

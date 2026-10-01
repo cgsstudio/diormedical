@@ -8,8 +8,8 @@
     overflow: hidden;
     margin-bottom: 20px;
     margin-top: 25px;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 /* Header Section */
@@ -164,10 +164,12 @@
 .va-table-wrapper {
     overflow-x: auto;
     width: 100%;
+    min-width: 0;
 }
 
 .va-table {
     width: 100%;
+    min-width: 1000px;
     border-collapse: separate;
     border-spacing: 0;
     background-color: #ffffff !important;
@@ -305,7 +307,7 @@
 .va-action-btn-sm {
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: 50%;
     border: none;
     display: flex;
     align-items: center;
@@ -313,6 +315,10 @@
     cursor: pointer;
     padding: 0 !important;
     margin: 0 !important;
+    background-color: transparent !important;
+}
+.va-action-btn-sm:hover {
+    background-color: rgba(0,0,0,0.05) !important;
 }
 
 .va-btn-edit {
@@ -607,6 +613,10 @@ a.va-btn-primary:hover {
 }
 
 @media (max-width: 1280px) {
+    .view-appointment-card {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
     .va-title-box h2 { font-size: 20px; }
     .va-header-container { padding: 10px 22px; gap: 14px; }
     .va-search-box { width: 220px; }
@@ -633,4 +643,441 @@ a.va-btn-primary:hover {
     .va-title-box h2 { font-size: 15px; }
     .va-icon-btn,
     .va-action-btn { width: 32px; height: 32px; font-size: 12px; }
+}
+/* ==========================================================================
+   MODAL REDESIGN (ALL POPUPS)
+   ========================================================================== */
+
+/* Modal Container Styling */
+.modal-content {
+    border-radius: 12px !important;
+    border: none !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12) !important;
+    overflow: hidden !important;
+}
+
+/* Modal Header */
+.modal-header {
+    border-bottom: 1px solid #edf2f7 !important;
+    padding: 20px 24px !important;
+    background-color: #fff !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.modal-header .modal-title .font-17 {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #2d3748 !important;
+}
+
+.modal-header .close {
+    background: transparent !important;
+    border: none !important;
+    opacity: 0.5 !important;
+    transition: opacity 0.2s ease !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+}
+
+.modal-header .close:hover {
+    opacity: 1 !important;
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 24px !important;
+    background-color: #fff !important;
+}
+
+/* Form Labels */
+.modal-body label {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #4a5568 !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+}
+
+.modal-body label .text-danger {
+    color: #e53e3e !important;
+}
+
+/* Form Inputs & Selects */
+.modal-body .form-control,
+.modal-body .form-select {
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e0 !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    color: #2d3748 !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    width: 100% !important;
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+    border-color: #0066ff !important;
+    box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1) !important;
+    outline: none !important;
+}
+
+/* Modal Footer */
+.modal-footer {
+    border-top: 1px solid #edf2f7 !important;
+    padding: 16px 24px !important;
+    background-color: #fff !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+}
+
+/* --- BUTTON STYLING (As per Image) --- */
+.modal-footer .btn {
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+}
+
+/* Save Button (Primary - Vibrant Blue) */
+.modal-footer .btn-primary {
+    background-color: #0066ff !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25) !important;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: #005ce6 !important;
+    box-shadow: 0 6px 16px rgba(0, 102, 255, 0.35) !important;
+    transform: translateY(-1px) !important;
+}
+
+.modal-footer .btn-primary:active {
+    transform: translateY(0) !important;
+}
+
+/* Close Button (Light Gray/White) */
+.modal-footer .btn-light {
+    background-color: #f8f9fa !important;
+    color: #4a5568 !important;
+    border: 1px solid #edf2f7 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+}
+
+.modal-footer .btn-light:hover {
+    background-color: #f1f3f5 !important;
+    color: #2d3748 !important;
+}
+
+/* ==========================================================================
+   DIGITAL PRESCRIPTIONS PAGE STYLES
+   ========================================================================== */
+
+/* 1. Main Background & Spacing */
+.main-content {
+    background-color: #f4f7fa !important;
+    padding: 24px !important;
+    font-family: 'Inter', 'Segoe UI', sans-serif !important;
+    min-height: 100vh !important;
+}
+
+/* 2. Breadcrumb Section */
+.breadcrumb-main {
+    margin-bottom: 24px !important;
+}
+
+.breadcrumb-title .page-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #2d3748 !important;
+    margin: 0 !important;
+}
+
+.breadcrumb-list {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 8px !important;
+    font-size: 14px !important;
+    color: #4a5568 !important;
+}
+
+.breadcrumb-list a {
+    color: #4a5568 !important;
+    text-decoration: none !important;
+}
+
+.breadcrumb-icon {
+    width: 16px !important;
+    height: 16px !important;
+    stroke: #4f46e5 !important;
+}
+
+/* 3. Master Table Card (White Container) */
+.master-table-card {
+    background-color: #ffffff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04) !important;
+    overflow: hidden !important;
+}
+
+/* 4. Card Header (Title & Actions) */
+.master-table-header {
+    padding: 24px 24px 0 24px !important;
+}
+
+.header-content {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 2px solid #f1f5f9 !important;
+    padding-bottom: 16px !important;
+}
+
+.table-title-section {
+    position: relative !important;
+}
+
+.table-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    margin: 0 !important;
+}
+
+.title-accent {
+    position: absolute !important;
+    bottom: -18px !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 2px !important;
+    background-color: #4f46e5 !important;
+}
+
+/* 5. Search Bar */
+.header-actions-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+}
+
+.search-container {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.search-icon {
+    position: absolute !important;
+    left: 12px !important;
+    color: #94a3b8 !important;
+    font-size: 18px !important;
+}
+
+.search-input {
+    padding: 10px 16px 10px 36px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    color: #334155 !important;
+    outline: none !important;
+    width: 250px !important;
+    transition: all 0.2s ease !important;
+}
+
+.search-input:focus {
+    border-color: #4f46e5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+/* 6. Top Action Buttons (+, Download, Refresh) */
+.action-buttons {
+    display: flex !important;
+    gap: 10px !important;
+}
+
+.action-btn {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    color: white !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.action-btn i {
+    font-size: 18px !important;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
+}
+
+.action-btn-primary { background-color: #5a67d8 !important; }
+.action-btn-success { background-color: #10b981 !important; }
+.action-btn-info { background-color: #3b82f6 !important; }
+.action-btn-danger { background-color: #ef4444 !important; }
+
+/* 7. Table Styling */
+.ngx-datatable {
+    box-shadow: none !important;
+    font-size: 14px !important;
+}
+
+.datatable-header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #edf2f7 !important;
+}
+
+.datatable-header-cell {
+    color: #718096 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 16px 12px !important;
+}
+
+.datatable-body-row {
+    border-bottom: 1px solid #f1f5f9 !important;
+    background-color: #ffffff !important;
+    transition: background-color 0.2s !important;
+}
+
+.datatable-body-row:hover {
+    background-color: #f8fafc !important;
+}
+
+.datatable-body-cell {
+    padding: 16px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    color: #4a5568 !important;
+}
+
+/* Custom Table Cell Elements */
+.cell-image-name {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.cell-avatar {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+}
+
+.cell-text {
+    font-weight: 600 !important;
+    color: #2d3748 !important;
+}
+
+.cell-icon-text {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.cell-icon-text .cell-icon {
+    font-size: 16px !important;
+    color: #4f46e5 !important;
+}
+
+/* Checkbox */
+.datatable-checkbox input[type="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 4px !important;
+    border: 1px solid #cbd5e1 !important;
+    cursor: pointer !important;
+}
+
+/* 8. Status Badges */
+.badge-solid {
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    display: inline-block !important;
+}
+
+.badge-solid.col-green {
+    background-color: transparent !important;
+    color: #059669 !important;
+}
+
+.badge-solid.col-blue {
+    background-color: transparent !important;
+    color: #2563eb !important;
+}
+
+.badge-solid.col-red {
+    background-color: transparent !important;
+    color: #dc2626 !important;
+}
+
+/* 9. Action Buttons in Table Row (Edit/Delete) */
+.cell-actions {
+    display: flex !important;
+    gap: 8px !important;
+}
+
+.action-icon-btn {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 6px !important;
+    border: none !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.edit-btn {
+    background-color: #e0e7ff !important;
+    color: #4f46e5 !important;
+}
+
+.edit-btn:hover {
+    background-color: #c7d2fe !important;
+}
+
+.delete-btn {
+    background-color: #fee2e2 !important;
+    color: #ef4444 !important;
+}
+
+.delete-btn:hover {
+    background-color: #fecaca !important;
+}
+
+/* 10. Table Footer */
+.datatable-footer {
+    border-top: 1px solid #edf2f7 !important;
+    background-color: #ffffff !important;
+    padding: 16px 24px !important;
+    color: #718096 !important;
+    font-size: 13px !important;
 }

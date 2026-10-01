@@ -1,4 +1,4 @@
-/*! pro-elements - v4.2.0 - 19-08-2026 */
+/*! pro-elements - v4.2.0 - 31-08-2026 */
 "use strict";
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["vendors-node_modules_dompurify_dist_purify_cjs_js"],{
 
@@ -482,8 +482,8 @@ function createDOMPurify() {
   let trustedTypesPolicy;
   let emptyHTML = '';
   // The instance's own internal Trusted Types policy. Unlike a caller-supplied
-  // `TRUSTED_TYPES_POLICY`, this is created at most once — Trusted Types throws
-  // on duplicate policy names — and is the only policy allowed to persist
+  // `TRUSTED_TYPES_POLICY`, this is created at most once вЂ” Trusted Types throws
+  // on duplicate policy names вЂ” and is the only policy allowed to persist
   // across configurations and survive `clearConfig()`.
   let defaultTrustedTypesPolicy;
   let defaultTrustedTypesPolicyResolved = false;
@@ -654,11 +654,11 @@ function createDOMPurify() {
    * properties and JS variables, mitigating attacks that abuse the HTML/DOM spec rules.
    *
    * HTML/DOM spec rules that enable DOM Clobbering:
-   *   - Named Access on Window (§7.3.3)
-   *   - DOM Tree Accessors (§3.1.5)
-   *   - Form Element Parent-Child Relations (§4.10.3)
-   *   - Iframe srcdoc / Nested WindowProxies (§4.8.5)
-   *   - HTMLCollection (§4.2.10.2)
+   *   - Named Access on Window (В§7.3.3)
+   *   - DOM Tree Accessors (В§3.1.5)
+   *   - Form Element Parent-Child Relations (В§4.10.3)
+   *   - Iframe srcdoc / Nested WindowProxies (В§4.8.5)
+   *   - HTMLCollection (В§4.2.10.2)
    *
    * Namespace isolation is implemented by prefixing `id` and `name` attributes
    * with a constant string, i.e., `user-content-`
@@ -676,7 +676,7 @@ function createDOMPurify() {
   let FORBID_CONTENTS = null;
   const DEFAULT_FORBID_CONTENTS = addToSet({}, ['annotation-xml', 'audio', 'colgroup', 'desc', 'foreignobject', 'head', 'iframe', 'math', 'mi', 'mn', 'mo', 'ms', 'mtext', 'noembed', 'noframes', 'noscript', 'plaintext', 'script',
   // <selectedcontent> mirrors the selected <option>'s subtree, cloned by
-  // the UA (customizable <select>) — including any on* handlers — and the
+  // the UA (customizable <select>) вЂ” including any on* handlers вЂ” and the
   // engine re-mirrors synchronously whenever a removal changes which
   // option/selectedcontent is current, even inside DOMPurify's inert
   // DOMParser document. Hoisting its children on removal re-inserts a fresh
@@ -889,8 +889,8 @@ function createDOMPurify() {
     // Re-derive the active Trusted Types policy from this configuration on
     // every parse. The active policy must never be sticky closure state that
     // outlives the config that set it: a caller-supplied policy left in place
-    // after `clearConfig()` — or after a later call that supplied none, or
-    // `TRUSTED_TYPES_POLICY: null` — could sign a subsequent "default"
+    // after `clearConfig()` вЂ” or after a later call that supplied none, or
+    // `TRUSTED_TYPES_POLICY: null` вЂ” could sign a subsequent "default"
     // `RETURN_TRUSTED_TYPE` result with a foreign, possibly unsafe policy.
     // See GHSA-vxr8-fq34-vvx9.
     if (cfg.TRUSTED_TYPES_POLICY) {
@@ -917,16 +917,16 @@ function createDOMPurify() {
       // Explicit opt-out for this call: perform no Trusted Types signing and
       // create nothing (so a strict `trusted-types` CSP that disallows a
       // `dompurify` policy can still call `sanitize` from inside its own
-      // policy — see #1422). Resetting to `undefined` rather than a sticky
+      // policy вЂ” see #1422). Resetting to `undefined` rather than a sticky
       // `null` also drops any previously retained caller policy, so it cannot
       // resurface on a later call, while still allowing the next config-less
       // call to restore the internal default policy. See GHSA-vxr8-fq34-vvx9.
       trustedTypesPolicy = undefined;
       emptyHTML = '';
     } else {
-      // No policy supplied: keep the currently active policy if one is set — a
+      // No policy supplied: keep the currently active policy if one is set вЂ” a
       // previously supplied policy is intentionally sticky across config-less
-      // calls — otherwise fall back to the instance's own internal policy,
+      // calls вЂ” otherwise fall back to the instance's own internal policy,
       // created at most once. (A policy supplied for a *single* call still
       // lingers by design; what must not linger is a policy whose configuration
       // has been torn down via `clearConfig()`, which restores the default.)
@@ -1077,13 +1077,13 @@ function createDOMPurify() {
       // eslint-disable-next-line unicorn/prefer-dom-node-remove
       getParentNode(node).removeChild(node);
     } catch (_) {
-      /* The normal detach failed — this is reached for a parentless node
+      /* The normal detach failed вЂ” this is reached for a parentless node
          (getParentNode() is null, so .removeChild throws). Element.prototype
          .remove() is itself a spec no-op on a parentless node, so a recorded
          "removal" would otherwise hand the caller back an intact,
          payload-bearing node (e.g. a detached IN_PLACE root the mXSS canary or
          the style-with-element-child rule decided to kill). Fail closed by
-         throwing — exactly as a clobbered root does at the IN_PLACE entry —
+         throwing вЂ” exactly as a clobbered root does at the IN_PLACE entry вЂ”
          rather than trying to "neutralize" the node via its own methods.
          Neutralizing would mean calling getAttributeNames()/removeAttribute()
          on the node, both of which a <form> root can clobber via a named child
@@ -1105,9 +1105,9 @@ function createDOMPurify() {
    * _neutralizeRoot
    *
    * Fail-closed teardown of an in-place root after the sanitize walk aborts
-   * (campaign-3 F2). An internal throw mid-walk — e.g. a page-registered
+   * (campaign-3 F2). An internal throw mid-walk вЂ” e.g. a page-registered
    * custom element's reaction detaches a node so `_forceRemove`'s deliberate
-   * parentless guard throws, or any other re-entrant engine mutation — would
+   * parentless guard throws, or any other re-entrant engine mutation вЂ” would
    * otherwise leave the caller's *live* tree half-sanitized, with everything
    * after the abort point still carrying its handlers. There is no safe way
    * to resume the walk (the tree mutated under us), so we strip the root bare:
@@ -1141,7 +1141,7 @@ function createDOMPurify() {
           try {
             root.removeAttribute(name);
           } catch (_) {
-            /* Clobbered removeAttribute — ignore (fail-closed best effort) */
+            /* Clobbered removeAttribute вЂ” ignore (fail-closed best effort) */
           }
         }
       }
@@ -1203,7 +1203,7 @@ function createDOMPurify() {
       try {
         element.removeAttribute(name);
       } catch (_) {
-        /* Clobbered removeAttribute on a doomed node — ignore */
+        /* Clobbered removeAttribute on a doomed node вЂ” ignore */
       }
     }
   };
@@ -1218,13 +1218,13 @@ function createDOMPurify() {
    * handler-bearing original among them (an `<img onerror>`/`<video>` that was
    * loading) keeps its queued resource event, which fires in page scope after
    * sanitize returns. This walks a removed subtree and strips every attribute
-   * the active configuration does not allow — so `on*` handlers are cancelled
+   * the active configuration does not allow вЂ” so `on*` handlers are cancelled
    * through the SAME allowlist that governs kept nodes, not a separate `/^on/`
    * blocklist. Run synchronously before sanitize returns, i.e. before any
    * queued event can fire. Hook-free by design: these nodes leave the output,
    * so firing attribute hooks for them would be surprising. Clobber-safe reads;
    * a doomed clobbered node may shadow `removeAttribute` (its own attributes are
-   * irrelevant — it is discarded — while its non-clobbered descendants, e.g.
+   * irrelevant вЂ” it is discarded вЂ” while its non-clobbered descendants, e.g.
    * the `<img>`, are reached and scrubbed).
    *
    * @param root the root of a removed subtree to neutralise
@@ -1330,7 +1330,7 @@ function createDOMPurify() {
    * Walks text/comment/CDATA/processing-instruction nodes and mutates `.data`
    * in place rather than round-tripping through innerHTML. This preserves
    * descendant node references (important for IN_PLACE callers), avoids a
-   * serialize/reparse cycle, and reads literal character data — which means
+   * serialize/reparse cycle, and reads literal character data вЂ” which means
    * `<%...%>` in text content matches the ERB regex against its real bytes
    * instead of the HTML-entity-escaped form innerHTML would produce.
    *
@@ -1376,7 +1376,7 @@ function createDOMPurify() {
    */
   const _isClobbered = function _isClobbered(element) {
     // Realm-independent tag-name probe. If we can't determine the tag
-    // name at all, we can't reason about clobbering — return false
+    // name at all, we can't reason about clobbering вЂ” return false
     // (the caller's other defences still apply).
     const realTagName = getNodeName ? getNodeName(element) : null;
     if (typeof realTagName !== 'string') {
@@ -1395,8 +1395,8 @@ function createDOMPurify() {
     // NodeType clobbering probe. Cached Node.prototype.nodeType getter
     // returns the integer 1 for any Element regardless of realm; direct
     // read on a clobbered form (e.g. <input name="nodeType">) returns
-    // the named child element. Cheap addition — nodeType is read from
-    // an internal slot, no serialization cost — and removes a residual
+    // the named child element. Cheap addition вЂ” nodeType is read from
+    // an internal slot, no serialization cost вЂ” and removes a residual
     // clobbering surface used by several mXSS / PI / comment branches
     // in _sanitizeElements that compare currentNode.nodeType directly.
     element.nodeType !== getNodeType(element) ||
@@ -1405,7 +1405,7 @@ function createDOMPurify() {
     // form.childNodes from a clobbered form return the named child
     // instead of the real NodeList, so any walk that reads it directly
     // skips the form's real children. Compare the direct read to the
-    // cached Node.prototype getter — when the form's named-property
+    // cached Node.prototype getter вЂ” when the form's named-property
     // getter intercepts the read, the two values differ and we flag
     // the form. This catches every clobbering child type (input,
     // select, etc.) regardless of whether the named child happens to
@@ -1514,7 +1514,7 @@ function createDOMPurify() {
       }
     }
     /* Keep content except for bad-listed elements.
-         Use the cached prototype getters exclusively — the previous code
+         Use the cached prototype getters exclusively вЂ” the previous code
          had `|| currentNode.parentNode` / `|| currentNode.childNodes`
          fallbacks, but the cached getters always return the canonical
          value (or null for a real parent-less node), so the fallback
@@ -1530,14 +1530,14 @@ function createDOMPurify() {
              and sanitises them through the same allowlist pass as every other
              node. The caller built the tree in the live document, so the
              originals carry already-queued resource events (`<img onerror>`,
-             `<video>`/`<audio>` error, lazy/`onload`, …); cloning would leave
+             `<video>`/`<audio>` error, lazy/`onload`, вЂ¦); cloning would leave
              those originals detached but still armed, firing in page scope
              while the returned tree looked clean. Moving is safe in-place: the
              root is pre-validated as an allowed tag and so is never the node
              being removed, which keeps `parentNode` inside the iterator root
              and the relocated child inside the serialised tree.
                       Otherwise (string / DOM-copy paths): clone. The iterator is rooted
-             at — and the result serialised from — `body`, so a restrictive
+             at вЂ” and the result serialised from вЂ” `body`, so a restrictive
              ALLOWED_TAGS that removes `body` itself must leave its content in
              place, which only cloning does; and those paths parse into an
              inert document, so their discarded originals never had a queued
@@ -1591,7 +1591,7 @@ function createDOMPurify() {
        Realm-safe check (GHSA-hpcv-96wg-7vj8): use the cached Node.prototype
        nodeType getter rather than `instanceof Element`, which is realm-
        bound and short-circuits to false for any node minted in a different
-       realm — letting a foreign-realm element with a forbidden namespace
+       realm вЂ” letting a foreign-realm element with a forbidden namespace
        slip past the namespace check entirely. */
     const nt = getNodeType ? getNodeType(currentNode) : currentNode.nodeType;
     if (nt === NODE_TYPE.element && !_checkValidNamespace(currentNode)) {
@@ -1782,7 +1782,7 @@ function createDOMPurify() {
         // Prefix the value and later re-create the attribute with the sanitized value
         value = SANITIZE_NAMED_PROPS_PREFIX + value;
       }
-      // Else: already prefixed, leave the attribute alone — the prefix is
+      // Else: already prefixed, leave the attribute alone вЂ” the prefix is
       // itself the clobbering protection, and re-applying it is incorrect.
       /* Work around a security issue with comments inside attributes */
       if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|script|title|xmp|textarea|noscript|iframe|noembed|noframes)/i, value)) {
@@ -1888,14 +1888,14 @@ function createDOMPurify() {
    *
    * This pass runs once, up front, so the main iteration loop (and the
    * existing _sanitizeShadowDOM template-content recursion) stay
-   * untouched — string-input paths are not affected.
+   * untouched вЂ” string-input paths are not affected.
    *
    * @param root the subtree root to walk for attached shadow roots
    */
   const _sanitizeAttachedShadowRoots = function _sanitizeAttachedShadowRoots(root) {
     /* Iterative (explicit stack) rather than per-child recursion. DOM APIs
        impose no depth cap, so an attacker-shaped tree (JSON/CRDT/editor data
-       built straight into the DOM — the IN_PLACE surface) deeper than the JS
+       built straight into the DOM вЂ” the IN_PLACE surface) deeper than the JS
        call-stack budget would otherwise overflow native recursion here and
        throw at the IN_PLACE entry pre-pass, before a single node is
        sanitized, leaving the caller's live tree untouched (fail-open). See
@@ -1906,7 +1906,7 @@ function createDOMPurify() {
        nested shadow roots are discovered before the outer shadow is
        sanitized (which may remove hosts). Pushes are in reverse of the
        desired processing order (LIFO): template content, then children, then
-       the shadow-sanitize, then the shadow walk — so the order matches the
+       the shadow-sanitize, then the shadow walk вЂ” so the order matches the
        previous recursion exactly. */
     const stack = [{
       node: root,
@@ -1922,7 +1922,7 @@ function createDOMPurify() {
       const node = item.node;
       const nodeType = getNodeType ? getNodeType(node) : node.nodeType;
       const isElement = nodeType === NODE_TYPE.element;
-      /* (pushed last → processed first) Children, snapshotted in reverse so
+      /* (pushed last в†’ processed first) Children, snapshotted in reverse so
          the first child is processed first. Snapshotting matters because a
          hook may detach siblings mid-walk. */
       const childNodes = getChildNodes(node);
@@ -1934,7 +1934,7 @@ function createDOMPurify() {
           });
         }
       }
-      /* (pushed before children → processed after them, matching the old
+      /* (pushed before children в†’ processed after them, matching the old
          "template content last" order) When the node is a <template>,
          descend into its content. */
       if (isElement) {
@@ -2028,12 +2028,12 @@ function createDOMPurify() {
        Writing the IN_PLACE closure variable here leaks under setConfig(),
        where _parseConfig is skipped on later calls: a single string call would
        disable in-place mode for every subsequent node call, returning a
-       sanitized copy while leaving the caller's node — which in-place callers
-       keep using and whose return value they ignore — unsanitized. REPORT-2. */
+       sanitized copy while leaving the caller's node вЂ” which in-place callers
+       keep using and whose return value they ignore вЂ” unsanitized. REPORT-2. */
     const inPlace = IN_PLACE && typeof dirty !== 'string' && _isNode(dirty);
     if (inPlace) {
       /* Do some early pre-sanitization to avoid unsafe root nodes.
-         Read nodeName through the cached prototype getter — a clobbering
+         Read nodeName through the cached prototype getter вЂ” a clobbering
          child named "nodeName" on the form root would otherwise shadow
          the property and let this check skip the root-allowlist
          validation entirely. */
@@ -2113,8 +2113,8 @@ function createDOMPurify() {
        engine/custom-element mutation can detach a node mid-walk so
        `_forceRemove`'s parentless guard throws, aborting the loop. Without the
        barrier the caller's in-place tree would be left half-sanitized with the
-       unvisited tail still armed. On any throw we fail closed — strip the
-       in-place root bare — then rethrow so the existing throw contract is
+       unvisited tail still armed. On any throw we fail closed вЂ” strip the
+       in-place root bare вЂ” then rethrow so the existing throw contract is
        preserved. (String/DOM-copy paths never return the partial body, so the
        propagating throw is already fail-closed there.) */
     try {
@@ -2144,7 +2144,7 @@ function createDOMPurify() {
          resource-event handler that fires in page scope after we return. The
          move-hoist covers only disallowed-tag KEEP_CONTENT removals; strip the
          non-allow-listed attributes off every other removed subtree (clobber,
-         mXSS, namespace, comments, KEEP_CONTENT:false, …) so those handlers are
+         mXSS, namespace, comments, KEEP_CONTENT:false, вЂ¦) so those handlers are
          cancelled before any event can fire. Runs synchronously, pre-return. */
       arrayForEach(DOMPurify.removed, entry => {
         if (entry.element) {
@@ -2207,7 +2207,7 @@ function createDOMPurify() {
     SET_CONFIG_ALLOWED_ATTR = null;
     // Drop any caller-supplied Trusted Types policy so it cannot poison later
     // `RETURN_TRUSTED_TYPE` output. The internal default policy (cached, and
-    // never recreated — Trusted Types throws on duplicate names) is restored by
+    // never recreated вЂ” Trusted Types throws on duplicate names) is restored by
     // the next `_parseConfig`. See GHSA-vxr8-fq34-vvx9.
     trustedTypesPolicy = defaultTrustedTypesPolicy;
     emptyHTML = '';

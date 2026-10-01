@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Dior Medical - Patient Portal & Dashboard
- * Plugin URI:  https://diormedical.com
+ * Plugin URI:  https://vultureconcepts.com
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
  * Version:     2.2.6
- * Author:      Dior Medical Team
- * Author URI:  https://diormedical.com
+ * Author:      Vulture Concepts
+ * Author URI:  https://vultureconcepts.com/
  * Text Domain: dior-medical
  */
 
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define( 'DIOR_PORTAL_VERSION', '2.2.6' );
+define('DIOR_PORTAL_VERSION', '2.2.6');
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
 define('DIOR_PORTAL_URL', plugin_dir_url(__FILE__));
 
@@ -1363,32 +1363,32 @@ class Dior_Medical_Auth
                 if (data && data.length) {
                     data.forEach(doc => {
                         html += `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(${doc.id}, '${doc.name.replace(/'/g, "\\'")}')">
-                                                                            <h4>${doc.name}</h4>
-                                                                            <p>${doc.speciality}</p>
-                                                                        </div>`;
+                                                                                            <h4>${doc.name}</h4>
+                                                                                            <p>${doc.speciality}</p>
+                                                                                        </div>`;
                     });
                 } else {
                     html = `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                        <h4>Dr. James Chen, DO</h4>
-                                                                        <p>Primary Care & Urgent Care</p>
-                                                                    </div>
-                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                        <h4>Dr. Marcus Sterling, DO</h4>
-                                                                        <p>Urgent Care Physician</p>
-                                                                    </div>`;
+                                                                                        <h4>Dr. James Chen, DO</h4>
+                                                                                        <p>Primary Care & Urgent Care</p>
+                                                                                    </div>
+                                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
+                                                                                        <h4>Dr. Marcus Sterling, DO</h4>
+                                                                                        <p>Urgent Care Physician</p>
+                                                                                    </div>`;
                 }
                 document.getElementById('doctors-list').innerHTML = html;
             })
             .catch(() => {
                 document.getElementById('doctors-list').innerHTML = `
-                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                <h4>Dr. James Chen, DO</h4>
-                                                                <p>Primary Care & Urgent Care</p>
-                                                            </div>
-                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                <h4>Dr. Marcus Sterling, DO</h4>
-                                                                <p>Urgent Care Physician</p>
-                                                            </div>`;
+                                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
+                                                                                <h4>Dr. James Chen, DO</h4>
+                                                                                <p>Primary Care & Urgent Care</p>
+                                                                            </div>
+                                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
+                                                                                <h4>Dr. Marcus Sterling, DO</h4>
+                                                                                <p>Urgent Care Physician</p>
+                                                                            </div>`;
             });
     }
 
@@ -1455,12 +1455,12 @@ class Dior_Medical_Auth
         diorBookingState.time = time;
 
         document.getElementById('booking-summary').innerHTML = `
-                                                    <p><strong>Treatment:</strong> ${diorBookingState.departmentName || 'Telehealth Urgent Care'}</p>
-                                                    <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
-                                                    <p><strong>Date:</strong> ${diorBookingState.date}</p>
-                                                    <p><strong>Time:</strong> ${diorBookingState.time}</p>
-                                                    <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
-                                                `;
+                                                                    <p><strong>Treatment:</strong> ${diorBookingState.departmentName || 'Telehealth Urgent Care'}</p>
+                                                                    <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
+                                                                    <p><strong>Date:</strong> ${diorBookingState.date}</p>
+                                                                    <p><strong>Time:</strong> ${diorBookingState.time}</p>
+                                                                    <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
+                                                                `;
         diorBookingGoToStep(4);
     }
 
@@ -2160,7 +2160,7 @@ class Dior_Medical_Auth
         $latest_rx = !empty($prescriptions) ? $prescriptions[0] : null;
 
         ob_start();
-?>
+        ?>
 <?php include DIOR_PORTAL_PATH . 'templates/patient-dashboard.php'; ?>
 <?php
                 return ob_get_clean();
@@ -3357,38 +3357,38 @@ class Dior_Medical_Auth
 
             if (!$existing_appt) {
                 $created_result = Dior_Appointment_Service::book_appointment([
-                'patient_id' => $patient_user_id,
-                'doctor_id' => $docbooker_doctor_id ?: $doctor_user_id,
-                'doctor_user_id' => $doctor_user_id,
-                'provider' => $doctor_name,
-                'condition' => $notes ?: 'General Telehealth Consultation',
-                'visit_type' => 'Video Visit (HD)',
-                'appt_date' => $date,
-                'appt_time' => $time,
-                'join_url' => 'https://zoom.us/join',
-                'payment_status' => 'Paid',
-                'notes' => $notes,
-                'booking_id' => $booking_id
+                    'patient_id' => $patient_user_id,
+                    'doctor_id' => $docbooker_doctor_id ?: $doctor_user_id,
+                    'doctor_user_id' => $doctor_user_id,
+                    'provider' => $doctor_name,
+                    'condition' => $notes ?: 'General Telehealth Consultation',
+                    'visit_type' => 'Video Visit (HD)',
+                    'appt_date' => $date,
+                    'appt_time' => $time,
+                    'join_url' => 'https://zoom.us/join',
+                    'payment_status' => 'Paid',
+                    'notes' => $notes,
+                    'booking_id' => $booking_id
                 ]);
                 $docbooker_created_appointment = !is_wp_error($created_result);
             }
 
             // 2. Add Patient Notification only when this hook created the canonical record.
             if ($docbooker_created_appointment) {
-            $p_notifs = Dior_Patient_Portal_Data::get_patient_notifications($patient_user_id);
-            array_unshift($p_notifs, [
-                'id' => 'NOTIF-' . time() . '-' . rand(100, 999),
-                'type' => 'appointment',
-                'icon' => 'fa-calendar-check',
-                'title' => 'Appointment Booked Successfully',
-                'message' => 'Your visit with ' . $doctor_name . ' is confirmed for ' . $date . ' at ' . $time . '.',
-                'time' => 'Just now',
-                'timestamp' => time(),
-                'created_at' => current_time('mysql'),
-                'is_read' => false,
-                'action_url' => '#tab=appointments'
-            ]);
-            update_user_meta($patient_user_id, 'dior_notifications', $p_notifs);
+                $p_notifs = Dior_Patient_Portal_Data::get_patient_notifications($patient_user_id);
+                array_unshift($p_notifs, [
+                    'id' => 'NOTIF-' . time() . '-' . rand(100, 999),
+                    'type' => 'appointment',
+                    'icon' => 'fa-calendar-check',
+                    'title' => 'Appointment Booked Successfully',
+                    'message' => 'Your visit with ' . $doctor_name . ' is confirmed for ' . $date . ' at ' . $time . '.',
+                    'time' => 'Just now',
+                    'timestamp' => time(),
+                    'created_at' => current_time('mysql'),
+                    'is_read' => false,
+                    'action_url' => '#tab=appointments'
+                ]);
+                update_user_meta($patient_user_id, 'dior_notifications', $p_notifs);
             }
         }
 

@@ -55,13 +55,19 @@
                                         </thead>
                                         <tbody id="dior-rx-tbody">
                                             <?php
-                                            $patient_rx_rows = is_array($prescriptions ?? []) ? $prescriptions : [];
+                                            global $wpdb;
+                                            $current_user = wp_get_current_user();
+                                            $patient_rx_rows = $wpdb->get_results($wpdb->prepare(
+                                                "SELECT * FROM {$wpdb->prefix}dior_prescriptions WHERE patient_id = %s OR patient_id = %d OR patient_name = %s ORDER BY id DESC",
+                                                (string)$current_user->ID, $current_user->ID, $current_user->display_name
+                                            ), ARRAY_A);
+                                            
                                             foreach ($patient_rx_rows as $rx):
-                                                $rx_id = $rx['id'] ?? ($rx['order_id'] ?? '—');
-                                                $rx_name = $rx['name'] ?? ($rx['medication'] ?? 'Prescription');
-                                                $rx_doctor = $rx['prescribed_by'] ?? 'Attending Physician';
-                                                $rx_date = $rx['date_prescribed'] ?? ($rx['date'] ?? '—');
-                                                $rx_disease = $rx['condition'] ?? ($rx['diagnosis'] ?? ($rx['notes'] ?? '—'));
+                                                $rx_id = $rx['prescription_id'] ?? '—';
+                                                $rx_name = $rx['medications'] ?? 'Prescription';
+                                                $rx_doctor = $rx['doctor_name'] ?? 'Attending Physician';
+                                                $rx_date = $rx['prescription_date'] ?? '—';
+                                                $rx_disease = $rx['dosage'] ?? '—';
                                             ?>
                                             <tr>
                                                 <td><span class="cell-text"><?php echo esc_html($rx_id); ?></span></td>

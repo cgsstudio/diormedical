@@ -1,5 +1,9 @@
 # PRO Elements - by PROElements.org
 
+#### 4.2.3 - 2026-08-31
+
+* Tweak: Updated WordPress compatibility to version 7.1
+
 #### 4.2.2 - 2026-08-19
 
 * Fix: Improved code security enforcement in Dynamic Tags

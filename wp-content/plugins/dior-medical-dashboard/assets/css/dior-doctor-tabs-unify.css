@@ -115,6 +115,10 @@
 /* ----- 1280 laptop: shrink type, keep layout ----- */
 @media (max-width: 1280px) {
 
+    .dior-doctor-wrap #dior-doc-content {
+        padding: 4px !important;
+    }
+
     .dior-doctor-wrap .va-title-box h2,
     .dior-doctor-wrap .app-page-title,
     .dior-doctor-wrap .table-title,

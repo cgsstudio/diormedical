@@ -1,0 +1,538 @@
+/* ==========================================================================
+   Notifications Tab CSS — Dior Medical Dashboard
+   ========================================================================== */
+
+/* Grid System for Notifications Tab */
+.notifications-tab-panel .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin-left: -12px !important;
+    margin-right: -12px !important;
+}
+
+.notifications-tab-panel [class*="col-"] {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    box-sizing: border-box !important;
+}
+
+.notifications-tab-panel .col-12 {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+}
+
+@media (min-width: 1200px) {
+    .notifications-tab-panel .col-xl-3 {
+        width: 25% !important;
+        flex: 0 0 25% !important;
+        max-width: 25% !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .notifications-tab-panel .col-lg-6,
+    .notifications-tab-panel .col-md-6 {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+    .notifications-tab-panel .col-md-7 {
+        width: 58.333% !important;
+        flex: 0 0 58.333% !important;
+        max-width: 58.333% !important;
+    }
+    .notifications-tab-panel .col-md-5 {
+        width: 41.666% !important;
+        flex: 0 0 41.666% !important;
+        max-width: 41.666% !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .notifications-tab-panel .col-md-7 {
+        width: 58.333% !important;
+        flex: 0 0 58.333% !important;
+        max-width: 58.333% !important;
+    }
+    .notifications-tab-panel .col-md-5 {
+        width: 41.666% !important;
+        flex: 0 0 41.666% !important;
+        max-width: 41.666% !important;
+    }
+    .notifications-tab-panel .col-md-6 {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .notifications-tab-panel .col-sm-12,
+    .notifications-tab-panel .col-md-7,
+    .notifications-tab-panel .col-md-5,
+    .notifications-tab-panel .col-md-6 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* 1. Stat Cards */
+.notifications-tab-panel .stat-card {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04) !important;
+    border: 1px solid #f1f5f9 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+}
+
+.notifications-tab-panel .stat-glow {
+    position: absolute !important;
+    top: -30px !important;
+    right: -30px !important;
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 50% !important;
+    filter: blur(40px) !important;
+    opacity: 0.25 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+}
+
+.notifications-tab-panel .stat-inner {
+    position: relative !important;
+    z-index: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+
+.notifications-tab-panel .stat-label {
+    font-size: 12px !important;
+    color: #64748b !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    display: block !important;
+    margin-bottom: 4px !important;
+}
+
+.notifications-tab-panel .stat-value {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    margin: 4px 0 0 0 !important;
+}
+
+.notifications-tab-panel .stat-icon-wrapper {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+}
+
+.notifications-tab-panel .stat-icon-wrapper i {
+    font-size: 18px !important;
+}
+
+.notifications-tab-panel .stat-footer {
+    margin-top: auto !important;
+    padding-top: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.notifications-tab-panel .stat-badge {
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    line-height: 1 !important;
+}
+
+.notifications-tab-panel .stat-subtext {
+    font-size: 12px !important;
+    color: #94a3b8 !important;
+    font-weight: 500 !important;
+}
+
+/* Color Variants for Stat Cards */
+.notifications-tab-panel .stat-card-amber .stat-glow { background: #f59e0b !important; }
+.notifications-tab-panel .text-amber { color: #d97706 !important; }
+.notifications-tab-panel .stat-card-amber .stat-icon-wrapper { background: #fef3c7 !important; color: #d97706 !important; }
+.notifications-tab-panel .badge-amber { background: #fef3c7 !important; color: #b45309 !important; }
+
+.notifications-tab-panel .stat-card-rose .stat-glow { background: #e11d48 !important; }
+.notifications-tab-panel .text-rose { color: #e11d48 !important; }
+.notifications-tab-panel .stat-card-rose .stat-icon-wrapper { background: #ffe4e6 !important; color: #e11d48 !important; }
+.notifications-tab-panel .badge-rose { background: #ffe4e6 !important; color: #be123c !important; }
+
+.notifications-tab-panel .stat-card-indigo .stat-glow { background: #4f46e5 !important; }
+.notifications-tab-panel .text-indigo { color: #4f46e5 !important; }
+.notifications-tab-panel .stat-card-indigo .stat-icon-wrapper { background: #e0e7ff !important; color: #4f46e5 !important; }
+.notifications-tab-panel .badge-indigo { background: #e0e7ff !important; color: #4338ca !important; }
+
+.notifications-tab-panel .stat-card-emerald .stat-glow { background: #10b981 !important; }
+.notifications-tab-panel .text-emerald { color: #059669 !important; }
+.notifications-tab-panel .stat-card-emerald .stat-icon-wrapper { background: #d1fae5 !important; color: #059669 !important; }
+.notifications-tab-panel .badge-emerald { background: #d1fae5 !important; color: #047857 !important; }
+
+/* 2. Navigation & Cards */
+.notifications-tab-panel .main-feed-card {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    border: 1px solid #f1f5f9 !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
+    overflow: hidden !important;
+}
+
+.notifications-tab-panel .segmented-nav {
+    display: inline-flex !important;
+    background: #f1f5f9 !important;
+    padding: 4px !important;
+    border-radius: 12px !important;
+    gap: 4px !important;
+}
+
+.notifications-tab-panel .segmented-tab {
+    border: none !important;
+    background: transparent !important;
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    height: auto !important;
+    width: auto !important;
+}
+
+.notifications-tab-panel .segmented-tab.active {
+    background: #ffffff !important;
+    color: #4f46e5 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+
+.notifications-tab-panel .count-pill {
+    background: #e2e8f0 !important;
+    color: #475569 !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+}
+
+.notifications-tab-panel .segmented-tab.active .count-pill {
+    background: #e0e7ff !important;
+    color: #4f46e5 !important;
+}
+
+.notifications-tab-panel .btn-primary-gradient {
+    background: linear-gradient(135deg, #4f46e5, #3b82f6) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 18px !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
+    height: auto !important;
+    width: auto !important;
+}
+
+.notifications-tab-panel .btn-primary-gradient:hover {
+    background: linear-gradient(135deg, #4338ca, #2563eb) !important;
+    color: #ffffff !important;
+}
+
+.notifications-tab-panel .search-input-group {
+    background: #f8fafc !important;
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+.notifications-tab-panel .search-input-group .input-group-text {
+    background: transparent !important;
+    border: none !important;
+    color: #94a3b8 !important;
+    padding: 8px 12px !important;
+}
+
+.notifications-tab-panel .search-input-group .form-control {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-size: 13px !important;
+    padding: 8px 12px 8px 0 !important;
+    width: 100% !important;
+    color: #334155 !important;
+}
+
+.notifications-tab-panel .filter-select {
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    font-size: 13px !important;
+    color: #475569 !important;
+    padding: 8px 12px !important;
+    background-color: #ffffff !important;
+    width: 100% !important;
+}
+
+/* 3. Alerts & Announcements Feed Cards */
+.notifications-tab-panel .alerts-feed-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+}
+
+.notifications-tab-panel .alert-item-card {
+    background: #ffffff !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    position: relative !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 5px solid #cbd5e1 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02) !important;
+}
+
+.notifications-tab-panel .alert-type-warning {
+    background: #fffdf5 !important;
+    border-left-color: #f59e0b !important;
+}
+
+.notifications-tab-panel .alert-type-success {
+    background: #f4fbf7 !important;
+    border-left-color: #10b981 !important;
+}
+
+.notifications-tab-panel .alert-type-danger {
+    background: #fef8f8 !important;
+    border-left-color: #ef4444 !important;
+}
+
+.notifications-tab-panel .alert-item-title {
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    font-size: 15px !important;
+    margin: 0 !important;
+}
+
+.notifications-tab-panel .badge-priority, 
+.notifications-tab-panel .badge-status {
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    line-height: 1 !important;
+}
+
+.notifications-tab-panel .status-dot {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    display: inline-block !important;
+}
+
+.notifications-tab-panel .badge-priority-high { background: #ffedd5 !important; color: #ea580c !important; }
+.notifications-tab-panel .badge-priority-high .status-dot { background: #ea580c !important; }
+
+.notifications-tab-panel .badge-priority-medium { background: #dbeafe !important; color: #2563eb !important; }
+.notifications-tab-panel .badge-priority-medium .status-dot { background: #2563eb !important; }
+
+.notifications-tab-panel .badge-priority-critical { background: #fee2e2 !important; color: #dc2626 !important; }
+.notifications-tab-panel .badge-priority-critical .status-dot { background: #dc2626 !important; }
+
+.notifications-tab-panel .badge-priority-low { background: #f1f5f9 !important; color: #64748b !important; }
+.notifications-tab-panel .badge-priority-low .status-dot { background: #64748b !important; }
+
+.notifications-tab-panel .badge-status-active { background: #d1fae5 !important; color: #059669 !important; }
+.notifications-tab-panel .badge-status-active .status-dot { background: #059669 !important; }
+
+.notifications-tab-panel .btn-icon-action {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #64748b !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    font-size: 13px !important;
+}
+
+.notifications-tab-panel .btn-icon-action:hover {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+
+.notifications-tab-panel .alert-item-message {
+    font-size: 13.5px !important;
+    color: #475569 !important;
+    line-height: 1.5 !important;
+    margin-bottom: 12px !important;
+}
+
+.notifications-tab-panel .meta-tag {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 12px !important;
+    color: #64748b !important;
+}
+
+.notifications-tab-panel .dismissible-chip {
+    background: #e0e7ff !important;
+    color: #4f46e5 !important;
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+}
+
+
+/* 4. System Notifications Feed Rows */
+.notifications-tab-panel .notifications-list-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.notifications-tab-panel .notification-item-row {
+    display: flex !important;
+    padding: 18px 24px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    position: relative !important;
+    background: #ffffff !important;
+    align-items: flex-start !important;
+}
+
+.notifications-tab-panel .notification-item-row:hover {
+    background: #f8fafc !important;
+}
+
+.notifications-tab-panel .is-unread-row {
+    background: #f8fafc !important;
+}
+
+.notifications-tab-panel .unread-strip {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 4px !important;
+    background: #4f46e5 !important;
+}
+
+.notifications-tab-panel .type-icon-wrapper {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-right: 16px !important;
+    font-size: 15px !important;
+    flex-shrink: 0 !important;
+}
+
+.notifications-tab-panel .notification-type-user .type-icon-wrapper { background: #e0e7ff !important; color: #4f46e5 !important; }
+.notifications-tab-panel .notification-type-security .type-icon-wrapper { background: #fee2e2 !important; color: #ef4444 !important; }
+.notifications-tab-panel .notification-type-appointment .type-icon-wrapper { background: #dcfce7 !important; color: #10b981 !important; }
+.notifications-tab-panel .notification-type-system .type-icon-wrapper { background: #fef3c7 !important; color: #f59e0b !important; }
+.notifications-tab-panel .notification-type-billing .type-icon-wrapper { background: #dcfce7 !important; color: #10b981 !important; }
+.notifications-tab-panel .notification-type-update .type-icon-wrapper { background: #e0e7ff !important; color: #4f46e5 !important; }
+
+.notifications-tab-panel .notification-title {
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    font-size: 14.5px !important;
+    margin: 0 !important;
+}
+
+.notifications-tab-panel .timestamp-tag {
+    font-size: 12px !important;
+    color: #94a3b8 !important;
+}
+
+.notifications-tab-panel .notification-text {
+    font-size: 13.5px !important;
+    color: #475569 !important;
+    margin-top: 4px !important;
+    margin-bottom: 8px !important;
+    line-height: 1.5 !important;
+}
+
+.notifications-tab-panel .btn-inline-action {
+    background: #e0e7ff !important;
+    color: #4f46e5 !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    padding: 5px 12px !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    width: auto !important;
+    max-width: fit-content !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+    box-shadow: none !important;
+}
+
+.notifications-tab-panel .btn-inline-action:hover {
+    background: #c7d2fe !important;
+    color: #4338ca !important;
+}
+
+.notifications-tab-panel .btn-outline-action {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    padding: 6px 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    cursor: pointer !important;
+}
+
+.notifications-tab-panel .unread-count-chip {
+    background: #fee2e2 !important;
+    color: #ef4444 !important;
+    padding: 3px 9px !important;
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+}
