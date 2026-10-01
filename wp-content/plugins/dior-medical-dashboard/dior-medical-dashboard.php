@@ -780,7 +780,7 @@ class Dior_Medical_Auth
             'dior-dashboard-js',
             DIOR_PORTAL_URL . 'assets/js/dior-dashboard.js',
             ['jquery', 'sweetalert2', 'html2pdf'],
-            $js_ver,
+            time(),
             true
         );
 
@@ -800,7 +800,7 @@ class Dior_Medical_Auth
             'dior-patient-dashboard-page-js',
             DIOR_PORTAL_URL . 'assets/js/dior-patient-dashboard.js',
             ['dior-dashboard-js'],
-            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-dashboard.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-dashboard.js') : DIOR_PORTAL_VERSION,
+            time(),
             true
         );
         wp_enqueue_script(

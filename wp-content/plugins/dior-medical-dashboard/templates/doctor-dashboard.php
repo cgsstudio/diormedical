@@ -319,6 +319,7 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/view-appointment.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/book-appointment.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/all-patients.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/add-patient.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/edit-patient.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-records.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-profile.php'; ?>

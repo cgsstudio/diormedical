@@ -94,15 +94,12 @@
     overflow-wrap: anywhere;
 }
 
-/* Settings/profile image: never let the source image dictate card height. */
-.dior-doctor-wrap #tab-doc-settings img,
+/* Settings/profile image constraints (scoped to avoid forcing 180px on avatar edit widgets). */
 .dior-doctor-wrap #tab-doc-settings .dior-profile-avatar,
 .dior-doctor-wrap #tab-doc-settings .dior-avatar-preview {
-    max-width: 180px !important;
-    max-height: 180px !important;
-    width: 180px;
-    height: 180px;
-    object-fit: cover !important;
+    max-width: 180px;
+    max-height: 180px;
+    object-fit: cover;
 }
 .dior-doctor-wrap #tab-doc-settings .dior-settings-card,
 .dior-doctor-wrap #tab-doc-settings .dior-profile-card {
@@ -110,21 +107,11 @@
     overflow: hidden;
 }
 
-/* Existing inline image sizes inside profile/source cards are constrained. */
-.dior-doctor-wrap #tab-doc-settings img[style*="width"],
-.dior-doctor-wrap #tab-doc-settings img[style*="height"] {
-    max-width: 180px !important;
-    max-height: 180px !important;
-    object-fit: cover !important;
-}
-
 /* Prevent giant decorative headings from overflowing. */
 .dior-doctor-wrap .dior-page-watermark,
 .dior-doctor-wrap .page-watermark,
 .dior-doctor-wrap .dior-big-title {
-    max-width: 100%;
-    overflow: hidden;
-    line-height: .95;
+    display: none !important;
 }
 
 /* Cards and tables should never force the whole dashboard wider than viewport. */

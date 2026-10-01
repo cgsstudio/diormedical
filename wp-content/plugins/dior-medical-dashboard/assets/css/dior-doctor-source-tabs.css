@@ -374,27 +374,17 @@
     gap: 12px;
 }
 
-/* Settings profile image must never use the source image's native dimensions. */
+/* Settings profile header card styles. */
 .dior-doctor-wrap .profile-header-card .profile-avatar-img,
 .dior-doctor-wrap .profile-header-card .avatar-edit-wrapper img {
-    width: 104px !important;
-    height: 104px !important;
-    max-width: 104px !important;
-    max-height: 104px !important;
-    min-width: 104px !important;
-    min-height: 104px !important;
     object-fit: cover !important;
-    display: block !important;
     border-radius: 50% !important;
 }
 
 .dior-doctor-wrap .profile-header-card .profile-cover-gradient {
-    height: 86px !important;
-    border-radius: 16px 16px 0 0;
-    background: linear-gradient(135deg, #2c6cb1, #174d86) !important;
+    border-radius: 14px 14px 0 0;
 }
 
-.dior-doctor-wrap .profile-header-card .avatar-edit-wrapper { margin-top: -52px; }
 .dior-doctor-wrap .profile-header-card .card-body { position: relative; }
 
 @media (max-width: 1200px) {

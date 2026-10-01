@@ -804,7 +804,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 const tabId = this.getAttribute('data-tab');
-                switchTab(tabId);
+                if (typeof window.diorSwitchTab === 'function') {
+                    window.diorSwitchTab(tabId);
+                } else {
+                    switchTab(tabId);
+                }
             });
         });
 
@@ -814,7 +818,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
             if (target) {
                 e.preventDefault();
                 const tabId = target.getAttribute('data-switch-tab');
-                switchTab(tabId);
+                if (typeof window.diorSwitchTab === 'function') {
+                    window.diorSwitchTab(tabId);
+                } else {
+                    switchTab(tabId);
+                }
                 // Also close notif dropdown if open
                 const notifDropdown = document.getElementById('dior-notif-dropdown');
                 if (notifDropdown) notifDropdown.classList.remove('open');
@@ -830,14 +838,23 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
             if (!btn || !appWrap.contains(btn)) return;
             if (btn.closest('.dior-nav-item-has-children')) return;
             e.preventDefault();
-            switchTab(btn.getAttribute('data-tab'));
+            const tabId = btn.getAttribute('data-tab');
+            if (typeof window.diorSwitchTab === 'function') {
+                window.diorSwitchTab(tabId);
+            } else {
+                switchTab(tabId);
+            }
         });
 
         // Deep linking via URL hash & hashchange listener
         function handleUrlHash() {
             if (window.location.hash && window.location.hash.startsWith('#tab=')) {
                 const hashTab = window.location.hash.replace('#tab=', '');
-                switchTab(hashTab);
+                if (typeof window.diorSwitchTab === 'function') {
+                    window.diorSwitchTab(hashTab);
+                } else {
+                    switchTab(hashTab);
+                }
             }
         }
         handleUrlHash();
