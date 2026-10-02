@@ -1,4 +1,18 @@
 <section class="dior-tab-panel" id="tab-appointments">
+    <!-- Breadcrumb Header -->
+    <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
+        <div>
+            <h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Book Appointment</h4>
+        </div>
+        <div>
+            <ul class="va-breadcrumb-list">
+                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><span style="color:#94A3B8;">/</span></li>
+                <li class="active"><span>Book Appointment</span></li>
+            </ul>
+        </div>
+    </div>
+
                 <?php
                     // Robust date normalizer: handles Y-m-d, d-m-Y, m-d-Y, d/m/Y etc.
                     if (!function_exists('dior_normalize_date')) {
@@ -239,8 +253,8 @@
 
                         <!-- 2. Today Appointments -->
                         <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-today">
-                            <div class="master-table-wrapper">
-                                <div class="master-table-container">
+                            <div class="va-table-wrapper">
+                                <div class="va-table-wrapper">
                                     <div class="master-table-card">
                                         <div class="master-table-header">
                                             <div class="header-content">
@@ -265,7 +279,7 @@
                                             </div>
                                         </div>
                                         <div class="table-content">
-                                            <table class="master-modern-table" id="dior-today-appointments-table">
+                                            <table class="va-table" id="dior-today-appointments-table">
                                                 <thead>
                                                     <tr>
                                                         <th>DOCTOR <i class="fa-solid fa-sort"></i></th>
@@ -332,8 +346,8 @@
 
                         <!-- 3. Upcoming Appointments -->
                         <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-upcoming">
-                            <div class="master-table-wrapper">
-                                <div class="master-table-container">
+                            <div class="va-table-wrapper">
+                                <div class="va-table-wrapper">
                                     <div class="master-table-card">
                                         <div class="master-table-header">
                                             <div class="header-content">
@@ -364,7 +378,7 @@
                                             </div>
                                         </div>
                                         <div class="table-content">
-                                            <table class="master-modern-table" id="dior-upcoming-appointments-table">
+                                            <table class="va-table" id="dior-upcoming-appointments-table">
                                                 <thead>
                                                     <tr>
                                                         <th class="dior-ic-5c9987d36c">
@@ -446,8 +460,8 @@
                         <!-- 4. Past Appointments -->
                         <!-- 4. Past Appointments -->
                         <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-past">
-                            <div class="master-table-wrapper">
-                                <div class="master-table-container">
+                            <div class="va-table-wrapper">
+                                <div class="va-table-wrapper">
                                     <div class="master-table-card">
                                         <div class="master-table-header">
                                             <div class="header-content">
@@ -472,7 +486,7 @@
                                             </div>
                                         </div>
                                         <div class="table-content">
-                                            <table class="master-modern-table" id="dior-past-appointments-table">
+                                            <table class="va-table" id="dior-past-appointments-table">
                                                 <thead>
                                                     <tr>
                                                         <th>DOCTOR <i class="fa-solid fa-sort"></i></th>

@@ -808,6 +808,12 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') : DIOR_PORTAL_VERSION
         );
         wp_enqueue_style(
+            'dior-view-appointment-css',
+            DIOR_PORTAL_URL . 'assets/css/view-appointment.css',
+            ['dior-doctor-source-tabs'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/view-appointment.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/view-appointment.css') : DIOR_PORTAL_VERSION
+        );
+        wp_enqueue_style(
             'dior-static-responsive-fix',
             DIOR_PORTAL_URL . 'assets/css/dior-static-responsive-fix.css',
             ['dior-doctor-source-tabs'],

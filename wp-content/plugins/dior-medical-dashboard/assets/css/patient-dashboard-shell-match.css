@@ -102,6 +102,10 @@
 .dior-patient-portal-wrap .dior-side-nav .grp {
     padding: 0 !important;
     margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
 }
 
 .dior-patient-portal-wrap .dior-side-nav .dior-nav-btn {
@@ -354,7 +358,7 @@
    Main content shell
    ================================================================ */
 .dior-patient-portal-wrap .dior-tab-container {
-    padding: 0 !important;
+    padding: 20px 28px 36px !important;
     background: var(--patient-bg) !important;
 }
 
@@ -402,6 +406,10 @@
 @media (max-width: 767px) {
     .dior-patient-portal-wrap .dior-topbar {
         padding: 0 12px !important;
+    }
+    
+    .dior-patient-portal-wrap .dior-tab-container {
+        padding: 15px !important;
     }
 
     .dior-patient-portal-wrap .dior-top-search {
