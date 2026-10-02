@@ -1,24 +1,5 @@
 <section class="dior-tab-panel" id="tab-doc-appointments" style="display: none; background-color: #f8fafc; padding: 20px; position: relative; overflow: hidden;">
     
-    <!-- Hide Watermark & Pseudo Elements -->
-    <style>
-    #tab-doc-appointments .dior-page-watermark,
-    #tab-doc-appointments .page-watermark,
-    #tab-doc-appointments .dior-big-title,
-    #tab-doc-appointments .breadcrumb-title h4::after,
-    #tab-doc-appointments .page-title::after,
-    .dior-doctor-wrap #tab-doc-appointments .dior-page-watermark,
-    .dior-doctor-wrap #tab-doc-appointments .page-watermark,
-    .dior-doctor-wrap #tab-doc-appointments .dior-big-title,
-    .dior-doctor-wrap #tab-doc-appointments .breadcrumb-title h4::after,
-    .dior-doctor-wrap #tab-doc-appointments .page-title::after {
-        display: none !important;
-        content: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-    }
-    </style>
-
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; position: relative; z-index: 5;">
         <div>
@@ -98,105 +79,7 @@
 
                     <!-- Calendar Grid Matrix -->
                     <div class="dior-cal-grid-wrapper" style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #ffffff;">
-                        
-                        <!-- Day Headers -->
-                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); background: #ffffff; border-bottom: 1px solid #e2e8f0;">
-                            <div class="cal-day-header">Sun</div>
-                            <div class="cal-day-header">Mon</div>
-                            <div class="cal-day-header">Tue</div>
-                            <div class="cal-day-header">Wed</div>
-                            <div class="cal-day-header">Thu</div>
-                            <div class="cal-day-header">Fri</div>
-                            <div class="cal-day-header">Sat</div>
-                        </div>
-
-                        <!-- Days Grid Matrix (6 Rows x 7 Cols) -->
-                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 105px;">
-                            
-                            <!-- Row 1: Sep 27 - Oct 3 -->
-                            <div class="cal-cell other-month">
-                                <div class="cal-cell-top"><span class="cal-num">27</span></div>
-                                <div class="cal-event-bar event-red">12a Go to Delhi</div>
-                            </div>
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">28</span></div></div>
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">29</span></div></div>
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">30</span></div></div>
-                            <div class="cal-cell is-today">
-                                <div class="cal-cell-top"><span class="cal-num today-badge">1</span></div>
-                                <div class="cal-event-bar event-green mb-1">12a All Day Event</div>
-                                <div class="cal-event-bar event-blue">11a Lunch</div>
-                            </div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">2</span></div></div>
-                            <div class="cal-cell">
-                                <div class="cal-cell-top"><span class="cal-num">3</span></div>
-                                <div class="cal-event-bar event-green">12:30p Meeting</div>
-                            </div>
-
-                            <!-- Row 2: Oct 4 - Oct 10 -->
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">4</span></div></div>
-                            <div class="cal-cell">
-                                <div class="cal-cell-top"><span class="cal-num">5</span></div>
-                                <div class="cal-event-bar event-orange">12p Shopping</div>
-                            </div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">6</span></div></div>
-                            <div class="cal-cell">
-                                <div class="cal-cell-top"><span class="cal-num">7</span></div>
-                                <div class="cal-event-bar event-cyan">10a Get To Gather</div>
-                            </div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">8</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">9</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">10</span></div></div>
-
-                            <!-- Row 3: Oct 11 - Oct 17 -->
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">11</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">12</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">13</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">14</span></div></div>
-                            <div class="cal-cell">
-                                <div class="cal-cell-top"><span class="cal-num">15</span></div>
-                                <div class="cal-event-bar event-green">10:30a Meeting</div>
-                            </div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">16</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">17</span></div></div>
-
-                            <!-- Row 4: Oct 18 - Oct 24 -->
-                            <div class="cal-cell">
-                                <div class="cal-cell-top"><span class="cal-num">18</span></div>
-                                <div class="cal-event-bar event-orange">7p Birthday Party</div>
-                            </div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">19</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">20</span></div></div>
-                            <div class="cal-cell">
-                                <div class="cal-cell-top"><span class="cal-num">21</span></div>
-                                <div class="cal-event-bar event-cyan">10a Collage Party</div>
-                            </div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">22</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">23</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">24</span></div></div>
-
-                            <!-- Row 5: Oct 25 - Oct 31 -->
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">25</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">26</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">27</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">28</span></div></div>
-                            <div class="cal-cell">
-                                <div class="cal-cell-top"><span class="cal-num">29</span></div>
-                                <div class="cal-event-bar event-blue">4p Break</div>
-                            </div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">30</span></div></div>
-                            <div class="cal-cell"><div class="cal-cell-top"><span class="cal-num">31</span></div></div>
-
-                            <!-- Row 6: Nov 1 - Nov 7 -->
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">1</span></div></div>
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">2</span></div></div>
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">3</span></div></div>
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">4</span></div></div>
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">5</span></div></div>
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">6</span></div></div>
-                            <div class="cal-cell other-month"><div class="cal-cell-top"><span class="cal-num">7</span></div></div>
-
-                        </div>
-
+                        <div id="dior-calendar-container" style="width: 100%; min-height: 500px;"></div>
                     </div>
 
                 </div>
@@ -206,76 +89,84 @@
     </div>
 </section>
 
-<!-- Custom Scoped Calendar Styles -->
-<style>
-.cal-day-header {
-    padding: 10px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    color: #64748b;
-    border-right: 1px solid #e2e8f0;
+<?php
+$appts = Dior_Doctor_Dynamic::render_appointments(get_current_user_id());
+$formatted_events = [];
+if (!empty($appts) && is_array($appts)) {
+    foreach ($appts as $app) {
+        $status = isset($app['status']) ? $app['status'] : '';
+        if ($status === 'Cancelled' || $status === 'No Show') continue;
+        $formatted_events[] = [
+            'id' => isset($app['appt_uid']) ? $app['appt_uid'] : '',
+            'title' => (isset($app['patient_name']) ? $app['patient_name'] : 'Patient') . ' - ' . (isset($app['condition_name']) ? $app['condition_name'] : 'Checkup'),
+            'start' => (isset($app['appt_date']) ? $app['appt_date'] : date('Y-m-d')) . 'T' . (isset($app['appt_time']) ? date('H:i:s', strtotime($app['appt_time'])) : '09:00:00'),
+            'backgroundColor' => ($status === 'Completed' ? '#10b981' : ($status === 'Pending' ? '#f97316' : '#2563eb')),
+            'borderColor' => 'transparent'
+        ];
+    }
 }
-.cal-day-header:last-child {
-    border-right: none;
-}
+$events_json = json_encode($formatted_events);
+?>
 
-.cal-cell {
-    border-right: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 6px 8px;
-    background: #ffffff;
-    position: relative;
-    box-sizing: border-box;
-}
-.cal-cell:nth-child(7n) {
-    border-right: none;
-}
-.cal-cell.other-month {
-    background: #ffffff;
-}
-.cal-cell.other-month .cal-num {
-    color: #cbd5e1;
-}
+<script>
+(function() {
+    if (typeof FullCalendar === 'undefined' && !window.fcLoadingDior) {
+        window.fcLoadingDior = true;
+        var script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js';
+        document.head.appendChild(script);
+    }
 
-.cal-cell-top {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 4px;
-}
-.cal-num {
-    font-size: 12px;
-    font-weight: 600;
-    color: #64748b;
-}
-.today-badge {
-    background: #6366f1;
-    color: #ffffff;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-}
+    function initDiorCal() {
+        if (typeof FullCalendar === 'undefined') {
+            setTimeout(initDiorCal, 100);
+            return;
+        }
+        var calEl = document.getElementById('dior-calendar-container');
+        if (!calEl || calEl.dataset.inited) return;
+        calEl.dataset.inited = 'true';
 
-/* Event Bar Pills */
-.cal-event-bar {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 4px;
-    color: #ffffff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 3px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-.event-red { background: #ef4444 !important; }
-.event-green { background: #10b981 !important; }
-.event-blue { background: #2563eb !important; }
-.event-orange { background: #f97316 !important; }
-.event-cyan { background: #06b6d4 !important; }
-</style>
+        var calendar = new FullCalendar.Calendar(calEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: false,
+            height: 'auto',
+            events: <?php echo $events_json; ?>,
+            datesSet: function(info) {
+                var titleEl = document.querySelector('.cal-toolbar h3');
+                if (titleEl) titleEl.textContent = info.view.title;
+            }
+        });
+        calendar.render();
+
+        var btns = document.querySelectorAll('.cal-nav-btn');
+        if (btns[0]) btns[0].addEventListener('click', () => calendar.prev());
+        if (btns[1]) btns[1].addEventListener('click', () => calendar.next());
+        
+        var todayBtn = document.querySelector('.cal-today-btn');
+        if (todayBtn) todayBtn.addEventListener('click', () => calendar.today());
+        
+        var viewBtns = document.querySelectorAll('.cal-view-btn');
+        var views = ['dayGridMonth', 'timeGridWeek', 'timeGridDay', 'listWeek'];
+        viewBtns.forEach((btn, i) => {
+            btn.addEventListener('click', function() {
+                viewBtns.forEach(b => { b.classList.remove('active'); b.style.background = 'transparent'; b.style.color = '#64748b'; });
+                this.classList.add('active');
+                this.style.background = '#6366f1';
+                this.style.color = '#ffffff';
+                if (views[i]) calendar.changeView(views[i]);
+            });
+        });
+
+        var tabEl = document.getElementById('tab-doc-appointments');
+        if (tabEl) {
+            new MutationObserver(function(muts) {
+                muts.forEach(function(m) {
+                    if (m.target.style.display !== 'none') setTimeout(() => calendar.updateSize(), 50);
+                });
+            }).observe(tabEl, { attributes: true, attributeFilter: ['style'] });
+        }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initDiorCal);
+    else initDiorCal();
+})();
+</script>

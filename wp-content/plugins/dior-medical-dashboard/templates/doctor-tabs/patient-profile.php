@@ -1,4 +1,46 @@
+<?php
+global $wpdb;
+// Fetch patients for select dropdown
+$pp_patients = $wpdb->get_results(
+    "SELECT user_id, first_name, last_name, patient_uid FROM {$wpdb->prefix}dior_patients WHERE status <> 'deleted' ORDER BY first_name ASC LIMIT 300",
+    ARRAY_A
+);
+if (empty($pp_patients)) {
+    $pp_users = get_users(['role__in' => ['patient','subscriber','customer'],'number' => 100]);
+    $pp_patients = [];
+    foreach ($pp_users as $u) {
+        $pp_patients[] = ['user_id'=>$u->ID,'first_name'=>$u->first_name ?: $u->display_name,'last_name'=>$u->last_name,'patient_uid'=>get_user_meta($u->ID,'patient_id',true) ?: 'DM-'.(10000+$u->ID)];
+    }
+}
+?>
 <link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/patient-profile.css?v=' . time()); ?>">
+
+<!-- Select Patient Popup -->
+<div id="pp-select-patient-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;padding:32px;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <div style="text-align:center;margin-bottom:24px;">
+            <div style="width:60px;height:60px;border-radius:50%;background:#e0e7ff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+                <i class="fa-solid fa-user-injured" style="font-size:24px;color:#4f46e5;"></i>
+            </div>
+            <h3 style="margin:0 0 8px;font-size:18px;font-weight:700;color:#1e293b;">Select a Patient</h3>
+            <p style="margin:0;color:#64748b;font-size:14px;">Please select a patient to view their profile.</p>
+        </div>
+        <div>
+            <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:8px;">Patient</label>
+            <select id="pp-patient-dropdown" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;margin-bottom:16px;">
+                <option value="">— Choose Patient —</option>
+                <?php foreach ($pp_patients as $pp):
+                    $pname = esc_html(trim(($pp['first_name']??'').' '.($pp['last_name']??'')));
+                ?>
+                <option value="<?php echo (int)$pp['user_id']; ?>"><?php echo $pname; ?> (<?php echo esc_html($pp['patient_uid']??''); ?>)</option>
+                <?php endforeach; ?>
+            </select>
+            <button id="pp-load-patient-btn" style="width:100%;padding:12px;border:none;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:15px;font-weight:600;cursor:pointer;">
+                <i class="fa-solid fa-arrow-right" style="margin-right:8px;"></i>Load Patient Profile
+            </button>
+        </div>
+    </div>
+</div>
 
 <section class="dior-tab-panel patient-profile-wrapper" id="tab-doc-patients-profile" style="display: none;">
     <!-- Breadcrumb Header -->
@@ -242,23 +284,134 @@
 </section>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tabLinks = document.querySelectorAll('.pp-tab-link');
-    const tabPanes = document.querySelectorAll('.pp-tab-pane');
+(function() {
+    var ajaxUrl = '<?php echo esc_js(admin_url("admin-ajax.php")); ?>';
+    var nonce   = '<?php echo esc_js(wp_create_nonce("dior_doctor_nonce")); ?>';
 
-    tabLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('data-target');
-            
-            // Remove active class from all links and panes
-            tabLinks.forEach(l => l.classList.remove('active'));
-            tabPanes.forEach(p => p.classList.remove('active'));
-            
-            // Add active class to clicked link and target pane
-            this.classList.add('active');
-            document.getElementById(targetId).classList.add('active');
+    // Tab navigation inside patient profile
+    document.addEventListener('DOMContentLoaded', function() {
+        var tabLinks = document.querySelectorAll('.pp-tab-link');
+        var tabPanes = document.querySelectorAll('.pp-tab-pane');
+        tabLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                var targetId = this.getAttribute('data-target');
+                tabLinks.forEach(function(l) { l.classList.remove('active'); });
+                tabPanes.forEach(function(p) { p.classList.remove('active'); });
+                this.classList.add('active');
+                var pane = document.getElementById(targetId);
+                if (pane) pane.classList.add('active');
+            });
         });
     });
-});
+
+    // Load patient profile by user_id
+    window.diorLoadPatientProfile = function(userId) {
+        if (!userId) { showSelectPatientPopup(); return; }
+        var data = new FormData();
+        data.append('action',     'dior_doc_get_patient_profile');
+        data.append('nonce',      nonce);
+        data.append('patient_id', userId);
+        fetch(ajaxUrl, {method:'POST',body:data})
+            .then(function(r){return r.json();})
+            .then(function(res) {
+                if (res.success && res.data && res.data.patient) {
+                    renderPatientProfile(res.data.patient);
+                } else {
+                    showSelectPatientPopup();
+                }
+            })
+            .catch(function() { showSelectPatientPopup(); });
+    };
+
+    function renderPatientProfile(p) {
+        var name = ((p.first_name||'') + ' ' + (p.last_name||'')).trim() || 'Unknown Patient';
+        var avatar = p.avatar_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=random&size=150');
+        var pid = p.patient_uid || ('DM-' + p.user_id);
+        var status = (p.status||'active').charAt(0).toUpperCase() + (p.status||'active').slice(1);
+
+        // Update banner
+        var bannerImg = document.querySelector('.pp-avatar-wrapper img');
+        if (bannerImg) { bannerImg.src = avatar; bannerImg.alt = name; }
+        var nameEl = document.querySelector('.pp-info h3');
+        if (nameEl) nameEl.textContent = name;
+        var pidEl = document.querySelector('.pp-info .pid');
+        if (pidEl) pidEl.textContent = 'Patient ID: ' + pid;
+        var genderEl = document.querySelector('.pp-meta span:first-child');
+        if (genderEl && p.gender) genderEl.innerHTML = '<i class="fa-solid fa-' + (p.gender.toLowerCase()==='female'?'venus':'mars') + '"></i> ' + p.gender;
+        var bloodEl = document.querySelector('.pp-meta span:nth-child(3)');
+        if (bloodEl && p.blood_group) bloodEl.innerHTML = '<i class="fa-solid fa-droplet"></i> ' + p.blood_group;
+        var badgeEl = document.querySelector('.pp-badge-active');
+        if (badgeEl) badgeEl.textContent = status;
+
+        // Update Personal Info pane
+        var infoRows = document.querySelectorAll('#pp-pane-personal .pp-info-table tr');
+        if (infoRows.length > 0) {
+            var dob = p.dob ? p.dob : '—';
+            var email = p.email || '—';
+            var phone = p.phone || '—';
+            var address = p.address || '—';
+            if (infoRows[0]) infoRows[0].querySelector('td').textContent = dob;
+            if (infoRows[3]) infoRows[3].querySelector('td').textContent = email;
+            if (infoRows[4]) infoRows[4].querySelector('td').textContent = phone;
+            if (infoRows[5]) infoRows[5].querySelector('td').textContent = address;
+        }
+
+        // Hide select patient popup if open
+        var popup = document.getElementById('pp-select-patient-popup');
+        if (popup) popup.style.display = 'none';
+
+        window.diorSelectedPatientId = p.user_id;
+    }
+
+    function showSelectPatientPopup() {
+        var popup = document.getElementById('pp-select-patient-popup');
+        if (popup) popup.style.display = 'flex';
+    }
+
+    // Button: Load Patient Profile from popup
+    document.addEventListener('DOMContentLoaded', function() {
+        var loadBtn = document.getElementById('pp-load-patient-btn');
+        if (loadBtn) {
+            loadBtn.addEventListener('click', function() {
+                var select = document.getElementById('pp-patient-dropdown');
+                if (select && select.value) {
+                    window.diorSelectedPatientId = select.value;
+                    window.diorLoadPatientProfile(select.value);
+                } else {
+                    alert('Please select a patient first.');
+                }
+            });
+        }
+    });
+
+    // Auto-run: check if the tab is active on load
+    document.addEventListener('DOMContentLoaded', function() {
+        var profileSection = document.getElementById('tab-doc-patients-profile');
+        if (profileSection && profileSection.style.display !== 'none') {
+            if (window.diorSelectedPatientId) {
+                window.diorLoadPatientProfile(window.diorSelectedPatientId);
+            } else {
+                showSelectPatientPopup();
+            }
+        }
+    });
+
+    // Also trigger when the tab is opened
+    var profileSection = document.getElementById('tab-doc-patients-profile');
+    if (profileSection) {
+        var observer = new MutationObserver(function(muts) {
+            muts.forEach(function(m) {
+                if (m.attributeName === 'style' && profileSection.style.display !== 'none') {
+                    if (window.diorSelectedPatientId) {
+                        window.diorLoadPatientProfile(window.diorSelectedPatientId);
+                    } else {
+                        showSelectPatientPopup();
+                    }
+                }
+            });
+        });
+        observer.observe(profileSection, {attributes:true});
+    }
+})();
 </script>

@@ -72,6 +72,8 @@
         position: relative;
         border: 1px solid #e2e8f0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
     .dior-alert-card-warning {
         background: #fffdf5 !important;

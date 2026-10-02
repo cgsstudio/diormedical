@@ -2316,7 +2316,6 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 if (!tabId) return;
 
                 event.preventDefault();
-                event.stopPropagation();
                 switchPatientTab(tabId);
 
                 if (tabId === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
@@ -2331,7 +2330,6 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             link.__diorPatientSubtabBound = true;
             link.addEventListener('click', function (event) {
                 event.preventDefault();
-                event.stopPropagation();
                 switchPatientTab('appointments');
                 if (typeof window.diorSwitchApptSubTab === 'function') {
                     window.diorSwitchApptSubTab(link.getAttribute('data-appt-subtab'));

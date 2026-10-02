@@ -3,7 +3,7 @@
  * Plugin Name: Dior Medical - Patient Portal & Dashboard
  * Plugin URI:  https://vultureconcepts.com
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version:     2.2.6
+ * Version:     4.0.0
  * Author:      Vulture Concepts
  * Author URI:  https://vultureconcepts.com/
  * Text Domain: dior-medical
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('DIOR_PORTAL_VERSION', '2.2.6');
+define('DIOR_PORTAL_VERSION', '4.1.0');
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
 define('DIOR_PORTAL_URL', plugin_dir_url(__FILE__));
 
@@ -53,6 +53,12 @@ if (!class_exists('Dior_Medical_REST_API')) {
 }
 if (!class_exists('Dior_Medical_Secure_Files')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-secure-files.php');
+}
+if (!class_exists('Dior_Demo_Data')) {
+    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-demo-data.php');
+}
+if (!class_exists('Dior_Doctor_Dynamic')) {
+    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-doctor-dynamic.php');
 }
 
 /**
@@ -137,6 +143,9 @@ add_action('plugins_loaded', function () {
     if (class_exists('Dior_Medical_Secure_Files')) {
         Dior_Medical_Secure_Files::init();
     }
+    if (class_exists('Dior_Demo_Data')) {
+        Dior_Demo_Data::init();
+    }
 });
 
 
@@ -157,6 +166,44 @@ add_action('wp_head', function () {
  */
 class Dior_Patient_Portal_Data
 {
+
+    /**
+     * Keep the normalized patient table synchronized with WordPress profile data.
+     * wp_users remains the authentication source; this table is the portal data source.
+     */
+    public static function sync_relational_patient($user_id)
+    {
+        global $wpdb;
+        $user_id = (int) $user_id;
+        $user = get_userdata($user_id);
+        if (!$user) return false;
+
+        $table = $wpdb->prefix . 'dior_patients';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) return false;
+
+        $dob = get_user_meta($user_id, 'dob', true) ?: get_user_meta($user_id, 'date_of_birth', true);
+        $wpdb->replace($table, [
+            'user_id' => $user_id,
+            'patient_uid' => get_user_meta($user_id, 'patient_id', true) ?: ('DM-' . (10000 + ($user_id % 90000))),
+            'first_name' => get_user_meta($user_id, 'first_name', true) ?: $user->first_name,
+            'last_name' => get_user_meta($user_id, 'last_name', true) ?: $user->last_name,
+            'email' => $user->user_email,
+            'phone' => get_user_meta($user_id, 'phone', true) ?: get_user_meta($user_id, 'billing_phone', true),
+            'dob' => $dob ? date('Y-m-d', strtotime($dob)) : null,
+            'gender' => get_user_meta($user_id, 'gender', true),
+            'blood_group' => get_user_meta($user_id, 'blood_group', true),
+            'address' => get_user_meta($user_id, 'address', true) ?: get_user_meta($user_id, 'billing_address_1', true),
+            'city' => get_user_meta($user_id, 'city', true),
+            'state' => get_user_meta($user_id, 'state', true),
+            'country' => get_user_meta($user_id, 'country', true) ?: 'United States',
+            'avatar_url' => get_user_meta($user_id, 'dior_profile_image', true) ?: get_user_meta($user_id, 'profile_image', true),
+            'status' => 'active',
+            'is_demo' => get_user_meta($user_id, 'dior_demo_record', true) ? 1 : 0,
+            'created_at' => current_time('mysql'),
+            'updated_at' => current_time('mysql'),
+        ]);
+        return true;
+    }
 
     /**
      * Get or initialize patient profile data
@@ -283,6 +330,10 @@ class Dior_Patient_Portal_Data
             'optin_reminder_dashboard' => (get_user_meta($user_id, 'optin_reminder_dashboard', true) !== '0') ? '1' : '0',
             'signature_url' => get_user_meta($user_id, 'dior_patient_signature', true) ?: '',
         ];
+
+        // Keep the normalized patient record synchronized for dynamic reporting/API use.
+        self::sync_relational_patient($user_id);
+        return $profile;
     }
 
     /**
@@ -453,13 +504,29 @@ class Dior_Patient_Portal_Data
      */
     public static function get_patient_prescriptions($user_id)
     {
-        $prescriptions = get_user_meta($user_id, 'dior_prescriptions', true);
-
-        if (!is_array($prescriptions)) {
-            $prescriptions = [];
-            update_user_meta($user_id, 'dior_prescriptions', $prescriptions);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_prescriptions';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE patient_id=%d AND status != 'Deleted' ORDER BY created_at DESC", (int) $user_id), ARRAY_A);
+            if (!empty($rows)) {
+                return array_map(static function ($row) {
+                    return [
+                        'id' => $row['prescription_uid'], 'order_id' => $row['prescription_uid'], 'group_id' => $row['prescription_uid'],
+                        'name' => $row['medication'], 'medication' => $row['medication'], 'dosage' => $row['medication'],
+                        'quantity' => $row['quantity'], 'refills' => $row['refills'], 'instructions' => $row['instructions'],
+                        'notes' => $row['instructions'], 'status' => $row['status'], 'is_active' => ($row['status'] === 'Active'),
+                        'date_prescribed' => $row['created_at'], 'prescribed_by' => 'Dr. ' . (get_userdata((int)$row['doctor_id'])->display_name ?? 'Doctor'),
+                        'pharmacy' => get_user_meta($user_id, 'preferred_pharmacy_name', true), 'items' => [[
+                            'id' => $row['prescription_uid'], 'medication' => $row['medication'], 'dosage' => $row['medication'],
+                            'quantity' => $row['quantity'], 'refills' => $row['refills'], 'instructions' => $row['instructions']
+                        ]]
+                    ];
+                }, $rows);
+            }
         }
 
+        $prescriptions = get_user_meta($user_id, 'dior_prescriptions', true);
+        if (!is_array($prescriptions)) $prescriptions = [];
         return self::group_prescriptions($prescriptions);
     }
 
@@ -468,14 +535,14 @@ class Dior_Patient_Portal_Data
      */
     public static function get_patient_payments($user_id)
     {
-        $payments = get_user_meta($user_id, 'dior_payments', true);
-
-        if (!is_array($payments)) {
-            $payments = [];
-            update_user_meta($user_id, 'dior_payments', $payments);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_payments';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE patient_id=%d ORDER BY created_at DESC", (int) $user_id), ARRAY_A);
+            if (!empty($rows)) return $rows;
         }
-
-        return $payments;
+        $payments = get_user_meta($user_id, 'dior_payments', true);
+        return is_array($payments) ? $payments : [];
     }
 
     /**
@@ -506,14 +573,22 @@ class Dior_Patient_Portal_Data
      */
     public static function get_patient_notifications($user_id)
     {
-        $notifications = get_user_meta($user_id, 'dior_notifications', true);
-
-        if (!is_array($notifications)) {
-            $notifications = [];
-            update_user_meta($user_id, 'dior_notifications', $notifications);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_notifications';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE user_id=%d ORDER BY created_at DESC, id DESC LIMIT 100", (int) $user_id), ARRAY_A);
+            if (!empty($rows)) {
+                return array_map(static function ($row) {
+                    return [
+                        'id' => $row['notification_uid'], 'title' => $row['title'], 'message' => $row['message'],
+                        'action_url' => $row['action_url'], 'icon' => $row['icon'] ?: 'fa-bell', 'is_read' => (bool)$row['is_read'],
+                        'created_at' => $row['created_at'], 'timestamp' => strtotime($row['created_at']), 'type' => $row['type']
+                    ];
+                }, $rows);
+            }
         }
-
-        return $notifications;
+        $notifications = get_user_meta($user_id, 'dior_notifications', true);
+        return is_array($notifications) ? $notifications : [];
     }
 }
 
@@ -772,6 +847,13 @@ class Dior_Medical_Auth
             DIOR_PORTAL_URL . 'assets/js/dior-patient-navigation.js',
             [],
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-navigation.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-navigation.js') : DIOR_PORTAL_VERSION,
+            true
+        );
+        wp_enqueue_script(
+            'dior-patient-live',
+            DIOR_PORTAL_URL . 'assets/js/dior-patient-live.js',
+            [],
+            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-live.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-live.js') : DIOR_PORTAL_VERSION,
             true
         );
 
@@ -1564,8 +1646,7 @@ class Dior_Medical_Auth
             </div>
 
             <div class="dior-auth-actions" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-                <a href="<?php echo esc_url($dash_url); ?>" class="dior-btn-auth-primary"><i
-                        class="fa-solid fa-gauge-high"></i> <?php echo esc_html($dash_label); ?></a>
+                <a href="<?php echo esc_url($dash_url); ?>" class="dior-btn-auth-primary"><?php echo esc_html($dash_label); ?></a>
                 <a href="<?php echo esc_url(wp_logout_url(home_url('/diro-login/'))); ?>"
                     class="dior-btn-auth-secondary">Sign Out</a>
             </div>
@@ -2620,6 +2701,9 @@ class Dior_Medical_Auth
         $raw_dob = trim(sanitize_text_field($_POST['dob'] ?? ''));
         $gender = trim(sanitize_text_field($_POST['gender'] ?? 'Female'));
         $address = trim(sanitize_text_field($_POST['address'] ?? ''));
+        $blood_group = trim(sanitize_text_field($_POST['blood_group'] ?? ''));
+        $city = trim(sanitize_text_field($_POST['city'] ?? ''));
+        $country = trim(sanitize_text_field($_POST['country'] ?? 'United States'));
 
         // Normalize DOB to YYYY-MM-DD
         $dob = $raw_dob;
@@ -2719,6 +2803,10 @@ class Dior_Medical_Auth
         update_user_meta($user_id, 'gender', $gender);
         update_user_meta($user_id, 'address', $address);
         update_user_meta($user_id, 'billing_address_1', $address);
+        update_user_meta($user_id, 'blood_group', $blood_group);
+        update_user_meta($user_id, 'city', $city);
+        update_user_meta($user_id, 'country', $country);
+        Dior_Patient_Portal_Data::sync_relational_patient($user_id);
         update_user_meta($user_id, 'emergency_name', $em_name);
         update_user_meta($user_id, 'emergency_relation', $em_rel);
         update_user_meta($user_id, 'emergency_phone', $em_phone);
@@ -3689,6 +3777,11 @@ class Dior_Medical_Auth
         }
 
         update_user_meta($user_id, 'dior_notifications', $notifications);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_notifications';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $wpdb->update($table, ['is_read' => 1, 'read_at' => current_time('mysql')], ['notification_uid' => $notif_id, 'user_id' => $user_id]);
+        }
         wp_send_json_success(['message' => 'Notification marked as read.']);
     }
 
@@ -3709,6 +3802,11 @@ class Dior_Medical_Auth
         }
 
         update_user_meta($user_id, 'dior_notifications', $notifications);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_notifications';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $wpdb->update($table, ['is_read' => 1, 'read_at' => current_time('mysql')], ['user_id' => $user_id]);
+        }
         wp_send_json_success(['message' => 'All notifications marked as read.']);
     }
 

@@ -16,6 +16,34 @@ if (!defined('ABSPATH')) {
 class Dior_Appointment_Service
 {
     /**
+     * Persist an appointment lifecycle event without breaking the booking flow.
+     */
+    private static function log_history($appt, $action, $extra = [])
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_appointment_history';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table || empty($appt)) return;
+        $wpdb->insert($table, [
+            'appointment_id' => isset($appt['id']) ? (int) $appt['id'] : null,
+            'appt_uid' => sanitize_text_field($appt['appt_uid'] ?? ''),
+            'patient_id' => (int) ($appt['patient_id'] ?? 0),
+            'doctor_id' => (int) ($appt['doctor_id'] ?? 0),
+            'action' => sanitize_key($action),
+            'old_status' => sanitize_text_field($extra['old_status'] ?? ''),
+            'new_status' => sanitize_text_field($extra['new_status'] ?? ($appt['status'] ?? '')),
+            'old_date' => !empty($extra['old_date']) ? $extra['old_date'] : null,
+            'new_date' => !empty($extra['new_date']) ? $extra['new_date'] : ($appt['appt_date'] ?? null),
+            'old_time' => sanitize_text_field($extra['old_time'] ?? ''),
+            'new_time' => sanitize_text_field($extra['new_time'] ?? ($appt['appt_time'] ?? '')),
+            'changed_by' => (int) (Dior_Auth_Service::get_current_user_id() ?: 0),
+            'notes' => sanitize_textarea_field($extra['notes'] ?? ''),
+            'created_at' => current_time('mysql'),
+        ]);
+    }
+
+    public static function log_history_public($appt, $action, $extra = []) { self::log_history($appt, $action, $extra); }
+
+    /**
      * Valid state transitions map
      */
     private static $valid_transitions = [
@@ -97,6 +125,9 @@ class Dior_Appointment_Service
         if (!$inserted) {
             return new WP_Error('db_error', 'Failed to schedule appointment.');
         }
+
+        $created_appt = self::get_appointment_by_uid($appt_uid);
+        self::log_history($created_appt, 'created', ['new_status' => 'Confirmed']);
 
         Dior_Audit_Service::log('appointment_book', 'appointment', $appt_uid, $patient_id, 'success', [
             'doctor_id' => $doctor_id,
@@ -219,6 +250,17 @@ class Dior_Appointment_Service
             return new WP_Error('db_error', 'Failed to update appointment schedule in database.');
         }
 
+        // Persist appointment lifecycle history.
+        self::log_history(self::get_appointment($appt['appt_uid']), 'rescheduled', [
+            'old_status' => $appt['status'],
+            'new_status' => 'Confirmed',
+            'old_date' => $old_date,
+            'new_date' => $valid_date,
+            'old_time' => $old_time,
+            'new_time' => $clean_time,
+            'notes' => $notes
+        ]);
+
         // Audit Logging
         Dior_Audit_Service::log('appointment_reschedule', 'appointment', $appt['appt_uid'], $appt['patient_id'], 'success', [
             'from' => $old_date . ' ' . $old_time,
@@ -292,6 +334,12 @@ class Dior_Appointment_Service
         if ($updated === false) {
             return new WP_Error('db_error', 'Failed to update appointment status in database.');
         }
+
+        self::log_history(self::get_appointment($appt['appt_uid']), 'cancelled', [
+            'old_status' => $appt['status'],
+            'new_status' => 'Cancelled',
+            'notes' => $clean_reason
+        ]);
 
         // Audit Logging
         Dior_Audit_Service::log('appointment_cancel', 'appointment', $appt['appt_uid'], $appt['patient_id'], 'success', [

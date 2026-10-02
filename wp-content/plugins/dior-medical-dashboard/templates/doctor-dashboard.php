@@ -56,13 +56,13 @@
                     <button type="button" class="dior-nav-btn active" data-tab="doc-overview"><i
                             class="fa-solid fa-gauge-high"></i><span class="nav-label">Dashboard</span></button>
                     
-                    <div class="dior-nav-item has-submenu active" id="appointments-menu-item">
+                    <div class="dior-nav-item has-submenu" id="appointments-menu-item">
                         <button type="button" class="dior-nav-btn" onclick="diorToggleSubmenu(event, 'appointments-menu-item')">
                             <i class="fa-regular fa-calendar"></i><span class="nav-label">Appointments</span>
                             <i class="fa-solid fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn active" data-tab="doc-appointments">
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-appointments">
                                 <i class="fa-solid fa-chevron-right"></i> Appointment Calendar
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-appointments-view">
@@ -264,7 +264,7 @@
                                 <?php endforeach; ?>
                             </div>
                             <div class="dior-notif-footer">
-                                <button type="button" onclick="diorDocSwitchTab('doc-notifications')">View All
+                                <button type="button" onclick="diorDocSwitchTab('doc-notifications-alerts'); document.getElementById('notifications-menu-item').classList.add('active');">View All
                                     &rarr;</button>
                             </div>
                         </div>

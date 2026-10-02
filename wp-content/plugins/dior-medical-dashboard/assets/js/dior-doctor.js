@@ -18,7 +18,21 @@ function initDoctorDashboard() {
     }
 
     // Initialize first tab
-    const firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn.active');
+    let initialTab = null;
+    try {
+        const hash = window.location.hash.match(/^#tab=([^&]+)/);
+        if (hash) initialTab = decodeURIComponent(hash[1]);
+        if (!initialTab) initialTab = localStorage.getItem('diorDocLastTab');
+    } catch(e) {}
+    
+    let firstTabBtn = null;
+    if (initialTab && initialTab !== 'null' && initialTab !== 'undefined') {
+        firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initialTab) + '"]');
+    }
+    if (!firstTabBtn) {
+        firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn.active') || document.querySelector('#dior-doc-sidebar .dior-nav-btn');
+    }
+    
     if (firstTabBtn) {
         diorDocSwitchTab(firstTabBtn.getAttribute('data-tab'));
     }
@@ -823,6 +837,7 @@ window.diorDoctorInitTablePagination = function(tableEl, pageSize) {
     }
 window.diorDocSwitchTab = function(tabId) {
     if (!tabId) return;
+    try { localStorage.setItem('diorDocLastTab', tabId); } catch(e) {}
 
     const notifDropdown = document.getElementById('dior-doc-notif-dd');
     if (notifDropdown) {
@@ -2850,6 +2865,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function switchTab(tabId) {
             if (!tabId) return;
+            try { localStorage.setItem('diorDocLastTab', tabId); } catch(e) {}
 
             var buttons = app.querySelectorAll('#dior-doc-sidebar .dior-nav-btn[data-tab]');
             buttons.forEach(function (btn) {
@@ -2862,8 +2878,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 panel.classList.toggle('active', active);
                 if (active) {
                     panel.removeAttribute('hidden');
+                    panel.style.display = 'block';
                 } else {
                     panel.setAttribute('hidden', 'hidden');
+                    panel.style.display = 'none';
                 }
             });
 
@@ -2872,18 +2890,23 @@ document.addEventListener('DOMContentLoaded', function () {
             } catch (e) {}
         }
 
-        window.diorDocSwitchTab = switchTab;
+        if (typeof window.diorDocSwitchTab !== 'function') {
+            window.diorDocSwitchTab = switchTab;
+        }
 
         app.addEventListener('click', function (event) {
             var btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
             if (!btn) return;
-            event.preventDefault();
-            event.stopPropagation();
-            switchTab(btn.getAttribute('data-tab'));
+            if (window.diorDocSwitchTab === switchTab) {
+                event.preventDefault();
+                event.stopPropagation();
+                switchTab(btn.getAttribute('data-tab'));
+            }
         }, true);
 
         var hash = window.location.hash.match(/^#tab=([^&]+)/);
         var initial = hash ? decodeURIComponent(hash[1]) : null;
+        if (!initial) { try { initial = localStorage.getItem('diorDocLastTab'); } catch(e) {} }
         var fallback = app.querySelector('#dior-doc-sidebar .dior-nav-btn.active[data-tab]') || app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab]');
         switchTab(initial && app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initial) + '"]') ? initial : (fallback ? fallback.getAttribute('data-tab') : 'doc-overview'));
     }

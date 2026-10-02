@@ -70,6 +70,26 @@ class Dior_Notification_Service
         }
 
         update_user_meta($user_id, $meta_key, $notifs);
+
+        // Persist the same event in the relational notification store.
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_notifications';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $uid = 'NDB-' . md5($notif_id . '|' . $user_id);
+            $wpdb->insert($table, [
+                'notification_uid' => $uid,
+                'user_id' => $user_id,
+                'patient_id' => $is_doctor ? null : $user_id,
+                'doctor_id' => $is_doctor ? $user_id : null,
+                'type' => (stripos($title, 'appointment') !== false || stripos($title, 'reminder') !== false || stripos($action_url, 'appointments') !== false) ? 'appointment' : ($is_doctor ? 'system' : 'patient'),
+                'title' => sanitize_text_field($title),
+                'message' => sanitize_textarea_field($message),
+                'action_url' => esc_url_raw($new_notif['action_url']),
+                'icon' => sanitize_text_field($icon),
+                'is_read' => 0,
+                'created_at' => current_time('mysql'),
+            ]);
+        }
         return true;
     }
 

@@ -1,0 +1,138 @@
+/**
+ * Dior Medical - stable patient dashboard controller.
+ * Keeps main tab navigation and profile persistence independent of legacy widgets.
+ */
+(function () {
+    'use strict';
+
+    var cfg = window.dior_vars || window.dior_patient_dashboard || {};
+    var ajaxUrl = cfg.ajax_url || (window.dior_vars && window.dior_vars.ajax_url);
+    var nonce = cfg.nonce || cfg.portal_nonce || '';
+
+    var titles = {
+        overview: 'Patient Overview',
+        appointments: 'Telehealth Appointments',
+        docs_meds: 'Medical Docs & Prescriptions',
+        telemedicine: 'Telemedicine',
+        medical_record: 'Medical Record',
+        payments: 'Billing & Payment Statements',
+        insurance: 'Insurance Claim',
+        documents: 'Documents & Reports',
+        emergency: 'Emergency Support',
+        feedback: 'Feedback & Support',
+        notifications: 'Notification Inbox',
+        consultation: 'Consultation Room',
+        settings: 'Settings'
+    };
+
+    function switchTab(tabId, updateHash) {
+        var app = document.getElementById('dior-patient-portal-app');
+        if (!app || !tabId) return false;
+        var panel = document.getElementById('tab-' + tabId);
+        if (!panel || !app.contains(panel)) return false;
+
+        app.querySelectorAll('.dior-nav-btn[data-tab]').forEach(function (button) {
+            button.classList.toggle('active', button.getAttribute('data-tab') === tabId);
+        });
+
+        app.querySelectorAll('.dior-tab-panel').forEach(function (item) {
+            var active = item === panel;
+            item.classList.toggle('active', active);
+            item.style.display = active ? 'block' : 'none';
+            item.style.visibility = active ? 'visible' : 'hidden';
+            item.style.opacity = active ? '1' : '0';
+        });
+
+        var title = document.getElementById('dior-current-page-title');
+        if (title && titles[tabId]) title.textContent = titles[tabId];
+
+        if (updateHash !== false) {
+            var hash = '#tab=' + encodeURIComponent(tabId);
+            if (window.history && window.history.replaceState) window.history.replaceState(null, '', hash);
+            else window.location.hash = hash;
+        }
+        return true;
+    }
+
+    window.diorSwitchTab = switchTab;
+    window.diorSafeSwitchPatientTab = switchTab;
+
+    function bindNavigation() {
+        var app = document.getElementById('dior-patient-portal-app');
+        if (!app || app.__diorLiveBound) return;
+        app.__diorLiveBound = true;
+
+        app.addEventListener('click', function (event) {
+            var btn = event.target.closest('.dior-nav-btn[data-tab]');
+            if (!btn || !app.contains(btn)) return;
+            var tab = btn.getAttribute('data-tab');
+            if (!tab) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            switchTab(tab, true);
+            if (tab === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
+                window.diorSwitchApptSubTab('today');
+            }
+        }, true);
+
+        app.querySelectorAll('[data-appt-subtab]').forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                switchTab('appointments', true);
+                if (typeof window.diorSwitchApptSubTab === 'function') {
+                    window.diorSwitchApptSubTab(link.getAttribute('data-appt-subtab'));
+                }
+            }, true);
+        });
+
+        var hash = window.location.hash || '';
+        var requested = hash.indexOf('#tab=') === 0 ? decodeURIComponent(hash.substring(5)) : 'overview';
+        if (!switchTab(requested, false)) switchTab('overview', false);
+    }
+
+    function bindProfileSave() {
+        var form = document.getElementById('dior-profile-settings-form');
+        if (!form || form.__diorProfileBound) return;
+        form.__diorProfileBound = true;
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            var data = new FormData(form);
+            data.append('action', 'dior_patient_save_profile');
+            data.append('nonce', nonce);
+
+            var button = form.querySelector('button[type="submit"]');
+            var original = button ? button.innerHTML : '';
+            if (button) { button.disabled = true; button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; }
+
+            fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
+                .then(function (response) { return response.json(); })
+                .then(function (result) {
+                    if (!result.success) throw new Error((result.data && result.data.message) || 'Unable to save profile.');
+                    var profile = result.data.profile || {};
+                    document.querySelectorAll('.dior-sidebar-user-name').forEach(function (el) { el.textContent = profile.full_name || 'Patient'; });
+                    if (window.Swal) {
+                        Swal.fire({ icon: 'success', title: 'Profile Updated', text: 'Your profile details have been saved.', timer: 1800, showConfirmButton: false });
+                    } else {
+                        alert('Profile updated successfully.');
+                    }
+                })
+                .catch(function (error) {
+                    if (window.Swal) Swal.fire({ icon: 'error', title: 'Update Failed', text: error.message });
+                    else alert(error.message);
+                })
+                .finally(function () {
+                    if (button) { button.disabled = false; button.innerHTML = original; }
+                });
+        });
+    }
+
+    function boot() {
+        bindNavigation();
+        bindProfileSave();
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+    else boot();
+})();

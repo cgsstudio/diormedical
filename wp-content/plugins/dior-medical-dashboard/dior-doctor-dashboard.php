@@ -69,6 +69,8 @@ class Dior_Doctor_Dashboard
         }
     }
 
+    public static function can_access_for_dynamic() { return self::can_access(); }
+
     private static function can_access()
     {
         return current_user_can("administrator") || current_user_can("manage_options") || current_user_can("doctor");

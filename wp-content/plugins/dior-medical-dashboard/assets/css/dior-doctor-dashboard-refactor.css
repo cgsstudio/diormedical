@@ -1,3 +1,5 @@
+@import url('https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css');
+
 /* DIOR DOCTOR DASHBOARD TABLE PAGINATION */
 .dior-table-pagination {
     display: flex !important;
@@ -5338,3 +5340,101 @@
         grid-template-columns: 48px 12px 1fr
     }
 }
+
+/* ==========================================================================
+   DOCTOR APPOINTMENTS CALENDAR STYLES
+   ========================================================================== */
+#tab-doc-appointments .dior-page-watermark,
+#tab-doc-appointments .page-watermark,
+#tab-doc-appointments .dior-big-title,
+#tab-doc-appointments .breadcrumb-title h4::after,
+#tab-doc-appointments .page-title::after,
+.dior-doctor-wrap #tab-doc-appointments .dior-page-watermark,
+.dior-doctor-wrap #tab-doc-appointments .page-watermark,
+.dior-doctor-wrap #tab-doc-appointments .dior-big-title,
+.dior-doctor-wrap #tab-doc-appointments .breadcrumb-title h4::after,
+.dior-doctor-wrap #tab-doc-appointments .page-title::after {
+    display: none !important;
+    content: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.cal-day-header {
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    border-right: 1px solid #e2e8f0;
+}
+.cal-day-header:last-child {
+    border-right: none;
+}
+
+.cal-cell {
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 6px 8px;
+    background: #ffffff;
+    position: relative;
+    box-sizing: border-box;
+}
+.cal-cell:nth-child(7n) {
+    border-right: none;
+}
+.cal-cell.other-month {
+    background: #ffffff;
+}
+.cal-cell.other-month .cal-num {
+    color: #cbd5e1;
+}
+
+.cal-cell-top {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 4px;
+}
+.cal-num {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+}
+.today-badge {
+    background: #6366f1;
+    color: #ffffff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+
+/* Event Bar Pills */
+.cal-event-bar {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.event-red { background: #ef4444 !important; }
+.event-green { background: #10b981 !important; }
+.event-blue { background: #2563eb !important; }
+.event-orange { background: #f97316 !important; }
+.event-cyan { background: #06b6d4 !important; }
+
+#dior-calendar-container { font-family: inherit; }
+.fc-header-toolbar { display: none !important; }
+.fc-theme-standard td, .fc-theme-standard th { border-color: #e2e8f0; }
+.fc-daygrid-day-number { font-size: 12px; font-weight: 600; color: #64748b; text-decoration: none; }
+.fc-col-header-cell-cushion { color: #64748b; font-size: 13px; font-weight: 600; text-decoration: none; padding: 10px !important; }
+.fc-day-today { background-color: #f8fafc !important; }
+.fc-event { border-radius: 4px !important; padding: 2px 6px !important; font-size: 11px !important; font-weight: 600 !important; cursor: pointer; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 3px; }
