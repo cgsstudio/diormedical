@@ -937,7 +937,9 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         }
 
         function closeMobileDrawer() {
-            window.diorCloseMobileDrawer();
+            if (typeof window.diorCloseMobileDrawer === 'function') {
+                window.diorCloseMobileDrawer();
+            }
         }
 
         if (mobileToggle) mobileToggle.addEventListener('click', window.diorOpenMobileDrawer);

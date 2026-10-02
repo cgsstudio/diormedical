@@ -25,7 +25,7 @@
                                     Gender, Address) in your profile before filling out medical questionnaires or
                                     booking appointments.
                                 </p>
-                                <button type="button" class="dior-btn-gold-primary dior-ic-2b79c76f5b" data-switch-tab="profile"
+                                <button type="button" class="dior-btn-gold-primary dior-ic-2b79c76f5b" data-switch-tab="settings"
                                    >
                                     <i class="fa-solid fa-user-pen"></i> Complete Personal Information First
                                 </button>

@@ -77,7 +77,7 @@
                     </table>
                 </div>
                 <div class="master-table-footer">
-                    <span class="page-count" id="dior-tele-page-count">0 selected / <?php echo count($tele_mock); ?> total</span>
+                    <span class="page-count" id="dior-tele-page-count">0 selected / <?php echo count($appointments); ?> total</span>
                     
                     <div class="master-pagination" id="dior-tele-pagination">
                     </div>

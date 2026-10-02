@@ -66,7 +66,7 @@
                     </table>
                 </div>
                 <div class="master-table-footer">
-                    <span class="page-count" id="dior-docs-page-count">0 selected / <?php echo count($docs_mock); ?> total</span>
+                    <span class="page-count" id="dior-docs-page-count">0 selected / <?php echo count($documents); ?> total</span>
                     
                     <div class="master-pagination" id="dior-docs-pagination">
                     </div>

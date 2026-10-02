@@ -75,7 +75,7 @@
                     </table>
                 </div>
                 <div class="master-table-footer">
-                    <span class="page-count" id="dior-insurance-page-count">0 selected / <?php echo count($insurance_mock); ?> total</span>
+                    <span class="page-count" id="dior-insurance-page-count">0 selected / <?php echo count($insurance_claims); ?> total</span>
                     
                     <div class="master-pagination" id="dior-insurance-pagination">
                     </div>

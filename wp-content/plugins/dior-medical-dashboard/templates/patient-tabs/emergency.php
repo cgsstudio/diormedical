@@ -92,7 +92,7 @@
                     </table>
                 </div>
                 <div class="master-table-footer">
-                    <span class="page-count" id="dior-emerg-page-count">0 selected / <?php echo count($emerg_mock); ?> total</span>
+                    <span class="page-count" id="dior-emerg-page-count">0 selected / <?php echo esc_html((!empty($profile['emergency_name']) || !empty($profile['emergency_phone'])) ? 1 : 0); ?> total</span>
                     
                     <div class="master-pagination" id="dior-emerg-pagination">
                     </div>

@@ -3016,6 +3016,7 @@ body {overflow-x: hidden !important;
 
   .dior-side.mobile-open {left: 0 !important;
   }
+}
 
 /* Desktop sidebar toggle support */
 @media (min-width: 1025px) {

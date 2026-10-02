@@ -786,6 +786,15 @@ class Dior_Medical_Auth
             ['dior-patient-dashboard', 'dior-dashboard-css'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-patient-dashboard-refactor.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-patient-dashboard-refactor.css') : DIOR_PORTAL_VERSION
         );
+
+        // Patient Dashboard shell match. Scoped to patient portal only so the Doctor Dashboard remains untouched.
+        $patient_shell_css_ver = file_exists(DIOR_PORTAL_PATH . 'assets/css/patient-dashboard-shell-match.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/patient-dashboard-shell-match.css') : DIOR_PORTAL_VERSION;
+        wp_enqueue_style(
+            'dior-patient-dashboard-shell-match',
+            DIOR_PORTAL_URL . 'assets/css/patient-dashboard-shell-match.css',
+            ['dior-doctor-source-tabs'],
+            $patient_shell_css_ver
+        );
         wp_enqueue_style(
             'dior-doctor-dashboard-refactor',
             DIOR_PORTAL_URL . 'assets/css/dior-doctor-dashboard-refactor.css',

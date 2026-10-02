@@ -690,11 +690,11 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                         // Switch inner tab
                         var panels = document.querySelectorAll('.dior-subtab-panel');
                         panels.forEach(function(panel) {
-                            if (panel.id === 'dior-subtab-' + targetSubTab) {
-                                panel.style.display = 'block';
-                            } else {
-                                panel.style.display = 'none';
-                            }
+                            panel.style.setProperty(
+                                'display',
+                                panel.id === 'dior-subtab-' + targetSubTab ? 'block' : 'none',
+                                'important'
+                            );
                         });
                     };
 
