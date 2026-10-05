@@ -1,0 +1,222 @@
+.dior-self-discovery-book {
+	box-sizing: border-box;
+	max-width: 1120px;
+	margin: clamp(2.5rem, 6vw, 5rem) auto;
+	padding: clamp(1.25rem, 3vw, 2.5rem);
+	border: 1px solid #d8e5e4;
+	border-radius: 22px;
+	background: #f8fbfb;
+	color: #173c42;
+	font-family: inherit;
+	line-height: 1.65;
+}
+
+.dior-self-discovery-book *,
+.dior-self-discovery-book *::before,
+.dior-self-discovery-book *::after {
+	box-sizing: border-box;
+}
+
+.dior-self-discovery-book__grid {
+	display: grid;
+	grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr);
+	align-items: start;
+	gap: clamp(1.75rem, 5vw, 4.5rem);
+}
+
+.dior-self-discovery-book__covers {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	align-items: start;
+	gap: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.dior-self-discovery-book__cover {
+	margin: 0;
+	text-align: center;
+}
+
+.dior-self-discovery-book__cover-frame {
+	aspect-ratio: 2 / 3;
+	overflow: hidden;
+	border: 1px solid #cbdcda;
+	border-radius: 10px;
+	background: #ffffff;
+	box-shadow: 0 10px 24px rgba(16, 61, 66, 0.1);
+	transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.dior-self-discovery-book__cover-frame:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 14px 30px rgba(16, 61, 66, 0.18);
+}
+
+.dior-self-discovery-book__cover-frame iframe {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	background: #ffffff;
+}
+
+.dior-self-discovery-book__cover figcaption {
+	margin-top: 0.65rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	line-height: 1.3;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.dior-self-discovery-book__cover figcaption a {
+	color: #507277;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.15em;
+}
+
+.dior-self-discovery-book__cover figcaption a:hover {
+	color: #126d74;
+}
+
+.dior-self-discovery-book__cover figcaption a:focus-visible,
+.dior-self-discovery-book__synopsis summary:focus-visible {
+	outline: 3px solid #197b82;
+	outline-offset: 3px;
+}
+
+.dior-self-discovery-book__details {
+	min-width: 0;
+}
+
+.dior-self-discovery-book__status {
+	margin: 0 0 0.7rem;
+	color: #197b82;
+	font-size: 0.8rem;
+	font-weight: 800;
+	letter-spacing: 0.16em;
+	line-height: 1.3;
+}
+
+.dior-self-discovery-book h3,
+.dior-self-discovery-book h4,
+.dior-self-discovery-book h5 {
+	color: #173c42;
+}
+
+.dior-self-discovery-book h3 {
+	margin: 0;
+	font-size: clamp(1.65rem, 3vw, 2.35rem);
+	line-height: 1.15;
+}
+
+.dior-self-discovery-book__subtitle {
+	margin: 0.85rem 0 1.5rem;
+	color: #507277;
+	font-size: clamp(1rem, 1.7vw, 1.15rem);
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.dior-self-discovery-book__synopsis {
+	border-top: 1px solid #cbdcda;
+}
+
+.dior-self-discovery-book__synopsis summary {
+	padding: 1rem 2rem 1rem 0;
+	color: #126d74;
+	cursor: pointer;
+	font-size: 1rem;
+	font-weight: 800;
+	line-height: 1.45;
+	list-style: none;
+	position: relative;
+}
+
+.dior-self-discovery-book__synopsis summary::-webkit-details-marker {
+	display: none;
+}
+
+.dior-self-discovery-book__synopsis summary::after {
+	content: "+";
+	position: absolute;
+	right: 0.15rem;
+	top: 0.75rem;
+	color: #197b82;
+	font-size: 1.45rem;
+	font-weight: 400;
+}
+
+.dior-self-discovery-book__synopsis[open] summary::after {
+	content: "−";
+}
+
+.dior-self-discovery-book__synopsis-content {
+	padding: 0.25rem 0 0.5rem;
+	color: #2f5054;
+	font-size: 0.98rem;
+}
+
+.dior-self-discovery-book__synopsis-content h4 {
+	margin: 0 0 0.2rem;
+	font-size: 1.25rem;
+	letter-spacing: 0.08em;
+	line-height: 1.3;
+}
+
+.dior-self-discovery-book__synopsis-content h5 {
+	margin: 0 0 1.25rem;
+	font-size: 1.05rem;
+	line-height: 1.35;
+}
+
+.dior-self-discovery-book__synopsis-content p {
+	margin: 0 0 1.15rem;
+}
+
+.dior-self-discovery-book__synopsis-content p:last-child {
+	margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+	.dior-self-discovery-book {
+		margin-right: 1rem;
+		margin-left: 1rem;
+	}
+
+	.dior-self-discovery-book__grid {
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+
+	.dior-self-discovery-book__covers {
+		max-width: 480px;
+		margin: 0 auto;
+		width: 100%;
+	}
+}
+
+@media (max-width: 420px) {
+	.dior-self-discovery-book {
+		padding: 1rem;
+	}
+
+	.dior-self-discovery-book__covers {
+		gap: 0.6rem;
+	}
+
+	.dior-self-discovery-book__synopsis-content {
+		font-size: 0.94rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dior-self-discovery-book__cover-frame {
+		transition: none;
+	}
+
+	.dior-self-discovery-book__cover-frame:hover {
+		transform: none;
+	}
+}
