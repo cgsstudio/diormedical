@@ -13,6 +13,18 @@
         </div>
     </div>
 
+    <?php
+    $patient_notif_rows = is_array($notifications ?? []) ? $notifications : [];
+    $patient_unread = 0;
+    foreach ($patient_notif_rows as $pn) { if (empty($pn['is_read'])) { $patient_unread++; } }
+    ?>
+    <div class="dior-patient-alerts-stats">
+        <div class="dior-patient-alert-stat"><div class="dior-patient-alert-stat-icon"><i class="fa-solid fa-bell"></i></div><div><span>Total Notifications</span><strong><?php echo count($patient_notif_rows); ?></strong></div></div>
+        <div class="dior-patient-alert-stat"><div class="dior-patient-alert-stat-icon unread"><i class="fa-solid fa-circle-exclamation"></i></div><div><span>Unread Alerts</span><strong><?php echo $patient_unread; ?></strong></div></div>
+        <div class="dior-patient-alert-stat"><div class="dior-patient-alert-stat-icon success"><i class="fa-solid fa-check-double"></i></div><div><span>Read Notifications</span><strong><?php echo max(0, count($patient_notif_rows) - $patient_unread); ?></strong></div></div>
+        <div class="dior-patient-alert-stat"><div class="dior-patient-alert-stat-icon info"><i class="fa-solid fa-shield-heart"></i></div><div><span>Portal Status</span><strong>Active</strong></div></div>
+    </div>
+
     <div class="master-table-wrapper">
         <div class="master-table-container">
             <div class="master-table-card">
@@ -48,18 +60,17 @@
                                 <th class="dior-ic-3fa4d8d717">
                                     <input type="checkbox" class="dior-ic-52ff4d551f">
                                 </th>
-                                <th>TITLE <i class="fa-solid fa-sort"></i></th>
-                                <th>MESSAGE <i class="fa-solid fa-sort"></i></th>
-                                <th>TYPE <i class="fa-solid fa-sort"></i></th>
-                                <th>DATE <i class="fa-solid fa-sort"></i></th>
-                                <th>TIME <i class="fa-solid fa-sort"></i></th>
-                                <th>STATUS <i class="fa-solid fa-sort"></i></th>
-                                <th>ACTIONS</th>
+                                <th>Title</th>
+                                <th>Message</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="dior-notif-tbody">
                             <?php
-                            $patient_notif_rows = is_array($notifications ?? []) ? $notifications : [];
                             foreach ($patient_notif_rows as $n):
                                 $n_title = $n['title'] ?? 'Notification';
                                 $n_message = $n['message'] ?? '';

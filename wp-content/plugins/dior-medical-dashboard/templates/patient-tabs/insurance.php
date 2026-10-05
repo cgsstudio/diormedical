@@ -61,10 +61,9 @@
                         </thead>
                         <tbody id="dior-insurance-tbody">
                             <?php
-                            $insurance_claims = get_user_meta($user_id, 'dior_insurance_claims', true);
-                            $insurance_claims = is_array($insurance_claims) ? $insurance_claims : [];
-                            if (empty($insurance_claims) && !empty($dior_demo_mode)) {
-                                $insurance_claims = [['claim_id'=>'DEMO-CLM-001','policy_id'=>'DEMO-POL-001','claim_date'=>current_time('Y-m-d'),'claim_type'=>'Consultation','provider'=>'Dior Medical','submitted'=>'Submitted','status'=>'In Review','amount'=>'$120']];
+                            if (empty($dior_patient_design_static)) {
+                                $insurance_claims = get_user_meta($user_id, 'dior_insurance_claims', true);
+                                $insurance_claims = is_array($insurance_claims) ? $insurance_claims : [];
                             }
                             ?>
                             <?php if (!empty($insurance_claims)): ?>

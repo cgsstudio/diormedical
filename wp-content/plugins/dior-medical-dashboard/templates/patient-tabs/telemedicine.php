@@ -80,7 +80,11 @@
                                         <td><span class="cell-text"><?php echo esc_html($apt['type'] ?? ($apt['visit_type'] ?? 'Video Visit')); ?></span></td>
                                         <td><div class="cell-content"><div class="badge-solid <?php echo esc_attr($tele_class); ?>"><?php echo esc_html($tele_status); ?></div></div></td>
                                         <td><div class="cell-actions">
-                                            <?php if (!empty($apt['join_url']) && !in_array(strtolower($tele_status), ['completed','cancelled','no show'], true)): ?><a class="action-icon-btn edit-btn" title="Join" href="<?php echo esc_url($apt['join_url']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-video"></i></a><?php endif; ?>
+                                            <button type="button" class="action-icon-btn edit-btn" title="View Session" onclick="diorViewTelemedicine(this)"><i class="fa-regular fa-eye"></i></button>
+                                            <?php if (!in_array(strtolower($tele_status), ['completed','cancelled','no show'], true)): ?>
+                                                <?php if (!empty($apt['join_url'])): ?><a class="action-icon-btn" title="Join Consultation" href="<?php echo esc_url($apt['join_url']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-video"></i></a><?php else: ?><button type="button" class="action-icon-btn" title="Join Consultation" onclick="diorViewTelemedicine(this)"><i class="fa-solid fa-video"></i></button><?php endif; ?>
+                                            <?php endif; ?>
+                                            <button type="button" class="action-icon-btn delete-btn" title="Cancel Session" onclick="diorDeleteStaticRow(this, 'telemedicine')"><i class="fa-solid fa-xmark"></i></button>
                                         </div></td>
                                     </tr>
                                 <?php endforeach; ?>

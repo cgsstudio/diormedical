@@ -8,18 +8,16 @@ $nonce     = wp_create_nonce('dior_doctor_nonce');
 $ajax_url  = admin_url('admin-ajax.php');
 $doctor_id = get_current_user_id();
 
-// Fetch reviews from DB
-$reviews = $wpdb->get_results(
-    $wpdb->prepare(
-        "SELECT r.*, 
-                p.first_name, p.last_name, p.avatar_url
-         FROM {$wpdb->prefix}dior_reviews r
-         LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = r.patient_id
-         ORDER BY r.created_at DESC
-         LIMIT 200"
-    ),
-    ARRAY_A
-);
+// Keep doctor reviews scoped to the signed-in doctor; administrators can review all submissions.
+$reviews_sql = "SELECT r.*, p.first_name, p.last_name, p.avatar_url
+    FROM {$wpdb->prefix}dior_reviews r
+    LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = r.patient_id";
+if (!current_user_can('manage_options')) {
+    $review_doctor_ids = Dior_Doctor_Resolver::get_accessible_doctor_ids($doctor_id);
+    $review_placeholders = implode(',', array_fill(0, count($review_doctor_ids), '%d'));
+    $reviews_sql .= $wpdb->prepare(" WHERE r.doctor_id IN ($review_placeholders)", ...$review_doctor_ids);
+}
+$reviews = $wpdb->get_results($reviews_sql . ' ORDER BY r.created_at DESC LIMIT 200', ARRAY_A);
 
 // Fetch patients for dropdown in future
 $patients = $wpdb->get_results(
@@ -81,6 +79,7 @@ if (empty($patients)) {
                     <tr>
                         <th style="width:50px;" class="text-center"><input type="checkbox" class="va-checkbox" id="rv-select-all"></th>
                         <th>PATIENT <i class="fa-solid fa-sort"></i></th>
+                        <th>SUBJECT</th>
                         <th>RATING <i class="fa-solid fa-sort"></i></th>
                         <th>DATE <i class="fa-solid fa-sort"></i></th>
                         <th>COMMENT</th>
@@ -95,12 +94,13 @@ if (empty($patients)) {
                         $pid    = (int)($r['patient_id'] ?? 0);
                         $fname  = esc_html(trim(($r['first_name']??'').' '.($r['last_name']??''))) ?: 'Unknown';
                         $avatar = esc_url($r['avatar_url'] ?? '');
+                        $subject = esc_html($r['subject'] ?? '');
                         $rating = (int)($r['rating'] ?? 5);
                         $comment= esc_html($r['comment'] ?? '');
                         $status = esc_html($r['status'] ?? 'Published');
                         $date_f = !empty($r['created_at']) ? date('M d, Y', strtotime($r['created_at'])) : '—';
                         $badge  = ($status === 'Published') ? 'va-badge-completed' : 'va-badge-pending';
-                        $enc    = esc_attr(json_encode(['id'=>$rid,'patient_id'=>$pid,'rating'=>$rating,'comment'=>$r['comment']??'','status'=>$status]));
+                        $enc    = esc_attr(wp_json_encode(['id'=>$rid,'patient_id'=>$pid,'subject'=>$r['subject']??'','rating'=>$rating,'comment'=>$r['comment']??'','status'=>$status]));
                     ?>
                     <tr data-id="<?php echo $rid; ?>">
                         <td class="text-center"><input type="checkbox" class="va-checkbox rv-row-check"></td>
@@ -112,6 +112,7 @@ if (empty($patients)) {
                                 <span class="va-user-name"><?php echo $fname; ?></span>
                             </div>
                         </td>
+                        <td><?php echo $subject !== '' ? $subject : 'Patient Review'; ?></td>
                         <td>
                             <div style="color:#F59E0B;font-size:14px;display:flex;gap:2px;">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
@@ -142,7 +143,7 @@ if (empty($patients)) {
                     </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="7" style="text-align:center;padding:40px;color:#94a3b8;">No reviews found.</td></tr>
+                    <tr><td colspan="8" style="text-align:center;padding:40px;color:#94a3b8;">No reviews found.</td></tr>
                 <?php endif; ?>
                 </tbody>
             </table>
@@ -217,6 +218,7 @@ window.rvViewReview = function(btn) {
         '<img src="https://ui-avatars.com/api/?name='+encodeURIComponent(name)+'&background=random" style="width:48px;height:48px;border-radius:50%;" alt="">' +
         '<div><div style="font-weight:700;color:#1e293b;">'+name+'</div><div style="font-size:13px;color:#64748b;">'+enc.status+'</div></div></div>' +
         '<div style="margin-bottom:16px;font-size:22px;display:flex;gap:4px;">'+stars+'</div>' +
+        (enc.subject ? '<div style="margin-bottom:8px;font-weight:700;color:#1e293b;">'+enc.subject+'</div>' : '') +
         '<div style="background:#f8fafc;border-radius:8px;padding:16px;color:#475569;font-size:14px;line-height:1.6;">'+(enc.comment||'No comment provided.')+'</div>';
     document.getElementById('rv-view-modal').style.display = 'flex';
 };

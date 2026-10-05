@@ -69,7 +69,10 @@
                                         <td><span class="cell-text"><?php echo esc_html($doc['size'] ?? '—'); ?></span></td>
                                         <td><div class="cell-content"><div class="badge-solid col-green">Available</div></div></td>
                                         <td><div class="cell-actions">
-                                            <?php if (!empty($doc['id'])): ?><button type="button" class="action-icon-btn edit-btn" title="View"><i class="fa-regular fa-eye"></i></button><?php endif; ?>
+                                            <?php if (!empty($doc['id'])): ?>
+                                                <button type="button" class="action-icon-btn edit-btn" title="Edit Document" onclick="diorEditDocument(this)"><i class="fa-solid fa-pen"></i></button>
+                                                <button type="button" class="action-icon-btn delete-btn" title="Delete Document" onclick="diorDeleteStaticRow(this, 'document')"><i class="fa-solid fa-trash"></i></button>
+                                            <?php endif; ?>
                                         </div></td>
                                     </tr>
                                 <?php endforeach; ?>

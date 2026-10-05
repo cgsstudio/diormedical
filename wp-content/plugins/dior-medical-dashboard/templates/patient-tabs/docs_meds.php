@@ -69,14 +69,16 @@
                         </thead>
                         <tbody id="dior-rx-tbody">
                             <?php
-                            global $wpdb;
-                            $current_user = wp_get_current_user();
-                            $patient_rx_rows = $wpdb->get_results($wpdb->prepare(
-                                "SELECT * FROM {$wpdb->prefix}dior_prescriptions WHERE patient_id = %s OR patient_id = %d OR patient_name = %s ORDER BY id DESC",
-                                (string) $current_user->ID,
-                                $current_user->ID,
-                                $current_user->display_name
-                            ), ARRAY_A);
+                            if (empty($dior_patient_design_static)) {
+                                global $wpdb;
+                                $current_user = wp_get_current_user();
+                                $patient_rx_rows = $wpdb->get_results($wpdb->prepare(
+                                    "SELECT * FROM {$wpdb->prefix}dior_prescriptions WHERE patient_id = %s OR patient_id = %d OR patient_name = %s ORDER BY id DESC",
+                                    (string) $current_user->ID,
+                                    $current_user->ID,
+                                    $current_user->display_name
+                                ), ARRAY_A);
+                            }
 
                             foreach ($patient_rx_rows as $rx):
                                 $rx_id = $rx['prescription_id'] ?? '—';

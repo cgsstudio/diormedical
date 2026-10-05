@@ -5,10 +5,6 @@
 (function () {
     'use strict';
 
-    var cfg = window.dior_vars || window.dior_patient_dashboard || {};
-    var ajaxUrl = cfg.ajax_url || (window.dior_vars && window.dior_vars.ajax_url);
-    var nonce = cfg.nonce || cfg.portal_nonce || '';
-
     var titles = {
         overview: 'Patient Overview',
         appointments: 'Telehealth Appointments',
@@ -98,6 +94,16 @@
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
+            var cfg = window.dior_patient_live_vars || window.dior_vars || window.dior_patient_dashboard || {};
+            var ajaxUrl = cfg.ajax_url || form.getAttribute('data-ajax-url');
+            var nonce = cfg.nonce || cfg.portal_nonce || form.getAttribute('data-nonce');
+            if (!ajaxUrl || !nonce) {
+                var configError = 'Unable to start the profile update. Refresh the page and try again.';
+                if (window.Swal) Swal.fire({ icon: 'error', title: 'Update Failed', text: configError });
+                else alert(configError);
+                return;
+            }
+
             var data = new FormData(form);
             data.append('action', 'dior_patient_save_profile');
             data.append('nonce', nonce);
@@ -107,11 +113,31 @@
             if (button) { button.disabled = true; button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; }
 
             fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
-                .then(function (response) { return response.json(); })
+                .then(function (response) {
+                    return response.text().then(function (body) {
+                        var result;
+                        try {
+                            result = JSON.parse(body);
+                        } catch (parseError) {
+                            var message = response.redirected
+                                ? 'Your session may have expired. Sign in again, then retry.'
+                                : 'The server returned a page instead of profile data (HTTP ' + response.status + '). Refresh and try again.';
+                            throw new Error(message);
+                        }
+                        if (!response.ok && !result.success) {
+                            throw new Error((result.data && result.data.message) || 'Unable to save profile.');
+                        }
+                        return result;
+                    });
+                })
                 .then(function (result) {
                     if (!result.success) throw new Error((result.data && result.data.message) || 'Unable to save profile.');
                     var profile = result.data.profile || {};
                     document.querySelectorAll('.dior-sidebar-user-name').forEach(function (el) { el.textContent = profile.full_name || 'Patient'; });
+                    var settingsName = document.querySelector('#tab-settings .dior-settings-profile-name');
+                    if (settingsName && profile.full_name) settingsName.textContent = profile.full_name;
+                    var settingsEmail = document.querySelector('#tab-settings .dior-settings-profile-email');
+                    if (settingsEmail && profile.email) settingsEmail.textContent = profile.email;
                     if (window.Swal) {
                         Swal.fire({ icon: 'success', title: 'Profile Updated', text: 'Your profile details have been saved.', timer: 1800, showConfirmButton: false });
                     } else {

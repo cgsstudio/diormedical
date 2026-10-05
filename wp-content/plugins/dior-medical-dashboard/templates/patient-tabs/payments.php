@@ -42,14 +42,14 @@
                     <table class="va-table" id="dior-bill-table">
                         <thead>
                             <tr>
-                                <th>INVOICE NO <i class="fa-solid fa-sort"></i></th>
-                                <th>DOCTOR NAME <i class="fa-solid fa-sort"></i></th>
-                                <th>DATE <i class="fa-solid fa-sort"></i></th>
-                                <th>AMOUNT <i class="fa-solid fa-sort"></i></th>
-                                <th>TAX <i class="fa-solid fa-sort"></i></th>
-                                <th>DISCOUNT <i class="fa-solid fa-sort"></i></th>
-                                <th>TOTAL <i class="fa-solid fa-sort"></i></th>
-                                <th>ACTIONS <i class="fa-solid fa-sort"></i></th>
+                                <th>Invoice No</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Tax</th>
+                                <th>Discount</th>
+                                <th>Total</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="dior-bill-tbody">
@@ -63,6 +63,8 @@
                                 ['#A345', 'Dr.Sarah Smith', 'Jul 14, 2016', '$60', '10%', '$5', '$56'],
                                 ['#A765', 'Dr.Jacob Ryan', 'Jun 22, 2016', '$40', '10%', '$5', '$39'],
                                 ['#A125', 'Dr.Rajesh', 'Jun 23, 2016', '$30', '10%', '$5', '$29']
+                                ,['#A905', 'Dr.Sarah Smith', 'Aug 2, 2016', '$72', '8%', '$4', '$74']
+                                ,['#A981', 'Dr.James Chen', 'Aug 16, 2016', '$95', '8%', '$0', '$103']
                             ];
                             foreach ($billing_mock as $bm):
                             ?>

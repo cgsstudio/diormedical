@@ -639,6 +639,7 @@ class Dior_Medical_Auth
 
         // Patient Dashboard AJAX Endpoints (Logged-in & Public Booking)
         add_action('wp_ajax_dior_patient_save_profile', [__CLASS__, 'ajax_save_profile']);
+        add_action('wp_ajax_dior_patient_submit_feedback', [__CLASS__, 'ajax_submit_feedback']);
         add_action('wp_ajax_dior_patient_upload_avatar', [__CLASS__, 'ajax_upload_avatar']);
         add_action('wp_ajax_dior_patient_remove_avatar', [__CLASS__, 'ajax_remove_avatar']);
         add_action('wp_ajax_dior_patient_upload_signature', [__CLASS__, 'ajax_upload_signature']);
@@ -826,6 +827,20 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-tabs-unify.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-tabs-unify.css') : DIOR_PORTAL_VERSION
         );
 
+        // Isolated UI improvements: never targets the Patient Overview or non-dashboard Doctor pages.
+        wp_enqueue_style(
+            'dior-patient-non-overview-improvements',
+            DIOR_PORTAL_URL . 'assets/css/dior-patient-non-overview-improvements.css',
+            ['dior-doctor-tabs-unify'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-patient-non-overview-improvements.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-patient-non-overview-improvements.css') : DIOR_PORTAL_VERSION
+        );
+        wp_enqueue_style(
+            'dior-doctor-calendar-rebuild',
+            DIOR_PORTAL_URL . 'assets/css/dior-doctor-calendar-rebuild.css',
+            ['dior-doctor-tabs-unify'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-calendar-rebuild.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-calendar-rebuild.css') : DIOR_PORTAL_VERSION
+        );
+
         wp_enqueue_script(
             'sweetalert2',
             'https://cdn.jsdelivr.net/npm/sweetalert2@11',
@@ -898,6 +913,13 @@ class Dior_Medical_Auth
             DIOR_PORTAL_URL . 'assets/js/dior-patient-dashboard.js',
             ['dior-dashboard-js'],
             time(),
+            true
+        );
+        wp_enqueue_script(
+            'dior-patient-static-actions',
+            DIOR_PORTAL_URL . 'assets/js/dior-patient-static-actions.js',
+            ['dior-patient-dashboard-page-js'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-static-actions.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-static-actions.js') : DIOR_PORTAL_VERSION,
             true
         );
         wp_enqueue_script(
@@ -975,6 +997,10 @@ class Dior_Medical_Auth
 
         wp_localize_script('dior-auth-js', 'dior_auth_vars', $localize_data);
         wp_localize_script('dior-dashboard-js', 'dior_vars', $localize_data);
+        wp_localize_script('dior-patient-live', 'dior_patient_live_vars', [
+            'ajax_url' => $localize_data['ajax_url'],
+            'nonce' => $localize_data['nonce'],
+        ]);
 
         $patient_page_data = [
             'ajax_url' => admin_url('admin-ajax.php'),
@@ -2860,6 +2886,103 @@ class Dior_Medical_Auth
             'message' => 'Personal information updated successfully in database!',
             'profile' => $updated_profile,
             'is_complete' => $is_complete
+        ]);
+    }
+
+    /**
+     * Save patient feedback and notify the selected doctor.
+     */
+    public static function ajax_submit_feedback()
+    {
+        Dior_Auth_Service::verify_ajax_nonce(['dior_portal_nonce', 'dior_auth_nonce']);
+
+        $patient_id = get_current_user_id();
+        if (!$patient_id) {
+            wp_send_json_error(['message' => 'Please sign in before submitting feedback.'], 401);
+        }
+
+        $subject = sanitize_text_field(wp_unslash($_POST['subject'] ?? ''));
+        $comment = sanitize_textarea_field(wp_unslash($_POST['message'] ?? ''));
+        $rating = absint($_POST['rating'] ?? 0);
+
+        if ($subject === '' || $comment === '') {
+            wp_send_json_error(['message' => 'Please enter a subject and feedback message.'], 400);
+        }
+        if ($rating < 1 || $rating > 5) {
+            wp_send_json_error(['message' => 'Please choose a rating from 1 to 5 stars.'], 400);
+        }
+
+        $doctor_id = 0;
+        $is_assigned_doctor = false;
+        foreach (Dior_Appointment_Service::get_patient_appointments($patient_id) as $appointment) {
+            $assigned_doctor_id = (int) ($appointment['doctor_user_id'] ?? 0);
+            if ($assigned_doctor_id && get_userdata($assigned_doctor_id)) {
+                $doctor_id = $assigned_doctor_id;
+                $is_assigned_doctor = true;
+                break;
+            }
+        }
+        if (!$doctor_id) {
+            $doctors = get_users(['role' => 'doctor', 'orderby' => 'display_name', 'order' => 'ASC', 'number' => 1, 'fields' => 'ID']);
+            $doctor_id = !empty($doctors) ? (int) $doctors[0] : 0;
+        }
+
+        $doctor = $doctor_id ? get_userdata($doctor_id) : false;
+        $doctor_roles = $doctor ? (array) $doctor->roles : [];
+        if (!$doctor || (!in_array('doctor', $doctor_roles, true) && !$is_assigned_doctor)) {
+            wp_send_json_error(['message' => 'No doctor is linked to your account yet. Please contact support.'], 403);
+        }
+
+        global $wpdb;
+        $reviews_table = $wpdb->prefix . 'dior_reviews';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $reviews_table)) !== $reviews_table) {
+            wp_send_json_error(['message' => 'Feedback storage is temporarily unavailable. Please try again later.'], 500);
+        }
+
+        $now = current_time('mysql');
+        $inserted = $wpdb->insert($reviews_table, [
+            'review_uid' => 'REV-' . wp_generate_uuid4(),
+            'patient_id' => $patient_id,
+            'doctor_id' => $doctor_id,
+            'subject' => $subject,
+            'rating' => $rating,
+            'comment' => $comment,
+            'status' => 'Pending',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ], ['%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s']);
+
+        if (!$inserted) {
+            wp_send_json_error(['message' => 'Your feedback could not be saved. Please try again.'], 500);
+        }
+
+        $patient = get_userdata($patient_id);
+        $patient_name = $patient ? $patient->display_name : 'A patient';
+        $doctor_name = trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name;
+        $doctor_name = preg_replace('/^(?:dr\.?\s*)+/i', '', $doctor_name);
+        $doctor_name = 'Dr. ' . $doctor_name;
+        if (class_exists('Dior_Notification_Service')) {
+            Dior_Notification_Service::add_dashboard_notification(
+                $doctor_id,
+                'New Patient Feedback',
+                $patient_name . ' submitted a ' . $rating . '-star review. Open Patient Reviews to view it.',
+                home_url('/doctor-dashboard/#tab=doc-patient-review'),
+                'fa-star',
+                true
+            );
+        }
+
+        wp_send_json_success([
+            'message' => 'Thank you. Your feedback was sent to your doctor.',
+            'review' => [
+                'id' => (int) $wpdb->insert_id,
+                'subject' => $subject,
+                'doctor' => $doctor_name,
+                'rating' => $rating,
+                'message' => $comment,
+                'date' => wp_date('M j, Y', current_time('timestamp')),
+                'status' => 'Pending',
+            ],
         ]);
     }
 

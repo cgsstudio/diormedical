@@ -3115,7 +3115,6 @@ body {overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     display: block !important;
   }
-}
 
 /* SMARTPHONES & SMALL TABLETS (<= 768px) */
 @media (max-width: 768px) {.dior-welcome-card {flex-direction: column !important;

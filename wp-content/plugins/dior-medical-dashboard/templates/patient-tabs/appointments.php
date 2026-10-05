@@ -301,6 +301,9 @@
                                                         ['Dr.Jens Brincker', 'Endocrinologist', 'Jun 12, 2020', '04:00-05:00', 'Diabetes', '+123 45678345', 'Cancelled', 'https://randomuser.me/api/portraits/men/75.jpg'],
                                                         ['Dr.Jamie Blair', 'Radiologist', 'Jun 12, 2020', '05:00-05:30', 'Diabetes', '+123 45678345', 'Confirm', 'https://randomuser.me/api/portraits/women/49.jpg'],
                                                         ['Dr.Nikki Barton', 'Endocrinologist', 'Jun 12, 2020', '06:00-07:00', 'X-Ray', '+123 45678345', 'Pending', 'https://randomuser.me/api/portraits/men/85.jpg']
+                                                        ,['Dr.Olivia Carter', 'Dermatologist', 'Jun 12, 2020', '07:30-08:00', 'Skin review', '+123 45678346', 'Confirm', 'https://randomuser.me/api/portraits/women/50.jpg']
+                                                        ,['Dr.Daniel Brooks', 'Neurologist', 'Jun 12, 2020', '08:00-08:30', 'Headache review', '+123 45678347', 'Pending', 'https://randomuser.me/api/portraits/men/51.jpg']
+                                                        ,['Dr.Emily Wilson', 'Endocrinologist', 'Jun 12, 2020', '08:30-09:00', 'Lab review', '+123 45678348', 'Confirm', 'https://randomuser.me/api/portraits/women/52.jpg']
                                                     ];
                                                     foreach ($today_mock as $tm):
                                                     ?>

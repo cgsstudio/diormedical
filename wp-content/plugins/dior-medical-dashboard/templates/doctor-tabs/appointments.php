@@ -128,6 +128,9 @@ $events_json = json_encode($formatted_events);
 
         var calendar = new FullCalendar.Calendar(calEl, {
             initialView: 'dayGridMonth',
+            initialDate: '<?php echo esc_js(current_time('Y-m-d')); ?>',
+            firstDay: 1,
+            dayMaxEvents: 3,
             headerToolbar: false,
             height: 'auto',
             events: <?php echo $events_json; ?>,
