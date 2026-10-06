@@ -21,9 +21,11 @@
         var modal = document.getElementById('dior-feedback-modal');
         if (!modal) return;
         document.getElementById('dior-feedback-modal-title').textContent = 'Give Feedback';
+        document.getElementById('dior-feedback-id').value = '';
         document.getElementById('dior-feedback-subject').value = '';
         document.getElementById('dior-feedback-rating-5').checked = true;
         document.getElementById('dior-feedback-message').value = '';
+        document.getElementById('dior-feedback-submit-btn').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Feedback';
         diorOpenStaticModal('dior-feedback-modal');
     };
 
@@ -134,6 +136,106 @@
         }
     };
 
+    window.diorEditPatientFeedback = function (button) {
+        var feedbackId = button.dataset.feedbackId;
+        var feedback;
+        try {
+            feedback = JSON.parse(button.dataset.feedback || '{}');
+        } catch (error) {
+            return;
+        }
+
+        var modal = document.getElementById('dior-feedback-modal');
+        if (!modal) return;
+
+        document.getElementById('dior-feedback-modal-title').textContent = 'Edit Feedback';
+        document.getElementById('dior-feedback-id').value = feedbackId || '';
+        document.getElementById('dior-feedback-subject').value = feedback.subject || '';
+        var rating = parseInt(feedback.rating) || 5;
+        var ratingInput = document.getElementById('dior-feedback-rating-' + rating);
+        if (ratingInput) ratingInput.checked = true;
+        document.getElementById('dior-feedback-message').value = feedback.message || '';
+        document.getElementById('dior-feedback-submit-btn').innerHTML = '<i class="fa-solid fa-save"></i> Update Feedback';
+
+        diorOpenStaticModal('dior-feedback-modal');
+    };
+
+    window.diorDeletePatientFeedback = function (button) {
+        var feedbackId = button.dataset.feedbackId;
+        if (!feedbackId) return;
+
+        var row = button.closest('tr');
+        if (!row) return;
+
+        if (window.Swal) {
+            Swal.fire({
+                title: 'Delete Feedback?',
+                text: 'Are you sure you want to delete this feedback? This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DC2626',
+                cancelButtonColor: '#94A3B8',
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    diorConfirmDeleteFeedback(feedbackId, row);
+                }
+            });
+        } else if (window.confirm('Are you sure you want to delete this feedback?')) {
+            diorConfirmDeleteFeedback(feedbackId, row);
+        }
+    };
+
+    function diorConfirmDeleteFeedback(feedbackId, row) {
+        var cfg = window.dior_vars || window.dior_patient_dashboard || {};
+        var ajaxUrl = cfg.ajax_url || '/wp-admin/admin-ajax.php';
+        var nonce = cfg.nonce || cfg.portal_nonce || '';
+
+        if (!nonce) {
+            if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Session expired. Please refresh the page.' });
+            else window.alert('Session expired. Please refresh the page.');
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('action', 'dior_patient_delete_feedback');
+        formData.append('nonce', nonce);
+        formData.append('feedback_id', feedbackId);
+
+        fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: formData })
+            .then(function (response) { return response.json(); })
+            .then(function (result) {
+                if (result.success) {
+                    row.remove();
+                    var totalLabel = document.getElementById('dior-feedback-total-count');
+                    if (totalLabel) {
+                        var tbody = document.querySelector('#dior-feedback-table tbody');
+                        var count = tbody ? tbody.querySelectorAll('tr[data-feedback-id]').length : 0;
+                        totalLabel.textContent = count + ' total feedback records';
+                    }
+                    if (window.Swal) {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Feedback Deleted",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    } else {
+                        window.alert('Feedback deleted successfully.');
+                    }
+                } else {
+                    if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: result.data.message || 'Failed to delete feedback.' });
+                    else window.alert(result.data.message || 'Failed to delete feedback.');
+                }
+            })
+            .catch(function (error) {
+                if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Network error. Please try again.' });
+                else window.alert('Network error. Please try again.');
+            });
+    }
+
     window.diorSaveFeedback = function (event) {
         event.preventDefault();
         var form = document.getElementById('dior-feedback-form');
@@ -148,13 +250,16 @@
             return false;
         }
 
+        var feedbackId = document.getElementById('dior-feedback-id').value;
+        var isEdit = feedbackId && feedbackId !== '';
+
         var formData = new FormData(form);
-        formData.append('action', 'dior_patient_submit_feedback');
+        formData.append('action', isEdit ? 'dior_patient_update_feedback' : 'dior_patient_submit_feedback');
         formData.append('nonce', nonce);
         var originalButton = button ? button.innerHTML : '';
         if (button) {
             button.disabled = true;
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + (isEdit ? 'Updating...' : 'Sending...');
         }
 
         fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: formData })
@@ -171,12 +276,43 @@
                 });
             })
             .then(function (result) {
-                appendFeedbackRow(result.data.review || {});
+                if (isEdit) {
+                    var row = document.querySelector('tr[data-feedback-id="' + feedbackId + '"]');
+                    if (row) {
+                        var cells = row.querySelectorAll('td');
+                        if (cells.length >= 5) {
+                            cells[0].querySelector('.cell-text').textContent = result.data.review.subject || 'Patient Feedback';
+                            cells[2].querySelector('.cell-text').innerHTML = '<i class="fa-solid fa-star" style="color:#F59E0B;"></i> ' + (result.data.review.rating || 5) + '/5';
+                            cells[3].querySelector('.cell-text').textContent = result.data.review.message || '';
+                            var viewButton = row.querySelector('.dior-feedback-view-action');
+                            if (viewButton) {
+                                viewButton.dataset.feedback = JSON.stringify({
+                                    subject: result.data.review.subject,
+                                    doctor: result.data.review.doctor,
+                                    rating: result.data.review.rating,
+                                    message: result.data.review.message,
+                                    status: result.data.review.status
+                                });
+                            }
+                        }
+                    }
+                } else {
+                    appendFeedbackRow(result.data.review || {});
+                }
                 diorCloseStaticModal('dior-feedback-modal');
                 form.reset();
+                document.getElementById('dior-feedback-id').value = '';
                 document.getElementById('dior-feedback-rating-5').checked = true;
+                document.getElementById('dior-feedback-submit-btn').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Feedback';
+                document.getElementById('dior-feedback-modal-title').textContent = 'Give Feedback';
                 if (window.Swal) {
-                    Swal.fire({ icon: 'success', title: 'Feedback Sent', text: result.data.message, confirmButtonColor: '#2C6CB1' });
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: isEdit ? "Feedback Updated" : "Feedback Sent",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                 } else {
                     window.alert(result.data.message);
                 }

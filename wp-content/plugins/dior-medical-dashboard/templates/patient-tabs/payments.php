@@ -13,33 +13,29 @@
         </div>
     </div>
 
-    <div class="master-table-wrapper">
-        <div class="master-table-container">
-            <div class="master-table-card">
-                <div class="master-table-header">
-                    <div class="header-content">
-                        <div class="table-title-section">
-                            <h2 class="table-title">Billing</h2>
-                            <div class="title-accent"></div>
+    <div class="docs-card">
+                <div class="docs-header-container">
+                    <div class="docs-title-box">
+                        <h2>Billing</h2>
+                        <div class="docs-title-line"></div>
+                    </div>
+                    <div class="docs-actions-wrapper">
+                        <div class="docs-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="dior-bill-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterBill()">
                         </div>
-                        <div class="header-actions-group">
-                            <div class="search-container">
-                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                                <input type="text" id="dior-bill-search-input" placeholder="Search records..." aria-label="Search box" class="search-input" onkeyup="diorFilterBill()">
-                            </div>
-                            <div class="action-buttons">
-                                <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success" title="Export to CSV" onclick="diorDownloadBillCSV()">
-                                    <i class="fa-solid fa-file-arrow-down"></i>
-                                </button>
-                                <button type="button" aria-label="Refresh data" class="action-btn action-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                    <i class="fa-solid fa-rotate-right"></i>
-                                </button>
-                            </div>
+                        <div class="docs-actions-group">
+                            <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadBillCSV()">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                            </button>
+                            <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="table-content">
-                    <table class="va-table" id="dior-bill-table">
+                <div class="docs-table-wrapper">
+                    <table class="docs-table" id="dior-bill-table">
                         <thead>
                             <tr>
                                 <th>Invoice No</th>
@@ -99,14 +95,10 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="master-table-footer">
-                    <span class="page-count" id="dior-bill-page-count">0 selected / <?php echo count($billing_mock); ?> total</span>
-                    
-                    <div class="master-pagination" id="dior-bill-pagination">
-                    </div>
+                <div class="docs-pagination-container">
+                    <div class="docs-showing-text" id="dior-bill-page-count">0 selected / <?php echo count($billing_mock); ?> total</div>
+                    <div id="dior-bill-pagination"></div>
                 </div>
-            </div>
-        </div>
     </div>
     
 

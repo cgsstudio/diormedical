@@ -13,36 +13,32 @@
         </div>
     </div>
 
-    <div class="master-table-wrapper">
-        <div class="master-table-container">
-            <div class="master-table-card">
-                <div class="master-table-header">
-                    <div class="header-content">
-                        <div class="table-title-section">
-                            <h2 class="table-title">Telemedicine / Video Consultations</h2>
-                            <div class="title-accent"></div>
+    <div class="docs-card">
+                <div class="docs-header-container">
+                    <div class="docs-title-box">
+                        <h2>Telemedicine / Video Consultations</h2>
+                        <div class="docs-title-line"></div>
+                    </div>
+                    <div class="docs-actions-wrapper">
+                        <div class="docs-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="dior-tele-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterTele()">
                         </div>
-                        <div class="header-actions-group">
-                            <div class="search-container">
-                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                                <input type="text" id="dior-tele-search-input" placeholder="Search records..." aria-label="Search box" class="search-input" onkeyup="diorFilterTele()">
-                            </div>
-                            <div class="action-buttons">
-                                <button type="button" aria-label="Add new record" class="action-btn action-btn-primary dior-ic-54410f9b78">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                                <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success" title="Export to CSV" onclick="diorDownloadTeleCSV()">
-                                    <i class="fa-solid fa-file-arrow-down"></i>
-                                </button>
-                                <button type="button" aria-label="Refresh data" class="action-btn action-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                    <i class="fa-solid fa-rotate-right"></i>
-                                </button>
-                            </div>
+                        <div class="docs-actions-group">
+                            <button type="button" aria-label="Add new record" class="docs-icon-btn docs-btn-primary dior-ic-54410f9b78">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadTeleCSV()">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                            </button>
+                            <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="table-content">
-                    <table class="va-table" id="dior-tele-table">
+                <div class="docs-table-wrapper">
+                    <table class="docs-table" id="dior-tele-table">
                         <thead>
                             <tr>
                                 <th class="dior-ic-3fa4d8d717">
@@ -94,14 +90,10 @@
 </tbody>
                     </table>
                 </div>
-                <div class="master-table-footer">
-                    <span class="page-count" id="dior-tele-page-count">0 selected / <?php echo count($appointments); ?> total</span>
-                    
-                    <div class="master-pagination" id="dior-tele-pagination">
-                    </div>
+                <div class="docs-pagination-container">
+                    <span class="docs-showing-text" id="dior-tele-page-count">0 selected / <?php echo count($appointments); ?> total</span>
+                    <div id="dior-tele-pagination"></div>
                 </div>
-            </div>
-        </div>
     </div>
     
 </section>

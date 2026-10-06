@@ -81,7 +81,11 @@
                         <td><span class="cell-text"><?php echo esc_html($feedback['message'] ?? ''); ?></span></td>
                         <td><div class="cell-content cell-icon-text"><i class="fa-regular fa-calendar cell-icon"></i><span class="cell-text"><?php echo esc_html($feedback_date); ?></span></div></td>
                         <td><div class="cell-content"><div class="badge-solid <?php echo ($feedback_status === 'Published') ? 'col-green' : 'col-amber'; ?>"><?php echo esc_html($feedback_status); ?></div></div></td>
-                        <td><button type="button" class="dior-feedback-view-action" aria-label="View feedback" title="View feedback" data-feedback="<?php echo $feedback_view_data; ?>" onclick="diorViewPatientFeedback(this)"><i class="fa-regular fa-eye"></i></button></td>
+                        <td>
+                            <button type="button" class="dior-feedback-view-action" aria-label="View feedback" title="View feedback" data-feedback="<?php echo $feedback_view_data; ?>" onclick="diorViewPatientFeedback(this)"><i class="fa-regular fa-eye"></i></button>
+                            <button type="button" class="dior-feedback-edit-action" aria-label="Edit feedback" title="Edit feedback" data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>" data-feedback="<?php echo $feedback_view_data; ?>" onclick="diorEditPatientFeedback(this)"><i class="fa-solid fa-pen"></i></button>
+                            <button type="button" class="dior-feedback-delete-action" aria-label="Delete feedback" title="Delete feedback" data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>" onclick="diorDeletePatientFeedback(this)"><i class="fa-solid fa-trash"></i></button>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 <?php if (empty($patient_feedback)): ?>
@@ -98,6 +102,7 @@
         <div class="dior-static-modal dior-feedback-modal">
             <div class="dior-static-modal-header"><h3 id="dior-feedback-modal-title">Give Feedback</h3><button type="button" class="dior-static-modal-close" onclick="diorCloseStaticModal('dior-feedback-modal')"><i class="fa-solid fa-xmark"></i></button></div>
             <form id="dior-feedback-form" onsubmit="return diorSaveFeedback(event)">
+                <input type="hidden" name="feedback_id" id="dior-feedback-id" value="">
                 <div class="dior-static-modal-body">
                     <p class="dior-feedback-intro">How was your experience today? Your feedback is sent privately to your doctor.</p>
                     <div class="dior-feedback-recipient">
@@ -126,7 +131,7 @@
                     <label for="dior-feedback-message">Message</label>
                     <textarea name="message" id="dior-feedback-message" rows="5" maxlength="3000" required placeholder="Tell us about your experience..."></textarea>
                 </div>
-                <div class="dior-static-modal-footer"><button type="button" onclick="diorCloseStaticModal('dior-feedback-modal')">Cancel</button><button type="submit" class="primary" <?php disabled(!$feedback_doctor_id); ?>><i class="fa-solid fa-paper-plane"></i> Submit Feedback</button></div>
+                <div class="dior-static-modal-footer"><button type="button" onclick="diorCloseStaticModal('dior-feedback-modal')">Cancel</button><button type="submit" class="primary" id="dior-feedback-submit-btn" <?php disabled(!$feedback_doctor_id); ?>><i class="fa-solid fa-paper-plane"></i> Submit Feedback</button></div>
             </form>
         </div>
     </div>

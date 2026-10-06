@@ -746,6 +746,40 @@
     box-shadow: none !important;
 }
 
+.dior-patient-portal-wrap #tab-feedback .dior-feedback-edit-action,
+.dior-patient-portal-wrap #tab-feedback .dior-feedback-delete-action {
+    display: inline-flex !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #64748B !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    margin-left: 4px !important;
+}
+
+.dior-patient-portal-wrap #tab-feedback .dior-feedback-edit-action:hover,
+.dior-patient-portal-wrap #tab-feedback .dior-feedback-edit-action:focus-visible {
+    background: transparent !important;
+    color: #2C6CB1 !important;
+    box-shadow: none !important;
+}
+
+.dior-patient-portal-wrap #tab-feedback .dior-feedback-delete-action:hover,
+.dior-patient-portal-wrap #tab-feedback .dior-feedback-delete-action:focus-visible {
+    background: transparent !important;
+    color: #DC2626 !important;
+    box-shadow: none !important;
+}
+
 .dior-patient-portal-wrap #tab-payments .master-table-card {
     border: 1px solid #E2E8F0 !important;
     border-radius: 12px !important;

@@ -14,7 +14,17 @@
     </div>
 
     <?php
-    $patient_notif_rows = is_array($notifications ?? []) ? $notifications : [];
+    // Filter out demo/static notifications - only show real database notifications
+    $patient_notif_rows = [];
+    if (is_array($notifications ?? [])) {
+        foreach ($notifications as $n) {
+            // Skip notifications with DEMO prefix (from static design data)
+            if (!empty($n['id']) && strpos($n['id'], 'DEMO-') === 0) {
+                continue;
+            }
+            $patient_notif_rows[] = $n;
+        }
+    }
     $patient_unread = 0;
     foreach ($patient_notif_rows as $pn) { if (empty($pn['is_read'])) { $patient_unread++; } }
     ?>
@@ -25,36 +35,32 @@
         <div class="dior-patient-alert-stat"><div class="dior-patient-alert-stat-icon info"><i class="fa-solid fa-shield-heart"></i></div><div><span>Portal Status</span><strong>Active</strong></div></div>
     </div>
 
-    <div class="master-table-wrapper">
-        <div class="master-table-container">
-            <div class="master-table-card">
-                <div class="master-table-header">
-                    <div class="header-content">
-                        <div class="table-title-section">
-                            <h2 class="table-title">Notifications Center</h2>
-                            <div class="title-accent"></div>
+    <div class="docs-card">
+                <div class="docs-header-container">
+                    <div class="docs-title-box">
+                        <h2>Notifications Center</h2>
+                        <div class="docs-title-line"></div>
+                    </div>
+                    <div class="docs-actions-wrapper">
+                        <div class="docs-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="dior-notif-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterNotif()">
                         </div>
-                        <div class="header-actions-group">
-                            <div class="search-container">
-                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                                <input type="text" id="dior-notif-search-input" placeholder="Search records..." aria-label="Search box" class="search-input" onkeyup="diorFilterNotif()">
-                            </div>
-                            <div class="action-buttons">
-                                <button type="button" aria-label="Add new record" class="action-btn action-btn-primary dior-ic-54410f9b78">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                                <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success" title="Export to CSV" onclick="diorDownloadNotifCSV()">
-                                    <i class="fa-solid fa-file-arrow-down"></i>
-                                </button>
-                                <button type="button" aria-label="Refresh data" class="action-btn action-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                    <i class="fa-solid fa-rotate-right"></i>
-                                </button>
-                            </div>
+                        <div class="docs-actions-group">
+                            <button type="button" aria-label="Add new record" class="docs-icon-btn docs-btn-primary dior-ic-54410f9b78">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadNotifCSV()">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                            </button>
+                            <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="table-content">
-                    <table class="va-table" id="dior-notif-table">
+                <div class="docs-table-wrapper">
+                    <table class="docs-table" id="dior-notif-table">
                         <thead>
                             <tr>
                                 <th class="dior-ic-3fa4d8d717">
@@ -103,14 +109,10 @@
 </tbody>
                     </table>
                 </div>
-                <div class="master-table-footer">
-                    <span class="page-count" id="dior-notif-page-count">0 selected / <?php echo count($patient_notif_rows); ?> total</span>
-                    
-                    <div class="master-pagination" id="dior-notif-pagination">
-                    </div>
+                <div class="docs-pagination-container">
+                    <span class="docs-showing-text" id="dior-notif-page-count">0 selected / <?php echo count($patient_notif_rows); ?> total</span>
+                    <div id="dior-notif-pagination"></div>
                 </div>
-            </div>
-        </div>
     </div>
     
 </section>

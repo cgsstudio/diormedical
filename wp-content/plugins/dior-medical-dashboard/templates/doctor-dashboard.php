@@ -19,9 +19,6 @@
                         <?php endif; ?>
                     </a>
                 </div>
-                <button type="button" class="dior-side-close" onclick="diorDocCloseMobile()">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
             </div>
 
             <!-- Doctor Identity Card Removed -->

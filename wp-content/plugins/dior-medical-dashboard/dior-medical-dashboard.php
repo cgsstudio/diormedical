@@ -640,6 +640,8 @@ class Dior_Medical_Auth
         // Patient Dashboard AJAX Endpoints (Logged-in & Public Booking)
         add_action('wp_ajax_dior_patient_save_profile', [__CLASS__, 'ajax_save_profile']);
         add_action('wp_ajax_dior_patient_submit_feedback', [__CLASS__, 'ajax_submit_feedback']);
+        add_action('wp_ajax_dior_patient_update_feedback', [__CLASS__, 'ajax_update_feedback']);
+        add_action('wp_ajax_dior_patient_delete_feedback', [__CLASS__, 'ajax_delete_feedback']);
         add_action('wp_ajax_dior_patient_upload_avatar', [__CLASS__, 'ajax_upload_avatar']);
         add_action('wp_ajax_dior_patient_remove_avatar', [__CLASS__, 'ajax_remove_avatar']);
         add_action('wp_ajax_dior_patient_upload_signature', [__CLASS__, 'ajax_upload_signature']);
@@ -813,6 +815,12 @@ class Dior_Medical_Auth
             DIOR_PORTAL_URL . 'assets/css/view-appointment.css',
             ['dior-doctor-source-tabs'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/view-appointment.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/view-appointment.css') : DIOR_PORTAL_VERSION
+        );
+        wp_enqueue_style(
+            'dior-documents-css',
+            DIOR_PORTAL_URL . 'assets/css/documents.css',
+            ['dior-view-appointment-css'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/documents.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/documents.css') : DIOR_PORTAL_VERSION
         );
         wp_enqueue_style(
             'dior-static-responsive-fix',
@@ -2243,14 +2251,7 @@ class Dior_Medical_Auth
                 ['id' => 'DEMO-Q-002', 'title' => 'Pre-Consultation Questionnaire', 'status' => 'Pending', 'updated_at' => $demo_today],
             ];
         }
-        if (empty($notifications)) {
-            $dior_demo_mode = true;
-            $notifications = [
-                ['id' => 'DEMO-N-001', 'title' => 'Appointment Confirmed', 'message' => 'Your appointment with Dr. Sarah Smith is confirmed.', 'created_at' => current_time('mysql'), 'is_read' => false, 'action_url' => '#tab=appointments'],
-                ['id' => 'DEMO-N-002', 'title' => 'Prescription Available', 'message' => 'A new prescription is available in your dashboard.', 'created_at' => current_time('mysql'), 'is_read' => false, 'action_url' => '#tab=docs_meds'],
-                ['id' => 'DEMO-N-003', 'title' => 'Report Uploaded', 'message' => 'Your latest blood test report is available.', 'created_at' => current_time('mysql'), 'is_read' => true, 'action_url' => '#tab=documents'],
-            ];
-        }
+        // Notifications are always dynamic from database - no demo fallback
 
         // Calculate stats
         $next_appointment = null;
@@ -2983,6 +2984,121 @@ class Dior_Medical_Auth
                 'date' => wp_date('M j, Y', current_time('timestamp')),
                 'status' => 'Pending',
             ],
+        ]);
+    }
+
+    /**
+     * Update existing patient feedback
+     */
+    public static function ajax_update_feedback()
+    {
+        Dior_Auth_Service::verify_ajax_nonce(['dior_portal_nonce', 'dior_auth_nonce']);
+
+        $patient_id = get_current_user_id();
+        if (!$patient_id) {
+            wp_send_json_error(['message' => 'Please sign in before updating feedback.'], 401);
+        }
+
+        $feedback_id = absint($_POST['feedback_id'] ?? 0);
+        if (!$feedback_id) {
+            wp_send_json_error(['message' => 'Invalid feedback ID.'], 400);
+        }
+
+        $subject = sanitize_text_field(wp_unslash($_POST['subject'] ?? ''));
+        $comment = sanitize_textarea_field(wp_unslash($_POST['message'] ?? ''));
+        $rating = absint($_POST['rating'] ?? 0);
+
+        if ($subject === '' || $comment === '') {
+            wp_send_json_error(['message' => 'Please enter a subject and feedback message.'], 400);
+        }
+        if ($rating < 1 || $rating > 5) {
+            wp_send_json_error(['message' => 'Please choose a rating from 1 to 5 stars.'], 400);
+        }
+
+        global $wpdb;
+        $reviews_table = $wpdb->prefix . 'dior_reviews';
+
+        // Verify ownership
+        $existing = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$reviews_table} WHERE id = %d AND patient_id = %d",
+            $feedback_id,
+            $patient_id
+        ));
+
+        if (!$existing) {
+            wp_send_json_error(['message' => 'Feedback not found or you do not have permission to edit it.'], 403);
+        }
+
+        $now = current_time('mysql');
+        $updated = $wpdb->update($reviews_table, [
+            'subject' => $subject,
+            'rating' => $rating,
+            'comment' => $comment,
+            'updated_at' => $now,
+        ], ['id' => $feedback_id, 'patient_id' => $patient_id], ['%s', '%d', '%s', '%s'], ['%d', '%d']);
+
+        if ($updated === false) {
+            wp_send_json_error(['message' => 'Your feedback could not be updated. Please try again.'], 500);
+        }
+
+        $doctor = get_userdata($existing->doctor_id);
+        $doctor_name = trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name;
+        $doctor_name = preg_replace('/^(?:dr\.?\s*)+/i', '', $doctor_name);
+        $doctor_name = 'Dr. ' . $doctor_name;
+
+        wp_send_json_success([
+            'message' => 'Feedback updated successfully.',
+            'review' => [
+                'id' => $feedback_id,
+                'subject' => $subject,
+                'doctor' => $doctor_name,
+                'rating' => $rating,
+                'message' => $comment,
+                'date' => wp_date('M j, Y', strtotime($existing->created_at)),
+                'status' => $existing->status,
+            ],
+        ]);
+    }
+
+    /**
+     * Delete patient feedback
+     */
+    public static function ajax_delete_feedback()
+    {
+        Dior_Auth_Service::verify_ajax_nonce(['dior_portal_nonce', 'dior_auth_nonce']);
+
+        $patient_id = get_current_user_id();
+        if (!$patient_id) {
+            wp_send_json_error(['message' => 'Please sign in before deleting feedback.'], 401);
+        }
+
+        $feedback_id = absint($_POST['feedback_id'] ?? 0);
+        if (!$feedback_id) {
+            wp_send_json_error(['message' => 'Invalid feedback ID.'], 400);
+        }
+
+        global $wpdb;
+        $reviews_table = $wpdb->prefix . 'dior_reviews';
+
+        // Verify ownership
+        $existing = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$reviews_table} WHERE id = %d AND patient_id = %d",
+            $feedback_id,
+            $patient_id
+        ));
+
+        if (!$existing) {
+            wp_send_json_error(['message' => 'Feedback not found or you do not have permission to delete it.'], 403);
+        }
+
+        $deleted = $wpdb->delete($reviews_table, ['id' => $feedback_id, 'patient_id' => $patient_id], ['%d', '%d']);
+
+        if ($deleted === false) {
+            wp_send_json_error(['message' => 'Your feedback could not be deleted. Please try again.'], 500);
+        }
+
+        wp_send_json_success([
+            'message' => 'Feedback deleted successfully.',
         ]);
     }
 

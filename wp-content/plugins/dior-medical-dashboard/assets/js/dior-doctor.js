@@ -176,15 +176,12 @@ function initDoctorDashboard() {
                     if (sideImg) sideImg.src = avatarUrl;
 
                     if (typeof Swal !== 'undefined') {
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Provider photo updated!",
                             showConfirmButton: false,
-                            timer: 2500
-                        });
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Provider photo updated!'
+                            timer: 1500
                         });
                     }
                 } else {
@@ -274,12 +271,11 @@ function initDoctorDashboard() {
 
                         if (typeof Swal !== 'undefined') {
                             Swal.fire({
-                                icon: 'success',
-                                title: 'Profile Photo Updated!',
-                                text: 'Your provider photo has been selected from the WordPress Media Library.',
-                                confirmButtonText: '<i class="fa-solid fa-check"></i> Great',
-                                confirmButtonColor: '#2C6CB1',
-                                timer: 2500
+                                position: "top-end",
+                                icon: "success",
+                                title: "Profile Photo Updated!",
+                                showConfirmButton: false,
+                                timer: 1500
                             });
                         }
                     } else {
@@ -353,11 +349,11 @@ function initDoctorDashboard() {
 
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
-                            icon: 'success',
-                            title: 'Photo Removed',
-                            text: 'Provider profile photo has been reset.',
-                            confirmButtonColor: '#2C6CB1',
-                            timer: 2000
+                            position: "top-end",
+                            icon: "success",
+                            title: "Photo Removed",
+                            showConfirmButton: false,
+                            timer: 1500
                         });
                     }
                 } else {
@@ -417,11 +413,11 @@ window.diorDocHandleSigFileSelect = function(input) {
             window.diorDocApplySignatureUI(res.data.signature_url);
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Signature Uploaded',
-                    text: 'Transparent PNG signature saved and active across letters & prescriptions.',
-                    confirmButtonColor: '#00A896',
-                    timer: 2500
+                    position: "top-end",
+                    icon: "success",
+                    title: "Signature Uploaded",
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             } else {
                 alert('Doctor signature uploaded successfully!');
@@ -480,11 +476,11 @@ window.diorDocOpenSigMediaLibrary = function() {
                     window.diorDocApplySignatureUI(sigUrl);
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
-                            icon: 'success',
-                            title: 'Signature Selected',
-                            text: 'Digital signature updated from Media Library.',
-                            confirmButtonColor: '#00A896',
-                            timer: 2500
+                            position: "top-end",
+                            icon: "success",
+                            title: "Signature Selected",
+                            showConfirmButton: false,
+                            timer: 1500
                         });
                     }
                 } else {
@@ -528,11 +524,11 @@ window.diorDocRemoveSignature = function() {
             window.diorDocClearSignatureUI();
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Signature Removed',
-                    text: 'Doctor signature has been reset.',
-                    confirmButtonColor: '#00A896',
-                    timer: 2000
+                    position: "top-end",
+                    icon: "success",
+                    title: "Signature Removed",
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             } else {
                 alert('Signature removed.');
@@ -1020,10 +1016,11 @@ window.diorDocSendApptReminder = function(apptId) {
             if (res.success) {
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
-                        title: 'Reminder Sent!',
-                        text: res.data.message || 'Appointment reminder dispatched successfully.',
-                        icon: 'success',
-                        confirmButtonColor: '#2C6CB1'
+                        position: "top-end",
+                        icon: "success",
+                        title: "Reminder Sent!",
+                        showConfirmButton: false,
+                        timer: 1500
                     });
                 } else {
                     alert(res.data.message || 'Reminder sent successfully!');
@@ -1120,11 +1117,11 @@ window.diorDocUpdateApptStatus = function(selectEl, patientId, apptId) {
 
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
-                        title: 'Status Updated',
-                        text: res.data.message || ('Status updated to ' + st),
-                        icon: 'success',
-                        timer: 1600,
-                        showConfirmButton: false
+                        position: "top-end",
+                        icon: "success",
+                        title: "Status Updated",
+                        showConfirmButton: false,
+                        timer: 1500
                     });
                 }
             } else {
@@ -1759,11 +1756,11 @@ window.diorDocExecutePrescriptionTransmit = function() {
 
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Prescription Transmitted!',
-                    text: 'e-Prescription successfully verified and delivered to patient portal & pharmacy EDI.',
-                    confirmButtonColor: '#00A896',
-                    timer: 3000
+                    position: "top-end",
+                    icon: "success",
+                    title: "Prescription Transmitted!",
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             }
 
@@ -1940,13 +1937,11 @@ window.diorDocSaveProfile = function(e) {
 
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Profile Updated Successfully!',
-                    text: 'Your provider credentials and personal information have been saved in the database.',
-                    confirmButtonText: '<i class="fa-solid fa-check"></i> Great',
-                    confirmButtonColor: '#2C6CB1',
-                    showCancelButton: false,
-                    timer: 2500
+                    position: "top-end",
+                    icon: "success",
+                    title: "Profile Updated Successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             }
         } else {
