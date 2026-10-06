@@ -6,7 +6,7 @@
         </div>
         <div>
             <ul class="va-breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><a href="#"><i class="fas fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
                 <li><span style="color:#94A3B8;">/</span></li>
                 <li class="active"><span>Medical Record</span></li>
             </ul>
@@ -89,22 +89,21 @@
 
                         <div class="card border-0 shadow-sm rounded-16 mb-4 no-print dior-ic-18f15f6b14">
                             <div class="card-body p-3 dior-ic-30853ea1b7">
-                                <div class="row align-items-center g-3 dior-ic-5f76b1419d">
-                                    <div class="col-lg-8 dior-ic-aea598fd73">
-                                        <div class="d-flex flex-wrap gap-2 dior-ic-c10bc232ce">
-                                            <button type="button" class="btn btn-sm btn-primary dior-medical-record-filter is-active" data-filter="ALL"><i class="fas fa-th-large me-1"></i> All Events (<?php echo esc_html(count($appointments) + count($documents) + count($questionnaires) + count($prescriptions)); ?>)</button>
-                                            <button type="button" class="btn btn-sm btn-light dior-medical-record-filter" data-filter="CONSULTATION"><i class="fas fa-stethoscope me-1 text-primary"></i> Consultations</button>
-                                            <button type="button" class="btn btn-sm btn-light dior-medical-record-filter" data-filter="PRESCRIPTION"><i class="fas fa-pills me-1 text-purple"></i> Prescriptions</button>
-                                            <button type="button" class="btn btn-sm btn-light dior-medical-record-filter" data-filter="DIAGNOSTIC"><i class="fas fa-file-medical-alt me-1 text-info"></i> Diagnostics &amp; Scans</button>
-                                            <button type="button" class="btn btn-sm btn-light dior-medical-record-filter" data-filter="PROCEDURE"><i class="fas fa-user-md me-1 text-danger"></i> Procedures</button>
-                                        </div>
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                    <div class="d-flex flex-wrap gap-2 flex-grow-1">
+                                        <button type="button" class="btn btn-sm rounded-pill btn-primary dior-medical-record-filter is-active px-3 shadow-sm" data-filter="ALL"><i class="fas fa-th-large me-1"></i> All Events (<?php echo esc_html(count($appointments) + count($documents) + count($questionnaires) + count($prescriptions)); ?>)</button>
+                                        <button type="button" class="btn btn-sm rounded-pill btn-outline-primary dior-medical-record-filter px-3 bg-white" data-filter="CONSULTATION"><i class="fas fa-stethoscope me-1 text-primary"></i> Consultations</button>
+                                        <button type="button" class="btn btn-sm rounded-pill btn-outline-primary dior-medical-record-filter px-3 bg-white" data-filter="PRESCRIPTION"><i class="fas fa-pills me-1 text-purple"></i> Prescriptions</button>
+                                        <button type="button" class="btn btn-sm rounded-pill btn-outline-primary dior-medical-record-filter px-3 bg-white" data-filter="DIAGNOSTIC"><i class="fas fa-file-medical-alt me-1 text-info"></i> Diagnostics &amp; Scans</button>
+                                        <button type="button" class="btn btn-sm rounded-pill btn-outline-primary dior-medical-record-filter px-3 bg-white" data-filter="PROCEDURE"><i class="fas fa-user-md me-1 text-danger"></i> Procedures</button>
                                     </div>
-                                    <div class="col-lg-4 d-flex gap-2 dior-ic-04e1c988f3">
-                                        <div class="input-group search-input-group flex-grow-1 dior-ic-81029c50e5">
-                                            <span class="input-group-text dior-ic-8ae62c593e"><i class="fas fa-search"></i></span>
-                                            <input type="text" placeholder="Search medical history..." class="form-control dior-ic-c87dae7386">
+                                    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-start justify-content-md-end">
+                                        <div class="input-group search-input-group shadow-sm" style="border-radius: 20px; overflow: hidden; width: 220px;">
+                                            <span class="input-group-text bg-white border-end-0 dior-ic-8ae62c593e"><i class="fas fa-search text-muted"></i></span>
+                                            <input type="text" placeholder="Search history..." class="form-control border-start-0 ps-0 dior-ic-c87dae7386" style="box-shadow: none;">
                                         </div>
-                                        <button type="button" title="Print Care History" class="btn btn-sm btn-outline-secondary px-3 dior-ic-30bc658af7"><i class="fas fa-print"></i></button>
+                                        <button type="button" title="Add Medical Record" class="btn btn-sm btn-primary px-3 rounded-pill shadow-sm" onclick="if(typeof diorDocOpenUploadModal === 'function') diorDocOpenUploadModal(); else alert('Only authorized providers can upload clinical documents here.');"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg></button>
+                                        <button type="button" title="Print Care History" class="btn btn-sm btn-outline-secondary px-3 rounded-pill bg-white shadow-sm dior-ic-30bc658af7"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16" style="background:transparent;"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/></svg></button>
                                     </div>
                                 </div>
                             </div>

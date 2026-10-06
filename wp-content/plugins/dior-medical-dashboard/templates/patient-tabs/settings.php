@@ -247,7 +247,7 @@
                     <ul class="breadcrumb-list" style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: 12px !important; color: #94a3b8;">
                         <li class="dior-bc-item" style="font-size: 12px !important;">
                             <a href="javascript:void(0)" style="color: #2563eb !important; text-decoration: none !important; font-size: 12px !important;">
-                                <i class="fa-solid fa-house" style="font-size: 12px !important;"></i>
+                                <i class="fas fa-house" style="font-size: 12px !important;"></i>
                             </a>
                         </li>
                         <li style="color: #cbd5e1; font-size: 12px !important;">/</li>

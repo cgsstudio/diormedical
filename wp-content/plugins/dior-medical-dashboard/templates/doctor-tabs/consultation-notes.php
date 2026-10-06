@@ -49,7 +49,7 @@ if (empty($patients)) {
         <div><h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Consultation Notes</h4></div>
         <div>
             <ul class="va-breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house"></i></a></li>
+                <li><a href="#"><i class="fas fa-house"></i></a></li>
                 <li>/</li>
                 <li class="active"><span>Consultation Notes</span></li>
             </ul>
@@ -65,14 +65,14 @@ if (empty($patients)) {
             </div>
             <div class="va-actions-box" style="display:flex;align-items:center;gap:10px;">
                 <div class="va-search-container" style="position:relative;">
-                    <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;"></i>
+                    <i class="fas fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;"></i>
                     <input type="text" id="cn-search" class="dior-search-input" placeholder="Search records..." style="padding:8px 12px 8px 36px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;width:220px;">
                 </div>
                 <button class="va-icon-btn va-btn-primary" id="cn-add-btn" title="Add New Consultation Note">
-                    <i class="fa-solid fa-plus"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg>
                 </button>
                 <button class="va-icon-btn va-btn-info" id="cn-refresh-btn" title="Refresh">
-                    <i class="fa-solid fa-rotate-right"></i>
+                    <i class="fas fa-rotate-right"></i>
                 </button>
             </div>
         </div>
@@ -84,12 +84,12 @@ if (empty($patients)) {
                     <tr>
                         <th style="width:50px;text-align:center;"><input type="checkbox" class="va-checkbox" id="cn-select-all"></th>
                         <th>ID</th>
-                        <th>PATIENT NAME <i class="fa-solid fa-sort" style="color:#ccc;"></i></th>
+                        <th>PATIENT NAME <i class="fas fa-sort" style="color:#ccc;"></i></th>
                         <th>DATE</th>
                         <th>CHIEF COMPLAINT</th>
                         <th>DIAGNOSIS</th>
                         <th>DOCTOR</th>
-                        <th>STATUS <i class="fa-solid fa-sort" style="color:#ccc;"></i></th>
+                        <th>STATUS <i class="fas fa-sort" style="color:#ccc;"></i></th>
                         <th>ACTIONS</th>
                     </tr>
                 </thead>
@@ -121,7 +121,7 @@ if (empty($patients)) {
                                 <span class="va-user-name"><?php echo $fname; ?></span>
                             </div>
                         </td>
-                        <td><i class="fa-regular fa-calendar va-icon-blue"></i> <?php echo $date_f; ?></td>
+                        <td><i class="far fa-calendar va-icon-blue"></i> <?php echo $date_f; ?></td>
                         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="<?php echo $complaint; ?>"><?php echo $complaint; ?></td>
                         <td><?php echo $diagnosis; ?></td>
                         <td><?php echo esc_html($n['attestation_author'] ?? $doc_name); ?></td>
@@ -130,12 +130,12 @@ if (empty($patients)) {
                             <div class="va-row-actions">
                                 <button class="va-action-btn-sm va-btn-edit cn-edit-btn"
                                         data-note="<?php echo $note_enc; ?>"
-                                        title="Edit Note"><i class="fa-solid fa-pen"></i></button>
+                                        title="Edit Note"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
                                 <button class="va-action-btn-sm va-btn-delete cn-delete-btn"
                                         data-id="<?php echo $nid; ?>"
                                         data-uid="<?php echo esc_attr($uid); ?>"
                                         data-pid="<?php echo $pid; ?>"
-                                        title="Delete Note"><i class="fa-regular fa-trash-can"></i></button>
+                                        title="Delete Note"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
                             </div>
                         </td>
                     </tr>
@@ -154,7 +154,7 @@ if (empty($patients)) {
     <div style="background:#fff;border-radius:16px;padding:32px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
             <h3 id="cn-modal-title" style="margin:0;font-size:18px;font-weight:700;color:#1e293b;">
-                <i class="fa-solid fa-notes-medical" style="color:#4f46e5;margin-right:8px;"></i>New Consultation Note
+                <i class="fas fa-notes-medical" style="color:#4f46e5;margin-right:8px;"></i>New Consultation Note
             </h3>
             <button id="cn-modal-close" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;">&times;</button>
         </div>
@@ -196,7 +196,7 @@ if (empty($patients)) {
         <div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end;">
             <button id="cn-modal-cancel" style="padding:10px 20px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;color:#64748b;font-size:14px;cursor:pointer;">Cancel</button>
             <button id="cn-save-btn" style="padding:10px 24px;border:none;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">
-                <i class="fa-solid fa-check" style="margin-right:6px;"></i>Save Note
+                <i class="fas fa-check" style="margin-right:6px;"></i>Save Note
             </button>
         </div>
     </div>
@@ -225,7 +225,7 @@ if (empty($patients)) {
     }
 
     function openAddModal() {
-        document.getElementById('cn-modal-title').innerHTML = '<i class="fa-solid fa-notes-medical" style="color:#4f46e5;margin-right:8px;"></i>New Consultation Note';
+        document.getElementById('cn-modal-title').innerHTML = '<i class="fas fa-notes-medical" style="color:#4f46e5;margin-right:8px;"></i>New Consultation Note';
         document.getElementById('cn-note-id').value  = '';
         document.getElementById('cn-note-uid').value = '';
         document.getElementById('cn-patient-select').value = '';
@@ -240,7 +240,7 @@ if (empty($patients)) {
 
     function openEditModal(btn) {
         var note = JSON.parse(btn.dataset.note);
-        document.getElementById('cn-modal-title').innerHTML = '<i class="fa-solid fa-pen" style="color:#4f46e5;margin-right:8px;"></i>Edit Consultation Note';
+        document.getElementById('cn-modal-title').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg>Edit Consultation Note';
         document.getElementById('cn-note-id').value   = note.id;
         document.getElementById('cn-note-uid').value  = note.uid;
         document.getElementById('cn-patient-select').value = note.patient_id;
@@ -264,7 +264,7 @@ if (empty($patients)) {
         var noteUid = document.getElementById('cn-note-uid').value;
         if (!pid && !noteId) { alert('Please select a patient.'); return; }
         btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:6px;"></i>Saving...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i>Saving...';
         var data = new FormData();
         data.append('action',     'dior_doc_save_consultation');
         data.append('nonce',      nonce);
@@ -281,7 +281,7 @@ if (empty($patients)) {
                 if (res.success) { closeModal(); location.reload(); }
                 else { alert(res.data && res.data.message ? res.data.message : 'Save failed.'); }
             }).catch(function(){alert('Network error.');})
-            .finally(function(){ btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-check" style="margin-right:6px;"></i>Save Note'; });
+            .finally(function(){ btn.disabled=false; btn.innerHTML='<i class="fas fa-check" style="margin-right:6px;"></i>Save Note'; });
     }
 
     function deleteNote(btn) {

@@ -36,19 +36,19 @@
     ?>
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
         <div><h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Feedback &amp; Support</h4></div>
-        <ul class="va-breadcrumb-list"><li><a href="#"><i class="fa-solid fa-house"></i></a></li><li><span>/</span></li><li class="active"><span>Feedback &amp; Support</span></li></ul>
+        <ul class="va-breadcrumb-list"><li><a href="#"><i class="fas fa-house"></i></a></li><li><span>/</span></li><li class="active"><span>Feedback &amp; Support</span></li></ul>
     </div>
 
     <div class="master-table-wrapper"><div class="master-table-container"><div class="master-table-card">
         <div class="master-table-header">
             <div class="header-content">
-                <div class="table-title-section"><h2 class="table-title"><i class="fa-solid fa-comments" style="margin-right:8px;"></i>Feedback &amp; Support</h2><div class="title-accent"></div></div>
+                <div class="table-title-section"><h2 class="table-title"><i class="fas fa-comments" style="margin-right:8px;"></i>Feedback &amp; Support</h2><div class="title-accent"></div></div>
                 <div class="header-actions-group">
-                    <div class="search-container"><i class="fa-solid fa-magnifying-glass search-icon"></i><input type="text" placeholder="Search feedback..." class="search-input" oninput="diorFilterStaticTable(this, 'dior-feedback-table')"></div>
+                    <div class="search-container"><i class="fas fa-magnifying-glass search-icon"></i><input type="text" placeholder="Search feedback..." class="search-input" oninput="diorFilterStaticTable(this, 'dior-feedback-table')"></div>
                     <div class="action-buttons">
-                        <button type="button" class="action-btn action-btn-primary" title="Give Feedback" onclick="diorOpenFeedbackModal()"><i class="fa-solid fa-plus"></i></button>
-                        <button type="button" class="action-btn action-btn-success" title="Export"><i class="fa-solid fa-file-arrow-down"></i></button>
-                        <button type="button" class="action-btn action-btn-info" title="Refresh" onclick="window.location.reload()"><i class="fa-solid fa-rotate-right"></i></button>
+                        <button type="button" class="action-btn action-btn-primary" title="Give Feedback" onclick="diorOpenFeedbackModal()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg></button>
+                        <button type="button" class="action-btn action-btn-success" title="Export"><i class="fas fa-file-arrow-down"></i></button>
+                        <button type="button" class="action-btn action-btn-info" title="Refresh" onclick="window.location.reload()"><i class="fas fa-rotate-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -77,14 +77,14 @@
                     <tr data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>">
                         <td><span class="cell-text"><?php echo esc_html($feedback['subject'] ?? 'Patient Feedback'); ?></span></td>
                         <td><span class="cell-text"><?php echo esc_html($feedback_doctor_name); ?></span></td>
-                        <td><span class="cell-text"><i class="fa-solid fa-star" style="color:#F59E0B;"></i> <?php echo $feedback_rating; ?>/5</span></td>
+                        <td><span class="cell-text"><i class="fas fa-star" style="color:#F59E0B;"></i> <?php echo $feedback_rating; ?>/5</span></td>
                         <td><span class="cell-text"><?php echo esc_html($feedback['message'] ?? ''); ?></span></td>
-                        <td><div class="cell-content cell-icon-text"><i class="fa-regular fa-calendar cell-icon"></i><span class="cell-text"><?php echo esc_html($feedback_date); ?></span></div></td>
+                        <td><div class="cell-content cell-icon-text"><i class="far fa-calendar cell-icon"></i><span class="cell-text"><?php echo esc_html($feedback_date); ?></span></div></td>
                         <td><div class="cell-content"><div class="badge-solid <?php echo ($feedback_status === 'Published') ? 'col-green' : 'col-amber'; ?>"><?php echo esc_html($feedback_status); ?></div></div></td>
                         <td>
-                            <button type="button" class="dior-feedback-view-action" aria-label="View feedback" title="View feedback" data-feedback="<?php echo $feedback_view_data; ?>" onclick="diorViewPatientFeedback(this)"><i class="fa-regular fa-eye"></i></button>
-                            <button type="button" class="dior-feedback-edit-action" aria-label="Edit feedback" title="Edit feedback" data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>" data-feedback="<?php echo $feedback_view_data; ?>" onclick="diorEditPatientFeedback(this)"><i class="fa-solid fa-pen"></i></button>
-                            <button type="button" class="dior-feedback-delete-action" aria-label="Delete feedback" title="Delete feedback" data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>" onclick="diorDeletePatientFeedback(this)"><i class="fa-solid fa-trash"></i></button>
+                            <button type="button" class="dior-feedback-view-action" aria-label="View feedback" title="View feedback" data-feedback="<?php echo $feedback_view_data; ?>" onclick="diorViewPatientFeedback(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#3b82f6" class="bi bi-eye" viewBox="0 0 16 16" style="background:transparent;"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg></button>
+                            <button type="button" class="dior-feedback-edit-action" aria-label="Edit feedback" title="Edit feedback" data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>" data-feedback="<?php echo $feedback_view_data; ?>" onclick="diorEditPatientFeedback(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
+                            <button type="button" class="dior-feedback-delete-action" aria-label="Delete feedback" title="Delete feedback" data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>" onclick="diorDeletePatientFeedback(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -100,13 +100,13 @@
     <!-- Feedback popup -->
     <div class="dior-static-modal-backdrop" id="dior-feedback-modal" role="dialog" aria-modal="true" aria-labelledby="dior-feedback-modal-title">
         <div class="dior-static-modal dior-feedback-modal">
-            <div class="dior-static-modal-header"><h3 id="dior-feedback-modal-title">Give Feedback</h3><button type="button" class="dior-static-modal-close" onclick="diorCloseStaticModal('dior-feedback-modal')"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="dior-static-modal-header"><h3 id="dior-feedback-modal-title">Give Feedback</h3><button type="button" class="dior-static-modal-close" onclick="diorCloseStaticModal('dior-feedback-modal')"><i class="fas fa-xmark"></i></button></div>
             <form id="dior-feedback-form" onsubmit="return diorSaveFeedback(event)">
                 <input type="hidden" name="feedback_id" id="dior-feedback-id" value="">
                 <div class="dior-static-modal-body">
                     <p class="dior-feedback-intro">How was your experience today? Your feedback is sent privately to your doctor.</p>
                     <div class="dior-feedback-recipient">
-                        <i class="fa-solid fa-user-doctor" aria-hidden="true"></i>
+                        <i class="fas fa-user-doctor" aria-hidden="true"></i>
                         <span>Sending to</span>
                         <strong><?php echo esc_html($feedback_doctor_name ?: 'Doctor unavailable'); ?></strong>
                     </div>
@@ -131,7 +131,7 @@
                     <label for="dior-feedback-message">Message</label>
                     <textarea name="message" id="dior-feedback-message" rows="5" maxlength="3000" required placeholder="Tell us about your experience..."></textarea>
                 </div>
-                <div class="dior-static-modal-footer"><button type="button" onclick="diorCloseStaticModal('dior-feedback-modal')">Cancel</button><button type="submit" class="primary" id="dior-feedback-submit-btn" <?php disabled(!$feedback_doctor_id); ?>><i class="fa-solid fa-paper-plane"></i> Submit Feedback</button></div>
+                <div class="dior-static-modal-footer"><button type="button" onclick="diorCloseStaticModal('dior-feedback-modal')">Cancel</button><button type="submit" class="primary" id="dior-feedback-submit-btn" <?php disabled(!$feedback_doctor_id); ?>><i class="fas fa-paper-plane"></i> Submit Feedback</button></div>
             </form>
         </div>
     </div>

@@ -105,23 +105,27 @@
 }
 
 .va-btn-primary {
-    background-color: #4F46E5 !important;
-    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2) !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    color: #4F46E5 !important;
 }
 
 .va-btn-success {
-    background-color: #10B981 !important;
-    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2) !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    color: #10B981 !important;
 }
 
 .va-btn-info {
-    background-color: #3B82F6 !important;
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2) !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    color: #3B82F6 !important;
 }
 
 .va-btn-danger {
-    background-color: #EF4444 !important;
-    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2) !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    color: #EF4444 !important;
 }
 
 /* Breadcrumb fixes */

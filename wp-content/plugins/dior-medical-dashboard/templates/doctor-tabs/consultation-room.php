@@ -2,7 +2,7 @@
     <div class="dior-ic-3c0b10badc">
         <div class="dior-ic-b7f55b7e4a">
             <div class="dior-ic-18a3c7f768">
-                <i class="fa-solid fa-video"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg>
             </div>
             <div>
                 <h2 class="dior-ic-418a393e7b">HD Telehealth Consultation Room</h2>
@@ -13,7 +13,7 @@
         </div>
         <div class="dior-ic-c047e12f84">
             <span class="dior-ic-a931cc6ff0">
-                <i class="fa-solid fa-wifi dior-ic-9bf73c3191"></i> Signal: Strong (5G)
+                <i class="fas fa-wifi dior-ic-9bf73c3191"></i> Signal: Strong (5G)
             </span>
             <span class="dior-ic-9b5f085d48">
                 <div class="dior-ic-71cc54b832"></div> REC HD 1080p
@@ -29,7 +29,7 @@
             <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=1200" alt="Patient Video" class="dior-ic-000b842d7a">
             
             <div class="dior-ic-4a1fefb9df">
-                <i class="fa-regular fa-clock dior-ic-8b19df99a6"></i> 01:19
+                <i class="far fa-clock dior-ic-8b19df99a6"></i> 01:19
             </div>
 
             <!-- PIP Window (Doctor Self View) -->
@@ -49,19 +49,19 @@
             <!-- Controls Dock -->
             <div class="dior-ic-0d29c8fc6a">
                 <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc" title="Mute Microphone">
-                    <i class="fa-solid fa-microphone"></i>
+                    <i class="fas fa-microphone"></i>
                 </button>
                 <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc" title="Turn Off Camera">
-                    <i class="fa-solid fa-video"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg>
                 </button>
                 <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc" title="Screen Share">
-                    <i class="fa-solid fa-desktop"></i>
+                    <i class="fas fa-desktop"></i>
                 </button>
                 <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc" title="Open Chat">
-                    <i class="fa-regular fa-comment-dots"></i>
+                    <i class="far fa-comment-dots"></i>
                 </button>
                 <button type="button" onmouseover="this.style.background='#DC2626'" onmouseout="this.style.background='#EF4444'" class="dior-ic-7c877a95fa" title="End Call">
-                    <i class="fa-solid fa-phone-slash"></i>
+                    <i class="fas fa-phone-slash"></i>
                 </button>
             </div>
         </div>
@@ -70,13 +70,13 @@
         <div class="dior-ic-f6cf83e34f">
             <div class="dior-ic-5c4ccb1aea">
                 <button type="button" class="dior-ic-fef1baf303">
-                    <i class="fa-regular fa-comments dior-ic-736c9ca116"></i> Live Chat
+                    <i class="far fa-comments dior-ic-736c9ca116"></i> Live Chat
                 </button>
                 <button type="button" class="dior-ic-ac80b8900c">
-                    <i class="fa-regular fa-clipboard dior-ic-736c9ca116"></i> E-Rx
+                    <i class="far fa-clipboard dior-ic-736c9ca116"></i> E-Rx
                 </button>
                 <button type="button" class="dior-ic-ac80b8900c">
-                    <i class="fa-solid fa-file-medical dior-ic-736c9ca116"></i> Notes
+                    <i class="fas fa-file-medical dior-ic-736c9ca116"></i> Notes
                 </button>
             </div>
 
@@ -130,7 +130,7 @@
                 <div class="dior-ic-f487d8d9d8">
                     <input type="text" id="dior-doc-chat-input" placeholder="Type a message..." class="dior-ic-011b57cbc6">
                     <button type="button" id="dior-doc-chat-send-btn" class="dior-ic-5104258266">
-                        <i class="fa-solid fa-paper-plane"></i>
+                        <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
             </div>

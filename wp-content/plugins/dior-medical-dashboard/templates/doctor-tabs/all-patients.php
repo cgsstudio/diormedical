@@ -49,7 +49,7 @@ $status_badges = [
         <div><h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">All Patients</h4></div>
         <div>
             <ul class="va-breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><a href="#"><i class="fas fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
                 <li><span style="color:#94A3B8;">/</span></li>
                 <li><a href="javascript:void(0)">Patients</a></li>
                 <li><span style="color:#94A3B8;">/</span></li>
@@ -67,15 +67,15 @@ $status_badges = [
                 </div>
                 <div class="va-actions-wrapper">
                     <div class="va-search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <i class="fas fa-magnifying-glass"></i>
                         <input type="text" id="ap-search" placeholder="Search patients...">
                     </div>
                     <div class="va-actions-group">
                         <button class="va-icon-btn va-btn-danger" id="ap-bulk-delete-btn" title="Bulk Delete" style="display:none;">
-                            <i class="fa-solid fa-trash-can"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
                         </button>
                         <button class="va-icon-btn va-btn-info" id="ap-refresh-btn" title="Refresh">
-                            <i class="fa-solid fa-rotate-right"></i>
+                            <i class="fas fa-rotate-right"></i>
                         </button>
                     </div>
                 </div>
@@ -88,13 +88,13 @@ $status_badges = [
                             <th style="width:50px;" class="text-center">
                                 <input type="checkbox" class="va-checkbox" id="ap-select-all">
                             </th>
-                            <th>Name <i class="fa-solid fa-sort"></i></th>
+                            <th>Name <i class="fas fa-sort"></i></th>
                             <th>Patient ID</th>
-                            <th>Phone <i class="fa-solid fa-sort"></i></th>
-                            <th>Gender <i class="fa-solid fa-sort"></i></th>
+                            <th>Phone <i class="fas fa-sort"></i></th>
+                            <th>Gender <i class="fas fa-sort"></i></th>
                             <th>Blood Group</th>
                             <th>Address</th>
-                            <th>Status <i class="fa-solid fa-sort"></i></th>
+                            <th>Status <i class="fas fa-sort"></i></th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -123,8 +123,8 @@ $status_badges = [
                                 </div>
                             </td>
                             <td><code style="font-size:12px;background:#f1f5f9;padding:2px 6px;border-radius:4px;"><?php echo $puid; ?></code></td>
-                            <td><i class="fa-solid fa-phone va-icon-blue"></i> <?php echo $phone; ?></td>
-                            <td><?php echo ($gender === 'Male' || $gender === 'male') ? '<i class="fa-solid fa-mars va-icon-blue"></i> Male' : (($gender === 'Female' || $gender === 'female') ? '<i class="fa-solid fa-venus va-icon-pink"></i> Female' : $gender); ?></td>
+                            <td><i class="fas fa-phone va-icon-blue"></i> <?php echo $phone; ?></td>
+                            <td><?php echo ($gender === 'Male' || $gender === 'male') ? '<i class="fas fa-mars va-icon-blue"></i> Male' : (($gender === 'Female' || $gender === 'female') ? '<i class="fas fa-venus va-icon-pink"></i> Female' : $gender); ?></td>
                             <td><?php echo $blood; ?></td>
                             <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="<?php echo htmlspecialchars($address); ?>"><?php echo $address; ?></td>
                             <td><span class="va-badge <?php echo $badge; ?> ap-status-badge"><?php echo ucfirst($status); ?></span></td>
@@ -135,20 +135,20 @@ $status_badges = [
                                             data-name="<?php echo esc_attr($name); ?>"
                                             data-status="<?php echo esc_attr($status); ?>"
                                             title="Edit Status">
-                                        <i class="fa-solid fa-pen"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg>
                                     </button>
                                     <button class="va-action-btn-sm va-btn-delete ap-delete-btn"
                                             data-id="<?php echo $pid; ?>"
                                             data-name="<?php echo esc_attr($name); ?>"
                                             title="Delete Patient">
-                                        <i class="fa-solid fa-trash-can"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
                                     </button>
                                     <button class="va-action-btn-sm"
-                                            style="background:#e0f2fe;color:#0284c7;border:1px solid #bae6fd;"
+                                            style="background:transparent; border:none;"
                                             data-patient-id="<?php echo $pid; ?>"
                                             onclick="window.diorSelectedPatientId='<?php echo $pid; ?>';if(typeof window.diorSwitchTab==='function')window.diorSwitchTab('doc-patients-profile');if(typeof window.diorLoadPatientProfile==='function')window.diorLoadPatientProfile('<?php echo $pid; ?>');"
                                             title="View Profile">
-                                        <i class="fa-solid fa-eye"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#3b82f6" class="bi bi-eye" viewBox="0 0 16 16" style="background:transparent;"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg>
                                     </button>
                                 </div>
                             </td>
@@ -176,7 +176,7 @@ $status_badges = [
 <div id="ap-edit-status-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
     <div style="background:#fff;border-radius:16px;padding:32px;width:380px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-            <h3 style="margin:0;font-size:18px;font-weight:700;color:#1e293b;"><i class="fa-solid fa-pen" style="color:#4f46e5;margin-right:8px;"></i>Update Status</h3>
+            <h3 style="margin:0;font-size:18px;font-weight:700;color:#1e293b;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg>Update Status</h3>
             <button onclick="document.getElementById('ap-edit-status-modal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;">&times;</button>
         </div>
         <p id="ap-edit-patient-name" style="color:#64748b;font-size:14px;margin:0 0 16px;"></p>
@@ -196,7 +196,7 @@ $status_badges = [
             </button>
             <button id="ap-save-status-btn"
                     style="padding:10px 24px;border:none;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">
-                <i class="fa-solid fa-check" style="margin-right:6px;"></i>Save Status
+                <i class="fas fa-check" style="margin-right:6px;"></i>Save Status
             </button>
         </div>
     </div>

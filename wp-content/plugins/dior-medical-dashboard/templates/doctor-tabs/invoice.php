@@ -285,7 +285,7 @@
         </div>
         <div>
             <ul class="va-breadcrumb-list" style="display: flex; gap: 8px; list-style: none; padding: 0; margin: 0; align-items: center; font-size: 12px;">
-                <li><a href="javascript:void(0)"><i class="fa-solid fa-house" style="color: #2563eb;"></i></a></li>
+                <li><a href="javascript:void(0)"><i class="fas fa-house" style="color: #2563eb;"></i></a></li>
                 <li style="color: #cbd5e1;">/</li>
                 <li><a href="javascript:void(0)" style="color: #64748b; text-decoration: none;">Accounts</a></li>
                 <li style="color: #cbd5e1;">/</li>

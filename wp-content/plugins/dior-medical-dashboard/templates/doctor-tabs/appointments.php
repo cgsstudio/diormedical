@@ -7,7 +7,7 @@
         </div>
         <div>
             <ul class="va-breadcrumb-list" style="display: flex; gap: 8px; list-style: none; padding: 0; margin: 0; align-items: center; font-size: 12px;">
-                <li><a href="javascript:void(0)"><i class="fa-solid fa-house" style="color: #2563eb;"></i></a></li>
+                <li><a href="javascript:void(0)"><i class="fas fa-house" style="color: #2563eb;"></i></a></li>
                 <li style="color: #cbd5e1;">/</li>
                 <li><a href="javascript:void(0)" style="color: #64748b; text-decoration: none;">Dashboard</a></li>
                 <li style="color: #cbd5e1;">/</li>
@@ -59,8 +59,8 @@
                         
                         <!-- Left Controls: Navigation + Today Button -->
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <button type="button" class="cal-nav-btn" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;"><i class="fa-solid fa-chevron-left"></i></button>
-                            <button type="button" class="cal-nav-btn" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button type="button" class="cal-nav-btn" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;"><i class="fas fa-chevron-left"></i></button>
+                            <button type="button" class="cal-nav-btn" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;"><i class="fas fa-chevron-right"></i></button>
                             <button type="button" class="cal-today-btn" style="background: #6366f1; color: #ffffff; border: none; border-radius: 20px; padding: 6px 18px; font-size: 12px; font-weight: 600; cursor: pointer;">today</button>
                         </div>
 

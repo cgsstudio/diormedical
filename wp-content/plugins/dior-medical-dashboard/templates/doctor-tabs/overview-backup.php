@@ -16,7 +16,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                     <p class="dior-ic-3e312440a1">Appointments</p>
                 </div>
                 <div class="dior-ic-f5fbf05210">
-                    <i class="fa-solid fa-calendar-days"></i>
+                    <i class="fas fa-calendar-days"></i>
                 </div>
             </div>
             
@@ -27,7 +27,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                     <p class="dior-ic-3e312440a1">Upcoming Appointments</p>
                 </div>
                 <div class="dior-ic-42e416bf09">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <i class="fas fa-clock-rotate-left"></i>
                 </div>
             </div>
 
@@ -38,7 +38,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                     <p class="dior-ic-3e312440a1">New Patients</p>
                 </div>
                 <div class="dior-ic-bc1a95728b">
-                    <i class="fa-solid fa-user-doctor"></i>
+                    <i class="fas fa-user-doctor"></i>
                 </div>
             </div>
 
@@ -49,7 +49,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                     <p class="dior-ic-3e312440a1">Total Earning</p>
                 </div>
                 <div class="dior-ic-561edb7729">
-                    <i class="fa-solid fa-dollar-sign"></i>
+                    <i class="fas fa-dollar-sign"></i>
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                     </div>
                                 </div>
                                 <div class="dior-ic-0587d65489">
-                                    <i class="fa-solid fa-wifi dior-ic-41a3b51c9b"></i>
+                                    <i class="fas fa-wifi dior-ic-41a3b51c9b"></i>
                                     <span class="dior-status-badge in-progress dior-ic-883ee42752">In Progress</span>
                                 </div>
                             </div>
@@ -149,9 +149,9 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                     </div>
                                 </div>
                                 <div class="dior-ic-c1dfa03f08">
-                                    <button class="dior-ic-ced0b969a3"><i class="fa-solid fa-video"></i></button>
-                                    <button class="dior-ic-6e4ea5fbfe"><i class="fa-solid fa-envelope"></i></button>
-                                    <button class="dior-ic-d51e829b76"><i class="fa-solid fa-play"></i> Join Now</button>
+                                    <button class="dior-ic-ced0b969a3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg></button>
+                                    <button class="dior-ic-6e4ea5fbfe"><i class="fas fa-envelope"></i></button>
+                                    <button class="dior-ic-d51e829b76"><i class="fas fa-play"></i> Join Now</button>
                                     <span class="dior-status-badge upcoming dior-ic-6a3e42737d">Upcoming</span>
                                 </div>
                             </div>
@@ -310,8 +310,8 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                 <td class="dior-ic-1c29539dda"><?php echo esc_html(($doc_ov_a(0)['date'] ?? $doc_ov_a(0)['appt_date'] ?? "")); ?></td>
                                 <td class="dior-ic-8ecb8ec0b8"><span class="dior-ic-ae0e475731">Ready</span></td>
                                 <td class="dior-ic-4d9fcbd0d6">
-                                    <button class="dior-ic-8d218c52f2"><i class="fa-solid fa-info-circle"></i></button>
-                                    <button class="dior-ic-a17447911c"><i class="fa-solid fa-download"></i></button>
+                                    <button class="dior-ic-8d218c52f2"><i class="fas fa-info-circle"></i></button>
+                                    <button class="dior-ic-a17447911c"><i class="fas fa-download"></i></button>
                                 </td>
                             </tr>
                             <tr>
@@ -321,8 +321,8 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                 <td class="dior-ic-1c29539dda"><?php echo esc_html(($doc_ov_a(0)['date'] ?? $doc_ov_a(0)['appt_date'] ?? "")); ?></td>
                                 <td class="dior-ic-8ecb8ec0b8"><span class="dior-ic-4dfda8fd3e">Pending</span></td>
                                 <td class="dior-ic-4d9fcbd0d6">
-                                    <button class="dior-ic-8d218c52f2"><i class="fa-solid fa-info-circle"></i></button>
-                                    <button class="dior-ic-a17447911c"><i class="fa-solid fa-download"></i></button>
+                                    <button class="dior-ic-8d218c52f2"><i class="fas fa-info-circle"></i></button>
+                                    <button class="dior-ic-a17447911c"><i class="fas fa-download"></i></button>
                                 </td>
                             </tr>
                             <tr>
@@ -332,8 +332,8 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                 <td class="dior-ic-1c29539dda"><?php echo esc_html(($doc_ov_a(0)['date'] ?? $doc_ov_a(0)['appt_date'] ?? "")); ?></td>
                                 <td class="dior-ic-8ecb8ec0b8"><span class="dior-ic-ae0e475731">In Progress</span></td>
                                 <td class="dior-ic-4d9fcbd0d6">
-                                    <button class="dior-ic-8d218c52f2"><i class="fa-solid fa-info-circle"></i></button>
-                                    <button class="dior-ic-a17447911c"><i class="fa-solid fa-download"></i></button>
+                                    <button class="dior-ic-8d218c52f2"><i class="fas fa-info-circle"></i></button>
+                                    <button class="dior-ic-a17447911c"><i class="fas fa-download"></i></button>
                                 </td>
                             </tr>
                             <tr>
@@ -343,8 +343,8 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                 <td class="dior-ic-1c29539dda"><?php echo esc_html(($doc_ov_a(0)['date'] ?? $doc_ov_a(0)['appt_date'] ?? "")); ?></td>
                                 <td class="dior-ic-8ecb8ec0b8"><span class="dior-ic-ae0e475731">Normal</span></td>
                                 <td class="dior-ic-4d9fcbd0d6">
-                                    <button class="dior-ic-8d218c52f2"><i class="fa-solid fa-info-circle"></i></button>
-                                    <button class="dior-ic-a17447911c"><i class="fa-solid fa-download"></i></button>
+                                    <button class="dior-ic-8d218c52f2"><i class="fas fa-info-circle"></i></button>
+                                    <button class="dior-ic-a17447911c"><i class="fas fa-download"></i></button>
                                 </td>
                             </tr>
                             <tr>
@@ -354,8 +354,8 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                 <td class="dior-ic-1c29539dda"><?php echo esc_html(($doc_ov_a(0)['date'] ?? $doc_ov_a(0)['appt_date'] ?? "")); ?></td>
                                 <td class="dior-ic-8ecb8ec0b8"><span class="dior-ic-ae0e475731">Normal</span></td>
                                 <td class="dior-ic-4d9fcbd0d6">
-                                    <button class="dior-ic-8d218c52f2"><i class="fa-solid fa-info-circle"></i></button>
-                                    <button class="dior-ic-a17447911c"><i class="fa-solid fa-download"></i></button>
+                                    <button class="dior-ic-8d218c52f2"><i class="fas fa-info-circle"></i></button>
+                                    <button class="dior-ic-a17447911c"><i class="fas fa-download"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -376,7 +376,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                         <h4 class="dior-ic-b903d02ad7"><?php echo esc_html(($doc_ov_p(2)['full_name'] ?? 'Patient')); ?></h4>
                                     </div>
                                     <div class="dior-ic-7349337dd9">
-                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                     </div>
                                 </div>
                                 <p class="dior-ic-a1afae8edb">Excellent doctor! Very professional and caring.</p>
@@ -389,7 +389,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                         <h4 class="dior-ic-b903d02ad7"><?php echo esc_html(($doc_ov_p(0)['full_name'] ?? 'Patient')); ?></h4>
                                     </div>
                                     <div class="dior-ic-7349337dd9">
-                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                     </div>
                                 </div>
                                 <p class="dior-ic-a1afae8edb">Great experience. Highly recommended!</p>
@@ -402,7 +402,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                         <h4 class="dior-ic-b903d02ad7"><?php echo esc_html(($doc_ov_p(1)['full_name'] ?? 'Patient')); ?></h4>
                                     </div>
                                     <div class="dior-ic-7349337dd9">
-                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                     </div>
                                 </div>
                                 <p class="dior-ic-a1afae8edb">Very knowledgeable and patient.</p>
@@ -415,7 +415,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                         <h4 class="dior-ic-b903d02ad7"><?php echo esc_html(($doc_ov_p(3)['full_name'] ?? 'Patient')); ?></h4>
                                     </div>
                                     <div class="dior-ic-7349337dd9">
-                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                                     </div>
                                 </div>
                                 <p class="dior-ic-a1afae8edb">Excellent doctor! Very professional and caring.</p>
@@ -434,7 +434,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                     <div>
                                         <h4 class="dior-ic-c196f988d2">General Consultation</h4>
                                         <p class="dior-ic-7b6c3d446a"><?php echo esc_html(($doc_ov_p(1)['full_name'] ?? 'Patient')); ?> | <?php echo esc_html(($doc_ov_p(1)['patient_id'] ?? '')); ?></p>
-                                        <p class="dior-ic-3be070defa"><i class="fa-regular fa-calendar dior-ic-6b696d6067"></i> <?php echo esc_html(($doc_ov_a(0)['date'] ?? $doc_ov_a(0)['appt_date'] ?? "")); ?> &nbsp;&nbsp; <i class="fa-regular fa-clock dior-ic-6b696d6067"></i> 05:30 PM</p>
+                                        <p class="dior-ic-3be070defa"><i class="far fa-calendar dior-ic-6b696d6067"></i> <?php echo esc_html(($doc_ov_a(0)['date'] ?? $doc_ov_a(0)['appt_date'] ?? "")); ?> &nbsp;&nbsp; <i class="far fa-clock dior-ic-6b696d6067"></i> 05:30 PM</p>
                                     </div>
                                 </div>
                                 <div class="dior-ic-225f71451e">
@@ -449,7 +449,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                     <div>
                                         <h4 class="dior-ic-c196f988d2">Follow-up Appointment</h4>
                                         <p class="dior-ic-7b6c3d446a"><?php echo esc_html(($doc_ov_p(2)['full_name'] ?? 'Patient')); ?> | <?php echo esc_html(($doc_ov_p(2)['patient_id'] ?? '')); ?></p>
-                                        <p class="dior-ic-3be070defa"><i class="fa-regular fa-calendar dior-ic-6b696d6067"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?> &nbsp;&nbsp; <i class="fa-regular fa-clock dior-ic-6b696d6067"></i> 11:00 AM</p>
+                                        <p class="dior-ic-3be070defa"><i class="far fa-calendar dior-ic-6b696d6067"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?> &nbsp;&nbsp; <i class="far fa-clock dior-ic-6b696d6067"></i> 11:00 AM</p>
                                     </div>
                                 </div>
                                 <div class="dior-ic-225f71451e">
@@ -464,7 +464,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                     <div>
                                         <h4 class="dior-ic-c196f988d2">General Consultation</h4>
                                         <p class="dior-ic-7b6c3d446a"><?php echo esc_html(($doc_ov_p(3)['full_name'] ?? 'Patient')); ?> | <?php echo esc_html(($doc_ov_p(3)['patient_id'] ?? '')); ?></p>
-                                        <p class="dior-ic-3be070defa"><i class="fa-regular fa-calendar dior-ic-6b696d6067"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?> &nbsp;&nbsp; <i class="fa-regular fa-clock dior-ic-6b696d6067"></i> 11:00 AM</p>
+                                        <p class="dior-ic-3be070defa"><i class="far fa-calendar dior-ic-6b696d6067"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?> &nbsp;&nbsp; <i class="far fa-clock dior-ic-6b696d6067"></i> 11:00 AM</p>
                                     </div>
                                 </div>
                                 <div class="dior-ic-225f71451e">
@@ -490,10 +490,10 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                     <p class="dior-ic-a1995a9bd0">Cardiologist</p>
                     
                     <div class="dior-ic-eda19daac0">
-                        <div><i class="fa-solid fa-envelope dior-ic-595ebcc376"></i> abc@gmail.com</div>
+                        <div><i class="fas fa-envelope dior-ic-595ebcc376"></i> abc@gmail.com</div>
                         <div class="dior-ic-b90ff44e91">
-                            <div><i class="fa-solid fa-phone dior-ic-595ebcc376"></i> +1 234 567 8900</div>
-                            <div><i class="fa-solid fa-briefcase dior-ic-595ebcc376"></i> 12 years experience</div>
+                            <div><i class="fas fa-phone dior-ic-595ebcc376"></i> +1 234 567 8900</div>
+                            <div><i class="fas fa-briefcase dior-ic-595ebcc376"></i> 12 years experience</div>
                         </div>
                     </div>
                     
@@ -510,7 +510,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                             <div>
                                 <h4 class="dior-ic-0a61be4834">Review lab reports</h4>
                                 <p class="dior-ic-f3ad71cd22">Check blood test results for 3 patients</p>
-                                <span class="dior-ic-d7e8195c45"><i class="fa-regular fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
+                                <span class="dior-ic-d7e8195c45"><i class="far fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
                             </div>
                         </div>
                         
@@ -519,7 +519,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                             <div>
                                 <h4 class="dior-ic-0a61be4834">Sign prescriptions</h4>
                                 <p class="dior-ic-f3ad71cd22">5 prescriptions pending signature</p>
-                                <span class="dior-ic-d7e8195c45"><i class="fa-regular fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
+                                <span class="dior-ic-d7e8195c45"><i class="far fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
                             </div>
                         </div>
 
@@ -528,7 +528,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                             <div>
                                 <h4 class="dior-ic-0a61be4834">Approve medical notes</h4>
                                 <p class="dior-ic-f3ad71cd22">Review and approve consultation notes</p>
-                                <span class="dior-ic-d7e8195c45"><i class="fa-regular fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
+                                <span class="dior-ic-d7e8195c45"><i class="far fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
                             </div>
                         </div>
 
@@ -537,7 +537,7 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                             <div>
                                 <h4 class="dior-ic-0a61be4834">Update patient records</h4>
                                 <p class="dior-ic-f3ad71cd22">Complete EMR updates for recent visits</p>
-                                <span class="dior-ic-d7e8195c45"><i class="fa-regular fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
+                                <span class="dior-ic-d7e8195c45"><i class="far fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
                             </div>
                         </div>
                     </div>
@@ -554,12 +554,12 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                 <div>
                                     <h4 class="dior-ic-3a5c484249"><?php echo esc_html(($doc_ov_p(2)['full_name'] ?? 'Patient')); ?> | <?php echo esc_html(($doc_ov_p(2)['patient_id'] ?? '')); ?></h4>
                                     <p class="dior-ic-24f11d5255">Routine Checkup</p>
-                                    <span class="dior-ic-d78f9ac356"><i class="fa-regular fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
+                                    <span class="dior-ic-d78f9ac356"><i class="far fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
                                 </div>
                             </div>
                             <div class="dior-ic-f8d5cd8301">
-                                <button class="dior-ic-c734c3607d"><i class="fa-solid fa-envelope"></i></button>
-                                <button class="dior-ic-c734c3607d"><i class="fa-solid fa-phone"></i></button>
+                                <button class="dior-ic-c734c3607d"><i class="fas fa-envelope"></i></button>
+                                <button class="dior-ic-c734c3607d"><i class="fas fa-phone"></i></button>
                             </div>
                         </div>
 
@@ -569,12 +569,12 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                 <div>
                                     <h4 class="dior-ic-3a5c484249"><?php echo esc_html(($doc_ov_p(0)['full_name'] ?? 'Patient')); ?> | <?php echo esc_html(($doc_ov_p(0)['patient_id'] ?? '')); ?></h4>
                                     <p class="dior-ic-24f11d5255">Routine Checkup</p>
-                                    <span class="dior-ic-d78f9ac356"><i class="fa-regular fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
+                                    <span class="dior-ic-d78f9ac356"><i class="far fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
                                 </div>
                             </div>
                             <div class="dior-ic-f8d5cd8301">
-                                <button class="dior-ic-c734c3607d"><i class="fa-solid fa-envelope"></i></button>
-                                <button class="dior-ic-c734c3607d"><i class="fa-solid fa-phone"></i></button>
+                                <button class="dior-ic-c734c3607d"><i class="fas fa-envelope"></i></button>
+                                <button class="dior-ic-c734c3607d"><i class="fas fa-phone"></i></button>
                             </div>
                         </div>
 
@@ -584,12 +584,12 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                 <div>
                                     <h4 class="dior-ic-3a5c484249"><?php echo esc_html(($doc_ov_p(3)['full_name'] ?? 'Patient')); ?> | <?php echo esc_html(($doc_ov_p(3)['patient_id'] ?? '')); ?></h4>
                                     <p class="dior-ic-24f11d5255">Routine Checkup</p>
-                                    <span class="dior-ic-d78f9ac356"><i class="fa-regular fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
+                                    <span class="dior-ic-d78f9ac356"><i class="far fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
                                 </div>
                             </div>
                             <div class="dior-ic-f8d5cd8301">
-                                <button class="dior-ic-c734c3607d"><i class="fa-solid fa-envelope"></i></button>
-                                <button class="dior-ic-c734c3607d"><i class="fa-solid fa-phone"></i></button>
+                                <button class="dior-ic-c734c3607d"><i class="fas fa-envelope"></i></button>
+                                <button class="dior-ic-c734c3607d"><i class="fas fa-phone"></i></button>
                             </div>
                         </div>
 
@@ -599,12 +599,12 @@ $doc_ov_a = static function($index) use ($doc_ov_appts) { return $doc_ov_appts[$
                                 <div>
                                     <h4 class="dior-ic-3a5c484249"><?php echo esc_html(($doc_ov_p(1)['full_name'] ?? 'Patient')); ?> | <?php echo esc_html(($doc_ov_p(1)['patient_id'] ?? '')); ?></h4>
                                     <p class="dior-ic-24f11d5255">Routine Checkup</p>
-                                    <span class="dior-ic-d78f9ac356"><i class="fa-regular fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
+                                    <span class="dior-ic-d78f9ac356"><i class="far fa-calendar"></i> <?php echo esc_html(($doc_ov_a(2)['date'] ?? $doc_ov_a(2)['appt_date'] ?? "")); ?></span>
                                 </div>
                             </div>
                             <div class="dior-ic-f8d5cd8301">
-                                <button class="dior-ic-c734c3607d"><i class="fa-solid fa-envelope"></i></button>
-                                <button class="dior-ic-c734c3607d"><i class="fa-solid fa-phone"></i></button>
+                                <button class="dior-ic-c734c3607d"><i class="fas fa-envelope"></i></button>
+                                <button class="dior-ic-c734c3607d"><i class="fas fa-phone"></i></button>
                             </div>
                         </div>
                     </div>

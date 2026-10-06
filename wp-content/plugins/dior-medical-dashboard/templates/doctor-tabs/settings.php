@@ -223,7 +223,7 @@
                     <ul class="breadcrumb-list" style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: 12px !important; color: #94a3b8;">
                         <li class="dior-bc-item" style="font-size: 12px !important;">
                             <a href="javascript:void(0)" style="color: #2563eb !important; text-decoration: none !important; font-size: 12px !important;">
-                                <i class="fa-solid fa-house" style="font-size: 12px !important;"></i>
+                                <i class="fas fa-house" style="font-size: 12px !important;"></i>
                             </a>
                         </li>
                         <li style="color: #cbd5e1; font-size: 12px !important;">/</li>
@@ -253,7 +253,8 @@
                         
                         <!-- Avatar Wrapper -->
                         <div class="avatar-edit-wrapper" style="position: relative; width: 90px; height: 90px; flex-shrink: 0;">
-                            <img alt="Doctor Avatar" class="profile-avatar-img" src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-1.png'); ?>">
+                            <?php $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : DIOR_PORTAL_URL . 'assets/images/users/user-1.png'; ?>
+                            <img alt="Doctor Avatar" class="profile-avatar-img" src="<?php echo esc_url($doc_avatar); ?>">
                             <button type="button" title="Change Avatar" class="avatar-change-btn" style="position: absolute; bottom: 2px; right: 2px; background: #2563eb; color: #ffffff; border: 2px solid #ffffff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 5;">
                                 <i class="fas fa-camera" style="font-size: 11px;"></i>
                             </button>
@@ -262,17 +263,17 @@
                         <!-- User Information Text -->
                         <div style="flex: 1 1 0%; min-width: 250px; padding-bottom: 4px;">
                             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px;">
-                                <h4 class="profile-user-name" style="font-weight: 700; color: #1e293b; font-size: 20px; margin: 0;">Dr. Sarah Smith</h4>
-                                <span class="specialty-badge" style="background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; display: inline-block;">Dermatology</span>
-                                <span class="license-chip" style="background: #f1f5f9; color: #64748b; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; display: inline-block;">#LIC-884920</span>
+                                <h4 class="profile-user-name" style="font-weight: 700; color: #1e293b; font-size: 20px; margin: 0;">Dr. <?php echo esc_html($doctor['full_name'] ?? 'Sarah Smith'); ?></h4>
+                                <span class="specialty-badge" style="background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; display: inline-block;"><?php echo esc_html($doctor['specialty'] ?? 'Dermatology'); ?></span>
+                                <span class="license-chip" style="background: #f1f5f9; color: #64748b; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; display: inline-block;">#LIC-<?php echo esc_html($doctor['license_no'] ?? '884920'); ?></span>
                                 <span class="badge badge-emerald-pill" style="background: #dcfce7; color: #16a34a; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; display: inline-flex; align-items: center;"><i class="fas fa-user-md" style="margin-right: 5px;"></i> Verified Specialist</span>
                             </div>
                             <div style="font-size: 13px; color: #64748b; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                <span><i class="fas fa-graduation-cap" style="color: #2563eb !important; margin-right: 5px;"></i> MBBS, MD - Dermatology</span>
+                                <span><i class="fas fa-graduation-cap" style="color: #2563eb !important; margin-right: 5px;"></i> <?php echo esc_html($doctor['qualifications'] ?? 'MBBS, MD'); ?></span>
                                 <span style="color: #cbd5e1;">&bull;</span>
-                                <span><i class="far fa-envelope" style="color: #2563eb !important; margin-right: 5px;"></i> dr.sarah.smith@medidash.com</span>
+                                <span><i class="far fa-envelope" style="color: #2563eb !important; margin-right: 5px;"></i> <?php echo esc_html($doctor['user_email'] ?? 'dr.sarah@medidash.com'); ?></span>
                                 <span style="color: #cbd5e1;">&bull;</span>
-                                <span><i class="fas fa-money-bill-wave" style="color: #10b981 !important; margin-right: 5px;"></i> Consultation Fee: <strong style="color: #334155;">INR 500</strong></span>
+                                <span><i class="fas fa-money-bill-wave" style="color: #10b981 !important; margin-right: 5px;"></i> Consultation Fee: <strong style="color: #334155;"><?php echo esc_html($doctor['fee'] ?? 'INR 500'); ?></strong></span>
                             </div>
                         </div>
 
@@ -342,19 +343,24 @@
                         <div class="card-body p-4" style="padding: 24px;">
                             <form novalidate onsubmit="event.preventDefault();">
                                 
+                                <?php
+                                $name_parts = explode(' ', $doctor['full_name'] ?? '');
+                                $first_name = $name_parts[0] ?? '';
+                                $last_name = isset($name_parts[1]) ? implode(' ', array_slice($name_parts, 1)) : '';
+                                ?>
                                 <div class="dior-form-row-2">
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">First Name <span class="text-danger" style="color: #ef4444;">*</span></label>
                                         <div class="input-group search-input-group">
                                             <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
-                                            <input type="text" value="Sarah" placeholder="First Name" class="form-control">
+                                            <input type="text" name="first_name" value="<?php echo esc_attr($first_name); ?>" placeholder="First Name" class="form-control">
                                         </div>
                                     </div>
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Last Name <span class="text-danger" style="color: #ef4444;">*</span></label>
                                         <div class="input-group search-input-group">
                                             <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
-                                            <input type="text" value="Smith" placeholder="Last Name" class="form-control">
+                                            <input type="text" name="last_name" value="<?php echo esc_attr($last_name); ?>" placeholder="Last Name" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -364,19 +370,20 @@
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Medical Qualifications <span class="text-danger" style="color: #ef4444;">*</span></label>
                                         <div class="input-group search-input-group">
                                             <span class="input-group-text"><i class="fas fa-graduation-cap text-muted"></i></span>
-                                            <input type="text" value="MBBS, MD - Dermatology" placeholder="e.g. MBBS, MD - Dermatology" class="form-control">
+                                            <input type="text" name="qualifications" value="<?php echo esc_attr($doctor['qualifications'] ?? 'MBBS, MD'); ?>" placeholder="e.g. MBBS, MD" class="form-control">
                                         </div>
                                     </div>
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Primary Specialty <span class="text-danger" style="color: #ef4444;">*</span></label>
-                                        <select class="form-select" style="width: 100%; min-height: 40px; border: 1px solid #dce4ec; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1e293b; background: #ffffff;">
-                                            <option value="Dermatology" selected>Dermatology</option>
-                                            <option value="Dentistry">Dentistry</option>
-                                            <option value="Orthopedics">Orthopedics</option>
-                                            <option value="General Surgery">General Surgery</option>
-                                            <option value="Cardiology">Cardiology</option>
-                                            <option value="Pediatrics">Pediatrics</option>
-                                            <option value="Neurology">Neurology</option>
+                                        <select name="specialty" class="form-select" style="width: 100%; min-height: 40px; border: 1px solid #dce4ec; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1e293b; background: #ffffff;">
+                                            <?php
+                                            $specialties = ['Dermatology', 'Dentistry', 'Orthopedics', 'General Surgery', 'Cardiology', 'Pediatrics', 'Neurology', 'Family Medicine'];
+                                            $doc_spec = $doctor['specialty'] ?? 'Dermatology';
+                                            foreach($specialties as $spec) {
+                                                $selected = ($doc_spec === $spec) ? 'selected' : '';
+                                                echo '<option value="' . esc_attr($spec) . '" ' . $selected . '>' . esc_html($spec) . '</option>';
+                                            }
+                                            ?>
                                         </select>
                                     </div>
                                 </div>
@@ -384,20 +391,20 @@
                                 <div class="dior-form-row-3">
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Medical License No. <span class="text-danger" style="color: #ef4444;">*</span></label>
-                                        <input type="text" value="LIC-884920" placeholder="LIC-XXXXXX" class="form-control" style="border-radius: 6px;">
+                                        <input type="text" name="license_no" value="<?php echo esc_attr($doctor['license_no'] ?? ''); ?>" placeholder="LIC-XXXXXX" class="form-control" style="border-radius: 6px;">
                                     </div>
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Professional Email <span class="text-danger" style="color: #ef4444;">*</span></label>
                                         <div class="input-group search-input-group">
                                             <span class="input-group-text"><i class="fas fa-envelope text-muted"></i></span>
-                                            <input type="email" value="dr.sarah.smith@medidash.com" placeholder="doctor@domain.com" class="form-control">
+                                            <input type="email" name="user_email" value="<?php echo esc_attr($doctor['user_email'] ?? ''); ?>" placeholder="doctor@domain.com" class="form-control">
                                         </div>
                                     </div>
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Mobile Contact <span class="text-danger" style="color: #ef4444;">*</span></label>
                                         <div class="input-group search-input-group">
                                             <span class="input-group-text"><i class="fas fa-phone text-muted"></i></span>
-                                            <input type="text" value="+1 (234) 987-6543" placeholder="+1 (234) 000-0000" class="form-control">
+                                            <input type="text" name="phone" value="<?php echo esc_attr($doctor['phone'] ?? ''); ?>" placeholder="+1 (234) 000-0000" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -407,14 +414,14 @@
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Consultation Fee <span class="text-danger" style="color: #ef4444;">*</span></label>
                                         <div class="input-group search-input-group">
                                             <span class="input-group-text"><i class="fas fa-money-bill-wave text-success" style="color: #10b981 !important;"></i></span>
-                                            <input type="text" value="INR 500" placeholder="INR 500" class="form-control">
+                                            <input type="text" name="fee" value="<?php echo esc_attr($doctor['fee'] ?? ''); ?>" placeholder="INR 500" class="form-control">
                                         </div>
                                     </div>
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Available Duty Hours <span class="text-danger" style="color: #ef4444;">*</span></label>
                                         <div class="input-group search-input-group">
                                             <span class="input-group-text"><i class="far fa-clock text-primary" style="color: #2563eb !important;"></i></span>
-                                            <input type="text" value="MON - SAT 10:00 AM - 8:00 PM" placeholder="MON - SAT 10:00 AM - 8:00 PM" class="form-control">
+                                            <input type="text" name="duty_hours" value="<?php echo esc_attr($doctor['duty_hours'] ?? 'MON - SAT 10:00 AM - 8:00 PM'); ?>" placeholder="MON - SAT 10:00 AM - 8:00 PM" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -422,21 +429,21 @@
                                 <div class="dior-form-row-3">
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">City</label>
-                                        <input type="text" value="New York" placeholder="City" class="form-control" style="border-radius: 6px;">
+                                        <input type="text" name="city" value="<?php echo esc_attr($doctor['city'] ?? ''); ?>" placeholder="City" class="form-control" style="border-radius: 6px;">
                                     </div>
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Country</label>
-                                        <input type="text" value="United States" placeholder="Country" class="form-control" style="border-radius: 6px;">
+                                        <input type="text" name="country" value="<?php echo esc_attr($doctor['country'] ?? ''); ?>" placeholder="Country" class="form-control" style="border-radius: 6px;">
                                     </div>
                                     <div class="dior-form-group">
                                         <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Clinic Address</label>
-                                        <input type="text" value="Shanti Nagar Bldg No B 4, Sector No 6, Mira Road" placeholder="Clinic / Hospital location" class="form-control" style="border-radius: 6px;">
+                                        <input type="text" name="address" value="<?php echo esc_attr($doctor['address'] ?? ''); ?>" placeholder="Clinic / Hospital location" class="form-control" style="border-radius: 6px;">
                                     </div>
                                 </div>
 
                                 <div class="dior-form-group" style="margin-bottom: 20px;">
                                     <label class="form-label" style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Clinical Experience &amp; Bio Summary</label>
-                                    <textarea rows="3" placeholder="Brief summary of clinical expertise, specializations, and patient care philosophy" class="form-control" style="border-radius: 6px; resize: vertical; min-height: 80px;">Senior Dermatologist with 14+ years of clinical expertise in advanced skin treatments, laser therapy, and cosmetic dermatology.</textarea>
+                                    <textarea name="bio" rows="3" placeholder="Brief summary of clinical expertise, specializations, and patient care philosophy" class="form-control" style="border-radius: 6px; resize: vertical; min-height: 80px;"><?php echo esc_textarea($doctor['bio'] ?? ''); ?></textarea>
                                 </div>
 
                                 <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 14px; border-top: 1px solid #edf1f5 !important;">

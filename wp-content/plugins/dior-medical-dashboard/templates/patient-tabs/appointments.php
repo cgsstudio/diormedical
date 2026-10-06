@@ -6,7 +6,7 @@
         </div>
         <div>
             <ul class="va-breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><a href="#"><i class="fas fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
                 <li><span style="color:#94A3B8;">/</span></li>
                 <li class="active"><span>Book Appointment</span></li>
             </ul>
@@ -89,7 +89,7 @@
             <div class="medidash-page-header">
                 <h2>Book Appointment</h2>
                 <div class="medidash-breadcrumb">
-                    <i class="fa-solid fa-house"></i> / Appointments / <span>Book Appointment</span>
+                    <i class="fas fa-house"></i> / Appointments / <span>Book Appointment</span>
                 </div>
             </div>
 
@@ -255,7 +255,7 @@
                 </div>
                 <div class="medidash-card-body">
                     <div class="dior-hipaa-embed-wrap dior-ic-b10f1f5d37">
-                        <h3 class="dior-ic-c4184d3815"><i class="fa-solid fa-clipboard-question dior-ic-31d287ea95"></i>
+                        <h3 class="dior-ic-c4184d3815"><i class="fas fa-clipboard-question dior-ic-31d287ea95"></i>
                             Step 1: Clinical Intake Questionnaire</h3>
                         <?php if (shortcode_exists('hipaatizer')): ?>
                             <?php echo do_shortcode('[hipaatizer id="01a07aa2-d931-728d-bfe9-8d7b3bc0389d"]'); ?>
@@ -267,7 +267,7 @@
                         <?php endif; ?>
                     </div>
                     <div class="dior-docbooker-embed-wrap dior-ic-eae3fd5ca4">
-                        <h3 class="dior-ic-c4184d3815"><i class="fa-solid fa-calendar-check dior-ic-a7dc4358b8"></i>
+                        <h3 class="dior-ic-c4184d3815"><i class="fas fa-calendar-check dior-ic-a7dc4358b8"></i>
                             Step 2: Schedule Consultation</h3>
                         <?php if (shortcode_exists('docbooker_appointments')): ?>
                             <?php echo do_shortcode('[docbooker_appointments]'); ?>
@@ -276,7 +276,7 @@
                         <?php else: ?>
                             <div class="dior-ic-34ca0e2aa0">
                                 <div class="dior-ic-60dd1f38dd">
-                                    <i class="fa-solid fa-calendar-days"></i>
+                                    <i class="fas fa-calendar-days"></i>
                                 </div>
                                 <h4 class="dior-ic-a5275d9442">DocBooker Scheduling</h4>
                                 <p class="dior-ic-cc929401cd">The interactive appointment calendar will appear here.</p>
@@ -299,7 +299,7 @@
                             </div>
                             <div class="docs-actions-wrapper">
                                 <div class="docs-search-box">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <i class="fas fa-magnifying-glass"></i>
                                     <input type="text" id="dior-today-search-input" placeholder="Search records..."
                                         aria-label="Search box" onkeyup="diorFilterTodayAppointments()">
                                 </div>
@@ -307,11 +307,11 @@
                                     <button type="button" aria-label="Export to CSV"
                                         class="docs-icon-btn docs-btn-success" title="Export to CSV"
                                         onclick="diorDownloadTodayAppointmentsCSV()">
-                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                        <i class="fas fa-file-arrow-down"></i>
                                     </button>
                                     <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info"
                                         title="Refresh Page" onclick="window.location.reload()">
-                                        <i class="fa-solid fa-rotate-right"></i>
+                                        <i class="fas fa-rotate-right"></i>
                                     </button>
                                 </div>
                             </div>
@@ -320,13 +320,13 @@
                             <table class="docs-table" id="dior-today-appointments-table">
                                 <thead>
                                     <tr>
-                                        <th>DOCTOR <i class="fa-solid fa-sort"></i></th>
-                                        <th>SPECIALIZATION <i class="fa-solid fa-sort"></i></th>
-                                        <th>DATE <i class="fa-solid fa-sort"></i></th>
-                                        <th>TIME <i class="fa-solid fa-sort"></i></th>
-                                        <th>TREATMENT <i class="fa-solid fa-sort"></i></th>
-                                        <th>CONTACT <i class="fa-solid fa-sort"></i></th>
-                                        <th>STATUS <i class="fa-solid fa-sort"></i></th>
+                                        <th>DOCTOR <i class="fas fa-sort"></i></th>
+                                        <th>SPECIALIZATION <i class="fas fa-sort"></i></th>
+                                        <th>DATE <i class="fas fa-sort"></i></th>
+                                        <th>TIME <i class="fas fa-sort"></i></th>
+                                        <th>TREATMENT <i class="fas fa-sort"></i></th>
+                                        <th>CONTACT <i class="fas fa-sort"></i></th>
+                                        <th>STATUS <i class="fas fa-sort"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody id="dior-today-appointments-tbody">
@@ -360,7 +360,7 @@
                                             <td><span class="cell-text"><?php echo esc_html($tm[1]); ?></span></td>
                                             <td>
                                                 <div class="cell-content cell-icon-text">
-                                                    <i class="fa-regular fa-calendar cell-icon"></i>
+                                                    <i class="far fa-calendar cell-icon"></i>
                                                     <span class="cell-text"><?php echo esc_html($tm[2]); ?></span>
                                                 </div>
                                             </td>
@@ -406,7 +406,7 @@
                             </div>
                             <div class="docs-actions-wrapper">
                                 <div class="docs-search-box">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <i class="fas fa-magnifying-glass"></i>
                                     <input type="text" id="dior-upcoming-search-input" placeholder="Search records..."
                                         aria-label="Search box" onkeyup="diorFilterUpcomingAppointments()">
                                 </div>
@@ -415,21 +415,21 @@
                                         class="docs-icon-btn docs-btn-danger dior-ic-44a70a0420"
                                         id="dior-upcoming-bulk-delete-btn" title="Delete Selected"
                                         onclick="diorBulkDeleteUpcomingRows()">
-                                        <i class="fa-regular fa-trash-can"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
                                     </button>
                                     <button type="button" aria-label="Add new record"
                                         class="docs-icon-btn docs-btn-primary" title="Book Appointment"
                                         data-switch-tab="appointments">
-                                        <i class="fa-solid fa-plus"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg>
                                     </button>
                                     <button type="button" aria-label="Export to CSV"
                                         class="docs-icon-btn docs-btn-success" title="Export to CSV"
                                         onclick="diorDownloadUpcomingAppointmentsCSV()">
-                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                        <i class="fas fa-file-arrow-down"></i>
                                     </button>
                                     <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info"
                                         title="Refresh Page" onclick="window.location.reload()">
-                                        <i class="fa-solid fa-rotate-right"></i>
+                                        <i class="fas fa-rotate-right"></i>
                                     </button>
                                 </div>
                             </div>
@@ -442,13 +442,13 @@
                                             <input type="checkbox" id="dior-select-all-upcoming" class="master-checkbox"
                                                 onclick="diorToggleSelectAllUpcoming(this)">
                                         </th>
-                                        <th>DOCTOR <i class="fa-solid fa-sort"></i></th>
-                                        <th>DATE <i class="fa-solid fa-sort"></i></th>
-                                        <th>TIME <i class="fa-solid fa-sort"></i></th>
-                                        <th>INJURY <i class="fa-solid fa-sort"></i></th>
-                                        <th>STATUS <i class="fa-solid fa-sort"></i></th>
-                                        <th>NOTES <i class="fa-solid fa-sort"></i></th>
-                                        <th class="dior-ic-d5c209e67c">ACTIONS <i class="fa-solid fa-sort"></i></th>
+                                        <th>DOCTOR <i class="fas fa-sort"></i></th>
+                                        <th>DATE <i class="fas fa-sort"></i></th>
+                                        <th>TIME <i class="fas fa-sort"></i></th>
+                                        <th>INJURY <i class="fas fa-sort"></i></th>
+                                        <th>STATUS <i class="fas fa-sort"></i></th>
+                                        <th>NOTES <i class="fas fa-sort"></i></th>
+                                        <th class="dior-ic-d5c209e67c">ACTIONS <i class="fas fa-sort"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody id="dior-upcoming-appointments-tbody">
@@ -477,7 +477,7 @@
                                             </td>
                                             <td>
                                                 <div class="cell-content cell-icon-text">
-                                                    <i class="fa-regular fa-calendar cell-icon"></i>
+                                                    <i class="far fa-calendar cell-icon"></i>
                                                     <span class="cell-text"><?php echo esc_html($um[1]); ?></span>
                                                 </div>
                                             </td>
@@ -499,10 +499,9 @@
                                             <td class="dior-ic-d5c209e67c">
                                                 <div class="cell-actions">
                                                     <button type="button" class="action-icon-btn edit-btn"
-                                                        title="Edit Record"><i class="fa-solid fa-pen"></i></button>
+                                                        title="Edit Record"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
                                                     <button type="button" class="action-icon-btn delete-btn"
-                                                        title="Delete Record"><i
-                                                            class="fa-regular fa-trash-can"></i></button>
+                                                        title="Delete Record"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -535,7 +534,7 @@
                             </div>
                             <div class="docs-actions-wrapper">
                                 <div class="docs-search-box">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <i class="fas fa-magnifying-glass"></i>
                                     <input type="text" id="dior-past-search-input" placeholder="Search records..."
                                         aria-label="Search box" onkeyup="diorFilterPastAppointments()">
                                 </div>
@@ -543,11 +542,11 @@
                                     <button type="button" aria-label="Export to CSV"
                                         class="docs-icon-btn docs-btn-success" title="Export to CSV"
                                         onclick="diorDownloadPastAppointmentsCSV()">
-                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                        <i class="fas fa-file-arrow-down"></i>
                                     </button>
                                     <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info"
                                         title="Refresh Page" onclick="window.location.reload()">
-                                        <i class="fa-solid fa-rotate-right"></i>
+                                        <i class="fas fa-rotate-right"></i>
                                     </button>
                                 </div>
                             </div>
@@ -556,14 +555,14 @@
                             <table class="docs-table" id="dior-past-appointments-table">
                                 <thead>
                                     <tr>
-                                        <th>DOCTOR <i class="fa-solid fa-sort"></i></th>
-                                        <th>DATE <i class="fa-solid fa-sort"></i></th>
-                                        <th>TIME <i class="fa-solid fa-sort"></i></th>
-                                        <th>EMAIL <i class="fa-solid fa-sort"></i></th>
-                                        <th>MOBILE <i class="fa-solid fa-sort"></i></th>
-                                        <th>INJURY <i class="fa-solid fa-sort"></i></th>
-                                        <th>TYPE <i class="fa-solid fa-sort"></i></th>
-                                        <th>NEXT APPOINTMENT <i class="fa-solid fa-sort"></i></th>
+                                        <th>DOCTOR <i class="fas fa-sort"></i></th>
+                                        <th>DATE <i class="fas fa-sort"></i></th>
+                                        <th>TIME <i class="fas fa-sort"></i></th>
+                                        <th>EMAIL <i class="fas fa-sort"></i></th>
+                                        <th>MOBILE <i class="fas fa-sort"></i></th>
+                                        <th>INJURY <i class="fas fa-sort"></i></th>
+                                        <th>TYPE <i class="fas fa-sort"></i></th>
+                                        <th>NEXT APPOINTMENT <i class="fas fa-sort"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody id="dior-past-appointments-tbody">
@@ -593,7 +592,7 @@
                                             </td>
                                             <td>
                                                 <div class="cell-content cell-icon-text">
-                                                    <i class="fa-regular fa-calendar cell-icon"></i>
+                                                    <i class="far fa-calendar cell-icon"></i>
                                                     <span class="cell-text"><?php echo esc_html($pm[1]); ?></span>
                                                 </div>
                                             </td>
@@ -604,7 +603,7 @@
                                             <td><span class="cell-text"><?php echo esc_html($pm[6]); ?></span></td>
                                             <td>
                                                 <div class="cell-content cell-icon-text">
-                                                    <i class="fa-regular fa-calendar cell-icon"></i>
+                                                    <i class="far fa-calendar cell-icon"></i>
                                                     <span class="cell-text"><?php echo esc_html($pm[7]); ?></span>
                                                 </div>
                                             </td>

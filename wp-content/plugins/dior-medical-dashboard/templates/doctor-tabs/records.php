@@ -4,7 +4,7 @@
                             <div class="title-left">
                                 <div class="title-icon-box dior-ic-9564331faa"
                                    >
-                                    <i class="fa-solid fa-folder-open"></i>
+                                    <i class="fas fa-folder-open"></i>
                                 </div>
                                 <div>
                                     <h1>Medical Records & Clinical Files</h1>
@@ -16,13 +16,13 @@
                                 <button type="button" class="dior-btn-sm dior-btn-ghost dior-ic-87c1296b6e"
                                     onclick="diorDocOpenUploadModal()"
                                    >
-                                    <i class="fa-solid fa-cloud-arrow-up dior-ic-d97e7c74af"></i>
+                                    <i class="fas fa-cloud-arrow-up dior-ic-d97e7c74af"></i>
                                     <span>Upload Document</span>
                                 </button>
                                 <button type="button" class="dior-btn-sm dior-btn-purple dior-ic-87c1296b6e"
                                     onclick="diorDocSwitchTab('doc-letters')"
                                    >
-                                    <i class="fa-solid fa-file-signature"></i>
+                                    <i class="fas fa-file-signature"></i>
                                     <span>Issue Work Excuse</span>
                                 </button>
                             </div>
@@ -39,20 +39,20 @@
                                     </button>
                                     <button type="button" class="dior-filter-pill"
                                         onclick="diorDocFilterCategory('consent', this)">
-                                        <i class="fa-solid fa-shield-halved dior-ic-d97e7c74af"></i> Consents
+                                        <i class="fas fa-shield-halved dior-ic-d97e7c74af"></i> Consents
                                     </button>
                                     <button type="button" class="dior-filter-pill"
                                         onclick="diorDocFilterCategory('excuse', this)">
-                                        <i class="fa-solid fa-file-signature dior-ic-7c92a7e454"></i> Excuses &
+                                        <i class="fas fa-file-signature dior-ic-7c92a7e454"></i> Excuses &
                                         Letters
                                     </button>
                                     <button type="button" class="dior-filter-pill"
                                         onclick="diorDocFilterCategory('lab', this)">
-                                        <i class="fa-solid fa-flask-vial dior-ic-dd152f8f76"></i> Lab Reports
+                                        <i class="fas fa-flask-vial dior-ic-dd152f8f76"></i> Lab Reports
                                     </button>
                                     <button type="button" class="dior-filter-pill"
                                         onclick="diorDocFilterCategory('clinical', this)">
-                                        <i class="fa-solid fa-notes-medical dior-ic-2582fe98a9"></i> Clinical Notes
+                                        <i class="fas fa-notes-medical dior-ic-2582fe98a9"></i> Clinical Notes
                                     </button>
                                 </div>
                                 <div class="dior-ic-daa0da3537">
@@ -127,7 +127,7 @@
                                                     <td>
                                                         <div class="dior-doc-cell">
                                                             <div class="dior-doc-icon-wrap <?php echo $doc_icon_color; ?>">
-                                                                <i class="fa-regular fa-file-pdf"></i>
+                                                                <i class="far fa-file-pdf"></i>
                                                             </div>
                                                             <div>
                                                                 <strong
@@ -139,7 +139,7 @@
                                                     </td>
                                                     <td>
                                                         <span class="dior-badge-pill <?php echo $badge_class; ?>">
-                                                            <i class="fa-solid <?php echo $cat_icon; ?>"></i>
+                                                            <i class="fas <?php echo $cat_icon; ?>"></i>
                                                             <?php echo esc_html($cat_raw); ?>
                                                         </span>
                                                     </td>
@@ -156,12 +156,12 @@
                                                             <a href="<?php echo esc_url($stream_url); ?>" target="_blank"
                                                                 class="dior-btn-sm dior-btn-primary"
                                                                 title="View Document in Viewer">
-                                                                <i class="fa-solid fa-eye"></i> View
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#3b82f6" class="bi bi-eye" viewBox="0 0 16 16" style="background:transparent;"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg> View
                                                             </a>
                                                             <button type="button" class="dior-btn-sm dior-btn-ghost"
                                                                 onclick="diorDocViewPatient(<?php echo $pid_val; ?>)"
                                                                 title="Open Patient Chart">
-                                                                <i class="fa-solid fa-folder-open"></i> Chart
+                                                                <i class="fas fa-folder-open"></i> Chart
                                                             </button>
                                                         </div>
                                                     </td>
@@ -170,7 +170,7 @@
                                         <?php else: ?>
                                             <tr>
                                                 <td colspan="7" class="dior-ic-dd81873a1f">
-                                                    <i class="fa-solid fa-folder-open fa-3x dior-ic-14661aa516"
+                                                    <i class="fas fa-folder-open fa-3x dior-ic-14661aa516"
                                                        ></i>
                                                     <strong
                                                         class="dior-ic-9b25bc6510">No

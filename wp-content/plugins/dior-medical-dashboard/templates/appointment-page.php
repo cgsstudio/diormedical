@@ -16,11 +16,11 @@ $doctors = get_users(['role' => 'dior_doctor']);
         <!-- Header -->
         <div class="dior-booking-header">
             <div class="dior-header-content">
-                <h2><i class="fa-solid fa-calendar-check" style="color: #D4AF37;"></i> Schedule Your Consultation</h2>
+                <h2><i class="fas fa-calendar-check" style="color: #D4AF37;"></i> Schedule Your Consultation</h2>
                 <p>Select your preferred physician and secure your telehealth appointment instantly.</p>
             </div>
             <div class="dior-header-badge">
-                <span><i class="fa-solid fa-shield-halved"></i> Secure & Confidential</span>
+                <span><i class="fas fa-shield-halved"></i> Secure & Confidential</span>
             </div>
         </div>
 
@@ -78,11 +78,11 @@ $doctors = get_users(['role' => 'dior_doctor']);
 
                 <div class="dior-datetime-picker">
                     <div class="dior-date-col">
-                        <h4><i class="fa-regular fa-calendar-days"></i> Choose Date</h4>
+                        <h4><i class="far fa-calendar-days"></i> Choose Date</h4>
                         <input type="date" id="dior_appointment_date" class="dior-glass-input" min="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                     <div class="dior-time-col">
-                        <h4><i class="fa-regular fa-clock"></i> Choose Time Slot</h4>
+                        <h4><i class="far fa-clock"></i> Choose Time Slot</h4>
                         <div class="dior-time-slots" id="dior-time-slots-container">
                             <span class="dior-slot-hint">Please select a date first</span>
                         </div>
@@ -91,7 +91,7 @@ $doctors = get_users(['role' => 'dior_doctor']);
 
                 <div class="dior-booking-actions">
                     <button type="button" class="dior-btn-secondary" onclick="diorGoBackToStep1()">Back</button>
-                    <button type="button" class="dior-btn-primary" onclick="diorProceedToStep3()">Continue <i class="fa-solid fa-arrow-right"></i></button>
+                    <button type="button" class="dior-btn-primary" onclick="diorProceedToStep3()">Continue <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
 
@@ -104,7 +104,7 @@ $doctors = get_users(['role' => 'dior_doctor']);
 
                 <div class="dior-confirmation-card">
                     <div class="confirm-header">
-                        <i class="fa-regular fa-circle-check"></i>
+                        <i class="far fa-circle-check"></i>
                         <h3>Review Your Details</h3>
                     </div>
                     
@@ -136,7 +136,7 @@ $doctors = get_users(['role' => 'dior_doctor']);
                         <button type="button" class="dior-btn-secondary" onclick="diorGoBackToStep2()">Back</button>
                         <button type="button" class="dior-btn-gold" id="btn-confirm-booking" onclick="diorSubmitBooking()">
                             <span>Confirm & Book Appointment</span>
-                            <i class="fa-solid fa-check"></i>
+                            <i class="fas fa-check"></i>
                         </button>
                     </div>
                 </div>
@@ -145,12 +145,12 @@ $doctors = get_users(['role' => 'dior_doctor']);
             <!-- Success State -->
             <div class="dior-wizard-step" id="dior-step-success" style="display:none; text-align:center; padding: 40px 20px;">
                 <div class="dior-success-icon">
-                    <i class="fa-solid fa-circle-check" style="font-size: 64px; color: #059669;"></i>
+                    <i class="fas fa-circle-check" style="font-size: 64px; color: #059669;"></i>
                 </div>
                 <h2 style="color: #0F172A; margin: 15px 0 10px;">Appointment Confirmed!</h2>
                 <p style="color: #64748B; font-size: 15px; margin-bottom: 25px;">Your telehealth consultation has been successfully scheduled. An email confirmation has been sent.</p>
                 <a href="<?php echo esc_url(get_permalink(get_option('dior_dashboard_page_id'))); ?>" class="dior-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
-                    Go to Patient Dashboard <i class="fa-solid fa-arrow-right"></i>
+                    Go to Patient Dashboard <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
 
@@ -239,7 +239,7 @@ function diorProceedToStep3() {
 
 function diorSubmitBooking() {
     const btn = document.getElementById('btn-confirm-booking');
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
     btn.disabled = true;
 
     const data = {
@@ -257,12 +257,12 @@ function diorSubmitBooking() {
             document.getElementById('dior-step-success').style.display = 'block';
         } else {
             alert(response.data || "An error occurred while booking.");
-            btn.innerHTML = '<span>Confirm & Book Appointment</span><i class="fa-solid fa-check"></i>';
+            btn.innerHTML = '<span>Confirm & Book Appointment</span><i class="fas fa-check"></i>';
             btn.disabled = false;
         }
     }).fail(function() {
         alert("Server error. Please try again.");
-        btn.innerHTML = '<span>Confirm & Book Appointment</span><i class="fa-solid fa-check"></i>';
+        btn.innerHTML = '<span>Confirm & Book Appointment</span><i class="fas fa-check"></i>';
         btn.disabled = false;
     });
 }

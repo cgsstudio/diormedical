@@ -9,7 +9,7 @@
         </div>
         <div>
             <ul class="va-breadcrumb-list" style="display: flex; gap: 8px; list-style: none; padding: 0; margin: 0; align-items: center;">
-                <li><a href="javascript:void(0)"><i class="fa-solid fa-house" style="font-size: 14px; color: #2563eb;"></i></a></li>
+                <li><a href="javascript:void(0)"><i class="fas fa-house" style="font-size: 14px; color: #2563eb;"></i></a></li>
                 <li><span style="color: #cbd5e1;">/</span></li>
                 <li><a href="javascript:void(0)" style="color: #64748b; text-decoration: none; font-size: 13px;">Notifications</a></li>
                 <li><span style="color: #cbd5e1;">/</span></li>
@@ -32,10 +32,10 @@
                                 <span class="stat-label">Total Notifications</span>
                                 <h3 class="stat-value text-indigo mt-1 mb-0">8</h3>
                             </div>
-                            <div class="stat-icon-wrapper"><i class="fa-solid fa-bell"></i></div>
+                            <div class="stat-icon-wrapper"><i class="fas fa-bell"></i></div>
                         </div>
                         <div class="stat-footer d-flex align-items-center" style="display: flex; align-items: center; margin-top: auto; padding-top: 12px;">
-                            <span class="stat-badge badge-indigo"><i class="fa-solid fa-clock-rotate-left text-xs"></i> System Audit </span>
+                            <span class="stat-badge badge-indigo"><i class="fas fa-clock-rotate-left text-xs"></i> System Audit </span>
                             <span class="stat-subtext ms-2" style="margin-left: 8px;">Real-time log</span>
                         </div>
                     </div>
@@ -51,10 +51,10 @@
                                 <span class="stat-label">Unread Items</span>
                                 <h3 class="stat-value text-amber mt-1 mb-0" id="dior-sys-unread-stat">4</h3>
                             </div>
-                            <div class="stat-icon-wrapper"><i class="fa-solid fa-envelope-open-text"></i></div>
+                            <div class="stat-icon-wrapper"><i class="fas fa-envelope-open-text"></i></div>
                         </div>
                         <div class="stat-footer d-flex align-items-center" style="display: flex; align-items: center; margin-top: auto; padding-top: 12px;">
-                            <span class="stat-badge badge-amber"><i class="fa-solid fa-hourglass-half text-xs"></i> Pending Action </span>
+                            <span class="stat-badge badge-amber"><i class="fas fa-hourglass-half text-xs"></i> Pending Action </span>
                             <span class="stat-subtext ms-2" style="margin-left: 8px;">Requires review</span>
                         </div>
                     </div>
@@ -70,10 +70,10 @@
                                 <span class="stat-label">High Priority Alerts</span>
                                 <h3 class="stat-value text-rose mt-1 mb-0">2</h3>
                             </div>
-                            <div class="stat-icon-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div class="stat-icon-wrapper"><i class="fas fa-shield-halved"></i></div>
                         </div>
                         <div class="stat-footer d-flex align-items-center" style="display: flex; align-items: center; margin-top: auto; padding-top: 12px;">
-                            <span class="stat-badge badge-rose"><i class="fa-solid fa-circle-exclamation text-xs"></i> Critical Stream </span>
+                            <span class="stat-badge badge-rose"><i class="fas fa-circle-exclamation text-xs"></i> Critical Stream </span>
                             <span class="stat-subtext ms-2" style="margin-left: 8px;">Security &amp; system</span>
                         </div>
                     </div>
@@ -89,10 +89,10 @@
                                 <span class="stat-label">System Health</span>
                                 <h3 class="stat-value text-emerald mt-1 mb-0">99.8%</h3>
                             </div>
-                            <div class="stat-icon-wrapper"><i class="fa-solid fa-shield-check"></i></div>
+                            <div class="stat-icon-wrapper"><i class="fas fa-shield-check"></i></div>
                         </div>
                         <div class="stat-footer d-flex align-items-center" style="display: flex; align-items: center; margin-top: auto; padding-top: 12px;">
-                            <span class="stat-badge badge-emerald"><i class="fa-solid fa-circle-check text-xs"></i> Nominal State </span>
+                            <span class="stat-badge badge-emerald"><i class="fas fa-circle-check text-xs"></i> Nominal State </span>
                             <span class="stat-subtext ms-2" style="margin-left: 8px;">All services online</span>
                         </div>
                     </div>
@@ -109,13 +109,13 @@
                     <div class="card-header border-0 pb-0 pt-3 px-4" style="padding: 20px 24px 14px 24px; border-bottom: 1px solid #f1f5f9; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;">
                         <div class="d-flex align-items-center gap-2" style="display: flex; align-items: center; gap: 10px;">
                             <h4 class="card-title-text mb-0" style="font-size: 16px; font-weight: 700; color: #1e293b; margin: 0;">
-                                <i class="fa-solid fa-bell me-2 text-primary" style="color: #2563eb !important; margin-right: 6px;"></i>System Notifications Activity Feed
+                                <i class="fas fa-bell me-2 text-primary" style="color: #2563eb !important; margin-right: 6px;"></i>System Notifications Activity Feed
                             </h4>
                             <span class="unread-count-chip" id="dior-sys-unread-chip">4 Unread</span>
                         </div>
                         <div class="d-flex align-items-center gap-2" style="display: flex; gap: 8px;">
-                            <button type="button" class="btn btn-sm btn-outline-action" onclick="diorMarkAllSystemNotificationsRead()"><i class="fa-solid fa-check-double me-1" style="margin-right: 4px;"></i> Mark All Read </button>
-                            <button type="button" class="btn btn-sm btn-outline-action text-danger" onclick="diorClearReadSystemNotifications()"><i class="fa-solid fa-trash me-1" style="margin-right: 4px; color: #ef4444;"></i> Clear Read </button>
+                            <button type="button" class="btn btn-sm btn-outline-action" onclick="diorMarkAllSystemNotificationsRead()"><i class="fas fa-check-double me-1" style="margin-right: 4px;"></i> Mark All Read </button>
+                            <button type="button" class="btn btn-sm btn-outline-action text-danger" onclick="diorClearReadSystemNotifications()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg> Clear Read </button>
                         </div>
                     </div>
                     
@@ -142,106 +142,106 @@
                             
                             <div class="notification-item-row is-unread-row notification-type-user" data-read-state="unread">
                                 <div class="unread-strip"></div>
-                                <div class="type-icon-wrapper"><i class="fa-solid fa-user-plus"></i></div>
+                                <div class="type-icon-wrapper"><i class="fas fa-user-plus"></i></div>
                                 <div class="notification-body flex-grow-1 min-w-0 me-3" style="flex: 1 1 auto; min-width: 0;">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1" style="display: flex; justify-content: space-between; align-items: center;">
                                         <div class="d-flex align-items-center gap-2 flex-wrap" style="display: flex; align-items: center; gap: 8px;">
                                             <h6 class="notification-title mb-0">New Patient Registration</h6>
                                             <span class="badge-priority badge-priority-medium"><span class="status-dot"></span> Medium </span>
                                         </div>
-                                        <span class="timestamp-tag"><i class="fa-regular fa-clock me-1"></i> Nov 26, 2025 </span>
+                                        <span class="timestamp-tag"><i class="far fa-clock me-1"></i> Nov 26, 2025 </span>
                                     </div>
                                     <p class="notification-text mb-2">John Doe has completed online registration and is awaiting medical profile approval.</p>
                                     <div class="notification-action-bar">
-                                        <a class="btn btn-sm btn-inline-action" href="javascript:void(0)"><i class="fa-solid fa-arrow-up-right-from-square me-1" style="margin-right: 4px;"></i> View Patient </a>
+                                        <a class="btn btn-sm btn-inline-action" href="javascript:void(0)"><i class="fas fa-arrow-up-right-from-square me-1" style="margin-right: 4px;"></i> View Patient </a>
                                     </div>
                                 </div>
                                 <div class="notification-controls d-flex align-items-center gap-1" style="display: flex; gap: 4px;">
-                                    <button type="button" title="Mark as Read" onclick="diorMarkRowAsRead(this)" class="btn btn-sm btn-icon-action"><i class="fa-solid fa-check text-success" style="color: #10b981;"></i></button>
-                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><i class="fa-solid fa-trash" style="color: #ef4444;"></i></button>
+                                    <button type="button" title="Mark as Read" onclick="diorMarkRowAsRead(this)" class="btn btn-sm btn-icon-action"><i class="fas fa-check text-success" style="color: #10b981;"></i></button>
+                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
                                 </div>
                             </div>
                             
                             <div class="notification-item-row is-unread-row notification-type-security" data-read-state="unread">
                                 <div class="unread-strip"></div>
-                                <div class="type-icon-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
+                                <div class="type-icon-wrapper"><i class="fas fa-shield-halved"></i></div>
                                 <div class="notification-body flex-grow-1 min-w-0 me-3" style="flex: 1 1 auto; min-width: 0;">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1" style="display: flex; justify-content: space-between; align-items: center;">
                                         <div class="d-flex align-items-center gap-2 flex-wrap" style="display: flex; align-items: center; gap: 8px;">
                                             <h6 class="notification-title mb-0">Security Alert: Failed Login Attempts</h6>
                                             <span class="badge-priority badge-priority-high"><span class="status-dot"></span> High </span>
                                         </div>
-                                        <span class="timestamp-tag"><i class="fa-regular fa-clock me-1"></i> Nov 26, 2025 </span>
+                                        <span class="timestamp-tag"><i class="far fa-clock me-1"></i> Nov 26, 2025 </span>
                                     </div>
                                     <p class="notification-text mb-2">Multiple failed authentication attempts detected from IP address 192.168.1.100.</p>
                                     <div class="notification-action-bar">
-                                        <a class="btn btn-sm btn-inline-action" href="javascript:void(0)"><i class="fa-solid fa-arrow-up-right-from-square me-1" style="margin-right: 4px;"></i> Review Incident </a>
+                                        <a class="btn btn-sm btn-inline-action" href="javascript:void(0)"><i class="fas fa-arrow-up-right-from-square me-1" style="margin-right: 4px;"></i> Review Incident </a>
                                     </div>
                                 </div>
                                 <div class="notification-controls d-flex align-items-center gap-1" style="display: flex; gap: 4px;">
-                                    <button type="button" title="Mark as Read" onclick="diorMarkRowAsRead(this)" class="btn btn-sm btn-icon-action"><i class="fa-solid fa-check text-success" style="color: #10b981;"></i></button>
-                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><i class="fa-solid fa-trash" style="color: #ef4444;"></i></button>
+                                    <button type="button" title="Mark as Read" onclick="diorMarkRowAsRead(this)" class="btn btn-sm btn-icon-action"><i class="fas fa-check text-success" style="color: #10b981;"></i></button>
+                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
                                 </div>
                             </div>
                             
                             <div class="notification-item-row notification-type-appointment" data-read-state="read">
-                                <div class="type-icon-wrapper"><i class="fa-solid fa-calendar-check"></i></div>
+                                <div class="type-icon-wrapper"><i class="fas fa-calendar-check"></i></div>
                                 <div class="notification-body flex-grow-1 min-w-0 me-3" style="flex: 1 1 auto; min-width: 0;">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1" style="display: flex; justify-content: space-between; align-items: center;">
                                         <div class="d-flex align-items-center gap-2 flex-wrap" style="display: flex; align-items: center; gap: 8px;">
                                             <h6 class="notification-title mb-0">Daily Appointment Schedule Summary</h6>
                                             <span class="badge-priority badge-priority-medium"><span class="status-dot"></span> Medium </span>
                                         </div>
-                                        <span class="timestamp-tag"><i class="fa-regular fa-clock me-1"></i> Nov 26, 2025 </span>
+                                        <span class="timestamp-tag"><i class="far fa-clock me-1"></i> Nov 26, 2025 </span>
                                     </div>
                                     <p class="notification-text mb-2">15 patient appointments scheduled for today. 3 patients have not confirmed attendance.</p>
                                     <div class="notification-action-bar">
-                                        <a class="btn btn-sm btn-inline-action" href="javascript:void(0)"><i class="fa-solid fa-arrow-up-right-from-square me-1" style="margin-right: 4px;"></i> View Appointments </a>
+                                        <a class="btn btn-sm btn-inline-action" href="javascript:void(0)"><i class="fas fa-arrow-up-right-from-square me-1" style="margin-right: 4px;"></i> View Appointments </a>
                                     </div>
                                 </div>
                                 <div class="notification-controls d-flex align-items-center gap-1" style="display: flex; gap: 4px;">
-                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><i class="fa-solid fa-trash" style="color: #ef4444;"></i></button>
+                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
                                 </div>
                             </div>
                             
                             <div class="notification-item-row is-unread-row notification-type-system" data-read-state="unread">
                                 <div class="unread-strip"></div>
-                                <div class="type-icon-wrapper"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                <div class="type-icon-wrapper"><i class="fas fa-triangle-exclamation"></i></div>
                                 <div class="notification-body flex-grow-1 min-w-0 me-3" style="flex: 1 1 auto; min-width: 0;">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1" style="display: flex; justify-content: space-between; align-items: center;">
                                         <div class="d-flex align-items-center gap-2 flex-wrap" style="display: flex; align-items: center; gap: 8px;">
                                             <h6 class="notification-title mb-0">Low Inventory Alert</h6>
                                             <span class="badge-priority badge-priority-high"><span class="status-dot"></span> High </span>
                                         </div>
-                                        <span class="timestamp-tag"><i class="fa-regular fa-clock me-1"></i> Nov 26, 2025 </span>
+                                        <span class="timestamp-tag"><i class="far fa-clock me-1"></i> Nov 26, 2025 </span>
                                     </div>
                                     <p class="notification-text mb-2">Surgical mask reserves running low (10 units remaining in Central Pharmacy).</p>
                                     <div class="notification-action-bar">
-                                        <a class="btn btn-sm btn-inline-action" href="javascript:void(0)"><i class="fa-solid fa-arrow-up-right-from-square me-1" style="margin-right: 4px;"></i> Reorder Supplies </a>
+                                        <a class="btn btn-sm btn-inline-action" href="javascript:void(0)"><i class="fas fa-arrow-up-right-from-square me-1" style="margin-right: 4px;"></i> Reorder Supplies </a>
                                     </div>
                                 </div>
                                 <div class="notification-controls d-flex align-items-center gap-1" style="display: flex; gap: 4px;">
-                                    <button type="button" title="Mark as Read" onclick="diorMarkRowAsRead(this)" class="btn btn-sm btn-icon-action"><i class="fa-solid fa-check text-success" style="color: #10b981;"></i></button>
-                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><i class="fa-solid fa-trash" style="color: #ef4444;"></i></button>
+                                    <button type="button" title="Mark as Read" onclick="diorMarkRowAsRead(this)" class="btn btn-sm btn-icon-action"><i class="fas fa-check text-success" style="color: #10b981;"></i></button>
+                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
                                 </div>
                             </div>
                             
                             <div class="notification-item-row is-unread-row notification-type-system" data-read-state="unread">
                                 <div class="unread-strip"></div>
-                                <div class="type-icon-wrapper"><i class="fa-solid fa-database"></i></div>
+                                <div class="type-icon-wrapper"><i class="fas fa-database"></i></div>
                                 <div class="notification-body flex-grow-1 min-w-0 me-3" style="flex: 1 1 auto; min-width: 0;">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1" style="display: flex; justify-content: space-between; align-items: center;">
                                         <div class="d-flex align-items-center gap-2 flex-wrap" style="display: flex; align-items: center; gap: 8px;">
                                             <h6 class="notification-title mb-0">System Backup Completed</h6>
                                             <span class="badge-priority badge-priority-low"><span class="status-dot"></span> Low </span>
                                         </div>
-                                        <span class="timestamp-tag"><i class="fa-regular fa-clock me-1"></i> Nov 26, 2025 </span>
+                                        <span class="timestamp-tag"><i class="far fa-clock me-1"></i> Nov 26, 2025 </span>
                                     </div>
                                     <p class="notification-text mb-2">Automated daily database and EMR backup completed successfully at 2:00 AM without errors.</p>
                                 </div>
                                 <div class="notification-controls d-flex align-items-center gap-1" style="display: flex; gap: 4px;">
-                                    <button type="button" title="Mark as Read" onclick="diorMarkRowAsRead(this)" class="btn btn-sm btn-icon-action"><i class="fa-solid fa-check text-success" style="color: #10b981;"></i></button>
-                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><i class="fa-solid fa-trash" style="color: #ef4444;"></i></button>
+                                    <button type="button" title="Mark as Read" onclick="diorMarkRowAsRead(this)" class="btn btn-sm btn-icon-action"><i class="fas fa-check text-success" style="color: #10b981;"></i></button>
+                                    <button type="button" title="Delete Notification" onclick="this.closest('.notification-item-row').remove()" class="btn btn-sm btn-icon-action text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
                                 </div>
                             </div>
 

@@ -6,7 +6,7 @@
         </div>
         <div>
             <ul class="va-breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><a href="#"><i class="fas fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
                 <li><span style="color:#94A3B8;">/</span></li>
                 <li class="active"><span>Clinical Intake & Medical Questionnaires</span></li>
             </ul>
@@ -29,7 +29,7 @@
                                >
                                 <div
                                     class="dior-ic-ff43736ffd">
-                                    <i class="fa-solid fa-lock"></i>
+                                    <i class="fas fa-lock"></i>
                                 </div>
                                 <h3 class="dior-ic-4285f57078">Personal
                                     Profile Required</h3>
@@ -41,7 +41,7 @@
                                 </p>
                                 <button type="button" class="dior-btn-gold-primary dior-ic-2b79c76f5b" data-switch-tab="settings"
                                    >
-                                    <i class="fa-solid fa-user-pen"></i> Complete Personal Information First
+                                    <i class="fas fa-user-pen"></i> Complete Personal Information First
                                 </button>
                             </div>
                             <?php endif; ?>
@@ -53,7 +53,7 @@
                                 <div class="dior-ic-29bdac4ec4">
                                     <div
                                         class="dior-ic-37258c726e">
-                                        <i class="fa-solid fa-circle-check"></i>
+                                        <i class="fas fa-circle-check"></i>
                                     </div>
                                     <div>
                                         <strong class="dior-ic-a6c6cc4d52">Clinical Intake
@@ -67,13 +67,13 @@
                                     <button type="button" class="dior-btn-gold-secondary dior-ic-603a8f0148"
                                         onclick="diorToggleIntakeReview()"
                                        >
-                                        <i class="fa-solid fa-file-medical"></i> <span id="toggle-intake-btn-text">View
+                                        <i class="fas fa-file-medical"></i> <span id="toggle-intake-btn-text">View
                                             Submitted Answers</span>
                                     </button>
                                     <button type="button" class="dior-btn-gold-secondary dior-ic-603a8f0148"
                                         onclick="diorReopenHipaaForm()"
                                        >
-                                        <i class="fa-solid fa-arrows-rotate"></i> Re-open Questionnaire
+                                        <i class="fas fa-arrows-rotate"></i> Re-open Questionnaire
                                     </button>
                                 </div>
                             </div>
@@ -83,7 +83,7 @@
                                >
                                 <div
                                     class="dior-ic-f0fa331c40">
-                                    <i class="fa-solid fa-clipboard-question"></i>
+                                    <i class="fas fa-clipboard-question"></i>
                                 </div>
                                 <div>
                                     <strong class="dior-ic-6b8a18039f">Step 1 of 2: Complete
@@ -101,20 +101,20 @@
                                >
                                 <div class="dior-card-header dior-ic-f51d57bb28"
                                    >
-                                    <h3 class="dior-ic-c7bbe9b97b"><i class="fa-solid fa-circle-check"></i> HIPAA Intake
+                                    <h3 class="dior-ic-c7bbe9b97b"><i class="fas fa-circle-check"></i> HIPAA Intake
                                         Form — Submitted</h3>
-                                    <span class="dior-st ok"><i class="fa-solid fa-calendar"></i>
+                                    <span class="dior-st ok"><i class="fas fa-calendar"></i>
                                         <?php echo esc_html(!empty($hipaa_intake['submitted_at']) ? date('M j, Y g:i A', strtotime($hipaa_intake['submitted_at'])) : date('M j, Y')); ?></span>
                                 </div>
                                 <div class="dior-card-body">
                                     <div class="dior-form-row-2 dior-ic-e0e28a337c">
                                         <div class="dior-profile-field-box">
-                                            <span class="pf-label"><i class="fa-solid fa-user"></i> Full Name</span>
+                                            <span class="pf-label"><i class="fas fa-user"></i> Full Name</span>
                                             <span
                                                 class="pf-value"><?php echo esc_html(trim(($hipaa_intake['first_name'] ?? '') . ' ' . ($hipaa_intake['last_name'] ?? '')) ?: ($profile['full_name'] ?? '—')); ?></span>
                                         </div>
                                         <div class="dior-profile-field-box">
-                                            <span class="pf-label"><i class="fa-solid fa-cake-candles"></i> Date of
+                                            <span class="pf-label"><i class="fas fa-cake-candles"></i> Date of
                                                 Birth</span>
                                             <span
                                                 class="pf-value"><?php echo esc_html(!empty($hipaa_intake['dob']) ? $hipaa_intake['dob'] : (!empty($profile['dob']) ? $profile['dob'] : '—')); ?></span>
@@ -122,12 +122,12 @@
                                     </div>
                                     <div class="dior-form-row-2 dior-ic-e0e28a337c">
                                         <div class="dior-profile-field-box">
-                                            <span class="pf-label"><i class="fa-solid fa-phone"></i> Phone</span>
+                                            <span class="pf-label"><i class="fas fa-phone"></i> Phone</span>
                                             <span
                                                 class="pf-value"><?php echo esc_html(!empty($hipaa_intake['phone']) ? $hipaa_intake['phone'] : (!empty($profile['phone']) ? $profile['phone'] : '—')); ?></span>
                                         </div>
                                         <div class="dior-profile-field-box">
-                                            <span class="pf-label"><i class="fa-solid fa-envelope"></i> Email</span>
+                                            <span class="pf-label"><i class="fas fa-envelope"></i> Email</span>
                                             <span
                                                 class="pf-value"><?php echo esc_html(!empty($hipaa_intake['email']) ? $hipaa_intake['email'] : (!empty($profile['email']) ? $profile['email'] : ($current_user->user_email ?? '—'))); ?></span>
                                         </div>
@@ -143,7 +143,7 @@
                                     if (!empty($formatted_intake_address)):
                                         ?>
                                     <div class="dior-profile-field-box dior-ic-e0e28a337c">
-                                        <span class="pf-label"><i class="fa-solid fa-location-dot"></i> Address</span>
+                                        <span class="pf-label"><i class="fas fa-location-dot"></i> Address</span>
                                         <span class="pf-value"><?php echo esc_html($formatted_intake_address); ?></span>
                                     </div>
                                     <?php endif; ?>
@@ -151,7 +151,7 @@
                                     <div
                                         class="dior-ic-dd9456ac71">
                                         <strong class="dior-ic-f2ba68561c"><i
-                                                class="fa-solid fa-stethoscope"></i> Chief Symptoms /
+                                                class="fas fa-stethoscope"></i> Chief Symptoms /
                                             Complaint:</strong>
                                         <span><?php echo nl2br(esc_html($hipaa_intake['symptoms'])); ?></span>
                                     </div>
@@ -160,7 +160,7 @@
                                     <div
                                         class="dior-ic-dad648367c">
                                         <strong class="dior-ic-e8f5bfad42"><i
-                                                class="fa-solid fa-triangle-exclamation"></i> Known Allergies:</strong>
+                                                class="fas fa-triangle-exclamation"></i> Known Allergies:</strong>
                                         <span><?php echo esc_html($hipaa_intake['allergies']); ?></span>
                                     </div>
                                     <?php endif; ?>
@@ -168,7 +168,7 @@
                                     <div
                                         class="dior-ic-dad648367c">
                                         <strong class="dior-ic-5f80400f91"><i
-                                                class="fa-solid fa-pills"></i> Current Medications (Legacy):</strong>
+                                                class="fas fa-pills"></i> Current Medications (Legacy):</strong>
                                         <span><?php echo esc_html($hipaa_intake['medications']); ?></span>
                                     </div>
                                     <?php endif; ?>
@@ -176,7 +176,7 @@
                                     <div
                                         class="dior-ic-426be80846">
                                         <strong class="dior-ic-d244c256b3"><i
-                                                class="fa-solid fa-notes-medical"></i> Medical History
+                                                class="fas fa-notes-medical"></i> Medical History
                                             (Legacy):</strong>
                                         <span><?php echo nl2br(esc_html($hipaa_intake['medical_history'])); ?></span>
                                     </div>
@@ -185,7 +185,7 @@
                                     <!-- New comprehensive display -->
                                     <?php if (!empty($hipaa_intake['service_condition'])): ?>
                                     <div class="dior-profile-field-box dior-ic-e0e28a337c">
-                                        <span class="pf-label"><i class="fa-solid fa-stethoscope"></i> Service
+                                        <span class="pf-label"><i class="fas fa-stethoscope"></i> Service
                                             Condition</span>
                                         <span
                                             class="pf-value"><?php echo esc_html($hipaa_intake['service_condition']); ?></span>
@@ -195,7 +195,7 @@
                                     <div class="dior-form-row-2 dior-ic-e0e28a337c">
                                         <?php if (!empty($hipaa_intake['is_18_plus'])): ?>
                                         <div class="dior-profile-field-box">
-                                            <span class="pf-label"><i class="fa-solid fa-user-shield"></i> 18+
+                                            <span class="pf-label"><i class="fas fa-user-shield"></i> 18+
                                                 Verified</span>
                                             <span
                                                 class="pf-value"><?php echo esc_html($hipaa_intake['is_18_plus']); ?></span>
@@ -203,7 +203,7 @@
                                         <?php endif; ?>
                                         <?php if (!empty($hipaa_intake['is_pregnant'])): ?>
                                         <div class="dior-profile-field-box">
-                                            <span class="pf-label"><i class="fa-solid fa-baby"></i> Pregnancy
+                                            <span class="pf-label"><i class="fas fa-baby"></i> Pregnancy
                                                 Status</span>
                                             <span
                                                 class="pf-value"><?php echo esc_html($hipaa_intake['is_pregnant']); ?></span>
@@ -215,7 +215,7 @@
                                     <div
                                         class="dior-ic-dd9456ac71">
                                         <strong class="dior-ic-f2ba68561c"><i
-                                                class="fa-solid fa-stethoscope"></i> Symptoms Description:</strong>
+                                                class="fas fa-stethoscope"></i> Symptoms Description:</strong>
                                         <span><?php echo nl2br(esc_html($hipaa_intake['symptoms_description'])); ?></span>
                                     </div>
                                     <?php endif; ?>
@@ -223,14 +223,14 @@
                                     <div class="dior-form-row-2 dior-ic-e0e28a337c">
                                         <?php if (!empty($hipaa_intake['symptom_duration'])): ?>
                                         <div class="dior-profile-field-box">
-                                            <span class="pf-label"><i class="fa-solid fa-clock"></i> Duration</span>
+                                            <span class="pf-label"><i class="fas fa-clock"></i> Duration</span>
                                             <span
                                                 class="pf-value"><?php echo esc_html($hipaa_intake['symptom_duration']); ?></span>
                                         </div>
                                         <?php endif; ?>
                                         <?php if (!empty($hipaa_intake['symptom_severity'])): ?>
                                         <div class="dior-profile-field-box">
-                                            <span class="pf-label"><i class="fa-solid fa-exclamation-triangle"></i>
+                                            <span class="pf-label"><i class="fas fa-exclamation-triangle"></i>
                                                 Severity</span>
                                             <span
                                                 class="pf-value"><?php echo esc_html($hipaa_intake['symptom_severity']); ?></span>
@@ -242,7 +242,7 @@
                                     <div
                                         class="dior-ic-5997cd2304">
                                         <h5 class="dior-ic-9f8a287aa0"><i
-                                                class="fa-solid fa-droplet"></i> UTI Details</h5>
+                                                class="fas fa-droplet"></i> UTI Details</h5>
                                         <div class="dior-ic-98884f8aff">
                                             <?php if (!empty($hipaa_intake['uti_burning_pain'])): ?>
                                             <div><strong>Burning/Pain:</strong>
@@ -276,7 +276,7 @@
                                     <div
                                         class="dior-ic-efe1f95ed6">
                                         <h5 class="dior-ic-98721629e4"><i
-                                                class="fa-solid fa-allergies"></i> Allergy Details</h5>
+                                                class="fas fa-allergies"></i> Allergy Details</h5>
                                         <div class="dior-ic-98884f8aff">
                                             <?php if (!empty($hipaa_intake['allergy_symptoms'])): ?>
                                             <div class="dior-ic-ef39ab073b"><strong>Symptoms:</strong>
@@ -306,7 +306,7 @@
                                     <div
                                         class="dior-ic-608bc341d4">
                                         <h5 class="dior-ic-6d898ecf3e"><i
-                                                class="fa-solid fa-notes-medical"></i> Medical History</h5>
+                                                class="fas fa-notes-medical"></i> Medical History</h5>
                                         <?php if (!empty($hipaa_intake['diagnosed_conditions'])): ?>
                                         <div class="dior-ic-952f9e597f"><strong>Diagnosed
                                                 Conditions:</strong>
@@ -323,7 +323,7 @@
                                     <div
                                         class="dior-ic-7bc2800f3c">
                                         <h5 class="dior-ic-ab7c698ca4"><i
-                                                class="fa-solid fa-pills"></i> Current Medications</h5>
+                                                class="fas fa-pills"></i> Current Medications</h5>
                                         <?php if (!empty($hipaa_intake['taking_medications'])): ?>
                                         <div class="dior-ic-952f9e597f"><strong>Taking
                                                 Medications:</strong>
@@ -340,7 +340,7 @@
                                     <div
                                         class="dior-ic-efe1f95ed6">
                                         <h5 class="dior-ic-98721629e4"><i
-                                                class="fa-solid fa-triangle-exclamation"></i> Drug Allergies</h5>
+                                                class="fas fa-triangle-exclamation"></i> Drug Allergies</h5>
                                         <?php if (!empty($hipaa_intake['drug_allergies'])): ?>
                                         <div class="dior-ic-952f9e597f"><strong>Has Drug
                                                 Allergies:</strong>
@@ -357,7 +357,7 @@
                                     <div
                                         class="dior-ic-e6cf659743">
                                         <h5 class="dior-ic-a45468e51f"><i
-                                                class="fa-solid fa-calendar"></i> Appointment Preferences</h5>
+                                                class="fas fa-calendar"></i> Appointment Preferences</h5>
                                         <div class="dior-ic-98884f8aff">
                                             <?php if (!empty($hipaa_intake['appointment_type'])): ?>
                                             <div><strong>Type:</strong>
@@ -379,7 +379,7 @@
                                     <div
                                         class="dior-ic-44e184414e">
                                         <h5 class="dior-ic-78699bc6d3"><i
-                                                class="fa-solid fa-file-signature"></i> Consent & Signature</h5>
+                                                class="fas fa-file-signature"></i> Consent & Signature</h5>
                                         <div class="dior-ic-98884f8aff">
                                             <?php if (!empty($hipaa_intake['telemedicine_consent'])): ?>
                                             <div><strong>Telemedicine Consent:</strong>
@@ -434,7 +434,7 @@
                                     <div>
                                         <h3
                                             class="dior-ic-0cab9b93d2">
-                                            <i class="fa-solid fa-calendar-check dior-ic-c416c351c1"></i>
+                                            <i class="fas fa-calendar-check dior-ic-c416c351c1"></i>
                                             <span>Step 2: Schedule Telehealth Consultation with Physician</span>
                                         </h3>
                                         <p class="dior-ic-302f7d6005">Pre-filled from your
@@ -442,7 +442,7 @@
                                     </div>
                                     <span class="dior-badge-luxury dior-ic-212d0017b3"
                                        >
-                                        <i class="fa-solid fa-shield-halved"></i> Intake Data Verified
+                                        <i class="fas fa-shield-halved"></i> Intake Data Verified
                                     </span>
                                 </div>
 
@@ -488,7 +488,7 @@
                                         <div class="dior-ic-29bdac4ec4">
                                             <div
                                                 class="dior-ic-435b456ef9">
-                                                <i class="fa-solid fa-user-check"></i>
+                                                <i class="fas fa-user-check"></i>
                                             </div>
                                             <div>
                                                 <strong
@@ -506,7 +506,7 @@
                                             class="dior-ic-d09da58e1e">
                                             <div
                                                 class="dior-ic-05af00f625">
-                                                <i class="fa-solid fa-stethoscope"></i>
+                                                <i class="fas fa-stethoscope"></i>
                                             </div>
                                             <div>
                                                 <span
@@ -521,7 +521,7 @@
                                     <!-- WIZARD STEP 1: SELECT DOCTOR -->
                                     <div class="dior-in-booking-step" id="in-step-doctor">
                                         <h4 class="dior-ic-b46e313c98">
-                                            <i class="fa-solid fa-user-doctor dior-ic-5d59a9a58e"></i> Available
+                                            <i class="fas fa-user-doctor dior-ic-5d59a9a58e"></i> Available
                                             Telehealth Physicians:
                                         </h4>
                                         <div id="in-dashboard-doctors-grid" class="dior-doctors-grid-cards dior-ic-4109a0209f"
@@ -550,7 +550,7 @@
                                                     class="dior-ic-b4deef6f98">
                                                     <div
                                                         class="dior-ic-7bd92c469d">
-                                                        <i class="fa-solid fa-user-md"></i>
+                                                        <i class="fas fa-user-md"></i>
                                                     </div>
                                                     <div>
                                                         <h5
@@ -563,7 +563,7 @@
                                                 </div>
                                                 <div
                                                     class="dior-ic-181e1087c6">
-                                                    <span><i class="fa-regular fa-clock"></i> Available via
+                                                    <span><i class="far fa-clock"></i> Available via
                                                         DocBooker</span>
                                                     <span class="dior-ic-a669b3acb9">Select &rarr;</span>
                                                 </div>
@@ -581,7 +581,7 @@
                                                     class="dior-ic-b4deef6f98">
                                                     <div
                                                         class="dior-ic-7bd92c469d">
-                                                        <i class="fa-solid fa-user-md"></i>
+                                                        <i class="fas fa-user-md"></i>
                                                     </div>
                                                     <div>
                                                         <h5
@@ -594,7 +594,7 @@
                                                 </div>
                                                 <div
                                                     class="dior-ic-181e1087c6">
-                                                    <span><i class="fa-regular fa-clock"></i> Next Available:
+                                                    <span><i class="far fa-clock"></i> Next Available:
                                                         Today</span>
                                                     <span class="dior-ic-a669b3acb9">Select &rarr;</span>
                                                 </div>
@@ -608,7 +608,7 @@
                                         <div
                                             class="dior-ic-603a3ffb8a">
                                             <h4 class="dior-ic-04a54a7f2f">
-                                                <i class="fa-solid fa-calendar-day dior-ic-5d59a9a58e"></i> Select
+                                                <i class="fas fa-calendar-day dior-ic-5d59a9a58e"></i> Select
                                                 Consultation Date &amp; Time Slot:
                                             </h4>
                                             <button type="button" class="dior-btn-text-back dior-ic-f4f3cceddb"
@@ -623,7 +623,7 @@
                                                 class="dior-ic-87c94397c4">
                                                 <label
                                                     class="dior-ic-95f70d4d96">
-                                                    <i class="fa-regular fa-calendar"></i> Select Date:
+                                                    <i class="far fa-calendar"></i> Select Date:
                                                 </label>
                                                 <input type="date" id="in-booking-date" class="dior-form-input"
                                                     min="<?php echo date('Y-m-d'); ?>"
@@ -638,7 +638,7 @@
                                             <div>
                                                 <label
                                                     class="dior-ic-95f70d4d96">
-                                                    <i class="fa-regular fa-clock"></i> Available Video Consultation
+                                                    <i class="far fa-clock"></i> Available Video Consultation
                                                     Slots:
                                                 </label>
                                                 <div id="in-time-slots-container" class="dior-ic-4a3ecf7f98">
@@ -654,7 +654,7 @@
                                         <div
                                             class="dior-ic-603a3ffb8a">
                                             <h4 class="dior-ic-04a54a7f2f">
-                                                <i class="fa-solid fa-clipboard-check dior-ic-a727565283"></i>
+                                                <i class="fas fa-clipboard-check dior-ic-a727565283"></i>
                                                 Review &amp; Confirm Consultation:
                                             </h4>
                                             <button type="button" class="dior-btn-text-back dior-ic-f4f3cceddb"
@@ -673,10 +673,10 @@
                                             <button type="button" class="dior-btn-gold-primary dior-ic-4a76c84446"
                                                 id="btn-in-confirm-booking" onclick="diorInSubmitBooking()"
                                                >
-                                                <i class="fa-solid fa-video"></i> Confirm &amp; Schedule Telehealth
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg> Confirm &amp; Schedule Telehealth
                                                 Visit
                                             </button>
-                                            <span class="dior-ic-ed08d70728"><i class="fa-solid fa-lock dior-ic-a727565283"
+                                            <span class="dior-ic-ed08d70728"><i class="fas fa-lock dior-ic-a727565283"
                                                    ></i> Instant Zoom room link &amp;
                                                 notifications will be generated for you &amp; your doctor.</span>
                                         </div>

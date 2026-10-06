@@ -20,7 +20,7 @@ if (empty($pp_patients)) {
     <div style="background:#fff;border-radius:16px;padding:32px;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
         <div style="text-align:center;margin-bottom:24px;">
             <div style="width:60px;height:60px;border-radius:50%;background:#e0e7ff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
-                <i class="fa-solid fa-user-injured" style="font-size:24px;color:#4f46e5;"></i>
+                <i class="fas fa-user-injured" style="font-size:24px;color:#4f46e5;"></i>
             </div>
             <h3 style="margin:0 0 8px;font-size:18px;font-weight:700;color:#1e293b;">Select a Patient</h3>
             <p style="margin:0;color:#64748b;font-size:14px;">Please select a patient to view their profile.</p>
@@ -36,7 +36,7 @@ if (empty($pp_patients)) {
                 <?php endforeach; ?>
             </select>
             <button id="pp-load-patient-btn" style="width:100%;padding:12px;border:none;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:15px;font-weight:600;cursor:pointer;">
-                <i class="fa-solid fa-arrow-right" style="margin-right:8px;"></i>Load Patient Profile
+                <i class="fas fa-arrow-right" style="margin-right:8px;"></i>Load Patient Profile
             </button>
         </div>
     </div>
@@ -50,7 +50,7 @@ if (empty($pp_patients)) {
         </div>
         <div>
             <ul class="breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house" style="font-size: 14px; color: #4F46E5;"></i></a></li>
+                <li><a href="#"><i class="fas fa-house" style="font-size: 14px; color: #4F46E5;"></i></a></li>
                 <li><span style="color: #94A3B8;">/</span></li>
                 <li><a href="javascript:void(0)">Patients</a></li>
                 <li><span style="color: #94A3B8;">/</span></li>
@@ -72,16 +72,16 @@ if (empty($pp_patients)) {
                     <h3>Sarah Smith</h3>
                     <p class="pid">Patient ID: P001</p>
                     <div class="pp-meta">
-                        <span><i class="fa-solid fa-venus"></i> Female</span>
-                        <span><i class="fa-solid fa-cake-candles"></i> 35 years</span>
-                        <span><i class="fa-solid fa-droplet"></i> A+</span>
+                        <span><i class="fas fa-venus"></i> Female</span>
+                        <span><i class="fas fa-cake-candles"></i> 35 years</span>
+                        <span><i class="fas fa-droplet"></i> A+</span>
                         <span class="pp-badge-active">Active</span>
                     </div>
                 </div>
             </div>
             <div>
                 <button type="button" class="pp-ai-btn">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Case Synthesis
+                    <i class="fas fa-wand-magic-sparkles"></i> AI Case Synthesis
                 </button>
             </div>
         </div>
@@ -89,7 +89,7 @@ if (empty($pp_patients)) {
         <!-- Navigation Card -->
         <div class="pp-card">
             <ul class="pp-nav-tabs">
-                <li><a href="javascript:void(0)" class="pp-tab-link active" data-target="pp-pane-ai"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Case Synthesis</a></li>
+                <li><a href="javascript:void(0)" class="pp-tab-link active" data-target="pp-pane-ai"><i class="fas fa-wand-magic-sparkles"></i> AI Case Synthesis</a></li>
                 <li><a href="javascript:void(0)" class="pp-tab-link" data-target="pp-pane-personal">Personal Info</a></li>
                 <li><a href="javascript:void(0)" class="pp-tab-link" data-target="pp-pane-medical">Medical Info</a></li>
                 <li><a href="javascript:void(0)" class="pp-tab-link" data-target="pp-pane-admission">Admission Details</a></li>
@@ -105,7 +105,7 @@ if (empty($pp_patients)) {
                     <div class="pp-ai-alert">
                         <div class="pp-ai-alert-left">
                             <div class="pp-ai-icon">
-                                <i class="fa-solid fa-brain"></i>
+                                <i class="fas fa-brain"></i>
                             </div>
                             <div class="pp-ai-alert-text">
                                 <h6>EHR Automated Case Intelligence</h6>
@@ -114,10 +114,10 @@ if (empty($pp_patients)) {
                         </div>
                         <div class="pp-ai-alert-actions">
                             <button type="button" class="pp-btn-outline primary">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> Re-Synthesize Chart
+                                <i class="fas fa-wand-magic-sparkles"></i> Re-Synthesize Chart
                             </button>
                             <button type="button" class="pp-btn-outline">
-                                <i class="fa-regular fa-copy"></i> Copy Summary
+                                <i class="far fa-copy"></i> Copy Summary
                             </button>
                         </div>
                     </div>
@@ -153,7 +153,7 @@ if (empty($pp_patients)) {
                     <div class="pp-inner-box">
                         <div style="padding: 15px 20px; border-bottom: 1px solid #E2E8F0;">
                             <h6 style="margin: 0; font-size: 15px; font-weight: 700; color: #1E293B; display: flex; align-items: center; gap: 8px;">
-                                <i class="fa-solid fa-pills" style="color: #4F46E5;"></i> Active Prescription & Interaction Analysis
+                                <i class="fas fa-pills" style="color: #4F46E5;"></i> Active Prescription & Interaction Analysis
                             </h6>
                         </div>
                         <table class="pp-table">
@@ -338,9 +338,9 @@ if (empty($pp_patients)) {
         var pidEl = document.querySelector('.pp-info .pid');
         if (pidEl) pidEl.textContent = 'Patient ID: ' + pid;
         var genderEl = document.querySelector('.pp-meta span:first-child');
-        if (genderEl && p.gender) genderEl.innerHTML = '<i class="fa-solid fa-' + (p.gender.toLowerCase()==='female'?'venus':'mars') + '"></i> ' + p.gender;
+        if (genderEl && p.gender) genderEl.innerHTML = '<i class="fas fa-' + (p.gender.toLowerCase()==='female'?'venus':'mars') + '"></i> ' + p.gender;
         var bloodEl = document.querySelector('.pp-meta span:nth-child(3)');
-        if (bloodEl && p.blood_group) bloodEl.innerHTML = '<i class="fa-solid fa-droplet"></i> ' + p.blood_group;
+        if (bloodEl && p.blood_group) bloodEl.innerHTML = '<i class="fas fa-droplet"></i> ' + p.blood_group;
         var badgeEl = document.querySelector('.pp-badge-active');
         if (badgeEl) badgeEl.textContent = status;
 

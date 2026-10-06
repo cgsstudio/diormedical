@@ -8,7 +8,7 @@
         </div>
         <div>
             <ul class="breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house" style="font-size: 14px; color: #4F46E5;"></i></a></li>
+                <li><a href="#"><i class="fas fa-house" style="font-size: 14px; color: #4F46E5;"></i></a></li>
                 <li><span style="color: #94A3B8;">/</span></li>
                 <li><a href="javascript:void(0)">Patients</a></li>
                 <li><span style="color: #94A3B8;">/</span></li>

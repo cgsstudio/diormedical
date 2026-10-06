@@ -6,7 +6,7 @@
         </div>
         <div>
             <ul class="va-breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house"></i></a></li>
+                <li><a href="#"><i class="fas fa-house"></i></a></li>
                 <li>/</li>
                 <li><a href="#">Accounts</a></li>
                 <li>/</li>

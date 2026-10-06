@@ -4,7 +4,7 @@
                         <div class="dior-page-title-bar new-design">
                             <div class="title-left">
                                 <div class="title-icon-box blue-tint dior-ic-cc5b134d4e">
-                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg>
                                 </div>
                                 <div>
                                     <h1>Prescriptions</h1>
@@ -22,7 +22,7 @@
                                 class="dior-ic-5408a35faa">
                                 <div
                                     class="dior-ic-3003a67a7f">
-                                    <i class="fa-solid fa-pen-to-square dior-ic-107087ebf8"></i>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg>
                                 </div>
                                 <div>
                                     <h3
@@ -58,7 +58,7 @@
                                             class="dior-ic-0eecc193ae">
                                             <div
                                                 class="dior-ic-1657007906">
-                                                <i class="fa-solid fa-pills dior-ic-23de06f74e"></i>
+                                                <i class="fas fa-pills dior-ic-23de06f74e"></i>
                                             </div>
                                             <h4
                                                 class="dior-ic-338f3700c0">
@@ -75,7 +75,7 @@
                                                         class="dior-ic-dc397e649c">*</span></label>
                                                 <span
                                                     class="dior-ic-cb222e6f98">
-                                                    <i class="fa-solid fa-shield-halved"></i> Official U.S. Govt API
+                                                    <i class="fas fa-shield-halved"></i> Official U.S. Govt API
                                                 </span>
                                             </div>
                                             <div class="dior-ic-f21edd2770">
@@ -83,7 +83,7 @@
                                                     placeholder="Type drug name (e.g. Amoxicillin, Metformin, Lisinopril)..."
                                                     autocomplete="off" oninput="diorDocSearchMedication(this.value)"
                                                     class="dior-ic-e3d6219556">
-                                                <i class="fa-solid fa-magnifying-glass dior-ic-3dd803ff58"
+                                                <i class="fas fa-magnifying-glass dior-ic-3dd803ff58"
                                                    ></i>
                                             </div>
                                             <div id="rx-med-autocomplete"
@@ -128,7 +128,7 @@
 
                                         <button type="button" onclick="diorDocAddMedToList()"
                                             class="dior-ic-2686c138d3">
-                                            <i class="fa-solid fa-plus"></i> Add to Prescription
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg> Add to Prescription
                                         </button>
                                     </div>
 
@@ -139,7 +139,7 @@
                                     <button type="button" id="btn-send-rx"
                                         onclick="diorDocPreviewPrescriptionConfirmation()"
                                         class="dior-ic-95961ab95a">
-                                        <i class="fa-solid fa-file-prescription"></i> Review & Issue Prescription
+                                        <i class="fas fa-file-prescription"></i> Review & Issue Prescription
                                     </button>
                                 </form>
                                 <div id="dior-rx-msg"
@@ -155,7 +155,7 @@
                                 class="dior-ic-5408a35faa">
                                 <div
                                     class="dior-ic-3003a67a7f">
-                                    <i class="fa-solid fa-prescription-bottle-medical dior-ic-107087ebf8"
+                                    <i class="fas fa-prescription-bottle-medical dior-ic-107087ebf8"
                                        ></i>
                                 </div>
                                 <h3

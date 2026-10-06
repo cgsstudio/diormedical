@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
-
+ * Version: 4.0.1
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '4.1.0');
+define('DIOR_PORTAL_VERSION', '4.0.1');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));

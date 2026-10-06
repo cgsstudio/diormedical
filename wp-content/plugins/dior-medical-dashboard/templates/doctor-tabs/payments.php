@@ -3,7 +3,7 @@
                         <div class="dior-page-title-bar new-design">
                             <div class="title-left">
                                 <div class="title-icon-box blue-tint dior-ic-cc5b134d4e">
-                                    <i class="fa-solid fa-credit-card"></i>
+                                    <i class="fas fa-credit-card"></i>
                                 </div>
                                 <div>
                                     <h1>Payment Records</h1>
@@ -13,7 +13,7 @@
                         </div>
                         <div class="dior-dash-table-card dior-box-card">
                             <div class="box-title-row">
-                                <h3><i class="fa-solid fa-credit-card"></i> All Payments</h3>
+                                <h3><i class="fas fa-credit-card"></i> All Payments</h3>
                             </div>
                             <div class="table-responsive dior-ic-6599399370">
                                 <?php

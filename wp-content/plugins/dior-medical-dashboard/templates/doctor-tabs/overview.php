@@ -7,22 +7,22 @@
     <section class="stats">
         <div class="card stat">
             <div class="num">20</div>
-            <div class="stat-icon"><i class="fa-regular fa-calendar-days"></i></div>
+            <div class="stat-icon"><i class="far fa-calendar-days"></i></div>
             <div class="label">Appointments</div>
         </div>
         <div class="card stat">
             <div class="num">90</div>
-            <div class="stat-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <div class="stat-icon"><i class="fas fa-clock-rotate-left"></i></div>
             <div class="label">Upcoming Appointments</div>
         </div>
         <div class="card stat">
             <div class="num">23</div>
-            <div class="stat-icon"><i class="fa-solid fa-user-doctor"></i></div>
+            <div class="stat-icon"><i class="fas fa-user-doctor"></i></div>
             <div class="label">New Patients</div>
         </div>
         <div class="card stat">
             <div class="num">$500.00</div>
-            <div class="stat-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
             <div class="label">Total Earning</div>
         </div>
     </section>
@@ -119,9 +119,9 @@
                             </div>
                             <div class="s-appt-right">
                                 <div class="s-appt-actions">
-                                    <button class="s-btn-icon"><i class="fa-regular fa-calendar-days"></i></button>
-                                    <button class="s-btn-icon mail-icon"><i class="fa-regular fa-envelope"></i></button>
-                                    <button class="s-btn-join"><i class="fa-solid fa-video"></i> Join Now</button>
+                                    <button class="s-btn-icon"><i class="far fa-calendar-days"></i></button>
+                                    <button class="s-btn-icon mail-icon"><i class="far fa-envelope"></i></button>
+                                    <button class="s-btn-join"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg> Join Now</button>
                                 </div>
                                 <span class="s-appt-status s-upcoming">Upcoming</span>
                             </div>
@@ -249,9 +249,9 @@
                         <div class="profile-name">Dr. Diorca Aquino De La Cruz</div>
                         <div class="profile-role">Cardiologist</div>
                         <div class="profile-meta">
-                            <i class="fa-solid fa-envelope"></i> Abc@gmail.com<br>
-                            <i class="fa-solid fa-phone"></i> +1 234 567 8900 &nbsp;&nbsp; <i
-                                class="fa-solid fa-briefcase"></i> 12 years experience
+                            <i class="fas fa-envelope"></i> Abc@gmail.com<br>
+                            <i class="fas fa-phone"></i> +1 234 567 8900 &nbsp;&nbsp; <i
+                                class="fas fa-briefcase"></i> 12 years experience
                         </div>
                     </div>
                 </div>
@@ -261,25 +261,25 @@
                 <div class="panel-title">Pending Tasks</div>
                 <div class="task"><span class="check"></span>
                     <div><b>Review lab reports</b>
-                        <p>Check blood test results for 3 patients</p><small><i class="fa-regular fa-calendar"></i> Oct
+                        <p>Check blood test results for 3 patients</p><small><i class="far fa-calendar"></i> Oct
                             2, 2026</small>
                     </div>
                 </div>
                 <div class="task"><span class="check"></span>
                     <div><b>Sign prescriptions</b>
-                        <p>5 prescriptions pending signature</p><small><i class="fa-regular fa-calendar"></i> Oct 2,
+                        <p>5 prescriptions pending signature</p><small><i class="far fa-calendar"></i> Oct 2,
                             2026</small>
                     </div>
                 </div>
                 <div class="task"><span class="check"></span>
                     <div><b>Approve medical notes</b>
-                        <p>Review and approve consultation notes</p><small><i class="fa-regular fa-calendar"></i> Oct 2,
+                        <p>Review and approve consultation notes</p><small><i class="far fa-calendar"></i> Oct 2,
                             2026</small>
                     </div>
                 </div>
                 <div class="task"><span class="check"></span>
                     <div><b>Update patient records</b>
-                        <p>Complete EMR updates for recent visits</p><small><i class="fa-regular fa-calendar"></i> Oct
+                        <p>Complete EMR updates for recent visits</p><small><i class="far fa-calendar"></i> Oct
                             2, 2026</small>
                     </div>
                 </div>
@@ -289,36 +289,36 @@
                 <div class="follow-item"><img class="avatar"
                         src="https://ui-avatars.com/api/?name=Mia+Song&background=eef2ff&color=4f46e5" alt="Avatar">
                     <div class="follow-info"><b>Mia Song | PAT00123</b><small>Routine Checkup</small><small><i
-                                class="fa-regular fa-calendar"></i> Oct 2, 2026</small></div>
+                                class="far fa-calendar"></i> Oct 2, 2026</small></div>
                     <div class="follow-buttons"><button class="square"><i
-                                class="fa-regular fa-envelope"></i></button><button class="square"><i
-                                class="fa-solid fa-phone"></i></button></div>
+                                class="far fa-envelope"></i></button><button class="square"><i
+                                class="fas fa-phone"></i></button></div>
                 </div>
                 <div class="follow-item"><img class="avatar"
                         src="https://ui-avatars.com/api/?name=John+Johnson&background=f0fdf4&color=166534" alt="Avatar">
                     <div class="follow-info"><b>John Johnson | PAT00111</b><small>Routine Checkup</small><small><i
-                                class="fa-regular fa-calendar"></i> Oct 2, 2026</small></div>
+                                class="far fa-calendar"></i> Oct 2, 2026</small></div>
                     <div class="follow-buttons"><button class="square"><i
-                                class="fa-regular fa-envelope"></i></button><button class="square"><i
-                                class="fa-solid fa-phone"></i></button></div>
+                                class="far fa-envelope"></i></button><button class="square"><i
+                                class="fas fa-phone"></i></button></div>
                 </div>
                 <div class="follow-item"><img class="avatar"
                         src="https://ui-avatars.com/api/?name=Richard+Davis&background=fff1f2&color=be123c"
                         alt="Avatar">
                     <div class="follow-info"><b>Richard Davis | PAT00238</b><small>Routine Checkup</small><small><i
-                                class="fa-regular fa-calendar"></i> Oct 2, 2026</small></div>
+                                class="far fa-calendar"></i> Oct 2, 2026</small></div>
                     <div class="follow-buttons"><button class="square"><i
-                                class="fa-regular fa-envelope"></i></button><button class="square"><i
-                                class="fa-solid fa-phone"></i></button></div>
+                                class="far fa-envelope"></i></button><button class="square"><i
+                                class="fas fa-phone"></i></button></div>
                 </div>
                 <div class="follow-item"><img class="avatar"
                         src="https://ui-avatars.com/api/?name=Elizabeth+Brown&background=fef3c7&color=b45309"
                         alt="Avatar">
                     <div class="follow-info"><b>Elizabeth Brown | PAT00112</b><small>Routine Checkup</small><small><i
-                                class="fa-regular fa-calendar"></i> Oct 2, 2026</small></div>
+                                class="far fa-calendar"></i> Oct 2, 2026</small></div>
                     <div class="follow-buttons"><button class="square"><i
-                                class="fa-regular fa-envelope"></i></button><button class="square"><i
-                                class="fa-solid fa-phone"></i></button></div>
+                                class="far fa-envelope"></i></button><button class="square"><i
+                                class="fas fa-phone"></i></button></div>
                 </div>
             </section>
         </div>
@@ -347,8 +347,8 @@
                         <td><span class="pill active">Ready</span></td>
                         <td>
                             <div class="lab-actions"><button class="round-action"><i
-                                        class="fa-solid fa-info"></i></button><button class="round-action"><i
-                                        class="fa-solid fa-download"></i></button></div>
+                                        class="fas fa-info"></i></button><button class="round-action"><i
+                                        class="fas fa-download"></i></button></div>
                         </td>
                     </tr>
                     <tr>
@@ -359,8 +359,8 @@
                         <td><span class="pill inactive">Pending</span></td>
                         <td>
                             <div class="lab-actions"><button class="round-action"><i
-                                        class="fa-solid fa-info"></i></button><button class="round-action"><i
-                                        class="fa-solid fa-download"></i></button></div>
+                                        class="fas fa-info"></i></button><button class="round-action"><i
+                                        class="fas fa-download"></i></button></div>
                         </td>
                     </tr>
                     <tr>
@@ -371,8 +371,8 @@
                         <td><span class="pill active">In Progress</span></td>
                         <td>
                             <div class="lab-actions"><button class="round-action"><i
-                                        class="fa-solid fa-info"></i></button><button class="round-action"><i
-                                        class="fa-solid fa-download"></i></button></div>
+                                        class="fas fa-info"></i></button><button class="round-action"><i
+                                        class="fas fa-download"></i></button></div>
                         </td>
                     </tr>
                     <tr>
@@ -383,8 +383,8 @@
                         <td><span class="pill active">Normal</span></td>
                         <td>
                             <div class="lab-actions"><button class="round-action"><i
-                                        class="fa-solid fa-info"></i></button><button class="round-action"><i
-                                        class="fa-solid fa-download"></i></button></div>
+                                        class="fas fa-info"></i></button><button class="round-action"><i
+                                        class="fas fa-download"></i></button></div>
                         </td>
                     </tr>
                 </tbody>
@@ -402,9 +402,9 @@
                     <div class="review-body">
                         <div class="review-row1">
                             <span class="review-name">Mia Song</span>
-                            <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                    class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                    class="fa-solid fa-star"></i></span>
+                            <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i></span>
                         </div>
                         <div class="review-text">Excellent doctor! Very professional and caring.</div>
                     </div>
@@ -416,9 +416,9 @@
                     <div class="review-body">
                         <div class="review-row1">
                             <span class="review-name">John Johnson</span>
-                            <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                    class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                    class="fa-solid fa-star"></i></span>
+                            <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i></span>
                         </div>
                         <div class="review-text">Great experience. Highly recommended!</div>
                     </div>
@@ -430,9 +430,9 @@
                     <div class="review-body">
                         <div class="review-row1">
                             <span class="review-name">Elizabeth Brown</span>
-                            <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                    class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                    class="fa-solid fa-star"></i></span>
+                            <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i></span>
                         </div>
                         <div class="review-text">Very knowledgeable and patient.</div>
                     </div>
@@ -444,9 +444,9 @@
                     <div class="review-body">
                         <div class="review-row1">
                             <span class="review-name">Richard Davis</span>
-                            <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                    class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                    class="fa-solid fa-star"></i></span>
+                            <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i></span>
                         </div>
                         <div class="review-text">Excellent doctor! Very professional and caring.</div>
                     </div>
@@ -464,8 +464,8 @@
                     <div class="session-info">
                         <b>General Consultation</b>
                         <span class="session-patient">Elizabeth Brown | PAT00112</span>
-                        <span class="session-time"><i class="fa-regular fa-calendar"></i> Sep 29, 2026 &nbsp;<i
-                                class="fa-regular fa-clock"></i> 05:30 PM</span>
+                        <span class="session-time"><i class="far fa-calendar"></i> Sep 29, 2026 &nbsp;<i
+                                class="far fa-clock"></i> 05:30 PM</span>
                     </div>
                     <div class="session-actions">
                         <button class="reschedule">Reschedule</button>
@@ -478,8 +478,8 @@
                     <div class="session-info">
                         <b>Follow-up Appointment</b>
                         <span class="session-patient">Mia Song | PAT00123</span>
-                        <span class="session-time"><i class="fa-regular fa-calendar"></i> Oct 2, 2026 &nbsp;<i
-                                class="fa-regular fa-clock"></i> 11:00 AM</span>
+                        <span class="session-time"><i class="far fa-calendar"></i> Oct 2, 2026 &nbsp;<i
+                                class="far fa-clock"></i> 11:00 AM</span>
                     </div>
                     <div class="session-actions">
                         <button class="reschedule">Reschedule</button>
@@ -493,8 +493,8 @@
                     <div class="session-info">
                         <b>General Consultation</b>
                         <span class="session-patient">Richard Davis | PAT00238</span>
-                        <span class="session-time"><i class="fa-regular fa-calendar"></i> Oct 2, 2026 &nbsp;<i
-                                class="fa-regular fa-clock"></i> 11:00 AM</span>
+                        <span class="session-time"><i class="far fa-calendar"></i> Oct 2, 2026 &nbsp;<i
+                                class="far fa-clock"></i> 11:00 AM</span>
                     </div>
                     <div class="session-actions">
                         <button class="reschedule">Reschedule</button>
@@ -504,5 +504,5 @@
             </div>
         </section>
     </div>
-    <button class="float"><i class="fa-solid fa-plus"></i></button>
+    <button class="float"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg></button>
 </section>

@@ -1,3 +1,75 @@
+
+<style>
+/* Table Design matching Feedback & Support */
+table.docs-table, table.va-table, table.dior-ref-table, table.table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: #ffffff !important;
+}
+
+table.docs-table thead th, table.va-table thead th, table.dior-ref-table thead th, table.table thead th {
+    background: #ffffff !important;
+    color: #64748b !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 16px 24px !important;
+    border-bottom: 2px solid #f1f5f9 !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+}
+
+table.docs-table tbody td, table.va-table tbody td, table.dior-ref-table tbody td, table.table tbody td {
+    padding: 20px 24px !important;
+    color: #334155 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    background: #ffffff !important;
+    text-align: left !important;
+    vertical-align: middle !important;
+}
+
+table.docs-table tbody tr:hover td, table.va-table tbody tr:hover td, table.dior-ref-table tbody tr:hover td, table.table tbody tr:hover td {
+    background: #f8fafc !important;
+}
+</style>
+<style>
+/* Global Action Button Fixes */
+button.va-action-btn-sm, 
+button.action-icon-btn, 
+button.dior-ref-icon-btn, 
+button.dior-action-btn-sm,
+button.dior-feedback-view-action,
+button.dior-ref-btn,
+button.va-btn-primary,
+button.va-btn-success,
+button.va-btn-info,
+button.va-btn-danger,
+.va-actions-group button,
+.dior-ref-card-head button,
+.cell-actions button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #3b82f6 !important; /* Fallback color for currentColor SVGs */
+}
+
+/* Ensure SVG icons inside have visible colors */
+button.action-icon-btn svg,
+button.va-action-btn-sm svg,
+button.dior-ref-icon-btn svg,
+button.dior-action-btn-sm svg,
+.va-actions-group button svg,
+.dior-ref-card-head button svg,
+.cell-actions button svg {
+    color: #3b82f6 !important;
+}
+
+/* Specific colors for specific icon types if needed, but they mostly have direct 'fill' attributes now */
+</style>
 <div class="dior-wrap dior-patient-portal-wrap" id="dior-patient-portal-app">
 
     <!-- Top Emergency Banner -->
@@ -22,7 +94,7 @@
                 </div>
                 <!-- <button type="button" class="dior-side-close" id="dior-side-close" onclick="diorCloseMobileDrawer()"
                     aria-label="Close sidebar">
-                    <i class="fa-solid fa-xmark"></i>
+                    <i class="fas fa-xmark"></i>
                 </button> -->
             </div>
 
@@ -30,69 +102,69 @@
             <nav class="dior-side-nav">
                 <div class="grp">
                     <button type="button" class="dior-nav-btn active" data-tab="overview">
-                        <i class="fa-solid fa-gauge-high"></i>
+                        <i class="fas fa-gauge-high"></i>
                         <span class="nav-label">Dashboard</span>
                     </button>
                     <div class="dior-nav-item-has-children" id="dior-appt-dropdown-wrap">
                         <button type="button" class="dior-nav-btn"
                             onclick="var w=document.getElementById('dior-appt-dropdown-wrap');w.classList.toggle('open');this.querySelector('.fa-chevron-down').style.transform=w.classList.contains('open')?'rotate(180deg)':'rotate(0deg)';diorSwitchTab('appointments');diorSwitchApptSubTab('today');">
-                            <i class="fa-regular fa-calendar"></i>
+                            <i class="far fa-calendar"></i>
                             <span class="nav-label">Appointments</span>
-                            <i class="fa-solid fa-chevron-down dior-ic-fdf55d6c0a"></i>
+                            <i class="fas fa-chevron-down dior-ic-fdf55d6c0a"></i>
                         </button>
                         <div class="dior-nav-dropdown">
                             <a href="#" class="dior-nav-dropdown-item" data-appt-subtab="book"><i
-                                    class="fa-solid fa-angle-right"></i> Book Appointment</a>
+                                    class="fas fa-angle-right"></i> Book Appointment</a>
                             <a href="#" class="dior-nav-dropdown-item" data-appt-subtab="today"><i
-                                    class="fa-solid fa-angle-right"></i> Today Appointments</a>
+                                    class="fas fa-angle-right"></i> Today Appointments</a>
                             <a href="#" class="dior-nav-dropdown-item" data-appt-subtab="upcoming"><i
-                                    class="fa-solid fa-angle-right"></i> Upcoming Appointments</a>
+                                    class="fas fa-angle-right"></i> Upcoming Appointments</a>
                             <a href="#" class="dior-nav-dropdown-item" data-appt-subtab="past"><i
-                                    class="fa-solid fa-angle-right"></i> Past Appointments</a>
+                                    class="fas fa-angle-right"></i> Past Appointments</a>
                         </div>
                     </div>
                     <button type="button" class="dior-nav-btn" data-tab="docs_meds">
-                        <i class="fa-solid fa-prescription-bottle-medical"></i>
+                        <i class="fas fa-prescription-bottle-medical"></i>
                         <span class="nav-label">Prescriptions</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="telemedicine">
-                        <i class="fa-solid fa-video"></i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg>
                         <span class="nav-label">Telemedicine</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="medical_record">
-                        <i class="fa-solid fa-notes-medical"></i>
+                        <i class="fas fa-notes-medical"></i>
                         <span class="nav-label">Medical Record</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="payments">
-                        <i class="fa-solid fa-wallet"></i>
+                        <i class="fas fa-wallet"></i>
                         <span class="nav-label">Billing &amp; Payment</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="insurance">
-                        <i class="fa-solid fa-shield-heart"></i>
+                        <i class="fas fa-shield-heart"></i>
                         <span class="nav-label">Insurance Claim</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="documents">
-                        <i class="fa-solid fa-file-lines"></i>
+                        <i class="fas fa-file-lines"></i>
                         <span class="nav-label">Documents &amp; Report</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="emergency">
-                        <i class="fa-solid fa-kit-medical"></i>
+                        <i class="fas fa-kit-medical"></i>
                         <span class="nav-label">Emergency support</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="feedback">
-                        <i class="fa-solid fa-comments"></i>
+                        <i class="fas fa-comments"></i>
                         <span class="nav-label">Feedback &amp; Support</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="notifications">
-                        <i class="fa-solid fa-bell"></i>
+                        <i class="fas fa-bell"></i>
                         <span class="nav-label">Notification</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="consultation">
-                        <i class="fa-solid fa-door-open"></i>
+                        <i class="fas fa-door-open"></i>
                         <span class="nav-label">Consultation Room</span>
                     </button>
                     <button type="button" class="dior-nav-btn" data-tab="settings">
-                        <i class="fa-solid fa-gear"></i>
+                        <i class="fas fa-gear"></i>
                         <span class="nav-label">Settings</span>
                     </button>
                 </div>
@@ -127,12 +199,12 @@
                 <div class="dior-topbar-left">
                     <button type="button" class="dior-mobile-menu-toggle" id="dior-mobile-menu-toggle"
                         onclick="diorOpenMobileDrawer()" aria-label="Open navigation menu">
-                        <i class="fa-solid fa-bars"></i>
+                        <i class="fas fa-bars"></i>
                     </button>
 
                     <!-- Search Bar (Clean Reference UI) -->
                     <div class="dior-top-search">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <i class="fas fa-magnifying-glass"></i>
                         <input type="text" placeholder="Search appointments, prescriptions, records. .">
                     </div>
                 </div>
@@ -140,14 +212,14 @@
                 <div class="dior-topbar-right">
                     <!-- Messages Icon -->
                     <button type="button" class="dior-msg-btn dior-ic-f2136e6b50" aria-label="Messages">
-                        <i class="fa-regular fa-envelope"></i>
+                        <i class="far fa-envelope"></i>
                     </button>
 
                     <!-- Notification Bell Dropdown -->
                     <div class="dior-notif-wrap" id="dior-notif-dropdown-wrap">
                         <button type="button" class="dior-notif-btn" onclick="diorToggleNotifDropdown(event)"
                             aria-label="Notifications">
-                            <i class="fa-solid fa-bell"></i>
+                            <i class="fas fa-bell"></i>
                             <?php if ($unread_count > 0): ?>
                                 <span class="dior-notif-indicator unread-badge-count"><?php echo $unread_count; ?></span>
                             <?php endif; ?>
@@ -160,7 +232,7 @@
                             <div class="dior-notif-list">
                                 <?php if (empty($notifications)): ?>
                                     <div class="dior-ic-00e4601aa1">
-                                        <i class="fa-solid fa-bell-slash dior-ic-41fd079087"></i>
+                                        <i class="fas fa-bell-slash dior-ic-41fd079087"></i>
                                         No new notifications
                                     </div>
                                 <?php else: ?>
@@ -171,7 +243,7 @@
                                             data-notif-id="<?php echo esc_attr($n['id']); ?>"
                                             data-switch-tab="<?php echo esc_attr($target_tab); ?>" class="dior-ic-7f6191e48d">
                                             <div class="notif-icon"><i
-                                                    class="fa-solid <?php echo esc_attr($n['icon'] ?? 'fa-bell'); ?>"></i></div>
+                                                    class="fas <?php echo esc_attr($n['icon'] ?? 'fa-bell'); ?>"></i></div>
                                             <div class="notif-body">
                                                 <strong><?php echo esc_html($n['title']); ?></strong>
                                                 <p><?php echo esc_html(mb_substr($n['message'], 0, 45) . (mb_strlen($n['message']) > 45 ? '...' : '')); ?>
@@ -219,23 +291,23 @@
                             <ul class="dior-profile-dropdown-menu">
                                 <li>
                                     <button type="button" data-switch-tab="settings">
-                                        <i class="fa-regular fa-user"></i> Profile
+                                        <i class="far fa-user"></i> Profile
                                     </button>
                                 </li>
                                 <li>
                                     <button type="button" data-switch-tab="settings">
-                                        <i class="fa-regular fa-envelope"></i> Email
+                                        <i class="far fa-envelope"></i> Email
                                     </button>
                                 </li>
                                 <li>
                                     <button type="button" data-switch-tab="settings">
-                                        <i class="fa-solid fa-gear"></i> Settings
+                                        <i class="fas fa-gear"></i> Settings
                                     </button>
                                 </li>
                                 <li>
                                     <a href="<?php echo esc_url(wp_logout_url(home_url('/diro-login/'))); ?>"
                                         class="dior-logout-text-btn">
-                                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                                        <i class="fas fa-arrow-right-from-bracket"></i> Logout
                                     </a>
                                 </li>
                             </ul>
@@ -256,7 +328,7 @@
                     <div class="dior-profile-incomplete-alert dior-ic-c03948b3c3" id="dior-profile-incomplete-banner">
                         <div class="dior-ic-29bdac4ec4">
                             <div class="dior-ic-3fb01cc77f">
-                                <i class="fa-solid fa-user-pen"></i>
+                                <i class="fas fa-user-pen"></i>
                             </div>
                             <div>
                                 <strong class="dior-ic-11190ca3a8">
@@ -270,7 +342,7 @@
                             </div>
                         </div>
                         <button type="button" class="dior-btn-gold-primary dior-ic-4ee0445c2a" data-switch-tab="profile">
-                            <i class="fa-solid fa-id-card"></i> Complete Profile Now
+                            <i class="fas fa-id-card"></i> Complete Profile Now
                         </button>
                     </div>
                 <?php endif; ?>
@@ -309,8 +381,8 @@
         <div class="dior-modal-dialog dior-modal-lg dior-ic-ee0c6b0194">
             <div class="dior-modal-header dior-ic-78529f928a">
                 <div>
-                    <h3 class="dior-ic-66a69ef8e4"><i class="fa-solid fa-calendar-plus"></i> Book New Visit</h3>
-                    <span class="dior-ic-23927a389b"><i class="fa-solid fa-shield-heart dior-ic-236b5f0eb0"></i>
+                    <h3 class="dior-ic-66a69ef8e4"><i class="fas fa-calendar-plus"></i> Book New Visit</h3>
+                    <span class="dior-ic-23927a389b"><i class="fas fa-shield-heart dior-ic-236b5f0eb0"></i>
                         HIPAA-Compliant Medical Intake &amp; Booking</span>
                 </div>
                 <button type="button" class="dior-modal-close"
@@ -332,7 +404,7 @@
     <div class="dior-modal-overlay" id="modal-reschedule-appointment">
         <div class="dior-modal-dialog">
             <div class="dior-modal-header">
-                <h3><i class="fa-regular fa-calendar"></i> Reschedule Consultation</h3>
+                <h3><i class="far fa-calendar"></i> Reschedule Consultation</h3>
                 <button type="button" class="dior-modal-close"
                     onclick="diorCloseModal('modal-reschedule-appointment')">&times;</button>
             </div>
@@ -376,7 +448,7 @@
                         <button type="button" class="dior-btn-gold-secondary"
                             onclick="diorCloseModal('modal-reschedule-appointment')">Keep Current Time</button>
                         <button type="submit" id="dior-btn-submit-resched" class="dior-btn-gold-primary">
-                            <i class="fa-solid fa-check"></i> Save New Time Slot
+                            <i class="fas fa-check"></i> Save New Time Slot
                         </button>
                     </div>
                 </form>
@@ -388,7 +460,7 @@
     <div class="dior-modal-overlay" id="modal-cancel-appointment">
         <div class="dior-modal-dialog">
             <div class="dior-modal-header">
-                <h3><i class="fa-solid fa-kit-medical dior-ic-557c97e141"></i> Cancel Consultation</h3>
+                <h3><i class="fas fa-kit-medical dior-ic-557c97e141"></i> Cancel Consultation</h3>
                 <button type="button" class="dior-modal-close"
                     onclick="diorCloseModal('modal-cancel-appointment')">&times;</button>
             </div>
@@ -419,7 +491,7 @@
                         <button type="button" class="dior-btn-gold-secondary"
                             onclick="diorCloseModal('modal-cancel-appointment')">Keep Appointment</button>
                         <button type="submit" id="dior-btn-submit-cancel" class="dior-btn-danger dior-ic-02e790ac8d">
-                            <i class="fa-solid fa-xmark"></i> Confirm Cancellation
+                            <i class="fas fa-xmark"></i> Confirm Cancellation
                         </button>
                     </div>
                 </form>
@@ -431,7 +503,7 @@
     <div class="dior-modal-overlay" id="modal-appointment-reminder">
         <div class="dior-modal-dialog">
             <div class="dior-modal-header">
-                <h3><i class="fa-solid fa-bell dior-ic-b2113a5eea"></i> Send Appointment Reminder</h3>
+                <h3><i class="fas fa-bell dior-ic-b2113a5eea"></i> Send Appointment Reminder</h3>
                 <button type="button" class="dior-modal-close"
                     onclick="diorCloseModal('modal-appointment-reminder')">&times;</button>
             </div>
@@ -449,7 +521,7 @@
 
                     <div class="dior-ic-2895f37e6b">
                         <div class="dior-ic-55132245a6">
-                            <i class="fa-solid fa-tower-broadcast dior-ic-1dc44a1b66"></i> Active
+                            <i class="fas fa-tower-broadcast dior-ic-1dc44a1b66"></i> Active
                             Notification Channels:
                         </div>
                         <div class="dior-ic-dce101ce6e">
@@ -471,7 +543,7 @@
                             onclick="diorCloseModal('modal-appointment-reminder')">Close</button>
                         <button type="submit" id="dior-btn-submit-reminder"
                             class="dior-btn-gold-primary dior-ic-2e8ec92046">
-                            <i class="fa-solid fa-bell"></i> Send Reminder Now
+                            <i class="fas fa-bell"></i> Send Reminder Now
                         </button>
                     </div>
                 </form>
@@ -483,7 +555,7 @@
     <div class="dior-modal-overlay" id="modal-questionnaire-intake">
         <div class="dior-modal-dialog dior-modal-lg">
             <div class="dior-modal-header">
-                <h3 id="modal-qn-title"><i class="fa-solid fa-clipboard-question"></i> Clinical Intake & E-Sign</h3>
+                <h3 id="modal-qn-title"><i class="fas fa-clipboard-question"></i> Clinical Intake & E-Sign</h3>
                 <button type="button" class="dior-modal-close"
                     onclick="diorCloseModal('modal-questionnaire-intake')">&times;</button>
             </div>
@@ -523,7 +595,7 @@
                     <div class="dior-form-group">
                         <label>Upload Supporting Images / Documents (e.g. Photo of Rash, Previous Lab Test)</label>
                         <div class="dior-upload-dropzone" id="dior-upload-dropzone">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <i class="fas fa-cloud-arrow-up"></i>
                             <span>Click to upload or drag and drop image (JPG, PNG, PDF up to 10MB)</span>
                             <input type="file" id="qn_file_upload" name="file_upload" accept="image/*,application/pdf"
                                 class="dior-ic-44a70a0420">
@@ -533,7 +605,7 @@
 
                     <!-- HIPAA Telemedicine Consent & E-Sign Pad -->
                     <div class="dior-esign-section">
-                        <h4><i class="fa-solid fa-signature"></i> Telemedicine & HIPAA Consent Agreement</h4>
+                        <h4><i class="fas fa-signature"></i> Telemedicine & HIPAA Consent Agreement</h4>
                         <div class="esign-text-box">
                             <p>By typing your legal name or signing below, you consent to receive telehealth medical
                                 evaluations from licensed clinicians at Dior Medical, acknowledge our HIPAA Privacy
@@ -559,7 +631,7 @@
                         <button type="button" class="dior-btn-gold-secondary"
                             onclick="diorCloseModal('modal-questionnaire-intake')">Cancel</button>
                         <button type="submit" class="dior-btn-gold-primary" id="dior-submit-intake-btn">
-                            <i class="fa-solid fa-paper-plane"></i> Submit Clinical Intake to Doctor &rarr;
+                            <i class="fas fa-paper-plane"></i> Submit Clinical Intake to Doctor &rarr;
                         </button>
                     </div>
                 </form>
@@ -571,7 +643,7 @@
     <div class="dior-modal-overlay" id="modal-change-pharmacy">
         <div class="dior-modal-dialog">
             <div class="dior-modal-header">
-                <h3><i class="fa-solid fa-store"></i> Update Preferred Pharmacy</h3>
+                <h3><i class="fas fa-store"></i> Update Preferred Pharmacy</h3>
                 <button type="button" class="dior-modal-close"
                     onclick="diorCloseModal('modal-change-pharmacy')">&times;</button>
             </div>
@@ -625,7 +697,7 @@
         <div class="dior-modal-dialog dior-ic-3eca92ddc0">
             <div class="dior-modal-header dior-ic-89e0058b3f">
                 <h3 class="dior-ic-b5eb34332b">
-                    <i class="fa-solid fa-receipt dior-ic-5d59a9a58e"></i> Telehealth Itemized Receipt
+                    <i class="fas fa-receipt dior-ic-5d59a9a58e"></i> Telehealth Itemized Receipt
                 </h3>
                 <button type="button" class="dior-modal-close dior-ic-926a99defe"
                     onclick="diorCloseModal('modal-view-receipt')">&times;</button>
@@ -682,7 +754,7 @@
                     </table>
 
                     <div class="receipt-footer-note dior-ic-8082556ec6">
-                        <i class="fa-solid fa-shield-heart dior-ic-4418794cf4"></i>
+                        <i class="fas fa-shield-heart dior-ic-4418794cf4"></i>
                         <span>Dior Medical Telehealth &amp; Urgent Care &bull; Tax ID / NPI Verified &bull; Eligible for
                             HSA/FSA Reimbursement</span>
                     </div>
@@ -694,11 +766,11 @@
                     onclick="diorCloseModal('modal-view-receipt')">Close</button>
                 <button type="button" class="dior-btn-gold-secondary dior-ic-fd09076f26"
                     onclick="diorPrintReceiptModal()">
-                    <i class="fa-solid fa-print"></i> Print
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16" style="background:transparent;"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/></svg> Print
                 </button>
                 <button type="button" class="dior-btn-gold-primary dior-ic-99a13c029f"
                     onclick="diorDownloadReceiptPdf()">
-                    <i class="fa-solid fa-file-arrow-down"></i> Download PDF
+                    <i class="fas fa-file-arrow-down"></i> Download PDF
                 </button>
             </div>
         </div>
@@ -709,7 +781,7 @@
         <div class="dior-modal-dialog dior-ic-c647d3a0d1">
             <div class="dior-modal-header dior-ic-89e0058b3f">
                 <h3 id="doc-modal-header-title" class="dior-ic-b5eb34332b">
-                    <i class="fa-solid fa-file-shield dior-ic-5d59a9a58e"></i> Certified Medical Document
+                    <i class="fas fa-file-shield dior-ic-5d59a9a58e"></i> Certified Medical Document
                 </h3>
                 <button type="button" class="dior-modal-close dior-ic-926a99defe"
                     onclick="diorCloseModal('modal-view-document')">&times;</button>
@@ -719,7 +791,7 @@
                 <div class="doc-preview-card dior-ic-d3b67ecf4f">
 
                     <div class="doc-icon-large dior-ic-623e027944">
-                        <i class="fa-solid fa-file-pdf"></i>
+                        <i class="fas fa-file-pdf"></i>
                     </div>
 
                     <h4 id="doc-preview-title" class="dior-ic-b59074b5a9">
@@ -755,7 +827,7 @@
                     </div>
 
                     <div class="doc-seal dior-ic-3e0fc52c0f">
-                        <i class="fa-solid fa-shield-heart dior-ic-e3f2780fa1"></i>
+                        <i class="fas fa-shield-heart dior-ic-e3f2780fa1"></i>
                         <span>Digitally Certified &amp; E-Signed by Dior Medical Telehealth System</span>
                     </div>
                 </div>
@@ -766,7 +838,7 @@
                     onclick="diorCloseModal('modal-view-document')">Close</button>
                 <button type="button" class="dior-btn-gold-primary dior-ic-99a13c029f"
                     onclick="diorDownloadCurrentDocumentPdf()">
-                    <i class="fa-solid fa-file-arrow-down"></i> Print / Download PDF
+                    <i class="fas fa-file-arrow-down"></i> Print / Download PDF
                 </button>
             </div>
         </div>
@@ -777,7 +849,7 @@
         <div class="dior-modal-dialog dior-ic-e9cfd8c2ad">
             <div class="dior-modal-header dior-ic-38b9f470b9">
                 <h3 class="dior-ic-55d820b400">
-                    <i class="fa-solid fa-calendar-check dior-ic-5d59a9a58e"></i> Appointment Details
+                    <i class="fas fa-calendar-check dior-ic-5d59a9a58e"></i> Appointment Details
                 </h3>
                 <button type="button" class="dior-modal-close dior-ic-f476a9f033"
                     onclick="diorCloseModal('modal-view-appointment-detail')">&times;</button>
@@ -806,8 +878,7 @@
                         <div>
                             <strong class="dior-ic-3a5e03a707">Consultation
                                 Mode</strong>
-                            <span id="pat-modal-appt-mode" class="dior-ic-035b2e7453"><i
-                                    class="fa-solid fa-video dior-ic-5d59a9a58e"></i> Video Visit</span>
+                            <span id="pat-modal-appt-mode" class="dior-ic-035b2e7453"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg> Video Visit</span>
                         </div>
                         <div class="dior-ic-b652b6f21e">
                             <strong class="dior-ic-3a5e03a707">Service
@@ -822,7 +893,7 @@
                 <div id="pat-modal-zoom-wrap" class="dior-ic-5d5fe245c5">
                     <div class="dior-ic-63a4b96787">
                         <div class="dior-ic-99e83aaa9f">
-                            <i class="fa-solid fa-video"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg>
                         </div>
                         <div>
                             <strong class="dior-ic-08abd803b3">Live Virtual Consultation
@@ -832,14 +903,14 @@
                     </div>
                     <a id="pat-modal-zoom-link" href="#" target="_blank" rel="noopener noreferrer"
                         class="dior-ic-459d58fbd7">
-                        <i class="fa-solid fa-video"></i> Join Video Call &rarr;
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg> Join Video Call &rarr;
                     </a>
                 </div>
 
                 <!-- Patient & Clinical Notes Card -->
                 <div class="dior-ic-a9ce782a97">
                     <h5 class="dior-ic-8277d4959a">
-                        <i class="fa-solid fa-notes-medical dior-ic-5d59a9a58e"></i> Clinical Notes &amp;
+                        <i class="fas fa-notes-medical dior-ic-5d59a9a58e"></i> Clinical Notes &amp;
                         Instructions
                     </h5>
                     <p id="pat-modal-appt-notes" class="dior-ic-d181656743">
@@ -849,7 +920,7 @@
                 </div>
 
                 <div class="dior-ic-3e0fc52c0f">
-                    <i class="fa-solid fa-shield-heart dior-ic-e3f2780fa1"></i>
+                    <i class="fas fa-shield-heart dior-ic-e3f2780fa1"></i>
                     <span>HIPAA Compliant &bull; Verified Dior Medical Telehealth Record</span>
                 </div>
             </div>
@@ -869,7 +940,7 @@
             <div class="dior-modal-header dior-ic-bf0665f2de">
                 <div class="dior-ic-2fa3fca1f7">
                     <div class="dior-ic-20a4bac022">
-                        <i class="fa-solid fa-prescription-bottle-medical"></i>
+                        <i class="fas fa-prescription-bottle-medical"></i>
                     </div>
                     <div>
                         <h3 class="dior-ic-5993936b7f">
@@ -912,11 +983,11 @@
                             ?>
                             <img src="<?php echo esc_url($disp_logo); ?>" alt="Dior Medical" class="dior-ic-ac19460d69">
                             <div class="dior-ic-17c0ef557f">
-                                <i class="fa-solid fa-staff-snake dior-ic-2cc80aed32"></i>
+                                <i class="fas fa-staff-snake dior-ic-2cc80aed32"></i>
                                 <span class="dior-ic-03cc0d21b0">Digital Rx Service</span>
                             </div>
                             <span class="dior-ic-4d08c3d882">
-                                <i class="fa-solid fa-circle-check"></i> NCPDP Real-Time EDI Script
+                                <i class="fas fa-circle-check"></i> NCPDP Real-Time EDI Script
                             </span>
                         </div>
                     </div>
@@ -1032,7 +1103,7 @@
                     <!-- Advice Given / Clinical Instructions (Image 3) -->
                     <div class="dior-rx-advice-card">
                         <div class="dior-rx-advice-title">
-                            <i class="fa-solid fa-notes-medical"></i> Advice Given &amp; Clinical Instructions:
+                            <i class="fas fa-notes-medical"></i> Advice Given &amp; Clinical Instructions:
                         </div>
                         <div class="dior-rx-advice-body" id="pat-modal-rx-advice">
                             &bull; Take medication strictly as prescribed. Do not exceed the stated dose.<br>
@@ -1053,11 +1124,11 @@
                                 <?php echo esc_html(!empty($profile['pharmacy_name']) ? $profile['pharmacy_name'] : 'Preferred Pharmacy on File'); ?>
                             </span>
                             <span id="pat-modal-rx-routing" class="dior-ic-e3862574c4">
-                                <i class="fa-solid fa-circle-check"></i> Routed Electronically via Surescripts NCPDP EDI
+                                <i class="fas fa-circle-check"></i> Routed Electronically via Surescripts NCPDP EDI
                             </span>
                         </div>
                         <span id="pat-modal-rx-status-badge" class="dior-ic-ef921fe83b">
-                            <i class="fa-solid fa-check"></i> Transmission Confirmed
+                            <i class="fas fa-check"></i> Transmission Confirmed
                         </span>
                     </div>
 
@@ -1088,11 +1159,11 @@
                     <!-- Letterhead Bottom Clinic Footer Details (Image 2) -->
                     <div class="dior-rx-footer-line">
                         <div>
-                            <i class="fa-solid fa-location-dot dior-ic-9043ac3683"></i> 100
+                            <i class="fas fa-location-dot dior-ic-9043ac3683"></i> 100
                             Medical Plaza, Suite 400 &bull; Dior Medical Telehealth Group
                         </div>
                         <div>
-                            <i class="fa-solid fa-phone dior-ic-9043ac3683"></i> (800) 555-DIOR
+                            <i class="fas fa-phone dior-ic-9043ac3683"></i> (800) 555-DIOR
                             &bull; concierge@diormedical.com
                         </div>
                     </div>
@@ -1104,11 +1175,11 @@
             <!-- Modal Action Footer (Permanently Pinned, Full Visibility) -->
             <div class="dior-modal-footer dior-ic-003eb72b4a">
                 <button type="button" id="pat-modal-rx-refill-btn" class="dior-ic-aef0d9cdb6">
-                    <i class="fa-solid fa-arrows-rotate dior-ic-1a809d86ac"></i> Request Refill
+                    <i class="fas fa-arrows-rotate dior-ic-1a809d86ac"></i> Request Refill
                 </button>
                 <div class="dior-ic-6c5b3070b0">
                     <button type="button" id="pat-modal-rx-pdf-btn" class="dior-ic-1d1379760d">
-                        <i class="fa-solid fa-file-arrow-down"></i> Download Official PDF
+                        <i class="fas fa-file-arrow-down"></i> Download Official PDF
                     </button>
                     <button type="button" onclick="diorCloseModal('modal-view-rx-detail')"
                         class="dior-ic-a340556f29">Close</button>
@@ -1119,3 +1190,45 @@
 
 
 </div> <!-- /#dior-patient-portal-app -->
+<!-- Global Table Sorting Initialization -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    function initSorting() {
+        if (typeof jQuery === 'undefined') return;
+        jQuery(function($) {
+            if ($.fn.DataTable) {
+                applySorting($);
+            } else {
+                $.getScript("https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js", function() {
+                    $("<link/>", {
+                       rel: "stylesheet",
+                       type: "text/css",
+                       href: "https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+                    }).appendTo("head");
+                    
+                    // Small delay to ensure CSS loads and doesn't FOUC tables weirdly
+                    setTimeout(function() { applySorting($); }, 100);
+                });
+            }
+        });
+    }
+    
+    function applySorting($) {
+        var tables = $('table.va-table, table.dior-ref-table, table.table').not('.dataTable');
+        tables.each(function() {
+            var $t = $(this);
+            if ($t.find('thead th').length > 0 && $t.find('tbody tr').length > 0) {
+                $t.DataTable({
+                    "order": [[0, "desc"]],
+                    "paging": false,
+                    "info": false,
+                    "searching": false,
+                    "retrieve": true
+                });
+            }
+        });
+    }
+    
+    initSorting();
+});
+</script>

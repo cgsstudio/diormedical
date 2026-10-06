@@ -7,7 +7,7 @@
                                     system alerts.</p>
                             </div>
                             <button type="button" class="dior-btn-gold-secondary" onclick="diorDocMarkAllRead()">
-                                <i class="fa-solid fa-check-double"></i> Mark All as Read
+                                <i class="fas fa-check-double"></i> Mark All as Read
                             </button>
                         </div>
 
@@ -19,17 +19,17 @@
                                 <div class="dior-ic-4e40d07727">
                                     <div
                                         class="dior-ic-bd2f861642">
-                                        <i class="fa-solid fa-bell"></i>
+                                        <i class="fas fa-bell"></i>
                                     </div>
                                     <div>
                                         <strong class="dior-ic-fa0cb41baa">
                                             Appointment Reminders:
                                             <?php if ($doctor['optin_appointment_reminders'] === '1'): ?>
                                                 <span class="dior-ic-deded86577"><i
-                                                        class="fa-solid fa-circle-check"></i> Active &amp; Opted-In</span>
+                                                        class="fas fa-circle-check"></i> Active &amp; Opted-In</span>
                                             <?php else: ?>
                                                 <span class="dior-ic-73a2e081c0"><i
-                                                        class="fa-solid fa-circle-xmark"></i> Paused</span>
+                                                        class="fas fa-circle-xmark"></i> Paused</span>
                                             <?php endif; ?>
                                         </strong>
                                         <span
@@ -43,7 +43,7 @@
                                     <button type="button" class="dior-btn-gold-secondary dior-ic-4b78ef9c9d"
                                         onclick="diorDocSwitchTab('tab-doc-settings');"
                                        >
-                                        <i class="fa-solid fa-sliders"></i> Provider Settings
+                                        <i class="fas fa-sliders"></i> Provider Settings
                                     </button>
                                 </div>
                             </div>
@@ -57,7 +57,7 @@
                                             class="dior-ic-0a2e00189a">
                                             <div
                                                 class="dior-ic-14b8b903a5">
-                                                <i class="fa-regular fa-bell-slash dior-ic-af2d77531e"
+                                                <i class="far fa-bell-slash dior-ic-af2d77531e"
                                                    ></i>
                                             </div>
                                             <p
@@ -71,7 +71,7 @@
                                             <div class="dior-full-notif-item <?php echo !$n['is_read'] ? 'unread' : ''; ?>"
                                                 data-notif-id="<?php echo esc_attr($n['id']); ?>">
                                                 <div class="notif-type-icon <?php echo esc_attr($n['type'] ?? 'system'); ?>">
-                                                    <i class="fa-solid <?php echo esc_attr($n['icon'] ?? 'fa-bell'); ?>"></i>
+                                                    <i class="fas <?php echo esc_attr($n['icon'] ?? 'fa-bell'); ?>"></i>
                                                 </div>
                                                 <div class="notif-full-body">
                                                     <div class="notif-full-top">
@@ -86,7 +86,7 @@
                                                         <button type="button" class="dior-btn-table-icon dior-mark-single-read"
                                                             title="Mark as Read"
                                                             onclick="diorDocMarkSingleRead('<?php echo esc_js($n['id']); ?>', this)">
-                                                            <i class="fa-solid fa-check"></i>
+                                                            <i class="fas fa-check"></i>
                                                         </button>
                                                     <?php endif; ?>
                                                 </div>

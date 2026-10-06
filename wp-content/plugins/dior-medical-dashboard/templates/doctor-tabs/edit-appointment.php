@@ -8,7 +8,7 @@
         </div>
         <div>
             <ul class="breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house" style="font-size: 14px; color: #4F46E5;"></i></a></li>
+                <li><a href="#"><i class="fas fa-house" style="font-size: 14px; color: #4F46E5;"></i></a></li>
                 <li><span style="color: #94A3B8;">/</span></li>
                 <li><a href="javascript:void(0)">Appointments</a></li>
                 <li><span style="color: #94A3B8;">/</span></li>
@@ -289,7 +289,7 @@
                                     <div class="file-upload-wrapper">
                                         <input type="file" class="file-input" accept="*">
                                         <div class="file-upload-area">
-                                            <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                                            <div class="upload-icon"><i class="fas fa-cloud-arrow-up"></i></div>
                                             <div class="upload-text">
                                                 <p class="mb-1">Drag &amp; drop files here or <span class="browse-link">browse</span></p>
                                                 <small class="text-muted">Choose file</small>

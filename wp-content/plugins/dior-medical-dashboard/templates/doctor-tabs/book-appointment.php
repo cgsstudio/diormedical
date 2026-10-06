@@ -8,7 +8,7 @@
         </div>
         <div>
             <ul class="breadcrumb-list">
-                <li><a href="#"><i class="fa-solid fa-house" style="font-size: 14px; color: #4F46E5;"></i></a></li>
+                <li><a href="#"><i class="fas fa-house" style="font-size: 14px; color: #4F46E5;"></i></a></li>
                 <li><span style="color: #94A3B8;">/</span></li>
                 <li><a href="javascript:void(0)">Appointments</a></li>
                 <li><span style="color: #94A3B8;">/</span></li>
@@ -224,7 +224,7 @@
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <label class="mb-0">Reason for Visit <span class="text-danger">*</span></label>
                                         <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-0 font-11">
-                                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Auto-Match Department
+                                            <i class="fas fa-wand-magic-sparkles"></i> AI Auto-Match Department
                                         </button>
                                     </div>
                                     <textarea rows="2" placeholder="Describe symptoms or primary reason for consultation..." class="form-control"></textarea>
@@ -294,7 +294,7 @@
                                     <div class="file-upload-wrapper">
                                         <input type="file" class="file-input" accept="*">
                                         <div class="file-upload-area">
-                                            <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                                            <div class="upload-icon"><i class="fas fa-cloud-arrow-up"></i></div>
                                             <div class="upload-text">
                                                 <p class="mb-1">Drag &amp; drop files here or <span class="browse-link">browse</span></p>
                                                 <small class="text-muted">Choose file</small>
