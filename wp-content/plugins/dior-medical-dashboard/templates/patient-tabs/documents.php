@@ -27,7 +27,7 @@
                 </div>
                 <div class="docs-actions-group">
                     <button type="button" aria-label="Add new record"
-                        class="docs-icon-btn docs-btn-primary dior-ic-54410f9b78">
+                        class="docs-icon-btn docs-btn-primary dior-ic-54410f9b78" onclick="diorOpenDocumentUploadModal()" title="Add Document">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                     <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success"
@@ -60,7 +60,7 @@
                 <tbody id="dior-docs-tbody">
                     <?php if (!empty($documents)): ?>
                         <?php foreach ($documents as $doc): ?>
-                            <tr data-doc-id="<?php echo esc_attr($doc['id'] ?? ''); ?>">
+                            <tr data-doc-id="<?php echo esc_attr($doc['id'] ?? ''); ?>" data-doc-author-id="<?php echo esc_attr($doc['author_id'] ?? 0); ?>">
                                 <td><input type="checkbox" class="dior-ic-52ff4d551f"></td>
                                 <td><span
                                         class="cell-text dior-ic-794116ec9b"><?php echo esc_html($doc['title'] ?? 'Medical Document'); ?></span>
@@ -84,7 +84,7 @@
                                     <div class="cell-actions">
                                         <?php if (!empty($doc['id'])): ?>
                                             <button type="button" class="action-icon-btn edit-btn" title="Edit Document"
-                                                onclick="diorEditDocument(this)"><i class="fa-solid fa-pen"></i></button>
+                                                data-doc-title="<?php echo esc_attr($doc['title'] ?? 'Medical Document'); ?>" data-doc-category="<?php echo esc_attr($doc['category'] ?? 'Clinical Record'); ?>" onclick="diorEditDocument(this)"><i class="fa-solid fa-pen"></i></button>
                                             <button type="button" class="action-icon-btn delete-btn" title="Delete Document"
                                                 onclick="diorDeleteStaticRow(this, 'document')"><i
                                                     class="fa-solid fa-trash"></i></button>
@@ -107,5 +107,36 @@
             <div id="dior-docs-pagination"></div>
         </div>
     </div>
+
+
+<!-- Patient document upload/edit modal -->
+<div id="dior-document-modal" class="dior-static-modal-backdrop" aria-hidden="true">
+    <div class="dior-document-modal" role="dialog" aria-modal="true" aria-labelledby="dior-document-modal-title">
+        <button type="button" class="dior-document-modal-close" onclick="diorCloseDocumentModal()" aria-label="Close">&times;</button>
+        <h3 id="dior-document-modal-title">Add Medical Document</h3>
+        <form id="dior-document-form" enctype="multipart/form-data">
+            <input type="hidden" id="dior-document-id" name="doc_id" value="">
+            <div class="dior-document-form-grid">
+                <label>Document Title<input type="text" id="dior-document-title" name="doc_title" required placeholder="e.g. Blood Test Report"></label>
+                <label>Category<select id="dior-document-category" name="doc_category">
+                    <option value="Clinical Record">Clinical Record</option>
+                    <option value="Laboratory">Laboratory</option>
+                    <option value="Diagnostic & Scans">Diagnostic &amp; Scans</option>
+                    <option value="Prescription">Prescription</option>
+                    <option value="Procedure">Procedure</option>
+                    <option value="Other">Other</option>
+                </select></label>
+            </div>
+            <div id="dior-document-file-wrap">
+                <label>Document File<input type="file" id="dior-document-file" name="doc_file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"></label>
+                <small>Allowed: PDF, PNG, JPG, DOC, DOCX. Maximum 25MB.</small>
+            </div>
+            <div class="dior-document-modal-actions">
+                <button type="button" class="btn btn-light" onclick="diorCloseDocumentModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="dior-document-save-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Document</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 </section>

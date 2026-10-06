@@ -333,18 +333,99 @@
     window.diorDeleteStaticRow = function (button, type) {
         var row = button.closest('tr');
         if (!row) return;
-        var label = type === 'document' ? 'document' : (type === 'telemedicine' ? 'telemedicine session' : (type === 'emergency contact' ? 'emergency contact' : 'feedback'));
-        if (window.confirm('Delete this ' + label + ' from the design preview?')) row.remove();
+        if (type !== 'document') {
+            var label = type === 'telemedicine' ? 'telemedicine session' : (type === 'emergency contact' ? 'emergency contact' : 'feedback');
+            if (window.confirm('Delete this ' + label + '?')) row.remove();
+            return;
+        }
+        var docId = row.getAttribute('data-doc-id') || '';
+        if (!docId) return;
+        var cfg = window.dior_vars || window.dior_patient_dashboard || {};
+        var fd = new FormData();
+        fd.append('action', 'dior_delete_document');
+        fd.append('nonce', cfg.nonce || cfg.portal_nonce || '');
+        fd.append('doc_id', docId);
+        fd.append('patient_id', cfg.current_user_id || (cfg.patient && cfg.patient.id) || '');
+        var doDelete = function(){
+            fetch(cfg.ajax_url || '/wp-admin/admin-ajax.php', {method:'POST', credentials:'same-origin', body:fd})
+                .then(function(r){return r.json();})
+                .then(function(result){
+                    if(!result.success) throw new Error((result.data && result.data.message) || 'Could not delete document.');
+                    row.remove();
+                    if(window.Swal) Swal.fire({position:'top-end',icon:'success',title:'Document Deleted',showConfirmButton:false,timer:1400});
+                }).catch(function(err){
+                    if(window.Swal) Swal.fire({icon:'error',title:'Delete Failed',text:err.message}); else window.alert(err.message);
+                });
+        };
+        if(window.Swal){
+            Swal.fire({title:'Delete Document?',text:'This document will be removed from your medical records.',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',confirmButtonText:'Delete'}).then(function(r){if(r.isConfirmed) doDelete();});
+        } else if(window.confirm('Delete this document?')) doDelete();
     };
 
-    window.diorEditDocument = function (button) {
-        var row = button.closest('tr');
-        if (!row) return;
-        var cells = row.querySelectorAll('td');
-        if (cells.length < 3) return;
-        var title = window.prompt('Edit document title:', cells[1].innerText.trim());
-        if (title !== null && title.trim()) cells[1].querySelector('.cell-text').textContent = title.trim();
+    window.diorOpenDocumentUploadModal = function(){
+        var modal=document.getElementById('dior-document-modal'); if(!modal) return;
+        var form=document.getElementById('dior-document-form'); if(form) form.reset();
+        document.getElementById('dior-document-id').value='';
+        document.getElementById('dior-document-modal-title').textContent='Add Medical Document';
+        document.getElementById('dior-document-save-btn').innerHTML='<i class="fa-solid fa-cloud-arrow-up"></i> Upload Document';
+        document.getElementById('dior-document-file-wrap').style.display='block';
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden','false');
     };
+
+    window.diorEditDocument = function(button){
+        var row=button.closest('tr'); if(!row) return;
+        var modal=document.getElementById('dior-document-modal'); if(!modal) return;
+        var id=row.getAttribute('data-doc-id') || '';
+        var title=button.getAttribute('data-doc-title') || (row.cells[1] ? row.cells[1].innerText.trim() : 'Medical Document');
+        var category=button.getAttribute('data-doc-category') || (row.cells[2] ? row.cells[2].innerText.trim() : 'Clinical Record');
+        document.getElementById('dior-document-id').value=id;
+        document.getElementById('dior-document-title').value=title;
+        document.getElementById('dior-document-category').value=category;
+        document.getElementById('dior-document-modal-title').textContent='Update Medical Document';
+        document.getElementById('dior-document-save-btn').innerHTML='<i class="fa-solid fa-save"></i> Save Changes';
+        document.getElementById('dior-document-file-wrap').style.display='none';
+        modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false');
+    };
+
+    window.diorCloseDocumentModal = function(){
+        var modal=document.getElementById('dior-document-modal'); if(!modal) return;
+        modal.classList.remove('is-open'); modal.setAttribute('aria-hidden','true');
+    };
+
+    document.addEventListener('submit', function(event){
+        if(event.target.id !== 'dior-document-form') return;
+        event.preventDefault();
+        var form=event.target, cfg=window.dior_vars || window.dior_patient_dashboard || {};
+        var id=document.getElementById('dior-document-id').value || '';
+        var btn=document.getElementById('dior-document-save-btn');
+        var fd=new FormData(form);
+        fd.append('action', id ? 'dior_update_document' : 'dior_upload_document');
+        fd.append('nonce', cfg.nonce || cfg.portal_nonce || '');
+        fd.append('patient_id', cfg.current_user_id || '');
+        btn.disabled=true;
+        fetch(cfg.ajax_url || '/wp-admin/admin-ajax.php',{method:'POST',credentials:'same-origin',body:fd})
+            .then(function(r){return r.json();})
+            .then(function(result){
+                if(!result.success) throw new Error((result.data && result.data.message) || 'Unable to save document.');
+                if(id){
+                    var row=document.querySelector('#dior-docs-tbody tr[data-doc-id="'+CSS.escape(id)+'"]');
+                    if(row){
+                        var title=result.data.title || fd.get('doc_title');
+                        var category=result.data.category || fd.get('doc_category');
+                        if(row.cells[1] && row.cells[1].querySelector('.cell-text')) row.cells[1].querySelector('.cell-text').textContent=title;
+                        if(row.cells[2] && row.cells[2].querySelector('.cell-text')) row.cells[2].querySelector('.cell-text').textContent=category;
+                        var edit=row.querySelector('.edit-btn'); if(edit){edit.setAttribute('data-doc-title',title);edit.setAttribute('data-doc-category',category);}
+                    }
+                } else if(result.data && result.data.document){
+                    window.location.reload();
+                }
+                diorCloseDocumentModal();
+                if(window.Swal) Swal.fire({position:'top-end',icon:'success',title:id?'Document Updated':'Document Uploaded',showConfirmButton:false,timer:1500});
+            })
+            .catch(function(err){if(window.Swal) Swal.fire({icon:'error',title:'Document Not Saved',text:err.message});else window.alert(err.message);})
+            .finally(function(){btn.disabled=false;});
+    });
 
     window.diorViewTelemedicine = function (button) {
         var row = button.closest('tr');

@@ -92,11 +92,11 @@
                                 <div class="row align-items-center g-3 dior-ic-5f76b1419d">
                                     <div class="col-lg-8 dior-ic-aea598fd73">
                                         <div class="d-flex flex-wrap gap-2 dior-ic-c10bc232ce">
-                                            <button type="button" class="btn btn-sm btn-primary dior-ic-b83363301a"><i class="fas fa-th-large me-1"></i> All Events (<?php echo esc_html(count($appointments) + count($documents) + count($questionnaires)); ?>) </button>
-                                            <button type="button" class="btn btn-sm btn-light dior-ic-acadeac91e"><i class="fas fa-stethoscope me-1 text-primary dior-ic-0c27d9541a"></i> Consultations </button>
-                                            <button type="button" class="btn btn-sm btn-light dior-ic-acadeac91e"><i class="fas fa-pills me-1 text-purple dior-ic-2552c485b6"></i> Prescriptions </button>
-                                            <button type="button" class="btn btn-sm btn-light dior-ic-acadeac91e"><i class="fas fa-file-medical-alt me-1 text-info dior-ic-93cffbc604"></i> Diagnostics &amp; Scans </button>
-                                            <button type="button" class="btn btn-sm btn-light dior-ic-acadeac91e"><i class="fas fa-user-md me-1 text-danger dior-ic-961ef1396d"></i> Procedures </button>
+                                            <button type="button" class="btn btn-sm btn-primary dior-medical-record-filter is-active" data-filter="ALL"><i class="fas fa-th-large me-1"></i> All Events (<?php echo esc_html(count($appointments) + count($documents) + count($questionnaires) + count($prescriptions)); ?>)</button>
+                                            <button type="button" class="btn btn-sm btn-light dior-medical-record-filter" data-filter="CONSULTATION"><i class="fas fa-stethoscope me-1 text-primary"></i> Consultations</button>
+                                            <button type="button" class="btn btn-sm btn-light dior-medical-record-filter" data-filter="PRESCRIPTION"><i class="fas fa-pills me-1 text-purple"></i> Prescriptions</button>
+                                            <button type="button" class="btn btn-sm btn-light dior-medical-record-filter" data-filter="DIAGNOSTIC"><i class="fas fa-file-medical-alt me-1 text-info"></i> Diagnostics &amp; Scans</button>
+                                            <button type="button" class="btn btn-sm btn-light dior-medical-record-filter" data-filter="PROCEDURE"><i class="fas fa-user-md me-1 text-danger"></i> Procedures</button>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 d-flex gap-2 dior-ic-04e1c988f3">
@@ -150,13 +150,23 @@
                                             'icon' => 'fa-calendar-check',
                                         ];
                                     }
+                                    foreach (($prescriptions ?? []) as $prescription) {
+                                        $timeline_events[] = [
+                                            'date' => $prescription['date_prescribed'] ?? ($prescription['date'] ?? current_time('mysql')),
+                                            'type' => 'PRESCRIPTION',
+                                            'title' => $prescription['name'] ?? ($prescription['medication'] ?? 'Prescription'),
+                                            'doctor' => $prescription['prescribed_by'] ?? 'Attending Physician',
+                                            'description' => $prescription['condition'] ?? ($prescription['diagnosis'] ?? 'Prescription recorded in the medical record.'),
+                                            'icon' => 'fa-pills',
+                                        ];
+                                    }
                                     usort($timeline_events, static function ($a, $b) {
                                         return strtotime((string)$b['date']) <=> strtotime((string)$a['date']);
                                     });
                                     foreach (array_slice($timeline_events, 0, 20) as $event):
                                         $event_ts = strtotime((string)$event['date']) ?: current_time('timestamp');
                                     ?>
-                                    <div class="mr-timeline-item">
+                                    <div class="mr-timeline-item" data-record-type="<?php echo esc_attr($event['type']); ?>">
                                         <div class="mr-timeline-time-col">
                                             <span class="dior-ic-14731f6c49"><?php echo esc_html(wp_date('d M Y', $event_ts)); ?></span>
                                             <span class="dior-ic-07e1c2794e"><i class="far fa-clock me-1"></i><?php echo esc_html(wp_date('g:i A', $event_ts)); ?></span>

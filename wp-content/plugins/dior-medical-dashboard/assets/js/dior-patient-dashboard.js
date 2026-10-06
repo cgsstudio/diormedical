@@ -1163,6 +1163,49 @@ let diorDocsCurrentPage = 1;
         diorRenderDocsPagination();
     }
 
+// Medical Record tab filters: the buttons filter the existing clinical timeline without reloading.
+(function () {
+    'use strict';
+    function initMedicalRecordFilters() {
+        var panel = document.getElementById('tab-medical_record');
+        if (!panel || panel.dataset.filtersReady === '1') return;
+        panel.dataset.filtersReady = '1';
+        var buttons = panel.querySelectorAll('.dior-medical-record-filter');
+        var items = panel.querySelectorAll('.mr-timeline-item[data-record-type]');
+        buttons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var filter = button.getAttribute('data-filter') || 'ALL';
+                buttons.forEach(function (b) {
+                    b.classList.remove('is-active', 'btn-primary');
+                    b.classList.add('btn-light');
+                });
+                button.classList.add('is-active', 'btn-primary');
+                button.classList.remove('btn-light');
+                items.forEach(function (item) {
+                    var type = item.getAttribute('data-record-type') || '';
+                    item.style.display = (filter === 'ALL' || type === filter || (filter === 'CONSULTATION' && (type === 'CONSULTATION' || type === 'APPOINTMENT'))) ? '' : 'none';
+                });
+                var visible = Array.prototype.filter.call(items, function (item) { return item.style.display !== 'none'; });
+                var empty = panel.querySelector('.mr-filter-empty');
+                if (!visible.length) {
+                    if (!empty) {
+                        empty = document.createElement('div');
+                        empty.className = 'mr-filter-empty';
+                        empty.textContent = 'No records found for this category.';
+                        var timeline = panel.querySelector('.modern-treatment-timeline');
+                        if (timeline) timeline.appendChild(empty);
+                    }
+                    empty.style.display = '';
+                } else if (empty) {
+                    empty.style.display = 'none';
+                }
+            });
+        });
+    }
+    document.addEventListener('DOMContentLoaded', initMedicalRecordFilters);
+    if (document.readyState !== 'loading') initMedicalRecordFilters();
+}());
+
 // --- Extracted dashboard script 11 ---
 let diorEmergCurrentPage = 1;
     const diorEmergRowsPerPage = 6;

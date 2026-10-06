@@ -1,7 +1,9 @@
 <?php
 /**
  * Plugin Name: Dior Medical - Patient Portal & Dashboard
- * Plugin URI:  https://vultureconcepts.com
+ * Plugin URI:  https://vultureconcepts.com/
+ * Author: Vulture Concepts
+ * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
 
  */

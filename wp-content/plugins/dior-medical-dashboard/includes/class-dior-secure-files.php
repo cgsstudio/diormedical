@@ -32,6 +32,7 @@ class Dior_Medical_Secure_Files
         // AJAX Handlers
         add_action('wp_ajax_dior_upload_document', [__CLASS__, 'ajax_upload_document']);
         add_action('wp_ajax_dior_delete_document', [__CLASS__, 'ajax_delete_document']);
+        add_action('wp_ajax_dior_update_document', [__CLASS__, 'ajax_update_document']);
         add_action('wp_ajax_dior_doctor_save_letter', [__CLASS__, 'ajax_save_doctor_letter']);
 
         // Authenticated Stream Gate

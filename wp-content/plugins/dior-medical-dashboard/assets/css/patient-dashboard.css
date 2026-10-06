@@ -5906,3 +5906,22 @@
         max-width: calc(100% - 260px) !important;
     }
 }
+
+
+/* Patient Medical Record controls + document modal */
+.dior-patient-portal-wrap .dior-medical-record-filter{transition:all .18s ease;cursor:pointer;}
+.dior-patient-portal-wrap .dior-medical-record-filter.is-active{box-shadow:0 2px 6px rgba(44,108,177,.16);}
+.dior-patient-portal-wrap .mr-filter-empty{padding:28px 16px;text-align:center;color:#64748b;font-size:14px;}
+.dior-patient-portal-wrap #dior-document-modal.dior-static-modal-backdrop{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.45);}
+.dior-patient-portal-wrap #dior-document-modal.dior-static-modal-backdrop.is-open{display:flex;}
+.dior-patient-portal-wrap .dior-document-modal{position:relative;width:min(620px,100%);background:#fff;border-radius:14px;padding:24px;box-shadow:0 20px 60px rgba(15,23,42,.18);}
+.dior-patient-portal-wrap .dior-document-modal h3{margin:0 0 20px;font-size:20px;font-weight:700;color:#0f172a;}
+.dior-patient-portal-wrap .dior-document-modal-close{position:absolute;top:12px;right:14px;border:0;background:transparent;color:#64748b;font-size:26px;line-height:1;cursor:pointer;}
+.dior-patient-portal-wrap .dior-document-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.dior-patient-portal-wrap .dior-document-modal label{display:block;font-size:13px;font-weight:600;color:#334155;}
+.dior-patient-portal-wrap .dior-document-modal input[type=text],
+.dior-patient-portal-wrap .dior-document-modal input[type=file],
+.dior-patient-portal-wrap .dior-document-modal select{display:block;width:100%;margin-top:7px;box-sizing:border-box;padding:10px 12px;border:1px solid #dbe4ee;border-radius:8px;background:#fff;color:#334155;}
+.dior-patient-portal-wrap .dior-document-modal small{display:block;margin-top:7px;color:#94a3b8;font-size:11px;}
+.dior-patient-portal-wrap .dior-document-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;}
+@media(max-width:640px){.dior-patient-portal-wrap .dior-document-form-grid{grid-template-columns:1fr;}}
