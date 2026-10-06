@@ -3,6 +3,50 @@
  * Extracted from the dashboard template without changing existing behavior.
  */
 
+/* ------------------------------------------------------------------
+ * Shared pager for every patient dashboard table.
+ * Renders the exact same markup as the Doctor Dashboard pager
+ * (.dior-page-btn: prev / numbers / next) so both dashboards share
+ * one visual language: light square buttons + blue active page.
+ * ------------------------------------------------------------------ */
+function diorPagerChevron(direction) {
+    return '<i class="fa-solid fa-chevron-' + direction + ' dior-pager-chevron"></i>';
+}
+
+function diorBuildPagerHtml(currentPage, totalPages, goFunctionName) {
+    if (!totalPages || totalPages < 2) {
+        return '';
+    }
+
+    var html = '';
+
+    html += '<button type="button" class="dior-page-btn" ' + (currentPage <= 1 ? 'disabled' : '') +
+        ' onclick="' + goFunctionName + '(' + (currentPage - 1) + ')" title="Previous Page">' +
+        diorPagerChevron('left') + '</button>';
+
+    if (totalPages <= 7) {
+        for (var i = 1; i <= totalPages; i++) {
+            html += '<button type="button" class="dior-page-btn' + (i === currentPage ? ' active' : '') +
+                '" onclick="' + goFunctionName + '(' + i + ')">' + i + '</button>';
+        }
+    } else {
+        for (var j = 1; j <= totalPages; j++) {
+            if (j === 1 || j === totalPages || (j >= currentPage - 1 && j <= currentPage + 1)) {
+                html += '<button type="button" class="dior-page-btn' + (j === currentPage ? ' active' : '') +
+                    '" onclick="' + goFunctionName + '(' + j + ')">' + j + '</button>';
+            } else if (j === currentPage - 2 || j === currentPage + 2) {
+                html += '<span class="dior-pager-gap">...</span>';
+            }
+        }
+    }
+
+    html += '<button type="button" class="dior-page-btn" ' + (currentPage >= totalPages ? 'disabled' : '') +
+        ' onclick="' + goFunctionName + '(' + (currentPage + 1) + ')" title="Next Page">' +
+        diorPagerChevron('right') + '</button>';
+
+    return html;
+}
+
 // --- Extracted dashboard script 1 ---
 let diorBookingState = {
                 departmentId: null,
@@ -408,31 +452,7 @@ let diorUpcomingCurrentPage = 1;
                                 // Build pagination HTML
                                 const pagContainer = document.getElementById('dior-upcoming-pagination');
                                 if (pagContainer) {
-                                    let html = '';
-                                    
-                                    // First page button
-                                    const firstDisabled = diorUpcomingCurrentPage === 1 ? 'disabled' : '';
-                                    html += `<button type="button" class="page-btn ${firstDisabled}" title="First Page" onclick="diorGoUpcomingPage(1)"><i class="fa-solid fa-angles-left"></i></button>`;
-                                    
-                                    // Previous page button
-                                    const prevDisabled = diorUpcomingCurrentPage === 1 ? 'disabled' : '';
-                                    html += `<button type="button" class="page-btn ${prevDisabled}" title="Previous Page" onclick="diorGoUpcomingPage(${diorUpcomingCurrentPage - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
-
-                                    // Page numbers
-                                    for (let i = 1; i <= totalPages; i++) {
-                                        const activeClass = i === diorUpcomingCurrentPage ? 'active' : '';
-                                        html += `<button type="button" class="page-num ${activeClass}" onclick="diorGoUpcomingPage(${i})">${i}</button>`;
-                                    }
-
-                                    // Next page button
-                                    const nextDisabled = diorUpcomingCurrentPage === totalPages ? 'disabled' : '';
-                                    html += `<button type="button" class="page-btn ${nextDisabled}" title="Next Page" onclick="diorGoUpcomingPage(${diorUpcomingCurrentPage + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
-
-                                    // Last page button
-                                    const lastDisabled = diorUpcomingCurrentPage === totalPages ? 'disabled' : '';
-                                    html += `<button type="button" class="page-btn ${lastDisabled}" title="Last Page" onclick="diorGoUpcomingPage(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
-
-                                    pagContainer.innerHTML = html;
+                                    pagContainer.innerHTML = diorBuildPagerHtml(diorUpcomingCurrentPage, totalPages, 'diorGoUpcomingPage');
                                 }
 
                                 diorUpdateUpcomingSelectedCount(activeRows.length);
@@ -587,26 +607,7 @@ let diorPastCurrentPage = 1;
 
                                 const pagContainer = document.getElementById('dior-past-pagination');
                                 if (pagContainer) {
-                                    let html = '';
-                                    
-                                    const firstDisabled = diorPastCurrentPage === 1 ? 'disabled' : '';
-                                    html += `<button type="button" class="page-btn ${firstDisabled}" title="First Page" onclick="diorGoPastPage(1)"><i class="fa-solid fa-angles-left"></i></button>`;
-                                    
-                                    const prevDisabled = diorPastCurrentPage === 1 ? 'disabled' : '';
-                                    html += `<button type="button" class="page-btn ${prevDisabled}" title="Previous Page" onclick="diorGoPastPage(${diorPastCurrentPage - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
-
-                                    for (let i = 1; i <= totalPages; i++) {
-                                        const activeClass = i === diorPastCurrentPage ? 'active' : '';
-                                        html += `<button type="button" class="page-num ${activeClass}" onclick="diorGoPastPage(${i})">${i}</button>`;
-                                    }
-
-                                    const nextDisabled = diorPastCurrentPage === totalPages ? 'disabled' : '';
-                                    html += `<button type="button" class="page-btn ${nextDisabled}" title="Next Page" onclick="diorGoPastPage(${diorPastCurrentPage + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
-
-                                    const lastDisabled = diorPastCurrentPage === totalPages ? 'disabled' : '';
-                                    html += `<button type="button" class="page-btn ${lastDisabled}" title="Last Page" onclick="diorGoPastPage(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
-
-                                    pagContainer.innerHTML = html;
+                                    pagContainer.innerHTML = diorBuildPagerHtml(diorPastCurrentPage, totalPages, 'diorGoPastPage');
                                 }
 
                                 const pageCountEl = document.getElementById('dior-past-page-count');
@@ -741,26 +742,7 @@ let diorBillCurrentPage = 1;
 
         const pagContainer = document.getElementById('dior-bill-pagination');
         if (pagContainer) {
-            let html = '';
-            
-            const firstDisabled = diorBillCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${firstDisabled}" title="First Page" onclick="diorGoBillPage(1)"><i class="fa-solid fa-angles-left"></i></button>`;
-            
-            const prevDisabled = diorBillCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${prevDisabled}" title="Previous Page" onclick="diorGoBillPage(${diorBillCurrentPage - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
-
-            for (let i = 1; i <= totalPages; i++) {
-                const activeClass = i === diorBillCurrentPage ? 'active' : '';
-                html += `<button type="button" class="page-num ${activeClass}" onclick="diorGoBillPage(${i})">${i}</button>`;
-            }
-
-            const nextDisabled = diorBillCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${nextDisabled}" title="Next Page" onclick="diorGoBillPage(${diorBillCurrentPage + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
-
-            const lastDisabled = diorBillCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${lastDisabled}" title="Last Page" onclick="diorGoBillPage(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
-
-            pagContainer.innerHTML = html;
+            pagContainer.innerHTML = diorBuildPagerHtml(diorBillCurrentPage, totalPages, 'diorGoBillPage');
         }
 
         const pageCountEl = document.getElementById('dior-bill-page-count');
@@ -865,26 +847,7 @@ let diorInsuranceCurrentPage = 1;
 
         const pagContainer = document.getElementById('dior-insurance-pagination');
         if (pagContainer) {
-            let html = '';
-            
-            const firstDisabled = diorInsuranceCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${firstDisabled}" title="First Page" onclick="diorGoInsurancePage(1)"><i class="fa-solid fa-angles-left"></i></button>`;
-            
-            const prevDisabled = diorInsuranceCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${prevDisabled}" title="Previous Page" onclick="diorGoInsurancePage(${diorInsuranceCurrentPage - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
-
-            for (let i = 1; i <= totalPages; i++) {
-                const activeClass = i === diorInsuranceCurrentPage ? 'active' : '';
-                html += `<button type="button" class="page-num ${activeClass}" onclick="diorGoInsurancePage(${i})">${i}</button>`;
-            }
-
-            const nextDisabled = diorInsuranceCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${nextDisabled}" title="Next Page" onclick="diorGoInsurancePage(${diorInsuranceCurrentPage + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
-
-            const lastDisabled = diorInsuranceCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${lastDisabled}" title="Last Page" onclick="diorGoInsurancePage(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
-
-            pagContainer.innerHTML = html;
+            pagContainer.innerHTML = diorBuildPagerHtml(diorInsuranceCurrentPage, totalPages, 'diorGoInsurancePage');
         }
 
         const pageCountEl = document.getElementById('dior-insurance-page-count');
@@ -973,26 +936,7 @@ let diorRxCurrentPage = 1;
 
                         const pagContainer = document.getElementById('dior-rx-pagination');
                         if (pagContainer) {
-                            let html = '';
-                            
-                            const firstDisabled = diorRxCurrentPage === 1 ? 'disabled' : '';
-                            html += `<button type="button" class="page-btn ${firstDisabled}" title="First Page" onclick="diorGoRxPage(1)"><i class="fa-solid fa-angles-left"></i></button>`;
-                            
-                            const prevDisabled = diorRxCurrentPage === 1 ? 'disabled' : '';
-                            html += `<button type="button" class="page-btn ${prevDisabled}" title="Previous Page" onclick="diorGoRxPage(${diorRxCurrentPage - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
-
-                            for (let i = 1; i <= totalPages; i++) {
-                                const activeClass = i === diorRxCurrentPage ? 'active' : '';
-                                html += `<button type="button" class="page-num ${activeClass}" onclick="diorGoRxPage(${i})">${i}</button>`;
-                            }
-
-                            const nextDisabled = diorRxCurrentPage === totalPages ? 'disabled' : '';
-                            html += `<button type="button" class="page-btn ${nextDisabled}" title="Next Page" onclick="diorGoRxPage(${diorRxCurrentPage + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
-
-                            const lastDisabled = diorRxCurrentPage === totalPages ? 'disabled' : '';
-                            html += `<button type="button" class="page-btn ${lastDisabled}" title="Last Page" onclick="diorGoRxPage(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
-
-                            pagContainer.innerHTML = html;
+                            pagContainer.innerHTML = diorBuildPagerHtml(diorRxCurrentPage, totalPages, 'diorGoRxPage');
                         }
 
                         const pageCountEl = document.getElementById('dior-rx-page-count');
@@ -1086,26 +1030,7 @@ let diorTeleCurrentPage = 1;
 
         const pagContainer = document.getElementById('dior-tele-pagination');
         if (pagContainer) {
-            let html = '';
-            
-            const firstDisabled = diorTeleCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${firstDisabled}" title="First Page" onclick="diorGoTelePage(1)"><i class="fa-solid fa-angles-left"></i></button>`;
-            
-            const prevDisabled = diorTeleCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${prevDisabled}" title="Previous Page" onclick="diorGoTelePage(${diorTeleCurrentPage - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
-
-            for (let i = 1; i <= totalPages; i++) {
-                const activeClass = i === diorTeleCurrentPage ? 'active' : '';
-                html += `<button type="button" class="page-num ${activeClass}" onclick="diorGoTelePage(${i})">${i}</button>`;
-            }
-
-            const nextDisabled = diorTeleCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${nextDisabled}" title="Next Page" onclick="diorGoTelePage(${diorTeleCurrentPage + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
-
-            const lastDisabled = diorTeleCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${lastDisabled}" title="Last Page" onclick="diorGoTelePage(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
-
-            pagContainer.innerHTML = html;
+            pagContainer.innerHTML = diorBuildPagerHtml(diorTeleCurrentPage, totalPages, 'diorGoTelePage');
         }
 
         const pageCountEl = document.getElementById('dior-tele-page-count');
@@ -1194,26 +1119,7 @@ let diorDocsCurrentPage = 1;
 
         const pagContainer = document.getElementById('dior-docs-pagination');
         if (pagContainer) {
-            let html = '';
-            
-            const firstDisabled = diorDocsCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${firstDisabled}" title="First Page" onclick="diorGoDocsPage(1)"><i class="fa-solid fa-angles-left"></i></button>`;
-            
-            const prevDisabled = diorDocsCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${prevDisabled}" title="Previous Page" onclick="diorGoDocsPage(${diorDocsCurrentPage - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
-
-            for (let i = 1; i <= totalPages; i++) {
-                const activeClass = i === diorDocsCurrentPage ? 'active' : '';
-                html += `<button type="button" class="page-num ${activeClass}" onclick="diorGoDocsPage(${i})">${i}</button>`;
-            }
-
-            const nextDisabled = diorDocsCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${nextDisabled}" title="Next Page" onclick="diorGoDocsPage(${diorDocsCurrentPage + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
-
-            const lastDisabled = diorDocsCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${lastDisabled}" title="Last Page" onclick="diorGoDocsPage(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
-
-            pagContainer.innerHTML = html;
+            pagContainer.innerHTML = diorBuildPagerHtml(diorDocsCurrentPage, totalPages, 'diorGoDocsPage');
         }
 
         const pageCountEl = document.getElementById('dior-docs-page-count');
@@ -1300,26 +1206,7 @@ let diorEmergCurrentPage = 1;
 
         const pagContainer = document.getElementById('dior-emerg-pagination');
         if (pagContainer) {
-            let html = '';
-            
-            const firstDisabled = diorEmergCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${firstDisabled}" title="First Page" onclick="diorGoEmergPage(1)"><i class="fa-solid fa-angles-left"></i></button>`;
-            
-            const prevDisabled = diorEmergCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${prevDisabled}" title="Previous Page" onclick="diorGoEmergPage(${diorEmergCurrentPage - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
-
-            for (let i = 1; i <= totalPages; i++) {
-                const activeClass = i === diorEmergCurrentPage ? 'active' : '';
-                html += `<button type="button" class="page-num ${activeClass}" onclick="diorGoEmergPage(${i})">${i}</button>`;
-            }
-
-            const nextDisabled = diorEmergCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${nextDisabled}" title="Next Page" onclick="diorGoEmergPage(${diorEmergCurrentPage + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
-
-            const lastDisabled = diorEmergCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${lastDisabled}" title="Last Page" onclick="diorGoEmergPage(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
-
-            pagContainer.innerHTML = html;
+            pagContainer.innerHTML = diorBuildPagerHtml(diorEmergCurrentPage, totalPages, 'diorGoEmergPage');
         }
 
         const pageCountEl = document.getElementById('dior-emerg-page-count');
@@ -1440,26 +1327,7 @@ let diorNotifCurrentPage = 1;
 
         const pagContainer = document.getElementById('dior-notif-pagination');
         if (pagContainer) {
-            let html = '';
-            
-            const firstDisabled = diorNotifCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${firstDisabled}" title="First Page" onclick="diorGoNotifPage(1)"><i class="fa-solid fa-angles-left"></i></button>`;
-            
-            const prevDisabled = diorNotifCurrentPage === 1 ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${prevDisabled}" title="Previous Page" onclick="diorGoNotifPage(${diorNotifCurrentPage - 1})"><i class="fa-solid fa-angle-left"></i></button>`;
-
-            for (let i = 1; i <= totalPages; i++) {
-                const activeClass = i === diorNotifCurrentPage ? 'active' : '';
-                html += `<button type="button" class="page-num ${activeClass}" onclick="diorGoNotifPage(${i})">${i}</button>`;
-            }
-
-            const nextDisabled = diorNotifCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${nextDisabled}" title="Next Page" onclick="diorGoNotifPage(${diorNotifCurrentPage + 1})"><i class="fa-solid fa-angle-right"></i></button>`;
-
-            const lastDisabled = diorNotifCurrentPage === totalPages ? 'disabled' : '';
-            html += `<button type="button" class="page-btn ${lastDisabled}" title="Last Page" onclick="diorGoNotifPage(${totalPages})"><i class="fa-solid fa-angles-right"></i></button>`;
-
-            pagContainer.innerHTML = html;
+            pagContainer.innerHTML = diorBuildPagerHtml(diorNotifCurrentPage, totalPages, 'diorGoNotifPage');
         }
 
         const pageCountEl = document.getElementById('dior-notif-page-count');
