@@ -13,7 +13,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define( 'DIOR_PORTAL_VERSION', '2.2.6' );
+if (!defined('DIOR_PORTAL_VERSION')) {
+    define('DIOR_PORTAL_VERSION', '2.2.6');
+}
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
 define('DIOR_PORTAL_URL', plugin_dir_url(__FILE__));
 
