@@ -19,6 +19,7 @@ class Dior_Medical_REST_API
     private $rest_base_appointments = 'appointments';
     private $rest_base_prescriptions = 'prescriptions';
     private $rest_base_analytics = 'analytics';
+    private $rest_base_hipaa_intake = 'hipaa-intake';
 
     /**
      * Initialize REST API
@@ -126,6 +127,32 @@ class Dior_Medical_REST_API
             ],
         ]);
 
+        // HIPAAtizer intake endpoints
+        // GET /wp-json/dior/v2/hipaa-intake
+        // GET /wp-json/dior/v2/hipaa-intake/{patient_id}
+        register_rest_route($this->namespace, '/' . $this->rest_base_hipaa_intake, [
+            [
+                'methods' => 'GET',
+                'callback' => [$this, 'get_hipaa_intake'],
+                'permission_callback' => [$this, 'check_hipaa_intake_permission'],
+                'args' => [
+                    'patient_id' => [
+                        'type' => 'integer',
+                        'required' => false,
+                        'minimum' => 1,
+                    ],
+                ],
+            ],
+        ]);
+
+        register_rest_route($this->namespace, '/' . $this->rest_base_hipaa_intake . '/(?P<patient_id>\\d+)', [
+            [
+                'methods' => 'GET',
+                'callback' => [$this, 'get_hipaa_intake'],
+                'permission_callback' => [$this, 'check_hipaa_intake_permission'],
+            ],
+        ]);
+
         // Analytics endpoints (admin only)
         register_rest_route($this->namespace, '/' . $this->rest_base_analytics . '/dashboard', [
             [
@@ -160,6 +187,127 @@ class Dior_Medical_REST_API
 
         // Allow if user is viewing their own profile or is admin
         return (current_user_can('manage_options') || intval($current_user->ID) === intval($patient_id));
+    }
+
+    /**
+     * Permission check for HIPAAtizer intake/eligibility data.
+     *
+     * Patients may read their own record.
+     * Doctors and administrators may read a specified patient record.
+     */
+    public function check_hipaa_intake_permission($request)
+    {
+        if (!is_user_logged_in()) {
+            return false;
+        }
+
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+
+        $current_user = wp_get_current_user();
+        $roles = (array) $current_user->roles;
+
+        if (in_array('doctor', $roles, true)) {
+            return true;
+        }
+
+        $requested_patient_id = 0;
+
+        if (isset($request['patient_id'])) {
+            $requested_patient_id = absint($request['patient_id']);
+        } elseif (isset($request['id'])) {
+            $requested_patient_id = absint($request['id']);
+        }
+
+        // A normal patient can only access their own intake.
+        return $requested_patient_id === 0 || $requested_patient_id === get_current_user_id();
+    }
+
+    /**
+     * Get HIPAAtizer intake / Patient Eligibility data.
+     *
+     * Data is read from the value already stored by the HIPAAtizer webhook
+     * under the patient's private user meta key: dior_hipaa_intake.
+     */
+    public function get_hipaa_intake($request)
+    {
+        $patient_id = isset($request['patient_id'])
+            ? absint($request['patient_id'])
+            : 0;
+
+        if (!$patient_id) {
+            $patient_id = get_current_user_id();
+        }
+
+        if (!$patient_id || !get_userdata($patient_id)) {
+            return new WP_Error(
+                'patient_not_found',
+                'Patient not found',
+                ['status' => 404]
+            );
+        }
+
+        // Enforce ownership for normal patients even if a patient_id is supplied.
+        if (!current_user_can('manage_options')) {
+            $current_user = wp_get_current_user();
+            $roles = (array) $current_user->roles;
+
+            if (!in_array('doctor', $roles, true) && $patient_id !== get_current_user_id()) {
+                return new WP_Error(
+                    'forbidden',
+                    'You are not allowed to access this patient intake.',
+                    ['status' => 403]
+                );
+            }
+        }
+
+        $intake = get_user_meta($patient_id, 'dior_hipaa_intake', true);
+
+        if (!is_array($intake) || empty($intake)) {
+            return new WP_Error(
+                'intake_not_found',
+                'No HIPAAtizer intake submission was found for this patient.',
+                ['status' => 404]
+            );
+        }
+
+        $raw_data = [];
+        if (!empty($intake['raw_data']) && is_array($intake['raw_data'])) {
+            $raw_data = $intake['raw_data'];
+        }
+
+        // Current Patient Eligibility form fields.
+        $eligibility_fields = [
+            'eligibility_age_18',
+            'eligibility_pregnant',
+            'eligibility_emergency',
+            'eligibility_location',
+        ];
+
+        $eligibility = [];
+        foreach ($eligibility_fields as $field) {
+            if (array_key_exists($field, $raw_data)) {
+                $eligibility[$field] = $raw_data[$field];
+            } elseif (array_key_exists($field, $intake)) {
+                $eligibility[$field] = $intake[$field];
+            } else {
+                $eligibility[$field] = null;
+            }
+        }
+
+        // Return the stored intake without exposing the raw_data twice.
+        $stored_intake = $intake;
+        unset($stored_intake['raw_data']);
+
+        return rest_ensure_response([
+            'success' => true,
+            'patient_id' => $patient_id,
+            'submitted' => true,
+            'eligibility' => $eligibility,
+            'intake' => $stored_intake,
+            'form_data' => $raw_data,
+        ]);
     }
 
     /**
