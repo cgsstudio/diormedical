@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 define('DIOR_PORTAL_VERSION', '4.1.0');
 
-define( 'DIOR_PORTAL_VERSION', '2.2.6' );
+define('DIOR_PORTAL_VERSION', '2.2.6');
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
 define('DIOR_PORTAL_URL', plugin_dir_url(__FILE__));
@@ -177,10 +177,12 @@ class Dior_Patient_Portal_Data
         global $wpdb;
         $user_id = (int) $user_id;
         $user = get_userdata($user_id);
-        if (!$user) return false;
+        if (!$user)
+            return false;
 
         $table = $wpdb->prefix . 'dior_patients';
-        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) return false;
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table)
+            return false;
 
         $dob = get_user_meta($user_id, 'dob', true) ?: get_user_meta($user_id, 'date_of_birth', true);
         $wpdb->replace($table, [
@@ -512,22 +514,39 @@ class Dior_Patient_Portal_Data
             if (!empty($rows)) {
                 return array_map(static function ($row) {
                     return [
-                        'id' => $row['prescription_uid'], 'order_id' => $row['prescription_uid'], 'group_id' => $row['prescription_uid'],
-                        'name' => $row['medication'], 'medication' => $row['medication'], 'dosage' => $row['medication'],
-                        'quantity' => $row['quantity'], 'refills' => $row['refills'], 'instructions' => $row['instructions'],
-                        'notes' => $row['instructions'], 'status' => $row['status'], 'is_active' => ($row['status'] === 'Active'),
-                        'date_prescribed' => $row['created_at'], 'prescribed_by' => 'Dr. ' . (get_userdata((int)$row['doctor_id'])->display_name ?? 'Doctor'),
-                        'pharmacy' => get_user_meta($user_id, 'preferred_pharmacy_name', true), 'items' => [[
-                            'id' => $row['prescription_uid'], 'medication' => $row['medication'], 'dosage' => $row['medication'],
-                            'quantity' => $row['quantity'], 'refills' => $row['refills'], 'instructions' => $row['instructions']
-                        ]]
+                        'id' => $row['prescription_uid'],
+                        'order_id' => $row['prescription_uid'],
+                        'group_id' => $row['prescription_uid'],
+                        'name' => $row['medication'],
+                        'medication' => $row['medication'],
+                        'dosage' => $row['medication'],
+                        'quantity' => $row['quantity'],
+                        'refills' => $row['refills'],
+                        'instructions' => $row['instructions'],
+                        'notes' => $row['instructions'],
+                        'status' => $row['status'],
+                        'is_active' => ($row['status'] === 'Active'),
+                        'date_prescribed' => $row['created_at'],
+                        'prescribed_by' => 'Dr. ' . (get_userdata((int) $row['doctor_id'])->display_name ?? 'Doctor'),
+                        'pharmacy' => get_user_meta($user_id, 'preferred_pharmacy_name', true),
+                        'items' => [
+                            [
+                                'id' => $row['prescription_uid'],
+                                'medication' => $row['medication'],
+                                'dosage' => $row['medication'],
+                                'quantity' => $row['quantity'],
+                                'refills' => $row['refills'],
+                                'instructions' => $row['instructions']
+                            ]
+                        ]
                     ];
                 }, $rows);
             }
         }
 
         $prescriptions = get_user_meta($user_id, 'dior_prescriptions', true);
-        if (!is_array($prescriptions)) $prescriptions = [];
+        if (!is_array($prescriptions))
+            $prescriptions = [];
         return self::group_prescriptions($prescriptions);
     }
 
@@ -540,7 +559,8 @@ class Dior_Patient_Portal_Data
         $table = $wpdb->prefix . 'dior_payments';
         if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
             $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE patient_id=%d ORDER BY created_at DESC", (int) $user_id), ARRAY_A);
-            if (!empty($rows)) return $rows;
+            if (!empty($rows))
+                return $rows;
         }
         $payments = get_user_meta($user_id, 'dior_payments', true);
         return is_array($payments) ? $payments : [];
@@ -581,9 +601,15 @@ class Dior_Patient_Portal_Data
             if (!empty($rows)) {
                 return array_map(static function ($row) {
                     return [
-                        'id' => $row['notification_uid'], 'title' => $row['title'], 'message' => $row['message'],
-                        'action_url' => $row['action_url'], 'icon' => $row['icon'] ?: 'fa-bell', 'is_read' => (bool)$row['is_read'],
-                        'created_at' => $row['created_at'], 'timestamp' => strtotime($row['created_at']), 'type' => $row['type']
+                        'id' => $row['notification_uid'],
+                        'title' => $row['title'],
+                        'message' => $row['message'],
+                        'action_url' => $row['action_url'],
+                        'icon' => $row['icon'] ?: 'fa-bell',
+                        'is_read' => (bool) $row['is_read'],
+                        'created_at' => $row['created_at'],
+                        'timestamp' => strtotime($row['created_at']),
+                        'type' => $row['type']
                     ];
                 }, $rows);
             }
@@ -812,7 +838,7 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') : DIOR_PORTAL_VERSION
         );
         wp_enqueue_style(
-<<<<<<< HEAD
+
             'dior-view-appointment-css',
             DIOR_PORTAL_URL . 'assets/css/view-appointment.css',
             ['dior-doctor-source-tabs'],
@@ -824,15 +850,6 @@ class Dior_Medical_Auth
             ['dior-view-appointment-css'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/documents.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/documents.css') : DIOR_PORTAL_VERSION
         );
-        wp_enqueue_style(
-=======
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
-            'dior-static-responsive-fix',
-            DIOR_PORTAL_URL . 'assets/css/dior-static-responsive-fix.css',
-            ['dior-doctor-source-tabs'],
-            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') : DIOR_PORTAL_VERSION
-        );
-<<<<<<< HEAD
         wp_enqueue_style(
             'dior-doctor-tabs-unify',
             DIOR_PORTAL_URL . 'assets/css/dior-doctor-tabs-unify.css',
@@ -853,8 +870,12 @@ class Dior_Medical_Auth
             ['dior-doctor-tabs-unify'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-calendar-rebuild.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-calendar-rebuild.css') : DIOR_PORTAL_VERSION
         );
-=======
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
+        wp_enqueue_style(
+            'dior-static-responsive-fix',
+            DIOR_PORTAL_URL . 'assets/css/dior-static-responsive-fix.css',
+            ['dior-doctor-source-tabs'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') : DIOR_PORTAL_VERSION
+        );
 
         wp_enqueue_script(
             'sweetalert2',
@@ -894,7 +915,7 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-navigation.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-navigation.js') : DIOR_PORTAL_VERSION,
             true
         );
-<<<<<<< HEAD
+
         wp_enqueue_script(
             'dior-patient-live',
             DIOR_PORTAL_URL . 'assets/js/dior-patient-live.js',
@@ -902,8 +923,8 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-live.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-live.js') : DIOR_PORTAL_VERSION,
             true
         );
-=======
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
+
+
 
         // Dashboard JS
         wp_enqueue_script(
@@ -1504,12 +1525,25 @@ class Dior_Medical_Auth
                 if (data && data.length) {
                     data.forEach(doc => {
                         html += `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(${doc.id}, '${doc.name.replace(/'/g, "\\'")}')">
-                                                                                            <h4>${doc.name}</h4>
-                                                                                            <p>${doc.speciality}</p>
-                                                                                        </div>`;
+                                                                                                    <h4>${doc.name}</h4>
+                                                                                                    <p>${doc.speciality}</p>
+                                                                                                </div>`;
                     });
                 } else {
                     html = `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
+                                                                                                <h4>Dr. James Chen, DO</h4>
+                                                                                                <p>Primary Care & Urgent Care</p>
+                                                                                            </div>
+                                                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
+                                                                                                <h4>Dr. Marcus Sterling, DO</h4>
+                                                                                                <p>Urgent Care Physician</p>
+                                                                                            </div>`;
+                }
+                document.getElementById('doctors-list').innerHTML = html;
+            })
+            .catch(() => {
+                document.getElementById('doctors-list').innerHTML = `
+                                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
                                                                                         <h4>Dr. James Chen, DO</h4>
                                                                                         <p>Primary Care & Urgent Care</p>
                                                                                     </div>
@@ -1517,19 +1551,6 @@ class Dior_Medical_Auth
                                                                                         <h4>Dr. Marcus Sterling, DO</h4>
                                                                                         <p>Urgent Care Physician</p>
                                                                                     </div>`;
-                }
-                document.getElementById('doctors-list').innerHTML = html;
-            })
-            .catch(() => {
-                document.getElementById('doctors-list').innerHTML = `
-                                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                                <h4>Dr. James Chen, DO</h4>
-                                                                                <p>Primary Care & Urgent Care</p>
-                                                                            </div>
-                                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                                <h4>Dr. Marcus Sterling, DO</h4>
-                                                                                <p>Urgent Care Physician</p>
-                                                                            </div>`;
             });
     }
 
@@ -1596,12 +1617,12 @@ class Dior_Medical_Auth
         diorBookingState.time = time;
 
         document.getElementById('booking-summary').innerHTML = `
-                                                                    <p><strong>Treatment:</strong> ${diorBookingState.departmentName || 'Telehealth Urgent Care'}</p>
-                                                                    <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
-                                                                    <p><strong>Date:</strong> ${diorBookingState.date}</p>
-                                                                    <p><strong>Time:</strong> ${diorBookingState.time}</p>
-                                                                    <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
-                                                                `;
+                                                                            <p><strong>Treatment:</strong> ${diorBookingState.departmentName || 'Telehealth Urgent Care'}</p>
+                                                                            <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
+                                                                            <p><strong>Date:</strong> ${diorBookingState.date}</p>
+                                                                            <p><strong>Time:</strong> ${diorBookingState.time}</p>
+                                                                            <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
+                                                                        `;
         diorBookingGoToStep(4);
     }
 
@@ -1705,7 +1726,8 @@ class Dior_Medical_Auth
             </div>
 
             <div class="dior-auth-actions" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-                <a href="<?php echo esc_url($dash_url); ?>" class="dior-btn-auth-primary"><?php echo esc_html($dash_label); ?></a>
+                <a href="<?php echo esc_url($dash_url); ?>"
+                    class="dior-btn-auth-primary"><?php echo esc_html($dash_label); ?></a>
                 <a href="<?php echo esc_url(wp_logout_url(home_url('/diro-login/'))); ?>"
                     class="dior-btn-auth-secondary">Sign Out</a>
             </div>
