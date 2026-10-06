@@ -6033,3 +6033,100 @@
 :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .master-table-footer .page-count {
     text-align: left !important;
 }
+
+
+/* FINAL PATIENT MASTER TABLE OVERRIDE — patient portal only */
+.dior-patient-portal-wrap .master-table-card{
+  padding:0!important;margin:0 0 20px!important;background:#fff!important;
+  border:1px solid #e7edf4!important;border-radius:14px!important;
+  box-shadow:0 4px 18px rgba(15,23,42,.05)!important;overflow:hidden!important;
+}
+.dior-patient-portal-wrap .master-table-header{
+  min-height:68px!important;padding:16px 20px!important;margin:0!important;
+  background:#fff!important;border-bottom:1px solid #edf1f5!important;
+}
+.dior-patient-portal-wrap .master-table-header .header-content{
+  width:100%!important;min-width:0!important;
+}
+.dior-patient-portal-wrap .master-table-header .table-title-section{
+  margin:0!important;padding:0!important;
+}
+.dior-patient-portal-wrap .master-table-header .table-title-section .table-title,
+.dior-patient-portal-wrap .master-table-header h2.table-title,
+.dior-patient-portal-wrap .master-table-card h2.table-title{
+  display:block!important;width:auto!important;height:auto!important;min-height:0!important;
+  margin:0!important;padding:0!important;border:0!important;outline:0!important;
+  background:transparent!important;box-shadow:none!important;color:#0f172a!important;
+  font-family:'Montserrat','DM Sans',Arial,sans-serif!important;font-size:20px!important;
+  line-height:1.25!important;font-weight:700!important;letter-spacing:normal!important;
+  text-align:left!important;text-decoration:none!important;text-transform:none!important;
+}
+.dior-patient-portal-wrap .master-table-header .title-accent{
+  display:block!important;width:36px!important;min-width:36px!important;height:3px!important;
+  min-height:3px!important;margin:6px 0 0!important;padding:0!important;
+  background:#2c6cb1!important;border:0!important;border-radius:2px!important;
+}
+.dior-patient-portal-wrap .master-table-card table.master-modern-table{
+  width:100%!important;margin:0!important;border-collapse:collapse!important;
+  border-spacing:0!important;background:#fff!important;
+}
+.dior-patient-portal-wrap .master-table-card table.master-modern-table th{
+  padding:12px 14px!important;background:#f8fafc!important;color:#64748b!important;
+  border:0!important;border-bottom:1px solid #e9eef4!important;
+  font-family:'DM Sans','Montserrat',Arial,sans-serif!important;font-size:11px!important;
+  line-height:1.3!important;font-weight:700!important;letter-spacing:.03em!important;
+  text-align:left!important;text-transform:uppercase!important;vertical-align:middle!important;
+}
+.dior-patient-portal-wrap .master-table-card table.master-modern-table td{
+  padding:13px 14px!important;background:#fff!important;color:#334155!important;
+  border:0!important;border-bottom:1px solid #edf2f7!important;
+  font-family:'DM Sans','Montserrat',Arial,sans-serif!important;font-size:13px!important;
+  line-height:1.45!important;vertical-align:middle!important;
+}
+.dior-patient-portal-wrap .master-table-card table.master-modern-table tbody tr:last-child td{border-bottom:0!important}
+.dior-patient-portal-wrap .master-table-card table.master-modern-table tbody tr:hover td{background:#f8fafc!important}
+.dior-patient-portal-wrap .master-table-footer{
+  min-height:54px!important;height:auto!important;margin:0!important;padding:12px 20px!important;
+  background:#fff!important;border-top:1px solid #edf1f5!important;display:flex!important;
+  flex-direction:row!important;align-items:center!important;justify-content:space-between!important;
+  flex-wrap:nowrap!important;gap:12px!important;
+}
+.dior-patient-portal-wrap .master-table-footer .page-count{
+  flex:0 0 auto!important;margin:0!important;padding:0!important;color:#64748b!important;
+  font-family:'DM Sans','Montserrat',Arial,sans-serif!important;font-size:12px!important;
+  line-height:1.4!important;font-weight:500!important;text-align:left!important;
+}
+.dior-patient-portal-wrap .master-table-footer .master-pagination{
+  flex:0 0 auto!important;width:auto!important;margin:0 0 0 auto!important;padding:0!important;
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;
+  flex-direction:row!important;flex-wrap:nowrap!important;gap:5px!important;
+  background:transparent!important;border:0!important;
+}
+.dior-patient-portal-wrap .master-table-footer .master-pagination .page-btn,
+.dior-patient-portal-wrap .master-table-footer .master-pagination .page-num{
+  box-sizing:border-box!important;width:32px!important;min-width:32px!important;height:32px!important;
+  margin:0!important;padding:0!important;border:1px solid #e2e8f0!important;border-radius:8px!important;
+  background:#fff!important;color:#475569!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;
+  font-family:'DM Sans','Montserrat',Arial,sans-serif!important;font-size:12px!important;
+  line-height:1!important;font-weight:600!important;box-shadow:none!important;
+}
+.dior-patient-portal-wrap .master-table-footer .master-pagination .page-num.active{
+  border-color:#2c6cb1!important;background:#2c6cb1!important;color:#fff!important;
+  border-radius:50%!important;font-weight:700!important;box-shadow:0 2px 6px rgba(44,108,177,.18)!important;
+}
+.dior-patient-portal-wrap .master-table-footer .master-pagination .page-btn:hover:not(:disabled),
+.dior-patient-portal-wrap .master-table-footer .master-pagination .page-num:hover:not(.active){
+  background:#f8fafc!important;border-color:#cbd5e1!important;color:#2c6cb1!important;
+}
+.dior-patient-portal-wrap .master-table-footer .master-pagination .page-btn:disabled,
+.dior-patient-portal-wrap .master-table-footer .master-pagination .page-btn.disabled{
+  opacity:.4!important;cursor:not-allowed!important;background:#fff!important;border-color:#e2e8f0!important;
+}
+@media(max-width:767px){
+  .dior-patient-portal-wrap .master-table-footer{flex-wrap:wrap!important}
+  .dior-patient-portal-wrap .master-table-footer .master-pagination{
+    width:100%!important;margin-left:0!important;justify-content:flex-end!important;
+  }
+  .dior-patient-portal-wrap .master-table-card table.master-modern-table{min-width:680px!important}
+}
