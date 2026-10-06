@@ -94,6 +94,14 @@
     overflow-wrap: anywhere;
 }
 
+<<<<<<< HEAD
+/* Settings/profile image constraints (scoped to avoid forcing 180px on avatar edit widgets). */
+.dior-doctor-wrap #tab-doc-settings .dior-profile-avatar,
+.dior-doctor-wrap #tab-doc-settings .dior-avatar-preview {
+    max-width: 180px;
+    max-height: 180px;
+    object-fit: cover;
+=======
 /* Settings/profile image: never let the source image dictate card height. */
 .dior-doctor-wrap #tab-doc-settings img,
 .dior-doctor-wrap #tab-doc-settings .dior-profile-avatar,
@@ -103,6 +111,7 @@
     width: 180px;
     height: 180px;
     object-fit: cover !important;
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 }
 .dior-doctor-wrap #tab-doc-settings .dior-settings-card,
 .dior-doctor-wrap #tab-doc-settings .dior-profile-card {
@@ -110,6 +119,8 @@
     overflow: hidden;
 }
 
+<<<<<<< HEAD
+=======
 /* Existing inline image sizes inside profile/source cards are constrained. */
 .dior-doctor-wrap #tab-doc-settings img[style*="width"],
 .dior-doctor-wrap #tab-doc-settings img[style*="height"] {
@@ -118,13 +129,18 @@
     object-fit: cover !important;
 }
 
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 /* Prevent giant decorative headings from overflowing. */
 .dior-doctor-wrap .dior-page-watermark,
 .dior-doctor-wrap .page-watermark,
 .dior-doctor-wrap .dior-big-title {
+<<<<<<< HEAD
+    display: none !important;
+=======
     max-width: 100%;
     overflow: hidden;
     line-height: .95;
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 }
 
 /* Cards and tables should never force the whole dashboard wider than viewport. */
@@ -274,6 +290,187 @@
     }
 }
 
+<<<<<<< HEAD
+/* ==========================================================================
+   FINAL RESPONSIVE LAYOUT FIX
+   - Native 100% browser scale at 1280px; no CSS zoom.
+   - Prevents header/content compression and accidental horizontal page scroll.
+   - Keeps wide data tables scrollable inside their own containers.
+   ========================================================================== */
+.dior-doctor-wrap,
+.dior-patient-portal-wrap,
+.dior-doctor-wrap .dior-app,
+.dior-patient-portal-wrap .dior-app {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+.dior-doctor-wrap .dior-main-content,
+.dior-patient-portal-wrap .dior-main-content {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+.dior-doctor-wrap #dior-doc-content,
+.dior-patient-portal-wrap .dior-tab-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* 1280px and below: use the available viewport naturally, never zoom panels. */
+@media (max-width: 1280px) {
+    .dior-doctor-wrap .dior-topbar,
+    .dior-patient-portal-wrap .dior-topbar {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+
+    .dior-doctor-wrap .dior-content-pad,
+    .dior-patient-portal-wrap .dior-content-pad {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+
+    .dior-doctor-wrap .va-table-wrapper,
+    .dior-doctor-wrap .table-content,
+    .dior-doctor-wrap .table-responsive,
+    .dior-patient-portal-wrap .dior-table-responsive {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* Tablet / mobile navigation and header. */
+@media (max-width: 1024px) {
+    .dior-doctor-wrap .dior-main-content,
+    .dior-patient-portal-wrap .dior-main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .dior-doctor-wrap .dior-topbar,
+    .dior-patient-portal-wrap .dior-topbar {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .dior-doctor-wrap .dior-topbar,
+    .dior-patient-portal-wrap .dior-topbar {
+        height: auto !important;
+        min-height: 60px !important;
+        padding: 10px 12px !important;
+        gap: 8px !important;
+    }
+
+    .dior-doctor-wrap .dior-topbar-left,
+    .dior-patient-portal-wrap .dior-topbar-left {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        gap: 8px !important;
+    }
+
+    .dior-doctor-wrap .dior-top-search,
+    .dior-patient-portal-wrap .dior-top-search {
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        flex: 1 1 auto !important;
+        margin: 0 !important;
+        height: 42px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .dior-doctor-wrap .dior-top-search input,
+    .dior-patient-portal-wrap .dior-top-search input {
+        min-width: 0 !important;
+        font-size: 12px !important;
+    }
+
+    .dior-doctor-wrap .dior-topbar-right,
+    .dior-patient-portal-wrap .dior-topbar-right {
+        flex: 0 0 auto !important;
+        gap: 6px !important;
+    }
+
+    .dior-doctor-wrap .dior-tab-content,
+    .dior-patient-portal-wrap .dior-tab-content {
+        overflow: visible !important;
+    }
+
+    .dior-doctor-wrap .dior-content-pad,
+    .dior-patient-portal-wrap .dior-content-pad,
+    .dior-doctor-wrap #dior-doc-content,
+    .dior-patient-portal-wrap .dior-tab-container {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    /* Data tables remain readable and scroll only inside their table area. */
+    .dior-doctor-wrap .ngx-datatable,
+    .dior-doctor-wrap .ngx-datatable .datatable-header-inner,
+    .dior-doctor-wrap .ngx-datatable .datatable-body-row,
+    .dior-doctor-wrap .ngx-datatable .datatable-row-center {
+        min-width: 760px !important;
+    }
+
+    .dior-doctor-wrap .va-table,
+    .dior-patient-portal-wrap .va-table {
+        min-width: 720px !important;
+    }
+
+    .dior-doctor-wrap .master-table-card,
+    .dior-patient-portal-wrap .dior-card,
+    .dior-patient-portal-wrap .dior-box {
+        max-width: 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .dior-doctor-wrap .dior-topbar,
+    .dior-patient-portal-wrap .dior-topbar {
+        padding: 8px 10px !important;
+    }
+
+    .dior-doctor-wrap .dior-mobile-menu-toggle,
+    .dior-patient-portal-wrap .dior-mobile-menu-toggle {
+        width: 38px !important;
+        min-width: 38px !important;
+        height: 38px !important;
+        padding: 0 !important;
+    }
+
+    .dior-doctor-wrap .dior-top-search,
+    .dior-patient-portal-wrap .dior-top-search {
+        height: 40px !important;
+    }
+
+    .dior-doctor-wrap .dior-topbar-right,
+    .dior-patient-portal-wrap .dior-topbar-right {
+        gap: 4px !important;
+    }
+
+    .dior-doctor-wrap .dior-content-pad,
+    .dior-patient-portal-wrap .dior-content-pad,
+    .dior-doctor-wrap #dior-doc-content,
+    .dior-patient-portal-wrap .dior-tab-container {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+
+=======
 
 /* Patient tables: match Doctor Consultation Notes reference. Visual-only override. */
 .dior-patient-portal-wrap .master-table-card{background:#fff!important;border:1px solid #e7edf4!important;border-radius:14px!important;box-shadow:0 4px 18px rgba(15,23,42,.05)!important;overflow:hidden!important;padding:0!important}
@@ -285,3 +482,4 @@
 .dior-patient-portal-wrap .master-pagination{display:flex!important;align-items:center!important;gap:5px!important}
 .dior-patient-portal-wrap .master-pagination .page-btn,.dior-patient-portal-wrap .master-pagination .page-num{min-width:32px!important;height:32px!important;border:0!important;border-radius:7px!important;background:transparent!important;color:#64748b!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:600!important}
 .dior-patient-portal-wrap .master-pagination .page-num.active{background:#2c6cb1!important;color:#fff!important;border-radius:50%!important}
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101

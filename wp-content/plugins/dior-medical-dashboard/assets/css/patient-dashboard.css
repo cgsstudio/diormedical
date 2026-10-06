@@ -459,8 +459,8 @@
 :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel button.dior-btn-primary,
 :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel button.dior-btn-gold-primary,
 :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-page-title-bar .dior-btn-head-cta {
-    background-color: #2C6CB1 !important;
-    color: #FFFFFF !important;
+
+
     font-weight: 600 !important;
     border: none !important;
 }
@@ -5541,8 +5541,9 @@
     background: transparent !important;
     margin-bottom: 24px !important;
 }
-.master-table-card{
-    padding:0px 10px;
+
+.master-table-card {
+    padding: 0px 10px;
 }
 
 :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .master-table-card {
@@ -5892,8 +5893,21 @@
     opacity: 0.4 !important;
     cursor: not-allowed !important;
 }
+
 /* Fix Doctor Dashboard Spacing */
 @media (min-width: 1025px) {
+<<<<<<< HEAD
+    .dior-doctor-wrap .dior-side {
+        width: 260px !important;
+    }
+
+    .dior-doctor-wrap .dior-main-content {
+        margin-left: 260px !important;
+        width: calc(100% - 260px) !important;
+        max-width: calc(100% - 260px) !important;
+    }
+}
+=======
     .dior-doctor-wrap .dior-side { width: 260px !important; }
     .dior-doctor-wrap .dior-main-content { margin-left: 260px !important; width: calc(100% - 260px) !important; max-width: calc(100% - 260px) !important; }
 }
@@ -6033,3 +6047,4 @@
 :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .master-table-footer .page-count {
     text-align: left !important;
 }
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101

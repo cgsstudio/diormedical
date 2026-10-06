@@ -1,19 +1,20 @@
 <?php
 /**
  * Plugin Name: Dior Medical - Patient Portal & Dashboard
- * Plugin URI:  https://diormedical.com
+ * Plugin URI:  https://vultureconcepts.com
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version:     2.2.6
- * Author:      Dior Medical Team
- * Author URI:  https://diormedical.com
- * Text Domain: dior-medical
+
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-define( 'DIOR_PORTAL_VERSION', '2.2.6' );
+
+define('DIOR_PORTAL_VERSION', '4.1.0');
+
+define('DIOR_PORTAL_VERSION', '2.2.6');
+
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
 define('DIOR_PORTAL_URL', plugin_dir_url(__FILE__));
 
@@ -53,6 +54,12 @@ if (!class_exists('Dior_Medical_REST_API')) {
 }
 if (!class_exists('Dior_Medical_Secure_Files')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-secure-files.php');
+}
+if (!class_exists('Dior_Demo_Data')) {
+    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-demo-data.php');
+}
+if (!class_exists('Dior_Doctor_Dynamic')) {
+    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-doctor-dynamic.php');
 }
 
 /**
@@ -137,6 +144,9 @@ add_action('plugins_loaded', function () {
     if (class_exists('Dior_Medical_Secure_Files')) {
         Dior_Medical_Secure_Files::init();
     }
+    if (class_exists('Dior_Demo_Data')) {
+        Dior_Demo_Data::init();
+    }
 });
 
 
@@ -157,6 +167,46 @@ add_action('wp_head', function () {
  */
 class Dior_Patient_Portal_Data
 {
+
+    /**
+     * Keep the normalized patient table synchronized with WordPress profile data.
+     * wp_users remains the authentication source; this table is the portal data source.
+     */
+    public static function sync_relational_patient($user_id)
+    {
+        global $wpdb;
+        $user_id = (int) $user_id;
+        $user = get_userdata($user_id);
+        if (!$user)
+            return false;
+
+        $table = $wpdb->prefix . 'dior_patients';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table)
+            return false;
+
+        $dob = get_user_meta($user_id, 'dob', true) ?: get_user_meta($user_id, 'date_of_birth', true);
+        $wpdb->replace($table, [
+            'user_id' => $user_id,
+            'patient_uid' => get_user_meta($user_id, 'patient_id', true) ?: ('DM-' . (10000 + ($user_id % 90000))),
+            'first_name' => get_user_meta($user_id, 'first_name', true) ?: $user->first_name,
+            'last_name' => get_user_meta($user_id, 'last_name', true) ?: $user->last_name,
+            'email' => $user->user_email,
+            'phone' => get_user_meta($user_id, 'phone', true) ?: get_user_meta($user_id, 'billing_phone', true),
+            'dob' => $dob ? date('Y-m-d', strtotime($dob)) : null,
+            'gender' => get_user_meta($user_id, 'gender', true),
+            'blood_group' => get_user_meta($user_id, 'blood_group', true),
+            'address' => get_user_meta($user_id, 'address', true) ?: get_user_meta($user_id, 'billing_address_1', true),
+            'city' => get_user_meta($user_id, 'city', true),
+            'state' => get_user_meta($user_id, 'state', true),
+            'country' => get_user_meta($user_id, 'country', true) ?: 'United States',
+            'avatar_url' => get_user_meta($user_id, 'dior_profile_image', true) ?: get_user_meta($user_id, 'profile_image', true),
+            'status' => 'active',
+            'is_demo' => get_user_meta($user_id, 'dior_demo_record', true) ? 1 : 0,
+            'created_at' => current_time('mysql'),
+            'updated_at' => current_time('mysql'),
+        ]);
+        return true;
+    }
 
     /**
      * Get or initialize patient profile data
@@ -283,6 +333,10 @@ class Dior_Patient_Portal_Data
             'optin_reminder_dashboard' => (get_user_meta($user_id, 'optin_reminder_dashboard', true) !== '0') ? '1' : '0',
             'signature_url' => get_user_meta($user_id, 'dior_patient_signature', true) ?: '',
         ];
+
+        // Keep the normalized patient record synchronized for dynamic reporting/API use.
+        self::sync_relational_patient($user_id);
+        return $profile;
     }
 
     /**
@@ -453,13 +507,46 @@ class Dior_Patient_Portal_Data
      */
     public static function get_patient_prescriptions($user_id)
     {
-        $prescriptions = get_user_meta($user_id, 'dior_prescriptions', true);
-
-        if (!is_array($prescriptions)) {
-            $prescriptions = [];
-            update_user_meta($user_id, 'dior_prescriptions', $prescriptions);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_prescriptions';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE patient_id=%d AND status != 'Deleted' ORDER BY created_at DESC", (int) $user_id), ARRAY_A);
+            if (!empty($rows)) {
+                return array_map(static function ($row) {
+                    return [
+                        'id' => $row['prescription_uid'],
+                        'order_id' => $row['prescription_uid'],
+                        'group_id' => $row['prescription_uid'],
+                        'name' => $row['medication'],
+                        'medication' => $row['medication'],
+                        'dosage' => $row['medication'],
+                        'quantity' => $row['quantity'],
+                        'refills' => $row['refills'],
+                        'instructions' => $row['instructions'],
+                        'notes' => $row['instructions'],
+                        'status' => $row['status'],
+                        'is_active' => ($row['status'] === 'Active'),
+                        'date_prescribed' => $row['created_at'],
+                        'prescribed_by' => 'Dr. ' . (get_userdata((int) $row['doctor_id'])->display_name ?? 'Doctor'),
+                        'pharmacy' => get_user_meta($user_id, 'preferred_pharmacy_name', true),
+                        'items' => [
+                            [
+                                'id' => $row['prescription_uid'],
+                                'medication' => $row['medication'],
+                                'dosage' => $row['medication'],
+                                'quantity' => $row['quantity'],
+                                'refills' => $row['refills'],
+                                'instructions' => $row['instructions']
+                            ]
+                        ]
+                    ];
+                }, $rows);
+            }
         }
 
+        $prescriptions = get_user_meta($user_id, 'dior_prescriptions', true);
+        if (!is_array($prescriptions))
+            $prescriptions = [];
         return self::group_prescriptions($prescriptions);
     }
 
@@ -468,14 +555,15 @@ class Dior_Patient_Portal_Data
      */
     public static function get_patient_payments($user_id)
     {
-        $payments = get_user_meta($user_id, 'dior_payments', true);
-
-        if (!is_array($payments)) {
-            $payments = [];
-            update_user_meta($user_id, 'dior_payments', $payments);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_payments';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE patient_id=%d ORDER BY created_at DESC", (int) $user_id), ARRAY_A);
+            if (!empty($rows))
+                return $rows;
         }
-
-        return $payments;
+        $payments = get_user_meta($user_id, 'dior_payments', true);
+        return is_array($payments) ? $payments : [];
     }
 
     /**
@@ -506,14 +594,28 @@ class Dior_Patient_Portal_Data
      */
     public static function get_patient_notifications($user_id)
     {
-        $notifications = get_user_meta($user_id, 'dior_notifications', true);
-
-        if (!is_array($notifications)) {
-            $notifications = [];
-            update_user_meta($user_id, 'dior_notifications', $notifications);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_notifications';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE user_id=%d ORDER BY created_at DESC, id DESC LIMIT 100", (int) $user_id), ARRAY_A);
+            if (!empty($rows)) {
+                return array_map(static function ($row) {
+                    return [
+                        'id' => $row['notification_uid'],
+                        'title' => $row['title'],
+                        'message' => $row['message'],
+                        'action_url' => $row['action_url'],
+                        'icon' => $row['icon'] ?: 'fa-bell',
+                        'is_read' => (bool) $row['is_read'],
+                        'created_at' => $row['created_at'],
+                        'timestamp' => strtotime($row['created_at']),
+                        'type' => $row['type']
+                    ];
+                }, $rows);
+            }
         }
-
-        return $notifications;
+        $notifications = get_user_meta($user_id, 'dior_notifications', true);
+        return is_array($notifications) ? $notifications : [];
     }
 }
 
@@ -564,6 +666,9 @@ class Dior_Medical_Auth
 
         // Patient Dashboard AJAX Endpoints (Logged-in & Public Booking)
         add_action('wp_ajax_dior_patient_save_profile', [__CLASS__, 'ajax_save_profile']);
+        add_action('wp_ajax_dior_patient_submit_feedback', [__CLASS__, 'ajax_submit_feedback']);
+        add_action('wp_ajax_dior_patient_update_feedback', [__CLASS__, 'ajax_update_feedback']);
+        add_action('wp_ajax_dior_patient_delete_feedback', [__CLASS__, 'ajax_delete_feedback']);
         add_action('wp_ajax_dior_patient_upload_avatar', [__CLASS__, 'ajax_upload_avatar']);
         add_action('wp_ajax_dior_patient_remove_avatar', [__CLASS__, 'ajax_remove_avatar']);
         add_action('wp_ajax_dior_patient_upload_signature', [__CLASS__, 'ajax_upload_signature']);
@@ -711,6 +816,15 @@ class Dior_Medical_Auth
             ['dior-patient-dashboard', 'dior-dashboard-css'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-patient-dashboard-refactor.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-patient-dashboard-refactor.css') : DIOR_PORTAL_VERSION
         );
+
+        // Patient Dashboard shell match. Scoped to patient portal only so the Doctor Dashboard remains untouched.
+        $patient_shell_css_ver = file_exists(DIOR_PORTAL_PATH . 'assets/css/patient-dashboard-shell-match.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/patient-dashboard-shell-match.css') : DIOR_PORTAL_VERSION;
+        wp_enqueue_style(
+            'dior-patient-dashboard-shell-match',
+            DIOR_PORTAL_URL . 'assets/css/patient-dashboard-shell-match.css',
+            ['dior-doctor-source-tabs'],
+            $patient_shell_css_ver
+        );
         wp_enqueue_style(
             'dior-doctor-dashboard-refactor',
             DIOR_PORTAL_URL . 'assets/css/dior-doctor-dashboard-refactor.css',
@@ -722,6 +836,39 @@ class Dior_Medical_Auth
             DIOR_PORTAL_URL . 'assets/css/dior-doctor-source-tabs.css',
             ['dior-doctor-dashboard-refactor'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') : DIOR_PORTAL_VERSION
+        );
+        wp_enqueue_style(
+
+            'dior-view-appointment-css',
+            DIOR_PORTAL_URL . 'assets/css/view-appointment.css',
+            ['dior-doctor-source-tabs'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/view-appointment.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/view-appointment.css') : DIOR_PORTAL_VERSION
+        );
+        wp_enqueue_style(
+            'dior-documents-css',
+            DIOR_PORTAL_URL . 'assets/css/documents.css',
+            ['dior-view-appointment-css'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/documents.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/documents.css') : DIOR_PORTAL_VERSION
+        );
+        wp_enqueue_style(
+            'dior-doctor-tabs-unify',
+            DIOR_PORTAL_URL . 'assets/css/dior-doctor-tabs-unify.css',
+            ['dior-static-responsive-fix', 'font-awesome-6'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-tabs-unify.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-tabs-unify.css') : DIOR_PORTAL_VERSION
+        );
+
+        // Isolated UI improvements: never targets the Patient Overview or non-dashboard Doctor pages.
+        wp_enqueue_style(
+            'dior-patient-non-overview-improvements',
+            DIOR_PORTAL_URL . 'assets/css/dior-patient-non-overview-improvements.css',
+            ['dior-doctor-tabs-unify'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-patient-non-overview-improvements.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-patient-non-overview-improvements.css') : DIOR_PORTAL_VERSION
+        );
+        wp_enqueue_style(
+            'dior-doctor-calendar-rebuild',
+            DIOR_PORTAL_URL . 'assets/css/dior-doctor-calendar-rebuild.css',
+            ['dior-doctor-tabs-unify'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-calendar-rebuild.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-calendar-rebuild.css') : DIOR_PORTAL_VERSION
         );
         wp_enqueue_style(
             'dior-static-responsive-fix',
@@ -769,12 +916,22 @@ class Dior_Medical_Auth
             true
         );
 
+        wp_enqueue_script(
+            'dior-patient-live',
+            DIOR_PORTAL_URL . 'assets/js/dior-patient-live.js',
+            [],
+            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-live.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-live.js') : DIOR_PORTAL_VERSION,
+            true
+        );
+
+
+
         // Dashboard JS
         wp_enqueue_script(
             'dior-dashboard-js',
             DIOR_PORTAL_URL . 'assets/js/dior-dashboard.js',
             ['jquery', 'sweetalert2', 'html2pdf'],
-            $js_ver,
+            time(),
             true
         );
 
@@ -794,7 +951,14 @@ class Dior_Medical_Auth
             'dior-patient-dashboard-page-js',
             DIOR_PORTAL_URL . 'assets/js/dior-patient-dashboard.js',
             ['dior-dashboard-js'],
-            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-dashboard.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-dashboard.js') : DIOR_PORTAL_VERSION,
+            time(),
+            true
+        );
+        wp_enqueue_script(
+            'dior-patient-static-actions',
+            DIOR_PORTAL_URL . 'assets/js/dior-patient-static-actions.js',
+            ['dior-patient-dashboard-page-js'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-static-actions.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-static-actions.js') : DIOR_PORTAL_VERSION,
             true
         );
         wp_enqueue_script(
@@ -809,6 +973,21 @@ class Dior_Medical_Auth
             DIOR_PORTAL_URL . 'assets/js/dior-doctor-source-tabs.js',
             ['dior-doctor-js'],
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-source-tabs.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-source-tabs.js') : DIOR_PORTAL_VERSION,
+            true
+        );
+
+        // Unified static dashboard table interactions (pagination + edit/delete).
+        wp_enqueue_style(
+            'dior-static-table-interactions',
+            DIOR_PORTAL_URL . 'assets/css/dior-static-table-interactions.css',
+            ['dior-doctor-tabs-unify'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-static-table-interactions.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-static-table-interactions.css') : DIOR_PORTAL_VERSION
+        );
+        wp_enqueue_script(
+            'dior-static-table-interactions',
+            DIOR_PORTAL_URL . 'assets/js/dior-static-table-interactions.js',
+            ['dior-patient-dashboard-page-js', 'dior-doctor-dashboard-page-js', 'dior-doctor-source-tabs-js'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-static-table-interactions.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-static-table-interactions.js') : DIOR_PORTAL_VERSION,
             true
         );
 
@@ -857,6 +1036,10 @@ class Dior_Medical_Auth
 
         wp_localize_script('dior-auth-js', 'dior_auth_vars', $localize_data);
         wp_localize_script('dior-dashboard-js', 'dior_vars', $localize_data);
+        wp_localize_script('dior-patient-live', 'dior_patient_live_vars', [
+            'ajax_url' => $localize_data['ajax_url'],
+            'nonce' => $localize_data['nonce'],
+        ]);
 
         $patient_page_data = [
             'ajax_url' => admin_url('admin-ajax.php'),
@@ -1342,32 +1525,32 @@ class Dior_Medical_Auth
                 if (data && data.length) {
                     data.forEach(doc => {
                         html += `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(${doc.id}, '${doc.name.replace(/'/g, "\\'")}')">
-                                                                            <h4>${doc.name}</h4>
-                                                                            <p>${doc.speciality}</p>
-                                                                        </div>`;
+                                                                                                    <h4>${doc.name}</h4>
+                                                                                                    <p>${doc.speciality}</p>
+                                                                                                </div>`;
                     });
                 } else {
                     html = `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                        <h4>Dr. James Chen, DO</h4>
-                                                                        <p>Primary Care & Urgent Care</p>
-                                                                    </div>
-                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                        <h4>Dr. Marcus Sterling, DO</h4>
-                                                                        <p>Urgent Care Physician</p>
-                                                                    </div>`;
+                                                                                                <h4>Dr. James Chen, DO</h4>
+                                                                                                <p>Primary Care & Urgent Care</p>
+                                                                                            </div>
+                                                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
+                                                                                                <h4>Dr. Marcus Sterling, DO</h4>
+                                                                                                <p>Urgent Care Physician</p>
+                                                                                            </div>`;
                 }
                 document.getElementById('doctors-list').innerHTML = html;
             })
             .catch(() => {
                 document.getElementById('doctors-list').innerHTML = `
-                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                <h4>Dr. James Chen, DO</h4>
-                                                                <p>Primary Care & Urgent Care</p>
-                                                            </div>
-                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                <h4>Dr. Marcus Sterling, DO</h4>
-                                                                <p>Urgent Care Physician</p>
-                                                            </div>`;
+                                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
+                                                                                        <h4>Dr. James Chen, DO</h4>
+                                                                                        <p>Primary Care & Urgent Care</p>
+                                                                                    </div>
+                                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
+                                                                                        <h4>Dr. Marcus Sterling, DO</h4>
+                                                                                        <p>Urgent Care Physician</p>
+                                                                                    </div>`;
             });
     }
 
@@ -1434,12 +1617,12 @@ class Dior_Medical_Auth
         diorBookingState.time = time;
 
         document.getElementById('booking-summary').innerHTML = `
-                                                    <p><strong>Treatment:</strong> ${diorBookingState.departmentName || 'Telehealth Urgent Care'}</p>
-                                                    <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
-                                                    <p><strong>Date:</strong> ${diorBookingState.date}</p>
-                                                    <p><strong>Time:</strong> ${diorBookingState.time}</p>
-                                                    <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
-                                                `;
+                                                                            <p><strong>Treatment:</strong> ${diorBookingState.departmentName || 'Telehealth Urgent Care'}</p>
+                                                                            <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
+                                                                            <p><strong>Date:</strong> ${diorBookingState.date}</p>
+                                                                            <p><strong>Time:</strong> ${diorBookingState.time}</p>
+                                                                            <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
+                                                                        `;
         diorBookingGoToStep(4);
     }
 
@@ -1543,8 +1726,8 @@ class Dior_Medical_Auth
             </div>
 
             <div class="dior-auth-actions" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-                <a href="<?php echo esc_url($dash_url); ?>" class="dior-btn-auth-primary"><i
-                        class="fa-solid fa-gauge-high"></i> <?php echo esc_html($dash_label); ?></a>
+                <a href="<?php echo esc_url($dash_url); ?>"
+                    class="dior-btn-auth-primary"><?php echo esc_html($dash_label); ?></a>
                 <a href="<?php echo esc_url(wp_logout_url(home_url('/diro-login/'))); ?>"
                     class="dior-btn-auth-secondary">Sign Out</a>
             </div>
@@ -2100,14 +2283,7 @@ class Dior_Medical_Auth
                 ['id' => 'DEMO-Q-002', 'title' => 'Pre-Consultation Questionnaire', 'status' => 'Pending', 'updated_at' => $demo_today],
             ];
         }
-        if (empty($notifications)) {
-            $dior_demo_mode = true;
-            $notifications = [
-                ['id' => 'DEMO-N-001', 'title' => 'Appointment Confirmed', 'message' => 'Your appointment with Dr. Sarah Smith is confirmed.', 'created_at' => current_time('mysql'), 'is_read' => false, 'action_url' => '#tab=appointments'],
-                ['id' => 'DEMO-N-002', 'title' => 'Prescription Available', 'message' => 'A new prescription is available in your dashboard.', 'created_at' => current_time('mysql'), 'is_read' => false, 'action_url' => '#tab=docs_meds'],
-                ['id' => 'DEMO-N-003', 'title' => 'Report Uploaded', 'message' => 'Your latest blood test report is available.', 'created_at' => current_time('mysql'), 'is_read' => true, 'action_url' => '#tab=documents'],
-            ];
-        }
+        // Notifications are always dynamic from database - no demo fallback
 
         // Calculate stats
         $next_appointment = null;
@@ -2139,7 +2315,7 @@ class Dior_Medical_Auth
         $latest_rx = !empty($prescriptions) ? $prescriptions[0] : null;
 
         ob_start();
-?>
+        ?>
 <?php include DIOR_PORTAL_PATH . 'templates/patient-dashboard.php'; ?>
 <?php
                 return ob_get_clean();
@@ -2599,6 +2775,9 @@ class Dior_Medical_Auth
         $raw_dob = trim(sanitize_text_field($_POST['dob'] ?? ''));
         $gender = trim(sanitize_text_field($_POST['gender'] ?? 'Female'));
         $address = trim(sanitize_text_field($_POST['address'] ?? ''));
+        $blood_group = trim(sanitize_text_field($_POST['blood_group'] ?? ''));
+        $city = trim(sanitize_text_field($_POST['city'] ?? ''));
+        $country = trim(sanitize_text_field($_POST['country'] ?? 'United States'));
 
         // Normalize DOB to YYYY-MM-DD
         $dob = $raw_dob;
@@ -2698,6 +2877,10 @@ class Dior_Medical_Auth
         update_user_meta($user_id, 'gender', $gender);
         update_user_meta($user_id, 'address', $address);
         update_user_meta($user_id, 'billing_address_1', $address);
+        update_user_meta($user_id, 'blood_group', $blood_group);
+        update_user_meta($user_id, 'city', $city);
+        update_user_meta($user_id, 'country', $country);
+        Dior_Patient_Portal_Data::sync_relational_patient($user_id);
         update_user_meta($user_id, 'emergency_name', $em_name);
         update_user_meta($user_id, 'emergency_relation', $em_rel);
         update_user_meta($user_id, 'emergency_phone', $em_phone);
@@ -2736,6 +2919,218 @@ class Dior_Medical_Auth
             'message' => 'Personal information updated successfully in database!',
             'profile' => $updated_profile,
             'is_complete' => $is_complete
+        ]);
+    }
+
+    /**
+     * Save patient feedback and notify the selected doctor.
+     */
+    public static function ajax_submit_feedback()
+    {
+        Dior_Auth_Service::verify_ajax_nonce(['dior_portal_nonce', 'dior_auth_nonce']);
+
+        $patient_id = get_current_user_id();
+        if (!$patient_id) {
+            wp_send_json_error(['message' => 'Please sign in before submitting feedback.'], 401);
+        }
+
+        $subject = sanitize_text_field(wp_unslash($_POST['subject'] ?? ''));
+        $comment = sanitize_textarea_field(wp_unslash($_POST['message'] ?? ''));
+        $rating = absint($_POST['rating'] ?? 0);
+
+        if ($subject === '' || $comment === '') {
+            wp_send_json_error(['message' => 'Please enter a subject and feedback message.'], 400);
+        }
+        if ($rating < 1 || $rating > 5) {
+            wp_send_json_error(['message' => 'Please choose a rating from 1 to 5 stars.'], 400);
+        }
+
+        $doctor_id = 0;
+        $is_assigned_doctor = false;
+        foreach (Dior_Appointment_Service::get_patient_appointments($patient_id) as $appointment) {
+            $assigned_doctor_id = (int) ($appointment['doctor_user_id'] ?? 0);
+            if ($assigned_doctor_id && get_userdata($assigned_doctor_id)) {
+                $doctor_id = $assigned_doctor_id;
+                $is_assigned_doctor = true;
+                break;
+            }
+        }
+        if (!$doctor_id) {
+            $doctors = get_users(['role' => 'doctor', 'orderby' => 'display_name', 'order' => 'ASC', 'number' => 1, 'fields' => 'ID']);
+            $doctor_id = !empty($doctors) ? (int) $doctors[0] : 0;
+        }
+
+        $doctor = $doctor_id ? get_userdata($doctor_id) : false;
+        $doctor_roles = $doctor ? (array) $doctor->roles : [];
+        if (!$doctor || (!in_array('doctor', $doctor_roles, true) && !$is_assigned_doctor)) {
+            wp_send_json_error(['message' => 'No doctor is linked to your account yet. Please contact support.'], 403);
+        }
+
+        global $wpdb;
+        $reviews_table = $wpdb->prefix . 'dior_reviews';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $reviews_table)) !== $reviews_table) {
+            wp_send_json_error(['message' => 'Feedback storage is temporarily unavailable. Please try again later.'], 500);
+        }
+
+        $now = current_time('mysql');
+        $inserted = $wpdb->insert($reviews_table, [
+            'review_uid' => 'REV-' . wp_generate_uuid4(),
+            'patient_id' => $patient_id,
+            'doctor_id' => $doctor_id,
+            'subject' => $subject,
+            'rating' => $rating,
+            'comment' => $comment,
+            'status' => 'Pending',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ], ['%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s']);
+
+        if (!$inserted) {
+            wp_send_json_error(['message' => 'Your feedback could not be saved. Please try again.'], 500);
+        }
+
+        $patient = get_userdata($patient_id);
+        $patient_name = $patient ? $patient->display_name : 'A patient';
+        $doctor_name = trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name;
+        $doctor_name = preg_replace('/^(?:dr\.?\s*)+/i', '', $doctor_name);
+        $doctor_name = 'Dr. ' . $doctor_name;
+        if (class_exists('Dior_Notification_Service')) {
+            Dior_Notification_Service::add_dashboard_notification(
+                $doctor_id,
+                'New Patient Feedback',
+                $patient_name . ' submitted a ' . $rating . '-star review. Open Patient Reviews to view it.',
+                home_url('/doctor-dashboard/#tab=doc-patient-review'),
+                'fa-star',
+                true
+            );
+        }
+
+        wp_send_json_success([
+            'message' => 'Thank you. Your feedback was sent to your doctor.',
+            'review' => [
+                'id' => (int) $wpdb->insert_id,
+                'subject' => $subject,
+                'doctor' => $doctor_name,
+                'rating' => $rating,
+                'message' => $comment,
+                'date' => wp_date('M j, Y', current_time('timestamp')),
+                'status' => 'Pending',
+            ],
+        ]);
+    }
+
+    /**
+     * Update existing patient feedback
+     */
+    public static function ajax_update_feedback()
+    {
+        Dior_Auth_Service::verify_ajax_nonce(['dior_portal_nonce', 'dior_auth_nonce']);
+
+        $patient_id = get_current_user_id();
+        if (!$patient_id) {
+            wp_send_json_error(['message' => 'Please sign in before updating feedback.'], 401);
+        }
+
+        $feedback_id = absint($_POST['feedback_id'] ?? 0);
+        if (!$feedback_id) {
+            wp_send_json_error(['message' => 'Invalid feedback ID.'], 400);
+        }
+
+        $subject = sanitize_text_field(wp_unslash($_POST['subject'] ?? ''));
+        $comment = sanitize_textarea_field(wp_unslash($_POST['message'] ?? ''));
+        $rating = absint($_POST['rating'] ?? 0);
+
+        if ($subject === '' || $comment === '') {
+            wp_send_json_error(['message' => 'Please enter a subject and feedback message.'], 400);
+        }
+        if ($rating < 1 || $rating > 5) {
+            wp_send_json_error(['message' => 'Please choose a rating from 1 to 5 stars.'], 400);
+        }
+
+        global $wpdb;
+        $reviews_table = $wpdb->prefix . 'dior_reviews';
+
+        // Verify ownership
+        $existing = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$reviews_table} WHERE id = %d AND patient_id = %d",
+            $feedback_id,
+            $patient_id
+        ));
+
+        if (!$existing) {
+            wp_send_json_error(['message' => 'Feedback not found or you do not have permission to edit it.'], 403);
+        }
+
+        $now = current_time('mysql');
+        $updated = $wpdb->update($reviews_table, [
+            'subject' => $subject,
+            'rating' => $rating,
+            'comment' => $comment,
+            'updated_at' => $now,
+        ], ['id' => $feedback_id, 'patient_id' => $patient_id], ['%s', '%d', '%s', '%s'], ['%d', '%d']);
+
+        if ($updated === false) {
+            wp_send_json_error(['message' => 'Your feedback could not be updated. Please try again.'], 500);
+        }
+
+        $doctor = get_userdata($existing->doctor_id);
+        $doctor_name = trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name;
+        $doctor_name = preg_replace('/^(?:dr\.?\s*)+/i', '', $doctor_name);
+        $doctor_name = 'Dr. ' . $doctor_name;
+
+        wp_send_json_success([
+            'message' => 'Feedback updated successfully.',
+            'review' => [
+                'id' => $feedback_id,
+                'subject' => $subject,
+                'doctor' => $doctor_name,
+                'rating' => $rating,
+                'message' => $comment,
+                'date' => wp_date('M j, Y', strtotime($existing->created_at)),
+                'status' => $existing->status,
+            ],
+        ]);
+    }
+
+    /**
+     * Delete patient feedback
+     */
+    public static function ajax_delete_feedback()
+    {
+        Dior_Auth_Service::verify_ajax_nonce(['dior_portal_nonce', 'dior_auth_nonce']);
+
+        $patient_id = get_current_user_id();
+        if (!$patient_id) {
+            wp_send_json_error(['message' => 'Please sign in before deleting feedback.'], 401);
+        }
+
+        $feedback_id = absint($_POST['feedback_id'] ?? 0);
+        if (!$feedback_id) {
+            wp_send_json_error(['message' => 'Invalid feedback ID.'], 400);
+        }
+
+        global $wpdb;
+        $reviews_table = $wpdb->prefix . 'dior_reviews';
+
+        // Verify ownership
+        $existing = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$reviews_table} WHERE id = %d AND patient_id = %d",
+            $feedback_id,
+            $patient_id
+        ));
+
+        if (!$existing) {
+            wp_send_json_error(['message' => 'Feedback not found or you do not have permission to delete it.'], 403);
+        }
+
+        $deleted = $wpdb->delete($reviews_table, ['id' => $feedback_id, 'patient_id' => $patient_id], ['%d', '%d']);
+
+        if ($deleted === false) {
+            wp_send_json_error(['message' => 'Your feedback could not be deleted. Please try again.'], 500);
+        }
+
+        wp_send_json_success([
+            'message' => 'Feedback deleted successfully.',
         ]);
     }
 
@@ -3336,38 +3731,38 @@ class Dior_Medical_Auth
 
             if (!$existing_appt) {
                 $created_result = Dior_Appointment_Service::book_appointment([
-                'patient_id' => $patient_user_id,
-                'doctor_id' => $docbooker_doctor_id ?: $doctor_user_id,
-                'doctor_user_id' => $doctor_user_id,
-                'provider' => $doctor_name,
-                'condition' => $notes ?: 'General Telehealth Consultation',
-                'visit_type' => 'Video Visit (HD)',
-                'appt_date' => $date,
-                'appt_time' => $time,
-                'join_url' => 'https://zoom.us/join',
-                'payment_status' => 'Paid',
-                'notes' => $notes,
-                'booking_id' => $booking_id
+                    'patient_id' => $patient_user_id,
+                    'doctor_id' => $docbooker_doctor_id ?: $doctor_user_id,
+                    'doctor_user_id' => $doctor_user_id,
+                    'provider' => $doctor_name,
+                    'condition' => $notes ?: 'General Telehealth Consultation',
+                    'visit_type' => 'Video Visit (HD)',
+                    'appt_date' => $date,
+                    'appt_time' => $time,
+                    'join_url' => 'https://zoom.us/join',
+                    'payment_status' => 'Paid',
+                    'notes' => $notes,
+                    'booking_id' => $booking_id
                 ]);
                 $docbooker_created_appointment = !is_wp_error($created_result);
             }
 
             // 2. Add Patient Notification only when this hook created the canonical record.
             if ($docbooker_created_appointment) {
-            $p_notifs = Dior_Patient_Portal_Data::get_patient_notifications($patient_user_id);
-            array_unshift($p_notifs, [
-                'id' => 'NOTIF-' . time() . '-' . rand(100, 999),
-                'type' => 'appointment',
-                'icon' => 'fa-calendar-check',
-                'title' => 'Appointment Booked Successfully',
-                'message' => 'Your visit with ' . $doctor_name . ' is confirmed for ' . $date . ' at ' . $time . '.',
-                'time' => 'Just now',
-                'timestamp' => time(),
-                'created_at' => current_time('mysql'),
-                'is_read' => false,
-                'action_url' => '#tab=appointments'
-            ]);
-            update_user_meta($patient_user_id, 'dior_notifications', $p_notifs);
+                $p_notifs = Dior_Patient_Portal_Data::get_patient_notifications($patient_user_id);
+                array_unshift($p_notifs, [
+                    'id' => 'NOTIF-' . time() . '-' . rand(100, 999),
+                    'type' => 'appointment',
+                    'icon' => 'fa-calendar-check',
+                    'title' => 'Appointment Booked Successfully',
+                    'message' => 'Your visit with ' . $doctor_name . ' is confirmed for ' . $date . ' at ' . $time . '.',
+                    'time' => 'Just now',
+                    'timestamp' => time(),
+                    'created_at' => current_time('mysql'),
+                    'is_read' => false,
+                    'action_url' => '#tab=appointments'
+                ]);
+                update_user_meta($patient_user_id, 'dior_notifications', $p_notifs);
             }
         }
 
@@ -3668,6 +4063,11 @@ class Dior_Medical_Auth
         }
 
         update_user_meta($user_id, 'dior_notifications', $notifications);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_notifications';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $wpdb->update($table, ['is_read' => 1, 'read_at' => current_time('mysql')], ['notification_uid' => $notif_id, 'user_id' => $user_id]);
+        }
         wp_send_json_success(['message' => 'Notification marked as read.']);
     }
 
@@ -3688,6 +4088,11 @@ class Dior_Medical_Auth
         }
 
         update_user_meta($user_id, 'dior_notifications', $notifications);
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_notifications';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
+            $wpdb->update($table, ['is_read' => 1, 'read_at' => current_time('mysql')], ['user_id' => $user_id]);
+        }
         wp_send_json_success(['message' => 'All notifications marked as read.']);
     }
 

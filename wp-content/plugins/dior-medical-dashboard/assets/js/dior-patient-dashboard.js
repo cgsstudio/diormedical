@@ -120,10 +120,12 @@ let diorBookingState = {
                 } else {
                     html = '<button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(1, \'Urgent Care Telehealth\')">Urgent Care Telehealth</button><button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(2, \'Primary Care & General Medicine\')">Primary Care</button>';
                 }
-                document.getElementById('treatments-list').innerHTML = html;
+                let el = document.getElementById('treatments-list');
+                if (el) el.innerHTML = html;
             })
             .catch(() => {
-                document.getElementById('treatments-list').innerHTML = '<button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(1, \'Urgent Care Telehealth\')">Urgent Care Telehealth</button><button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(2, \'Primary Care & General Medicine\')">Primary Care</button>';
+                let el = document.getElementById('treatments-list');
+                if (el) el.innerHTML = '<button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(1, \'Urgent Care Telehealth\')">Urgent Care Telehealth</button><button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(2, \'Primary Care & General Medicine\')">Primary Care</button>';
             });
     }
 
@@ -519,14 +521,6 @@ let diorUpcomingCurrentPage = 1;
                                 diorUpdateUpcomingSelectedCount();
                             }
 
-                            function diorDeleteUpcomingRow(btn) {
-                                const row = btn.closest('tr');
-                                if (row) {
-                                    row.remove();
-                                    diorRenderUpcomingPagination();
-                                }
-                            }
-
                             function diorBulkDeleteUpcomingRows() {
                                 const checkedBoxes = document.querySelectorAll('.upcoming-row-checkbox:checked');
                                 checkedBoxes.forEach(function(cb) {
@@ -697,11 +691,11 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                         // Switch inner tab
                         var panels = document.querySelectorAll('.dior-subtab-panel');
                         panels.forEach(function(panel) {
-                            if (panel.id === 'dior-subtab-' + targetSubTab) {
-                                panel.style.display = 'block';
-                            } else {
-                                panel.style.display = 'none';
-                            }
+                            panel.style.setProperty(
+                                'display',
+                                panel.id === 'dior-subtab-' + targetSubTab ? 'block' : 'none',
+                                'important'
+                            );
                         });
                     };
 
@@ -2119,10 +2113,70 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
 (function () {
     'use strict';
 
+<<<<<<< HEAD
+    function switchPatientTab(tabId, updateHash) {
+        var panel = document.getElementById('tab-' + tabId);
+        if (!panel) {
+            return false;
+        }
+
+        document.querySelectorAll('.dior-nav-btn[data-tab]').forEach(function (btn) {
+            if (btn.getAttribute('data-tab') === tabId) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        document.querySelectorAll('.dior-tab-panel').forEach(function (item) {
+            if (item.id === 'tab-' + tabId) {
+                item.classList.add('active');
+                item.style.setProperty('display', 'block', 'important');
+                item.style.setProperty('visibility', 'visible', 'important');
+                item.style.setProperty('opacity', '1', 'important');
+            } else {
+                item.classList.remove('active');
+                item.style.setProperty('display', 'none', 'important');
+            }
+        });
+
+        var title = document.getElementById('dior-current-page-title');
+        var titles = {
+            overview: 'Patient Overview',
+            appointments: 'Telehealth Appointments',
+            docs_meds: 'Medical Docs & Prescriptions',
+            telemedicine: 'Telemedicine',
+            medical_record: 'Medical Record',
+            payments: 'Billing & Payment Statements',
+            insurance: 'Insurance Claim',
+            documents: 'Documents & Reports',
+            emergency: 'Emergency Support',
+            feedback: 'Feedback & Support',
+            notifications: 'Notification Inbox',
+            consultation: 'Consultation Room',
+            settings: 'Settings',
+            questionnaire: 'Clinical Intake Questionnaires'
+        };
+        if (title && titles[tabId]) title.textContent = titles[tabId];
+
+        if (updateHash !== false && window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
+        }
+
+        return true;
+    }
+
+    // Always expose this function immediately so inline onclick handlers never throw ReferenceError
+    window.diorSwitchTab = switchPatientTab;
+
+=======
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
     function initPatientMainTabNavigation() {
         var app = document.getElementById('dior-patient-portal-app');
         if (!app) return;
 
+<<<<<<< HEAD
+=======
         function switchPatientTab(tabId, updateHash) {
             var panel = document.getElementById('tab-' + tabId);
             if (!panel) {
@@ -2166,6 +2220,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         // Expose one canonical function for existing buttons/links.
         window.diorSwitchTab = switchPatientTab;
 
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
         // Delegated listener means dynamically rendered buttons also work.
         if (!app.__diorPatientNavBound) {
             app.__diorPatientNavBound = true;
@@ -2178,7 +2233,10 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 if (!tabId) return;
 
                 event.preventDefault();
+<<<<<<< HEAD
+=======
                 event.stopPropagation();
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
                 switchPatientTab(tabId);
 
                 if (tabId === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
@@ -2193,7 +2251,10 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             link.__diorPatientSubtabBound = true;
             link.addEventListener('click', function (event) {
                 event.preventDefault();
+<<<<<<< HEAD
+=======
                 event.stopPropagation();
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
                 switchPatientTab('appointments');
                 if (typeof window.diorSwitchApptSubTab === 'function') {
                     window.diorSwitchApptSubTab(link.getAttribute('data-appt-subtab'));

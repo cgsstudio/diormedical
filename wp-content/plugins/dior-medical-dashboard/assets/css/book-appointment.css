@@ -1,0 +1,223 @@
+/* Premium Styles for Book/Edit Appointment Forms */
+
+.appointment-form-wrapper .card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+    border: none;
+    overflow: hidden;
+    margin-bottom: 30px;
+    margin-top: 25px;
+}
+
+.appointment-form-wrapper .card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #EEF2F6;
+    padding: 24px 30px;
+}
+
+.appointment-form-wrapper .card-header h4 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1E293B;
+    margin: 0;
+}
+
+.appointment-form-wrapper .card-body {
+    padding: 30px;
+}
+
+.appointment-form-wrapper .card-inside-title {
+    color: #4F46E5 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    margin-bottom: 20px !important;
+    margin-top: 30px !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid #EEF2F6 !important;
+}
+
+.appointment-form-wrapper .card-inside-title:first-of-type {
+    margin-top: 0 !important;
+}
+
+.appointment-form-wrapper label {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    margin-bottom: 8px !important;
+}
+
+.appointment-form-wrapper .form-control,
+.appointment-form-wrapper .form-select {
+    padding: 10px 15px !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    color: #334155 !important;
+    background-color: #ffffff !important;
+}
+
+.appointment-form-wrapper .form-control:focus,
+.appointment-form-wrapper .form-select:focus {
+    border-color: #4F46E5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+/* File Upload Area */
+.appointment-form-wrapper .file-upload-wrapper {
+    border: 2px dashed #CBD5E1;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #F8FAFC;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.appointment-form-wrapper .file-upload-wrapper:hover {
+    border-color: #4F46E5;
+    background-color: #EEF2FF;
+}
+
+.appointment-form-wrapper .file-upload-wrapper i {
+    font-size: 32px;
+    color: #94A3B8;
+    margin-bottom: 15px;
+}
+
+.appointment-form-wrapper .file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Buttons */
+.appointment-form-wrapper .btn-primary {
+    background-color: #4F46E5 !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2) !important;
+}
+
+.appointment-form-wrapper .btn-light {
+    background-color: #F1F5F9 !important;
+    color: #475569 !important;
+    border: none !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+/* Time Slot Radio Buttons */
+.appointment-form-wrapper .btn-outline-primary {
+    color: #4F46E5 !important;
+    border-color: #4F46E5 !important;
+    background-color: #ffffff !important;
+    border-radius: 6px !important;
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    margin-right: 5px !important;
+    margin-bottom: 5px !important;
+}
+
+.appointment-form-wrapper .btn-check:checked + .btn-outline-primary {
+    background-color: #4F46E5 !important;
+    color: #ffffff !important;
+}
+
+.appointment-form-wrapper .btn-outline-primary:hover {
+    background-color: #EEF2FF !important;
+}
+
+/* AI Auto-Match Button */
+.appointment-form-wrapper .btn-sm.btn-outline-primary.rounded-pill {
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+/* Breadcrumbs */
+.appointment-form-wrapper .breadcrumb-list {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 8px !important;
+}
+
+.appointment-form-wrapper .breadcrumb-list li {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 14px !important;
+    margin: 0 !important;
+}
+
+.appointment-form-wrapper .breadcrumb-list li::before {
+    content: none !important;
+}
+
+.appointment-form-wrapper .breadcrumb-list li a,
+.appointment-form-wrapper .breadcrumb-list li span {
+    font-size: 14px !important;
+    line-height: 1 !important;
+    color: #64748B !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+}
+
+.appointment-form-wrapper .breadcrumb-list li.active {
+    color: #1E293B !important;
+    font-weight: 700 !important;
+}
+
+.appointment-form-wrapper h6 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1E293B;
+    margin-bottom: 12px;
+}
+
+.appointment-form-wrapper,
+.appointment-form-wrapper * {
+    font-family: 'Montserrat', 'DMSans', 'DM Sans', sans-serif;
+}
+.appointment-form-wrapper i[class*="fa-"] {
+    font-family: "Font Awesome 6 Free" !important;
+    font-style: normal !important;
+}
+
+@media (max-width: 1280px) {
+    .appointment-form-wrapper .card-header h4 { font-size: 18px; }
+    .appointment-form-wrapper .card-body { padding: 24px; }
+}
+@media (max-width: 1200px) {
+    .appointment-form-wrapper .card-header { padding: 18px 22px; }
+    .appointment-form-wrapper .card-header h4 { font-size: 17px; }
+    .appointment-form-wrapper .card-inside-title { font-size: 14px !important; }
+    .appointment-form-wrapper label,
+    .appointment-form-wrapper .form-control,
+    .appointment-form-wrapper h6 { font-size: 13px; }
+}
+@media (max-width: 768px) {
+    .appointment-form-wrapper .card-header h4 { font-size: 16px; }
+    .appointment-form-wrapper .card-body { padding: 16px; }
+    .appointment-form-wrapper label,
+    .appointment-form-wrapper .form-control,
+    .appointment-form-wrapper h6 { font-size: 12px; }
+}

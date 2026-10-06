@@ -1,0 +1,191 @@
+/* edit-patient.css - Custom styling for Edit Patient Tab */
+
+.edit-patient-wrapper {
+    padding-bottom: 30px;
+}
+
+/* Breadcrumb override */
+.edit-patient-wrapper .breadcrumb-list {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 8px !important;
+}
+
+.edit-patient-wrapper .breadcrumb-list li {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 14px !important;
+    margin: 0 !important;
+}
+
+.edit-patient-wrapper .breadcrumb-list li::before {
+    content: none !important;
+}
+
+.edit-patient-wrapper .breadcrumb-list li a,
+.edit-patient-wrapper .breadcrumb-list li span {
+    font-size: 14px !important;
+    line-height: 1 !important;
+    color: #64748B !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+}
+
+.edit-patient-wrapper .breadcrumb-list li.active span {
+    color: #1E293B !important;
+    font-weight: 700 !important;
+}
+
+/* Card Styling */
+.edit-patient-wrapper .card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+    border: none;
+    margin-top: 10px;
+}
+
+.edit-patient-wrapper .card-header {
+    background: transparent;
+    padding: 24px 30px 10px 30px;
+    border-bottom: 0px solid transparent;
+}
+
+.edit-patient-wrapper .card-header h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1E293B;
+    margin: 0;
+}
+
+.edit-patient-wrapper .card-body {
+    padding: 10px 30px 30px 30px;
+}
+
+/* Form Styles */
+.edit-patient-wrapper .card-inside-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #4F46E5;
+    margin-bottom: 20px;
+    margin-top: 15px;
+}
+
+.edit-patient-wrapper .card-inside-title.mt-4 {
+    margin-top: 30px !important;
+}
+
+.edit-patient-wrapper label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+.edit-patient-wrapper .text-danger {
+    color: #EF4444 !important;
+}
+
+.edit-patient-wrapper .form-control,
+.edit-patient-wrapper .form-select {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #334155;
+    background-color: #ffffff;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+
+.edit-patient-wrapper .form-control:focus,
+.edit-patient-wrapper .form-select:focus {
+    border-color: #4F46E5;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.edit-patient-wrapper .form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+.edit-patient-wrapper .mb-3 {
+    margin-bottom: 20px !important;
+}
+
+/* Action Buttons */
+.edit-patient-wrapper .btn-primary {
+    background-color: #4F46E5;
+    border-color: #4F46E5;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.edit-patient-wrapper .btn-primary:hover {
+    background-color: #4338CA;
+    border-color: #4338CA;
+}
+
+.edit-patient-wrapper .btn-light {
+    background-color: #F1F5F9;
+    border-color: #E2E8F0;
+    color: #475569;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.edit-patient-wrapper .btn-light:hover {
+    background-color: #E2E8F0;
+    color: #334155;
+}
+
+.edit-patient-wrapper .me-2 {
+    margin-right: 12px !important;
+}
+
+.edit-patient-wrapper,
+.edit-patient-wrapper * {
+    font-family: 'Montserrat', 'DMSans', 'DM Sans', sans-serif;
+}
+.edit-patient-wrapper i[class*="fa-"] {
+    font-family: "Font Awesome 6 Free" !important;
+    font-style: normal !important;
+}
+
+@media (max-width: 1280px) {
+    .edit-patient-wrapper .card-header h4 { font-size: 16px; }
+    .edit-patient-wrapper .card-inside-title { font-size: 15px; }
+}
+@media (max-width: 1200px) {
+    .edit-patient-wrapper .card-header,
+    .edit-patient-wrapper .card-body { padding-left: 22px; padding-right: 22px; }
+    .edit-patient-wrapper .form-control,
+    .edit-patient-wrapper label { font-size: 13px; }
+}
+@media (max-width: 768px) {
+    .edit-patient-wrapper .card-header,
+    .edit-patient-wrapper .card-body { padding: 16px; }
+    .edit-patient-wrapper .card-header h4 { font-size: 15px; }
+    .edit-patient-wrapper .card-inside-title,
+    .edit-patient-wrapper .form-control,
+    .edit-patient-wrapper label,
+    .edit-patient-wrapper .btn-primary,
+    .edit-patient-wrapper .btn-light { font-size: 12px; }
+}

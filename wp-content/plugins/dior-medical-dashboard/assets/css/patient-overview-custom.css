@@ -1,0 +1,699 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+#tab-overview.custom-patient-overview {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 14px;
+  background: #f5faff;
+  color: #171717;
+  padding: 31px 29px 36px;
+}
+
+#tab-overview.custom-patient-overview button,
+#tab-overview.custom-patient-overview input {
+  font: inherit;
+}
+
+#tab-overview.custom-patient-overview .content-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+#tab-overview.custom-patient-overview h1 {
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+  color: #225a92;
+  font-size: 35px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+#tab-overview.custom-patient-overview .subtitle {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: #555;
+}
+
+#tab-overview.custom-patient-overview .gold-btn {
+  border: 0;
+  background: #d4a719;
+  color: #fff;
+  border-radius: 28px;
+  height: 56px;
+  padding: 0 29px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#tab-overview.custom-patient-overview .gold-btn svg {
+  width: 17px;
+  height: 17px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2;
+}
+
+#tab-overview.custom-patient-overview .dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 485px;
+  gap: 15px;
+  align-items: start;
+}
+
+#tab-overview.custom-patient-overview .left-col,
+#tab-overview.custom-patient-overview .right-col {
+  min-width: 0;
+}
+
+#tab-overview.custom-patient-overview .stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 15px;
+}
+
+#tab-overview.custom-patient-overview .card {
+  background: #fff;
+  border: 1px solid #bfd7ec;
+  border-radius: 18px;
+}
+
+#tab-overview.custom-patient-overview .stat-card {
+  height: 157px;
+  padding: 27px 22px;
+}
+
+#tab-overview.custom-patient-overview .stat-num {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 39px;
+  font-weight: 600;
+  color: #2e6fb6;
+  line-height: 1;
+}
+
+#tab-overview.custom-patient-overview .stat-label {
+  font-size: 13px;
+  margin-top: 39px;
+  font-weight: 500;
+}
+
+#tab-overview.custom-patient-overview .mid-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 15px;
+}
+
+#tab-overview.custom-patient-overview .patient-card {
+  height: 253px;
+  padding: 20px 38px 15px;
+}
+
+#tab-overview.custom-patient-overview .patient-top {
+  display: flex;
+  align-items: center;
+  gap: 19px;
+}
+
+#tab-overview.custom-patient-overview .patient-photo {
+  width: 137px;
+  height: 137px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #a6cbe8;
+  flex: none;
+  background: #eaf3fb;
+}
+
+#tab-overview.custom-patient-overview .patient-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#tab-overview.custom-patient-overview .patient-info h2 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 26px;
+  color: #245f9c;
+  margin: 0 0 5px;
+}
+
+#tab-overview.custom-patient-overview .patient-id {
+  display: inline-block;
+  border: 1px solid #d9e2ec;
+  border-radius: 10px;
+  padding: 3px 9px;
+  font-size: 9px;
+  color: #34404d;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+#tab-overview.custom-patient-overview .age {
+  font-size: 13px;
+  margin-bottom: 31px;
+}
+
+#tab-overview.custom-patient-overview .metrics {
+  display: flex;
+  gap: 0;
+}
+
+#tab-overview.custom-patient-overview .metric {
+  min-width: 85px;
+}
+
+#tab-overview.custom-patient-overview .metric + .metric {
+  border-left: 1px solid #b7cde0;
+  padding-left: 22px;
+  margin-left: 20px;
+}
+
+#tab-overview.custom-patient-overview .metric strong {
+  font-size: 15px;
+}
+
+#tab-overview.custom-patient-overview .metric span {
+  display: block;
+  font-size: 9px;
+  margin-top: 5px;
+}
+
+#tab-overview.custom-patient-overview .edit-btn {
+  height: 38px;
+  width: 100%;
+  border: 0;
+  border-radius: 20px;
+  background: #2d72ba;
+  color: #fff;
+  font-size: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+#tab-overview.custom-patient-overview .goals-card {
+  height: 253px;
+  padding: 20px 24px;
+}
+
+#tab-overview.custom-patient-overview .section-title {
+  color: #2465a8;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d5e3ef;
+}
+
+#tab-overview.custom-patient-overview .goal {
+  margin-bottom: 17px;
+}
+
+#tab-overview.custom-patient-overview .goal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+#tab-overview.custom-patient-overview .goal-value {
+  color: #999;
+  font-size: 11px;
+}
+
+#tab-overview.custom-patient-overview .progress {
+  height: 8px;
+  border-radius: 5px;
+  background: #d7e1e9;
+  overflow: hidden;
+}
+
+#tab-overview.custom-patient-overview .progress i {
+  display: block;
+  height: 100%;
+  background: #ff970f;
+}
+
+#tab-overview.custom-patient-overview .table-card {
+  padding: 29px 29px 24px;
+  margin-bottom: 15px;
+}
+
+#tab-overview.custom-patient-overview .table-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#tab-overview.custom-patient-overview .table-head .section-title {
+  flex: 1;
+  margin-bottom: 14px;
+}
+
+#tab-overview.custom-patient-overview .view-all {
+  color: #0f61aa;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#tab-overview.custom-patient-overview .table-wrap {
+  overflow: hidden;
+}
+
+/* Reset theme (hello-elementor reset.css) table overrides */
+#tab-overview.custom-patient-overview table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+  border: none !important;
+  border-spacing: 0 !important;
+  margin: 0 !important;
+  background-color: transparent !important;
+}
+
+#tab-overview.custom-patient-overview thead tr,
+#tab-overview.custom-patient-overview tbody tr,
+#tab-overview.custom-patient-overview tr {
+  background: #fff !important;
+  background-color: #fff !important;
+  border: none !important;
+  line-height: normal !important;
+}
+
+/* Override theme odd-row background */
+#tab-overview.custom-patient-overview tbody > tr:nth-child(odd) > td,
+#tab-overview.custom-patient-overview tbody > tr:nth-child(odd) > th {
+  background-color: #fff !important;
+}
+
+#tab-overview.custom-patient-overview th {
+  text-align: left !important;
+  color: #1763ad !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 11px 10px !important;
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  line-height: 1.4 !important;
+  vertical-align: middle !important;
+}
+
+#tab-overview.custom-patient-overview td {
+  font-size: 12px !important;
+  padding: 10px 10px !important;
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.4 !important;
+  vertical-align: middle !important;
+}
+
+#tab-overview.custom-patient-overview tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+#tab-overview.custom-patient-overview tbody tr:hover td,
+#tab-overview.custom-patient-overview tbody tr:hover th {
+  background-color: #f7fbff !important;
+}
+
+#tab-overview.custom-patient-overview .status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  height: 25px;
+  padding: 0 10px;
+  border-radius: 15px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+#tab-overview.custom-patient-overview .status.cancel { background: #fde1e5; color: #f0435a; }
+#tab-overview.custom-patient-overview .status.progressing { background: #fff0df; color: #c97600; }
+#tab-overview.custom-patient-overview .status.done { background: #e1f5e6; color: #238b3e; }
+#tab-overview.custom-patient-overview .status.normal { background: #e1f5e6; color: #238b3e; }
+#tab-overview.custom-patient-overview .status.abnormal { background: #f6ead1; color: #a96300; }
+
+#tab-overview.custom-patient-overview .lab-card {
+  padding: 29px 29px 23px;
+}
+
+#tab-overview.custom-patient-overview .lab-table td,
+#tab-overview.custom-patient-overview .lab-table th {
+  padding-right: 12px;
+}
+
+#tab-overview.custom-patient-overview .download {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 6px !important;
+  background: #2c8d45 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  border: none !important;
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#tab-overview.custom-patient-overview .download svg {
+  width: 14px !important;
+  height: 14px !important;
+  stroke: #ffffff !important;
+  stroke-width: 2.5 !important;
+  fill: none !important;
+  display: block !important;
+  pointer-events: none !important;
+}
+
+#tab-overview.custom-patient-overview .doctor-card {
+  height: 252px;
+  padding: 27px 28px;
+  background: #edf6ff;
+}
+
+#tab-overview.custom-patient-overview .doctor-top {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+#tab-overview.custom-patient-overview .doctor-photo {
+  width: 126px;
+  height: 126px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #9dc6e8;
+  flex: none;
+}
+
+#tab-overview.custom-patient-overview .doctor-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#tab-overview.custom-patient-overview .doctor-copy {
+  min-width: 0;
+}
+
+#tab-overview.custom-patient-overview .doctor-type {
+  font-size: 12px;
+  color: #0f62a7;
+  font-weight: 700;
+  margin-bottom: 9px;
+}
+
+#tab-overview.custom-patient-overview .doctor-role {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
+
+#tab-overview.custom-patient-overview .doctor-name {
+  font-size: 12px;
+  margin-bottom: 18px;
+}
+
+#tab-overview.custom-patient-overview .meta {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+#tab-overview.custom-patient-overview .meta span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+#tab-overview.custom-patient-overview .meta svg {
+  width: 14px;
+  height: 14px;
+  stroke: #333;
+  fill: none;
+  stroke-width: 1.5;
+}
+
+#tab-overview.custom-patient-overview .doctor-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 17px;
+}
+
+#tab-overview.custom-patient-overview .primary-btn,
+#tab-overview.custom-patient-overview .outline-btn {
+  height: 38px;
+  border-radius: 21px;
+  padding: 0 18px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#tab-overview.custom-patient-overview .primary-btn {
+  background: #2c71b7;
+  color: #fff;
+  border: 1px solid #2c71b7;
+}
+
+#tab-overview.custom-patient-overview .outline-btn {
+  background: #fff;
+  color: #1763ad;
+  border: 1px solid #5992c7;
+}
+
+#tab-overview.custom-patient-overview .upcoming {
+  padding: 29px 28px 18px;
+  margin-top: 15px;
+}
+
+#tab-overview.custom-patient-overview .consult {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 14px;
+  padding: 13px 0 24px;
+  border-bottom: 1px solid #d5e3ef;
+}
+
+#tab-overview.custom-patient-overview .consult:last-child {
+  border-bottom: 0;
+  padding-bottom: 4px;
+}
+
+#tab-overview.custom-patient-overview .consult-photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #a4cbe8;
+}
+
+#tab-overview.custom-patient-overview .consult-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#tab-overview.custom-patient-overview .consult-role {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 3px 0 9px;
+}
+
+#tab-overview.custom-patient-overview .consult-name {
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+#tab-overview.custom-patient-overview .consult-meta {
+  font-size: 10px;
+  display: flex;
+  gap: 18px;
+  margin-bottom: 11px;
+}
+
+#tab-overview.custom-patient-overview .reschedule {
+  height: 29px;
+  padding: 0 17px;
+  border: 1px solid #5e9bd0;
+  border-radius: 17px;
+  background: #fff;
+  color: #1763ad;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+#tab-overview.custom-patient-overview .prescriptions {
+  padding: 29px 28px 15px;
+  margin-top: 15px;
+}
+
+#tab-overview.custom-patient-overview .rx {
+  padding: 15px 0 18px;
+  border-bottom: 1px solid #d5e3ef;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+#tab-overview.custom-patient-overview .rx:last-child {
+  border-bottom: 0;
+}
+
+#tab-overview.custom-patient-overview .rx-name {
+  font-size: 14px;
+  margin-bottom: 7px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+#tab-overview.custom-patient-overview .rx-doctor {
+  font-size: 10px;
+  color: #444;
+}
+
+#tab-overview.custom-patient-overview .rx-status {
+  min-width: 82px;
+  height: 20px;
+  border-radius: 11px;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+}
+
+#tab-overview.custom-patient-overview .rx-active {
+  background: #2b8c44;
+}
+
+#tab-overview.custom-patient-overview .rx-inactive {
+  background: #ad6900;
+}
+
+@media (max-width: 1400px) {
+  #tab-overview.custom-patient-overview .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr) 390px;
+  }
+  #tab-overview.custom-patient-overview .patient-card {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+  #tab-overview.custom-patient-overview .patient-photo {
+    width: 120px;
+    height: 120px;
+  }
+  #tab-overview.custom-patient-overview .doctor-role {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 1100px) {
+  #tab-overview.custom-patient-overview .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  #tab-overview.custom-patient-overview .right-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  #tab-overview.custom-patient-overview .doctor-card,
+  #tab-overview.custom-patient-overview .upcoming,
+  #tab-overview.custom-patient-overview .prescriptions {
+    margin-top: 0;
+  }
+  #tab-overview.custom-patient-overview .prescriptions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  #tab-overview.custom-patient-overview h1 {
+    font-size: 28px;
+  }
+  #tab-overview.custom-patient-overview .gold-btn {
+    height: 46px;
+    padding: 0 17px;
+    font-size: 11px;
+  }
+  #tab-overview.custom-patient-overview .stats {
+    grid-template-columns: 1fr;
+  }
+  #tab-overview.custom-patient-overview .stat-card {
+    height: 115px;
+  }
+  #tab-overview.custom-patient-overview .stat-label {
+    margin-top: 20px;
+  }
+  #tab-overview.custom-patient-overview .mid-grid,
+  #tab-overview.custom-patient-overview .right-col {
+    grid-template-columns: 1fr;
+  }
+  #tab-overview.custom-patient-overview .patient-card,
+  #tab-overview.custom-patient-overview .goals-card {
+    height: auto;
+    min-height: 230px;
+  }
+  #tab-overview.custom-patient-overview .table-card,
+  #tab-overview.custom-patient-overview .lab-card {
+    overflow-x: auto;
+  }
+  #tab-overview.custom-patient-overview table {
+    min-width: 650px;
+  }
+  #tab-overview.custom-patient-overview .doctor-card {
+    height: auto;
+  }
+  #tab-overview.custom-patient-overview .upcoming,
+  #tab-overview.custom-patient-overview .prescriptions {
+    height: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  #tab-overview.custom-patient-overview .content-head {
+    display: block;
+  }
+  #tab-overview.custom-patient-overview .gold-btn {
+    margin-top: 15px;
+  }
+  #tab-overview.custom-patient-overview .patient-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  #tab-overview.custom-patient-overview .patient-card {
+    padding: 20px;
+  }
+  #tab-overview.custom-patient-overview .patient-photo {
+    width: 110px;
+    height: 110px;
+  }
+  #tab-overview.custom-patient-overview .doctor-top {
+    align-items: flex-start;
+  }
+  #tab-overview.custom-patient-overview .doctor-photo {
+    width: 100px;
+    height: 100px;
+  }
+}

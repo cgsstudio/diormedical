@@ -1,4 +1,18 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-insurance">
+    <!-- Breadcrumb Header -->
+    <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
+        <div>
+            <h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Insurance & Claims</h4>
+        </div>
+        <div>
+            <ul class="va-breadcrumb-list">
+                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><span style="color:#94A3B8;">/</span></li>
+                <li class="active"><span>Insurance & Claims</span></li>
+            </ul>
+        </div>
+    </div>
+
     <div class="master-table-wrapper">
         <div class="master-table-container">
             <div class="master-table-card">
@@ -28,7 +42,7 @@
                     </div>
                 </div>
                 <div class="table-content">
-                    <table class="master-modern-table" id="dior-insurance-table">
+                    <table class="va-table" id="dior-insurance-table">
                         <thead>
                             <tr>
                                 <th class="dior-ic-3fa4d8d717">
@@ -47,10 +61,9 @@
                         </thead>
                         <tbody id="dior-insurance-tbody">
                             <?php
-                            $insurance_claims = get_user_meta($user_id, 'dior_insurance_claims', true);
-                            $insurance_claims = is_array($insurance_claims) ? $insurance_claims : [];
-                            if (empty($insurance_claims) && !empty($dior_demo_mode)) {
-                                $insurance_claims = [['claim_id'=>'DEMO-CLM-001','policy_id'=>'DEMO-POL-001','claim_date'=>current_time('Y-m-d'),'claim_type'=>'Consultation','provider'=>'Dior Medical','submitted'=>'Submitted','status'=>'In Review','amount'=>'$120']];
+                            if (empty($dior_patient_design_static)) {
+                                $insurance_claims = get_user_meta($user_id, 'dior_insurance_claims', true);
+                                $insurance_claims = is_array($insurance_claims) ? $insurance_claims : [];
                             }
                             ?>
                             <?php if (!empty($insurance_claims)): ?>
@@ -75,7 +88,7 @@
                     </table>
                 </div>
                 <div class="master-table-footer">
-                    <span class="page-count" id="dior-insurance-page-count">0 selected / <?php echo count($insurance_mock); ?> total</span>
+                    <span class="page-count" id="dior-insurance-page-count">0 selected / <?php echo count($insurance_claims); ?> total</span>
                     
                     <div class="master-pagination" id="dior-insurance-pagination">
                     </div>

@@ -15,6 +15,52 @@ if (!defined('ABSPATH')) {
 
 class Dior_Appointment_Service
 {
+    private static function doctor_owns_appointment($appointment, $user_id)
+    {
+        $user_id = (int) $user_id;
+        if (!$user_id || Dior_Auth_Service::is_admin($user_id)) return (bool) $user_id;
+        if (!Dior_Auth_Service::is_doctor($user_id)) return false;
+
+        $doctor_ids = class_exists('Dior_Doctor_Resolver')
+            ? Dior_Doctor_Resolver::get_accessible_doctor_ids($user_id)
+            : [$user_id];
+        $appointment_doctor_id = (int) ($appointment['doctor_id'] ?? 0);
+        if (in_array($appointment_doctor_id, $doctor_ids, true)) return true;
+
+        if (class_exists('Dior_Doctor_Resolver') && $appointment_doctor_id) {
+            return (int) Dior_Doctor_Resolver::resolve_doctor_user_id($appointment_doctor_id) === $user_id;
+        }
+        return false;
+    }
+
+    /**
+     * Persist an appointment lifecycle event without breaking the booking flow.
+     */
+    private static function log_history($appt, $action, $extra = [])
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_appointment_history';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table || empty($appt)) return;
+        $wpdb->insert($table, [
+            'appointment_id' => isset($appt['id']) ? (int) $appt['id'] : null,
+            'appt_uid' => sanitize_text_field($appt['appt_uid'] ?? ''),
+            'patient_id' => (int) ($appt['patient_id'] ?? 0),
+            'doctor_id' => (int) ($appt['doctor_id'] ?? 0),
+            'action' => sanitize_key($action),
+            'old_status' => sanitize_text_field($extra['old_status'] ?? ''),
+            'new_status' => sanitize_text_field($extra['new_status'] ?? ($appt['status'] ?? '')),
+            'old_date' => !empty($extra['old_date']) ? $extra['old_date'] : null,
+            'new_date' => !empty($extra['new_date']) ? $extra['new_date'] : ($appt['appt_date'] ?? null),
+            'old_time' => sanitize_text_field($extra['old_time'] ?? ''),
+            'new_time' => sanitize_text_field($extra['new_time'] ?? ($appt['appt_time'] ?? '')),
+            'changed_by' => (int) (Dior_Auth_Service::get_current_user_id() ?: 0),
+            'notes' => sanitize_textarea_field($extra['notes'] ?? ''),
+            'created_at' => current_time('mysql'),
+        ]);
+    }
+
+    public static function log_history_public($appt, $action, $extra = []) { self::log_history($appt, $action, $extra); }
+
     /**
      * Valid state transitions map
      */
@@ -98,6 +144,9 @@ class Dior_Appointment_Service
             return new WP_Error('db_error', 'Failed to schedule appointment.');
         }
 
+        $created_appt = self::get_appointment_by_uid($appt_uid);
+        self::log_history($created_appt, 'created', ['new_status' => 'Confirmed']);
+
         Dior_Audit_Service::log('appointment_book', 'appointment', $appt_uid, $patient_id, 'success', [
             'doctor_id' => $doctor_id,
             'date'      => $appt_date,
@@ -157,7 +206,7 @@ class Dior_Appointment_Service
         }
 
         $current_user_id = Dior_Auth_Service::get_current_user_id();
-        $is_doc = Dior_Auth_Service::is_doctor($current_user_id);
+        $is_doc = self::doctor_owns_appointment($appt, $current_user_id);
         $is_pat = (int)$appt['patient_id'] === $current_user_id;
 
         if (!$is_doc && !$is_pat && !Dior_Auth_Service::is_admin($current_user_id)) {
@@ -219,6 +268,17 @@ class Dior_Appointment_Service
             return new WP_Error('db_error', 'Failed to update appointment schedule in database.');
         }
 
+        // Persist appointment lifecycle history.
+        self::log_history(self::get_appointment($appt['appt_uid']), 'rescheduled', [
+            'old_status' => $appt['status'],
+            'new_status' => 'Confirmed',
+            'old_date' => $old_date,
+            'new_date' => $valid_date,
+            'old_time' => $old_time,
+            'new_time' => $clean_time,
+            'notes' => $notes
+        ]);
+
         // Audit Logging
         Dior_Audit_Service::log('appointment_reschedule', 'appointment', $appt['appt_uid'], $appt['patient_id'], 'success', [
             'from' => $old_date . ' ' . $old_time,
@@ -258,7 +318,7 @@ class Dior_Appointment_Service
         }
 
         $current_user_id = Dior_Auth_Service::get_current_user_id();
-        $is_doc = Dior_Auth_Service::is_doctor($current_user_id);
+        $is_doc = self::doctor_owns_appointment($appt, $current_user_id);
         $is_pat = (int)$appt['patient_id'] === $current_user_id;
 
         if (!$is_doc && !$is_pat && !Dior_Auth_Service::is_admin($current_user_id)) {
@@ -293,6 +353,12 @@ class Dior_Appointment_Service
             return new WP_Error('db_error', 'Failed to update appointment status in database.');
         }
 
+        self::log_history(self::get_appointment($appt['appt_uid']), 'cancelled', [
+            'old_status' => $appt['status'],
+            'new_status' => 'Cancelled',
+            'notes' => $clean_reason
+        ]);
+
         // Audit Logging
         Dior_Audit_Service::log('appointment_cancel', 'appointment', $appt['appt_uid'], $appt['patient_id'], 'success', [
             'reason' => $clean_reason,
@@ -324,6 +390,14 @@ class Dior_Appointment_Service
             return new WP_Error('not_found', 'Appointment not found.');
         }
 
+        $current_user_id = Dior_Auth_Service::get_current_user_id();
+        if ($sender === 'doctor' && !self::doctor_owns_appointment($appt, $current_user_id)) {
+            return new WP_Error('unauthorized', 'This appointment is not assigned to your doctor account.');
+        }
+        if ($sender === 'patient' && (int) $appt['patient_id'] !== $current_user_id) {
+            return new WP_Error('unauthorized', 'This appointment does not belong to your patient account.');
+        }
+
         if (!class_exists('Dior_Notification_Service')) {
             return new WP_Error('service_unavailable', 'Notification service unavailable.');
         }
@@ -352,7 +426,7 @@ class Dior_Appointment_Service
         }
 
         $current_user_id = Dior_Auth_Service::get_current_user_id();
-        $is_doc = Dior_Auth_Service::is_doctor($current_user_id);
+        $is_doc = self::doctor_owns_appointment($appt, $current_user_id);
         $is_pat = (int)$appt['patient_id'] === $current_user_id;
 
         if (!$is_doc && !$is_pat && !Dior_Auth_Service::is_admin($current_user_id)) {
@@ -414,23 +488,40 @@ class Dior_Appointment_Service
 
             $doc_id = (int)$r['doctor_id'];
             $doc_user_id = 0;
+            $doc_name = '';
+            $doc_spec = '';
             if ($doc_id) {
                 $candidate = get_userdata($doc_id);
-                if ($candidate && (in_array('doctor', (array)$candidate->roles, true) || in_array('administrator', (array)$candidate->roles, true))) {
-                    $doc_user_id = $candidate->ID;
+                $merged_doctor_id = $candidate ? (int) get_user_meta($candidate->ID, '_dior_merged_into_doctor_id', true) : 0;
+                if ($candidate && $merged_doctor_id) {
+                    $doc_user_id = $merged_doctor_id;
+                    $doc_name = trim($candidate->first_name . ' ' . $candidate->last_name) ?: $candidate->display_name;
+                    $doc_spec = get_user_meta($candidate->ID, 'doctor_specialty', true);
+                } elseif ($candidate && (in_array('doctor', (array)$candidate->roles, true) || in_array('administrator', (array)$candidate->roles, true))) {
+                    $doc_user_id = class_exists('Dior_Doctor_Resolver')
+                        ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($candidate->ID)
+                        : (int) $candidate->ID;
+                    $doc_name = trim($candidate->first_name . ' ' . $candidate->last_name) ?: $candidate->display_name;
+                    $doc_spec = get_user_meta($candidate->ID, 'doctor_specialty', true);
                 } elseif (class_exists('Dior_Doctor_Resolver')) {
                     $doctor_post = get_post($doc_id);
                     if ($doctor_post && $doctor_post->post_type === 'wpddb_doctor') {
                         $doc_user_id = (int)Dior_Doctor_Resolver::resolve_doctor_user_id($doc_id);
+                        $doc_name = $doctor_post->post_title;
+                        $doc_spec = get_post_meta($doc_id, 'wpddb_doctor_speciality', true);
                     }
                 }
             }
             $doc_user = $doc_user_id ? get_userdata($doc_user_id) : null;
-            $doc_name = $doc_user ? 'Dr. ' . (trim($doc_user->first_name . ' ' . $doc_user->last_name) ?: $doc_user->display_name) : 'Attending Physician';
+            if ($doc_name === '') {
+                $doc_name = $doc_user ? (trim($doc_user->first_name . ' ' . $doc_user->last_name) ?: $doc_user->display_name) : 'Attending Physician';
+            }
+            $doc_name = preg_replace('/^(?:dr\.?\s*)+/i', '', trim($doc_name));
+            if ($doc_name !== '' && $doc_name !== 'Attending Physician') $doc_name = 'Dr. ' . $doc_name;
             $r['doctor_user_id'] = $doc_user_id;
             $r['provider'] = $doc_name;
             $r['doctor_name'] = $doc_name;
-            $r['provider_spec'] = $doc_user ? (get_user_meta($doc_user->ID, 'doctor_specialty', true) ?: 'Telehealth Physician') : 'Telehealth Physician';
+            $r['provider_spec'] = $doc_spec ?: ($doc_user ? (get_user_meta($doc_user->ID, 'doctor_specialty', true) ?: 'Telehealth Physician') : 'Telehealth Physician');
 
             $status = $r['status'] ?? 'Confirmed';
             $r['can_reschedule'] = in_array($status, ['Confirmed', 'Pending', 'Scheduled', 'In-Queue'], true);
@@ -462,7 +553,10 @@ class Dior_Appointment_Service
                 (string)$doctor_id
             ));
             
-            $allowed_ids = array_unique(array_filter(array_merge([(int)$doctor_id], array_map('intval', (array)$linked_post_ids))));
+            $managed_ids = class_exists('Dior_Doctor_Resolver')
+                ? Dior_Doctor_Resolver::get_accessible_doctor_ids((int) $doctor_id)
+                : [(int) $doctor_id];
+            $allowed_ids = array_unique(array_filter(array_merge($managed_ids, array_map('intval', (array)$linked_post_ids))));
             
             // If primary clinic default doctor, allow general/unassigned appointments
             if ($doctor_id == $default_doc_id) {

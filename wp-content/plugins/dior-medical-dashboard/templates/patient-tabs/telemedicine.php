@@ -1,34 +1,44 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-telemedicine">
-    <div class="master-table-wrapper">
-        <div class="master-table-container">
-            <div class="master-table-card">
-                <div class="master-table-header">
-                    <div class="header-content">
-                        <div class="table-title-section">
-                            <h2 class="table-title">Telemedicine / Video Consultations</h2>
-                            <div class="title-accent"></div>
+    <!-- Breadcrumb Header -->
+    <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
+        <div>
+            <h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Telemedicine</h4>
+        </div>
+        <div>
+            <ul class="va-breadcrumb-list">
+                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><span style="color:#94A3B8;">/</span></li>
+                <li class="active"><span>Telemedicine</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="docs-card">
+                <div class="docs-header-container">
+                    <div class="docs-title-box">
+                        <h2>Telemedicine / Video Consultations</h2>
+                        <div class="docs-title-line"></div>
+                    </div>
+                    <div class="docs-actions-wrapper">
+                        <div class="docs-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="dior-tele-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterTele()">
                         </div>
-                        <div class="header-actions-group">
-                            <div class="search-container">
-                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                                <input type="text" id="dior-tele-search-input" placeholder="Search records..." aria-label="Search box" class="search-input" onkeyup="diorFilterTele()">
-                            </div>
-                            <div class="action-buttons">
-                                <button type="button" aria-label="Add new record" class="action-btn action-btn-primary dior-ic-54410f9b78">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                                <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success" title="Export to CSV" onclick="diorDownloadTeleCSV()">
-                                    <i class="fa-solid fa-file-arrow-down"></i>
-                                </button>
-                                <button type="button" aria-label="Refresh data" class="action-btn action-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                    <i class="fa-solid fa-rotate-right"></i>
-                                </button>
-                            </div>
+                        <div class="docs-actions-group">
+                            <button type="button" aria-label="Add new record" class="docs-icon-btn docs-btn-primary dior-ic-54410f9b78">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadTeleCSV()">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                            </button>
+                            <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="table-content">
-                    <table class="master-modern-table" id="dior-tele-table">
+                <div class="docs-table-wrapper">
+                    <table class="docs-table" id="dior-tele-table">
                         <thead>
                             <tr>
                                 <th class="dior-ic-3fa4d8d717">
@@ -66,7 +76,11 @@
                                         <td><span class="cell-text"><?php echo esc_html($apt['type'] ?? ($apt['visit_type'] ?? 'Video Visit')); ?></span></td>
                                         <td><div class="cell-content"><div class="badge-solid <?php echo esc_attr($tele_class); ?>"><?php echo esc_html($tele_status); ?></div></div></td>
                                         <td><div class="cell-actions">
-                                            <?php if (!empty($apt['join_url']) && !in_array(strtolower($tele_status), ['completed','cancelled','no show'], true)): ?><a class="action-icon-btn edit-btn" title="Join" href="<?php echo esc_url($apt['join_url']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-video"></i></a><?php endif; ?>
+                                            <button type="button" class="action-icon-btn edit-btn" title="View Session" onclick="diorViewTelemedicine(this)"><i class="fa-regular fa-eye"></i></button>
+                                            <?php if (!in_array(strtolower($tele_status), ['completed','cancelled','no show'], true)): ?>
+                                                <?php if (!empty($apt['join_url'])): ?><a class="action-icon-btn" title="Join Consultation" href="<?php echo esc_url($apt['join_url']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-video"></i></a><?php else: ?><button type="button" class="action-icon-btn" title="Join Consultation" onclick="diorViewTelemedicine(this)"><i class="fa-solid fa-video"></i></button><?php endif; ?>
+                                            <?php endif; ?>
+                                            <button type="button" class="action-icon-btn delete-btn" title="Cancel Session" onclick="diorDeleteStaticRow(this, 'telemedicine')"><i class="fa-solid fa-xmark"></i></button>
                                         </div></td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -76,14 +90,10 @@
 </tbody>
                     </table>
                 </div>
-                <div class="master-table-footer">
-                    <span class="page-count" id="dior-tele-page-count">0 selected / <?php echo count($tele_mock); ?> total</span>
-                    
-                    <div class="master-pagination" id="dior-tele-pagination">
-                    </div>
+                <div class="docs-pagination-container">
+                    <span class="docs-showing-text" id="dior-tele-page-count">0 selected / <?php echo count($appointments); ?> total</span>
+                    <div id="dior-tele-pagination"></div>
                 </div>
-            </div>
-        </div>
     </div>
     
 </section>

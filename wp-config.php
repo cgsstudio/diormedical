@@ -15,8 +15,7 @@ define( 'WP_CACHE', true ); // Added by WP Rocket
  * * Database table prefix
  * * ABSPATH
  *
- * @link https://developer.wordpress.org/advanced-administration/wordpress/wp-config/
- *
+ 
  * @package WordPress
  */
 

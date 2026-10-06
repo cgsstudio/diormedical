@@ -1,4 +1,18 @@
 <section class="dior-tab-panel" id="tab-appointments">
+    <!-- Breadcrumb Header -->
+    <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
+        <div>
+            <h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Book Appointment</h4>
+        </div>
+        <div>
+            <ul class="va-breadcrumb-list">
+                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><span style="color:#94A3B8;">/</span></li>
+                <li class="active"><span>Book Appointment</span></li>
+            </ul>
+        </div>
+    </div>
+
                 <?php
                     // Robust date normalizer: handles Y-m-d, d-m-Y, m-d-Y, d/m/Y etc.
                     if (!function_exists('dior_normalize_date')) {
@@ -239,33 +253,31 @@
 
                         <!-- 2. Today Appointments -->
                         <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-today">
-                            <div class="master-table-wrapper">
-                                <div class="master-table-container">
-                                    <div class="master-table-card">
-                                        <div class="master-table-header">
-                                            <div class="header-content">
-                                                <div class="table-title-section">
-                                                    <h2 class="table-title">Today's Appointments</h2>
-                                                    <div class="title-accent"></div>
+                            <div class="va-table-wrapper">
+                                <div class="va-table-wrapper">
+                                    <div class="docs-card">
+                                        <div class="docs-header-container">
+                                            <div class="docs-title-box">
+                                                <h2>Today's Appointments</h2>
+                                                <div class="docs-title-line"></div>
+                                            </div>
+                                            <div class="docs-actions-wrapper">
+                                                <div class="docs-search-box">
+                                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                                    <input type="text" id="dior-today-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterTodayAppointments()">
                                                 </div>
-                                                <div class="header-actions-group">
-                                                    <div class="search-container">
-                                                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                                                        <input type="text" id="dior-today-search-input" placeholder="Search records..." aria-label="Search box" class="search-input" onkeyup="diorFilterTodayAppointments()">
-                                                    </div>
-                                                    <div class="action-buttons">
-                                                        <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success" title="Export to CSV" onclick="diorDownloadTodayAppointmentsCSV()">
-                                                            <i class="fa-solid fa-file-arrow-down"></i>
-                                                        </button>
-                                                        <button type="button" aria-label="Refresh data" class="action-btn action-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                                            <i class="fa-solid fa-rotate-right"></i>
-                                                        </button>
-                                                    </div>
+                                                <div class="docs-actions-group">
+                                                    <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadTodayAppointmentsCSV()">
+                                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                                    </button>
+                                                    <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
+                                                        <i class="fa-solid fa-rotate-right"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="table-content">
-                                            <table class="master-modern-table" id="dior-today-appointments-table">
+                                        <div class="docs-table-wrapper">
+                                            <table class="docs-table" id="dior-today-appointments-table">
                                                 <thead>
                                                     <tr>
                                                         <th>DOCTOR <i class="fa-solid fa-sort"></i></th>
@@ -287,6 +299,9 @@
                                                         ['Dr.Jens Brincker', 'Endocrinologist', 'Jun 12, 2020', '04:00-05:00', 'Diabetes', '+123 45678345', 'Cancelled', 'https://randomuser.me/api/portraits/men/75.jpg'],
                                                         ['Dr.Jamie Blair', 'Radiologist', 'Jun 12, 2020', '05:00-05:30', 'Diabetes', '+123 45678345', 'Confirm', 'https://randomuser.me/api/portraits/women/49.jpg'],
                                                         ['Dr.Nikki Barton', 'Endocrinologist', 'Jun 12, 2020', '06:00-07:00', 'X-Ray', '+123 45678345', 'Pending', 'https://randomuser.me/api/portraits/men/85.jpg']
+                                                        ,['Dr.Olivia Carter', 'Dermatologist', 'Jun 12, 2020', '07:30-08:00', 'Skin review', '+123 45678346', 'Confirm', 'https://randomuser.me/api/portraits/women/50.jpg']
+                                                        ,['Dr.Daniel Brooks', 'Neurologist', 'Jun 12, 2020', '08:00-08:30', 'Headache review', '+123 45678347', 'Pending', 'https://randomuser.me/api/portraits/men/51.jpg']
+                                                        ,['Dr.Emily Wilson', 'Endocrinologist', 'Jun 12, 2020', '08:30-09:00', 'Lab review', '+123 45678348', 'Confirm', 'https://randomuser.me/api/portraits/women/52.jpg']
                                                     ];
                                                     foreach ($today_mock as $tm):
                                                     ?>
@@ -320,8 +335,8 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="master-table-footer">
-                                            <span class="page-count" id="dior-today-page-count">0 selected / <?php echo count($today_mock); ?> total</span>
+                                        <div class="docs-pagination-container">
+                                            <span class="docs-showing-text" id="dior-today-page-count">0 selected / <?php echo count($today_mock); ?> total</span>
                                         </div>
                                     </div>
                                 </div>
@@ -332,39 +347,37 @@
 
                         <!-- 3. Upcoming Appointments -->
                         <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-upcoming">
-                            <div class="master-table-wrapper">
-                                <div class="master-table-container">
-                                    <div class="master-table-card">
-                                        <div class="master-table-header">
-                                            <div class="header-content">
-                                                <div class="table-title-section">
-                                                    <h2 class="table-title">Upcoming Appointments</h2>
-                                                    <div class="title-accent"></div>
+                            <div class="va-table-wrapper">
+                                <div class="va-table-wrapper">
+                                    <div class="docs-card">
+                                        <div class="docs-header-container">
+                                            <div class="docs-title-box">
+                                                <h2>Upcoming Appointments</h2>
+                                                <div class="docs-title-line"></div>
+                                            </div>
+                                            <div class="docs-actions-wrapper">
+                                                <div class="docs-search-box">
+                                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                                    <input type="text" id="dior-upcoming-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterUpcomingAppointments()">
                                                 </div>
-                                                <div class="header-actions-group">
-                                                    <div class="search-container">
-                                                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                                                        <input type="text" id="dior-upcoming-search-input" placeholder="Search records..." aria-label="Search box" class="search-input" onkeyup="diorFilterUpcomingAppointments()">
-                                                    </div>
-                                                    <div class="action-buttons">
-                                                        <button type="button" aria-label="Delete selected items" class="action-btn action-btn-danger dior-ic-44a70a0420" id="dior-upcoming-bulk-delete-btn" title="Delete Selected" onclick="diorBulkDeleteUpcomingRows()">
-                                                            <i class="fa-regular fa-trash-can"></i>
-                                                        </button>
-                                                        <button type="button" aria-label="Add new record" class="action-btn action-btn-primary" title="Book Appointment" data-switch-tab="appointments">
-                                                            <i class="fa-solid fa-plus"></i>
-                                                        </button>
-                                                        <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success" title="Export to CSV" onclick="diorDownloadUpcomingAppointmentsCSV()">
-                                                            <i class="fa-solid fa-file-arrow-down"></i>
-                                                        </button>
-                                                        <button type="button" aria-label="Refresh data" class="action-btn action-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                                            <i class="fa-solid fa-rotate-right"></i>
-                                                        </button>
-                                                    </div>
+                                                <div class="docs-actions-group">
+                                                    <button type="button" aria-label="Delete selected items" class="docs-icon-btn docs-btn-danger dior-ic-44a70a0420" id="dior-upcoming-bulk-delete-btn" title="Delete Selected" onclick="diorBulkDeleteUpcomingRows()">
+                                                        <i class="fa-regular fa-trash-can"></i>
+                                                    </button>
+                                                    <button type="button" aria-label="Add new record" class="docs-icon-btn docs-btn-primary" title="Book Appointment" data-switch-tab="appointments">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </button>
+                                                    <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadUpcomingAppointmentsCSV()">
+                                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                                    </button>
+                                                    <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
+                                                        <i class="fa-solid fa-rotate-right"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="table-content">
-                                            <table class="master-modern-table" id="dior-upcoming-appointments-table">
+                                        <div class="docs-table-wrapper">
+                                            <table class="docs-table" id="dior-upcoming-appointments-table">
                                                 <thead>
                                                     <tr>
                                                         <th class="dior-ic-5c9987d36c">
@@ -422,7 +435,7 @@
                                                         <td class="dior-ic-d5c209e67c">
                                                             <div class="cell-actions">
                                                                 <button type="button" class="action-icon-btn edit-btn" title="Edit Record"><i class="fa-solid fa-pen"></i></button>
-                                                                <button type="button" class="action-icon-btn delete-btn" title="Delete Record" onclick="diorDeleteUpcomingRow(this)"><i class="fa-regular fa-trash-can"></i></button>
+                                                                <button type="button" class="action-icon-btn delete-btn" title="Delete Record"><i class="fa-regular fa-trash-can"></i></button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -430,11 +443,9 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="master-table-footer">
-                                            <span class="page-count" id="dior-upcoming-page-count">0 selected / <?php echo count($upcoming_mock); ?> total</span>
-                                            
-                                            <div class="master-pagination" id="dior-upcoming-pagination">
-                                            </div>
+                                        <div class="docs-pagination-container">
+                                            <span class="docs-showing-text" id="dior-upcoming-page-count">0 selected / <?php echo count($upcoming_mock); ?> total</span>
+                                            <div id="dior-upcoming-pagination"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -446,33 +457,31 @@
                         <!-- 4. Past Appointments -->
                         <!-- 4. Past Appointments -->
                         <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-past">
-                            <div class="master-table-wrapper">
-                                <div class="master-table-container">
-                                    <div class="master-table-card">
-                                        <div class="master-table-header">
-                                            <div class="header-content">
-                                                <div class="table-title-section">
-                                                    <h2 class="table-title">Past Appointments</h2>
-                                                    <div class="title-accent"></div>
+                            <div class="va-table-wrapper">
+                                <div class="va-table-wrapper">
+                                    <div class="docs-card">
+                                        <div class="docs-header-container">
+                                            <div class="docs-title-box">
+                                                <h2>Past Appointments</h2>
+                                                <div class="docs-title-line"></div>
+                                            </div>
+                                            <div class="docs-actions-wrapper">
+                                                <div class="docs-search-box">
+                                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                                    <input type="text" id="dior-past-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterPastAppointments()">
                                                 </div>
-                                                <div class="header-actions-group">
-                                                    <div class="search-container">
-                                                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                                                        <input type="text" id="dior-past-search-input" placeholder="Search records..." aria-label="Search box" class="search-input" onkeyup="diorFilterPastAppointments()">
-                                                    </div>
-                                                    <div class="action-buttons">
-                                                        <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success" title="Export to CSV" onclick="diorDownloadPastAppointmentsCSV()">
-                                                            <i class="fa-solid fa-file-arrow-down"></i>
-                                                        </button>
-                                                        <button type="button" aria-label="Refresh data" class="action-btn action-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                                            <i class="fa-solid fa-rotate-right"></i>
-                                                        </button>
-                                                    </div>
+                                                <div class="docs-actions-group">
+                                                    <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadPastAppointmentsCSV()">
+                                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                                    </button>
+                                                    <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
+                                                        <i class="fa-solid fa-rotate-right"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="table-content">
-                                            <table class="master-modern-table" id="dior-past-appointments-table">
+                                        <div class="docs-table-wrapper">
+                                            <table class="docs-table" id="dior-past-appointments-table">
                                                 <thead>
                                                     <tr>
                                                         <th>DOCTOR <i class="fa-solid fa-sort"></i></th>
@@ -530,11 +539,9 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <div class="master-table-footer">
-                                            <span class="page-count" id="dior-past-page-count">0 selected / <?php echo count($past_mock); ?> total</span>
-                                            
-                                            <div class="master-pagination" id="dior-past-pagination">
-                                            </div>
+                                        <div class="docs-pagination-container">
+                                            <span class="docs-showing-text" id="dior-past-page-count">0 selected / <?php echo count($past_mock); ?> total</span>
+                                            <div id="dior-past-pagination"></div>
                                         </div>
                                     </div>
                                 </div>

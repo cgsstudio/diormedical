@@ -1,4 +1,4 @@
-/*! pro-elements - v4.2.0 - 19-08-2026 */
+/*! pro-elements - v4.2.0 - 31-08-2026 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -3234,7 +3234,7 @@ var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, 
 (store.versions || (store.versions = [])).push({
   version: '3.49.0',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2013–2025 Denis Pushkarev (zloirock.ru), 2025–2026 CoreJS Company (core-js.io). All rights reserved.',
+  copyright: 'В© 2013вЂ“2025 Denis Pushkarev (zloirock.ru), 2025вЂ“2026 CoreJS Company (core-js.io). All rights reserved.',
   license: 'https://github.com/zloirock/core-js/blob/v3.49.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });

@@ -468,7 +468,7 @@ sans-serif !important;
   background: transparent !important;
   background-color: transparent !important;
   color: #FFFFFF !important;
-  font-size: 16px !important;
+  font-size: 14px !important;
   font-weight: 500 !important;
   border-radius: 10px !important;
   cursor: pointer !important;
@@ -718,14 +718,18 @@ sans-serif !important;
   gap: 14px !important;
 }
 
-.dior-mobile-menu-toggle {display: none !important;
-  background: #FFFFFF !important;
-  border: 1px solid var(--dior-border) !important;
-  padding: 7px 11px !important;
+.dior-mobile-menu-toggle {display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
   border-radius: 8px !important;
-  font-size: 15px !important;
+  border: 1px solid var(--dior-border) !important;
+  background: #FFFFFF !important;
   color: var(--dior-navy) !important;
+  font-size: 16px !important;
   cursor: pointer !important;
+  flex-shrink: 0 !important;
 }
 
 .dior-topbar-title h1 {font-family: inherit !important;
@@ -3012,6 +3016,26 @@ body {overflow-x: hidden !important;
 
   .dior-side.mobile-open {left: 0 !important;
   }
+}
+
+/* Desktop sidebar toggle support */
+@media (min-width: 1025px) {
+  .dior-side {
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .dior-side.mobile-open {
+    transform: translateX(-100%) !important;
+  }
+  
+  .dior-drawer-backdrop {
+    display: none !important;
+  }
+  
+  .dior-drawer-backdrop.active {
+    display: none !important;
+  }
+}
 
   .dior-side-close {display: flex !important;
     align-items: center !important;
@@ -3091,7 +3115,6 @@ body {overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     display: block !important;
   }
-}
 
 /* SMARTPHONES & SMALL TABLETS (<= 768px) */
 @media (max-width: 768px) {.dior-welcome-card {flex-direction: column !important;
@@ -3822,10 +3845,11 @@ sans-serif !important;
   background: #F8FAFC !important;
   border: 1px solid #E2E8F0 !important;
   border-radius: 12px !important;
-  padding: 0px 16px !important;
+  padding: 6px 16px !important;
   margin: 0px 10px;
   width: 340px !important;
   max-width: 100% !important;
+  height: 36px !important;
 }
 
 .dior-top-search i {color: #94A3B8 !important;
@@ -6497,6 +6521,55 @@ sans-serif !important;
 /* ==========================================================================
    DIOR MEDICAL SWEETALERT2 LUXURY STYLES & ZERO-PINK OVERRIDES
    ========================================================================== */
+
+/* Toast Notifications - Small compact alerts in top-right */
+div:where(.swal2-container).swal2-toast-shown,
+.swal2-container.swal2-toast-shown {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+div:where(.swal2-container).swal2-toast-shown .swal2-popup,
+.swal2-container.swal2-toast-shown .swal2-popup {
+  width: auto !important;
+  max-width: 350px !important;
+  min-width: 280px !important;
+  padding: 16px 20px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15) !important;
+  border: 1px solid #E2E8F0 !important;
+}
+
+div:where(.swal2-container).swal2-toast-shown .swal2-icon,
+.swal2-container.swal2-toast-shown .swal2-icon {
+  margin: 0 12px 0 0 !important;
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 24px !important;
+}
+
+div:where(.swal2-container).swal2-toast-shown .swal2-title,
+.swal2-container.swal2-toast-shown .swal2-title {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+div:where(.swal2-container).swal2-toast-shown .swal2-html-container,
+.swal2-container.swal2-toast-shown .swal2-html-container {
+  font-size: 13px !important;
+  margin: 4px 0 0 0 !important;
+  text-align: left !important;
+}
+
+div:where(.swal2-container).swal2-toast-shown .swal2-timer-progress-bar,
+.swal2-container.swal2-toast-shown .swal2-timer-progress-bar {
+  height: 3px !important;
+  background: linear-gradient(90deg, #4F46E5, #10B981) !important;
+}
+
 div:where(.swal2-container),
 .swal2-container {z-index: 999999 !important;
   backdrop-filter: blur(4px) !important;

@@ -1,4 +1,18 @@
 <section class="dior-tab-panel" id="tab-questionnaire">
+    <!-- Breadcrumb Header -->
+    <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
+        <div>
+            <h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Clinical Intake & Medical Questionnaires</h4>
+        </div>
+        <div>
+            <ul class="va-breadcrumb-list">
+                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><span style="color:#94A3B8;">/</span></li>
+                <li class="active"><span>Clinical Intake & Medical Questionnaires</span></li>
+            </ul>
+        </div>
+    </div>
+
                     <div class="dior-page-header-box">
                         <div>
                             <h2>Clinical Intake & Medical Questionnaires</h2>
@@ -25,7 +39,7 @@
                                     Gender, Address) in your profile before filling out medical questionnaires or
                                     booking appointments.
                                 </p>
-                                <button type="button" class="dior-btn-gold-primary dior-ic-2b79c76f5b" data-switch-tab="profile"
+                                <button type="button" class="dior-btn-gold-primary dior-ic-2b79c76f5b" data-switch-tab="settings"
                                    >
                                     <i class="fa-solid fa-user-pen"></i> Complete Personal Information First
                                 </button>

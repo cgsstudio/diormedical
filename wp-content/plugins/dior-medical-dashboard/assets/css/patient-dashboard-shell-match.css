@@ -1,0 +1,748 @@
+/**
+ * Dior Medical Patient Dashboard - Shell Match
+ *
+ * Purpose:
+ * - Match the approved Patient Portal HTML/reference shell.
+ * - Reuse the same clean shell conventions as the existing Doctor Dashboard.
+ * - Scope every rule to the patient portal so Doctor Dashboard styles are untouched.
+ * - Keep existing PHP, tabs, AJAX and dashboard functionality unchanged.
+ */
+
+.dior-patient-portal-wrap {
+    --patient-navy: #0B1030;
+    --patient-navy-hover: #174E87;
+    --patient-active: #1F5F9F;
+    --patient-blue: #2D6EB4;
+    --patient-line: #BFD7EC;
+    --patient-bg: #F5FAFF;
+    --patient-text: #171717;
+    --patient-muted: #707070;
+    background: var(--patient-bg) !important;
+    color: var(--patient-text) !important;
+    font-family: 'Montserrat', Arial, sans-serif !important;
+}
+
+.dior-patient-portal-wrap .dior-app {
+    min-height: 100vh !important;
+    background: var(--patient-bg) !important;
+}
+
+/* ================================================================
+   Sidebar - exact Patient Portal reference proportions
+   ================================================================ */
+@media (min-width: 1025px) {
+    .dior-patient-portal-wrap .dior-side {
+        width: 315px !important;
+        min-width: 315px !important;
+        max-width: 315px !important;
+        background: var(--patient-navy) !important;
+        color: #fff !important;
+        border-right: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .dior-patient-portal-wrap .dior-main-content {
+        margin-left: 315px !important;
+        width: calc(100% - 315px) !important;
+        max-width: calc(100% - 315px) !important;
+        background: var(--patient-bg) !important;
+    }
+}
+
+.dior-patient-portal-wrap .dior-side-header {
+    height: 150px !important;
+    min-height: 150px !important;
+    padding: 0 !important;
+    background: var(--patient-navy) !important;
+    border: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.dior-patient-portal-wrap .dior-side-header .brand {
+    width: 100% !important;
+    height: 150px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+}
+
+.dior-patient-portal-wrap .dior-side-header .brand-link {
+    width: 100% !important;
+    height: 150px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.dior-patient-portal-wrap .dior-side .brand-logo {
+    display: block !important;
+    width: 190px !important;
+    height: 126px !important;
+    max-width: calc(100% - 40px) !important;
+    max-height: 126px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.dior-patient-portal-wrap .dior-side-nav {
+    padding: 0 !important;
+    background: var(--patient-navy) !important;
+    flex: 1 1 auto !important;
+}
+
+.dior-patient-portal-wrap .dior-side-nav .grp {
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+}
+
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn {
+    width: 100% !important;
+    min-height: 46px !important;
+    height: 46px !important;
+    margin: 0 !important;
+    padding: 0 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #fff !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-align: left !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn i,
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn svg {
+    width: 18px !important;
+    min-width: 18px !important;
+    font-size: 16px !important;
+    color: #fff !important;
+    text-align: center !important;
+}
+
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn:hover {
+    background: var(--patient-navy-hover) !important;
+    color: #fff !important;
+}
+
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn:hover span,
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn:hover .nav-label,
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn:hover i,
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn:hover svg {
+    color: #fff !important;
+}
+
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn.active {
+    background: var(--patient-active) !important;
+    color: #fff !important;
+    border-radius: 0 !important;
+    font-weight: 500 !important;
+}
+
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn.active span,
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn.active .nav-label,
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn.active i,
+.dior-patient-portal-wrap .dior-side-nav .dior-nav-btn.active svg {
+    color: #fff !important;
+}
+
+/* Appointment dropdown stays functional, but follows the same sidebar visual language. */
+.dior-patient-portal-wrap .dior-nav-dropdown {
+    background: #0F1539 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+.dior-patient-portal-wrap .dior-nav-dropdown-item {
+    min-height: 42px !important;
+    padding: 0 31px 0 64px !important;
+    color: #D9E4F0 !important;
+    background: transparent !important;
+}
+
+.dior-patient-portal-wrap .dior-nav-dropdown-item:hover,
+.dior-patient-portal-wrap .dior-nav-dropdown-item.active {
+    background: #174E87 !important;
+    color: #fff !important;
+}
+
+/* Patient portal footer: matches the reference instead of the old profile card. */
+.dior-patient-portal-wrap .dior-sidebar-bottom-profile {
+    display: none !important;
+}
+
+.dior-patient-portal-wrap .dior-patient-sidebar-footer {
+    margin-top: auto !important;
+    padding: 0 31px 30px !important;
+    background: var(--patient-navy) !important;
+    color: #fff !important;
+}
+
+.dior-patient-portal-wrap .dior-patient-sidebar-privacy {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    margin: 0 0 18px !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+.dior-patient-portal-wrap .dior-patient-sidebar-privacy i {
+    width: 17px !important;
+    font-size: 16px !important;
+}
+
+.dior-patient-portal-wrap .dior-patient-sidebar-copyright {
+    margin: 0 !important;
+    color: rgba(255,255,255,.95) !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+}
+
+/* ================================================================
+   Header - Doctor Dashboard Style Match
+   ================================================================ */
+.dior-patient-portal-wrap .dior-topbar {
+    height: 72px !important;
+    min-height: 72px !important;
+    padding: 0 28px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    box-shadow: none !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+}
+
+.dior-patient-portal-wrap .dior-topbar-left {
+    gap: 16px !important;
+    align-items: center !important;
+}
+
+.dior-patient-portal-wrap .dior-mobile-menu-toggle {
+    width: 34px !important;
+    height: 34px !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: var(--patient-blue) !important;
+    box-shadow: none !important;
+    font-size: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Search bar - matches doctor dashboard exactly */
+.dior-patient-portal-wrap .dior-top-search {
+    width: 380px !important;
+    height: 42px !important;
+    margin: 0 !important;
+    padding: 0 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    border: 1.05px solid rgba(44, 108, 177, 0.4) !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.dior-patient-portal-wrap .dior-top-search i {
+    width: auto !important;
+    margin-right: 0 !important;
+    color: var(--patient-blue) !important;
+    font-size: 14px !important;
+    flex-shrink: 0 !important;
+}
+
+.dior-patient-portal-wrap .dior-top-search input {
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    font-size: 13px !important;
+    color: #334155 !important;
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+.dior-patient-portal-wrap .dior-top-search input::placeholder {
+    color: #94A3B8 !important;
+    opacity: 1 !important;
+}
+
+/* Right side icons area */
+.dior-patient-portal-wrap .dior-topbar-right {
+    gap: 12px !important;
+    align-items: center !important;
+}
+
+/* Message button - circular blue style like doctor dashboard */
+.dior-patient-portal-wrap .dior-topbar .dior-msg-btn {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 50% !important;
+    background: #2C6CB1 !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    font-size: 15px !important;
+    transition: background 0.2s !important;
+}
+
+.dior-patient-portal-wrap .dior-topbar .dior-msg-btn:hover {
+    background: #1a4f85 !important;
+}
+
+.dior-patient-portal-wrap .dior-topbar .dior-msg-btn i {
+    color: #ffffff !important;
+    font-size: 15px !important;
+}
+
+/* Notification button - circular blue style like doctor dashboard */
+.dior-patient-portal-wrap .dior-notif-btn {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 50% !important;
+    background: #2C6CB1 !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    font-size: 15px !important;
+    transition: background 0.2s !important;
+    position: relative !important;
+}
+
+.dior-patient-portal-wrap .dior-notif-btn:hover {
+    background: #1a4f85 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.dior-patient-portal-wrap .dior-notif-btn i {
+    color: #ffffff !important;
+    font-size: 15px !important;
+}
+
+.dior-patient-portal-wrap .dior-notif-indicator {
+    top: -3px !important;
+    right: -3px !important;
+    width: 17px !important;
+    height: 17px !important;
+    font-size: 9px !important;
+    background: #E11D48 !important;
+    border: 2px solid #fff !important;
+    border-radius: 50% !important;
+    color: #fff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Avatar pill - show only the avatar circle, hide name/status text (matches doctor) */
+.dior-patient-portal-wrap .dior-user-pill-btn {
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.dior-patient-portal-wrap .dior-user-pill-card {
+    min-width: 0 !important;
+    gap: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
+.dior-patient-portal-wrap .dior-pill-avatar {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    border: 2px solid #9fc1df !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+}
+
+.dior-patient-portal-wrap .dior-pill-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    border-radius: 50% !important;
+}
+
+/* Hide name & status text next to avatar — doctor dashboard shows avatar only */
+.dior-patient-portal-wrap .dior-pill-user-meta,
+.dior-patient-portal-wrap .dior-pill-user-name,
+.dior-patient-portal-wrap .dior-pill-user-status {
+    display: none !important;
+}
+
+/* Notification popup */
+.dior-patient-portal-wrap .dior-notif-dropdown {
+    width: 360px !important;
+    max-width: calc(100vw - 30px) !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 14px 35px rgba(11,16,48,.16) !important;
+}
+
+/* ================================================================
+   Main content shell
+   ================================================================ */
+.dior-patient-portal-wrap .dior-tab-container {
+    padding: 20px 28px 36px !important;
+    background: var(--patient-bg) !important;
+}
+
+/* The overview has its own pixel-matched stylesheet; don't override it here. */
+.dior-patient-portal-wrap #tab-overview {
+    background: var(--patient-bg) !important;
+}
+
+/* ================================================================
+   Responsive
+   ================================================================ */
+@media (max-width: 1024px) {
+    .dior-patient-portal-wrap .dior-side {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 85vw !important;
+    }
+
+    .dior-patient-portal-wrap .dior-side-header,
+    .dior-patient-portal-wrap .dior-side-header .brand,
+    .dior-patient-portal-wrap .dior-side-header .brand-link {
+        height: 140px !important;
+        min-height: 140px !important;
+    }
+
+    .dior-patient-portal-wrap .dior-side .brand-logo {
+        width: 180px !important;
+        height: 120px !important;
+        max-width: calc(100% - 40px) !important;
+        max-height: 120px !important;
+        object-fit: contain !important;
+    }
+
+    .dior-patient-portal-wrap .dior-topbar {
+        padding: 0 18px !important;
+        min-height: 64px !important;
+        height: 64px !important;
+    }
+
+    .dior-patient-portal-wrap .dior-top-search {
+        width: min(360px, calc(100vw - 180px)) !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .dior-patient-portal-wrap .dior-topbar {
+        padding: 0 12px !important;
+    }
+    
+    .dior-patient-portal-wrap .dior-tab-container {
+        padding: 15px !important;
+    }
+
+    .dior-patient-portal-wrap .dior-top-search {
+        width: min(280px, calc(100vw - 155px)) !important;
+        height: 40px !important;
+    }
+
+    .dior-patient-portal-wrap .dior-topbar-right {
+        gap: 10px !important;
+    }
+
+    .dior-patient-portal-wrap .dior-user-pill-card {
+        min-width: 0 !important;
+    }
+
+    .dior-patient-portal-wrap .dior-pill-user-meta {
+        display: none !important;
+    }
+
+    .dior-patient-portal-wrap .dior-notif-dropdown {
+        position: fixed !important;
+        top: 68px !important;
+        right: 10px !important;
+        width: min(360px, calc(100vw - 20px)) !important;
+    }
+
+    .dior-patient-portal-wrap .dior-patient-sidebar-footer {
+        padding-bottom: 22px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .dior-patient-portal-wrap .dior-top-search {
+        width: calc(100vw - 150px) !important;
+        max-width: 230px !important;
+    }
+
+    .dior-patient-portal-wrap .dior-top-search input::placeholder {
+        font-size: 11px !important;
+    }
+}
+
+/* Sidebar unread notification count */
+.dior-patient-portal-wrap .patient-sidebar-notification-badge {
+    flex: 0 0 auto !important;
+    min-width: 20px !important;
+    height: 20px !important;
+    padding: 0 6px !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #EF4D62 !important;
+    color: #fff !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+}
+
+/* Keep the WordPress Media Library modal isolated from site-wide heading and button styles. */
+body .media-modal .media-frame-title {
+    height: 50px !important;
+}
+
+body .media-modal .media-frame-title h1 {
+    margin: 0 !important;
+    padding: 0 16px !important;
+    color: #1d2327 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    font-size: 22px !important;
+    font-weight: 400 !important;
+    line-height: 50px !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    text-shadow: none !important;
+}
+
+body .media-modal,
+body .media-modal .media-frame {
+    color: #3c434a !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+}
+
+body .media-modal h1,
+body .media-modal h2,
+body .media-modal h3,
+body .media-modal h4,
+body .media-modal h5,
+body .media-modal h6 {
+    color: #3c434a !important;
+    font-family: inherit !important;
+    font-weight: 400 !important;
+    letter-spacing: normal !important;
+    line-height: 1.4 !important;
+    margin: 0 0 8px !important;
+    text-transform: none !important;
+    text-shadow: none !important;
+}
+
+body .media-modal .uploading h2 {
+    font-size: 20px !important;
+}
+
+body .media-modal .uploader-inline h2 {
+    font-size: 20px !important;
+}
+
+body .media-modal .uploader-inline .has-upload-message .upload-instructions {
+    color: #3c434a !important;
+    font-size: 14px !important;
+}
+
+body .media-modal .media-sidebar h2,
+body .media-modal .attachment-details h2 {
+    color: #646970 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    margin: 24px 0 8px !important;
+    text-transform: uppercase !important;
+}
+
+body .media-modal p,
+body .media-modal .description,
+body .media-modal .description a,
+body .media-modal .attachment-info,
+body .media-modal .attachment-info .details,
+body .media-modal .attachment-info .filename,
+body .media-modal .attachment-details .setting,
+body .media-modal .attachment-details .setting .name,
+body .media-modal .attachment-details .setting .value,
+body .media-modal .attachment-details .setting + .description {
+    color: #50575e !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    overflow-wrap: anywhere;
+}
+
+body .media-modal .attachment-info .filename {
+    color: #3c434a !important;
+    font-weight: 600 !important;
+}
+
+body .media-modal .media-frame a {
+    border-bottom: 0 !important;
+    color: #2271b1 !important;
+    text-decoration: none !important;
+}
+
+body .media-modal .media-frame a:hover,
+body .media-modal .media-frame a:active,
+body .media-modal .media-frame a:focus {
+    color: #135e96 !important;
+    text-decoration: none !important;
+}
+
+body .media-modal .media-router .media-menu-item {
+    background: transparent !important;
+    border: 0 !important;
+    color: #2271b1 !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+}
+
+body .media-modal .media-router .media-menu-item:hover,
+body .media-modal .media-router .media-menu-item:active,
+body .media-modal .media-router .media-menu-item:focus {
+    background: transparent !important;
+    color: #135e96 !important;
+    text-decoration: none !important;
+}
+
+body .media-modal .media-router .media-menu-item.active,
+body .media-modal .media-router .media-menu-item.active:hover,
+body .media-modal .media-router .media-menu-item.active:focus {
+    margin: -1px -1px 0 !important;
+    background: #ffffff !important;
+    border: 1px solid #dcdcde !important;
+    border-bottom: 0 !important;
+    color: #1d2327 !important;
+    box-shadow: none !important;
+}
+
+body .media-modal .media-menu .media-menu-item {
+    background: transparent !important;
+    color: #2271b1 !important;
+    text-decoration: none !important;
+}
+
+body .media-modal .media-menu .media-menu-item:hover,
+body .media-modal .media-menu .media-menu-item:active,
+body .media-modal .media-menu .media-menu-item:focus {
+    background: rgba(0, 0, 0, 0.04) !important;
+    color: #135e96 !important;
+}
+
+body .media-modal .media-menu .media-menu-item.active,
+body .media-modal .media-menu .media-menu-item.active:hover {
+    background: transparent !important;
+    color: #1d2327 !important;
+}
+
+body .media-modal .media-modal-close {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: 50px !important;
+    min-width: 50px !important;
+    max-width: 50px !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid transparent !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #646970 !important;
+    box-shadow: none !important;
+    font-family: inherit !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    line-height: normal !important;
+    text-transform: none !important;
+    transform: none !important;
+}
+
+body .media-modal .media-modal-close:hover,
+body .media-modal .media-modal-close:active {
+    background: transparent !important;
+    color: var(--wp-admin-theme-color, #3858e9) !important;
+}
+
+body .media-modal .media-modal-close:focus {
+    border-color: var(--wp-admin-theme-color, #3858e9) !important;
+    box-shadow: 0 0 3px rgba(56, 88, 233, 0.8) !important;
+}
+
+body .media-modal .media-modal-close .media-modal-icon::before {
+    font-family: dashicons !important;
+    font-size: 20px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+}
+
+@media only screen and (max-width: 900px) {
+    body .media-modal .media-frame-title {
+        height: 40px !important;
+    }
+
+    body .media-modal .media-frame-title h1 {
+        font-size: 18px !important;
+        line-height: 40px !important;
+    }
+
+    body .media-modal .media-modal-close {
+        width: 42px !important;
+        min-width: 42px !important;
+        max-width: 42px !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        max-height: 42px !important;
+    }
+}

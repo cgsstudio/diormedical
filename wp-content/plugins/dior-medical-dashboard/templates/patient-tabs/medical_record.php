@@ -1,4 +1,18 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-medical_record">
+    <!-- Breadcrumb Header -->
+    <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
+        <div>
+            <h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Medical Record</h4>
+        </div>
+        <div>
+            <ul class="va-breadcrumb-list">
+                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><span style="color:#94A3B8;">/</span></li>
+                <li class="active"><span>Medical Record</span></li>
+            </ul>
+        </div>
+    </div>
+
                     <div class="dior-page-header-box">
                         <div>
                             <h2>Medical Record</h2>

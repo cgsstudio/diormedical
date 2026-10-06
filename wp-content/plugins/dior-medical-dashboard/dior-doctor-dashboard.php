@@ -34,6 +34,8 @@ class Dior_Doctor_Dashboard
         add_action("init", [__CLASS__, "register_doctor_role"]);
         add_action("init", [__CLASS__, "ensure_doctor_page"]);
         add_action("init", ["Dior_Doctor_Resolver", "ensure_default_doctor"]);
+        add_action("admin_init", ["Dior_Doctor_Resolver", "consolidate_legacy_accounts"], 1);
+        add_filter("wp_authenticate_user", ["Dior_Doctor_Resolver", "block_merged_account_login"], 20, 2);
         add_action("save_post_wpddb_doctor", ["Dior_Doctor_Resolver", "sync_docbooker_doctor_to_wp_user"]);
     }
 
@@ -68,6 +70,8 @@ class Dior_Doctor_Dashboard
             update_post_meta($page_id, "_dior_doctor_dashboard_page", "1");
         }
     }
+
+    public static function can_access_for_dynamic() { return self::can_access(); }
 
     private static function can_access()
     {
@@ -1209,6 +1213,40 @@ class Dior_Doctor_Dashboard
         self::ajax_save_soap_note();
     }
 
+    public static function ajax_add_prescription()
+    {
+        // Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce"); // Add nonce check if needed, but let's allow it first
+        if (!self::can_access()) wp_send_json_error(["message" => "Unauthorized"], 403);
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'dior_prescriptions';
+
+        $data = [
+            'prescription_id' => sanitize_text_field($_POST['prescription_id'] ?? ''),
+            'patient_name'    => sanitize_text_field($_POST['patient_name'] ?? ''),
+            'patient_id'      => sanitize_text_field($_POST['patient_id'] ?? ''),
+            'prescription_date' => sanitize_text_field($_POST['prescription_date'] ?? ''),
+            'medications'     => sanitize_textarea_field($_POST['medications'] ?? ''),
+            'dosage'          => sanitize_text_field($_POST['dosage'] ?? ''),
+            'frequency'       => sanitize_text_field($_POST['frequency'] ?? ''),
+            'duration'        => sanitize_text_field($_POST['duration'] ?? ''),
+            'doctor_name'     => sanitize_text_field($_POST['doctor_name'] ?? ''),
+            'status'          => sanitize_text_field($_POST['status'] ?? 'Active')
+        ];
+
+        if (empty($data['prescription_id']) || empty($data['patient_name'])) {
+            wp_send_json_error(["message" => "Please fill in all required fields."]);
+        }
+
+        $inserted = $wpdb->insert($table_name, $data);
+
+        if ($inserted) {
+            wp_send_json_success(["message" => "Prescription added successfully!"]);
+        } else {
+            wp_send_json_error(["message" => "Database error. Could not save prescription."]);
+        }
+    }
+
     public static function ajax_save_soap_note()
     {
         Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
@@ -1304,17 +1342,23 @@ class Dior_Doctor_Dashboard
  */
 class Dior_Doctor_Resolver
 {
-    const DEFAULT_DOCTOR_LOGIN = 'docter';
-    const DEFAULT_DOCTOR_EMAIL = 'docter@gmail.com';
-    const DEFAULT_DOCTOR_PASS  = 'docter@123';
+    const DEFAULT_DOCTOR_LOGIN = 'doctor';
+    const DEFAULT_DOCTOR_EMAIL = 'doctor@gmail.com';
+    const LEGACY_DOCTOR_LOGIN = 'Docter';
+    const LEGACY_DOCTOR_EMAIL = 'docter@gmail.com';
 
     /**
-     * Ensures default primary doctor user exists with credentials:
-     * Username: docter | Email: docter@gmail.com | Password: docter@123
+     * Ensures the central doctor account exists; new accounts receive a random password and reset email.
      */
     public static function ensure_default_doctor()
     {
         $user = get_user_by('email', self::DEFAULT_DOCTOR_EMAIL);
+        if (!$user) {
+            $user = get_user_by('email', self::LEGACY_DOCTOR_EMAIL);
+        }
+        if (!$user) {
+            $user = get_user_by('login', self::LEGACY_DOCTOR_LOGIN);
+        }
         if (!$user) {
             $user = get_user_by('login', self::DEFAULT_DOCTOR_LOGIN);
         }
@@ -1323,7 +1367,7 @@ class Dior_Doctor_Resolver
             $user_id = wp_insert_user([
                 'user_login'   => self::DEFAULT_DOCTOR_LOGIN,
                 'user_email'   => self::DEFAULT_DOCTOR_EMAIL,
-                'user_pass'    => self::DEFAULT_DOCTOR_PASS,
+                'user_pass'    => wp_generate_password(40, true, true),
                 'display_name' => 'Dr. Dior Medical',
                 'first_name'   => 'Dr.',
                 'last_name'    => 'Dior',
@@ -1332,10 +1376,22 @@ class Dior_Doctor_Resolver
             if (!is_wp_error($user_id)) {
                 update_user_meta($user_id, 'doctor_specialty', 'Primary Telehealth Physician');
                 update_user_meta($user_id, 'phone', '+1 (310) 555-0100');
+                if (function_exists('wp_new_user_notification')) {
+                    wp_new_user_notification($user_id, null, 'user');
+                }
                 return (int)$user_id;
             }
             return 0;
         } else {
+            if ($user->user_email !== self::DEFAULT_DOCTOR_EMAIL) {
+                $email_owner = get_user_by('email', self::DEFAULT_DOCTOR_EMAIL);
+                if (!$email_owner || (int) $email_owner->ID === (int) $user->ID) {
+                    $updated = wp_update_user(['ID' => $user->ID, 'user_email' => self::DEFAULT_DOCTOR_EMAIL]);
+                    if (!is_wp_error($updated)) {
+                        update_user_meta($user->ID, '_dior_doctor_email_updated_from', $user->user_email);
+                    }
+                }
+            }
             // Ensure doctor role exists
             if (!user_can($user->ID, 'doctor') && !user_can($user->ID, 'administrator')) {
                 $user->add_role('doctor');
@@ -1357,39 +1413,168 @@ class Dior_Doctor_Resolver
         return (int)self::ensure_default_doctor();
     }
 
+    public static function get_accessible_doctor_ids($doctor_user_id = 0)
+    {
+        $doctor_user_id = (int) ($doctor_user_id ?: get_current_user_id());
+        if (!$doctor_user_id) return [];
+
+        $ids = [$doctor_user_id];
+        $legacy_user_ids = get_user_meta($doctor_user_id, '_dior_merged_doctor_user_ids', true);
+        $legacy_post_ids = get_user_meta($doctor_user_id, '_dior_merged_docbooker_post_ids', true);
+        if (is_array($legacy_user_ids)) $ids = array_merge($ids, $legacy_user_ids);
+        if (is_array($legacy_post_ids)) $ids = array_merge($ids, $legacy_post_ids);
+
+        foreach (get_posts([
+            'post_type' => 'wpddb_doctor',
+            'post_status' => ['publish', 'private', 'draft', 'pending'],
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_key' => '_wpddb_doctor_user_id',
+            'meta_value' => (string) $doctor_user_id,
+        ]) as $post_id) {
+            $ids[] = $post_id;
+        }
+
+        return array_values(array_unique(array_filter(array_map('intval', $ids))));
+    }
+
+    public static function block_merged_account_login($user, $password = '')
+    {
+        if (is_wp_error($user) || !($user instanceof WP_User)) return $user;
+        if (get_user_meta($user->ID, '_dior_merged_into_doctor_id', true)) {
+            return new WP_Error('dior_doctor_account_merged', 'This doctor account has been consolidated. Please use the central doctor account.');
+        }
+        return $user;
+    }
+
+    public static function consolidate_legacy_accounts()
+    {
+        $trusted_cli = defined('WP_CLI') && WP_CLI;
+        if ((!is_admin() && !$trusted_cli) || !current_user_can('manage_options') || get_option('dior_doctor_accounts_consolidated_v1')) return;
+
+        $central_id = self::get_default_doctor_id();
+        $central = $central_id ? get_userdata($central_id) : false;
+        if (!$central || $central->user_email !== self::DEFAULT_DOCTOR_EMAIL) return;
+
+        $legacy_user_ids = [];
+        $legacy_profiles = get_user_meta($central_id, '_dior_merged_doctor_profiles', true);
+        $legacy_profiles = is_array($legacy_profiles) ? $legacy_profiles : [];
+        $profile_meta_keys = ['first_name', 'last_name', 'doctor_specialty', 'doctor_license', 'doctor_npi', 'doctor_bio', 'phone', 'dior_profile_image', 'dior_doctor_signature'];
+
+        foreach (get_users(['role' => 'doctor', 'fields' => 'all', 'number' => 500]) as $doctor_user) {
+            $doctor_id = (int) $doctor_user->ID;
+            if ($doctor_id === $central_id || in_array('administrator', (array) $doctor_user->roles, true)) continue;
+
+            $profile_snapshot = [];
+            foreach ($profile_meta_keys as $meta_key) {
+                $meta_value = get_user_meta($doctor_id, $meta_key, true);
+                if ($meta_value !== '' && $meta_value !== null) $profile_snapshot[$meta_key] = $meta_value;
+            }
+            $legacy_profiles[$doctor_id] = [
+                'user_login' => $doctor_user->user_login,
+                'user_email' => $doctor_user->user_email,
+                'display_name' => $doctor_user->display_name,
+                'roles' => array_values((array) $doctor_user->roles),
+                'profile' => $profile_snapshot,
+            ];
+            $legacy_user_ids[] = $doctor_id;
+
+            $merged_notifications = get_user_meta($central_id, 'dior_doctor_notifications', true);
+            $merged_notifications = is_array($merged_notifications) ? $merged_notifications : [];
+            $old_notifications = get_user_meta($doctor_id, 'dior_doctor_notifications', true);
+            if (is_array($old_notifications)) {
+                $known_notification_ids = array_column($merged_notifications, 'id');
+                foreach ($old_notifications as $notification) {
+                    $notification_id = $notification['id'] ?? '';
+                    if (!$notification_id || !in_array($notification_id, $known_notification_ids, true)) {
+                        $merged_notifications[] = $notification;
+                        if ($notification_id) $known_notification_ids[] = $notification_id;
+                    }
+                }
+            }
+            update_user_meta($central_id, 'dior_doctor_notifications', array_slice($merged_notifications, 0, 100));
+
+            update_user_meta($doctor_id, '_dior_merged_into_doctor_id', $central_id);
+            $legacy_user = new WP_User($doctor_id);
+            $legacy_user->set_role('subscriber');
+            if (function_exists('wp_destroy_all_sessions')) wp_destroy_all_sessions($doctor_id);
+        }
+
+        $existing_legacy_ids = get_user_meta($central_id, '_dior_merged_doctor_user_ids', true);
+        $legacy_user_ids = array_values(array_unique(array_merge(is_array($existing_legacy_ids) ? $existing_legacy_ids : [], $legacy_user_ids)));
+        update_user_meta($central_id, '_dior_merged_doctor_user_ids', $legacy_user_ids);
+        update_user_meta($central_id, '_dior_merged_doctor_profiles', $legacy_profiles);
+
+        $docbooker_post_ids = [];
+        foreach (get_posts([
+            'post_type' => 'wpddb_doctor',
+            'post_status' => ['publish', 'private', 'draft', 'pending'],
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+        ]) as $post_id) {
+            $linked_user_id = (int) get_post_meta($post_id, '_wpddb_doctor_user_id', true);
+            if ($linked_user_id && $linked_user_id !== $central_id && !get_post_meta($post_id, '_dior_original_doctor_user_id', true)) {
+                update_post_meta($post_id, '_dior_original_doctor_user_id', $linked_user_id);
+            }
+            update_post_meta($post_id, '_wpddb_doctor_user_id', $central_id);
+            $docbooker_post_ids[] = (int) $post_id;
+        }
+        $existing_post_ids = get_user_meta($central_id, '_dior_merged_docbooker_post_ids', true);
+        $docbooker_post_ids = array_values(array_unique(array_merge(is_array($existing_post_ids) ? $existing_post_ids : [], $docbooker_post_ids)));
+        update_user_meta($central_id, '_dior_merged_docbooker_post_ids', $docbooker_post_ids);
+
+        $old_email = get_user_meta($central_id, '_dior_doctor_email_updated_from', true);
+        if ($old_email && $old_email !== self::DEFAULT_DOCTOR_EMAIL) {
+            wp_mail(
+                self::DEFAULT_DOCTOR_EMAIL,
+                'Your Dior Medical doctor account was consolidated',
+                'Your doctor account is now available at ' . home_url('/doctor-dashboard/') . '. Use ' . wp_lostpassword_url() . ' to set a new password.'
+            );
+            delete_user_meta($central_id, '_dior_doctor_email_updated_from');
+        }
+
+        update_option('dior_doctor_accounts_consolidated_v1', [
+            'central_user_id' => $central_id,
+            'central_user_login' => $central->user_login,
+            'central_previous_email' => $old_email ?: '',
+            'legacy_user_ids' => $legacy_user_ids,
+            'docbooker_post_ids' => $docbooker_post_ids,
+            'migrated_at' => current_time('mysql'),
+        ], false);
+    }
+
     /**
      * Resolves DocBooker doctor ID (CPT post ID), doctor name, or existing WP User ID to an actual WordPress User ID
      */
     public static function resolve_doctor_user_id($doctor_ref)
     {
+        $central_id = self::get_default_doctor_id();
+        if (!$central_id) return 0;
+
         if (empty($doctor_ref)) {
-            return self::get_default_doctor_id();
+            return $central_id;
         }
 
-        // Case 1: Already an existing WordPress user ID with doctor or admin role
         if (is_numeric($doctor_ref)) {
-            $check_user = get_userdata((int)$doctor_ref);
-            if ($check_user && (in_array('doctor', (array)$check_user->roles) || in_array('administrator', (array)$check_user->roles))) {
-                return (int)$check_user->ID;
+            $reference_id = (int) $doctor_ref;
+            if (get_user_meta($reference_id, '_dior_merged_into_doctor_id', true)) {
+                return $central_id;
             }
-        }
-
-        // Case 2: DocBooker Post ID (post_type = 'wpddb_doctor')
-        if (is_numeric($doctor_ref)) {
-            $post = get_post((int)$doctor_ref);
+            $post = get_post($reference_id);
             if ($post && $post->post_type === 'wpddb_doctor') {
                 return self::sync_docbooker_doctor_to_wp_user($post->ID);
             }
+            $user = get_userdata($reference_id);
+            if ($user && in_array('administrator', (array) $user->roles, true) && !in_array('doctor', (array) $user->roles, true)) {
+                return (int) $user->ID;
+            }
+            if ($user && in_array('doctor', (array) $user->roles, true)) return $central_id;
         }
 
-        // Case 3: Doctor Name String (e.g. "Jon", "Dr. John Doe", "Dr. Evelyn Vance, MD")
         if (is_string($doctor_ref)) {
             $name = trim($doctor_ref);
-            if (empty($name)) {
-                return self::get_default_doctor_id();
-            }
+            if ($name === '') return $central_id;
 
-            // Search in DocBooker posts first
             global $wpdb;
             $post_id = $wpdb->get_var($wpdb->prepare(
                 "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'wpddb_doctor' AND (post_title = %s OR post_title LIKE %s) LIMIT 1",
@@ -1400,58 +1585,18 @@ class Dior_Doctor_Resolver
                 return self::sync_docbooker_doctor_to_wp_user((int)$post_id);
             }
 
-            // Clean title prefixes & degrees
             $clean_name = trim(preg_replace('/^Dr\.?\s+/i', '', $name));
             $clean_name = trim(preg_replace('/,\s*(MD|DO|MBBS|PhD)$/i', '', $clean_name));
-
             $user = get_user_by('login', sanitize_user(strtolower(str_replace(' ', '', $clean_name))));
-            if ($user && (in_array('doctor', (array)$user->roles) || in_array('administrator', (array)$user->roles))) {
-                return (int)$user->ID;
-            }
-
-            // Search by display_name or nicename
-            $matched_user_id = $wpdb->get_var($wpdb->prepare(
-                "SELECT ID FROM {$wpdb->users} WHERE display_name = %s OR user_nicename = %s OR user_login = %s LIMIT 1",
-                $name,
-                $clean_name,
-                $clean_name
-            ));
-            if ($matched_user_id) {
-                $u = get_userdata((int)$matched_user_id);
-                if ($u && !in_array('doctor', (array)$u->roles) && !in_array('administrator', (array)$u->roles)) {
-                    $u->add_role('doctor');
+            if ($user) {
+                if (get_user_meta($user->ID, '_dior_merged_into_doctor_id', true) || in_array('doctor', (array) $user->roles, true)) {
+                    return $central_id;
                 }
-                return (int)$matched_user_id;
-            }
-
-            // Auto-provision WordPress user for this newly named doctor!
-            $new_login = sanitize_user(strtolower(str_replace(' ', '', $clean_name)));
-            if (empty($new_login)) $new_login = 'doctor_' . time();
-            $new_email = $new_login . '@diormedical.com';
-
-            $existing_by_email = get_user_by('email', $new_email);
-            if ($existing_by_email) {
-                return (int)$existing_by_email->ID;
-            }
-
-            $new_uid = wp_insert_user([
-                'user_login'   => $new_login,
-                'user_email'   => $new_email,
-                'user_pass'    => self::DEFAULT_DOCTOR_PASS,
-                'display_name' => $name,
-                'first_name'   => 'Dr.',
-                'last_name'    => $clean_name,
-                'role'         => 'doctor',
-            ]);
-
-            if (!is_wp_error($new_uid)) {
-                update_user_meta($new_uid, 'doctor_specialty', 'Telehealth Physician');
-                return (int)$new_uid;
+                if (in_array('administrator', (array) $user->roles, true)) return (int) $user->ID;
             }
         }
 
-        // Fallback to primary default doctor
-        return self::get_default_doctor_id();
+        return $central_id;
     }
 
     /**
@@ -1464,62 +1609,20 @@ class Dior_Doctor_Resolver
             return self::get_default_doctor_id();
         }
 
-        $linked_uid = get_post_meta($post_id, '_wpddb_doctor_user_id', true);
-        if ($linked_uid && get_userdata((int)$linked_uid)) {
-            return (int)$linked_uid;
+        $central_id = self::get_default_doctor_id();
+        if (!$central_id) return 0;
+
+        $linked_user_id = (int) get_post_meta($post_id, '_wpddb_doctor_user_id', true);
+        if ($linked_user_id && $linked_user_id !== $central_id && !get_post_meta($post_id, '_dior_original_doctor_user_id', true)) {
+            update_post_meta($post_id, '_dior_original_doctor_user_id', $linked_user_id);
         }
-
-        // Check by doctor post email if specified
-        $email = get_post_meta($post_id, 'wpddb_doctor_email', true);
-        if ($email && is_email($email)) {
-            $user_by_email = get_user_by('email', $email);
-            if ($user_by_email) {
-                if (!in_array('doctor', (array)$user_by_email->roles) && !in_array('administrator', (array)$user_by_email->roles)) {
-                    $user_by_email->add_role('doctor');
-                }
-                update_post_meta($post_id, '_wpddb_doctor_user_id', $user_by_email->ID);
-                update_user_meta($user_by_email->ID, '_docbooker_doctor_id', $post_id);
-                return (int)$user_by_email->ID;
-            }
-        }
-
-        // Search by name
-        $title = trim($post->post_title);
-        $clean = trim(preg_replace('/^Dr\.?\s+/i', '', $title));
-        $clean = trim(preg_replace('/,\s*(MD|DO|MBBS|PhD)$/i', '', $clean));
-        $user_login = sanitize_user(strtolower(str_replace(' ', '', $clean)));
-        if (empty($user_login)) $user_login = 'doctor_' . $post_id;
-
-        $existing_user = get_user_by('login', $user_login);
-        if ($existing_user) {
-            if (!in_array('doctor', (array)$existing_user->roles) && !in_array('administrator', (array)$existing_user->roles)) {
-                $existing_user->add_role('doctor');
-            }
-            update_post_meta($post_id, '_wpddb_doctor_user_id', $existing_user->ID);
-            update_user_meta($existing_user->ID, '_docbooker_doctor_id', $post_id);
-            return (int)$existing_user->ID;
-        }
-
-        // Auto-create WP user for this doctor!
-        $new_email = (!empty($email) && is_email($email)) ? $email : ($user_login . '@diormedical.com');
-        $new_uid = wp_insert_user([
-            'user_login'   => $user_login,
-            'user_email'   => $new_email,
-            'user_pass'    => self::DEFAULT_DOCTOR_PASS,
-            'display_name' => $title,
-            'first_name'   => 'Dr.',
-            'last_name'    => $clean,
-            'role'         => 'doctor',
-        ]);
-
-        if (!is_wp_error($new_uid)) {
-            update_post_meta($post_id, '_wpddb_doctor_user_id', $new_uid);
-            update_user_meta($new_uid, '_docbooker_doctor_id', $post_id);
-            update_user_meta($new_uid, 'doctor_specialty', get_post_meta($post_id, 'wpddb_doctor_speciality', true) ?: 'Telehealth Physician');
-            return (int)$new_uid;
-        }
-
-        return self::get_default_doctor_id();
+        update_post_meta($post_id, '_wpddb_doctor_user_id', $central_id);
+        $post_ids = get_user_meta($central_id, '_dior_merged_docbooker_post_ids', true);
+        $post_ids = is_array($post_ids) ? $post_ids : [];
+        $post_ids[] = (int) $post_id;
+        update_user_meta($central_id, '_dior_merged_docbooker_post_ids', array_values(array_unique(array_map('intval', $post_ids))));
+        update_user_meta($central_id, '_docbooker_doctor_id', (int) $post_id);
+        return $central_id;
     }
 }
 

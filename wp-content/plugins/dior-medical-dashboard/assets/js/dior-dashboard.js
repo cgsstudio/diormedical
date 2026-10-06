@@ -804,7 +804,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 const tabId = this.getAttribute('data-tab');
-                switchTab(tabId);
+                if (typeof window.diorSwitchTab === 'function') {
+                    window.diorSwitchTab(tabId);
+                } else {
+                    switchTab(tabId);
+                }
             });
         });
 
@@ -814,7 +818,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
             if (target) {
                 e.preventDefault();
                 const tabId = target.getAttribute('data-switch-tab');
-                switchTab(tabId);
+                if (typeof window.diorSwitchTab === 'function') {
+                    window.diorSwitchTab(tabId);
+                } else {
+                    switchTab(tabId);
+                }
                 // Also close notif dropdown if open
                 const notifDropdown = document.getElementById('dior-notif-dropdown');
                 if (notifDropdown) notifDropdown.classList.remove('open');
@@ -830,14 +838,23 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
             if (!btn || !appWrap.contains(btn)) return;
             if (btn.closest('.dior-nav-item-has-children')) return;
             e.preventDefault();
-            switchTab(btn.getAttribute('data-tab'));
+            const tabId = btn.getAttribute('data-tab');
+            if (typeof window.diorSwitchTab === 'function') {
+                window.diorSwitchTab(tabId);
+            } else {
+                switchTab(tabId);
+            }
         });
 
         // Deep linking via URL hash & hashchange listener
         function handleUrlHash() {
             if (window.location.hash && window.location.hash.startsWith('#tab=')) {
                 const hashTab = window.location.hash.replace('#tab=', '');
-                switchTab(hashTab);
+                if (typeof window.diorSwitchTab === 'function') {
+                    window.diorSwitchTab(hashTab);
+                } else {
+                    switchTab(hashTab);
+                }
             }
         }
         handleUrlHash();
@@ -920,7 +937,9 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         }
 
         function closeMobileDrawer() {
-            window.diorCloseMobileDrawer();
+            if (typeof window.diorCloseMobileDrawer === 'function') {
+                window.diorCloseMobileDrawer();
+            }
         }
 
         if (mobileToggle) mobileToggle.addEventListener('click', window.diorOpenMobileDrawer);
@@ -1203,10 +1222,17 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                         ddList.innerHTML = d.dropdown_html;
                     }
 
-                    // 3. Update Full Page List
-                    const fullList = document.getElementById('dior-notifications-full-container');
-                    if (fullList && d.full_html && d.latest_id !== diorLastKnownNotifId) {
-                        fullList.innerHTML = d.full_html;
+                    // 3. Update Full Page List (Notifications tab table)
+                    const notifTableBody = document.querySelector('#dior-notif-tbody');
+                    if (notifTableBody && d.full_html && d.latest_id !== diorLastKnownNotifId) {
+                        notifTableBody.innerHTML = d.full_html;
+                        // Update stats cards
+                        const totalCount = document.querySelector('.dior-patient-alert-stat:nth-child(1) strong');
+                        const unreadCountEl = document.querySelector('.dior-patient-alert-stat:nth-child(2) strong');
+                        const readCountEl = document.querySelector('.dior-patient-alert-stat:nth-child(3) strong');
+                        if (totalCount) totalCount.textContent = d.total_count || 0;
+                        if (unreadCountEl) unreadCountEl.textContent = d.unread_count || 0;
+                        if (readCountEl) readCountEl.textContent = (d.total_count - d.unread_count) || 0;
                     }
 
                     // 4. Trigger Toasts for New Alerts
@@ -1332,10 +1358,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
-                            title: 'Reminder Dispatched!',
-                            text: (resData && resData.message) ? resData.message : 'Appointment reminder dispatched to both you and your attending doctor.',
-                            icon: 'success',
-                            confirmButtonColor: '#2C6CB1'
+                            position: "top-end",
+                            icon: "success",
+                            title: "Reminder Dispatched!",
+                            showConfirmButton: false,
+                            timer: 1500
                         });
                     } else {
                         showToast('Appointment reminder sent successfully.');
@@ -1460,10 +1487,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
-                            title: 'Consultation Rescheduled!',
-                            text: `Your visit is now scheduled for ${newDate} at ${newTime}. Multi-channel confirmation notifications have been dispatched to both you and your doctor.`,
-                            icon: 'success',
-                            confirmButtonColor: '#2C6CB1'
+                            position: "top-end",
+                            icon: "success",
+                            title: "Consultation Rescheduled!",
+                            showConfirmButton: false,
+                            timer: 1500
                         });
                     } else {
                         showToast(`Appointment rescheduled to ${newDate} at ${newTime}.`);
@@ -1975,11 +2003,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Profile Updated Successfully!',
-                        text: 'Your personal information has been saved in the database. Telehealth appointments and medical services are now unlocked.',
-                        confirmButtonText: '<i class="fa-solid fa-check"></i> Great, Continue',
-                        confirmButtonColor: '#2C6CB1'
+                        position: "top-end",
+                        icon: "success",
+                        title: "Profile Updated Successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
                     });
                 } else {
                     showToast('Profile updated successfully!');
@@ -2200,12 +2228,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                         if (typeof Swal !== 'undefined') {
                             Swal.fire({
-                                icon: 'success',
-                                title: 'Profile Photo Uploaded!',
-                                text: 'Your profile photo has been updated directly from your device.',
-                                confirmButtonText: '<i class="fa-solid fa-check"></i> Great',
-                                confirmButtonColor: '#2C6CB1',
-                                timer: 2500
+                                position: "top-end",
+                                icon: "success",
+                                title: "Profile Photo Uploaded!",
+                                showConfirmButton: false,
+                                timer: 1500
                             });
                         } else {
                             showToast('Profile photo uploaded successfully!');
@@ -2306,12 +2333,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                             if (typeof Swal !== 'undefined') {
                                 Swal.fire({
-                                    icon: 'success',
-                                    title: 'Profile Photo Updated!',
-                                    text: 'Your new photo has been selected from the WordPress Media Library.',
-                                    confirmButtonText: '<i class="fa-solid fa-check"></i> Great',
-                                    confirmButtonColor: '#2C6CB1',
-                                    timer: 2500
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: "Profile Photo Updated!",
+                                    showConfirmButton: false,
+                                    timer: 1500
                                 });
                             } else {
                                 showToast('Profile photo updated successfully!');
@@ -2382,11 +2408,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                         if (typeof Swal !== 'undefined') {
                             Swal.fire({
-                                icon: 'success',
-                                title: 'Photo Removed',
-                                text: 'Your profile photo has been removed.',
-                                confirmButtonColor: '#2C6CB1',
-                                timer: 2000
+                                position: "top-end",
+                                icon: "success",
+                                title: "Photo Removed",
+                                showConfirmButton: false,
+                                timer: 1500
                             });
                         } else {
                             showToast('Profile photo removed.');
@@ -2537,11 +2563,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                         if (typeof Swal !== 'undefined') {
                             Swal.fire({
-                                icon: 'success',
-                                title: 'Signature Saved!',
-                                text: 'Your electronic signature has been securely stored.',
-                                confirmButtonColor: '#2C6CB1',
-                                timer: 2500
+                                position: "top-end",
+                                icon: "success",
+                                title: "Signature Saved!",
+                                showConfirmButton: false,
+                                timer: 1500
                             });
                         } else {
                             showToast('Signature saved successfully!');
@@ -2622,11 +2648,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                             }
                             if (typeof Swal !== 'undefined') {
                                 Swal.fire({
-                                    icon: 'success',
-                                    title: 'Signature Selected!',
-                                    text: 'Your electronic signature was selected from media library.',
-                                    confirmButtonColor: '#2C6CB1',
-                                    timer: 2000
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: "Signature Selected!",
+                                    showConfirmButton: false,
+                                    timer: 1500
                                 });
                             } else {
                                 showToast('Signature updated.');
@@ -2673,11 +2699,11 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
-                            icon: 'success',
-                            title: 'Signature Removed',
-                            text: 'Your electronic signature has been removed.',
-                            confirmButtonColor: '#2C6CB1',
-                            timer: 2000
+                            position: "top-end",
+                            icon: "success",
+                            title: "Signature Removed",
+                            showConfirmButton: false,
+                            timer: 1500
                         });
                     } else {
                         showToast('Signature removed.');
@@ -3503,7 +3529,10 @@ window.diorHandleOptinMasterToggle = function(checkbox) {
                 });
                 Toast.fire({
                     icon: isChecked ? 'success' : 'info',
-                    title: isChecked ? 'Appointment Reminders Opted-In' : 'Appointment Reminders Paused'
+                    title: isChecked ? 'Appointment Reminders Opted-In' : 'Appointment Reminders Paused',
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             }
         });
@@ -3518,10 +3547,11 @@ window.diorToggleReminderOptin = function(channel, value) {
         }, function(res) {
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Preferences Updated',
-                    text: res.message || 'Notification preference saved successfully.',
-                    confirmButtonColor: '#2C6CB1'
+                    position: "top-end",
+                    icon: "success",
+                    title: "Preferences Updated",
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             }
         });

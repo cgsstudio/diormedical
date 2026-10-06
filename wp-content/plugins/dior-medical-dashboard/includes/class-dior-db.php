@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 class Dior_DB
 {
-    const DB_VERSION = '3.0.0';
+    const DB_VERSION = '4.0.2';
     const DB_VERSION_OPTION = 'dior_medical_db_version';
 
     /**
@@ -171,6 +171,163 @@ class Dior_DB
             KEY idx_created_at (created_at)
         ) $charset_collate;";
         dbDelta($sql_audit);
+
+        // 5. Appointment lifecycle/history table
+        $table_history = $wpdb->prefix . 'dior_appointment_history';
+        $sql_history = "CREATE TABLE $table_history (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            appointment_id BIGINT UNSIGNED NULL,
+            appt_uid VARCHAR(64) NOT NULL,
+            patient_id BIGINT UNSIGNED NOT NULL,
+            doctor_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
+            action VARCHAR(50) NOT NULL,
+            old_status VARCHAR(50) NULL,
+            new_status VARCHAR(50) NULL,
+            old_date DATE NULL,
+            new_date DATE NULL,
+            old_time VARCHAR(50) NULL,
+            new_time VARCHAR(50) NULL,
+            changed_by BIGINT UNSIGNED NULL,
+            notes TEXT NULL,
+            created_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            KEY idx_appt_uid (appt_uid),
+            KEY idx_patient_id (patient_id),
+            KEY idx_doctor_id (doctor_id),
+            KEY idx_created_at (created_at)
+        ) $charset_collate;";
+        dbDelta($sql_history);
+
+        // 6. In-app notification table
+        $table_notifications = $wpdb->prefix . 'dior_notifications';
+        $sql_notifications = "CREATE TABLE $table_notifications (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            notification_uid VARCHAR(64) NOT NULL,
+            user_id BIGINT UNSIGNED NOT NULL,
+            patient_id BIGINT UNSIGNED NULL,
+            doctor_id BIGINT UNSIGNED NULL,
+            type VARCHAR(50) NOT NULL DEFAULT 'system',
+            title VARCHAR(255) NOT NULL,
+            message TEXT NOT NULL,
+            action_url VARCHAR(500) NULL,
+            icon VARCHAR(100) NULL,
+            is_read TINYINT(1) NOT NULL DEFAULT 0,
+            read_at DATETIME NULL,
+            created_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY uk_notification_uid (notification_uid),
+            KEY idx_user_id (user_id),
+            KEY idx_patient_id (patient_id),
+            KEY idx_doctor_id (doctor_id),
+            KEY idx_is_read (is_read),
+            KEY idx_created_at (created_at)
+        ) $charset_collate;";
+        dbDelta($sql_notifications);
+
+        // 7. Prescriptions table
+        $table_prescriptions = $wpdb->prefix . 'dior_prescriptions';
+        $sql_prescriptions = "CREATE TABLE $table_prescriptions (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            prescription_uid VARCHAR(64) NOT NULL,
+            patient_id BIGINT UNSIGNED NOT NULL,
+            doctor_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
+            appointment_uid VARCHAR(64) NULL,
+            medication VARCHAR(255) NOT NULL,
+            instructions TEXT NULL,
+            quantity VARCHAR(100) NULL,
+            refills INT NOT NULL DEFAULT 0,
+            status VARCHAR(30) NOT NULL DEFAULT 'Active',
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY uk_prescription_uid (prescription_uid),
+            KEY idx_patient_id (patient_id),
+            KEY idx_doctor_id (doctor_id),
+            KEY idx_status (status),
+            KEY idx_created_at (created_at)
+        ) $charset_collate;";
+        dbDelta($sql_prescriptions);
+
+        // 8. Invoices table
+        $table_invoices = $wpdb->prefix . 'dior_invoices';
+        $sql_invoices = "CREATE TABLE $table_invoices (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            invoice_uid VARCHAR(64) NOT NULL,
+            patient_id BIGINT UNSIGNED NOT NULL,
+            doctor_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
+            appointment_uid VARCHAR(64) NULL,
+            amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            currency VARCHAR(10) NOT NULL DEFAULT 'USD',
+            status VARCHAR(30) NOT NULL DEFAULT 'Pending',
+            description VARCHAR(255) NULL,
+            issued_at DATETIME NULL,
+            due_at DATETIME NULL,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY uk_invoice_uid (invoice_uid),
+            KEY idx_patient_id (patient_id),
+            KEY idx_doctor_id (doctor_id),
+            KEY idx_status (status),
+            KEY idx_created_at (created_at)
+        ) $charset_collate;";
+        dbDelta($sql_invoices);
+
+        // 9. Payments table
+        $table_payments = $wpdb->prefix . 'dior_payments';
+        $sql_payments = "CREATE TABLE $table_payments (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            payment_uid VARCHAR(64) NOT NULL,
+            patient_id BIGINT UNSIGNED NOT NULL,
+            doctor_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
+            appointment_uid VARCHAR(64) NULL,
+            invoice_uid VARCHAR(64) NULL,
+            amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            currency VARCHAR(10) NOT NULL DEFAULT 'USD',
+            payment_method VARCHAR(50) NULL,
+            transaction_id VARCHAR(150) NULL,
+            status VARCHAR(30) NOT NULL DEFAULT 'Pending',
+            paid_at DATETIME NULL,
+            created_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY uk_payment_uid (payment_uid),
+            KEY idx_patient_id (patient_id),
+            KEY idx_doctor_id (doctor_id),
+            KEY idx_invoice_uid (invoice_uid),
+            KEY idx_status (status),
+            KEY idx_created_at (created_at)
+        ) $charset_collate;";
+        dbDelta($sql_payments);
+
+        // 10. Normalized patient profile table. wp_users remains the authentication source.
+        $table_patients = $wpdb->prefix . 'dior_patients';
+        $sql_patients = "CREATE TABLE $table_patients (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            user_id BIGINT UNSIGNED NOT NULL,
+            patient_uid VARCHAR(64) NOT NULL,
+            first_name VARCHAR(100) NOT NULL DEFAULT '',
+            last_name VARCHAR(100) NOT NULL DEFAULT '',
+            email VARCHAR(190) NOT NULL DEFAULT '',
+            phone VARCHAR(50) NULL,
+            dob DATE NULL,
+            gender VARCHAR(50) NULL,
+            blood_group VARCHAR(10) NULL,
+            address VARCHAR(500) NULL,
+            city VARCHAR(100) NULL,
+            state VARCHAR(100) NULL,
+            country VARCHAR(100) NULL,
+            avatar_url VARCHAR(500) NULL,
+            status VARCHAR(30) NOT NULL DEFAULT 'active',
+            is_demo TINYINT(1) NOT NULL DEFAULT 0,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY uk_user_id (user_id),
+            UNIQUE KEY uk_patient_uid (patient_uid),
+            KEY idx_email (email),
+            KEY idx_status (status)
+        ) $charset_collate;";
+        dbDelta($sql_patients);
     }
 
     /**

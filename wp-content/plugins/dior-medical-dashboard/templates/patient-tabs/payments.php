@@ -1,41 +1,51 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-payments">
-    <div class="master-table-wrapper">
-        <div class="master-table-container">
-            <div class="master-table-card">
-                <div class="master-table-header">
-                    <div class="header-content">
-                        <div class="table-title-section">
-                            <h2 class="table-title">Billing</h2>
-                            <div class="title-accent"></div>
+    <!-- Breadcrumb Header -->
+    <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
+        <div>
+            <h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Billing</h4>
+        </div>
+        <div>
+            <ul class="va-breadcrumb-list">
+                <li><a href="#"><i class="fa-solid fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
+                <li><span style="color:#94A3B8;">/</span></li>
+                <li class="active"><span>Billing</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="docs-card">
+                <div class="docs-header-container">
+                    <div class="docs-title-box">
+                        <h2>Billing</h2>
+                        <div class="docs-title-line"></div>
+                    </div>
+                    <div class="docs-actions-wrapper">
+                        <div class="docs-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="dior-bill-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterBill()">
                         </div>
-                        <div class="header-actions-group">
-                            <div class="search-container">
-                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                                <input type="text" id="dior-bill-search-input" placeholder="Search records..." aria-label="Search box" class="search-input" onkeyup="diorFilterBill()">
-                            </div>
-                            <div class="action-buttons">
-                                <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success" title="Export to CSV" onclick="diorDownloadBillCSV()">
-                                    <i class="fa-solid fa-file-arrow-down"></i>
-                                </button>
-                                <button type="button" aria-label="Refresh data" class="action-btn action-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                    <i class="fa-solid fa-rotate-right"></i>
-                                </button>
-                            </div>
+                        <div class="docs-actions-group">
+                            <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadBillCSV()">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                            </button>
+                            <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="table-content">
-                    <table class="master-modern-table" id="dior-bill-table">
+                <div class="docs-table-wrapper">
+                    <table class="docs-table" id="dior-bill-table">
                         <thead>
                             <tr>
-                                <th>INVOICE NO <i class="fa-solid fa-sort"></i></th>
-                                <th>DOCTOR NAME <i class="fa-solid fa-sort"></i></th>
-                                <th>DATE <i class="fa-solid fa-sort"></i></th>
-                                <th>AMOUNT <i class="fa-solid fa-sort"></i></th>
-                                <th>TAX <i class="fa-solid fa-sort"></i></th>
-                                <th>DISCOUNT <i class="fa-solid fa-sort"></i></th>
-                                <th>TOTAL <i class="fa-solid fa-sort"></i></th>
-                                <th>ACTIONS <i class="fa-solid fa-sort"></i></th>
+                                <th>Invoice No</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Tax</th>
+                                <th>Discount</th>
+                                <th>Total</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="dior-bill-tbody">
@@ -49,6 +59,8 @@
                                 ['#A345', 'Dr.Sarah Smith', 'Jul 14, 2016', '$60', '10%', '$5', '$56'],
                                 ['#A765', 'Dr.Jacob Ryan', 'Jun 22, 2016', '$40', '10%', '$5', '$39'],
                                 ['#A125', 'Dr.Rajesh', 'Jun 23, 2016', '$30', '10%', '$5', '$29']
+                                ,['#A905', 'Dr.Sarah Smith', 'Aug 2, 2016', '$72', '8%', '$4', '$74']
+                                ,['#A981', 'Dr.James Chen', 'Aug 16, 2016', '$95', '8%', '$0', '$103']
                             ];
                             foreach ($billing_mock as $bm):
                             ?>
@@ -83,14 +95,10 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="master-table-footer">
-                    <span class="page-count" id="dior-bill-page-count">0 selected / <?php echo count($billing_mock); ?> total</span>
-                    
-                    <div class="master-pagination" id="dior-bill-pagination">
-                    </div>
+                <div class="docs-pagination-container">
+                    <div class="docs-showing-text" id="dior-bill-page-count">0 selected / <?php echo count($billing_mock); ?> total</div>
+                    <div id="dior-bill-pagination"></div>
                 </div>
-            </div>
-        </div>
     </div>
     
 
