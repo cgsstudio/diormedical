@@ -2860,7 +2860,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function switchTab(tabId) {
             if (!tabId) return;
+<<<<<<< HEAD
             try { localStorage.setItem('diorDocLastTab', tabId); } catch(e) {}
+=======
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 
             var buttons = app.querySelectorAll('#dior-doc-sidebar .dior-nav-btn[data-tab]');
             buttons.forEach(function (btn) {
@@ -2873,10 +2876,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 panel.classList.toggle('active', active);
                 if (active) {
                     panel.removeAttribute('hidden');
+<<<<<<< HEAD
                     panel.style.display = 'block';
                 } else {
                     panel.setAttribute('hidden', 'hidden');
                     panel.style.display = 'none';
+=======
+                } else {
+                    panel.setAttribute('hidden', 'hidden');
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
                 }
             });
 
@@ -2885,23 +2893,36 @@ document.addEventListener('DOMContentLoaded', function () {
             } catch (e) {}
         }
 
+<<<<<<< HEAD
         if (typeof window.diorDocSwitchTab !== 'function') {
             window.diorDocSwitchTab = switchTab;
         }
+=======
+        window.diorDocSwitchTab = switchTab;
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 
         app.addEventListener('click', function (event) {
             var btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
             if (!btn) return;
+<<<<<<< HEAD
             if (window.diorDocSwitchTab === switchTab) {
                 event.preventDefault();
                 event.stopPropagation();
                 switchTab(btn.getAttribute('data-tab'));
             }
+=======
+            event.preventDefault();
+            event.stopPropagation();
+            switchTab(btn.getAttribute('data-tab'));
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
         }, true);
 
         var hash = window.location.hash.match(/^#tab=([^&]+)/);
         var initial = hash ? decodeURIComponent(hash[1]) : null;
+<<<<<<< HEAD
         if (!initial) { try { initial = localStorage.getItem('diorDocLastTab'); } catch(e) {} }
+=======
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
         var fallback = app.querySelector('#dior-doc-sidebar .dior-nav-btn.active[data-tab]') || app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab]');
         switchTab(initial && app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initial) + '"]') ? initial : (fallback ? fallback.getAttribute('data-tab') : 'doc-overview'));
     }

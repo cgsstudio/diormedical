@@ -94,12 +94,24 @@
     overflow-wrap: anywhere;
 }
 
+<<<<<<< HEAD
 /* Settings/profile image constraints (scoped to avoid forcing 180px on avatar edit widgets). */
 .dior-doctor-wrap #tab-doc-settings .dior-profile-avatar,
 .dior-doctor-wrap #tab-doc-settings .dior-avatar-preview {
     max-width: 180px;
     max-height: 180px;
     object-fit: cover;
+=======
+/* Settings/profile image: never let the source image dictate card height. */
+.dior-doctor-wrap #tab-doc-settings img,
+.dior-doctor-wrap #tab-doc-settings .dior-profile-avatar,
+.dior-doctor-wrap #tab-doc-settings .dior-avatar-preview {
+    max-width: 180px !important;
+    max-height: 180px !important;
+    width: 180px;
+    height: 180px;
+    object-fit: cover !important;
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 }
 .dior-doctor-wrap #tab-doc-settings .dior-settings-card,
 .dior-doctor-wrap #tab-doc-settings .dior-profile-card {
@@ -107,11 +119,28 @@
     overflow: hidden;
 }
 
+<<<<<<< HEAD
+=======
+/* Existing inline image sizes inside profile/source cards are constrained. */
+.dior-doctor-wrap #tab-doc-settings img[style*="width"],
+.dior-doctor-wrap #tab-doc-settings img[style*="height"] {
+    max-width: 180px !important;
+    max-height: 180px !important;
+    object-fit: cover !important;
+}
+
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 /* Prevent giant decorative headings from overflowing. */
 .dior-doctor-wrap .dior-page-watermark,
 .dior-doctor-wrap .page-watermark,
 .dior-doctor-wrap .dior-big-title {
+<<<<<<< HEAD
     display: none !important;
+=======
+    max-width: 100%;
+    overflow: hidden;
+    line-height: .95;
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 }
 
 /* Cards and tables should never force the whole dashboard wider than viewport. */
@@ -261,6 +290,7 @@
     }
 }
 
+<<<<<<< HEAD
 /* ==========================================================================
    FINAL RESPONSIVE LAYOUT FIX
    - Native 100% browser scale at 1280px; no CSS zoom.
@@ -440,3 +470,16 @@
     }
 }
 
+=======
+
+/* Patient tables: match Doctor Consultation Notes reference. Visual-only override. */
+.dior-patient-portal-wrap .master-table-card{background:#fff!important;border:1px solid #e7edf4!important;border-radius:14px!important;box-shadow:0 4px 18px rgba(15,23,42,.05)!important;overflow:hidden!important;padding:0!important}
+.dior-patient-portal-wrap .master-table-header{padding:16px 20px!important;border-bottom:1px solid #edf1f5!important;background:#fff!important}
+.dior-patient-portal-wrap table.master-modern-table thead th{padding:12px 14px!important;background:#f8fafc!important;border:0!important;border-bottom:1px solid #e9eef4!important;color:#64748b!important;font-size:11px!important;font-weight:750!important;text-transform:uppercase!important;letter-spacing:.03em!important;text-align:left!important}
+.dior-patient-portal-wrap table.master-modern-table tbody td{padding:13px 14px!important;border:0!important;border-bottom:1px solid #edf2f7!important;background:#fff!important;color:#334155!important;font-size:13px!important;vertical-align:middle!important}
+.dior-patient-portal-wrap table.master-modern-table tbody tr:hover td{background:#f8fafc!important}
+.dior-patient-portal-wrap .master-table-footer{padding:12px 20px!important;min-height:54px!important;background:#fff!important;border-top:1px solid #edf1f5!important;display:flex!important;align-items:center!important;justify-content:space-between!important}
+.dior-patient-portal-wrap .master-pagination{display:flex!important;align-items:center!important;gap:5px!important}
+.dior-patient-portal-wrap .master-pagination .page-btn,.dior-patient-portal-wrap .master-pagination .page-num{min-width:32px!important;height:32px!important;border:0!important;border-radius:7px!important;background:transparent!important;color:#64748b!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:600!important}
+.dior-patient-portal-wrap .master-pagination .page-num.active{background:#2c6cb1!important;color:#fff!important;border-radius:50%!important}
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101

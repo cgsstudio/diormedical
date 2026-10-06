@@ -3,17 +3,18 @@
  * Plugin Name: Dior Medical - Patient Portal & Dashboard
  * Plugin URI:  https://vultureconcepts.com
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version:     4.0.0
- * Author:      Vulture Concepts
- * Author URI:  https://vultureconcepts.com/
- * Text Domain: dior-medical
+
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
+
 define('DIOR_PORTAL_VERSION', '4.1.0');
+
+define( 'DIOR_PORTAL_VERSION', '2.2.6' );
+
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
 define('DIOR_PORTAL_URL', plugin_dir_url(__FILE__));
 
@@ -811,6 +812,7 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') : DIOR_PORTAL_VERSION
         );
         wp_enqueue_style(
+<<<<<<< HEAD
             'dior-view-appointment-css',
             DIOR_PORTAL_URL . 'assets/css/view-appointment.css',
             ['dior-doctor-source-tabs'],
@@ -823,11 +825,14 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/css/documents.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/documents.css') : DIOR_PORTAL_VERSION
         );
         wp_enqueue_style(
+=======
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
             'dior-static-responsive-fix',
             DIOR_PORTAL_URL . 'assets/css/dior-static-responsive-fix.css',
             ['dior-doctor-source-tabs'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') : DIOR_PORTAL_VERSION
         );
+<<<<<<< HEAD
         wp_enqueue_style(
             'dior-doctor-tabs-unify',
             DIOR_PORTAL_URL . 'assets/css/dior-doctor-tabs-unify.css',
@@ -848,6 +853,8 @@ class Dior_Medical_Auth
             ['dior-doctor-tabs-unify'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-calendar-rebuild.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-calendar-rebuild.css') : DIOR_PORTAL_VERSION
         );
+=======
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 
         wp_enqueue_script(
             'sweetalert2',
@@ -887,6 +894,7 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-navigation.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-navigation.js') : DIOR_PORTAL_VERSION,
             true
         );
+<<<<<<< HEAD
         wp_enqueue_script(
             'dior-patient-live',
             DIOR_PORTAL_URL . 'assets/js/dior-patient-live.js',
@@ -894,6 +902,8 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-live.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-live.js') : DIOR_PORTAL_VERSION,
             true
         );
+=======
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 
         // Dashboard JS
         wp_enqueue_script(

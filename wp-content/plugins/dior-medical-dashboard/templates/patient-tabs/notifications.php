@@ -1,4 +1,5 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-notifications">
+<<<<<<< HEAD
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
         <div>
@@ -61,11 +62,44 @@
                 </div>
                 <div class="docs-table-wrapper">
                     <table class="docs-table" id="dior-notif-table">
+=======
+    <div class="master-table-wrapper">
+        <div class="master-table-container">
+            <div class="master-table-card">
+                <div class="master-table-header">
+                    <div class="header-content">
+                        <div class="table-title-section">
+                            <h2 class="table-title">Notifications Center</h2>
+                            <div class="title-accent"></div>
+                        </div>
+                        <div class="header-actions-group">
+                            <div class="search-container">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                <input type="text" id="dior-notif-search-input" placeholder="Search records..." aria-label="Search box" class="search-input" onkeyup="diorFilterNotif()">
+                            </div>
+                            <div class="action-buttons">
+                                <button type="button" aria-label="Add new record" class="action-btn action-btn-primary dior-ic-54410f9b78">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success" title="Export to CSV" onclick="diorDownloadNotifCSV()">
+                                    <i class="fa-solid fa-file-arrow-down"></i>
+                                </button>
+                                <button type="button" aria-label="Refresh data" class="action-btn action-btn-info" title="Refresh Page" onclick="window.location.reload()">
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-content">
+                    <table class="master-modern-table" id="dior-notif-table">
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
                         <thead>
                             <tr>
                                 <th class="dior-ic-3fa4d8d717">
                                     <input type="checkbox" class="dior-ic-52ff4d551f">
                                 </th>
+<<<<<<< HEAD
                                 <th>Title</th>
                                 <th>Message</th>
                                 <th>Type</th>
@@ -73,10 +107,23 @@
                                 <th>Time</th>
                                 <th>Status</th>
                                 <th>Actions</th>
+=======
+                                <th>TITLE <i class="fa-solid fa-sort"></i></th>
+                                <th>MESSAGE <i class="fa-solid fa-sort"></i></th>
+                                <th>TYPE <i class="fa-solid fa-sort"></i></th>
+                                <th>DATE <i class="fa-solid fa-sort"></i></th>
+                                <th>TIME <i class="fa-solid fa-sort"></i></th>
+                                <th>STATUS <i class="fa-solid fa-sort"></i></th>
+                                <th>ACTIONS</th>
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
                             </tr>
                         </thead>
                         <tbody id="dior-notif-tbody">
                             <?php
+<<<<<<< HEAD
+=======
+                            $patient_notif_rows = is_array($notifications ?? []) ? $notifications : [];
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
                             foreach ($patient_notif_rows as $n):
                                 $n_title = $n['title'] ?? 'Notification';
                                 $n_message = $n['message'] ?? '';
@@ -109,10 +156,21 @@
 </tbody>
                     </table>
                 </div>
+<<<<<<< HEAD
                 <div class="docs-pagination-container">
                     <span class="docs-showing-text" id="dior-notif-page-count">0 selected / <?php echo count($patient_notif_rows); ?> total</span>
                     <div id="dior-notif-pagination"></div>
                 </div>
+=======
+                <div class="master-table-footer">
+                    <span class="page-count" id="dior-notif-page-count">0 selected / <?php echo count($patient_notif_rows); ?> total</span>
+                    
+                    <div class="master-pagination" id="dior-notif-pagination">
+                    </div>
+                </div>
+            </div>
+        </div>
+>>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
     </div>
     
 </section>
