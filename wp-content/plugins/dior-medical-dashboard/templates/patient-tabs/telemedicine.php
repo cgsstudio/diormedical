@@ -14,89 +14,123 @@
     </div>
 
     <div class="docs-card">
-                <div class="docs-header-container">
-                    <div class="docs-title-box">
-                        <h2>Telemedicine / Video Consultations</h2>
-                        <div class="docs-title-line"></div>
-                    </div>
-                    <div class="docs-actions-wrapper">
-                        <div class="docs-search-box">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="dior-tele-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterTele()">
-                        </div>
-                        <div class="docs-actions-group">
-                            <button type="button" aria-label="Add new record" class="docs-icon-btn docs-btn-primary dior-ic-54410f9b78">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                            <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadTeleCSV()">
-                                <i class="fa-solid fa-file-arrow-down"></i>
-                            </button>
-                            <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                <i class="fa-solid fa-rotate-right"></i>
-                            </button>
-                        </div>
-                    </div>
+        <div class="docs-header-container">
+            <div class="docs-title-box">
+                <h2 class="table-title">Telemedicine / Video Consultations</h2>
+                <div class="docs-title-line"></div>
+            </div>
+            <div class="docs-actions-wrapper">
+                <div class="docs-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="dior-tele-search-input" placeholder="Search records..."
+                        aria-label="Search box" onkeyup="diorFilterTele()">
                 </div>
-                <div class="docs-table-wrapper">
-                    <table class="docs-table" id="dior-tele-table">
-                        <thead>
+                <div class="docs-actions-group">
+                    <button type="button" aria-label="Add new record"
+                        class="docs-icon-btn docs-btn-primary dior-ic-54410f9b78">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success"
+                        title="Export to CSV" onclick="diorDownloadTeleCSV()">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                    </button>
+                    <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info"
+                        title="Refresh Page" onclick="window.location.reload()">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="docs-table-wrapper">
+            <table class="docs-table" id="dior-tele-table">
+                <thead>
+                    <tr>
+                        <th class="dior-ic-3fa4d8d717">
+                            <input type="checkbox" class="dior-ic-52ff4d551f">
+                        </th>
+                        <th>SESSION ID <i class="fa-solid fa-sort"></i></th>
+                        <th>DOCTOR <i class="fa-solid fa-sort"></i></th>
+                        <th>SPECIALTY <i class="fa-solid fa-sort"></i></th>
+                        <th>DATE <i class="fa-solid fa-sort"></i></th>
+                        <th>TIME <i class="fa-solid fa-sort"></i></th>
+                        <th>DURATION <i class="fa-solid fa-sort"></i></th>
+                        <th>TYPE <i class="fa-solid fa-sort"></i></th>
+                        <th>STATUS <i class="fa-solid fa-sort"></i></th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="dior-tele-tbody">
+                    <?php if (!empty($appointments)): ?>
+                        <?php foreach ($appointments as $apt): ?>
+                            <?php
+                            $tele_id = $apt['id'] ?? ($apt['appt_uid'] ?? '');
+                            $tele_date = $apt['date'] ?? ($apt['appt_date'] ?? '—');
+                            $tele_time = $apt['time'] ?? ($apt['appt_time'] ?? '—');
+                            $tele_status = $apt['status'] ?? 'Confirmed';
+                            $tele_class = strtolower($tele_status) === 'completed' ? 'col-green' : (strtolower($tele_status) === 'cancelled' ? 'col-red' : 'col-indigo');
+                            ?>
                             <tr>
-                                <th class="dior-ic-3fa4d8d717">
-                                    <input type="checkbox" class="dior-ic-52ff4d551f">
-                                </th>
-                                <th>SESSION ID <i class="fa-solid fa-sort"></i></th>
-                                <th>DOCTOR <i class="fa-solid fa-sort"></i></th>
-                                <th>SPECIALTY <i class="fa-solid fa-sort"></i></th>
-                                <th>DATE <i class="fa-solid fa-sort"></i></th>
-                                <th>TIME <i class="fa-solid fa-sort"></i></th>
-                                <th>DURATION <i class="fa-solid fa-sort"></i></th>
-                                <th>TYPE <i class="fa-solid fa-sort"></i></th>
-                                <th>STATUS <i class="fa-solid fa-sort"></i></th>
-                                <th>ACTIONS</th>
+                                <td><input type="checkbox" class="dior-ic-52ff4d551f"></td>
+                                <td><span class="cell-text"><?php echo esc_html($tele_id ?: '—'); ?></span></td>
+                                <td><span
+                                        class="cell-text"><?php echo esc_html($apt['provider'] ?? ($apt['doctor_name'] ?? 'Attending Physician')); ?></span>
+                                </td>
+                                <td><span
+                                        class="cell-text"><?php echo esc_html($apt['provider_spec'] ?? 'Telehealth Physician'); ?></span>
+                                </td>
+                                <td>
+                                    <div class="cell-content cell-icon-text"><i class="material-icons-outlined cell-icon">
+                                        </i><span class="cell-text"><?php echo esc_html($tele_date); ?></span></div>
+                                </td>
+                                <td><span class="cell-text"><?php echo esc_html($tele_time); ?></span></td>
+                                <td><span class="cell-text"><?php echo esc_html($apt['duration'] ?? '30 minutes'); ?></span>
+                                </td>
+                                <td><span
+                                        class="cell-text"><?php echo esc_html($apt['type'] ?? ($apt['visit_type'] ?? 'Video Visit')); ?></span>
+                                </td>
+                                <td>
+                                    <div class="cell-content">
+                                        <div class="badge-solid <?php echo esc_attr($tele_class); ?>">
+                                            <?php echo esc_html($tele_status); ?>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="cell-actions">
+                                        <button type="button" class="action-icon-btn edit-btn" title="View Session"
+                                            onclick="diorViewTelemedicine(this)"><i class="fa-regular fa-eye"></i></button>
+                                        <?php if (!in_array(strtolower($tele_status), ['completed', 'cancelled', 'no show'], true)): ?>
+                                            <?php if (!empty($apt['join_url'])): ?><a class="action-icon-btn"
+                                                    title="Join Consultation" href="<?php echo esc_url($apt['join_url']); ?>"
+                                                    target="_blank" rel="noopener"><i
+                                                        class="fa-solid fa-video"></i></a><?php else: ?><button type="button"
+                                                    class="action-icon-btn" title="Join Consultation"
+                                                    onclick="diorViewTelemedicine(this)"><i
+                                                        class="fa-solid fa-video"></i></button><?php endif; ?>
+                                        <?php endif; ?>
+                                        <button type="button" class="action-icon-btn delete-btn" title="Cancel Session"
+                                            onclick="diorDeleteStaticRow(this, 'telemedicine')"><i
+                                                class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody id="dior-tele-tbody">
-                            <?php if (!empty($appointments)): ?>
-                                <?php foreach ($appointments as $apt): ?>
-                                    <?php
-                                    $tele_id = $apt['id'] ?? ($apt['appt_uid'] ?? '');
-                                    $tele_date = $apt['date'] ?? ($apt['appt_date'] ?? '—');
-                                    $tele_time = $apt['time'] ?? ($apt['appt_time'] ?? '—');
-                                    $tele_status = $apt['status'] ?? 'Confirmed';
-                                    $tele_class = strtolower($tele_status) === 'completed' ? 'col-green' : (strtolower($tele_status) === 'cancelled' ? 'col-red' : 'col-indigo');
-                                    ?>
-                                    <tr>
-                                        <td><input type="checkbox" class="dior-ic-52ff4d551f"></td>
-                                        <td><span class="cell-text"><?php echo esc_html($tele_id ?: '—'); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($apt['provider'] ?? ($apt['doctor_name'] ?? 'Attending Physician')); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($apt['provider_spec'] ?? 'Telehealth Physician'); ?></span></td>
-                                        <td><div class="cell-content cell-icon-text"><i class="material-icons-outlined cell-icon">calendar_today</i><span class="cell-text"><?php echo esc_html($tele_date); ?></span></div></td>
-                                        <td><span class="cell-text"><?php echo esc_html($tele_time); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($apt['duration'] ?? '30 minutes'); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($apt['type'] ?? ($apt['visit_type'] ?? 'Video Visit')); ?></span></td>
-                                        <td><div class="cell-content"><div class="badge-solid <?php echo esc_attr($tele_class); ?>"><?php echo esc_html($tele_status); ?></div></div></td>
-                                        <td><div class="cell-actions">
-                                            <button type="button" class="action-icon-btn edit-btn" title="View Session" onclick="diorViewTelemedicine(this)"><i class="fa-regular fa-eye"></i></button>
-                                            <?php if (!in_array(strtolower($tele_status), ['completed','cancelled','no show'], true)): ?>
-                                                <?php if (!empty($apt['join_url'])): ?><a class="action-icon-btn" title="Join Consultation" href="<?php echo esc_url($apt['join_url']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-video"></i></a><?php else: ?><button type="button" class="action-icon-btn" title="Join Consultation" onclick="diorViewTelemedicine(this)"><i class="fa-solid fa-video"></i></button><?php endif; ?>
-                                            <?php endif; ?>
-                                            <button type="button" class="action-icon-btn delete-btn" title="Cancel Session" onclick="diorDeleteStaticRow(this, 'telemedicine')"><i class="fa-solid fa-xmark"></i></button>
-                                        </div></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr><td colspan="10" class="dior-empty-state">No telemedicine sessions available.</td></tr>
-                            <?php endif; ?>
-</tbody>
-                    </table>
-                </div>
-                <div class="docs-pagination-container">
-                    <span class="docs-showing-text" id="dior-tele-page-count">0 selected / <?php echo count($appointments); ?> total</span>
-                    <div id="dior-tele-pagination"></div>
-                </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="10" class="dior-empty-state">No telemedicine sessions available.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="docs-pagination-container">
+            <span class="docs-showing-text" id="dior-tele-page-count">0 selected / <?php echo count($appointments); ?>
+                total</span>
+            <div id="dior-tele-pagination"></div>
+        </div>
     </div>
-    
+
 </section>
-                <!-- ============================================================== -->
-                <!-- 5. MEDICAL RECORD TAB -->
-                <!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- 5. MEDICAL RECORD TAB -->
+<!-- ============================================================== -->

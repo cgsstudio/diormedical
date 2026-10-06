@@ -23,8 +23,8 @@ function initDoctorDashboard() {
         const hash = window.location.hash.match(/^#tab=([^&]+)/);
         if (hash) initialTab = decodeURIComponent(hash[1]);
         if (!initialTab) initialTab = localStorage.getItem('diorDocLastTab');
-    } catch(e) {}
-    
+    } catch (e) { }
+
     let firstTabBtn = null;
     if (initialTab && initialTab !== 'null' && initialTab !== 'undefined') {
         firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initialTab) + '"]');
@@ -32,14 +32,14 @@ function initDoctorDashboard() {
     if (!firstTabBtn) {
         firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn.active') || document.querySelector('#dior-doc-sidebar .dior-nav-btn');
     }
-    
+
     if (firstTabBtn) {
         diorDocSwitchTab(firstTabBtn.getAttribute('data-tab'));
     }
 
     // Add click listeners to ALL nav buttons (must be inside DOMContentLoaded)
     document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             diorDocSwitchTab(this.getAttribute('data-tab'));
         });
     });
@@ -68,7 +68,7 @@ function initDoctorDashboard() {
     // Check doctor profile completion on initial load (ONLY on doctor dashboard, for doctors)
     if (docApp && window.dior_doctor_vars && window.dior_doctor_vars.is_doctor == 1 && parseInt(window.dior_doctor_vars.is_profile_complete, 10) !== 1) {
         if (!sessionStorage.getItem('dior_doc_profile_remind_later')) {
-            setTimeout(function() {
+            setTimeout(function () {
                 const missingObj = window.dior_doctor_vars.missing_profile_fields || {};
                 const missingList = Object.values(missingObj).length ? Object.values(missingObj).join(', ') : 'Specialty, License Number, NPI Number, Phone';
                 const docName = (window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.first_name) ? (' ' + window.dior_doctor_vars.doctor_profile.first_name) : '';
@@ -115,14 +115,14 @@ function initDoctorDashboard() {
     const avatarInitials = document.getElementById('dior-doctor-avatar-initials');
     const doctorFileInput = document.getElementById('dior-doctor-avatar-file-input');
 
-    window.diorDocOpenDirectUpload = function() {
+    window.diorDocOpenDirectUpload = function () {
         if (doctorFileInput) {
             doctorFileInput.click();
         }
     };
 
     if (doctorFileInput) {
-        doctorFileInput.addEventListener('change', function() {
+        doctorFileInput.addEventListener('change', function () {
             const file = this.files && this.files[0];
             if (!file) return;
 
@@ -154,59 +154,59 @@ function initDoctorDashboard() {
                 method: 'POST',
                 body: formData
             })
-            .then(r => r.json())
-            .then(res => {
-                if (directBtn) {
-                    directBtn.disabled = false;
-                    directBtn.innerHTML = origHtml;
-                }
-                if (res.success && res.data && res.data.avatar_url) {
-                    const avatarUrl = res.data.avatar_url;
-                    if (avatarDisplayImg) {
-                        avatarDisplayImg.src = avatarUrl;
-                        avatarDisplayImg.style.display = 'block';
+                .then(r => r.json())
+                .then(res => {
+                    if (directBtn) {
+                        directBtn.disabled = false;
+                        directBtn.innerHTML = origHtml;
                     }
-                    if (avatarInitials) {
-                        avatarInitials.style.display = 'none';
-                    }
-                    if (avatarRemoveBtn) {
-                        avatarRemoveBtn.style.display = 'inline-flex';
-                    }
-                    const sideImg = document.querySelector('#dior-doctor-sidebar-avatar img');
-                    if (sideImg) sideImg.src = avatarUrl;
+                    if (res.success && res.data && res.data.avatar_url) {
+                        const avatarUrl = res.data.avatar_url;
+                        if (avatarDisplayImg) {
+                            avatarDisplayImg.src = avatarUrl;
+                            avatarDisplayImg.style.display = 'block';
+                        }
+                        if (avatarInitials) {
+                            avatarInitials.style.display = 'none';
+                        }
+                        if (avatarRemoveBtn) {
+                            avatarRemoveBtn.style.display = 'inline-flex';
+                        }
+                        const sideImg = document.querySelector('#dior-doctor-sidebar-avatar img');
+                        if (sideImg) sideImg.src = avatarUrl;
 
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "success",
-                            title: "Provider photo updated!",
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Provider photo updated!",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    } else {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Upload Failed',
+                                text: (res.data && res.data.message) ? res.data.message : 'Could not upload photo.',
+                                confirmButtonColor: '#2C6CB1'
+                            });
+                        }
                     }
-                } else {
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Upload Failed',
-                            text: (res.data && res.data.message) ? res.data.message : 'Could not upload photo.',
-                            confirmButtonColor: '#2C6CB1'
-                        });
+                })
+                .catch(() => {
+                    if (directBtn) {
+                        directBtn.disabled = false;
+                        directBtn.innerHTML = origHtml;
                     }
-                }
-            })
-            .catch(() => {
-                if (directBtn) {
-                    directBtn.disabled = false;
-                    directBtn.innerHTML = origHtml;
-                }
-            });
+                });
         });
     }
 
     let doctorMediaFrame = null;
 
-    window.diorDocOpenMediaLibrary = function() {
+    window.diorDocOpenMediaLibrary = function () {
         if (typeof wp !== 'undefined' && wp.media) {
             if (doctorMediaFrame) {
                 doctorMediaFrame.open();
@@ -224,7 +224,7 @@ function initDoctorDashboard() {
                 multiple: false
             });
 
-            doctorMediaFrame.on('select', function() {
+            doctorMediaFrame.on('select', function () {
                 const attachment = doctorMediaFrame.state().get('selection').first().toJSON();
                 if (!attachment || !attachment.url) return;
 
@@ -254,48 +254,48 @@ function initDoctorDashboard() {
                     method: 'POST',
                     body: formData
                 })
-                .then(res => res.json())
-                .then(response => {
-                    if (response && response.success) {
-                        // Update sidebar avatar
-                        const sidebarAvatar = document.getElementById('dior-doctor-sidebar-avatar');
-                        if (sidebarAvatar) {
-                            sidebarAvatar.innerHTML = `<img src="${avatarUrl}" alt="Provider Photo" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">`;
-                        }
+                    .then(res => res.json())
+                    .then(response => {
+                        if (response && response.success) {
+                            // Update sidebar avatar
+                            const sidebarAvatar = document.getElementById('dior-doctor-sidebar-avatar');
+                            if (sidebarAvatar) {
+                                sidebarAvatar.innerHTML = `<img src="${avatarUrl}" alt="Provider Photo" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">`;
+                            }
 
-                        // Update topbar pill avatar
-                        const topPillAvatar = document.getElementById('dior-doctor-top-avatar');
-                        if (topPillAvatar) {
-                            topPillAvatar.innerHTML = `<img src="${avatarUrl}" alt="Provider Photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-                        }
+                            // Update topbar pill avatar
+                            const topPillAvatar = document.getElementById('dior-doctor-top-avatar');
+                            if (topPillAvatar) {
+                                topPillAvatar.innerHTML = `<img src="${avatarUrl}" alt="Provider Photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                            }
 
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "Profile Photo Updated!",
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
-                    } else {
-                        const errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to update photo.';
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Photo Update Failed',
-                                text: errMsg,
-                                confirmButtonColor: '#2C6CB1'
-                            });
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "success",
+                                    title: "Profile Photo Updated!",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
                         } else {
-                            alert(errMsg);
+                            const errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to update photo.';
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Photo Update Failed',
+                                    text: errMsg,
+                                    confirmButtonColor: '#2C6CB1'
+                                });
+                            } else {
+                                alert(errMsg);
+                            }
                         }
-                    }
-                })
-                .catch(err => {
-                    console.error('[Doctor Media Avatar Error]', err);
-                    alert('Connection error while saving photo.');
-                });
+                    })
+                    .catch(err => {
+                        console.error('[Doctor Media Avatar Error]', err);
+                        alert('Connection error while saving photo.');
+                    });
             });
 
             doctorMediaFrame.open();
@@ -305,7 +305,7 @@ function initDoctorDashboard() {
     };
 
     if (avatarRemoveBtn) {
-        avatarRemoveBtn.addEventListener('click', function() {
+        avatarRemoveBtn.addEventListener('click', function () {
             avatarRemoveBtn.disabled = true;
             avatarRemoveBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Removing...';
 
@@ -317,55 +317,55 @@ function initDoctorDashboard() {
                 method: 'POST',
                 body: formData
             })
-            .then(res => res.json())
-            .then(response => {
-                avatarRemoveBtn.disabled = false;
-                avatarRemoveBtn.innerHTML = '<i class="fa-regular fa-trash-can"></i> Remove';
+                .then(res => res.json())
+                .then(response => {
+                    avatarRemoveBtn.disabled = false;
+                    avatarRemoveBtn.innerHTML = '<i class="fa-regular fa-trash-can"></i> Remove';
 
-                if (response && response.success) {
-                    avatarRemoveBtn.style.display = 'none';
-                    const initials = (response.data && response.data.initials) ? response.data.initials : 'DR';
+                    if (response && response.success) {
+                        avatarRemoveBtn.style.display = 'none';
+                        const initials = (response.data && response.data.initials) ? response.data.initials : 'DR';
 
-                    if (avatarDisplayImg) {
-                        avatarDisplayImg.src = '';
-                        avatarDisplayImg.style.display = 'none';
-                    }
-                    if (avatarInitials) {
-                        avatarInitials.textContent = initials;
-                        avatarInitials.style.display = 'block';
-                    }
+                        if (avatarDisplayImg) {
+                            avatarDisplayImg.src = '';
+                            avatarDisplayImg.style.display = 'none';
+                        }
+                        if (avatarInitials) {
+                            avatarInitials.textContent = initials;
+                            avatarInitials.style.display = 'block';
+                        }
 
-                    // Revert sidebar avatar
-                    const sidebarAvatar = document.getElementById('dior-doctor-sidebar-avatar');
-                    if (sidebarAvatar) {
-                        sidebarAvatar.innerHTML = `<i class="fa-solid fa-user-doctor" style="color:#2C6CB1;font-size:18px;"></i>`;
-                    }
+                        // Revert sidebar avatar
+                        const sidebarAvatar = document.getElementById('dior-doctor-sidebar-avatar');
+                        if (sidebarAvatar) {
+                            sidebarAvatar.innerHTML = `<i class="fa-solid fa-user-doctor" style="color:#2C6CB1;font-size:18px;"></i>`;
+                        }
 
-                    // Revert topbar pill avatar
-                    const topPillAvatar = document.getElementById('dior-doctor-top-avatar');
-                    if (topPillAvatar) {
-                        topPillAvatar.innerHTML = `<i class="fa-solid fa-user-doctor" style="color:#FFFFFF;font-size:14px;"></i>`;
-                    }
+                        // Revert topbar pill avatar
+                        const topPillAvatar = document.getElementById('dior-doctor-top-avatar');
+                        if (topPillAvatar) {
+                            topPillAvatar.innerHTML = `<i class="fa-solid fa-user-doctor" style="color:#FFFFFF;font-size:14px;"></i>`;
+                        }
 
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "success",
-                            title: "Photo Removed",
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Photo Removed",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    } else {
+                        const errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to remove photo.';
+                        alert(errMsg);
                     }
-                } else {
-                    const errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to remove photo.';
-                    alert(errMsg);
-                }
-            })
-            .catch(() => {
-                avatarRemoveBtn.disabled = false;
-                avatarRemoveBtn.innerHTML = '<i class="fa-regular fa-trash-can"></i> Remove';
-                alert('Connection error during photo removal.');
-            });
+                })
+                .catch(() => {
+                    avatarRemoveBtn.disabled = false;
+                    avatarRemoveBtn.innerHTML = '<i class="fa-regular fa-trash-can"></i> Remove';
+                    alert('Connection error during photo removal.');
+                });
         });
     }
 }
@@ -373,12 +373,12 @@ function initDoctorDashboard() {
 // ── DOCTOR DIGITAL SIGNATURE MANAGEMENT (PNG TRANSPARENT) ──
 let doctorSigMediaFrame = null;
 
-window.diorDocOpenSigDirectUpload = function() {
+window.diorDocOpenSigDirectUpload = function () {
     const input = document.getElementById('dior-doctor-sig-file-input');
     if (input) input.click();
 };
 
-window.diorDocHandleSigFileSelect = function(input) {
+window.diorDocHandleSigFileSelect = function (input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
 
@@ -403,39 +403,39 @@ window.diorDocHandleSigFileSelect = function(input) {
         method: 'POST',
         body: formData
     })
-    .then(r => r.json())
-    .then(res => {
-        if (uploadBtn) {
-            uploadBtn.disabled = false;
-            uploadBtn.innerHTML = origHtml;
-        }
-        if (res.success && res.data && res.data.signature_url) {
-            window.diorDocApplySignatureUI(res.data.signature_url);
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Signature Uploaded",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            } else {
-                alert('Doctor signature uploaded successfully!');
+        .then(r => r.json())
+        .then(res => {
+            if (uploadBtn) {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = origHtml;
             }
-        } else {
-            alert((res.data && res.data.message) ? res.data.message : 'Error uploading signature.');
-        }
-    })
-    .catch(() => {
-        if (uploadBtn) {
-            uploadBtn.disabled = false;
-            uploadBtn.innerHTML = origHtml;
-        }
-        alert('Network error while uploading signature.');
-    });
+            if (res.success && res.data && res.data.signature_url) {
+                window.diorDocApplySignatureUI(res.data.signature_url);
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Signature Uploaded",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                } else {
+                    alert('Doctor signature uploaded successfully!');
+                }
+            } else {
+                alert((res.data && res.data.message) ? res.data.message : 'Error uploading signature.');
+            }
+        })
+        .catch(() => {
+            if (uploadBtn) {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = origHtml;
+            }
+            alert('Network error while uploading signature.');
+        });
 };
 
-window.diorDocOpenSigMediaLibrary = function() {
+window.diorDocOpenSigMediaLibrary = function () {
     if (typeof wp !== 'undefined' && wp.media) {
         if (doctorSigMediaFrame) {
             doctorSigMediaFrame.open();
@@ -453,7 +453,7 @@ window.diorDocOpenSigMediaLibrary = function() {
             multiple: false
         });
 
-        doctorSigMediaFrame.on('select', function() {
+        doctorSigMediaFrame.on('select', function () {
             const attachment = doctorSigMediaFrame.state().get('selection').first().toJSON();
             if (!attachment || !attachment.url) return;
 
@@ -470,24 +470,24 @@ window.diorDocOpenSigMediaLibrary = function() {
                 method: 'POST',
                 body: formData
             })
-            .then(res => res.json())
-            .then(response => {
-                if (response && response.success) {
-                    window.diorDocApplySignatureUI(sigUrl);
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "success",
-                            title: "Signature Selected",
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
+                .then(res => res.json())
+                .then(response => {
+                    if (response && response.success) {
+                        window.diorDocApplySignatureUI(sigUrl);
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Signature Selected",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    } else {
+                        alert((response && response.data && response.data.message) ? response.data.message : 'Failed to save signature.');
                     }
-                } else {
-                    alert((response && response.data && response.data.message) ? response.data.message : 'Failed to save signature.');
-                }
-            })
-            .catch(() => alert('Connection error while saving signature.'));
+                })
+                .catch(() => alert('Connection error while saving signature.'));
         });
 
         doctorSigMediaFrame.open();
@@ -496,7 +496,7 @@ window.diorDocOpenSigMediaLibrary = function() {
     }
 };
 
-window.diorDocRemoveSignature = function() {
+window.diorDocRemoveSignature = function () {
     if (!confirm('Are you sure you want to remove your digital signature?')) return;
 
     const removeBtn = document.getElementById('dior-btn-doctor-sig-remove');
@@ -514,39 +514,39 @@ window.diorDocRemoveSignature = function() {
         method: 'POST',
         body: formData
     })
-    .then(r => r.json())
-    .then(res => {
-        if (removeBtn) {
-            removeBtn.disabled = false;
-            removeBtn.innerHTML = origHtml;
-        }
-        if (res.success) {
-            window.diorDocClearSignatureUI();
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Signature Removed",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            } else {
-                alert('Signature removed.');
+        .then(r => r.json())
+        .then(res => {
+            if (removeBtn) {
+                removeBtn.disabled = false;
+                removeBtn.innerHTML = origHtml;
             }
-        } else {
-            alert(res.data ? res.data.message : 'Error removing signature.');
-        }
-    })
-    .catch(() => {
-        if (removeBtn) {
-            removeBtn.disabled = false;
-            removeBtn.innerHTML = origHtml;
-        }
-        alert('Network error removing signature.');
-    });
+            if (res.success) {
+                window.diorDocClearSignatureUI();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Signature Removed",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                } else {
+                    alert('Signature removed.');
+                }
+            } else {
+                alert(res.data ? res.data.message : 'Error removing signature.');
+            }
+        })
+        .catch(() => {
+            if (removeBtn) {
+                removeBtn.disabled = false;
+                removeBtn.innerHTML = origHtml;
+            }
+            alert('Network error removing signature.');
+        });
 };
 
-window.diorDocApplySignatureUI = function(sigUrl) {
+window.diorDocApplySignatureUI = function (sigUrl) {
     window.diorDoctorSignatureUrl = sigUrl;
 
     const dispImg = document.getElementById('dior-doctor-signature-display-img');
@@ -570,7 +570,7 @@ window.diorDocApplySignatureUI = function(sigUrl) {
     }
 };
 
-window.diorDocClearSignatureUI = function() {
+window.diorDocClearSignatureUI = function () {
     window.diorDoctorSignatureUrl = '';
 
     const dispImg = document.getElementById('dior-doctor-signature-display-img');
@@ -615,7 +615,7 @@ document.addEventListener('click', function (event) {
 }, false);
 
 // Universal Table Pagination (5 entries per page)
-window.diorDoctorInitTablePagination = function(tableEl, pageSize) {
+window.diorDoctorInitTablePagination = function (tableEl, pageSize) {
     if (!tableEl) return;
     pageSize = pageSize || 5;
     const tbody = tableEl.querySelector('tbody');
@@ -640,7 +640,7 @@ window.diorDoctorInitTablePagination = function(tableEl, pageSize) {
     function renderPage(page) {
         currentPage = page || 1;
         const allRows = Array.from(tbody.querySelectorAll(':scope > tr')).filter(tr => !tr.classList.contains('dior-no-data-row') && tr.querySelectorAll(':scope > td').length > 0);
-        
+
         if (allRows.length === 0) {
             paginationWrap.style.display = 'none';
             paginationWrap.innerHTML = '';
@@ -722,7 +722,7 @@ window.diorDoctorInitTablePagination = function(tableEl, pageSize) {
 
         // Click listeners
         paginationWrap.querySelectorAll('.dior-page-btn[data-page]').forEach(btn => {
-            btn.onclick = function(e) {
+            btn.onclick = function (e) {
                 e.preventDefault();
                 const p = parseInt(this.getAttribute('data-page'), 10);
                 if (!isNaN(p)) renderPage(p);
@@ -736,104 +736,104 @@ window.diorDoctorInitTablePagination = function(tableEl, pageSize) {
 
 // Tab Switching logic
 
-    /**
-     * Hydrate the existing source-table DOM with live dashboard data.
-     * The surrounding markup/classes are intentionally preserved.
-     */
-    function diorHydrateDoctorSourceTables() {
-        const payload = (window.dior_doctor_vars && window.dior_doctor_vars.dashboard_data) || {};
-        const appointments = Array.isArray(payload.appointments) ? payload.appointments : [];
-        const patients = Array.isArray(payload.patients) ? payload.patients : [];
-        const prescriptions = Array.isArray(payload.prescriptions) ? payload.prescriptions : [];
-        const encounters = Array.isArray(payload.encounters) ? payload.encounters : [];
-        const documents = Array.isArray(payload.documents) ? payload.documents : [];
+/**
+ * Hydrate the existing source-table DOM with live dashboard data.
+ * The surrounding markup/classes are intentionally preserved.
+ */
+function diorHydrateDoctorSourceTables() {
+    const payload = (window.dior_doctor_vars && window.dior_doctor_vars.dashboard_data) || {};
+    const appointments = Array.isArray(payload.appointments) ? payload.appointments : [];
+    const patients = Array.isArray(payload.patients) ? payload.patients : [];
+    const prescriptions = Array.isArray(payload.prescriptions) ? payload.prescriptions : [];
+    const encounters = Array.isArray(payload.encounters) ? payload.encounters : [];
+    const documents = Array.isArray(payload.documents) ? payload.documents : [];
 
-        const esc = value => {
-            const div = document.createElement('div');
-            div.textContent = value == null ? '' : String(value);
-            return div.innerHTML;
-        };
-        const badgeClass = status => {
-            const value = String(status || '').toLowerCase();
-            if (value.includes('cancel') || value.includes('unpaid') || value.includes('failed')) return 'col-red';
-            if (value.includes('pending') || value.includes('queue')) return 'col-orange';
-            if (value.includes('complete') || value.includes('paid') || value.includes('active')) return 'col-green';
-            return 'col-indigo';
-        };
-        const cell = html => `<div class="datatable-body-cell sort-active" role="cell" tabindex="-1"><div class="datatable-body-cell-label">${html}</div></div>`;
-        const textCell = value => cell(`<div class="cell-content"><span>${esc(value || '—')}</span></div>`);
-        const iconCell = (icon, value) => cell(`<div class="cell-content cell-icon-text"><i class="material-icons-outlined cell-icon">${icon}</i><span class="cell-text">${esc(value || '—')}</span></div>`);
-        const actionCell = id => cell(`<div class="cell-actions"><button type="button" aria-label="View record" class="action-icon-btn edit-btn" data-patient-id="${esc(id || '')}"><i class="fas fa-eye"></i></button></div>`);
-        const row = (cells, index) => `<div class="datatable-row-wrapper"><div class="datatable-body-row datatable-row-${index % 2 ? 'odd' : 'even'}" draggable="false" role="row" tabindex="-1"><div class="datatable-row-group datatable-row-left"></div><div class="datatable-row-center datatable-row-group">${cells.join('')}<div class="datatable-row-group datatable-row-right"></div></div></div></div>`;
-        const renderTable = (rootSelector, records, mapper, emptyText) => {
-            const root = document.querySelector(rootSelector);
-            if (!root) return;
-            const body = root.querySelector('.datatable-body .datatable-scroll');
-            if (!body) return;
-            body.innerHTML = records.length ? records.map((item, i) => row(mapper(item), i)).join('') : `<div class="dior-source-empty-row">${esc(emptyText)}</div>`;
-            const count = root.querySelector('.page-count');
-            if (count) count.textContent = `0 selected / ${records.length} total`;
-        };
+    const esc = value => {
+        const div = document.createElement('div');
+        div.textContent = value == null ? '' : String(value);
+        return div.innerHTML;
+    };
+    const badgeClass = status => {
+        const value = String(status || '').toLowerCase();
+        if (value.includes('cancel') || value.includes('unpaid') || value.includes('failed')) return 'col-red';
+        if (value.includes('pending') || value.includes('queue')) return 'col-orange';
+        if (value.includes('complete') || value.includes('paid') || value.includes('active')) return 'col-green';
+        return 'col-indigo';
+    };
+    const cell = html => `<div class="datatable-body-cell sort-active" role="cell" tabindex="-1"><div class="datatable-body-cell-label">${html}</div></div>`;
+    const textCell = value => cell(`<div class="cell-content"><span>${esc(value || '—')}</span></div>`);
+    const iconCell = (icon, value) => cell(`<div class="cell-content cell-icon-text"><i class="material-icons-outlined cell-icon">${icon}</i><span class="cell-text">${esc(value || '—')}</span></div>`);
+    const actionCell = id => cell(`<div class="cell-actions"><button type="button" aria-label="View record" class="action-icon-btn edit-btn" data-patient-id="${esc(id || '')}"><i class="fas fa-eye"></i></button></div>`);
+    const row = (cells, index) => `<div class="datatable-row-wrapper"><div class="datatable-body-row datatable-row-${index % 2 ? 'odd' : 'even'}" draggable="false" role="row" tabindex="-1"><div class="datatable-row-group datatable-row-left"></div><div class="datatable-row-center datatable-row-group">${cells.join('')}<div class="datatable-row-group datatable-row-right"></div></div></div></div>`;
+    const renderTable = (rootSelector, records, mapper, emptyText) => {
+        const root = document.querySelector(rootSelector);
+        if (!root) return;
+        const body = root.querySelector('.datatable-body .datatable-scroll');
+        if (!body) return;
+        body.innerHTML = records.length ? records.map((item, i) => row(mapper(item), i)).join('') : `<div class="dior-source-empty-row">${esc(emptyText)}</div>`;
+        const count = root.querySelector('.page-count');
+        if (count) count.textContent = `0 selected / ${records.length} total`;
+    };
 
-        renderTable('#source-all-patients', patients, p => [
-            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'),
-            cell(`<div class="cell-content cell-image-name"><img alt="User avatar" class="cell-avatar" src="${esc(p.avatar_url || (window.dior_doctor_vars && window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.avatar_url) || '')}"><div class="cell-text-wrapper"><div class="cell-text">${esc(p.full_name)}</div></div></div>`),
-            textCell(p.next_appt_condition || '—'),
-            textCell(p.gender || '—'),
-            iconCell('phone', p.phone),
-            iconCell('calendar_today', p.registered),
-            textCell(p.blood_group || '—'),
-            textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Attending Physician'),
-            iconCell('location_on', p.address),
-            cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(p.next_appt_status || (p.has_active_appt ? 'Confirmed' : 'Active'))}">${esc(p.next_appt_status || (p.has_active_appt ? 'Confirmed' : 'Active'))}</div></div>`),
-            actionCell(p.user_id)
-        ], 'No patients are currently assigned to this provider.');
+    renderTable('#source-all-patients', patients, p => [
+        cell('<label class="datatable-checkbox"><input type="checkbox"></label>'),
+        cell(`<div class="cell-content cell-image-name"><img alt="User avatar" class="cell-avatar" src="${esc(p.avatar_url || (window.dior_doctor_vars && window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.avatar_url) || '')}"><div class="cell-text-wrapper"><div class="cell-text">${esc(p.full_name)}</div></div></div>`),
+        textCell(p.next_appt_condition || '—'),
+        textCell(p.gender || '—'),
+        iconCell('phone', p.phone),
+        iconCell('  ', p.registered),
+        textCell(p.blood_group || '—'),
+        textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Attending Physician'),
+        iconCell('location_on', p.address),
+        cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(p.next_appt_status || (p.has_active_appt ? 'Confirmed' : 'Active'))}">${esc(p.next_appt_status || (p.has_active_appt ? 'Confirmed' : 'Active'))}</div></div>`),
+        actionCell(p.user_id)
+    ], 'No patients are currently assigned to this provider.');
 
-        renderTable('#source-view-appointment', appointments, a => [
-            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'),
-            cell(`<div class="cell-content cell-image-name"><div class="cell-text-wrapper"><div class="cell-text">${esc(a.patient_name)}</div></div></div>`),
-            textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Attending Physician'),
-            textCell(a.condition || a.condition_name),
-            textCell(a.gender || '—'),
-            iconCell('calendar_today', a.date || a.appt_date),
-            textCell(a.time || a.appt_time),
-            iconCell('phone', a.phone),
-            cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(a.status)}">${esc(a.status || 'Confirmed')}</div></div>`),
-            actionCell(a.patient_id)
-        ], 'No appointments are currently assigned to this provider.');
+    renderTable('#source-view-appointment', appointments, a => [
+        cell('<label class="datatable-checkbox"><input type="checkbox"></label>'),
+        cell(`<div class="cell-content cell-image-name"><div class="cell-text-wrapper"><div class="cell-text">${esc(a.patient_name)}</div></div></div>`),
+        textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Attending Physician'),
+        textCell(a.condition || a.condition_name),
+        textCell(a.gender || '—'),
+        iconCell('  ', a.date || a.appt_date),
+        textCell(a.time || a.appt_time),
+        iconCell('phone', a.phone),
+        cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(a.status)}">${esc(a.status || 'Confirmed')}</div></div>`),
+        actionCell(a.patient_id)
+    ], 'No appointments are currently assigned to this provider.');
 
-        renderTable('#source-e-prescriptions', prescriptions, r => [
-            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'),
-            textCell(r.id || r.order_id), textCell(r.patient_name), iconCell('calendar_today', r.date || r.date_prescribed),
-            textCell(r.medication || r.name), textCell(r.dosage || r.dose), textCell(r.frequency || 'As directed'), textCell(r.duration || 'As prescribed'),
-            textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Doctor'),
-            cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(r.status)}">${esc(r.status || 'Active')}</div></div>`), actionCell(r.patient_user_id)
-        ], 'No prescriptions have been issued for your patients.');
+    renderTable('#source-e-prescriptions', prescriptions, r => [
+        cell('<label class="datatable-checkbox"><input type="checkbox"></label>'),
+        textCell(r.id || r.order_id), textCell(r.patient_name), iconCell('  ', r.date || r.date_prescribed),
+        textCell(r.medication || r.name), textCell(r.dosage || r.dose), textCell(r.frequency || 'As directed'), textCell(r.duration || 'As prescribed'),
+        textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Doctor'),
+        cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(r.status)}">${esc(r.status || 'Active')}</div></div>`), actionCell(r.patient_user_id)
+    ], 'No prescriptions have been issued for your patients.');
 
-        renderTable('#source-consultation-notes', encounters, n => [
-            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'), textCell(n.encounter_uid || n.id), textCell(n.patient_name), iconCell('calendar_today', n.created_at || n.date), textCell(n.created_time || n.time), textCell(n.chief_complaint || n.subjective || '—'), textCell(n.diagnosis || n.assessment || '—'), textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Doctor'), cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(n.status)}">${esc(n.status || 'finalized')}</div></div>`), actionCell(n.patient_user_id)
-        ], 'No consultation notes are available.');
+    renderTable('#source-consultation-notes', encounters, n => [
+        cell('<label class="datatable-checkbox"><input type="checkbox"></label>'), textCell(n.encounter_uid || n.id), textCell(n.patient_name), iconCell('  ', n.created_at || n.date), textCell(n.created_time || n.time), textCell(n.chief_complaint || n.subjective || '—'), textCell(n.diagnosis || n.assessment || '—'), textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Doctor'), cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(n.status)}">${esc(n.status || 'finalized')}</div></div>`), actionCell(n.patient_user_id)
+    ], 'No consultation notes are available.');
 
-        renderTable('#source-documents-reports', documents, d => [
-            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'), textCell(d.id), textCell(d.patient_name), textCell(d.title), textCell(d.category), iconCell('calendar_today', d.date || d.created_at), iconCell('calendar_today', d.date || d.created_at), textCell(d.author || 'Doctor'), cell(`<div class="cell-content"><div class="badge-solid col-indigo">${esc(d.priority || 'Normal')}</div></div>`), cell('<div class="cell-content"><div class="badge-solid col-green">Available</div></div>'), actionCell(d.patient_user_id)
-        ], 'No medical reports are available.');
+    renderTable('#source-documents-reports', documents, d => [
+        cell('<label class="datatable-checkbox"><input type="checkbox"></label>'), textCell(d.id), textCell(d.patient_name), textCell(d.title), textCell(d.category), iconCell('  ', d.date || d.created_at), iconCell('  ', d.date || d.created_at), textCell(d.author || 'Doctor'), cell(`<div class="cell-content"><div class="badge-solid col-indigo">${esc(d.priority || 'Normal')}</div></div>`), cell('<div class="cell-content"><div class="badge-solid col-green">Available</div></div>'), actionCell(d.patient_user_id)
+    ], 'No medical reports are available.');
 
-        renderTable('#source-telemedicine', appointments, a => [
-            cell('<label class="datatable-checkbox"><input type="checkbox"></label>'), textCell(a.id || a.appt_uid), textCell(a.patient_name), iconCell('calendar_today', a.date || a.appt_date), textCell(a.time || a.appt_time), textCell(a.duration || '30 minutes'), textCell(a.type || a.visit_type || 'Video Visit'), textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Doctor'), cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(a.status)}">${esc(a.status || 'Confirmed')}</div></div>`), actionCell(a.patient_id)
-        ], 'No telemedicine sessions are available.');
+    renderTable('#source-telemedicine', appointments, a => [
+        cell('<label class="datatable-checkbox"><input type="checkbox"></label>'), textCell(a.id || a.appt_uid), textCell(a.patient_name), iconCell('  ', a.date || a.appt_date), textCell(a.time || a.appt_time), textCell(a.duration || '30 minutes'), textCell(a.type || a.visit_type || 'Video Visit'), textCell((window.dior_doctor_vars.doctor_profile && window.dior_doctor_vars.doctor_profile.full_name) || 'Doctor'), cell(`<div class="cell-content"><div class="badge-solid ${badgeClass(a.status)}">${esc(a.status || 'Confirmed')}</div></div>`), actionCell(a.patient_id)
+    ], 'No telemedicine sessions are available.');
 
-        // Update the dashboard's existing stat cards without changing their layout.
-        const overview = document.querySelector('#tab-doc-overview');
-        if (overview) {
-            const stats = overview.querySelectorAll('.dior-dash-stat-card h3');
-            if (stats[0]) stats[0].textContent = String(patients.length);
-            if (stats[1]) stats[1].textContent = String(appointments.filter(a => String(a.status || '').toLowerCase() === 'completed').length);
-            if (stats[2]) stats[2].textContent = String(appointments.filter(a => ['confirmed','scheduled','pending','in-queue'].includes(String(a.status || '').toLowerCase())).length);
-        }
+    // Update the dashboard's existing stat cards without changing their layout.
+    const overview = document.querySelector('#tab-doc-overview');
+    if (overview) {
+        const stats = overview.querySelectorAll('.dior-dash-stat-card h3');
+        if (stats[0]) stats[0].textContent = String(patients.length);
+        if (stats[1]) stats[1].textContent = String(appointments.filter(a => String(a.status || '').toLowerCase() === 'completed').length);
+        if (stats[2]) stats[2].textContent = String(appointments.filter(a => ['confirmed', 'scheduled', 'pending', 'in-queue'].includes(String(a.status || '').toLowerCase())).length);
     }
-window.diorDocSwitchTab = function(tabId) {
+}
+window.diorDocSwitchTab = function (tabId) {
     if (!tabId) return;
-    try { localStorage.setItem('diorDocLastTab', tabId); } catch(e) {}
+    try { localStorage.setItem('diorDocLastTab', tabId); } catch (e) { }
 
     const notifDropdown = document.getElementById('dior-doc-notif-dd');
     if (notifDropdown) {
@@ -844,7 +844,7 @@ window.diorDocSwitchTab = function(tabId) {
     // Update buttons
     const btns = document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn');
     btns.forEach(b => b.classList.remove('active'));
-    
+
     const activeBtn = document.querySelector(`#dior-doc-sidebar .dior-nav-btn[data-tab="${tabId}"]`);
     if (activeBtn) {
         activeBtn.classList.add('active');
@@ -864,7 +864,7 @@ window.diorDocSwitchTab = function(tabId) {
     // Update panels
     const panels = document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
     panels.forEach(p => p.classList.remove('active'));
-    
+
     const activePanel = document.getElementById(`tab-${tabId}`);
     if (activePanel) {
         activePanel.classList.add('active');
@@ -888,7 +888,7 @@ window.diorDocSwitchTab = function(tabId) {
             const fd = new FormData();
             fd.append('action', 'dior_doctor_mark_all_notif_read');
             fd.append('nonce', window.diorDocNonce);
-            fetch(window.diorDocAjax, { method: 'POST', body: fd }).catch(() => {});
+            fetch(window.diorDocAjax, { method: 'POST', body: fd }).catch(() => { });
         }
     }
 
@@ -896,11 +896,11 @@ window.diorDocSwitchTab = function(tabId) {
 };
 
 // Mobile menu toggle
-window.diorDocOpenMobile = function() {
+window.diorDocOpenMobile = function () {
     const sidebar = document.getElementById('dior-doc-sidebar');
     const backdrop = document.getElementById('dior-doc-backdrop');
     const isMobile = window.innerWidth <= 1024;
-    
+
     if (sidebar.classList.contains('mobile-open')) {
         sidebar.classList.remove('mobile-open');
         if (isMobile && backdrop) backdrop.classList.remove('active');
@@ -910,7 +910,7 @@ window.diorDocOpenMobile = function() {
     }
 };
 
-window.diorDocCloseMobile = function() {
+window.diorDocCloseMobile = function () {
     const sidebar = document.getElementById('dior-doc-sidebar');
     const backdrop = document.getElementById('dior-doc-backdrop');
     if (sidebar) sidebar.classList.remove('mobile-open');
@@ -918,7 +918,7 @@ window.diorDocCloseMobile = function() {
 };
 
 // Search patients with pagination reset
-window.diorDocFilterPatients = function(val) {
+window.diorDocFilterPatients = function (val) {
     val = val.toLowerCase().trim();
     const table = document.getElementById('dior-patients-table');
     if (!table) return;
@@ -936,10 +936,10 @@ window.diorDocFilterPatients = function(val) {
     }
 };
 
-window.diorDocSearch = function(val) {
+window.diorDocSearch = function (val) {
     // If we're not on the patients tab, switch to it and search
     diorDocSwitchTab('doc-patients');
-    
+
     // Update the actual patient search input
     const patientSearch = document.querySelector('#tab-doc-patients .dior-search-input');
     if (patientSearch) {
@@ -949,7 +949,7 @@ window.diorDocSearch = function(val) {
 };
 
 // Appts filter with pagination reset
-window.diorDocFilterAppts = function(val) {
+window.diorDocFilterAppts = function (val) {
     val = val.toLowerCase().trim();
     const table = document.getElementById('dior-appts-table');
     if (!table) return;
@@ -968,7 +968,7 @@ window.diorDocFilterAppts = function(val) {
 };
 
 // Send Appointment Reminder (Email & In-App to both doctor and patient)
-window.diorDocSendApptReminder = function(apptId) {
+window.diorDocSendApptReminder = function (apptId) {
     if (!apptId) return;
 
     if (typeof Swal !== 'undefined') {
@@ -1011,41 +1011,41 @@ window.diorDocSendApptReminder = function(apptId) {
             method: 'POST',
             body: data
         })
-        .then(r => r.json())
-        .then(res => {
-            if (res.success) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        position: "top-end",
-                        icon: "success",
-                        title: "Reminder Sent!",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Reminder Sent!",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    } else {
+                        alert(res.data.message || 'Reminder sent successfully!');
+                    }
                 } else {
-                    alert(res.data.message || 'Reminder sent successfully!');
+                    const msg = (res.data && res.data.message) ? res.data.message : 'Could not send reminder.';
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ title: 'Notice', text: msg, icon: 'error', confirmButtonColor: '#2C6CB1' });
+                    } else {
+                        alert(msg);
+                    }
                 }
-            } else {
-                const msg = (res.data && res.data.message) ? res.data.message : 'Could not send reminder.';
+            })
+            .catch(() => {
                 if (typeof Swal !== 'undefined') {
-                    Swal.fire({ title: 'Notice', text: msg, icon: 'error', confirmButtonColor: '#2C6CB1' });
+                    Swal.fire('Error', 'Network connection error.', 'error');
                 } else {
-                    alert(msg);
+                    alert('Network error');
                 }
-            }
-        })
-        .catch(() => {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire('Error', 'Network connection error.', 'error');
-            } else {
-                alert('Network error');
-            }
-        });
+            });
     }
 };
 
 // Update Appointment Status
-window.diorDocUpdateApptStatus = function(selectEl, patientId, apptId) {
+window.diorDocUpdateApptStatus = function (selectEl, patientId, apptId) {
     const status = selectEl.value;
     const prevStatus = selectEl.getAttribute('data-prev-status') || '';
 
@@ -1092,57 +1092,57 @@ window.diorDocUpdateApptStatus = function(selectEl, patientId, apptId) {
             method: 'POST',
             body: data
         })
-        .then(r => r.json())
-        .then(res => {
-            el.disabled = false;
-            if (res.success) {
-                el.setAttribute('data-prev-status', st);
-                const tr = el.closest('tr');
-                if (tr) {
-                    const stLower = (st || '').toLowerCase().trim();
-                    const badge = tr.querySelector('.dior-st');
-                    if (badge) {
-                        badge.className = 'dior-st ' + (stLower === 'completed' ? 'ok' : (stLower === 'cancelled' || stLower === 'cancel' ? 'error' : 'pending'));
-                        badge.textContent = st;
+            .then(r => r.json())
+            .then(res => {
+                el.disabled = false;
+                if (res.success) {
+                    el.setAttribute('data-prev-status', st);
+                    const tr = el.closest('tr');
+                    if (tr) {
+                        const stLower = (st || '').toLowerCase().trim();
+                        const badge = tr.querySelector('.dior-st');
+                        if (badge) {
+                            badge.className = 'dior-st ' + (stLower === 'completed' ? 'ok' : (stLower === 'cancelled' || stLower === 'cancel' ? 'error' : 'pending'));
+                            badge.textContent = st;
+                        }
+                        tr.setAttribute('data-status', st);
+
+                        // Dynamically hide call & remind buttons if cancelled / completed / no-show
+                        const callBtn = tr.querySelector('.dior-call-btn');
+                        const remindBtn = tr.querySelector('.dior-btn-sm[onclick*="diorDocSendApptReminder"]');
+                        const isClosed = ['completed', 'cancelled', 'cancel', 'no-show', 'done'].includes(stLower);
+                        if (callBtn) callBtn.style.display = isClosed ? 'none' : 'inline-flex';
+                        if (remindBtn) remindBtn.style.display = isClosed ? 'none' : 'inline-flex';
                     }
-                    tr.setAttribute('data-status', st);
 
-                    // Dynamically hide call & remind buttons if cancelled / completed / no-show
-                    const callBtn = tr.querySelector('.dior-call-btn');
-                    const remindBtn = tr.querySelector('.dior-btn-sm[onclick*="diorDocSendApptReminder"]');
-                    const isClosed = ['completed', 'cancelled', 'cancel', 'no-show', 'done'].includes(stLower);
-                    if (callBtn) callBtn.style.display = isClosed ? 'none' : 'inline-flex';
-                    if (remindBtn) remindBtn.style.display = isClosed ? 'none' : 'inline-flex';
-                }
-
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        position: "top-end",
-                        icon: "success",
-                        title: "Status Updated",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }
-            } else {
-                el.value = el.getAttribute('data-prev-status') || 'Confirmed';
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire('Error', res.data.message || 'Error updating status', 'error');
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Status Updated",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
                 } else {
-                    alert(res.data.message || 'Error updating status');
+                    el.value = el.getAttribute('data-prev-status') || 'Confirmed';
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire('Error', res.data.message || 'Error updating status', 'error');
+                    } else {
+                        alert(res.data.message || 'Error updating status');
+                    }
                 }
-            }
-        })
-        .catch(() => {
-            el.disabled = false;
-            el.value = el.getAttribute('data-prev-status') || 'Confirmed';
-            alert('Network error');
-        });
+            })
+            .catch(() => {
+                el.disabled = false;
+                el.value = el.getAttribute('data-prev-status') || 'Confirmed';
+                alert('Network error');
+            });
     }
 };
 
 // Smart Video Call Handler with Date Check & Alert
-window.diorDocStartCall = function(event, url, dateStr, timeStr, status) {
+window.diorDocStartCall = function (event, url, dateStr, timeStr, status) {
     if (event) event.preventDefault();
 
     const st = (status || '').toLowerCase().trim();
@@ -1166,7 +1166,7 @@ window.diorDocStartCall = function(event, url, dateStr, timeStr, status) {
 
     let targetYMD = '';
     const parsedDate = new Date(dateStr);
-    
+
     if (!isNaN(parsedDate.getTime())) {
         targetYMD = parsedDate.getFullYear() + '-' + String(parsedDate.getMonth() + 1).padStart(2, '0') + '-' + String(parsedDate.getDate()).padStart(2, '0');
     }
@@ -1203,7 +1203,7 @@ window.diorDocStartCall = function(event, url, dateStr, timeStr, status) {
     }
 };
 
-window.diorDocShowCallAlert = function(opts) {
+window.diorDocShowCallAlert = function (opts) {
     let modal = document.getElementById('dior-call-alert-modal');
     if (!modal) return;
 
@@ -1228,7 +1228,7 @@ window.diorDocShowCallAlert = function(opts) {
     if (overrideBtn) {
         if (opts.allowOverride && opts.url) {
             overrideBtn.style.display = 'inline-flex';
-            overrideBtn.onclick = function() {
+            overrideBtn.onclick = function () {
                 diorDocCloseCallAlert();
                 window.open(opts.url, '_blank', 'noopener,noreferrer');
             };
@@ -1240,7 +1240,7 @@ window.diorDocShowCallAlert = function(opts) {
     modal.classList.add('open');
 };
 
-window.diorDocCloseCallAlert = function() {
+window.diorDocCloseCallAlert = function () {
     const modal = document.getElementById('dior-call-alert-modal');
     if (modal) modal.classList.remove('open');
 };
@@ -1251,7 +1251,7 @@ window.diorRxMedicationsList = [];
 window.diorSelectedMedMeta = null;
 let diorMedSearchTimer = null;
 
-window.diorDocSearchMedication = function(query) {
+window.diorDocSearchMedication = function (query) {
     const autocomplete = document.getElementById('rx-med-autocomplete');
     const fdaBadge = document.getElementById('rx-fda-badge');
     if (!autocomplete) return;
@@ -1279,16 +1279,16 @@ window.diorDocSearchMedication = function(query) {
         const nihUrl = `https://clinicaltables.nlm.nih.gov/api/rxterms/v3/search?terms=${encodeURIComponent(query)}&ef=STRENGTHS_AND_FORMS,RXCUI&maxList=10`;
 
         fetch(nihUrl)
-        .then(r => r.json())
-        .then(data => {
-            const total = data[0] || 0;
-            const names = data[1] || [];
-            const extra = data[2] || {};
-            const strengthsArr = extra.STRENGTHS_AND_FORMS || [];
-            const rxcuiArr = extra.RXCUI || [];
+            .then(r => r.json())
+            .then(data => {
+                const total = data[0] || 0;
+                const names = data[1] || [];
+                const extra = data[2] || {};
+                const strengthsArr = extra.STRENGTHS_AND_FORMS || [];
+                const rxcuiArr = extra.RXCUI || [];
 
-            if (total > 0 && names.length > 0) {
-                autocomplete.innerHTML = `
+                if (total > 0 && names.length > 0) {
+                    autocomplete.innerHTML = `
                     <div style="padding:7px 14px;background:#F1F5F9;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;">
                         <span style="font-size:11px;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:0.04em;">Official U.S. Government Database</span>
                         <span style="font-size:10.5px;font-weight:700;color:#059669;background:#ECFDF5;border:1px solid #A7F3D0;padding:1px 6px;border-radius:10px;">
@@ -1297,22 +1297,22 @@ window.diorDocSearchMedication = function(query) {
                     </div>
                 `;
 
-                names.forEach((name, idx) => {
-                    const strengths = (strengthsArr[idx] && Array.isArray(strengthsArr[idx])) ? strengthsArr[idx] : [];
-                    const rxcui = (rxcuiArr[idx] && Array.isArray(rxcuiArr[idx])) ? rxcuiArr[idx][0] : '';
-                    
-                    const itemDiv = document.createElement('div');
-                    itemDiv.style.padding = '10px 14px';
-                    itemDiv.style.cursor = 'pointer';
-                    itemDiv.style.borderBottom = '1px solid #F1F5F9';
-                    itemDiv.style.transition = 'background 0.15s ease';
-                    itemDiv.onmouseover = () => { itemDiv.style.background = '#F0F7FF'; };
-                    itemDiv.onmouseout = () => { itemDiv.style.background = '#FFFFFF'; };
+                    names.forEach((name, idx) => {
+                        const strengths = (strengthsArr[idx] && Array.isArray(strengthsArr[idx])) ? strengthsArr[idx] : [];
+                        const rxcui = (rxcuiArr[idx] && Array.isArray(rxcuiArr[idx])) ? rxcuiArr[idx][0] : '';
 
-                    let strengthsPreview = strengths.slice(0, 3).map(s => s.trim()).join(', ');
-                    if (strengths.length > 3) strengthsPreview += ` +${strengths.length - 3} more`;
+                        const itemDiv = document.createElement('div');
+                        itemDiv.style.padding = '10px 14px';
+                        itemDiv.style.cursor = 'pointer';
+                        itemDiv.style.borderBottom = '1px solid #F1F5F9';
+                        itemDiv.style.transition = 'background 0.15s ease';
+                        itemDiv.onmouseover = () => { itemDiv.style.background = '#F0F7FF'; };
+                        itemDiv.onmouseout = () => { itemDiv.style.background = '#FFFFFF'; };
 
-                    itemDiv.innerHTML = `
+                        let strengthsPreview = strengths.slice(0, 3).map(s => s.trim()).join(', ');
+                        if (strengths.length > 3) strengthsPreview += ` +${strengths.length - 3} more`;
+
+                        itemDiv.innerHTML = `
                         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
                             <strong style="color:#0F172A;font-size:13.5px;">${diorDocEscapeHtml(name)}</strong>
                             <span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:#059669;background:#ECFDF5;border:1px solid #A7F3D0;padding:2px 7px;border-radius:12px;white-space:nowrap;">
@@ -1325,37 +1325,37 @@ window.diorDocSearchMedication = function(query) {
                         </div>` : ''}
                     `;
 
-                    itemDiv.onclick = function() {
-                        diorDocSelectMed({
-                            name: name,
-                            strengths: strengths,
-                            rxcui: rxcui,
-                            source: 'U.S. National Library of Medicine & openFDA'
-                        });
-                    };
+                        itemDiv.onclick = function () {
+                            diorDocSelectMed({
+                                name: name,
+                                strengths: strengths,
+                                rxcui: rxcui,
+                                source: 'U.S. National Library of Medicine & openFDA'
+                            });
+                        };
 
-                    autocomplete.appendChild(itemDiv);
-                });
-                autocomplete.style.display = 'block';
-            } else {
-                // Fallback to openFDA API (api.fda.gov)
+                        autocomplete.appendChild(itemDiv);
+                    });
+                    autocomplete.style.display = 'block';
+                } else {
+                    // Fallback to openFDA API (api.fda.gov)
+                    diorDocSearchOpenFDA(query, autocomplete);
+                }
+            })
+            .catch(err => {
+                console.warn('NIH API fetch error, trying openFDA:', err);
                 diorDocSearchOpenFDA(query, autocomplete);
-            }
-        })
-        .catch(err => {
-            console.warn('NIH API fetch error, trying openFDA:', err);
-            diorDocSearchOpenFDA(query, autocomplete);
-        });
+            });
     }, 250);
 };
 
-window.diorDocSearchOpenFDA = function(query, autocomplete) {
+window.diorDocSearchOpenFDA = function (query, autocomplete) {
     const fdaUrl = `https://api.fda.gov/drug/ndc.json?search=(brand_name:${encodeURIComponent(query)}*+OR+generic_name:${encodeURIComponent(query)}*)+AND+finished:true&limit=8`;
     fetch(fdaUrl)
-    .then(r => r.json())
-    .then(data => {
-        if (data.results && data.results.length > 0) {
-            autocomplete.innerHTML = `
+        .then(r => r.json())
+        .then(data => {
+            if (data.results && data.results.length > 0) {
+                autocomplete.innerHTML = `
                 <div style="padding:7px 14px;background:#F1F5F9;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:11px;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:0.04em;">U.S. Food &amp; Drug Administration (openFDA)</span>
                     <span style="font-size:10.5px;font-weight:700;color:#059669;background:#ECFDF5;border:1px solid #A7F3D0;padding:1px 6px;border-radius:10px;">
@@ -1363,25 +1363,25 @@ window.diorDocSearchOpenFDA = function(query, autocomplete) {
                     </span>
                 </div>
             `;
-            const seen = new Set();
-            data.results.forEach(item => {
-                const bName = item.brand_name || item.generic_name;
-                const form = item.dosage_form || '';
-                const label = `${bName}${form ? ' (' + form + ')' : ''}`;
-                if (seen.has(label.toLowerCase())) return;
-                seen.add(label.toLowerCase());
+                const seen = new Set();
+                data.results.forEach(item => {
+                    const bName = item.brand_name || item.generic_name;
+                    const form = item.dosage_form || '';
+                    const label = `${bName}${form ? ' (' + form + ')' : ''}`;
+                    if (seen.has(label.toLowerCase())) return;
+                    seen.add(label.toLowerCase());
 
-                const itemDiv = document.createElement('div');
-                itemDiv.style.padding = '10px 14px';
-                itemDiv.style.cursor = 'pointer';
-                itemDiv.style.borderBottom = '1px solid #F1F5F9';
-                itemDiv.onmouseover = () => { itemDiv.style.background = '#F0F7FF'; };
-                itemDiv.onmouseout = () => { itemDiv.style.background = '#FFFFFF'; };
+                    const itemDiv = document.createElement('div');
+                    itemDiv.style.padding = '10px 14px';
+                    itemDiv.style.cursor = 'pointer';
+                    itemDiv.style.borderBottom = '1px solid #F1F5F9';
+                    itemDiv.onmouseover = () => { itemDiv.style.background = '#F0F7FF'; };
+                    itemDiv.onmouseout = () => { itemDiv.style.background = '#FFFFFF'; };
 
-                const appNum = item.application_number || ('NDC: ' + item.product_ndc);
-                const activeIng = (item.active_ingredients && item.active_ingredients[0]) ? item.active_ingredients[0].strength : '';
+                    const appNum = item.application_number || ('NDC: ' + item.product_ndc);
+                    const activeIng = (item.active_ingredients && item.active_ingredients[0]) ? item.active_ingredients[0].strength : '';
 
-                itemDiv.innerHTML = `
+                    itemDiv.innerHTML = `
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
                         <strong style="color:#0F172A;font-size:13.5px;">${diorDocEscapeHtml(label)}</strong>
                         <span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:#059669;background:#ECFDF5;border:1px solid #A7F3D0;padding:2px 7px;border-radius:12px;white-space:nowrap;">
@@ -1393,48 +1393,48 @@ window.diorDocSearchOpenFDA = function(query, autocomplete) {
                     </div>
                 `;
 
-                itemDiv.onclick = function() {
-                    diorDocSelectMed({
-                        name: label,
-                        strengths: activeIng ? [activeIng] : [],
-                        rxcui: item.openfda?.rxcui?.[0] || '',
-                        source: 'U.S. FDA National Drug Code Directory'
-                    });
-                };
+                    itemDiv.onclick = function () {
+                        diorDocSelectMed({
+                            name: label,
+                            strengths: activeIng ? [activeIng] : [],
+                            rxcui: item.openfda?.rxcui?.[0] || '',
+                            source: 'U.S. FDA National Drug Code Directory'
+                        });
+                    };
 
-                autocomplete.appendChild(itemDiv);
-            });
-            autocomplete.style.display = 'block';
-        } else {
-            autocomplete.innerHTML = `
+                    autocomplete.appendChild(itemDiv);
+                });
+                autocomplete.style.display = 'block';
+            } else {
+                autocomplete.innerHTML = `
                 <div style="padding:14px 16px;background:#FFF;color:#B91C1C;font-size:12.5px;display:flex;align-items:center;gap:8px;">
                     <i class="fa-solid fa-triangle-exclamation" style="font-size:14px;"></i>
                     <span>No official U.S. FDA approved medication found for "<strong>${diorDocEscapeHtml(query)}</strong>". Please verify drug spelling.</span>
                 </div>
             `;
-            autocomplete.style.display = 'block';
-        }
-    })
-    .catch(() => {
-        autocomplete.innerHTML = `
+                autocomplete.style.display = 'block';
+            }
+        })
+        .catch(() => {
+            autocomplete.innerHTML = `
             <div style="padding:14px 16px;background:#FFF;color:#B91C1C;font-size:12.5px;display:flex;align-items:center;gap:8px;">
                 <i class="fa-solid fa-triangle-exclamation" style="font-size:14px;"></i>
                 <span>No official U.S. FDA approved medication found for "<strong>${diorDocEscapeHtml(query)}</strong>".</span>
             </div>
         `;
-        autocomplete.style.display = 'block';
-    });
+            autocomplete.style.display = 'block';
+        });
 };
 
-window.diorDocEscapeHtml = function(str) {
+window.diorDocEscapeHtml = function (str) {
     if (!str) return '';
     return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
 };
 
-window.diorDocSelectMed = function(med) {
+window.diorDocSelectMed = function (med) {
     const medName = typeof med === 'object' ? med.name : med;
     const strengths = (typeof med === 'object' && Array.isArray(med.strengths)) ? med.strengths : [];
-    
+
     document.getElementById('rx-med-search').value = medName;
     const autocomplete = document.getElementById('rx-med-autocomplete');
     if (autocomplete) autocomplete.style.display = 'none';
@@ -1488,17 +1488,17 @@ window.diorDocSelectMed = function(med) {
     };
 };
 
-window.diorDocAddMedToList = function() {
+window.diorDocAddMedToList = function () {
     const name = document.getElementById('rx-med-search').value.trim();
     const dose = document.getElementById('rx-dosage').value.trim();
     const ref = document.getElementById('rx-refills').value.trim();
     const notes = document.getElementById('rx-notes').value.trim();
-    
+
     if (!name || !dose) {
         alert("Please enter Medication Name and Dosage.");
         return;
     }
-    
+
     window.diorRxMedicationsList.push({
         medication: name,
         dosage: dose,
@@ -1507,12 +1507,12 @@ window.diorDocAddMedToList = function() {
         fda_approved: true,
         fda_source: window.diorSelectedMedMeta ? window.diorSelectedMedMeta.source : 'U.S. FDA & NIH RxNorm'
     });
-    
+
     document.getElementById('rx-med-search').value = '';
     document.getElementById('rx-dosage').value = '';
     document.getElementById('rx-refills').value = '';
     document.getElementById('rx-notes').value = '';
-    
+
     const fdaBadge = document.getElementById('rx-fda-badge');
     if (fdaBadge) fdaBadge.style.display = 'none';
     const datalist = document.getElementById('rx-dosage-list');
@@ -1522,7 +1522,7 @@ window.diorDocAddMedToList = function() {
     diorDocRenderMedList();
 };
 
-window.diorDocRenderMedList = function() {
+window.diorDocRenderMedList = function () {
     const list = document.getElementById('rx-med-list');
     if (!list) return;
     list.innerHTML = '';
@@ -1549,14 +1549,14 @@ window.diorDocRenderMedList = function() {
     });
 };
 
-window.diorDocRemoveMed = function(index) {
+window.diorDocRemoveMed = function (index) {
     window.diorRxMedicationsList.splice(index, 1);
     diorDocRenderMedList();
 };
 
 // ── PRE-TRANSMISSION PRESCRIPTION CONFIRMATION MODAL & TRANSMIT ──
 
-window.diorDocPreviewPrescriptionConfirmation = function() {
+window.diorDocPreviewPrescriptionConfirmation = function () {
     const pSelect = document.getElementById('rx-patient-select');
     const patientId = pSelect ? pSelect.value : '';
 
@@ -1665,7 +1665,7 @@ window.diorDocPreviewPrescriptionConfirmation = function() {
     }
 };
 
-window.diorDocCloseRxConfirmModal = function() {
+window.diorDocCloseRxConfirmModal = function () {
     const modal = document.getElementById('modal-doc-rx-confirm-preview');
     if (modal) {
         modal.style.display = 'none';
@@ -1673,7 +1673,7 @@ window.diorDocCloseRxConfirmModal = function() {
     }
 };
 
-window.diorDocExecutePrescriptionTransmit = function() {
+window.diorDocExecutePrescriptionTransmit = function () {
     const pSelect = document.getElementById('rx-patient-select');
     const patientId = pSelect ? pSelect.value : '';
     const transmitBtn = document.getElementById('btn-doc-confirm-transmit-rx');
@@ -1701,42 +1701,42 @@ window.diorDocExecutePrescriptionTransmit = function() {
         method: 'POST',
         body: data
     })
-    .then(r => r.json())
-    .then(res => {
-        if (transmitBtn) {
-            transmitBtn.disabled = false;
-            transmitBtn.innerHTML = origHtml;
-        }
-        window.diorDocCloseRxConfirmModal();
+        .then(r => r.json())
+        .then(res => {
+            if (transmitBtn) {
+                transmitBtn.disabled = false;
+                transmitBtn.innerHTML = origHtml;
+            }
+            window.diorDocCloseRxConfirmModal();
 
-        if (msg) {
-            msg.style.display = 'block';
-        }
-
-        if (res.success) {
             if (msg) {
-                msg.className = 'dior-st ok';
-                msg.innerHTML = '<i class="fa-solid fa-check"></i> ' + (res.data.message || 'Prescription confirmed and transmitted successfully!');
+                msg.style.display = 'block';
             }
 
-            window.diorRxMedicationsList = [];
-            diorDocRenderMedList();
-            if (pSelect) pSelect.value = '';
-            const searchInput = document.getElementById('rx-med-search');
-            if (searchInput) searchInput.value = '';
-            const notesInput = document.getElementById('rx-notes');
-            if (notesInput) notesInput.value = '';
+            if (res.success) {
+                if (msg) {
+                    msg.className = 'dior-st ok';
+                    msg.innerHTML = '<i class="fa-solid fa-check"></i> ' + (res.data.message || 'Prescription confirmed and transmitted successfully!');
+                }
 
-            const tbody = document.getElementById('dior-all-rx-tbody');
-            if (tbody && res.data.rxs) {
-                const emptyRow = tbody.querySelector('td[colspan="5"]');
-                if (emptyRow) emptyRow.parentElement.remove();
+                window.diorRxMedicationsList = [];
+                diorDocRenderMedList();
+                if (pSelect) pSelect.value = '';
+                const searchInput = document.getElementById('rx-med-search');
+                if (searchInput) searchInput.value = '';
+                const notesInput = document.getElementById('rx-notes');
+                if (notesInput) notesInput.value = '';
 
-                const opt = pSelect.options[pSelect.selectedIndex];
-                const pName = opt ? opt.text : 'Patient';
-                res.data.rxs.forEach(rx => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
+                const tbody = document.getElementById('dior-all-rx-tbody');
+                if (tbody && res.data.rxs) {
+                    const emptyRow = tbody.querySelector('td[colspan="5"]');
+                    if (emptyRow) emptyRow.parentElement.remove();
+
+                    const opt = pSelect.options[pSelect.selectedIndex];
+                    const pName = opt ? opt.text : 'Patient';
+                    res.data.rxs.forEach(rx => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
                         <td><strong>${pName}</strong></td>
                         <td>
                             <div style="display:flex;align-items:center;gap:6px;">
@@ -1750,44 +1750,44 @@ window.diorDocExecutePrescriptionTransmit = function() {
                         <td>${rx.date}</td>
                         <td><span class="dior-st ok">Active</span></td>
                     `;
-                    tbody.prepend(tr);
-                });
-            }
+                        tbody.prepend(tr);
+                    });
+                }
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Prescription Transmitted!",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Prescription Transmitted!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
 
-            setTimeout(() => { if (msg) msg.style.display = 'none'; }, 6000);
-        } else {
-            if (msg) {
-                msg.className = 'dior-st error';
-                msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + (res.data.message || 'Error transmitting prescription.');
+                setTimeout(() => { if (msg) msg.style.display = 'none'; }, 6000);
+            } else {
+                if (msg) {
+                    msg.className = 'dior-st error';
+                    msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + (res.data.message || 'Error transmitting prescription.');
+                }
+                alert((res.data && res.data.message) ? res.data.message : 'Failed to transmit prescription.');
             }
-            alert((res.data && res.data.message) ? res.data.message : 'Failed to transmit prescription.');
-        }
-    })
-    .catch(() => {
-        if (transmitBtn) {
-            transmitBtn.disabled = false;
-            transmitBtn.innerHTML = origHtml;
-        }
-        window.diorDocCloseRxConfirmModal();
-        alert('Connection error while transmitting prescription.');
-    });
+        })
+        .catch(() => {
+            if (transmitBtn) {
+                transmitBtn.disabled = false;
+                transmitBtn.innerHTML = origHtml;
+            }
+            window.diorDocCloseRxConfirmModal();
+            alert('Connection error while transmitting prescription.');
+        });
 };
 
 // Backwards compatibility alias
 window.diorDocSendPrescription = window.diorDocPreviewPrescriptionConfirmation;
 
 // Profile Save
-window.diorDocSaveProfile = function(e) {
+window.diorDocSaveProfile = function (e) {
     if (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -1834,7 +1834,7 @@ window.diorDocSaveProfile = function(e) {
     [fnEl, lnEl, spEl, licEl, npiEl, phEl].forEach(el => {
         if (el && !el._diorHasCleanListener) {
             el._diorHasCleanListener = true;
-            el.addEventListener('input', function() {
+            el.addEventListener('input', function () {
                 this.style.borderColor = '#E2E8F0';
                 this.style.backgroundColor = '#FFFFFF';
             });
@@ -1868,12 +1868,12 @@ window.diorDocSaveProfile = function(e) {
         }
         return;
     }
-    
+
     if (btn) {
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
     }
-    
+
     const data = new FormData(form);
     data.append('action', 'dior_doctor_save_profile');
     data.append('nonce', getDiorDocNonce());
@@ -1884,111 +1884,111 @@ window.diorDocSaveProfile = function(e) {
     if (optinAppt) data.set('optin_appointment_reminders', optinAppt.checked ? '1' : '0');
     if (optinEmail) data.set('optin_reminder_email', optinEmail.checked ? '1' : '0');
     if (optinDash) data.set('optin_reminder_dashboard', optinDash.checked ? '1' : '0');
-    
+
     fetch(getDiorDocAjax(), {
         method: 'POST',
         body: data
     })
-    .then(r => r.json())
-    .then(res => {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Profile';
-        }
-
-        if (res.success) {
-            if (msg) {
-                msg.style.display = 'block';
-                msg.style.background = '#ECFDF5';
-                msg.style.color = '#059669';
-                msg.style.border = '1px solid #A7F3D0';
-                msg.innerHTML = '<i class="fa-solid fa-check"></i> ' + (res.data && res.data.message ? res.data.message : 'Profile saved!');
-                setTimeout(() => { msg.style.display = 'none'; }, 4000);
+        .then(r => r.json())
+        .then(res => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Profile';
             }
 
-            // Update doctor global vars
-            if (window.dior_doctor_vars) {
-                window.dior_doctor_vars.is_profile_complete = 1;
-                window.dior_doctor_vars.missing_profile_fields = {};
-                if (res.data && res.data.profile) {
-                    window.dior_doctor_vars.doctor_profile = res.data.profile;
+            if (res.success) {
+                if (msg) {
+                    msg.style.display = 'block';
+                    msg.style.background = '#ECFDF5';
+                    msg.style.color = '#059669';
+                    msg.style.border = '1px solid #A7F3D0';
+                    msg.innerHTML = '<i class="fa-solid fa-check"></i> ' + (res.data && res.data.message ? res.data.message : 'Profile saved!');
+                    setTimeout(() => { msg.style.display = 'none'; }, 4000);
+                }
+
+                // Update doctor global vars
+                if (window.dior_doctor_vars) {
+                    window.dior_doctor_vars.is_profile_complete = 1;
+                    window.dior_doctor_vars.missing_profile_fields = {};
+                    if (res.data && res.data.profile) {
+                        window.dior_doctor_vars.doctor_profile = res.data.profile;
+                    }
+                }
+
+                // Remove warning banner if present
+                const banner = document.getElementById('dior-doctor-profile-incomplete-banner');
+                if (banner) banner.remove();
+
+                // Update UI doctor full name across dashboard
+                const newFullName = 'Dr. ' + (fn + ' ' + ln).trim();
+                const sidebarName = document.querySelector('.dior-side-org-card .org-info strong');
+                if (sidebarName) sidebarName.textContent = newFullName;
+
+                const sidebarSpec = document.querySelector('.dior-side-org-card .org-info span');
+                if (sidebarSpec) sidebarSpec.textContent = sp || 'Licensed Provider';
+
+                const topPillName = document.querySelector('.dior-user-pill .dior-pill-name');
+                if (topPillName) topPillName.textContent = newFullName;
+
+                const welcomeSub = document.querySelector('.dior-page-title-bar .title-sub');
+                if (welcomeSub) {
+                    welcomeSub.textContent = `Welcome back, ${newFullName}. Here's your clinical summary.`;
+                }
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Profile Updated Successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            } else {
+                const errText = (res.data && res.data.message) ? res.data.message : 'Failed to save profile.';
+                if (msg) {
+                    msg.style.display = 'block';
+                    msg.style.background = '#FEF2F2';
+                    msg.style.color = '#DC2626';
+                    msg.style.border = '1px solid #FECACA';
+                    msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + errText;
+                }
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Profile Update Failed',
+                        text: errText,
+                        confirmButtonColor: '#2C6CB1'
+                    });
                 }
             }
-
-            // Remove warning banner if present
-            const banner = document.getElementById('dior-doctor-profile-incomplete-banner');
-            if (banner) banner.remove();
-
-            // Update UI doctor full name across dashboard
-            const newFullName = 'Dr. ' + (fn + ' ' + ln).trim();
-            const sidebarName = document.querySelector('.dior-side-org-card .org-info strong');
-            if (sidebarName) sidebarName.textContent = newFullName;
-
-            const sidebarSpec = document.querySelector('.dior-side-org-card .org-info span');
-            if (sidebarSpec) sidebarSpec.textContent = sp || 'Licensed Provider';
-
-            const topPillName = document.querySelector('.dior-user-pill .dior-pill-name');
-            if (topPillName) topPillName.textContent = newFullName;
-
-            const welcomeSub = document.querySelector('.dior-page-title-bar .title-sub');
-            if (welcomeSub) {
-                welcomeSub.textContent = `Welcome back, ${newFullName}. Here's your clinical summary.`;
+        })
+        .catch(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Profile';
             }
-
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Profile Updated Successfully!",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-        } else {
-            const errText = (res.data && res.data.message) ? res.data.message : 'Failed to save profile.';
             if (msg) {
                 msg.style.display = 'block';
                 msg.style.background = '#FEF2F2';
                 msg.style.color = '#DC2626';
                 msg.style.border = '1px solid #FECACA';
-                msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + errText;
+                msg.textContent = 'Network error during save.';
             }
-
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Profile Update Failed',
-                    text: errText,
+                    title: 'Network Error',
+                    text: 'Connection error while saving your profile. Please check your connection and try again.',
                     confirmButtonColor: '#2C6CB1'
                 });
             }
-        }
-    })
-    .catch(() => {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Profile';
-        }
-        if (msg) {
-            msg.style.display = 'block';
-            msg.style.background = '#FEF2F2';
-            msg.style.color = '#DC2626';
-            msg.style.border = '1px solid #FECACA';
-            msg.textContent = 'Network error during save.';
-        }
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Network Error',
-                text: 'Connection error while saving your profile. Please check your connection and try again.',
-                confirmButtonColor: '#2C6CB1'
-            });
-        }
-    });
+        });
 };
 
 // Notifications
-window.diorDocToggleNotif = function(e) {
+window.diorDocToggleNotif = function (e) {
     if (e) {
         if (typeof e.preventDefault === 'function') e.preventDefault();
         if (typeof e.stopPropagation === 'function') e.stopPropagation();
@@ -1999,7 +1999,7 @@ window.diorDocToggleNotif = function(e) {
     }
 };
 
-window.diorDocMarkSingleRead = function(notifId, btn) {
+window.diorDocMarkSingleRead = function (notifId, btn) {
     const item = btn ? btn.closest('.dior-full-notif-item, .dior-notif-item, .dior-notif-item-full') : null;
     if (item) {
         item.classList.remove('unread');
@@ -2014,11 +2014,11 @@ window.diorDocMarkSingleRead = function(notifId, btn) {
         data.append('action', 'dior_doctor_mark_notif_read');
         data.append('nonce', nonce);
         data.append('notif_id', notifId);
-        fetch(ajaxUrl, { method: 'POST', body: data }).catch(() => {});
+        fetch(ajaxUrl, { method: 'POST', body: data }).catch(() => { });
     }
 };
 
-window.diorDocMarkAllRead = function(e) {
+window.diorDocMarkAllRead = function (e) {
     if (e && e.preventDefault) e.preventDefault();
     if (e && e.stopPropagation) e.stopPropagation();
 
@@ -2038,10 +2038,10 @@ window.diorDocMarkAllRead = function(e) {
     const data = new FormData();
     data.append('action', 'dior_doctor_mark_all_notif_read');
     data.append('nonce', nonce);
-    
+
     fetch(ajaxUrl, { method: 'POST', body: data })
-    .then(r => r.json())
-    .catch(() => {});
+        .then(r => r.json())
+        .catch(() => { });
 };
 
 // =========================================================================
@@ -2086,7 +2086,7 @@ window.diorDocMarkAllRead = function(e) {
             gain2.connect(ctx.destination);
             osc2.start(now + 0.12);
             osc2.stop(now + 0.55);
-        } catch(e) {}
+        } catch (e) { }
     }
 
     function getDoctorToastContainer() {
@@ -2120,12 +2120,12 @@ window.diorDocMarkAllRead = function(e) {
             <button type="button" class="toast-close" aria-label="Dismiss">&times;</button>
         `;
 
-        toast.querySelector('.toast-close').onclick = function(e) {
+        toast.querySelector('.toast-close').onclick = function (e) {
             e.stopPropagation();
             removeDoctorToast(toast);
         };
 
-        toast.onclick = function() {
+        toast.onclick = function () {
             removeDoctorToast(toast);
             const actionUrl = alert.action_url || '';
             if (actionUrl.indexOf('#tab=') !== -1) {
@@ -2186,69 +2186,69 @@ window.diorDocMarkAllRead = function(e) {
         }
 
         fetch(ajaxUrl, { method: 'POST', body: data })
-        .then(r => r.json())
-        .then(res => {
-            isDoctorNotifPolling = false;
-            if (res && res.success && res.data) {
-                const d = res.data;
-                const unreadCount = parseInt(d.unread_count, 10) || 0;
+            .then(r => r.json())
+            .then(res => {
+                isDoctorNotifPolling = false;
+                if (res && res.success && res.data) {
+                    const d = res.data;
+                    const unreadCount = parseInt(d.unread_count, 10) || 0;
 
-                // 1. Update Badges
-                document.querySelectorAll('.doc-unread-badge, .dior-notif-indicator').forEach(b => {
-                    if (unreadCount > 0) {
-                        b.style.display = 'inline-flex';
-                        b.textContent = unreadCount;
-                    } else {
-                        b.style.display = 'none';
-                    }
-                });
-
-                // 2. Update Nav Badge if exists
-                const navBadge = document.querySelector('.dior-nav-btn[data-tab="doc-notifications"] .nav-count-badge');
-                if (navBadge) {
-                    if (unreadCount > 0) {
-                        navBadge.style.display = 'inline-flex';
-                        navBadge.textContent = unreadCount;
-                    } else {
-                        navBadge.style.display = 'none';
-                    }
-                }
-
-                // 3. Update Dropdown List
-                const ddList = document.querySelector('#dior-doc-notif-dd .dior-notif-list');
-                const dd = document.getElementById('dior-doc-notif-dd');
-                if (ddList && (!dd || !dd.classList.contains('open')) && d.dropdown_html) {
-                    ddList.innerHTML = d.dropdown_html;
-                }
-
-                // 4. Update Full Page List
-                const fullList = document.getElementById('dior-doc-notif-full');
-                if (fullList && d.full_html && d.latest_id !== diorLastDoctorNotifId) {
-                    fullList.innerHTML = d.full_html;
-                }
-
-                // 5. Trigger Toasts for New Alerts
-                if (d.new_alerts && d.new_alerts.length > 0) {
-                    triggerDoctorBellAnimation();
-                    d.new_alerts.forEach(al => {
-                        showDoctorLiveToast(al);
+                    // 1. Update Badges
+                    document.querySelectorAll('.doc-unread-badge, .dior-notif-indicator').forEach(b => {
+                        if (unreadCount > 0) {
+                            b.style.display = 'inline-flex';
+                            b.textContent = unreadCount;
+                        } else {
+                            b.style.display = 'none';
+                        }
                     });
-                }
 
-                if (d.latest_id) {
-                    diorLastDoctorNotifId = d.latest_id;
+                    // 2. Update Nav Badge if exists
+                    const navBadge = document.querySelector('.dior-nav-btn[data-tab="doc-notifications"] .nav-count-badge');
+                    if (navBadge) {
+                        if (unreadCount > 0) {
+                            navBadge.style.display = 'inline-flex';
+                            navBadge.textContent = unreadCount;
+                        } else {
+                            navBadge.style.display = 'none';
+                        }
+                    }
+
+                    // 3. Update Dropdown List
+                    const ddList = document.querySelector('#dior-doc-notif-dd .dior-notif-list');
+                    const dd = document.getElementById('dior-doc-notif-dd');
+                    if (ddList && (!dd || !dd.classList.contains('open')) && d.dropdown_html) {
+                        ddList.innerHTML = d.dropdown_html;
+                    }
+
+                    // 4. Update Full Page List
+                    const fullList = document.getElementById('dior-doc-notif-full');
+                    if (fullList && d.full_html && d.latest_id !== diorLastDoctorNotifId) {
+                        fullList.innerHTML = d.full_html;
+                    }
+
+                    // 5. Trigger Toasts for New Alerts
+                    if (d.new_alerts && d.new_alerts.length > 0) {
+                        triggerDoctorBellAnimation();
+                        d.new_alerts.forEach(al => {
+                            showDoctorLiveToast(al);
+                        });
+                    }
+
+                    if (d.latest_id) {
+                        diorLastDoctorNotifId = d.latest_id;
+                    }
                 }
-            }
-        })
-        .catch(() => {
-            isDoctorNotifPolling = false;
-        });
+            })
+            .catch(() => {
+                isDoctorNotifPolling = false;
+            });
     }
 
     setTimeout(pollDoctorLiveNotifications, 2200);
     setInterval(pollDoctorLiveNotifications, 6000);
 
-    document.addEventListener('visibilitychange', function() {
+    document.addEventListener('visibilitychange', function () {
         if (!document.hidden) {
             pollDoctorLiveNotifications();
         }
@@ -2258,55 +2258,55 @@ window.diorDocMarkAllRead = function(e) {
 })();
 
 // Modal
-window.diorDocViewPatient = function(patientId) {
+window.diorDocViewPatient = function (patientId) {
     const modal = document.getElementById('modal-doc-patient');
     const body = document.getElementById('modal-doc-patient-body');
     if (!modal || !body) return;
-    
+
     modal.classList.add('open');
     body.innerHTML = '<div style="text-align:center;padding:32px;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:#059669;"></i></div>';
-    
+
     const data = new FormData();
     data.append('action', 'dior_doctor_get_patient_detail');
     data.append('nonce', window.diorDocNonce || getDiorDocNonce());
     data.append('patient_user_id', patientId);
-    
+
     fetch(getDiorDocAjax(), { method: 'POST', body: data })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success) {
-            body.innerHTML = res.data.html;
-            
-            // Direct binding to chart nav tabs
-            body.querySelectorAll('.dior-chart-nav-btn, .dior-pdm-tab-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const targetId = this.getAttribute('data-target') || this.getAttribute('data-tab') || (this.getAttribute('onclick') || '').match(/['"](cpanel-[^'"]+|pdm-tab-[^'"]+)['"]/)?.[1];
-                    if (targetId) {
-                        window.pchartSwitchTab(this, targetId);
-                    }
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                body.innerHTML = res.data.html;
+
+                // Direct binding to chart nav tabs
+                body.querySelectorAll('.dior-chart-nav-btn, .dior-pdm-tab-btn').forEach(btn => {
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const targetId = this.getAttribute('data-target') || this.getAttribute('data-tab') || (this.getAttribute('onclick') || '').match(/['"](cpanel-[^'"]+|pdm-tab-[^'"]+)['"]/)?.[1];
+                        if (targetId) {
+                            window.pchartSwitchTab(this, targetId);
+                        }
+                    });
                 });
-            });
-        } else {
-            body.innerHTML = '<div class="dior-st error" style="padding:20px;text-align:center;">' + (res.data && res.data.message ? res.data.message : 'Error loading patient data') + '</div>';
-        }
-    })
-    .catch(() => {
-        body.innerHTML = '<div class="dior-st error" style="padding:20px;text-align:center;">Network Error</div>';
-    });
+            } else {
+                body.innerHTML = '<div class="dior-st error" style="padding:20px;text-align:center;">' + (res.data && res.data.message ? res.data.message : 'Error loading patient data') + '</div>';
+            }
+        })
+        .catch(() => {
+            body.innerHTML = '<div class="dior-st error" style="padding:20px;text-align:center;">Network Error</div>';
+        });
 };
 
-window.diorDocCloseModal = function() {
+window.diorDocCloseModal = function () {
     const modal = document.getElementById('modal-doc-patient');
     if (modal) modal.classList.remove('open');
 };
 
 // Patient Detail Modal Tab Switching (Robust Global Handler)
-window.pchartSwitchTab = function(btn, paneId) {
+window.pchartSwitchTab = function (btn, paneId) {
     if (!paneId) return;
     const modalBody = document.getElementById('modal-doc-patient-body') || document.querySelector('#modal-doc-patient') || document;
-    
+
     // Update button states
     modalBody.querySelectorAll('.dior-chart-nav-btn, .dior-pdm-tab-btn').forEach(b => {
         b.classList.remove('active');
@@ -2317,18 +2317,18 @@ window.pchartSwitchTab = function(btn, paneId) {
         const matchingBtn = modalBody.querySelector(`.dior-chart-nav-btn[data-target="${paneId}"], .dior-chart-nav-btn[onclick*="${paneId}"]`);
         if (matchingBtn) matchingBtn.classList.add('active');
     }
-    
+
     // Update pane states
     modalBody.querySelectorAll('.dior-chart-pane, .dior-pdm-tab-pane').forEach(p => {
         p.classList.remove('active');
         p.style.display = 'none';
     });
-    
+
     const target = modalBody.querySelector('#' + paneId) || document.getElementById(paneId);
     if (target) {
         target.classList.add('active');
         target.style.display = 'flex';
-        
+
         // Scroll body back to top
         const scrollContainer = modalBody.querySelector('.dior-chart-body') || modalBody.querySelector('.dior-pdm-body');
         if (scrollContainer && scrollContainer.scrollTop !== undefined) {
@@ -2340,7 +2340,7 @@ window.pchartSwitchTab = function(btn, paneId) {
 window.pdmTab = window.pchartSwitchTab;
 
 // Global Delegated Click Listener for Modal Tabs
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     const tabBtn = e.target.closest('.dior-chart-nav-btn, .dior-pdm-tab-btn');
     if (tabBtn) {
         const targetId = tabBtn.getAttribute('data-target') || tabBtn.getAttribute('data-tab') || (tabBtn.getAttribute('onclick') || '').match(/['"](cpanel-[^'"]+|pdm-tab-[^'"]+)['"]/)?.[1];
@@ -2352,7 +2352,7 @@ document.addEventListener('click', function(e) {
 });
 
 // SOAP Presets & Notes Global Functions
-window.pchartApplySoapPreset = function(diag, s, o, a, p) {
+window.pchartApplySoapPreset = function (diag, s, o, a, p) {
     if (document.getElementById('soap_diagnosis')) document.getElementById('soap_diagnosis').value = diag || '';
     if (document.getElementById('soap_subjective')) document.getElementById('soap_subjective').value = s || '';
     if (document.getElementById('soap_objective')) document.getElementById('soap_objective').value = o || '';
@@ -2360,13 +2360,13 @@ window.pchartApplySoapPreset = function(diag, s, o, a, p) {
     if (document.getElementById('soap_plan')) document.getElementById('soap_plan').value = p || '';
 };
 
-window.pchartSaveSoapNote = function(button) {
+window.pchartSaveSoapNote = function (button) {
     const diag = (document.getElementById('soap_diagnosis') && document.getElementById('soap_diagnosis').value.trim()) || '';
     if (!diag) {
         alert('Please enter an Assessment / Primary Diagnosis before signing.');
         return;
     }
-    
+
     const origText = button.innerHTML;
     button.innerHTML = 'Saving...';
     button.disabled = true;
@@ -2392,51 +2392,51 @@ window.pchartSaveSoapNote = function(button) {
         method: 'POST',
         body: formData
     })
-    .then(res => res.json())
-    .then(data => {
-        button.innerHTML = origText;
-        button.disabled = false;
-        if (data.success) {
-            alert('SOAP Clinical Encounter Note successfully signed and saved to patient record!');
-            if (typeof window.diorDocViewPatient === 'function' && pid) {
-                window.diorDocViewPatient(pid);
+        .then(res => res.json())
+        .then(data => {
+            button.innerHTML = origText;
+            button.disabled = false;
+            if (data.success) {
+                alert('SOAP Clinical Encounter Note successfully signed and saved to patient record!');
+                if (typeof window.diorDocViewPatient === 'function' && pid) {
+                    window.diorDocViewPatient(pid);
+                }
+            } else {
+                alert('Note saved: ' + (data.data && data.data.message ? data.data.message : 'Recorded in patient chart.'));
             }
-        } else {
-            alert('Note saved: ' + (data.data && data.data.message ? data.data.message : 'Recorded in patient chart.'));
-        }
-    })
-    .catch(err => {
-        button.innerHTML = origText;
-        button.disabled = false;
-        alert('Encounter note signed & recorded successfully!');
-    });
+        })
+        .catch(err => {
+            button.innerHTML = origText;
+            button.disabled = false;
+            alert('Encounter note signed & recorded successfully!');
+        });
 };
 
-window.pchartIssueExcuseLetter = function(button) {
+window.pchartIssueExcuseLetter = function (button) {
     alert('Certified Work/School Excuse Letter successfully generated and delivered to patient dashboard!');
 };
 
-window.diorOpenDoctorUploadModal = function(patientId) {
+window.diorOpenDoctorUploadModal = function (patientId) {
     if (typeof window.diorDocOpenUploadModal === 'function') {
         window.diorDocOpenUploadModal(patientId);
     }
 };
 
 // Toggle password visibility
-window.diorDocTogglePwd = function(inputId, btn) {
+window.diorDocTogglePwd = function (inputId, btn) {
     const input = document.getElementById(inputId);
     if (!input) return;
     const isPwd = input.type === 'password';
     input.type = isPwd ? 'text' : 'password';
     if (btn) {
-        btn.innerHTML = isPwd 
+        btn.innerHTML = isPwd
             ? '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
             : '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
     }
 };
 
 // Change Password Handler
-window.diorDocChangePassword = function(e) {
+window.diorDocChangePassword = function (e) {
     if (e) e.preventDefault();
     const form = document.getElementById('dior-doc-password-form');
     const msg = document.getElementById('dior-doc-password-msg');
@@ -2453,45 +2453,45 @@ window.diorDocChangePassword = function(e) {
     }
 
     fetch(window.diorDocAjax, { method: 'POST', body: fd })
-    .then(r => r.json())
-    .then(res => {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-key"></i> Update Password';
-        }
-        if (msg) {
-            msg.style.display = 'block';
-            if (res.success) {
-                msg.style.background = '#ECFDF5';
-                msg.style.color = '#065F46';
-                msg.style.border = '1px solid #A7F3D0';
-                msg.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> ' + res.data.message;
-                form.reset();
-            } else {
+        .then(r => r.json())
+        .then(res => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-key"></i> Update Password';
+            }
+            if (msg) {
+                msg.style.display = 'block';
+                if (res.success) {
+                    msg.style.background = '#ECFDF5';
+                    msg.style.color = '#065F46';
+                    msg.style.border = '1px solid #A7F3D0';
+                    msg.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:6px;"></i> ' + res.data.message;
+                    form.reset();
+                } else {
+                    msg.style.background = '#FEF2F2';
+                    msg.style.color = '#991B1B';
+                    msg.style.border = '1px solid #FECACA';
+                    msg.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i> ' + res.data.message;
+                }
+            }
+        })
+        .catch(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-key"></i> Update Password';
+            }
+            if (msg) {
+                msg.style.display = 'block';
                 msg.style.background = '#FEF2F2';
                 msg.style.color = '#991B1B';
                 msg.style.border = '1px solid #FECACA';
-                msg.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i> ' + res.data.message;
+                msg.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i> Network error. Please try again.';
             }
-        }
-    })
-    .catch(() => {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-key"></i> Update Password';
-        }
-        if (msg) {
-            msg.style.display = 'block';
-            msg.style.background = '#FEF2F2';
-            msg.style.color = '#991B1B';
-            msg.style.border = '1px solid #FECACA';
-            msg.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i> Network error. Please try again.';
-        }
-    });
+        });
 };
 
 // Filter Medical Records Table
-window.diorDocFilterRecordsTable = function(val) {
+window.diorDocFilterRecordsTable = function (val) {
     const q = (val || '').toLowerCase().trim();
     const rows = document.querySelectorAll('#dior-doc-records-table tbody tr');
     rows.forEach(r => {
@@ -2512,7 +2512,7 @@ window.diorDocFilterRecordsTable = function(val) {
 };
 
 // Update Standalone Letter Generator Live Preview (Reference Style Match)
-window.diorDocUpdateStandaloneLetterPreview = function() {
+window.diorDocUpdateStandaloneLetterPreview = function () {
     const select = document.getElementById('doc_gen_patient_select');
     const opt = select ? select.options[select.selectedIndex] : null;
     const preview = document.getElementById('doc-standalone-letter-preview-content');
@@ -2529,7 +2529,7 @@ window.diorDocUpdateStandaloneLetterPreview = function() {
     const letterType = document.getElementById('doc_gen_letter_type') ? document.getElementById('doc_gen_letter_type').value : 'Work Absence Note';
     const condition = document.getElementById('doc_gen_condition') ? (document.getElementById('doc_gen_condition').value || 'Medical Evaluation') : 'Medical Evaluation';
     const startDate = document.getElementById('doc_gen_start_date') ? (document.getElementById('doc_gen_start_date').value || new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0];
-    const returnDate = document.getElementById('doc_gen_return_date') ? (document.getElementById('doc_gen_return_date').value || new Date(Date.now() + 3*86400000).toISOString().split('T')[0]) : new Date(Date.now() + 3*86400000).toISOString().split('T')[0];
+    const returnDate = document.getElementById('doc_gen_return_date') ? (document.getElementById('doc_gen_return_date').value || new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0]) : new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0];
     const restrictions = document.getElementById('doc_gen_restrictions') ? document.getElementById('doc_gen_restrictions').value : 'Full Rest / Excused from all duties';
     const remarks = document.getElementById('doc_gen_remarks') ? document.getElementById('doc_gen_remarks').value : '';
 
@@ -2578,7 +2578,7 @@ window.diorDocUpdateStandaloneLetterPreview = function() {
 };
 
 // Submit & Publish Standalone Letter
-window.diorDocSubmitStandaloneLetter = function(e) {
+window.diorDocSubmitStandaloneLetter = function (e) {
     e.preventDefault();
     const select = document.getElementById('doc_gen_patient_select');
     const pid = select.value;
@@ -2612,35 +2612,35 @@ window.diorDocSubmitStandaloneLetter = function(e) {
         method: 'POST',
         body: fd
     })
-    .then(r => r.json())
-    .then(res => {
-        btn.disabled = false;
-        btn.innerHTML = origHtml;
-        if (res.success) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Medical Letter Published!',
-                    text: 'The certified medical letter has been published to the patient portal.',
-                    confirmButtonColor: '#00A896'
-                }).then(() => window.location.reload());
+        .then(r => r.json())
+        .then(res => {
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+            if (res.success) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Medical Letter Published!',
+                        text: 'The certified medical letter has been published to the patient portal.',
+                        confirmButtonColor: '#00A896'
+                    }).then(() => window.location.reload());
+                } else {
+                    alert(res.data.message || 'Medical Letter published and sent to patient portal successfully!');
+                    window.location.reload();
+                }
             } else {
-                alert(res.data.message || 'Medical Letter published and sent to patient portal successfully!');
-                window.location.reload();
+                alert(res.data.message || 'Error publishing letter.');
             }
-        } else {
-            alert(res.data.message || 'Error publishing letter.');
-        }
-    })
-    .catch(err => {
-        btn.disabled = false;
-        btn.innerHTML = origHtml;
-        alert('Network error publishing letter.');
-    });
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+            alert('Network error publishing letter.');
+        });
 };
 
 // Print Standalone Preview (Reference Styled Letterhead)
-window.diorDocPrintStandalonePreview = function() {
+window.diorDocPrintStandalonePreview = function () {
     const previewBox = document.getElementById('doc-standalone-letter-preview-box');
     if (!previewBox) return;
     const content = previewBox.innerHTML;
@@ -2672,7 +2672,7 @@ window.diorDocPrintStandalonePreview = function() {
 };
 
 // Filter Category in Records Table
-window.diorDocFilterCategory = function(cat, btn) {
+window.diorDocFilterCategory = function (cat, btn) {
     if (btn) {
         const group = btn.closest('.dior-filter-pill-group') || btn.parentElement;
         if (group) {
@@ -2702,7 +2702,7 @@ window.diorDocFilterCategory = function(cat, btn) {
 };
 
 // Apply Quick Preset in Letter Generator
-window.diorDocApplyLetterPreset = function(condition, restrictions, remarks) {
+window.diorDocApplyLetterPreset = function (condition, restrictions, remarks) {
     const condEl = document.getElementById('doc_gen_condition');
     const restEl = document.getElementById('doc_gen_restrictions');
     const remEl = document.getElementById('doc_gen_remarks');
@@ -2715,14 +2715,14 @@ window.diorDocApplyLetterPreset = function(condition, restrictions, remarks) {
 };
 
 // Open & Close Upload Document Modal
-window.diorDocOpenUploadModal = function() {
+window.diorDocOpenUploadModal = function () {
     const modal = document.getElementById('modal-doc-upload');
     if (modal) {
         modal.classList.add('open');
     }
 };
 
-window.diorDocCloseUploadModal = function() {
+window.diorDocCloseUploadModal = function () {
     const modal = document.getElementById('modal-doc-upload');
     if (modal) {
         modal.classList.remove('open');
@@ -2730,7 +2730,7 @@ window.diorDocCloseUploadModal = function() {
 };
 
 // Handle Document Upload
-window.diorDocSubmitUpload = function(e) {
+window.diorDocSubmitUpload = function (e) {
     if (e) e.preventDefault();
     const form = document.getElementById('dior-doc-upload-form');
     if (!form) return;
@@ -2767,31 +2767,31 @@ window.diorDocSubmitUpload = function(e) {
         method: 'POST',
         body: fd
     })
-    .then(r => r.json())
-    .then(res => {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = origBtnHtml;
-        }
-        if (res.success) {
-            alert(res.data.message || 'Document uploaded and secured successfully!');
-            window.diorDocCloseUploadModal();
-            window.location.reload();
-        } else {
-            alert(res.data.message || 'Error uploading document.');
-        }
-    })
-    .catch(err => {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = origBtnHtml;
-        }
-        alert('Network error during file upload.');
-    });
+        .then(r => r.json())
+        .then(res => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = origBtnHtml;
+            }
+            if (res.success) {
+                alert(res.data.message || 'Document uploaded and secured successfully!');
+                window.diorDocCloseUploadModal();
+                window.location.reload();
+            } else {
+                alert(res.data.message || 'Error uploading document.');
+            }
+        })
+        .catch(err => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = origBtnHtml;
+            }
+            alert('Network error during file upload.');
+        });
 };
 
 // Handle Document Deletion
-window.diorDocDeleteDocument = function(docId, btn) {
+window.diorDocDeleteDocument = function (docId, btn) {
     if (!confirm('Are you sure you want to delete this document from the secure vault? This action cannot be undone.')) {
         return;
     }
@@ -2812,32 +2812,32 @@ window.diorDocDeleteDocument = function(docId, btn) {
         method: 'POST',
         body: fd
     })
-    .then(r => r.json())
-    .then(res => {
-        if (res.success) {
-            if (row) {
-                row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                row.style.opacity = '0';
-                row.style.transform = 'translateX(20px)';
-                setTimeout(() => row.remove(), 300);
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                if (row) {
+                    row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(20px)';
+                    setTimeout(() => row.remove(), 300);
+                } else {
+                    window.location.reload();
+                }
             } else {
-                window.location.reload();
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = origHtml;
+                }
+                alert(res.data.message || 'Error deleting document.');
             }
-        } else {
+        })
+        .catch(err => {
             if (btn) {
                 btn.disabled = false;
                 btn.innerHTML = origHtml;
             }
-            alert(res.data.message || 'Error deleting document.');
-        }
-    })
-    .catch(err => {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = origHtml;
-        }
-        alert('Network error deleting document.');
-    });
+            alert('Network error deleting document.');
+        });
 };
 
 
@@ -2860,10 +2860,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function switchTab(tabId) {
             if (!tabId) return;
-<<<<<<< HEAD
-            try { localStorage.setItem('diorDocLastTab', tabId); } catch(e) {}
-=======
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
+            try { localStorage.setItem('diorDocLastTab', tabId); } catch (e) { }
 
             var buttons = app.querySelectorAll('#dior-doc-sidebar .dior-nav-btn[data-tab]');
             buttons.forEach(function (btn) {
@@ -2876,53 +2873,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 panel.classList.toggle('active', active);
                 if (active) {
                     panel.removeAttribute('hidden');
-<<<<<<< HEAD
                     panel.style.display = 'block';
                 } else {
                     panel.setAttribute('hidden', 'hidden');
                     panel.style.display = 'none';
-=======
-                } else {
-                    panel.setAttribute('hidden', 'hidden');
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
                 }
             });
 
             try {
                 history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
-            } catch (e) {}
+            } catch (e) { }
         }
 
-<<<<<<< HEAD
         if (typeof window.diorDocSwitchTab !== 'function') {
             window.diorDocSwitchTab = switchTab;
         }
-=======
-        window.diorDocSwitchTab = switchTab;
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 
         app.addEventListener('click', function (event) {
             var btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
             if (!btn) return;
-<<<<<<< HEAD
             if (window.diorDocSwitchTab === switchTab) {
                 event.preventDefault();
                 event.stopPropagation();
                 switchTab(btn.getAttribute('data-tab'));
             }
-=======
-            event.preventDefault();
-            event.stopPropagation();
-            switchTab(btn.getAttribute('data-tab'));
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
         }, true);
 
         var hash = window.location.hash.match(/^#tab=([^&]+)/);
         var initial = hash ? decodeURIComponent(hash[1]) : null;
-<<<<<<< HEAD
-        if (!initial) { try { initial = localStorage.getItem('diorDocLastTab'); } catch(e) {} }
-=======
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
+        if (!initial) { try { initial = localStorage.getItem('diorDocLastTab'); } catch (e) { } }
         var fallback = app.querySelector('#dior-doc-sidebar .dior-nav-btn.active[data-tab]') || app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab]');
         switchTab(initial && app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initial) + '"]') ? initial : (fallback ? fallback.getAttribute('data-tab') : 'doc-overview'));
     }

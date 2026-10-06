@@ -374,40 +374,17 @@
     gap: 12px;
 }
 
-<<<<<<< HEAD
 /* Settings profile header card styles. */
 .dior-doctor-wrap .profile-header-card .profile-avatar-img,
 .dior-doctor-wrap .profile-header-card .avatar-edit-wrapper img {
     object-fit: cover !important;
-=======
-/* Settings profile image must never use the source image's native dimensions. */
-.dior-doctor-wrap .profile-header-card .profile-avatar-img,
-.dior-doctor-wrap .profile-header-card .avatar-edit-wrapper img {
-    width: 104px !important;
-    height: 104px !important;
-    max-width: 104px !important;
-    max-height: 104px !important;
-    min-width: 104px !important;
-    min-height: 104px !important;
-    object-fit: cover !important;
-    display: block !important;
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
     border-radius: 50% !important;
 }
 
 .dior-doctor-wrap .profile-header-card .profile-cover-gradient {
-<<<<<<< HEAD
     border-radius: 14px 14px 0 0;
 }
 
-=======
-    height: 86px !important;
-    border-radius: 16px 16px 0 0;
-    background: linear-gradient(135deg, #2c6cb1, #174d86) !important;
-}
-
-.dior-doctor-wrap .profile-header-card .avatar-edit-wrapper { margin-top: -52px; }
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
 .dior-doctor-wrap .profile-header-card .card-body { position: relative; }
 
 @media (max-width: 1200px) {

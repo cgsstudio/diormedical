@@ -3,6 +3,7 @@
 .documents-tab-panel {
     display: none;
 }
+
 .documents-tab-panel.active {
     display: block;
 }
@@ -159,10 +160,25 @@
     transform: translateY(-2px);
 }
 
-.docs-btn-primary { background-color: #4F46E5 !important; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2) !important; }
-.docs-btn-success { background-color: #10B981 !important; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2) !important; }
-.docs-btn-info { background-color: #3B82F6 !important; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2) !important; }
-.docs-btn-danger { background-color: #EF4444 !important; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2) !important; }
+.docs-btn-primary {
+    background-color: #4F46E5 !important;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2) !important;
+}
+
+.docs-btn-success {
+    background-color: #10B981 !important;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2) !important;
+}
+
+.docs-btn-info {
+    background-color: #3B82F6 !important;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2) !important;
+}
+
+.docs-btn-danger {
+    background-color: #EF4444 !important;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2) !important;
+}
 
 /* Table Styles */
 .docs-table-wrapper {
@@ -317,12 +333,18 @@
     background-color: transparent !important;
     transition: all 0.2s;
 }
+
 .docs-action-btn-sm:hover {
-    background-color: rgba(0,0,0,0.05) !important;
+    background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
-.docs-btn-edit { color: #4F46E5 !important; }
-.docs-btn-delete { color: #EF4444 !important; }
+.docs-btn-edit {
+    color: #4F46E5 !important;
+}
+
+.docs-btn-delete {
+    color: #EF4444 !important;
+}
 
 /* Pagination Footer */
 .docs-footer {
@@ -343,6 +365,8 @@
 
 .docs-pagination-container {
     padding: 0px 10px 15px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .docs-card,

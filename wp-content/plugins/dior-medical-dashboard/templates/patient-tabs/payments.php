@@ -14,93 +14,102 @@
     </div>
 
     <div class="docs-card">
-                <div class="docs-header-container">
-                    <div class="docs-title-box">
-                        <h2>Billing</h2>
-                        <div class="docs-title-line"></div>
-                    </div>
-                    <div class="docs-actions-wrapper">
-                        <div class="docs-search-box">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="dior-bill-search-input" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterBill()">
-                        </div>
-                        <div class="docs-actions-group">
-                            <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success" title="Export to CSV" onclick="diorDownloadBillCSV()">
-                                <i class="fa-solid fa-file-arrow-down"></i>
-                            </button>
-                            <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info" title="Refresh Page" onclick="window.location.reload()">
-                                <i class="fa-solid fa-rotate-right"></i>
-                            </button>
-                        </div>
-                    </div>
+        <div class="docs-header-container">
+            <div class="docs-title-box">
+                <h2 class="table-title">Billing</h2>
+                <div class="docs-title-line"></div>
+            </div>
+            <div class="docs-actions-wrapper">
+                <div class="docs-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="dior-bill-search-input" placeholder="Search records..."
+                        aria-label="Search box" onkeyup="diorFilterBill()">
                 </div>
-                <div class="docs-table-wrapper">
-                    <table class="docs-table" id="dior-bill-table">
-                        <thead>
-                            <tr>
-                                <th>Invoice No</th>
-                                <th>Doctor</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Tax</th>
-                                <th>Discount</th>
-                                <th>Total</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dior-bill-tbody">
-                            <?php
-                            $billing_mock = [
-                                ['#A348', 'Dr.Jacob Ryan', 'Mar 4, 2016', '$40', '10%', '$5', '$39'],
-                                ['#A645', 'Dr.Rajesh', 'Apr 11, 2016', '$25', '10%', '$5', '$22'],
-                                ['#A873', 'Dr.Jay Soni', 'Apr 18, 2016', '$50', '10%', '$5', '$47'],
-                                ['#A927', 'Dr.John Deo', 'May 22, 2016', '$45', '10%', '$5', '$42'],
-                                ['#A228', 'Dr.Megha Trivedi', 'Jul 9, 2016', '$62', '10%', '$5', '$57'],
-                                ['#A345', 'Dr.Sarah Smith', 'Jul 14, 2016', '$60', '10%', '$5', '$56'],
-                                ['#A765', 'Dr.Jacob Ryan', 'Jun 22, 2016', '$40', '10%', '$5', '$39'],
-                                ['#A125', 'Dr.Rajesh', 'Jun 23, 2016', '$30', '10%', '$5', '$29']
-                                ,['#A905', 'Dr.Sarah Smith', 'Aug 2, 2016', '$72', '8%', '$4', '$74']
-                                ,['#A981', 'Dr.James Chen', 'Aug 16, 2016', '$95', '8%', '$0', '$103']
-                            ];
-                            foreach ($billing_mock as $bm):
-                            ?>
-                            <tr onclick="diorOpenBillingModal('<?php echo esc_js($bm[0]); ?>', '<?php echo esc_js($bm[1]); ?>', '<?php echo esc_js($bm[2]); ?>', '<?php echo esc_js($bm[3]); ?>', '<?php echo esc_js($bm[4]); ?>', '<?php echo esc_js($bm[5]); ?>', '<?php echo esc_js($bm[6]); ?>')" class="dior-ic-8e7e606bc6">
-                                <td><span class="cell-text"><?php echo esc_html($bm[0]); ?></span></td>
-                                <td><span class="cell-text"><?php echo esc_html($bm[1]); ?></span></td>
-                                <td>
-                                    <div class="cell-content cell-icon-text">
-                                        <i class="fa-regular fa-calendar cell-icon dior-ic-d53ea48df0"></i>
-                                        <span class="cell-text"><?php echo esc_html($bm[2]); ?></span>
-                                    </div>
-                                </td>
-                                <td><span class="cell-text"><?php echo esc_html($bm[3]); ?></span></td>
-                                <td><span class="cell-text"><?php echo esc_html($bm[4]); ?></span></td>
-                                <td><span class="cell-text"><?php echo esc_html($bm[5]); ?></span></td>
-                                <td><span class="cell-text"><?php echo esc_html($bm[6]); ?></span></td>
-                                <td>
-                                    <div class="cell-content action-cell dior-ic-b568c61cf9">
-                                        <button type="button" class="action-btn action-btn-success dior-ic-49777d7482" title="Download Bill">
-                                            <i class="fa-solid fa-download dior-ic-d0ad57ff03"></i>
-                                        </button>
-                                        <button type="button" class="action-btn action-btn-info dior-ic-43535b6eba" title="View Bill">
-                                            <i class="fa-solid fa-eye dior-ic-d0ad57ff03"></i>
-                                        </button>
-                                        <button type="button" class="action-btn dior-ic-1d598d91fe" title="Print Bill">
-                                            <i class="fa-solid fa-print dior-ic-d0ad57ff03"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                <div class="docs-actions-group">
+                    <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success"
+                        title="Export to CSV" onclick="diorDownloadBillCSV()">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                    </button>
+                    <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info"
+                        title="Refresh Page" onclick="window.location.reload()">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
                 </div>
-                <div class="docs-pagination-container">
-                    <div class="docs-showing-text" id="dior-bill-page-count">0 selected / <?php echo count($billing_mock); ?> total</div>
-                    <div id="dior-bill-pagination"></div>
-                </div>
+            </div>
+        </div>
+        <div class="docs-table-wrapper">
+            <table class="docs-table" id="dior-bill-table">
+                <thead>
+                    <tr>
+                        <th>Invoice No</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Tax</th>
+                        <th>Discount</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="dior-bill-tbody">
+                    <?php
+                    $billing_mock = [
+                        ['#A348', 'Dr.Jacob Ryan', 'Mar 4, 2016', '$40', '10%', '$5', '$39'],
+                        ['#A645', 'Dr.Rajesh', 'Apr 11, 2016', '$25', '10%', '$5', '$22'],
+                        ['#A873', 'Dr.Jay Soni', 'Apr 18, 2016', '$50', '10%', '$5', '$47'],
+                        ['#A927', 'Dr.John Deo', 'May 22, 2016', '$45', '10%', '$5', '$42'],
+                        ['#A228', 'Dr.Megha Trivedi', 'Jul 9, 2016', '$62', '10%', '$5', '$57'],
+                        ['#A345', 'Dr.Sarah Smith', 'Jul 14, 2016', '$60', '10%', '$5', '$56'],
+                        ['#A765', 'Dr.Jacob Ryan', 'Jun 22, 2016', '$40', '10%', '$5', '$39'],
+                        ['#A125', 'Dr.Rajesh', 'Jun 23, 2016', '$30', '10%', '$5', '$29']
+                        ,
+                        ['#A905', 'Dr.Sarah Smith', 'Aug 2, 2016', '$72', '8%', '$4', '$74']
+                        ,
+                        ['#A981', 'Dr.James Chen', 'Aug 16, 2016', '$95', '8%', '$0', '$103']
+                    ];
+                    foreach ($billing_mock as $bm):
+                        ?>
+                        <tr onclick="diorOpenBillingModal('<?php echo esc_js($bm[0]); ?>', '<?php echo esc_js($bm[1]); ?>', '<?php echo esc_js($bm[2]); ?>', '<?php echo esc_js($bm[3]); ?>', '<?php echo esc_js($bm[4]); ?>', '<?php echo esc_js($bm[5]); ?>', '<?php echo esc_js($bm[6]); ?>')"
+                            class="dior-ic-8e7e606bc6">
+                            <td><span class="cell-text"><?php echo esc_html($bm[0]); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[1]); ?></span></td>
+                            <td>
+                                <div class="cell-content cell-icon-text">
+                                    <i class="fa-regular fa-calendar cell-icon dior-ic-d53ea48df0"></i>
+                                    <span class="cell-text"><?php echo esc_html($bm[2]); ?></span>
+                                </div>
+                            </td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[3]); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[4]); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[5]); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[6]); ?></span></td>
+                            <td>
+                                <div class="cell-content action-cell dior-ic-b568c61cf9">
+                                    <button type="button" class="action-btn action-btn-success dior-ic-49777d7482"
+                                        title="Download Bill">
+                                        <i class="fa-solid fa-download dior-ic-d0ad57ff03"></i>
+                                    </button>
+                                    <button type="button" class="action-btn action-btn-info dior-ic-43535b6eba"
+                                        title="View Bill">
+                                        <i class="fa-solid fa-eye dior-ic-d0ad57ff03"></i>
+                                    </button>
+                                    <button type="button" class="action-btn dior-ic-1d598d91fe" title="Print Bill">
+                                        <i class="fa-solid fa-print dior-ic-d0ad57ff03"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="docs-pagination-container">
+            <div class="docs-showing-text" id="dior-bill-page-count">0 selected / <?php echo count($billing_mock); ?>
+                total</div>
+            <div id="dior-bill-pagination"></div>
+        </div>
     </div>
-    
+
 
     <div class="dior-billing-modal-backdrop dior-ic-b546859a82" id="diorBillingModal">
         <div class="modal-content dior-ic-7903a9dded">
@@ -119,7 +128,7 @@
                         <span>Edit</span>
                     </button>
                     <button type="button" onclick="diorCloseBillingModal()" class="dior-ic-7a752f6c0e">
-                       close
+                        close
                     </button>
                 </div>
             </div>
@@ -134,22 +143,24 @@
                 </div>
                 <div class="details-grid-container">
                     <div class="row g-3 dior-ic-bd41a014a7">
-                        
+
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xl-6 dior-ic-f8f25bc60b">
                             <div class="detail-field-card dior-ic-57d219ccba">
                                 <div class="field-label-group dior-ic-b85bb26d7d">
                                     <span class="field-label">Invoice No</span>
                                 </div>
-                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576" id="billModalInv"></span></div>
+                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576"
+                                        id="billModalInv"></span></div>
                             </div>
                         </div>
-                        
+
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xl-6 dior-ic-f8f25bc60b">
                             <div class="detail-field-card dior-ic-57d219ccba">
                                 <div class="field-label-group dior-ic-b85bb26d7d">
-                                   <span class="field-label">Doctor Name</span>
+                                    <span class="field-label">Doctor Name</span>
                                 </div>
-                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576" id="billModalDocName2"></span></div>
+                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576"
+                                        id="billModalDocName2"></span></div>
                             </div>
                         </div>
 
@@ -158,7 +169,8 @@
                                 <div class="field-label-group dior-ic-b85bb26d7d">
                                     <span class="field-label">Date</span>
                                 </div>
-                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576" id="billModalDate"></span></div>
+                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576"
+                                        id="billModalDate"></span></div>
                             </div>
                         </div>
 
@@ -167,34 +179,38 @@
                                 <div class="field-label-group dior-ic-b85bb26d7d">
                                     <span class="field-label">Amount</span>
                                 </div>
-                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576" id="billModalAmount"></span></div>
+                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576"
+                                        id="billModalAmount"></span></div>
                             </div>
                         </div>
-                        
+
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xl-6 dior-ic-f8f25bc60b">
                             <div class="detail-field-card dior-ic-57d219ccba">
                                 <div class="field-label-group dior-ic-b85bb26d7d">
                                     <span class="field-label">Tax</span>
                                 </div>
-                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576" id="billModalTax"></span></div>
+                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576"
+                                        id="billModalTax"></span></div>
                             </div>
                         </div>
-                        
+
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xl-6 dior-ic-f8f25bc60b">
                             <div class="detail-field-card dior-ic-57d219ccba">
                                 <div class="field-label-group dior-ic-b85bb26d7d">
                                     <span class="field-label">Discount</span>
                                 </div>
-                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576" id="billModalDisc"></span></div>
+                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576"
+                                        id="billModalDisc"></span></div>
                             </div>
                         </div>
-                        
+
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xl-6 dior-ic-f8f25bc60b">
                             <div class="detail-field-card dior-ic-57d219ccba">
                                 <div class="field-label-group dior-ic-b85bb26d7d">
                                     <span class="field-label">Total</span>
                                 </div>
-                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576" id="billModalTotal"></span></div>
+                                <div class="field-value-wrapper"><span class="field-value dior-ic-3b2d8e2576"
+                                        id="billModalTotal"></span></div>
                             </div>
                         </div>
 
@@ -203,7 +219,8 @@
                                 <div class="field-label-group dior-ic-b85bb26d7d">
                                     <span class="field-label">Actions</span>
                                 </div>
-                                <div class="field-value-wrapper"><span class="field-value dior-ic-e304798bad">--</span></div>
+                                <div class="field-value-wrapper"><span class="field-value dior-ic-e304798bad">--</span>
+                                </div>
                             </div>
                         </div>
 

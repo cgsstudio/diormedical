@@ -13,7 +13,6 @@ if (!defined('ABSPATH')) {
 
 define('DIOR_PORTAL_VERSION', '4.1.0');
 
-define('DIOR_PORTAL_VERSION', '2.2.6');
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
 define('DIOR_PORTAL_URL', plugin_dir_url(__FILE__));
@@ -1525,12 +1524,25 @@ class Dior_Medical_Auth
                 if (data && data.length) {
                     data.forEach(doc => {
                         html += `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(${doc.id}, '${doc.name.replace(/'/g, "\\'")}')">
-                                                                                                    <h4>${doc.name}</h4>
-                                                                                                    <p>${doc.speciality}</p>
-                                                                                                </div>`;
+                                                                                                            <h4>${doc.name}</h4>
+                                                                                                            <p>${doc.speciality}</p>
+                                                                                                        </div>`;
                     });
                 } else {
                     html = `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
+                                                                                                        <h4>Dr. James Chen, DO</h4>
+                                                                                                        <p>Primary Care & Urgent Care</p>
+                                                                                                    </div>
+                                                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
+                                                                                                        <h4>Dr. Marcus Sterling, DO</h4>
+                                                                                                        <p>Urgent Care Physician</p>
+                                                                                                    </div>`;
+                }
+                document.getElementById('doctors-list').innerHTML = html;
+            })
+            .catch(() => {
+                document.getElementById('doctors-list').innerHTML = `
+                                                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
                                                                                                 <h4>Dr. James Chen, DO</h4>
                                                                                                 <p>Primary Care & Urgent Care</p>
                                                                                             </div>
@@ -1538,19 +1550,6 @@ class Dior_Medical_Auth
                                                                                                 <h4>Dr. Marcus Sterling, DO</h4>
                                                                                                 <p>Urgent Care Physician</p>
                                                                                             </div>`;
-                }
-                document.getElementById('doctors-list').innerHTML = html;
-            })
-            .catch(() => {
-                document.getElementById('doctors-list').innerHTML = `
-                                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                                        <h4>Dr. James Chen, DO</h4>
-                                                                                        <p>Primary Care & Urgent Care</p>
-                                                                                    </div>
-                                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                                        <h4>Dr. Marcus Sterling, DO</h4>
-                                                                                        <p>Urgent Care Physician</p>
-                                                                                    </div>`;
             });
     }
 
@@ -1617,12 +1616,12 @@ class Dior_Medical_Auth
         diorBookingState.time = time;
 
         document.getElementById('booking-summary').innerHTML = `
-                                                                            <p><strong>Treatment:</strong> ${diorBookingState.departmentName || 'Telehealth Urgent Care'}</p>
-                                                                            <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
-                                                                            <p><strong>Date:</strong> ${diorBookingState.date}</p>
-                                                                            <p><strong>Time:</strong> ${diorBookingState.time}</p>
-                                                                            <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
-                                                                        `;
+                                                                                    <p><strong>Treatment:</strong> ${diorBookingState.departmentName || 'Telehealth Urgent Care'}</p>
+                                                                                    <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
+                                                                                    <p><strong>Date:</strong> ${diorBookingState.date}</p>
+                                                                                    <p><strong>Time:</strong> ${diorBookingState.time}</p>
+                                                                                    <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
+                                                                                `;
         diorBookingGoToStep(4);
     }
 

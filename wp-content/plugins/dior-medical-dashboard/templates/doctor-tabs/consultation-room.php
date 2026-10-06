@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-doc-consultation" style="display: none;">
     <div class="dior-ic-3c0b10badc">
         <div class="dior-ic-b7f55b7e4a">
@@ -138,12 +137,3 @@
         </div>
     </div>
 </section>
-=======
-<?php
-defined('ABSPATH') || exit;
-
-// Legacy compatibility template. The active dashboard uses consultation.php.
-if (file_exists(DIOR_PORTAL_PATH . 'templates/doctor-tabs/consultation.php')) {
-    include DIOR_PORTAL_PATH . 'templates/doctor-tabs/consultation.php';
-}
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101

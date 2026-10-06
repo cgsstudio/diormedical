@@ -2113,7 +2113,6 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
 (function () {
     'use strict';
 
-<<<<<<< HEAD
     function switchPatientTab(tabId, updateHash) {
         var panel = document.getElementById('tab-' + tabId);
         if (!panel) {
@@ -2169,58 +2168,10 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
     // Always expose this function immediately so inline onclick handlers never throw ReferenceError
     window.diorSwitchTab = switchPatientTab;
 
-=======
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
     function initPatientMainTabNavigation() {
         var app = document.getElementById('dior-patient-portal-app');
         if (!app) return;
 
-<<<<<<< HEAD
-=======
-        function switchPatientTab(tabId, updateHash) {
-            var panel = document.getElementById('tab-' + tabId);
-            if (!panel) {
-                return false;
-            }
-
-            app.querySelectorAll('.dior-nav-btn[data-tab]').forEach(function (btn) {
-                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
-            });
-
-            app.querySelectorAll('.dior-tab-panel').forEach(function (item) {
-                item.classList.toggle('active', item.id === 'tab-' + tabId);
-            });
-
-            var title = document.getElementById('dior-current-page-title');
-            var titles = {
-                overview: 'Patient Overview',
-                appointments: 'Telehealth Appointments',
-                docs_meds: 'Medical Docs & Prescriptions',
-                telemedicine: 'Telemedicine',
-                medical_record: 'Medical Record',
-                payments: 'Billing & Payment Statements',
-                insurance: 'Insurance Claim',
-                documents: 'Documents & Reports',
-                emergency: 'Emergency Support',
-                feedback: 'Feedback & Support',
-                notifications: 'Notification Inbox',
-                consultation: 'Consultation Room',
-                settings: 'Settings',
-                questionnaire: 'Clinical Intake Questionnaires'
-            };
-            if (title && titles[tabId]) title.textContent = titles[tabId];
-
-            if (updateHash !== false && window.history && window.history.replaceState) {
-                window.history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
-            }
-
-            return true;
-        }
-
-        // Expose one canonical function for existing buttons/links.
-        window.diorSwitchTab = switchPatientTab;
-
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
         // Delegated listener means dynamically rendered buttons also work.
         if (!app.__diorPatientNavBound) {
             app.__diorPatientNavBound = true;
@@ -2233,10 +2184,6 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 if (!tabId) return;
 
                 event.preventDefault();
-<<<<<<< HEAD
-=======
-                event.stopPropagation();
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
                 switchPatientTab(tabId);
 
                 if (tabId === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
@@ -2251,10 +2198,6 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             link.__diorPatientSubtabBound = true;
             link.addEventListener('click', function (event) {
                 event.preventDefault();
-<<<<<<< HEAD
-=======
-                event.stopPropagation();
->>>>>>> fa0e02d91376b068a5cd18ba25d29811366c5101
                 switchPatientTab('appointments');
                 if (typeof window.diorSwitchApptSubTab === 'function') {
                     window.diorSwitchApptSubTab(link.getAttribute('data-appt-subtab'));
