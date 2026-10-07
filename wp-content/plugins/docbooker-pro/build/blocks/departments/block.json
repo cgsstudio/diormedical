@@ -1,0 +1,235 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/departments",
+  "title": "Departments",
+  "category": "doc-booker-blocks",
+  "icon": "category",
+  "description": "A department directory in 3 layouts (grid / pill-cloud / icon-cards), reading the doctor-department taxonomy with each term's icon + accent color and live specialist counts.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "grid"
+    },
+    "departmentIds": {
+      "type": "array",
+      "default": []
+    },
+    "orderBy": {
+      "type": "string",
+      "default": "count"
+    },
+    "order": {
+      "type": "string",
+      "default": "DESC"
+    },
+    "limit": {
+      "type": "number",
+      "default": 0
+    },
+    "hideEmpty": {
+      "type": "boolean",
+      "default": true
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true
+    },
+    "showCount": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "showIndex": {
+      "type": "boolean",
+      "default": true
+    },
+    "showExplore": {
+      "type": "boolean",
+      "default": true
+    },
+    "showSearch": {
+      "type": "boolean",
+      "default": true
+    },
+    "featureFirst": {
+      "type": "boolean",
+      "default": true
+    },
+    "countSuffix": {
+      "type": "string",
+      "default": "specialists"
+    },
+    "exploreText": {
+      "type": "string",
+      "default": "Explore"
+    },
+    "searchPlaceholder": {
+      "type": "string",
+      "default": "Filter specialties…"
+    },
+    "useTermAccentColor": {
+      "type": "boolean",
+      "default": true
+    },
+    "globalAccentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "columnsLg": {
+      "type": "number",
+      "default": 4
+    },
+    "columnsMd": {
+      "type": "number",
+      "default": 3
+    },
+    "columnsSm": {
+      "type": "number",
+      "default": 1
+    },
+    "gap": {
+      "type": "object",
+      "default": {
+        "lg": 22,
+        "md": 18,
+        "sm": 16,
+        "unit": "px"
+      }
+    },
+    "cardBg": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "cardPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "nameColor": {
+      "type": "string",
+      "default": ""
+    },
+    "nameTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "descriptionColor": {
+      "type": "string",
+      "default": ""
+    },
+    "descriptionTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "countColor": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

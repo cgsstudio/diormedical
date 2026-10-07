@@ -1,0 +1,402 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/slider",
+  "title": "Slider",
+  "category": "doc-booker-blocks",
+  "icon": "images-alt2",
+  "description": "A Swiper-powered editorial carousel with 3 layouts — full-bleed hero, peek-next cards, and a fixed-left split — fully configurable transitions, navigation, autoplay and pagination.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "hero"
+    },
+    "contentPosH": {
+      "type": "string",
+      "default": "left"
+    },
+    "contentPosV": {
+      "type": "string",
+      "default": "middle"
+    },
+    "displayHeader": {
+      "type": "boolean",
+      "default": true
+    },
+    "headerEyebrow": {
+      "type": "string",
+      "default": "Featured services"
+    },
+    "headerTitle": {
+      "type": "string",
+      "default": "Care, organised around you."
+    },
+    "headerDescription": {
+      "type": "string",
+      "default": "One front door for every program — each with same-week availability and transparent pricing."
+    },
+    "slides": {
+      "type": "array",
+      "default": [
+        {
+          "id": "slide-1",
+          "image": {
+            "url": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&w=1600&q=80",
+            "id": 0,
+            "alt": ""
+          },
+          "subtitle": "Now booking · cardiac care",
+          "title": "Your heart deserves a closer look",
+          "titleTag": "h3",
+          "description": "Comprehensive cardiac screening with same-week appointments. Book online in minutes.",
+          "buttonText": "Book a screening",
+          "buttonURL": "#",
+          "buttonNewTab": false,
+          "buttonNoFollow": false
+        },
+        {
+          "id": "slide-2",
+          "image": {
+            "url": "https://images.unsplash.com/photo-1666214280391-8ff5bd3c0bf0?auto=format&fit=crop&w=1600&q=80",
+            "id": 0,
+            "alt": ""
+          },
+          "subtitle": "Accepting new patients",
+          "title": "Care for the whole family",
+          "titleTag": "h3",
+          "description": "Family medicine and pediatrics with same-week availability. Reserve a visit that fits your schedule.",
+          "buttonText": "Find a doctor",
+          "buttonURL": "#",
+          "buttonNewTab": false,
+          "buttonNoFollow": false
+        },
+        {
+          "id": "slide-3",
+          "image": {
+            "url": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1600&q=80",
+            "id": 0,
+            "alt": ""
+          },
+          "subtitle": "Open enrollment",
+          "title": "Same-day visits, seven days a week",
+          "titleTag": "h3",
+          "description": "Walk in or reserve a slot online — most patients are seen within twenty minutes.",
+          "buttonText": "Reserve a slot",
+          "buttonURL": "#",
+          "buttonNewTab": false,
+          "buttonNoFollow": false
+        }
+      ]
+    },
+    "displaySubtitle": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayTitle": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayButton": {
+      "type": "boolean",
+      "default": true
+    },
+    "effect": {
+      "type": "string",
+      "default": "fade"
+    },
+    "speed": {
+      "type": "number",
+      "default": 700
+    },
+    "loop": {
+      "type": "boolean",
+      "default": true
+    },
+    "autoplay": {
+      "type": "boolean",
+      "default": true
+    },
+    "autoplayDelay": {
+      "type": "number",
+      "default": 6000
+    },
+    "pauseOnHover": {
+      "type": "boolean",
+      "default": true
+    },
+    "showNav": {
+      "type": "boolean",
+      "default": true
+    },
+    "showPagination": {
+      "type": "boolean",
+      "default": true
+    },
+    "paginationType": {
+      "type": "string",
+      "default": "bullets"
+    },
+    "keyboard": {
+      "type": "boolean",
+      "default": false
+    },
+    "mousewheel": {
+      "type": "boolean",
+      "default": false
+    },
+    "slidesPerView": {
+      "type": "number",
+      "default": 2
+    },
+    "spaceBetween": {
+      "type": "number",
+      "default": 24
+    },
+    "overlayColor": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperHeight": {
+      "type": "object",
+      "default": {
+        "lg": 560,
+        "md": 520,
+        "sm": 460,
+        "unit": "px"
+      }
+    },
+    "wrapperBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": "4 4 4 4",
+        "unit": "px"
+      }
+    },
+    "wrapperBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "cardBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "headerEyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headerTitleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headerDescriptionColor": {
+      "type": "string",
+      "default": ""
+    },
+    "subtitleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "subtitleTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "descriptionColor": {
+      "type": "string",
+      "default": ""
+    },
+    "descriptionTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "buttonTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "buttonPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "16 26 16 26",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "buttonBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": "2 2 2 2",
+        "unit": "px"
+      }
+    },
+    "buttonColor": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonHoverBackground": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

@@ -20,6 +20,109 @@ class Dior_Medical_REST_API
     private $rest_base_prescriptions = 'prescriptions';
     private $rest_base_analytics = 'analytics';
 
+    private $rest_base_hipaa_intake = 'hipaa-intake';
+
+    public function check_hipaa_intake_permission( $request ) {
+        if ( ! is_user_logged_in() ) {
+            return new \WP_Error(
+                'dior_rest_not_logged_in',
+                'You must be logged in to access this information.',
+                array( 'status' => 401 )
+            );
+        }
+
+        $current_user = wp_get_current_user();
+        if ( current_user_can( 'manage_options' ) ) return true;
+        if ( in_array( 'doctor', (array) $current_user->roles, true ) ) return true;
+
+        $patient_id = absint( $request->get_param( 'patient_id' ) );
+        if ( ! $patient_id ) {
+            $patient_id = get_current_user_id();
+        }
+
+        if ( $patient_id !== get_current_user_id() ) {
+            return new \WP_Error(
+                'dior_rest_forbidden',
+                'You are not allowed to access this patient record.',
+                array( 'status' => 403 )
+            );
+        }
+        return true;
+    }
+
+    public function get_hipaa_intake( $request ) {
+        $patient_id = absint( $request->get_param( 'patient_id' ) );
+        if ( ! $patient_id ) $patient_id = get_current_user_id();
+
+        if ( ! $patient_id ) {
+            return new \WP_Error('dior_invalid_patient', 'Invalid patient ID.', array( 'status' => 400 ));
+        }
+
+        $patient = get_user_by( 'ID', $patient_id );
+        if ( ! $patient ) {
+            return new \WP_Error('dior_patient_not_found', 'Patient not found.', array( 'status' => 404 ));
+        }
+
+        $hipaa_data = get_user_meta($patient_id, 'dior_hipaa_intake', true);
+        if ( empty( $hipaa_data ) ) {
+            return new \WP_Error('dior_hipaa_data_not_found', 'No HIPAA intake data found for this patient.', array( 'status' => 404 ));
+        }
+
+        if ( ! is_array( $hipaa_data ) ) $hipaa_data = array('value' => $hipaa_data);
+
+        $raw_data = array();
+        if ( isset( $hipaa_data['raw_data'] ) && is_array( $hipaa_data['raw_data'] ) ) {
+            $raw_data = $hipaa_data['raw_data'];
+        }
+
+        $eligibility_fields = array('eligibility_age_18', 'eligibility_pregnant', 'eligibility_emergency', 'eligibility_location');
+        $eligibility = array();
+        $eligibility_labels = array();
+
+        foreach ( $eligibility_fields as $field_name ) {
+            $value = null;
+            if ( array_key_exists( $field_name, $raw_data ) ) {
+                $value = $raw_data[ $field_name ];
+            }
+            if ( null === $value && isset( $raw_data['form_data'] ) && is_array( $raw_data['form_data'] ) && array_key_exists( $field_name, $raw_data['form_data'] ) ) {
+                $value = $raw_data['form_data'][ $field_name ];
+            }
+            if ( null === $value && array_key_exists( $field_name, $hipaa_data ) ) {
+                $value = $hipaa_data[ $field_name ];
+            }
+            
+            // Ensure value is a string for mapping if exists
+            $str_val = (string) $value;
+            $eligibility[ $field_name ] = $str_val;
+            
+            // Generate labels
+            $label = '';
+            if ( $field_name === 'eligibility_age_18' || $field_name === 'eligibility_pregnant' ) {
+                if ( $str_val === '1' ) $label = 'Yes';
+                elseif ( $str_val === '2' ) $label = 'No';
+            } else {
+                if ( $str_val === '1' ) $label = 'Yes';
+                elseif ( $str_val === '2' ) $label = 'No';
+                elseif ( $str_val === '3' ) $label = "I'm not sure";
+            }
+            
+            $eligibility_labels[ $field_name ] = $label;
+        }
+
+        return rest_ensure_response(array(
+            'success'            => true,
+            'patient_id'         => $patient_id,
+            'submitted'          => true,
+            'eligibility'        => $eligibility,
+            'eligibility_labels' => $eligibility_labels,
+            'form'               => array(
+                'title'       => 'Dior Medical Urgent Care - Patient Eligibility',
+                'workflow_id' => '01a110f3-ddb0-7783-88de-8b9b744cb56d'
+            )
+        ));
+    }
+
+
     /**
      * Initialize REST API
      */

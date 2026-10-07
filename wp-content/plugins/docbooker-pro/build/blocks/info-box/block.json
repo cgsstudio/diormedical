@@ -1,0 +1,347 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/info-box",
+  "title": "Info Box",
+  "category": "doc-booker-blocks",
+  "icon": "info",
+  "description": "An editorial info box with 9 skins across 3 families — icon-stack, side-by-side, and image-led.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "circle"
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "displayIcon": {
+      "type": "boolean",
+      "default": true
+    },
+    "iconName": {
+      "type": "string",
+      "default": "heart"
+    },
+    "iconColor": {
+      "type": "string",
+      "default": ""
+    },
+    "iconSize": {
+      "type": "object",
+      "default": {
+        "lg": "",
+        "unit": "px"
+      }
+    },
+    "image": {
+      "type": "object",
+      "default": {
+        "url": "",
+        "id": 0
+      }
+    },
+    "displayEyebrow": {
+      "type": "boolean",
+      "default": true
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": ""
+    },
+    "numberText": {
+      "type": "string",
+      "default": ""
+    },
+    "displayTitle": {
+      "type": "boolean",
+      "default": true
+    },
+    "titleText": {
+      "type": "string",
+      "default": ""
+    },
+    "accentText": {
+      "type": "string",
+      "default": ""
+    },
+    "displayDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "descriptionText": {
+      "type": "string",
+      "default": ""
+    },
+    "displayLink": {
+      "type": "boolean",
+      "default": true
+    },
+    "linkText": {
+      "type": "string",
+      "default": ""
+    },
+    "linkURL": {
+      "type": "string",
+      "default": ""
+    },
+    "linkNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "linkNoFollow": {
+      "type": "boolean",
+      "default": false
+    },
+    "displayStatTile": {
+      "type": "boolean",
+      "default": false
+    },
+    "statTileIcon": {
+      "type": "string",
+      "default": "shield"
+    },
+    "statTileValue": {
+      "type": "string",
+      "default": ""
+    },
+    "statTileLabel": {
+      "type": "string",
+      "default": ""
+    },
+    "displaySecondaryLink": {
+      "type": "boolean",
+      "default": false
+    },
+    "secondaryLinkText": {
+      "type": "string",
+      "default": ""
+    },
+    "secondaryLinkURL": {
+      "type": "string",
+      "default": ""
+    },
+    "secondaryLinkNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "eyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "descriptionColor": {
+      "type": "string",
+      "default": ""
+    },
+    "linkColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "descriptionTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "titleMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "descriptionMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "wrapperBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBorder": {
+      "type": "object",
+      "default": {
+        "width": {
+          "value": "",
+          "unit": "px",
+          "isLinked": true
+        },
+        "style": "",
+        "color": ""
+      }
+    },
+    "wrapperBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "wrapperBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "",
+        "custom": {
+          "x": 0,
+          "y": 4,
+          "blur": 12,
+          "spread": 0,
+          "color": "rgba(0,0,0,0.1)",
+          "inset": false
+        }
+      }
+    },
+    "wrapperPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        }
+      }
+    },
+    "wrapperMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        }
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

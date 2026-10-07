@@ -1,0 +1,426 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/process-steps",
+  "title": "Process Steps",
+  "category": "doc-booker-blocks",
+  "icon": "list-view",
+  "description": "A how-it-works / patient-journey stepper with 9 layouts — vertical (left-rail / zig-zag / stacked), timeline (node-line / icon-disc / segmented progress), and cards (big-numeral / filled / icon-row).",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "left-rail"
+    },
+    "currentStep": {
+      "type": "number",
+      "default": 3
+    },
+    "numberingStyle": {
+      "type": "string",
+      "default": "padded"
+    },
+    "showConnector": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayHeader": {
+      "type": "boolean",
+      "default": true
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": "The booking journey"
+    },
+    "headingText": {
+      "type": "string",
+      "default": "From first search to booked."
+    },
+    "headingTag": {
+      "type": "string",
+      "default": "h2"
+    },
+    "subheadingText": {
+      "type": "string",
+      "default": "Five quiet steps — no account, no waiting on hold."
+    },
+    "steps": {
+      "type": "array",
+      "default": [
+        {
+          "id": "ps-1",
+          "icon": "search",
+          "kicker": "Step 01",
+          "title": "Find your doctor",
+          "description": "Search by clinic and department, browse profiles, and pick the specialist who fits.",
+          "detail": "~1 min",
+          "meta": "By clinic & specialty",
+          "linkText": "Find a doctor",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": false
+        },
+        {
+          "id": "ps-2",
+          "icon": "calendar",
+          "kicker": "Step 02",
+          "title": "Pick a time",
+          "description": "Choose an open slot from the live calendar that suits your schedule — including same-week openings.",
+          "detail": "Live availability",
+          "meta": "Same-week slots",
+          "linkText": "See times",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": false
+        },
+        {
+          "id": "ps-3",
+          "icon": "user",
+          "kicker": "Step 03",
+          "title": "Confirm your details",
+          "description": "Enter your name, email, and phone — no account to create, no password to remember.",
+          "detail": "No account",
+          "meta": "Name, email, phone",
+          "linkText": "",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": true
+        },
+        {
+          "id": "ps-4",
+          "icon": "shield",
+          "kicker": "Step 04",
+          "title": "Pay or reserve",
+          "description": "Pay the consultation fee securely online where enabled, or simply settle it at the clinic reception.",
+          "detail": "Secure",
+          "meta": "Card or at clinic",
+          "linkText": "",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": false
+        },
+        {
+          "id": "ps-5",
+          "icon": "check",
+          "kicker": "Step 05",
+          "title": "You're booked",
+          "description": "Your confirmation arrives by email with everything you need. Look up your report here after the visit.",
+          "detail": "By email",
+          "meta": "Confirmation sent",
+          "linkText": "View a report",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": false
+        }
+      ]
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true
+    },
+    "showNumber": {
+      "type": "boolean",
+      "default": true
+    },
+    "showKicker": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDetail": {
+      "type": "boolean",
+      "default": true
+    },
+    "showLink": {
+      "type": "boolean",
+      "default": true
+    },
+    "columnsLg": {
+      "type": "number",
+      "default": 4
+    },
+    "columnsMd": {
+      "type": "number",
+      "default": 2
+    },
+    "columnsSm": {
+      "type": "number",
+      "default": 1
+    },
+    "displayFooter": {
+      "type": "boolean",
+      "default": true
+    },
+    "footerButtonText": {
+      "type": "string",
+      "default": "Start your booking"
+    },
+    "footerButtonURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "footerButtonNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "footerSecondaryText": {
+      "type": "string",
+      "default": ""
+    },
+    "footerSecondaryURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "wrapperBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "wrapperPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "wrapperMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "cardBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "dividerColor": {
+      "type": "string",
+      "default": ""
+    },
+    "nodeColor": {
+      "type": "string",
+      "default": ""
+    },
+    "nodeBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "iconColor": {
+      "type": "string",
+      "default": ""
+    },
+    "iconBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "numberColor": {
+      "type": "string",
+      "default": ""
+    },
+    "connectorColor": {
+      "type": "string",
+      "default": ""
+    },
+    "currentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "eyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "kickerColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "descriptionColor": {
+      "type": "string",
+      "default": ""
+    },
+    "descriptionTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "detailColor": {
+      "type": "string",
+      "default": ""
+    },
+    "linkColor": {
+      "type": "string",
+      "default": ""
+    },
+    "linkHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "footerBtnColor": {
+      "type": "string",
+      "default": ""
+    },
+    "footerBtnBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "footerBtnHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "footerBtnHoverBackground": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

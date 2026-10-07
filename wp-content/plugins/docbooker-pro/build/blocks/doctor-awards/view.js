@@ -1,0 +1,1 @@
+!function(){"use strict";function t(){document.addEventListener("click",function(t){t.target.closest&&t.target.closest(".wpddbp-awards-print")&&(t.preventDefault(),window.print())})}"loading"===document.readyState?document.addEventListener("DOMContentLoaded",t):t()}();

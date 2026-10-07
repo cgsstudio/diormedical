@@ -1,0 +1,221 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/testimonials",
+  "title": "Testimonials",
+  "category": "doc-booker-blocks",
+  "icon": "format-quote",
+  "description": "Patient testimonials in 3 layouts — quote-cards grid, featured spotlight (hero + thumbnail rail), or a masonry wall. Author-entered quotes with rating, verified badge and an optional doctor link.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "quote-cards"
+    },
+    "items": {
+      "type": "array",
+      "default": [
+        {
+          "quote": "Dr. Chen sat with me for an hour at our first visit and drew my heart on a napkin until I understood. Eleven months later, I'm hiking again.",
+          "rating": 5,
+          "name": "Margaret R.",
+          "role": "Cardiac patient",
+          "date": "Dec 2024",
+          "verified": true,
+          "doctorName": "Dr. Sarah Chen",
+          "doctorSpecialty": "Cardiology",
+          "doctorUrl": "",
+          "image": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          },
+          "photo": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          }
+        },
+        {
+          "quote": "Our four-year-old looks forward to her appointments. She brings drawings every visit. That's everything.",
+          "rating": 5,
+          "name": "Aisha & Tom B.",
+          "role": "Parent",
+          "date": "Jan 2025",
+          "verified": true,
+          "doctorName": "Dr. Marcus Johnson",
+          "doctorSpecialty": "Pediatrics",
+          "doctorUrl": "",
+          "image": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          },
+          "photo": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          }
+        },
+        {
+          "quote": "I came in worried about a single mole. Dr. Patel found two more. Caught early, removed cleanly. I'm here because she looked twice.",
+          "rating": 5,
+          "name": "Carlos M.",
+          "role": "Dermatology patient",
+          "date": "Feb 2025",
+          "verified": true,
+          "doctorName": "Dr. Priya Patel",
+          "doctorSpecialty": "Dermatology",
+          "doctorUrl": "",
+          "image": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          },
+          "photo": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          }
+        }
+      ]
+    },
+    "columnsLg": {
+      "type": "number",
+      "default": 3
+    },
+    "columnsMd": {
+      "type": "number",
+      "default": 2
+    },
+    "columnsSm": {
+      "type": "number",
+      "default": 1
+    },
+    "featuredFirst": {
+      "type": "boolean",
+      "default": true
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": "Patient voices"
+    },
+    "titleText": {
+      "type": "string",
+      "default": ""
+    },
+    "ledeText": {
+      "type": "string",
+      "default": ""
+    },
+    "showRating": {
+      "type": "boolean",
+      "default": true
+    },
+    "showVerified": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDoctorChip": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDate": {
+      "type": "boolean",
+      "default": true
+    },
+    "showAvatar": {
+      "type": "boolean",
+      "default": true
+    },
+    "cardBg": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "quoteColor": {
+      "type": "string",
+      "default": ""
+    },
+    "quoteTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "nameColor": {
+      "type": "string",
+      "default": ""
+    },
+    "starColor": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

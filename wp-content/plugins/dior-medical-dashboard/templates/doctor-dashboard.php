@@ -204,6 +204,11 @@ button.dior-action-btn-sm svg,
                             </button>
                         </div>
                     </div>
+                    
+                    <button type="button" class="dior-nav-btn" data-tab="doc-form-test">
+                        <i class="fas fa-file-medical"></i><span class="nav-label">Form Test</span>
+                    </button>
+
                     <button type="button" class="dior-nav-btn" data-tab="doc-analytics"><i
                             class="fas fa-chart-line"></i><span class="nav-label">Analytics</span></button>
                     <div class="dior-nav-item has-submenu" id="accounts-menu-item">
@@ -437,6 +442,7 @@ button.dior-action-btn-sm svg,
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/edit-patient.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-records.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-profile.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/form-test.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/analytics.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/bill-list.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/add-bill.php'; ?>
@@ -805,7 +811,15 @@ document.addEventListener("DOMContentLoaded", function() {
         var tables = $('table.va-table, table.dior-ref-table, table.table').not('.dataTable');
         tables.each(function() {
             var $t = $(this);
-            if ($t.find('thead th').length > 0 && $t.find('tbody tr').length > 0) {
+            // Remove manual empty colspan rows so DataTables doesn't crash
+            $t.find('tbody tr').each(function() {
+                var cells = $(this).children('td');
+                if (cells.length === 1 && cells.first().attr('colspan')) {
+                    $(this).remove();
+                }
+            });
+            
+            if ($t.find('thead th').length > 0) {
                 $t.DataTable({
                     "order": [[0, "desc"]],
                     "paging": false,

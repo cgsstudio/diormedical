@@ -390,11 +390,11 @@ button.dior-action-btn-sm svg,
             </div>
             <div class="dior-modal-body dior-ic-1d15569872">
                 <iframe id="hipaatizer-book-visit-iframe"
-                    src="https://app.hipaatizer.com/workflow/01a07aa2-d931-728d-bfe9-8d7b3bc0389d"
+                    src="https://app.hipaatizer.com/workflow/01a110f3-ddb0-7783-88de-8b9b744cb56d"
                     allow="microphone; camera; payment" title="HIPAAtizer Booking Form" class="dior-ic-a52858ae73">
                 </iframe>
                 <div class="dior-ic-44a70a0420">
-                    <?php echo do_shortcode('[hipaatizer id="01a07aa2-d931-728d-bfe9-8d7b3bc0389d"]'); ?>
+                    <?php echo do_shortcode('[hipaatizer id="01a110f3-ddb0-7783-88de-8b9b744cb56d"]'); ?>
                 </div>
             </div>
         </div>
@@ -1217,7 +1217,15 @@ document.addEventListener("DOMContentLoaded", function() {
         var tables = $('table.va-table, table.dior-ref-table, table.table').not('.dataTable');
         tables.each(function() {
             var $t = $(this);
-            if ($t.find('thead th').length > 0 && $t.find('tbody tr').length > 0) {
+            // Remove manual empty colspan rows so DataTables doesn't crash
+            $t.find('tbody tr').each(function() {
+                var cells = $(this).children('td');
+                if (cells.length === 1 && cells.first().attr('colspan')) {
+                    $(this).remove();
+                }
+            });
+            
+            if ($t.find('thead th').length > 0) {
                 $t.DataTable({
                     "order": [[0, "desc"]],
                     "paging": false,

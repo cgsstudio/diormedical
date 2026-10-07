@@ -1,0 +1,115 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/wrapper",
+  "title": "Wrapper",
+  "category": "doc-booker-blocks",
+  "icon": "editor-table",
+  "description": "A flexible section wrapper — full-bleed background, padding, and a centered content-width cap. Nest any blocks inside.",
+  "supports": {
+    "html": false
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "customCSS": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": "full"
+    },
+    "contentWidth": {
+      "type": "string",
+      "default": "fullWidth"
+    },
+    "innerContentWidth": {
+      "type": "object",
+      "default": {
+        "lg": "",
+        "unit": "px"
+      }
+    },
+    "wrapperTag": {
+      "type": "string",
+      "default": "div"
+    },
+    "wrapperMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        }
+      }
+    },
+    "wrapperPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        }
+      }
+    },
+    "mainWrapBG": {
+      "type": "object",
+      "default": {
+        "openBGColor": 0,
+        "type": "classic",
+        "classic": {
+          "color": "",
+          "img": {
+            "imgURL": "",
+            "imgID": ""
+          },
+          "imgProperty": {
+            "imgPosition": {
+              "lg": ""
+            },
+            "imgAttachment": {
+              "lg": ""
+            },
+            "imgRepeat": {
+              "lg": ""
+            },
+            "imgSize": {
+              "lg": ""
+            }
+          }
+        },
+        "gradient": null
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

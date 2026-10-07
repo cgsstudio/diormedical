@@ -1,0 +1,601 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/hero",
+  "title": "Hero",
+  "category": "doc-booker-blocks",
+  "icon": "cover-image",
+  "description": "A flexible page hero with 5 layouts — image-forward (floating stat/rating/credential cards + trust strip), mirror, centered overlay, split-action (booking entry card), and minimal editorial.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": "full"
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "image-forward"
+    },
+    "showEyebrow": {
+      "type": "boolean",
+      "default": true
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": "Accepting new patients"
+    },
+    "headingText": {
+      "type": "string",
+      "default": "Care that starts the moment"
+    },
+    "headingAccent": {
+      "type": "string",
+      "default": "you ask."
+    },
+    "headingTag": {
+      "type": "string",
+      "default": "h1"
+    },
+    "showLede": {
+      "type": "boolean",
+      "default": true
+    },
+    "ledeText": {
+      "type": "string",
+      "default": "Find the right specialist, choose a time that works, and confirm in minutes — with an SMS in your hand before you close the tab."
+    },
+    "showPrimaryBtn": {
+      "type": "boolean",
+      "default": true
+    },
+    "primaryBtnText": {
+      "type": "string",
+      "default": "Book appointment"
+    },
+    "primaryBtnURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "primaryBtnNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "primaryBtnNoFollow": {
+      "type": "boolean",
+      "default": false
+    },
+    "showSecondaryBtn": {
+      "type": "boolean",
+      "default": true
+    },
+    "secondaryBtnText": {
+      "type": "string",
+      "default": "Find a doctor"
+    },
+    "secondaryBtnURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "secondaryBtnNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "secondaryBtnNoFollow": {
+      "type": "boolean",
+      "default": false
+    },
+    "imageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "imageId": {
+      "type": "number",
+      "default": 0
+    },
+    "imageAlt": {
+      "type": "string",
+      "default": ""
+    },
+    "imageAspectRatio": {
+      "type": "string",
+      "default": "4 / 5"
+    },
+    "scrimColor": {
+      "type": "string",
+      "default": ""
+    },
+    "scrimOpacity": {
+      "type": "number",
+      "default": 72
+    },
+    "showCaption": {
+      "type": "boolean",
+      "default": false
+    },
+    "captionText": {
+      "type": "string",
+      "default": ""
+    },
+    "sectionMinHeight": {
+      "type": "number",
+      "default": 0
+    },
+    "contentAlign": {
+      "type": "string",
+      "default": "left"
+    },
+    "showTrustStrip": {
+      "type": "boolean",
+      "default": true
+    },
+    "trustDivider": {
+      "type": "boolean",
+      "default": true
+    },
+    "trustItems": {
+      "type": "array",
+      "default": [
+        {
+          "id": "ts-1",
+          "number": "1.2",
+          "unit": "M",
+          "label": "Patients seen"
+        },
+        {
+          "id": "ts-2",
+          "number": "34",
+          "unit": "",
+          "label": "Specialists"
+        },
+        {
+          "id": "ts-3",
+          "number": "11",
+          "unit": "",
+          "label": "Departments"
+        }
+      ]
+    },
+    "showFloatingCards": {
+      "type": "boolean",
+      "default": true
+    },
+    "floatingCards": {
+      "type": "array",
+      "default": [
+        {
+          "id": "fc-1",
+          "type": "stat",
+          "icon": "heart",
+          "value": "1.2M",
+          "label": "Patients cared for",
+          "position": "tl",
+          "float": true
+        },
+        {
+          "id": "fc-2",
+          "type": "rating",
+          "icon": "star",
+          "value": "4.9",
+          "label": "2,418 reviews",
+          "position": "br",
+          "float": true
+        },
+        {
+          "id": "fc-3",
+          "type": "credential",
+          "icon": "shield",
+          "value": "NABH Accredited",
+          "label": "",
+          "position": "bl",
+          "float": false
+        }
+      ]
+    },
+    "acTitle": {
+      "type": "string",
+      "default": "Start your booking"
+    },
+    "acLiveText": {
+      "type": "string",
+      "default": "Slots live"
+    },
+    "acTab1Label": {
+      "type": "string",
+      "default": "By department"
+    },
+    "acTab2Label": {
+      "type": "string",
+      "default": "By doctor"
+    },
+    "acField1Label": {
+      "type": "string",
+      "default": "Department"
+    },
+    "acField1Value": {
+      "type": "string",
+      "default": "Cardiology"
+    },
+    "acField1Icon": {
+      "type": "string",
+      "default": "heart"
+    },
+    "acField2Label": {
+      "type": "string",
+      "default": "Clinic"
+    },
+    "acField2Value": {
+      "type": "string",
+      "default": "Downtown Medical Center"
+    },
+    "acField2Icon": {
+      "type": "string",
+      "default": "map-pin"
+    },
+    "acField3Label": {
+      "type": "string",
+      "default": "Doctor"
+    },
+    "acField3Value": {
+      "type": "string",
+      "default": "Dr. Sarah Chen"
+    },
+    "acField3Icon": {
+      "type": "string",
+      "default": "user"
+    },
+    "acField4Label": {
+      "type": "string",
+      "default": "Earliest time"
+    },
+    "acField4Value": {
+      "type": "string",
+      "default": "Today, 2:30 PM"
+    },
+    "acField4Icon": {
+      "type": "string",
+      "default": "calendar"
+    },
+    "acButtonText": {
+      "type": "string",
+      "default": "See available times"
+    },
+    "acButtonURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "acButtonNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "acFootText": {
+      "type": "string",
+      "default": "Secure payment · SMS confirmation · no account needed"
+    },
+    "acDataMode": {
+      "type": "string",
+      "default": "static"
+    },
+    "acDoctorIds": {
+      "type": "array",
+      "default": []
+    },
+    "acClinicId": {
+      "type": "number",
+      "default": 0
+    },
+    "acInlineBooking": {
+      "type": "boolean",
+      "default": true
+    },
+    "wrapperBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "wrapperBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "wrapperPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "wrapperMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "frameRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "frameBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "ringColor": {
+      "type": "string",
+      "default": ""
+    },
+    "blobColor": {
+      "type": "string",
+      "default": ""
+    },
+    "eyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "eyebrowTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "headingColor": {
+      "type": "string",
+      "default": ""
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "headingMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "ledeColor": {
+      "type": "string",
+      "default": ""
+    },
+    "ledeTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "trustNumberColor": {
+      "type": "string",
+      "default": ""
+    },
+    "trustNumberTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "trustLabelColor": {
+      "type": "string",
+      "default": ""
+    },
+    "trustDividerColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "cardRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "cardValueColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardLabelColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardIconColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardIconBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "btnColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "btnHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnHoverBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "ghostColor": {
+      "type": "string",
+      "default": ""
+    },
+    "ghostHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

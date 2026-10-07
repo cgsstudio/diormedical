@@ -1,0 +1,190 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/doctor-awards",
+  "title": "Doctor Awards",
+  "category": "doc-booker-blocks",
+  "icon": "awards",
+  "description": "Showcase doctors' awards & honors in 2 layouts — a bronze trophy-wall (practice-wide masonry) or a per-doctor credential list. Reads each doctor's real awards meta.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "trophy-wall"
+    },
+    "source": {
+      "type": "string",
+      "default": "all"
+    },
+    "doctorIds": {
+      "type": "array",
+      "default": []
+    },
+    "orderBy": {
+      "type": "string",
+      "default": "menu_order"
+    },
+    "order": {
+      "type": "string",
+      "default": "ASC"
+    },
+    "limit": {
+      "type": "number",
+      "default": 0
+    },
+    "showYear": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDoctor": {
+      "type": "boolean",
+      "default": true
+    },
+    "showAwardImage": {
+      "type": "boolean",
+      "default": true
+    },
+    "showProfileLink": {
+      "type": "boolean",
+      "default": true
+    },
+    "showExperience": {
+      "type": "boolean",
+      "default": true
+    },
+    "showCredentials": {
+      "type": "boolean",
+      "default": true
+    },
+    "showQuote": {
+      "type": "boolean",
+      "default": true
+    },
+    "enablePrint": {
+      "type": "boolean",
+      "default": true
+    },
+    "profileLinkText": {
+      "type": "string",
+      "default": "View profile"
+    },
+    "experienceLabel": {
+      "type": "string",
+      "default": "Years in practice"
+    },
+    "emptyText": {
+      "type": "string",
+      "default": "No awards to display yet."
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "columnsLg": {
+      "type": "number",
+      "default": 3
+    },
+    "columnsMd": {
+      "type": "number",
+      "default": 2
+    },
+    "columnsSm": {
+      "type": "number",
+      "default": 1
+    },
+    "gap": {
+      "type": "object",
+      "default": {
+        "lg": 22,
+        "md": 18,
+        "sm": 16,
+        "unit": "px"
+      }
+    },
+    "cardBg": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "yearColor": {
+      "type": "string",
+      "default": ""
+    },
+    "doctorColor": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

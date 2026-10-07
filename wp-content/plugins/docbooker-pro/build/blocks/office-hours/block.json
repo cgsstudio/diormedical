@@ -1,0 +1,545 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/office-hours",
+  "title": "Office Hours",
+  "category": "doc-booker-blocks",
+  "icon": "clock",
+  "description": "Author-driven weekly opening hours with a live Open-now / Closed status and 6 layouts — table (ruled week / compact list / day-chip strip) and card (split / status band / stacked).",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "ruled-table"
+    },
+    "displayEyebrow": {
+      "type": "boolean",
+      "default": true
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": "Visiting hours"
+    },
+    "displayHeading": {
+      "type": "boolean",
+      "default": true
+    },
+    "headingText": {
+      "type": "string",
+      "default": "Riverside Family"
+    },
+    "headingAccent": {
+      "type": "string",
+      "default": "Clinic"
+    },
+    "displayFootnote": {
+      "type": "boolean",
+      "default": true
+    },
+    "footnoteText": {
+      "type": "string",
+      "default": "Public holidays excepted. Urgent care line open 24/7 — call (212) 555-0142."
+    },
+    "weekListTitle": {
+      "type": "string",
+      "default": "Weekly hours"
+    },
+    "weekListNote": {
+      "type": "string",
+      "default": "Holiday hours may vary — call ahead."
+    },
+    "displayContact": {
+      "type": "boolean",
+      "default": true
+    },
+    "addressText": {
+      "type": "string",
+      "default": "248 Riverside Drive, Suite 110, Brooklyn, NY 11201"
+    },
+    "phoneText": {
+      "type": "string",
+      "default": "(718) 555-0148"
+    },
+    "emailText": {
+      "type": "string",
+      "default": "care@riversideclinic.com"
+    },
+    "displayPrimaryBtn": {
+      "type": "boolean",
+      "default": true
+    },
+    "primaryBtnText": {
+      "type": "string",
+      "default": "Get directions"
+    },
+    "primaryBtnURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "primaryBtnNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "displaySecondaryBtn": {
+      "type": "boolean",
+      "default": true
+    },
+    "secondaryBtnText": {
+      "type": "string",
+      "default": "Call clinic"
+    },
+    "secondaryBtnURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "secondaryBtnNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "weeklyHours": {
+      "type": "array",
+      "default": [
+        {
+          "closed": false,
+          "open": "08:00",
+          "close": "18:00",
+          "split": false,
+          "open2": "",
+          "close2": "",
+          "label": ""
+        },
+        {
+          "closed": false,
+          "open": "08:00",
+          "close": "18:00",
+          "split": false,
+          "open2": "",
+          "close2": "",
+          "label": ""
+        },
+        {
+          "closed": false,
+          "open": "08:00",
+          "close": "12:30",
+          "split": true,
+          "open2": "14:00",
+          "close2": "19:00",
+          "label": ""
+        },
+        {
+          "closed": false,
+          "open": "08:00",
+          "close": "18:00",
+          "split": false,
+          "open2": "",
+          "close2": "",
+          "label": ""
+        },
+        {
+          "closed": false,
+          "open": "08:00",
+          "close": "17:00",
+          "split": false,
+          "open2": "",
+          "close2": "",
+          "label": ""
+        },
+        {
+          "closed": false,
+          "open": "09:00",
+          "close": "13:00",
+          "split": false,
+          "open2": "",
+          "close2": "",
+          "label": ""
+        },
+        {
+          "closed": true,
+          "open": "",
+          "close": "",
+          "split": false,
+          "open2": "",
+          "close2": "",
+          "label": ""
+        }
+      ]
+    },
+    "timeFormat": {
+      "type": "string",
+      "default": "12"
+    },
+    "timezone": {
+      "type": "string",
+      "default": "site"
+    },
+    "displayStatus": {
+      "type": "boolean",
+      "default": true
+    },
+    "statusMode": {
+      "type": "string",
+      "default": "auto"
+    },
+    "countdownStyle": {
+      "type": "string",
+      "default": "at"
+    },
+    "openLabel": {
+      "type": "string",
+      "default": "Open now"
+    },
+    "closedLabel": {
+      "type": "string",
+      "default": "Closed"
+    },
+    "highlightToday": {
+      "type": "boolean",
+      "default": true
+    },
+    "dimClosed": {
+      "type": "boolean",
+      "default": true
+    },
+    "showNextHint": {
+      "type": "boolean",
+      "default": true
+    },
+    "wrapperBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "wrapperBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "wrapperPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "wrapperMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "eyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headlineColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headlineTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "detailColor": {
+      "type": "string",
+      "default": ""
+    },
+    "dayColor": {
+      "type": "string",
+      "default": ""
+    },
+    "dayTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "hoursColor": {
+      "type": "string",
+      "default": ""
+    },
+    "hoursTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "closedColor": {
+      "type": "string",
+      "default": ""
+    },
+    "dividerColor": {
+      "type": "string",
+      "default": ""
+    },
+    "rowBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "todayBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "todayColor": {
+      "type": "string",
+      "default": ""
+    },
+    "todayAccent": {
+      "type": "string",
+      "default": ""
+    },
+    "statusTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "statusRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "openTextColor": {
+      "type": "string",
+      "default": ""
+    },
+    "openBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "closedTextColor": {
+      "type": "string",
+      "default": ""
+    },
+    "closedBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "statusBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "contactIconColor": {
+      "type": "string",
+      "default": ""
+    },
+    "contactLabelColor": {
+      "type": "string",
+      "default": ""
+    },
+    "contactValueColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "btnHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnHoverBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "btnRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}
