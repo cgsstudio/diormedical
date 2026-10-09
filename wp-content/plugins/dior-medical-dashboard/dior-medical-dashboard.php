@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
-
+ * Version: 5.0.2
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '4.1.0');
+define('DIOR_PORTAL_VERSION', '5.0.2');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -53,6 +53,7 @@ if (!class_exists('Dior_Medical_Analytics')) {
 if (!class_exists('Dior_Medical_REST_API')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-rest-api.php');
 }
+require_once(DIOR_PORTAL_PATH . 'rest_api/hipaatizer_rest_api.php');
 if (!class_exists('Dior_Medical_Secure_Files')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-secure-files.php');
 }
@@ -316,6 +317,8 @@ class Dior_Patient_Portal_Data
             'height' => get_user_meta($user_id, 'height', true) ?: '',
             'weight' => get_user_meta($user_id, 'weight', true) ?: '',
             'city' => get_user_meta($user_id, 'city', true) ?: (get_user_meta($user_id, 'billing_city', true) ?: ''),
+            'state' => get_user_meta($user_id, 'state', true) ?: (get_user_meta($user_id, 'billing_state', true) ?: ''),
+            'zip' => get_user_meta($user_id, 'zip', true) ?: (get_user_meta($user_id, 'zip_code', true) ?: (get_user_meta($user_id, 'billing_postcode', true) ?: '')),
             'country' => get_user_meta($user_id, 'country', true) ?: (get_user_meta($user_id, 'billing_country', true) ?: ''),
             'address' => $address ?: '',
             'emergency_name' => $em_name ?: '',
@@ -735,36 +738,6 @@ class Dior_Medical_Auth
     public static function enqueue_assets()
     {
 
-        // Analytics dashboard (NEW)
-        if (is_admin() && current_user_can('manage_options')) {
-            wp_enqueue_script(
-                'chartjs',
-                'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js',
-                [],
-                '3.9.1',
-                true
-            );
-
-            wp_enqueue_script(
-                'dior-analytics',
-                DIOR_PORTAL_URL . 'assets/js/dior-analytics.js',
-                ['jquery', 'chartjs'],
-                DIOR_PORTAL_VERSION,
-                true
-            );
-
-            wp_enqueue_style(
-                'dior-analytics-css',
-                DIOR_PORTAL_URL . 'assets/css/dior-analytics.css',
-                [],
-                DIOR_PORTAL_VERSION
-            );
-
-            wp_localize_script('dior-analytics', 'diorAnalyticsData', [
-                'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('dior_analytics_nonce'),
-            ]);
-        }
         // Font Awesome for modern icons
         wp_enqueue_style(
             'font-awesome-6',
@@ -823,7 +796,7 @@ class Dior_Medical_Auth
         wp_enqueue_style(
             'dior-patient-dashboard-shell-match',
             DIOR_PORTAL_URL . 'assets/css/patient-dashboard-shell-match.css',
-            ['dior-doctor-source-tabs'],
+            ['dior-doctor-tabs-unify'],
             $patient_shell_css_ver
         );
         wp_enqueue_style(
@@ -832,17 +805,11 @@ class Dior_Medical_Auth
             ['dior-dashboard-css'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-dashboard-refactor.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-dashboard-refactor.css') : DIOR_PORTAL_VERSION
         );
-        wp_enqueue_style(
-            'dior-doctor-source-tabs',
-            DIOR_PORTAL_URL . 'assets/css/dior-doctor-source-tabs.css',
-            ['dior-doctor-dashboard-refactor'],
-            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-source-tabs.css') : DIOR_PORTAL_VERSION
-        );
-        wp_enqueue_style(
+wp_enqueue_style(
 
             'dior-view-appointment-css',
             DIOR_PORTAL_URL . 'assets/css/view-appointment.css',
-            ['dior-doctor-source-tabs'],
+            ['dior-doctor-tabs-unify'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/view-appointment.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/view-appointment.css') : DIOR_PORTAL_VERSION
         );
         wp_enqueue_style(
@@ -854,7 +821,7 @@ class Dior_Medical_Auth
         wp_enqueue_style(
             'dior-doctor-tabs-unify',
             DIOR_PORTAL_URL . 'assets/css/dior-doctor-tabs-unify.css',
-            ['dior-static-responsive-fix', 'font-awesome-6'],
+            ['font-awesome-6'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-tabs-unify.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor-tabs-unify.css') : DIOR_PORTAL_VERSION
         );
 
@@ -874,7 +841,7 @@ class Dior_Medical_Auth
         wp_enqueue_style(
             'dior-static-responsive-fix',
             DIOR_PORTAL_URL . 'assets/css/dior-static-responsive-fix.css',
-            ['dior-doctor-source-tabs'],
+            ['dior-doctor-tabs-unify'],
             file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-static-responsive-fix.css') : DIOR_PORTAL_VERSION
         );
 
@@ -884,6 +851,29 @@ class Dior_Medical_Auth
             [],
             '11.0.0',
             false
+        );
+
+        // Animation libraries
+        wp_enqueue_script(
+            'lenis',
+            'https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js',
+            [],
+            '1.0.29',
+            true
+        );
+        wp_enqueue_script(
+            'gsap',
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js',
+            [],
+            '3.12.2',
+            true
+        );
+        wp_enqueue_script(
+            'dior-animations-js',
+            DIOR_PORTAL_URL . 'assets/js/dior-animations.js',
+            ['lenis', 'gsap'],
+            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-animations.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-animations.js') : DIOR_PORTAL_VERSION,
+            true
         );
 
         // Enqueue WordPress Media Library for profile photos & documents
@@ -969,15 +959,7 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-dashboard-page.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-dashboard-page.js') : DIOR_PORTAL_VERSION,
             true
         );
-        wp_enqueue_script(
-            'dior-doctor-source-tabs-js',
-            DIOR_PORTAL_URL . 'assets/js/dior-doctor-source-tabs.js',
-            ['dior-doctor-js'],
-            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-source-tabs.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-source-tabs.js') : DIOR_PORTAL_VERSION,
-            true
-        );
-
-        // Unified static dashboard table interactions (pagination + edit/delete).
+// Unified static dashboard table interactions (pagination + edit/delete).
         wp_enqueue_style(
             'dior-static-table-interactions',
             DIOR_PORTAL_URL . 'assets/css/dior-static-table-interactions.css',
@@ -987,7 +969,7 @@ class Dior_Medical_Auth
         wp_enqueue_script(
             'dior-static-table-interactions',
             DIOR_PORTAL_URL . 'assets/js/dior-static-table-interactions.js',
-            ['dior-patient-dashboard-page-js', 'dior-doctor-dashboard-page-js', 'dior-doctor-source-tabs-js'],
+            ['dior-patient-dashboard-page-js', 'dior-doctor-dashboard-page-js'],
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-static-table-interactions.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-static-table-interactions.js') : DIOR_PORTAL_VERSION,
             true
         );
@@ -1898,6 +1880,22 @@ class Dior_Medical_Auth
                     <span>No, I am under 18 years of age.</span>
                 </label>
             </div>
+            
+            <div class="dior-form-group" style="margin-top: 15px;">
+                <label>Are you currently experiencing a medical emergency, severe symptoms, or a potentially life-threatening condition?</label>
+                <div style="display:flex; gap:15px; margin-top:5px;">
+                    <label class="dior-reg-radio-label"><input type="radio" name="medical_emergency" value="yes" class="dior-reg-radio-input"> <span>Yes</span></label>
+                    <label class="dior-reg-radio-label"><input type="radio" name="medical_emergency" value="no" required checked class="dior-reg-radio-input"> <span>No</span></label>
+                </div>
+            </div>
+
+            <div class="dior-form-group" id="dior-reg-pregnancy-wrap" style="display:none; margin-top: 15px;">
+                <label>Are you currently pregnant?</label>
+                <div style="display:flex; gap:15px; margin-top:5px;">
+                    <label class="dior-reg-radio-label"><input type="radio" name="is_pregnant" value="yes" class="dior-reg-radio-input"> <span>Yes</span></label>
+                    <label class="dior-reg-radio-label"><input type="radio" name="is_pregnant" value="no" checked class="dior-reg-radio-input"> <span>No</span></label>
+                </div>
+            </div>
 
             <!-- Contact Information -->
             <div class="dior-reg-section-title">Contact Information</div>
@@ -1976,6 +1974,59 @@ class Dior_Medical_Auth
         </div>
 
         <?php endif; ?>
+    </div>
+</div>
+
+<style>
+.dior-hipaa-swal.swal2-popup { 
+    max-width: 950px !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+.dior-hipaa-swal .swal2-title {
+    padding: 15px 15px 10px !important;
+    margin: 0 !important;
+}
+.dior-hipaa-swal .swal2-html-container {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.dior-hipaa-swal .swal2-close {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #666 !important;
+    font-size: 32px !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    position: absolute !important;
+    top: 5px !important;
+    right: 5px !important;
+}
+.dior-hipaa-swal .swal2-close:hover {
+    color: #d33 !important;
+    background-color: transparent !important;
+}
+</style>
+
+<!-- Hidden Intake Form Content for Success Popup --><!-- Hidden Intake Form Overlay -->
+<div id="dior-custom-hipaatizer-modal" style="display:none; position:fixed; inset:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:999999; justify-content:center; align-items:center;">
+    <div style="width:min(950px, 95vw); height:90vh; background:#fff; border-radius:12px; position:relative; overflow:hidden;">
+        <button type="button" onclick="diorCloseHipaaModal();" aria-label="Close HIPAAtizer form" style="position:absolute; right:15px; top:10px; font-size:32px; line-height:1; color:#666; background:#fff; border:none; cursor:pointer; z-index:10000;">&times;</button>
+        <div id="hipaatizer-inject-target" style="width:100%; height:100%; padding:20px; box-sizing:border-box;">
+            <iframe
+                id="dior-hipaatizer-intake-frame"
+                title="HIPAAtizer Clinical Intake & Questionnaire Form"
+                src="about:blank"
+                data-src="https://app.hipaatizer.com/workflow/01a11515-b491-79dc-b59b-e4be2a345a49"
+                allow="microphone; camera; payment"
+                style="display:block; width:100%; height:100%; min-height:700px; border:0; background:#fff;"
+                loading="eager"></iframe>
+        </div>
     </div>
 </div>
 <?php
@@ -2523,7 +2574,7 @@ class Dior_Medical_Auth
         wp_set_auth_cookie($user_id, true);
 
         wp_send_json_success([
-            'message' => 'Account created successfully! Redirecting to your dashboard...',
+            'message' => 'Account created successfully! Opening your Patient Dashboard...',
             'redirect' => home_url('/patient-dashboard/')
         ]);
     }
@@ -2778,6 +2829,8 @@ class Dior_Medical_Auth
         $address = trim(sanitize_text_field($_POST['address'] ?? ''));
         $blood_group = trim(sanitize_text_field($_POST['blood_group'] ?? ''));
         $city = trim(sanitize_text_field($_POST['city'] ?? ''));
+        $state = trim(sanitize_text_field($_POST['state'] ?? ''));
+        $zip = trim(sanitize_text_field($_POST['zip'] ?? ''));
         $country = trim(sanitize_text_field($_POST['country'] ?? 'United States'));
 
         // Normalize DOB to YYYY-MM-DD
@@ -2880,6 +2933,9 @@ class Dior_Medical_Auth
         update_user_meta($user_id, 'billing_address_1', $address);
         update_user_meta($user_id, 'blood_group', $blood_group);
         update_user_meta($user_id, 'city', $city);
+        update_user_meta($user_id, 'state', $state);
+        update_user_meta($user_id, 'zip', $zip);
+        update_user_meta($user_id, 'zip_code', $zip);
         update_user_meta($user_id, 'country', $country);
         Dior_Patient_Portal_Data::sync_relational_patient($user_id);
         update_user_meta($user_id, 'emergency_name', $em_name);
@@ -4273,6 +4329,23 @@ class Dior_Medical_Auth
         if (empty($data))
             return;
 
+        // --- DEBUG LOGGING ---
+        $log_file = DIOR_PORTAL_PATH . 'webhook_debug.log';
+        file_put_contents($log_file, "[" . current_time('mysql') . "] Webhook Received:\n" . print_r($data, true) . "\n", FILE_APPEND);
+        // ---------------------
+
+        // Unpack HIPAAtizer payload structure
+        $raw_data = $data;
+        if (isset($data['data'])) {
+            $data = $data['data'];
+        }
+        if (isset($data['fields'])) {
+            $data = $data['fields'];
+        }
+        $data['raw_data'] = $raw_data;
+
+        file_put_contents($log_file, "[" . current_time('mysql') . "] Unpacked Data:\n" . print_r($data, true) . "\n", FILE_APPEND);
+
         // Try to find user by user_id first
         $user_id = 0;
         if (!empty($data['user_id'])) {
@@ -4285,7 +4358,7 @@ class Dior_Medical_Auth
 
         // Try to find user by email from form data
         $email = '';
-        $email_keys = ['email', 'Email', 'email_address', 'patient_email', 'submitter_email'];
+        $email_keys = ['email', 'Email', 'email_address', 'patient_email', 'submitter_email', 'Email Address'];
         foreach ($email_keys as $k) {
             if (!empty($data[$k])) {
                 $email = sanitize_email($data[$k]);
@@ -4293,10 +4366,30 @@ class Dior_Medical_Auth
             }
         }
 
+        file_put_contents($log_file, "[" . current_time('mysql') . "] Extracted Email: " . $email . " | User ID: " . $user_id . "\n", FILE_APPEND);
+
         if (!$user_id && $email) {
             $user = get_user_by('email', $email);
-            if ($user)
+            if ($user) {
                 $user_id = $user->ID;
+                file_put_contents($log_file, "[" . current_time('mysql') . "] Found WP User by Email. User ID: " . $user_id . "\n", FILE_APPEND);
+            } else {
+                // Fallback: match the normalized Dior patient table.
+                global $wpdb;
+                $patient_table = $wpdb->prefix . 'dior_patients';
+                $matched_patient = $wpdb->get_row(
+                    $wpdb->prepare(
+                        "SELECT user_id FROM {$patient_table} WHERE email = %s LIMIT 1",
+                        $email
+                    )
+                );
+                if ($matched_patient && !empty($matched_patient->user_id)) {
+                    $user_id = (int) $matched_patient->user_id;
+                    file_put_contents($log_file, "[" . current_time('mysql') . "] Found Dior patient by Email. User ID: " . $user_id . "\n", FILE_APPEND);
+                } else {
+                    file_put_contents($log_file, "[" . current_time('mysql') . "] User/patient not found for email: " . $email . "\n", FILE_APPEND);
+                }
+            }
         }
 
         if ($user_id && empty($email)) {
@@ -4305,8 +4398,47 @@ class Dior_Medical_Auth
                 $email = $u_obj->user_email;
         }
 
-        $first_name = sanitize_text_field($data['first_name'] ?? $data['First Name'] ?? $data['firstname'] ?? '');
-        $last_name = sanitize_text_field($data['last_name'] ?? $data['Last Name'] ?? $data['lastname'] ?? '');
+        // HIPAAtizer supports both internal variable keys (e.g. email) and
+        // the exact inserted-variable labels configured in the webhook body
+        // (e.g. Email Address, Full Name, Street Address). Read both forms.
+        $dior_value = static function (array $source, array $keys, $default = '') {
+            foreach ($keys as $key) {
+                if (array_key_exists($key, $source) && $source[$key] !== '' && $source[$key] !== null) {
+                    $value = $source[$key];
+                    if (is_array($value)) {
+                        return implode(', ', array_map('sanitize_text_field', $value));
+                    }
+                    return (string) $value;
+                }
+            }
+            return $default;
+        };
+
+        // Exact HIPAAtizer inserted-variable names supplied by the form.
+        $email = sanitize_email($dior_value($data, [
+            'email', 'Email', 'email_address', 'patient_email', 'submitter_email', 'Email Address'
+        ], $email));
+
+        $full_name = sanitize_text_field($dior_value($data, [
+            'full_name', 'Full Name'
+        ]));
+
+        $first_name = sanitize_text_field($dior_value($data, [
+            'first_name', 'First Name', 'firstname'
+        ]));
+        $last_name = sanitize_text_field($dior_value($data, [
+            'last_name', 'Last Name', 'lastname'
+        ]));
+
+        // If HIPAAtizer only sends Full Name, split it into WP first/last name.
+        if ($full_name && !$first_name && !$last_name) {
+            $name_parts = preg_split('/\s+/', trim($full_name), -1, PREG_SPLIT_NO_EMPTY);
+            if (!empty($name_parts)) {
+                $first_name = array_shift($name_parts);
+                $last_name = implode(' ', $name_parts);
+            }
+        }
+
         if ($user_id && empty($first_name)) {
             $first_name = get_user_meta($user_id, 'first_name', true) ?: '';
             $last_name = get_user_meta($user_id, 'last_name', true) ?: '';
@@ -4317,11 +4449,13 @@ class Dior_Medical_Auth
             'submitted_at' => current_time('Y-m-d H:i:s'),
 
             // Step 1: Service Selection
-            'service_condition' => sanitize_text_field($data['service_condition'] ?? $data['service'] ?? $data['Which service or condition do you need care for today'] ?? ''),
+            'service_condition' => sanitize_text_field($dior_value($data, ['service_condition', 'service', 'selected_service', 'Selected Service / Condition', 'Which service or condition do you need care for today'])),
+            'consultation_type' => sanitize_text_field($dior_value($data, ['consultation_type', 'Preferred Consultation Type', 'Preferred Consultation Type (Labels)', 'Preferred Consultation Type (Values)'])),
+            'referral_source' => sanitize_text_field($dior_value($data, ['referral_source', 'How did you hear about us?', 'How did you hear about us? (Labels)', 'How did you hear about us? (Values)'])),
 
             // Step 2: Eligibility Checks
             'is_18_plus' => sanitize_text_field($data['is_18_plus'] ?? $data['Are you 18 years or older'] ?? ''),
-            'is_pregnant' => sanitize_text_field($data['is_pregnant'] ?? $data['Are you currently pregnant'] ?? ''),
+            'is_pregnant' => sanitize_text_field($dior_value($data, ['is_pregnant', 'Are you currently pregnant?', 'Are you currently pregnant'])),
 
             // Step 3: Patient Information
             'first_name' => $first_name,
@@ -4329,11 +4463,16 @@ class Dior_Medical_Auth
             'dob' => sanitize_text_field($data['dob'] ?? $data['date_of_birth'] ?? $data['Date of Birth'] ?? ''),
             'gender' => sanitize_text_field($data['gender'] ?? $data['Gender'] ?? $data['biological_sex'] ?? $data['Biological Sex'] ?? $data['Sex'] ?? $data['sex'] ?? ''),
             'email' => $email,
-            'phone' => sanitize_text_field($data['phone'] ?? $data['Phone'] ?? $data['phone_number'] ?? ''),
-            'address' => sanitize_text_field($data['address'] ?? $data['Address'] ?? $data['street_address'] ?? $data['Street Address'] ?? ''),
-            'city' => sanitize_text_field($data['city'] ?? $data['City'] ?? ''),
-            'state' => sanitize_text_field($data['state'] ?? $data['State'] ?? $data['service_state'] ?? ''),
-            'zip' => sanitize_text_field($data['zip'] ?? $data['Zip'] ?? $data['postal_code'] ?? $data['ZIP Code'] ?? ''),
+            'phone' => sanitize_text_field($dior_value($data, ['phone', 'Phone', 'phone_number', 'Phone Number'])),
+            'address' => sanitize_text_field($dior_value($data, ['address', 'Address', 'street_address', 'Street Address'])),
+            'city' => sanitize_text_field($dior_value($data, ['city', 'City'])),
+            'state' => sanitize_text_field($dior_value($data, ['state', 'State', 'service_state', 'State (Labels)', 'State (Values)'])),
+            'zip' => sanitize_text_field($dior_value($data, ['zip', 'Zip', 'postal_code', 'ZIP Code', 'ZIP / PIN Code'])),
+            'emergency_name' => sanitize_text_field($dior_value($data, ['emergency_name', 'emergency_contact_name', 'Emergency Contact Name'])),
+            'emergency_relation' => sanitize_text_field($data['emergency_relation'] ?? $data['emergency_contact_relationship'] ?? $data['Emergency Contact Relationship'] ?? ''),
+            'emergency_phone' => sanitize_text_field($dior_value($data, ['emergency_phone', 'emergency_contact_phone', 'Emergency Contact Phone'])),
+            'insurance_provider' => sanitize_text_field($dior_value($data, ['insurance_provider', 'Insurance Provider Name'])),
+            'insurance_member_id' => sanitize_text_field($dior_value($data, ['insurance_member_id', 'Insurance Member / Policy ID'])),
 
             // Step 4: Symptoms Description
             'symptoms_description' => sanitize_textarea_field($data['symptoms_description'] ?? $data['Describe your symptoms'] ?? ''),
@@ -4414,20 +4553,88 @@ class Dior_Medical_Auth
                 update_user_meta($user_id, 'dob', $intake['dob']);
             }
             if (!empty($intake['address'])) {
-                update_user_meta($user_id, 'street_address', $intake['address']);
+                update_user_meta($user_id, 'address', $intake['address']);
+                update_user_meta($user_id, 'billing_address_1', $intake['address']);
             }
             if (!empty($intake['city'])) {
                 update_user_meta($user_id, 'city', $intake['city']);
+                update_user_meta($user_id, 'billing_city', $intake['city']);
             }
             if (!empty($intake['state'])) {
                 update_user_meta($user_id, 'state', $intake['state']);
             }
             if (!empty($intake['zip'])) {
                 update_user_meta($user_id, 'zip', $intake['zip']);
+                update_user_meta($user_id, 'zip_code', $intake['zip']);
             }
-            if (!empty($intake['address']) || !empty($intake['city']) || !empty($intake['state'])) {
-                $full_address = trim(($intake['address'] ?? '') . ' ' . ($intake['city'] ?? '') . ', ' . ($intake['state'] ?? '') . ' ' . ($intake['zip'] ?? ''));
-                update_user_meta($user_id, 'address', $full_address);
+            if (!empty($intake['emergency_name'])) {
+                update_user_meta($user_id, 'emergency_name', $intake['emergency_name']);
+            }
+            if (!empty($intake['emergency_relation'])) {
+                update_user_meta($user_id, 'emergency_relation', $intake['emergency_relation']);
+            }
+            if (!empty($intake['emergency_phone'])) {
+                update_user_meta($user_id, 'emergency_phone', $intake['emergency_phone']);
+            }
+            if ($intake['is_pregnant'] !== '') {
+                $pregnant = in_array(strtolower((string) $intake['is_pregnant']), ['1', 'yes', 'true', 'y'], true);
+                update_user_meta($user_id, 'pregnancy_status', $pregnant ? 'Pregnant' : 'Not Pregnant');
+            }
+
+            // Keep the complete mailing address for the dashboard while retaining
+            // the original street address in its canonical field.
+            if (!empty($intake['address']) || !empty($intake['city']) || !empty($intake['state']) || !empty($intake['zip'])) {
+                $full_address = trim(
+                    ($intake['address'] ?? '') . ', ' .
+                    ($intake['city'] ?? '') . ', ' .
+                    ($intake['state'] ?? '') . ' ' .
+                    ($intake['zip'] ?? '')
+                );
+                update_user_meta($user_id, 'address', trim($full_address, " ,"));
+            }
+
+            // IMPORTANT: sync HIPAAtizer data into the normalized patient table
+            // used by Doctor Dashboard and Patient Settings.
+            if (class_exists('Dior_Patient_Portal_Data')) {
+                Dior_Patient_Portal_Data::sync_relational_patient($user_id);
+            }
+
+            // Sync insurance when HIPAAtizer sends provider/member information.
+            $insurance_provider = sanitize_text_field(
+                $data['insurance_provider'] ?? $data['Insurance Provider'] ?? $data['Insurance Provider Name'] ?? $intake['insurance_provider'] ?? ''
+            );
+            $insurance_member_id = sanitize_text_field(
+                $data['insurance_member_id'] ?? $data['insurance_member_number'] ?? $data['Insurance Member ID'] ?? $data['Insurance Member / Policy ID'] ?? $intake['insurance_member_id'] ?? ''
+            );
+            if ($insurance_provider !== '' || $insurance_member_id !== '') {
+                global $wpdb;
+                $insurance_table = $wpdb->prefix . 'dior_insurance';
+                $patient_row = $wpdb->get_row(
+                    $wpdb->prepare(
+                        "SELECT id FROM {$wpdb->prefix}dior_patients WHERE user_id = %d LIMIT 1",
+                        $user_id
+                    )
+                );
+                if ($patient_row) {
+                    $existing_insurance = $wpdb->get_var(
+                        $wpdb->prepare(
+                            "SELECT id FROM {$insurance_table} WHERE patient_id = %d LIMIT 1",
+                            $patient_row->id
+                        )
+                    );
+                    $insurance_data = [
+                        'primary_insurance_provider' => $insurance_provider,
+                        'primary_member_id' => $insurance_member_id,
+                        'updated_at' => current_time('mysql'),
+                    ];
+                    if ($existing_insurance) {
+                        $wpdb->update($insurance_table, $insurance_data, ['patient_id' => $patient_row->id]);
+                    } else {
+                        $insurance_data['patient_id'] = $patient_row->id;
+                        $insurance_data['created_at'] = current_time('mysql');
+                        $wpdb->insert($insurance_table, $insurance_data);
+                    }
+                }
             }
 
             // Create initial appointment from HIPAAtizer intake

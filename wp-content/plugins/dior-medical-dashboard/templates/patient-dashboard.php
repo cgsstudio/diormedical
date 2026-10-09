@@ -1,75 +1,4 @@
 
-<style>
-/* Table Design matching Feedback & Support */
-table.docs-table, table.va-table, table.dior-ref-table, table.table {
-    width: 100% !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    background: #ffffff !important;
-}
-
-table.docs-table thead th, table.va-table thead th, table.dior-ref-table thead th, table.table thead th {
-    background: #ffffff !important;
-    color: #64748b !important;
-    font-size: 11px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    padding: 16px 24px !important;
-    border-bottom: 2px solid #f1f5f9 !important;
-    text-align: left !important;
-    white-space: nowrap !important;
-}
-
-table.docs-table tbody td, table.va-table tbody td, table.dior-ref-table tbody td, table.table tbody td {
-    padding: 20px 24px !important;
-    color: #334155 !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
-    border-bottom: 1px solid #f1f5f9 !important;
-    background: #ffffff !important;
-    text-align: left !important;
-    vertical-align: middle !important;
-}
-
-table.docs-table tbody tr:hover td, table.va-table tbody tr:hover td, table.dior-ref-table tbody tr:hover td, table.table tbody tr:hover td {
-    background: #f8fafc !important;
-}
-</style>
-<style>
-/* Global Action Button Fixes */
-button.va-action-btn-sm, 
-button.action-icon-btn, 
-button.dior-ref-icon-btn, 
-button.dior-action-btn-sm,
-button.dior-feedback-view-action,
-button.dior-ref-btn,
-button.va-btn-primary,
-button.va-btn-success,
-button.va-btn-info,
-button.va-btn-danger,
-.va-actions-group button,
-.dior-ref-card-head button,
-.cell-actions button {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    color: #3b82f6 !important; /* Fallback color for currentColor SVGs */
-}
-
-/* Ensure SVG icons inside have visible colors */
-button.action-icon-btn svg,
-button.va-action-btn-sm svg,
-button.dior-ref-icon-btn svg,
-button.dior-action-btn-sm svg,
-.va-actions-group button svg,
-.dior-ref-card-head button svg,
-.cell-actions button svg {
-    color: #3b82f6 !important;
-}
-
-/* Specific colors for specific icon types if needed, but they mostly have direct 'fill' attributes now */
-</style>
 <div class="dior-wrap dior-patient-portal-wrap" id="dior-patient-portal-app">
 
     <!-- Top Emergency Banner -->
@@ -341,7 +270,7 @@ button.dior-action-btn-sm svg,
                                 </span>
                             </div>
                         </div>
-                        <button type="button" class="dior-btn-gold-primary dior-ic-4ee0445c2a" data-switch-tab="profile">
+                        <button type="button" class="dior-btn-gold-primary dior-ic-4ee0445c2a" onclick="diorOpenHipaaPopup()">
                             <i class="fas fa-id-card"></i> Complete Profile Now
                         </button>
                     </div>
@@ -390,11 +319,11 @@ button.dior-action-btn-sm svg,
             </div>
             <div class="dior-modal-body dior-ic-1d15569872">
                 <iframe id="hipaatizer-book-visit-iframe"
-                    src="https://app.hipaatizer.com/workflow/01a110f3-ddb0-7783-88de-8b9b744cb56d"
+                    src="https://app.hipaatizer.com/workflow/01a11515-b491-79dc-b59b-e4be2a345a49"
                     allow="microphone; camera; payment" title="HIPAAtizer Booking Form" class="dior-ic-a52858ae73">
                 </iframe>
                 <div class="dior-ic-44a70a0420">
-                    <?php echo do_shortcode('[hipaatizer id="01a110f3-ddb0-7783-88de-8b9b744cb56d"]'); ?>
+                    <?php echo do_shortcode('[hipaatizer id="01a11515-b491-79dc-b59b-e4be2a345a49"]'); ?>
                 </div>
             </div>
         </div>
@@ -1239,4 +1168,93 @@ document.addEventListener("DOMContentLoaded", function() {
     
     initSorting();
 });
+
+// Hipaatizer Popup logic
+function diorLoadHipaaFrame() {
+    const frame = document.getElementById('dior-hipaatizer-intake-frame');
+    if (!frame) return;
+    const target = frame.getAttribute('data-src');
+    if (target && frame.getAttribute('src') === 'about:blank') {
+        frame.setAttribute('src', target);
+    }
+}
+
+function diorOpenHipaaPopup() {
+    const hipaatizerModal = document.getElementById('dior-custom-hipaatizer-modal');
+    if (!hipaatizerModal) {
+        console.error('HIPAAtizer modal not found!');
+        return;
+    }
+    hipaatizerModal.style.display = 'flex';
+    // Start HIPAAtizer only after the modal is visible.
+    requestAnimationFrame(function() {
+        setTimeout(diorLoadHipaaFrame, 50);
+    });
+}
+
+function diorCloseHipaaModal() {
+    const modal = document.getElementById('dior-custom-hipaatizer-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+// Keep the global name used by the registration/dashboard scripts.
+window.diorOpenHipaaPopup = diorOpenHipaaPopup;
+window.diorCloseHipaaModal = diorCloseHipaaModal;
 </script>
+
+<style>
+.dior-hipaa-swal.swal2-popup { 
+    max-width: 950px !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+.dior-hipaa-swal .swal2-title {
+    padding: 15px 15px 10px !important;
+    margin: 0 !important;
+}
+.dior-hipaa-swal .swal2-html-container {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.dior-hipaa-swal .swal2-close {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #666 !important;
+    font-size: 32px !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    position: absolute !important;
+    top: 5px !important;
+    right: 5px !important;
+}
+.dior-hipaa-swal .swal2-close:hover {
+    color: #d33 !important;
+    background-color: transparent !important;
+}
+</style>
+
+<!-- Hidden Intake Form Overlay -->
+<div id="dior-custom-hipaatizer-modal" style="display:none; position:fixed; inset:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:999999; justify-content:center; align-items:center;">
+    <div style="width:min(950px, 95vw); height:90vh; background:#fff; border-radius:12px; position:relative; overflow:hidden;">
+        <button type="button" onclick="diorCloseHipaaModal();" aria-label="Close HIPAAtizer form" style="position:absolute; right:15px; top:10px; font-size:32px; line-height:1; color:#666; background:#fff; border:none; cursor:pointer; z-index:10000;">&times;</button>
+        <div id="hipaatizer-inject-target" style="width:100%; height:100%; padding:20px; box-sizing:border-box;">
+            <!-- Load HIPAAtizer only after the dashboard modal becomes visible. This avoids the
+                 HIPAAtizer loader getting initialized while its parent is display:none. -->
+            <iframe
+                id="dior-hipaatizer-intake-frame"
+                title="HIPAAtizer Clinical Intake & Questionnaire Form"
+                src="about:blank"
+                data-src="https://app.hipaatizer.com/workflow/01a11515-b491-79dc-b59b-e4be2a345a49"
+                allow="microphone; camera; payment"
+                style="display:block; width:100%; height:100%; min-height:700px; border:0; background:#fff;"
+                loading="eager"></iframe>
+        </div>
+    </div>
+</div>
+<!-- Hidden Intake Form Content for Dashboard Popup -->
+

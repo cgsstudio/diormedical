@@ -258,9 +258,9 @@
                         <h3 class="dior-ic-c4184d3815"><i class="fas fa-clipboard-question dior-ic-31d287ea95"></i>
                             Step 1: Clinical Intake Questionnaire</h3>
                         <?php if (shortcode_exists('hipaatizer')): ?>
-                            <?php echo do_shortcode('[hipaatizer id="01a110f3-ddb0-7783-88de-8b9b744cb56d"]'); ?>
+                            <?php echo do_shortcode('[hipaatizer id="01a11515-b491-79dc-b59b-e4be2a345a49"]'); ?>
                         <?php else: ?>
-                            <iframe src="https://app.hipaatizer.com/workflow/01a110f3-ddb0-7783-88de-8b9b744cb56d"
+                            <iframe src="https://app.hipaatizer.com/workflow/01a11515-b491-79dc-b59b-e4be2a345a49"
                                 allow="microphone; camera; payment"
                                 title="HIPAAtizer Clinical Intake &amp; Questionnaire Form"
                                 class="dior-ic-091ab91f5b"></iframe>
@@ -304,6 +304,9 @@
                                         aria-label="Search box" onkeyup="diorFilterTodayAppointments()">
                                 </div>
                                 <div class="docs-actions-group">
+                                    <button type="button" aria-label="Delete selected items" class="docs-icon-btn docs-btn-danger" title="Delete Selected" onclick="diorBulkDeleteStaticRows(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                     <button type="button" aria-label="Export to CSV"
                                         class="docs-icon-btn docs-btn-success" title="Export to CSV"
                                         onclick="diorDownloadTodayAppointmentsCSV()">
@@ -415,7 +418,7 @@
                                         class="docs-icon-btn docs-btn-danger dior-ic-44a70a0420"
                                         id="dior-upcoming-bulk-delete-btn" title="Delete Selected"
                                         onclick="diorBulkDeleteUpcomingRows()">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                     <button type="button" aria-label="Add new record"
                                         class="docs-icon-btn docs-btn-primary" title="Book Appointment"
@@ -501,7 +504,7 @@
                                                     <button type="button" class="action-icon-btn edit-btn"
                                                         title="Edit Record"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
                                                     <button type="button" class="action-icon-btn delete-btn"
-                                                        title="Delete Record"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
+                                                        title="Delete Record"><i class="fas fa-trash"></i></button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -539,6 +542,9 @@
                                         aria-label="Search box" onkeyup="diorFilterPastAppointments()">
                                 </div>
                                 <div class="docs-actions-group">
+                                    <button type="button" aria-label="Delete selected items" class="docs-icon-btn docs-btn-danger" title="Delete Selected" onclick="diorBulkDeleteStaticRows(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                     <button type="button" aria-label="Export to CSV"
                                         class="docs-icon-btn docs-btn-success" title="Export to CSV"
                                         onclick="diorDownloadPastAppointmentsCSV()">

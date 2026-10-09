@@ -5,6 +5,17 @@
 
 window.diorOnIntakeSubmitted = function(e) {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+    // Remove the one-time registration flag after successful intake submission.
+    // This prevents the HIPAAtizer form from opening again on a normal refresh/login.
+    try {
+        const cleanUrl = new URL(window.location.href);
+        if (cleanUrl.searchParams.has('intake_required')) {
+            cleanUrl.searchParams.delete('intake_required');
+            window.history.replaceState({}, document.title, cleanUrl.toString());
+        }
+    } catch (cleanupError) {}
+
     const hipaaWrap = document.getElementById('dior-hipaa-form-container');
     const bookingSec = document.getElementById('dior-dashboard-booking-section');
     const stepNotice = document.getElementById('dior-intake-step-notice');
@@ -48,11 +59,9 @@ window.addEventListener('message', function(event) {
     if (data && typeof data === 'object') {
         if (data.type === 'hipaatizer-form-submitted' ||
             data.action === 'form_submitted' ||
-            data.event === 'submit' ||
             data.event === 'form_submitted' ||
-            data.status === 'completed' ||
-            data.status === 'submitted' ||
-            (data.source && String(data.source).indexOf('hipaatizer') !== -1 && (data.action === 'submit' || data.event === 'submit'))
+            (data.source && String(data.source).indexOf('hipaatizer') !== -1 &&
+                (data.action === 'submit' || data.event === 'submit'))
         ) {
             isSubmitted = true;
         }
@@ -66,6 +75,29 @@ window.addEventListener('message', function(event) {
         }
     }
 });
+
+// After new patient registration, the dashboard must load first and then open HIPAAtizer.
+// This is intentionally tied to the one-time registration query flag so normal logins
+// do not automatically open the medical intake form.
+try {
+    var registrationIntakeParams = new URLSearchParams(window.location.search);
+    if (registrationIntakeParams.get('intake_required') === '1') {
+        setTimeout(function() {
+            if (typeof window.diorOpenHipaaPopup === 'function') {
+                window.diorOpenHipaaPopup();
+                return;
+            }
+            var registrationModal = document.getElementById('dior-custom-hipaatizer-modal');
+            if (registrationModal) {
+                registrationModal.style.display = 'flex';
+                var frame = document.getElementById('dior-hipaatizer-intake-frame');
+                if (frame && frame.getAttribute('src') === 'about:blank') {
+                    frame.setAttribute('src', frame.getAttribute('data-src'));
+                }
+            }
+        }, 900);
+    }
+} catch (e) {}
 
 // Check URL parameters for direct redirect from HIPAAtizer settings
 try {
@@ -861,7 +893,12 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         window.addEventListener('hashchange', handleUrlHash);
 
         // Check profile completion on patient dashboard initial load
-        if (window.dior_vars && window.dior_vars.is_logged_in && parseInt(window.dior_vars.is_profile_complete, 10) !== 1) {
+        var registrationIntakeRequired = false;
+        try {
+            registrationIntakeRequired = new URLSearchParams(window.location.search).get('intake_required') === '1';
+        } catch (e) {}
+
+        if (!registrationIntakeRequired && window.dior_vars && window.dior_vars.is_logged_in && parseInt(window.dior_vars.is_profile_complete, 10) !== 1) {
             if (!sessionStorage.getItem('dior_patient_profile_remind_later')) {
                 setTimeout(function() {
                     const missingFieldsObj = window.dior_vars.missing_profile_fields || {};
@@ -879,17 +916,14 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                             confirmButtonColor: '#2C6CB1',
                             showCancelButton: true,
                             cancelButtonText: 'Remind Me Later',
-                            cancelButtonColor: '#94A3B8'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                switchTab('profile');
-                                setTimeout(() => {
-                                    const firstEmpty = document.querySelector('#dior-form-patient-profile input:invalid, #dior-form-patient-profile input[name="first_name"]');
-                                    if (firstEmpty) {
-                                        firstEmpty.focus();
-                                        firstEmpty.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                    }
-                                }, 300);
+                                let modal = document.getElementById('dior-custom-hipaatizer-modal');
+                                if(modal) {
+                                    modal.style.display = 'flex';
+                                } else {
+                                    console.error('Hipaatizer modal not found in DOM');
+                                }
                             } else {
                                 sessionStorage.setItem('dior_patient_profile_remind_later', '1');
                             }

@@ -1,0 +1,18 @@
+Dior Medical - HIPAAtizer Direct Webhook (v5.0.2)
+
+Direct webhook URL format:
+https://YOUR-DOMAIN/diormedical/wp-content/plugins/dior-medical-dashboard/rest_api/hipaatizer_direct_webhook.php?token=YOUR_SECRET
+
+The direct receiver uses the existing Dior HIPAAtizer fallback importer and supports exact inserted-variable labels such as:
+- Full Name
+- Email Address
+- Street Address
+- City
+- State
+- ZIP / PIN Code
+- Emergency Contact Name
+- Emergency Contact Phone
+- Insurance Provider Name
+- Insurance Member / Policy ID
+
+Do not put the webhook secret into this file. Keep it in wp-config.php as DIOR_HIPAATIZER_WEBHOOK_SECRET.

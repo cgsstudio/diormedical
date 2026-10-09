@@ -5925,3 +5925,38 @@
 .dior-patient-portal-wrap .dior-document-modal small{display:block;margin-top:7px;color:#94a3b8;font-size:11px;}
 .dior-patient-portal-wrap .dior-document-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;}
 @media(max-width:640px){.dior-patient-portal-wrap .dior-document-form-grid{grid-template-columns:1fr;}}
+
+/* Medical Record Button Fixes */
+#tab-medical_record .btn {
+    padding: 6px 16px !important;
+    font-size: 13px !important;
+    height: auto !important;
+    min-height: 32px !important;
+    line-height: 1.5 !important;
+    border-radius: 50px !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+}
+#tab-medical_record .btn-primary {
+    background-color: #2C6CB1 !important;
+    border-color: #2C6CB1 !important;
+    color: #fff !important;
+}
+#tab-medical_record .btn-outline-primary {
+    background-color: #fff !important;
+    border-color: #2C6CB1 !important;
+    color: #2C6CB1 !important;
+}
+#tab-medical_record .btn-outline-primary:hover,
+#tab-medical_record .btn-primary:hover {
+    opacity: 0.9 !important;
+}
+#tab-medical_record .btn-outline-secondary {
+    background-color: #fff !important;
+    border-color: #cbd5e1 !important;
+    color: #475569 !important;
+}
+#tab-medical_record .btn-outline-secondary:hover {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+}

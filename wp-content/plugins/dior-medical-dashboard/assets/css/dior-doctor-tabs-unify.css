@@ -266,3 +266,51 @@
         width: 100%;
     }
 }
+
+
+/* Doctor dashboard navigation/submenu structure */
+.dior-nav-item.has-submenu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.submenu-icon {
+    margin-left: auto !important;
+    font-size: 12px;
+}
+.dior-submenu {
+    display: none;
+    flex-direction: column;
+    padding-left: 20px;
+}
+.dior-nav-item.active .dior-submenu {
+    display: flex;
+}
+.dior-nav-item.active > .dior-nav-btn .submenu-icon::before {
+    content: "\f068";
+}
+.dior-nav-item:not(.active) > .dior-nav-btn .submenu-icon::before {
+    content: "\f067";
+}
+.dior-submenu .submenu-btn {
+    font-size: 14px;
+    padding: 10px 16px;
+    color: #64748B;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dior-submenu .submenu-btn i {
+    font-size: 10px;
+    width: 12px;
+}
+.dior-submenu .submenu-btn:hover,
+.dior-submenu .submenu-btn.active {
+    color: #4F46E5;
+    font-weight: 600;
+}
+

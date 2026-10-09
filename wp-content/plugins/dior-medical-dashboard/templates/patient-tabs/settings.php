@@ -319,7 +319,7 @@
                                         <input id="patient-settings-phone" class="form-control" type="tel" name="phone" value="<?php echo esc_attr($settings_patient_profile['phone'] ?? ''); ?>" autocomplete="tel" required>
                                     </div>
                                 </div>
-                                <div class="dior-form-row-3">
+                                <div class="dior-form-row-2">
                                     <div class="dior-form-group">
                                         <label class="form-label" for="patient-settings-dob">Date of birth *</label>
                                         <input id="patient-settings-dob" class="form-control" type="date" name="dob" value="<?php echo esc_attr($settings_patient_profile['dob'] ?? ''); ?>" required>
@@ -334,10 +334,6 @@
                                             <option value="Prefer not to say" <?php selected($settings_patient_profile['gender'] ?? '', 'Prefer not to say'); ?>>Prefer not to say</option>
                                         </select>
                                     </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label" for="patient-settings-blood-group">Blood group</label>
-                                        <input id="patient-settings-blood-group" class="form-control" type="text" name="blood_group" value="<?php echo esc_attr($settings_patient_profile['blood_group'] ?? ''); ?>" placeholder="e.g. O+">
-                                    </div>
                                 </div>
                                 <div class="dior-form-group" style="margin-bottom: 16px;">
                                     <label class="form-label" for="patient-settings-address">Mailing address *</label>
@@ -347,6 +343,16 @@
                                     <div class="dior-form-group">
                                         <label class="form-label" for="patient-settings-city">City</label>
                                         <input id="patient-settings-city" class="form-control" type="text" name="city" value="<?php echo esc_attr($settings_patient_profile['city'] ?? ''); ?>" autocomplete="address-level2">
+                                    </div>
+                                    <div class="dior-form-group">
+                                        <label class="form-label" for="patient-settings-state">State</label>
+                                        <input id="patient-settings-state" class="form-control" type="text" name="state" value="<?php echo esc_attr($settings_patient_profile['state'] ?? ''); ?>" autocomplete="address-level1">
+                                    </div>
+                                </div>
+                                <div class="dior-form-row-2">
+                                    <div class="dior-form-group">
+                                        <label class="form-label" for="patient-settings-zip">ZIP / Postal code</label>
+                                        <input id="patient-settings-zip" class="form-control" type="text" name="zip" value="<?php echo esc_attr($settings_patient_profile['zip'] ?? ''); ?>" autocomplete="postal-code">
                                     </div>
                                     <div class="dior-form-group">
                                         <label class="form-label" for="patient-settings-country">Country</label>

@@ -7,7 +7,7 @@ const files = [
 
 files.forEach(file => {
     let content = fs.readFileSync(file, 'utf8');
-    
+
     // Instead of regex, just split and replace
     const oldConfig = `
                 $t.DataTable({
@@ -18,7 +18,7 @@ files.forEach(file => {
                         "search": "Filter records:"
                     }
                 });`;
-                
+
     const newConfig = `
                 $t.DataTable({
                     "order": [[0, "desc"]],
@@ -27,14 +27,14 @@ files.forEach(file => {
                     "searching": false,
                     "retrieve": true
                 });`;
-                
+
     if (content.includes(oldConfig.trim())) {
         content = content.replace(oldConfig.trim(), newConfig.trim());
     } else {
         // Fallback regex
         content = content.replace(/\$t\.DataTable\(\{[\s\S]*?"order": \[\[0, "desc"\]\][\s\S]*?\}\);/g, newConfig.trim());
     }
-    
+
     fs.writeFileSync(file, content, 'utf8');
     console.log('Fixed Datatable config in ' + file);
 });

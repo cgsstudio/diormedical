@@ -117,7 +117,7 @@ class Dior_Medical_REST_API
             'eligibility_labels' => $eligibility_labels,
             'form'               => array(
                 'title'       => 'Dior Medical Urgent Care - Patient Eligibility',
-                'workflow_id' => '01a110f3-ddb0-7783-88de-8b9b744cb56d'
+                'workflow_id' => '01a11515-b491-79dc-b59b-e4be2a345a49'
             )
         ));
     }
@@ -137,6 +137,18 @@ class Dior_Medical_REST_API
      */
     public function register_routes()
     {
+        // HIPAA intake endpoint
+        register_rest_route($this->namespace, '/' . $this->rest_base_hipaa_intake, [
+            [
+                'methods' => 'GET',
+                'callback' => [$this, 'get_hipaa_intake'],
+                'permission_callback' => [$this, 'check_hipaa_intake_permission'],
+                'args' => [
+                    'patient_id' => ['type' => 'integer'],
+                ],
+            ],
+        ]);
+
         // Patient endpoints
         register_rest_route($this->namespace, '/' . $this->rest_base_patients, [
             [

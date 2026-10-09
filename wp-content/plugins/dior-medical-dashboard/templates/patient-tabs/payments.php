@@ -26,6 +26,9 @@
                         aria-label="Search box" onkeyup="diorFilterBill()">
                 </div>
                 <div class="docs-actions-group">
+                    <button type="button" aria-label="Delete selected items" class="docs-icon-btn docs-btn-danger" title="Delete Selected" onclick="diorBulkDeleteStaticRows(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
                     <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success"
                         title="Export to CSV" onclick="diorDownloadBillCSV()">
                         <i class="fas fa-file-arrow-down"></i>

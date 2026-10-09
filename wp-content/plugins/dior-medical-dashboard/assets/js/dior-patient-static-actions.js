@@ -307,6 +307,7 @@
                 document.getElementById('dior-feedback-modal-title').textContent = 'Give Feedback';
                 if (window.Swal) {
                     Swal.fire({
+                        toast: true,
                         position: "top-end",
                         icon: "success",
                         title: isEdit ? "Feedback Updated" : "Feedback Sent",
@@ -453,4 +454,54 @@
         if (event.key !== 'Escape') return;
         document.querySelectorAll('.dior-static-modal-backdrop.is-open').forEach(function (modal) { modal.classList.remove('is-open'); });
     });
+
+    window.diorBulkDeleteStaticRows = function (btn) {
+        var wrapper = btn.closest('.docs-card, .va-table-wrapper, .card, .medidash-card, .dior-tab-panel');
+        if (!wrapper) return;
+        var table = wrapper.querySelector('table');
+        if (!table) return;
+        var checkedBoxes = table.querySelectorAll('tbody input[type="checkbox"]:checked');
+        if (checkedBoxes.length === 0) {
+            if (window.Swal) Swal.fire({ icon: 'info', title: 'No Rows Selected', text: 'Please select at least one row to delete.' });
+            else window.alert('Please select at least one row to delete.');
+            return;
+        }
+
+        var performDelete = function() {
+            checkedBoxes.forEach(function(cb) {
+                var row = cb.closest('tr');
+                if (row) row.remove();
+            });
+            var masterCb = table.querySelector('thead input[type="checkbox"]');
+            if (masterCb) masterCb.checked = false;
+            
+            // Try updating count if exists
+            var countEl = wrapper.querySelector('[id*="-page-count"]');
+            if (countEl) {
+                var total = table.querySelectorAll('tbody tr:not(.dior-empty-state)').length;
+                countEl.innerText = '0 selected / ' + total + ' total';
+            }
+        };
+
+        if (window.Swal) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You are about to delete ' + checkedBoxes.length + ' selected record(s).',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, delete them!'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    performDelete();
+                    Swal.fire({ position: 'top-end', icon: 'success', title: 'Records Deleted', showConfirmButton: false, timer: 1500 });
+                }
+            });
+        } else {
+            if (window.confirm('Delete ' + checkedBoxes.length + ' selected records?')) {
+                performDelete();
+            }
+        }
+    };
 }());

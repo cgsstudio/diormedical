@@ -114,6 +114,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // -----------------------------------------------------------------
     const regForm = document.getElementById('dior-register-form');
     if (regForm) {
+        const genderSelect = document.getElementById('dior-reg-gender');
+        const pregnancyWrap = document.getElementById('dior-reg-pregnancy-wrap');
+        
+        if (genderSelect && pregnancyWrap) {
+            genderSelect.addEventListener('change', function() {
+                if (this.value === 'Female') {
+                    pregnancyWrap.style.display = 'block';
+                } else {
+                    pregnancyWrap.style.display = 'none';
+                    // Reset to "no" when hidden
+                    const pregNo = document.querySelector('input[name="is_pregnant"][value="no"]');
+                    if (pregNo) pregNo.checked = true;
+                }
+            });
+        }
+
         regForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -137,10 +153,50 @@ document.addEventListener('DOMContentLoaded', function() {
             const confirmPwd = confirmPwdEl ? confirmPwdEl.value : '';
             const eligibility = regForm.querySelector('input[name="eligibility_check"]:checked');
 
-            if (!eligibility || eligibility.value !== 'yes') {
-                if (msgBox) {
+            const emergency = regForm.querySelector('input[name="medical_emergency"]:checked');
+            const pregnancy = regForm.querySelector('input[name="is_pregnant"]:checked');
+            const gender = document.getElementById('dior-reg-gender');
+
+            if (emergency && emergency.value === 'yes') {
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Medical Emergency',
+                        text: 'Registration nahi ho sakta. Aapko medical emergency hai, kripya turant nazdiki hospital (ya 911) se direct contact karein.'
+                    });
+                } else if (msgBox) {
                     msgBox.classList.add('error');
-                    msgBox.innerHTML = 'You must confirm that you are 18+ years of age to register.';
+                    msgBox.innerHTML = 'Registration nahi ho sakta. Aapko medical emergency hai, kripya turant nazdiki hospital (ya 911) se direct contact karein.';
+                    msgBox.style.display = 'block';
+                }
+                return;
+            }
+
+            if (gender && gender.value === 'Female' && pregnancy && pregnancy.value === 'yes') {
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Service Not Available',
+                        text: 'Aap currently pregnant hain. Humari telemedicine service pregnancy ke cases mein available nahi hai, isliye registration allow nahi hoga.'
+                    });
+                } else if (msgBox) {
+                    msgBox.classList.add('error');
+                    msgBox.innerHTML = 'Aap currently pregnant hain. Humari telemedicine service pregnancy ke cases mein available nahi hai, isliye registration allow nahi hoga.';
+                    msgBox.style.display = 'block';
+                }
+                return;
+            }
+
+            if (!eligibility || eligibility.value !== 'yes') {
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Registration Not Allowed',
+                        text: 'Aapki age 18 saal se kam hai, isliye aap registration nahi kar sakte.'
+                    });
+                } else if (msgBox) {
+                    msgBox.classList.add('error');
+                    msgBox.innerHTML = 'Aapki age 18 saal se kam hai, isliye aap registration nahi kar sakte.';
                     msgBox.style.display = 'block';
                 }
                 return;
@@ -177,9 +233,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 if (age < 18) {
-                    if (msgBox) {
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Registration Not Allowed',
+                            text: '18 se kam saal ke logo ke liye registration allowed nahi hai. (You must be 18+ to register.)'
+                        });
+                    } else if (msgBox) {
                         msgBox.classList.add('error');
-                        msgBox.innerHTML = 'You must be at least 18 years of age to register for Dior Medical adult telehealth care (Calculated age: ' + Math.max(0, age) + ' years).';
+                        msgBox.innerHTML = '18 se kam saal ke logo ke liye registration allowed nahi hai. (You must be 18+ to register.)';
                         msgBox.style.display = 'block';
                     }
                     regDobEl.focus();
@@ -226,15 +288,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 if (res.success) {
-                    if (msgBox) {
-                        msgBox.classList.add('success');
-                        msgBox.innerHTML = res.data.message || 'Account created successfully! Redirecting...';
-                        msgBox.style.display = 'block';
-                    }
-
-                    setTimeout(function() {
-                        window.location.href = res.data.redirect || dior_auth_vars.home_url;
-                    }, 900);
+                    // Registration must land on the Patient Dashboard first.
+                    // The dashboard then opens HIPAAtizer using the intake_required flag.
+                    // This keeps registration, dashboard loading and medical intake as separate steps.
+                    const dashboardUrl = res.data.redirect || dior_auth_vars.home_url;
+                    const separator = dashboardUrl.indexOf('?') === -1 ? '?' : '&';
+                    window.location.href = dashboardUrl + separator + 'intake_required=1';
                 } else {
                     if (msgBox) {
                         msgBox.classList.add('error');

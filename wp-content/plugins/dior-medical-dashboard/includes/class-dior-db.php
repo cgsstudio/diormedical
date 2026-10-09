@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 class Dior_DB
 {
-    const DB_VERSION = '4.0.2';
+    const DB_VERSION = '4.0.3';
     const DB_VERSION_OPTION = 'dior_medical_db_version';
 
     /**
@@ -298,8 +298,28 @@ class Dior_DB
             KEY idx_created_at (created_at)
         ) $charset_collate;";
         dbDelta($sql_payments);
+        // 10. Reviews / Feedback table
+        $table_reviews = $wpdb->prefix . 'dior_reviews';
+        $sql_reviews = "CREATE TABLE $table_reviews (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            review_uid VARCHAR(64) NOT NULL,
+            patient_id BIGINT UNSIGNED NOT NULL,
+            doctor_id BIGINT UNSIGNED NOT NULL,
+            subject VARCHAR(255) NOT NULL,
+            rating INT NOT NULL DEFAULT 5,
+            comment TEXT NULL,
+            status VARCHAR(50) NOT NULL DEFAULT 'Pending',
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY uk_review_uid (review_uid),
+            KEY idx_patient_id (patient_id),
+            KEY idx_doctor_id (doctor_id),
+            KEY idx_status (status)
+        ) $charset_collate;";
+        dbDelta($sql_reviews);
 
-        // 10. Normalized patient profile table. wp_users remains the authentication source.
+        // 11. Normalized patient profile table. wp_users remains the authentication source.
         $table_patients = $wpdb->prefix . 'dior_patients';
         $sql_patients = "CREATE TABLE $table_patients (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
