@@ -1,0 +1,3 @@
+$kind: collection
+description: Endpoints for managing appointments, including searching, scheduling, and reminders.
+order: 1000

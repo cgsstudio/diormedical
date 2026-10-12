@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 5.0.2
+ * Version: 17.0.0
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '5.0.2');
+define('DIOR_PORTAL_VERSION', '17.0.0');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -54,6 +54,7 @@ if (!class_exists('Dior_Medical_REST_API')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-rest-api.php');
 }
 require_once(DIOR_PORTAL_PATH . 'rest_api/hipaatizer_rest_api.php');
+require_once(DIOR_PORTAL_PATH . 'rest_api/hipaatizer_api_sync.php');
 if (!class_exists('Dior_Medical_Secure_Files')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-secure-files.php');
 }
@@ -2573,9 +2574,11 @@ wp_enqueue_style(
         wp_set_current_user($user_id);
         wp_set_auth_cookie($user_id, true);
 
+        // New patients must complete the HIPAAtizer intake before opening the dashboard.
+        // The Start Your Visit page is created and managed manually by the site owner.
         wp_send_json_success([
-            'message' => 'Account created successfully! Opening your Patient Dashboard...',
-            'redirect' => home_url('/patient-dashboard/')
+            'message' => 'Account created successfully! Redirecting you to Start Your Visit...',
+            'redirect' => home_url('/start-your-visit/')
         ]);
     }
 
@@ -4329,11 +4332,6 @@ wp_enqueue_style(
         if (empty($data))
             return;
 
-        // --- DEBUG LOGGING ---
-        $log_file = DIOR_PORTAL_PATH . 'webhook_debug.log';
-        file_put_contents($log_file, "[" . current_time('mysql') . "] Webhook Received:\n" . print_r($data, true) . "\n", FILE_APPEND);
-        // ---------------------
-
         // Unpack HIPAAtizer payload structure
         $raw_data = $data;
         if (isset($data['data'])) {
@@ -4343,8 +4341,6 @@ wp_enqueue_style(
             $data = $data['fields'];
         }
         $data['raw_data'] = $raw_data;
-
-        file_put_contents($log_file, "[" . current_time('mysql') . "] Unpacked Data:\n" . print_r($data, true) . "\n", FILE_APPEND);
 
         // Try to find user by user_id first
         $user_id = 0;
@@ -4366,13 +4362,10 @@ wp_enqueue_style(
             }
         }
 
-        file_put_contents($log_file, "[" . current_time('mysql') . "] Extracted Email: " . $email . " | User ID: " . $user_id . "\n", FILE_APPEND);
-
         if (!$user_id && $email) {
             $user = get_user_by('email', $email);
             if ($user) {
                 $user_id = $user->ID;
-                file_put_contents($log_file, "[" . current_time('mysql') . "] Found WP User by Email. User ID: " . $user_id . "\n", FILE_APPEND);
             } else {
                 // Fallback: match the normalized Dior patient table.
                 global $wpdb;
@@ -4385,9 +4378,7 @@ wp_enqueue_style(
                 );
                 if ($matched_patient && !empty($matched_patient->user_id)) {
                     $user_id = (int) $matched_patient->user_id;
-                    file_put_contents($log_file, "[" . current_time('mysql') . "] Found Dior patient by Email. User ID: " . $user_id . "\n", FILE_APPEND);
                 } else {
-                    file_put_contents($log_file, "[" . current_time('mysql') . "] User/patient not found for email: " . $email . "\n", FILE_APPEND);
                 }
             }
         }
@@ -4467,7 +4458,8 @@ wp_enqueue_style(
             'address' => sanitize_text_field($dior_value($data, ['address', 'Address', 'street_address', 'Street Address'])),
             'city' => sanitize_text_field($dior_value($data, ['city', 'City'])),
             'state' => sanitize_text_field($dior_value($data, ['state', 'State', 'service_state', 'State (Labels)', 'State (Values)'])),
-            'zip' => sanitize_text_field($dior_value($data, ['zip', 'Zip', 'postal_code', 'ZIP Code', 'ZIP / PIN Code'])),
+            'zip' => sanitize_text_field($dior_value($data, ['zip', 'Zip', 'zip_code', 'Zip Code', 'ZIP Code', 'ZIP / PIN Code', 'ZIP / Postal code', 'ZIP / Postal Code', 'postal_code', 'postalCode', 'postal_code_value'])),
+            'country' => sanitize_text_field($dior_value($data, ['country', 'Country', 'country_name', 'Country Name', 'country_of_residence', 'Country (Labels)', 'Country (Values)'])),
             'emergency_name' => sanitize_text_field($dior_value($data, ['emergency_name', 'emergency_contact_name', 'Emergency Contact Name'])),
             'emergency_relation' => sanitize_text_field($data['emergency_relation'] ?? $data['emergency_contact_relationship'] ?? $data['Emergency Contact Relationship'] ?? ''),
             'emergency_phone' => sanitize_text_field($dior_value($data, ['emergency_phone', 'emergency_contact_phone', 'Emergency Contact Phone'])),
@@ -4566,6 +4558,11 @@ wp_enqueue_style(
             if (!empty($intake['zip'])) {
                 update_user_meta($user_id, 'zip', $intake['zip']);
                 update_user_meta($user_id, 'zip_code', $intake['zip']);
+            }
+
+            if (!empty($intake['country'])) {
+                update_user_meta($user_id, 'country', $intake['country']);
+                update_user_meta($user_id, 'billing_country', $intake['country']);
             }
             if (!empty($intake['emergency_name'])) {
                 update_user_meta($user_id, 'emergency_name', $intake['emergency_name']);
@@ -4971,3 +4968,53 @@ function dior_save_docbooker_user_profile_fields($user_id)
 }
 
 
+
+
+/**
+ * Dior HIPAAtizer Appointment Popup — v17 integration.
+ * Uses the form shortcode from the HIPAAtizer WordPress integration.
+ */
+if ( ! class_exists( 'Dior_HIPAAtizer_Appointment_Popup_V17' ) ) {
+    final class Dior_HIPAAtizer_Appointment_Popup_V17 {
+        private const FORM_ID = '01a12050-38e5-74ba-967b-60dacc2bd7f7';
+
+        public static function init() {
+            add_action( 'wp_enqueue_scripts', [ __CLASS__, 'enqueue_assets' ], 30 );
+            add_action( 'wp_footer', [ __CLASS__, 'render_form_source' ], 100 );
+        }
+
+        public static function enqueue_assets() {
+            if ( is_admin() ) {
+                return;
+            }
+
+            wp_enqueue_style(
+                'dior-hipaatizer-popup-v17',
+                DIOR_PORTAL_URL . 'assets/css/dior-hipaatizer-popup.css',
+                [],
+                DIOR_PORTAL_VERSION
+            );
+
+            // SweetAlert2 is already enqueued by the dashboard; declare dependency.
+            wp_enqueue_script(
+                'dior-hipaatizer-popup-v17',
+                DIOR_PORTAL_URL . 'assets/js/dior-hipaatizer-popup.js',
+                [ 'sweetalert2' ],
+                DIOR_PORTAL_VERSION,
+                true
+            );
+        }
+
+        public static function render_form_source() {
+            if ( is_admin() || ! shortcode_exists( 'hipaatizer' ) ) {
+                return;
+            }
+
+            echo '<div id="dior-hipaatizer-form-source-v17" hidden>';
+            echo do_shortcode( '[hipaatizer id="' . esc_attr( self::FORM_ID ) . '"]' );
+            echo '</div>';
+        }
+    }
+
+    Dior_HIPAAtizer_Appointment_Popup_V17::init();
+}

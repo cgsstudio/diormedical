@@ -1,0 +1,47 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/v1/api_key/submissions/search?workflowId=<uuid>"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  queryParams:
+    - key: workflowId
+      value: <uuid>
+      description: (Required) Id of workflow
+  body:
+    type: json
+    content: |-
+      {
+        "searchBy": "<string>",
+        "searchFor": "<string>",
+        "searchById": "<string>",
+        "additionalColumns": [
+          "<string>",
+          "<string>"
+        ],
+        "dates": {
+          "from": "<string>",
+          "to": "<string>"
+        },
+        "includeNotCompleted": "<boolean>",
+        "sorting": {
+          "direction": "Desc",
+          "column": "CreatedAt",
+          "additionalColumn": "<string>"
+        },
+        "pagination": {
+          "page": "<integer>",
+          "limit": "<integer>"
+        }
+      }
+response:
+  statusCode: 500
+  statusText: Internal Server Error
+  body:
+    type: text
+    content: ""
+order: 5000

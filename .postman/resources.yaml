@@ -1,0 +1,13 @@
+# Use this workspace to collaborate
+workspace:
+  id: e1affefc-0680-4449-82f1-ff9970aedea3
+
+cloudResources:
+  collections:
+    ../postman/collections/HIPAAtizer API Documentation: b914b80f-8ded-457c-be45-a3f081d2eb07
+
+# All resources in the `postman/` folder are automatically registered in Local View.
+# Point to additional files outside the `postman/` folder to register them individually. Example:
+#localResources:
+#  collections:
+#    - ../tests/E2E Test Collection/

@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/api_key/submissions/:submissionId/confirm_upload"
+method: POST
+headers:
+  Accept: application/json
+pathVariables:
+  - key: submissionId
+    value: <uuid>
+    description: (Required) Id of submission
+auth:
+  type: apikey
+  credentials:
+    key: X-Api-Key
+    value: "{{apiKey}}"
+    in: header
+examples: ./.resources/Mark Submission as Received.resources/examples
+order: 1000

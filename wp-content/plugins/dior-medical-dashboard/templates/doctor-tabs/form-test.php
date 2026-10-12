@@ -74,30 +74,47 @@ $patients = get_users([
 </section>
 
 <script>
-function fetchHipaaIntake(patientId) {
-    var responseBox = document.getElementById('api_response_' + patientId);
-    responseBox.style.display = 'block';
-    responseBox.innerText = 'Fetching from /wp-json/dior/v2/hipaa-intake/' + patientId + ' ...';
-    
-    // Add nonce if available, otherwise just standard fetch
-    var headers = {
-        'Accept': 'application/json'
-    };
-    if (typeof wpApiSettings !== 'undefined' && wpApiSettings.nonce) {
-        headers['X-WP-Nonce'] = wpApiSettings.nonce;
-    }
+/**
+ * Fetch saved intake through the authenticated WordPress REST API.
+ * Route format: /hipaa-intake?patient_id=ID.
+ */
+const diorHipaaIntakeApiUrl = <?php echo wp_json_encode(rest_url('dior/v2/hipaa-intake')); ?>;
+const diorHipaaRestNonce = <?php echo wp_json_encode(wp_create_nonce('wp_rest')); ?>;
 
-    fetch('/wp-json/dior/v2/hipaa-intake/' + patientId, {
+function fetchHipaaIntake(patientId) {
+    const responseBox = document.getElementById('api_response_' + patientId);
+    if (!responseBox) return;
+
+    responseBox.style.display = 'block';
+    responseBox.style.color = '#a5b4fc';
+    responseBox.innerText = 'Fetching saved intake data...';
+
+    const url = new URL(diorHipaaIntakeApiUrl);
+    url.searchParams.set('patient_id', String(patientId));
+
+    fetch(url.toString(), {
         method: 'GET',
-        headers: headers
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'X-WP-Nonce': diorHipaaRestNonce
+        }
     })
-    .then(response => response.json())
+    .then(async response => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            const message = data.message || data.code || ('HTTP ' + response.status);
+            throw new Error(message + ' (HTTP ' + response.status + ')');
+        }
+        return data;
+    })
     .then(data => {
+        responseBox.style.color = data.success ? '#a5b4fc' : '#fca5a5';
         responseBox.innerText = JSON.stringify(data, null, 2);
     })
     .catch(error => {
         responseBox.style.color = '#ef4444';
-        responseBox.innerText = 'Error: ' + error.message;
+        responseBox.innerText = 'API request failed: ' + error.message;
     });
 }
 </script>

@@ -1,0 +1,109 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/v1/api_key/submissions/search?workflowId=<uuid>"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  queryParams:
+    - key: workflowId
+      value: <uuid>
+      description: (Required) Id of workflow
+  body:
+    type: json
+    content: |-
+      {
+        "searchBy": "<string>",
+        "searchFor": "<string>",
+        "searchById": "<string>",
+        "additionalColumns": [
+          "<string>",
+          "<string>"
+        ],
+        "dates": {
+          "from": "<string>",
+          "to": "<string>"
+        },
+        "includeNotCompleted": "<boolean>",
+        "sorting": {
+          "direction": "Desc",
+          "column": "CreatedAt",
+          "additionalColumn": "<string>"
+        },
+        "pagination": {
+          "page": "<integer>",
+          "limit": "<integer>"
+        }
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "searchBy": "<string>",
+        "searchFor": "<string>",
+        "searchById": "<string>",
+        "additionalColumns": [
+          "<string>",
+          "<string>"
+        ],
+        "dates": {
+          "from": "<string>",
+          "to": "<string>"
+        },
+        "includeNotCompleted": "<boolean>",
+        "sorting": {
+          "direction": "Asc",
+          "column": "CreatedAt",
+          "additionalColumn": "<string>"
+        },
+        "pagination": {
+          "page": "<integer>",
+          "limit": "<integer>",
+          "total": "<integer>"
+        },
+        "title": "<string>",
+        "workflowType": "SimpleSign",
+        "data": [
+          {
+            "id": "<uuid>",
+            "increment": "<integer>",
+            "ipAddress": "<string>",
+            "email": "<string>",
+            "comments": "<integer>",
+            "status": "PrivateUrlSent",
+            "additionalStatus": "Completed",
+            "additionalColumns": {
+              "et17": "<string>",
+              "anim_59": "<string>",
+              "Duis_c90": "<string>",
+              "sint8": "<string>"
+            },
+            "createdAt": "<string>"
+          },
+          {
+            "id": "<uuid>",
+            "increment": "<integer>",
+            "ipAddress": "<string>",
+            "email": "<string>",
+            "comments": "<integer>",
+            "status": "PrivateUrlSent",
+            "additionalStatus": "Completed",
+            "additionalColumns": {
+              "elit_f6": "<string>",
+              "qui3": "<string>"
+            },
+            "createdAt": "<string>"
+          }
+        ]
+      }
+order: 1000

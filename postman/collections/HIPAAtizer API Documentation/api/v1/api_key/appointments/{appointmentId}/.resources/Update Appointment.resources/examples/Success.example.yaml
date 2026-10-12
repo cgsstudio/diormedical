@@ -1,0 +1,134 @@
+$kind: http-example
+request:
+  url: https://app.hipaatizer.com/api/v1/api_key/appointments/:appointmentId
+  method: PUT
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  pathVariables:
+    appointmentId: ""
+  body:
+    type: json
+    content: |-
+      {
+        "date": "<string>",
+        "locationId": "<uuid>",
+        "serviceId": "<uuid>",
+        "workerId": "<uuid>",
+        "firstName": "<string>",
+        "lastName": "<string>",
+        "email": "<string>",
+        "phone": "<string>"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "<uuid>",
+        "location": {
+          "id": "<uuid>",
+          "name": "<string>",
+          "timeZoneId": "<string>",
+          "address": "<string>",
+          "phone": "<string>",
+          "defaultScheduleId": "<uuid>"
+        },
+        "service": {
+          "title": "<string>",
+          "id": "<uuid>"
+        },
+        "settings": {
+          "requiredContactInformation": {
+            "firstName": {
+              "isDisplay": "<boolean>",
+              "initialValueNamePath": "<string>"
+            },
+            "lastName": {
+              "isDisplay": "<boolean>",
+              "initialValueNamePath": "<string>"
+            },
+            "email": {
+              "isDisplay": "<boolean>",
+              "initialValueNamePath": "<string>"
+            },
+            "phone": {
+              "isDisplay": "<boolean>",
+              "initialValueNamePath": "<string>"
+            }
+          },
+          "steps": [
+            {
+              "name": "<string>",
+              "type": "SelectWorker"
+            },
+            {
+              "name": "<string>",
+              "type": "SelectWorker"
+            }
+          ],
+          "workers": [
+            {
+              "scheduleId": "<uuid>",
+              "serviceIds": [
+                "<uuid>",
+                "<uuid>"
+              ],
+              "workerId": "<uuid>"
+            },
+            {
+              "scheduleId": "<uuid>",
+              "serviceIds": [
+                "<uuid>",
+                "<uuid>"
+              ],
+              "workerId": "<uuid>"
+            }
+          ],
+          "profileId": "<uuid>",
+          "locationIds": [
+            "<uuid>",
+            "<uuid>"
+          ],
+          "remindMinutes": "<integer>",
+          "isHideMap": "<boolean>",
+          "isSubmitByFormSubmit": "<boolean>"
+        },
+        "timeZoneId": "<string>",
+        "worker": {
+          "name": "<string>",
+          "id": "<uuid>"
+        },
+        "accountId": "<uuid>",
+        "firstName": "<string>",
+        "lastName": "<string>",
+        "email": "<string>",
+        "phone": "<string>",
+        "date": "<string>",
+        "createdAt": "<string>",
+        "haveRelatedSubmission": "<boolean>",
+        "metadata": {
+          "elitf_": {
+            "nullable": true
+          },
+          "Duis8c8": {
+            "nullable": true
+          },
+          "in_db3": {
+            "nullable": true
+          },
+          "mollit89": {
+            "nullable": true
+          }
+        }
+      }
+order: 1000

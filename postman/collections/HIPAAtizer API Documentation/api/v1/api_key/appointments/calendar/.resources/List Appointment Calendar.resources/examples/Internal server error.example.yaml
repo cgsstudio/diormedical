@@ -1,0 +1,28 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/v1/api_key/appointments/calendar"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  body:
+    type: json
+    content: |-
+      {
+        "month": "February",
+        "year": "<integer>",
+        "locationIds": [
+          "<uuid>",
+          "<uuid>"
+        ]
+      }
+response:
+  statusCode: 500
+  statusText: Internal Server Error
+  body:
+    type: text
+    content: ""
+order: 5000

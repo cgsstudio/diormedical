@@ -30,8 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $inputJSON = file_get_contents('php://input');
 
 // --- DEBUG LOGGING ---
-$log_file = dirname(__FILE__) . '/webhook_debug.log';
-file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Webhook Hit. Payload:\n" . $inputJSON . "\n\n", FILE_APPEND);
 // ---------------------
 
 $input = json_decode($inputJSON, true);

@@ -1,0 +1,46 @@
+$kind: collection
+description: |-
+  The **HIPAAtizer API** provides tools for integrating HIPAA-compliant workflows into your applications. With this API, you can:
+
+  - **Retrieve Form Submission Data**: Access and manage submitted form information securely.
+      
+  - **Manage Appointments**: Set up, search, and organize appointments programmatically.
+      
+  - **Start Advanced Workflows**: Automate processes to enhance your application capabilities.
+      
+
+  ### **Prerequisites**
+
+  To use the API, you need to:
+
+  1. **Whitelist Your IP Address**  
+      Add your server's IP address in the **Integrations** menu of your HIPAAtizer account.
+      
+  2. **Generate an API Key**  
+      Obtain a **personal API key** from the **Integrations** menu.
+      
+  3. **Include the API Key in Requests**  
+      Add your API key in the `X-Api-Key` header for every request.
+      
+
+  ### **Important Notes**
+
+  - Use **HTTPS** for all API requests to ensure data security.
+      
+  - Ensure your IP address is whitelisted before making requests.
+      
+  - Keep your API key confidential and do not share it publicly.
+variables:
+  - key: baseUrl
+    value: https://app.hipaatizer.com
+    disabled: false
+  - key: X-Api-Key
+    secret: true
+    disabled: false
+auth:
+  - id: e2768c57-868e-46de-b63b-bcb7644b92ec
+    type: apikey
+    name: apikey auth
+    credentials:
+      value: "{{X-Api-Key}}"
+      key: X-Api-Ley

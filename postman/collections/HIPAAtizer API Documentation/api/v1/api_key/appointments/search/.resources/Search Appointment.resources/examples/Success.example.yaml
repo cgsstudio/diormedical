@@ -1,0 +1,254 @@
+$kind: http-example
+request:
+  url: https://app.hipaatizer.com/api/v1/api_key/appointments/search
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  body:
+    type: json
+    content: |-
+      {
+        "pagination": {
+          "page": "<integer>",
+          "limit": "<integer>"
+        },
+        "search": "<string>",
+        "locationIds": [
+          "<uuid>",
+          "<uuid>"
+        ],
+        "workerIds": [
+          "<uuid>",
+          "<uuid>"
+        ],
+        "serviceIds": [
+          "<uuid>",
+          "<uuid>"
+        ],
+        "dateRange": {
+          "from": "<string>",
+          "to": "<string>"
+        }
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "pagination": {
+          "page": "<integer>",
+          "limit": "<integer>",
+          "total": "<integer>"
+        },
+        "search": "<string>",
+        "locationIds": [
+          "<uuid>",
+          "<uuid>"
+        ],
+        "workerIds": [
+          "<uuid>",
+          "<uuid>"
+        ],
+        "serviceIds": [
+          "<uuid>",
+          "<uuid>"
+        ],
+        "dateRange": {
+          "from": "<string>",
+          "to": "<string>"
+        },
+        "data": [
+          {
+            "id": "<uuid>",
+            "location": {
+              "id": "<uuid>",
+              "name": "<string>",
+              "timeZoneId": "<string>",
+              "address": "<string>",
+              "phone": "<string>",
+              "defaultScheduleId": "<uuid>"
+            },
+            "service": {
+              "title": "<string>",
+              "id": "<uuid>"
+            },
+            "settings": {
+              "requiredContactInformation": {
+                "firstName": {
+                  "isDisplay": "<boolean>",
+                  "initialValueNamePath": "<string>"
+                },
+                "lastName": {
+                  "isDisplay": "<boolean>",
+                  "initialValueNamePath": "<string>"
+                },
+                "email": {
+                  "isDisplay": "<boolean>",
+                  "initialValueNamePath": "<string>"
+                },
+                "phone": {
+                  "isDisplay": "<boolean>",
+                  "initialValueNamePath": "<string>"
+                }
+              },
+              "steps": [
+                {
+                  "name": "<string>",
+                  "type": "SelectLocation"
+                },
+                {
+                  "name": "<string>",
+                  "type": "SelectTime"
+                }
+              ],
+              "workers": [
+                {
+                  "scheduleId": "<uuid>",
+                  "serviceIds": [
+                    "<uuid>",
+                    "<uuid>"
+                  ],
+                  "workerId": "<uuid>"
+                },
+                {
+                  "scheduleId": "<uuid>",
+                  "serviceIds": [
+                    "<uuid>",
+                    "<uuid>"
+                  ],
+                  "workerId": "<uuid>"
+                }
+              ],
+              "profileId": "<uuid>",
+              "locationIds": [
+                "<uuid>",
+                "<uuid>"
+              ],
+              "remindMinutes": "<integer>",
+              "isHideMap": "<boolean>",
+              "isSubmitByFormSubmit": "<boolean>"
+            },
+            "timeZoneId": "<string>",
+            "worker": {
+              "name": "<string>",
+              "id": "<uuid>"
+            },
+            "accountId": "<uuid>",
+            "firstName": "<string>",
+            "lastName": "<string>",
+            "email": "<string>",
+            "phone": "<string>",
+            "date": "<string>",
+            "createdAt": "<string>",
+            "haveRelatedSubmission": "<boolean>",
+            "metadata": {
+              "mollit8": {
+                "nullable": true
+              },
+              "et_50": {
+                "nullable": true
+              }
+            }
+          },
+          {
+            "id": "<uuid>",
+            "location": {
+              "id": "<uuid>",
+              "name": "<string>",
+              "timeZoneId": "<string>",
+              "address": "<string>",
+              "phone": "<string>",
+              "defaultScheduleId": "<uuid>"
+            },
+            "service": {
+              "title": "<string>",
+              "id": "<uuid>"
+            },
+            "settings": {
+              "requiredContactInformation": {
+                "firstName": {
+                  "isDisplay": "<boolean>",
+                  "initialValueNamePath": "<string>"
+                },
+                "lastName": {
+                  "isDisplay": "<boolean>",
+                  "initialValueNamePath": "<string>"
+                },
+                "email": {
+                  "isDisplay": "<boolean>",
+                  "initialValueNamePath": "<string>"
+                },
+                "phone": {
+                  "isDisplay": "<boolean>",
+                  "initialValueNamePath": "<string>"
+                }
+              },
+              "steps": [
+                {
+                  "name": "<string>",
+                  "type": "SelectService"
+                },
+                {
+                  "name": "<string>",
+                  "type": "SelectService"
+                }
+              ],
+              "workers": [
+                {
+                  "scheduleId": "<uuid>",
+                  "serviceIds": [
+                    "<uuid>",
+                    "<uuid>"
+                  ],
+                  "workerId": "<uuid>"
+                },
+                {
+                  "scheduleId": "<uuid>",
+                  "serviceIds": [
+                    "<uuid>",
+                    "<uuid>"
+                  ],
+                  "workerId": "<uuid>"
+                }
+              ],
+              "profileId": "<uuid>",
+              "locationIds": [
+                "<uuid>",
+                "<uuid>"
+              ],
+              "remindMinutes": "<integer>",
+              "isHideMap": "<boolean>",
+              "isSubmitByFormSubmit": "<boolean>"
+            },
+            "timeZoneId": "<string>",
+            "worker": {
+              "name": "<string>",
+              "id": "<uuid>"
+            },
+            "accountId": "<uuid>",
+            "firstName": "<string>",
+            "lastName": "<string>",
+            "email": "<string>",
+            "phone": "<string>",
+            "date": "<string>",
+            "createdAt": "<string>",
+            "haveRelatedSubmission": "<boolean>",
+            "metadata": {
+              "in_a": {
+                "nullable": true
+              }
+            }
+          }
+        ]
+      }
+order: 1000

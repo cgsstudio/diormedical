@@ -113,6 +113,8 @@ class Dior_Medical_REST_API
             'success'            => true,
             'patient_id'         => $patient_id,
             'submitted'          => true,
+            // Include stored intake for authorized dashboard/API callers.
+            'intake'             => $hipaa_data,
             'eligibility'        => $eligibility,
             'eligibility_labels' => $eligibility_labels,
             'form'               => array(

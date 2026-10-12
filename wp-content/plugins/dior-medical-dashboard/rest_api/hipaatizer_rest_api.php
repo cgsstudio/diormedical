@@ -46,11 +46,6 @@ if (!function_exists('dior_fallback_save_hipaa_intake')) {
         if (empty($data))
             return;
 
-        // --- DEBUG LOGGING ---
-        $log_file = DIOR_PORTAL_PATH . 'webhook_debug.log';
-        file_put_contents($log_file, "[" . current_time('mysql') . "] Webhook Received:\n" . print_r($data, true) . "\n", FILE_APPEND);
-        // ---------------------
-
         // Unpack HIPAAtizer payload structure
         $raw_data = $data;
         if (isset($data['data'])) {
@@ -60,8 +55,6 @@ if (!function_exists('dior_fallback_save_hipaa_intake')) {
             $data = $data['fields'];
         }
         $data['raw_data'] = $raw_data;
-
-        file_put_contents($log_file, "[" . current_time('mysql') . "] Unpacked Data:\n" . print_r($data, true) . "\n", FILE_APPEND);
 
         // Try to find user by user_id first
         $user_id = 0;
@@ -83,13 +76,10 @@ if (!function_exists('dior_fallback_save_hipaa_intake')) {
             }
         }
 
-        file_put_contents($log_file, "[" . current_time('mysql') . "] Extracted Email: " . $email . " | User ID: " . $user_id . "\n", FILE_APPEND);
-
         if (!$user_id && $email) {
             $user = get_user_by('email', $email);
             if ($user) {
                 $user_id = $user->ID;
-                file_put_contents($log_file, "[" . current_time('mysql') . "] Found WP User by Email. User ID: " . $user_id . "\n", FILE_APPEND);
             } else {
                 // Fallback: match the normalized Dior patient table.
                 global $wpdb;
@@ -102,9 +92,7 @@ if (!function_exists('dior_fallback_save_hipaa_intake')) {
                 );
                 if ($matched_patient && !empty($matched_patient->user_id)) {
                     $user_id = (int) $matched_patient->user_id;
-                    file_put_contents($log_file, "[" . current_time('mysql') . "] Found Dior patient by Email. User ID: " . $user_id . "\n", FILE_APPEND);
                 } else {
-                    file_put_contents($log_file, "[" . current_time('mysql') . "] User/patient not found for email: " . $email . "\n", FILE_APPEND);
                 }
             }
         }
@@ -184,7 +172,8 @@ if (!function_exists('dior_fallback_save_hipaa_intake')) {
             'address' => sanitize_text_field($dior_value($data, ['address', 'Address', 'street_address', 'Street Address'])),
             'city' => sanitize_text_field($dior_value($data, ['city', 'City'])),
             'state' => sanitize_text_field($dior_value($data, ['state', 'State', 'service_state', 'State (Labels)', 'State (Values)'])),
-            'zip' => sanitize_text_field($dior_value($data, ['zip', 'Zip', 'postal_code', 'ZIP Code', 'ZIP / PIN Code'])),
+            'zip' => sanitize_text_field($dior_value($data, ['zip', 'Zip', 'zip_code', 'Zip Code', 'ZIP Code', 'ZIP / PIN Code', 'ZIP / Postal code', 'ZIP / Postal Code', 'postal_code', 'postalCode', 'postal_code_value'])),
+            'country' => sanitize_text_field($dior_value($data, ['country', 'Country', 'country_name', 'Country Name', 'country_of_residence', 'Country (Labels)', 'Country (Values)'])),
             'emergency_name' => sanitize_text_field($dior_value($data, ['emergency_name', 'emergency_contact_name', 'Emergency Contact Name'])),
             'emergency_relation' => sanitize_text_field($data['emergency_relation'] ?? $data['emergency_contact_relationship'] ?? $data['Emergency Contact Relationship'] ?? ''),
             'emergency_phone' => sanitize_text_field($dior_value($data, ['emergency_phone', 'emergency_contact_phone', 'Emergency Contact Phone'])),
@@ -283,6 +272,11 @@ if (!function_exists('dior_fallback_save_hipaa_intake')) {
             if (!empty($intake['zip'])) {
                 update_user_meta($user_id, 'zip', $intake['zip']);
                 update_user_meta($user_id, 'zip_code', $intake['zip']);
+            }
+
+            if (!empty($intake['country'])) {
+                update_user_meta($user_id, 'country', $intake['country']);
+                update_user_meta($user_id, 'billing_country', $intake['country']);
             }
             if (!empty($intake['emergency_name'])) {
                 update_user_meta($user_id, 'emergency_name', $intake['emergency_name']);

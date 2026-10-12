@@ -1,0 +1,32 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/v1/api_key/appointments/:appointmentId"
+  method: PUT
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  pathVariables:
+    appointmentId: ""
+  body:
+    type: json
+    content: |-
+      {
+        "date": "<string>",
+        "locationId": "<uuid>",
+        "serviceId": "<uuid>",
+        "workerId": "<uuid>",
+        "firstName": "<string>",
+        "lastName": "<string>",
+        "email": "<string>",
+        "phone": "<string>"
+      }
+response:
+  statusCode: 403
+  statusText: Forbidden
+  body:
+    type: text
+    content: ""
+order: 4000

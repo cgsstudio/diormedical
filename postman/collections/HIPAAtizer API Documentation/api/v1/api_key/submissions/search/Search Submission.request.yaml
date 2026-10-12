@@ -1,0 +1,44 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/api_key/submissions/search?workflowId=<uuid>"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+queryParams:
+  - key: workflowId
+    value: <uuid>
+    description: (Required) Id of workflow
+body:
+  type: json
+  content: |-
+    {
+      "searchBy": "<string>",
+      "searchFor": "<string>",
+      "searchById": "<string>",
+      "additionalColumns": [
+        "<string>",
+        "<string>"
+      ],
+      "dates": {
+        "from": "<string>",
+        "to": "<string>"
+      },
+      "includeNotCompleted": "<boolean>",
+      "sorting": {
+        "direction": "Desc",
+        "column": "CreatedAt",
+        "additionalColumn": "<string>"
+      },
+      "pagination": {
+        "page": "<integer>",
+        "limit": "<integer>"
+      }
+    }
+auth:
+  type: apikey
+  credentials:
+    key: X-Api-Key
+    value: "{{apiKey}}"
+    in: header
+examples: ./.resources/Search Submission.resources/examples
+order: 1000

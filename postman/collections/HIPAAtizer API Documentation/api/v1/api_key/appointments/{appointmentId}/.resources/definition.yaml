@@ -1,0 +1,3 @@
+$kind: collection
+description: Includes methods related to a specific appointment, identified by its unique ID.
+order: 4000

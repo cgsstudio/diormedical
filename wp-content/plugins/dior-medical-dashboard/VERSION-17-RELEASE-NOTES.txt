@@ -1,0 +1,27 @@
+Dior Medical Dashboard v17.0.0
+================================
+
+Included from v16:
+- Existing doctor and patient dashboard features and files preserved.
+
+Added:
+- HIPAAtizer form popup integration using form ID 01a12050-38e5-74ba-967b-60dacc2bd7f7.
+- Popup enlarged to up to 1120px wide and responsive for mobile.
+- Popup close button removed.
+- Outside-click and Escape-key closing disabled.
+- HIPAAtizer form remains responsible for its configured post-submit redirect.
+
+Existing code in this v16 package already contains:
+- Doctor avatar upload AJAX actions.
+- Patient Settings profile-photo media-library button.
+- A notification service with email sending helper.
+
+Deployment:
+1. Backup current site and database.
+2. Install this ZIP via Plugins > Add New Plugin > Upload Plugin.
+3. If WordPress reports an existing plugin folder, deactivate the existing Dior Medical dashboard plugin and replace its files, or remove the old version after a backup before installing.
+4. Clear all page/object/CDN caches.
+5. Verify Book An Appointment button, HIPAAtizer form submit/redirect, doctor and patient login, profile photo upload, and email delivery in staging first.
+
+Important:
+This update merges the popup into the dashboard package. It does not claim that all email providers guarantee delivery. wp_mail success means the WordPress mail handoff succeeded, not that the message reached the recipient inbox. Configure SMTP/provider logging and test actual delivery.

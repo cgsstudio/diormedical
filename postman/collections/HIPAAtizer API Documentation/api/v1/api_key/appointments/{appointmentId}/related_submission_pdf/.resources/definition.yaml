@@ -1,0 +1,3 @@
+$kind: collection
+description: Methods for downloading PDFs related to appointment submissions.
+order: 2000
