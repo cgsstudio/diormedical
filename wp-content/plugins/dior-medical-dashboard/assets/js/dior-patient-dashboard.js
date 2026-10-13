@@ -80,25 +80,35 @@ let diorBookingState = {
     }
 
     // Mark patient notifications read using the existing secured AJAX endpoint.
-    document.querySelectorAll('.dior-mark-notification-read').forEach(function (button) {
-        button.addEventListener('click', function () {
-            const notificationId = this.getAttribute('data-notif-id');
-            if (!notificationId) return;
-            const body = new URLSearchParams({
-                action: 'dior_patient_mark_notification_read',
-                nonce: diorPortalNonce,
-                notif_id: notificationId
-            });
-            fetch(diorAjaxUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: body.toString() })
-                .then(function (response) { return response.json(); })
-                .then(function (data) {
-                    if (data && data.success) {
-                        const row = button.closest('tr');
-                        if (row) row.remove();
-                    }
-                })
-                .catch(function () {});
+    document.addEventListener('click', function (e) {
+        const button = e.target.closest('.dior-mark-notification-read');
+        if (!button) return;
+        const notificationId = button.getAttribute('data-notif-id');
+        if (!notificationId) return;
+        const body = new URLSearchParams({
+            action: 'dior_patient_mark_notification_read',
+            nonce: diorPortalNonce,
+            notif_id: notificationId
         });
+        fetch(diorAjaxUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: body.toString() })
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                if (data && data.success) {
+                    const row = button.closest('tr');
+                    if (row) {
+                        const statusCell = row.querySelector('.dior-dyn-status');
+                        if (statusCell) {
+                            statusCell.textContent = 'Read';
+                            statusCell.className = 'dior-dyn-status dior-dyn-bg-D1FAE5 dior-dyn-color-10B981';
+                        }
+                        button.remove();
+                    }
+                    if (typeof diorRenderNotifPagination === 'function') {
+                        diorRenderNotifPagination();
+                    }
+                }
+            })
+            .catch(function () {});
     });
                 diorFetchTreatments();
             });
@@ -697,6 +707,30 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                                 'important'
                             );
                         });
+
+                        // Update dynamic breadcrumb & headers
+                        var titles = {
+                            'book': 'Book Appointment',
+                            'today': "Today's Appointments",
+                            'upcoming': 'Upcoming Appointments',
+                            'past': 'Past Appointments'
+                        };
+                        var t = titles[targetSubTab] || 'Appointments';
+                        var mainTitleEl = document.getElementById('dior-appt-main-title');
+                        var crumbTitleEl = document.getElementById('dior-appt-breadcrumb-title');
+                        if (mainTitleEl) mainTitleEl.textContent = t;
+                        if (crumbTitleEl) crumbTitleEl.textContent = t;
+
+                        // Highlight active dropdown item
+                        document.querySelectorAll('#dior-appt-dropdown-wrap .dior-nav-dropdown-item').forEach(function(item) {
+                            if (item.getAttribute('data-appt-subtab') === targetSubTab) {
+                                item.classList.add('active');
+                            } else {
+                                item.classList.remove('active');
+                            }
+                        });
+
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     };
 
 // --- Extracted dashboard script 6 ---
@@ -1381,6 +1415,7 @@ let diorNotifCurrentPage = 1;
     function diorFilterNotif() {
         diorNotifCurrentPage = 1;
         diorRenderNotifPagination();
+        diorUpdateNotifSelectionCount();
     }
     
     function diorDownloadNotifCSV() {
@@ -1407,11 +1442,280 @@ let diorNotifCurrentPage = 1;
         document.body.removeChild(link);
     }
 
+    function diorToggleSelectAllNotifs(masterCb) {
+        const isChecked = masterCb.checked;
+        const activeRows = diorGetNotifActiveRows();
+        activeRows.forEach(row => {
+            const cb = row.querySelector('.dior-notif-row-cb, input[type="checkbox"]');
+            if (cb) cb.checked = isChecked;
+        });
+        diorUpdateNotifSelectionCount();
+    }
+    window.diorToggleSelectAllNotifs = diorToggleSelectAllNotifs;
+
+    function diorUpdateNotifSelectionCount() {
+        const activeRows = diorGetNotifActiveRows();
+        const selected = activeRows.filter(row => {
+            const cb = row.querySelector('.dior-notif-row-cb, input[type="checkbox"]');
+            return cb && cb.checked;
+        }).length;
+        const countEl = document.getElementById('dior-notif-page-count');
+        if (countEl) {
+            countEl.innerText = `${selected} selected / ${activeRows.length} total`;
+        }
+        const masterCb = document.getElementById('dior-notif-select-all');
+        if (masterCb) {
+            masterCb.checked = activeRows.length > 0 && selected === activeRows.length;
+        }
+    }
+    window.diorUpdateNotifSelectionCount = diorUpdateNotifSelectionCount;
+
+    function diorBulkDeleteNotifications(btn) {
+        const table = document.getElementById('dior-notif-table');
+        if (!table) return;
+        const checkedRows = Array.from(table.querySelectorAll('#dior-notif-tbody tr')).filter(row => {
+            const cb = row.querySelector('.dior-notif-row-cb, input[type="checkbox"]');
+            return cb && cb.checked;
+        });
+
+        if (checkedRows.length === 0) {
+            if (window.Swal) Swal.fire({ icon: 'info', title: 'No Notifications Selected', text: 'Please select at least one notification to delete.' });
+            else alert('Please select at least one notification to delete.');
+            return;
+        }
+
+        const notifIds = checkedRows.map(r => r.getAttribute('data-notif-id')).filter(Boolean);
+
+        const doDelete = function() {
+            const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || (window.dior_vars && window.dior_vars.ajax_url) || '';
+            const nonce = (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || (window.dior_vars && window.dior_vars.nonce) || '';
+
+            const body = new URLSearchParams({
+                action: 'dior_patient_bulk_delete_notifications',
+                nonce: nonce
+            });
+            notifIds.forEach(id => body.append('notif_ids[]', id));
+
+            fetch(ajaxUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                body: body.toString()
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.success) {
+                    checkedRows.forEach(r => r.remove());
+                    const masterCb = document.getElementById('dior-notif-select-all');
+                    if (masterCb) masterCb.checked = false;
+                    diorRenderNotifPagination();
+                    diorUpdateNotifSelectionCount();
+                    if (window.Swal) {
+                        Swal.fire({ position: 'top-end', icon: 'success', title: data.data?.message || 'Notifications Deleted', showConfirmButton: false, timer: 1500 });
+                    }
+                } else {
+                    if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: (data && data.data && data.data.message) || 'Failed to delete notifications.' });
+                    else alert('Failed to delete notifications.');
+                }
+            })
+            .catch(() => {
+                if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Network error deleting notifications.' });
+                else alert('Network error deleting notifications.');
+            });
+        };
+
+        if (window.Swal) {
+            Swal.fire({
+                title: 'Delete Notifications?',
+                text: `You are about to delete ${checkedRows.length} selected notification(s).`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, delete!'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    doDelete();
+                }
+            });
+        } else {
+            if (confirm(`Delete ${checkedRows.length} selected notification(s)?`)) {
+                doDelete();
+            }
+        }
+    }
+    window.diorBulkDeleteNotifications = diorBulkDeleteNotifications;
+
+    function diorMarkAllNotificationsRead() {
+        const rows = Array.from(document.querySelectorAll('#dior-notif-tbody tr[data-notif-id]'));
+        if (rows.length === 0) {
+            if (window.Swal) Swal.fire({ icon: 'info', title: 'No Notifications', text: 'There are no notifications to mark as read.' });
+            else alert('No notifications to mark as read.');
+            return;
+        }
+
+        const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || (window.dior_vars && window.dior_vars.ajax_url) || '';
+        const nonce = (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || (window.dior_vars && window.dior_vars.nonce) || '';
+
+        const body = new URLSearchParams({
+            action: 'dior_patient_mark_all_notifications_read',
+            nonce: nonce
+        });
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            body: body.toString()
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.success) {
+                rows.forEach(r => {
+                    const statusCell = r.querySelector('.dior-dyn-status');
+                    if (statusCell) {
+                        statusCell.textContent = 'Read';
+                        statusCell.className = 'dior-dyn-status dior-dyn-bg-D1FAE5 dior-dyn-color-10B981';
+                    }
+                    const readBtn = r.querySelector('.dior-mark-notification-read');
+                    if (readBtn) readBtn.remove();
+                });
+                const badges = document.querySelectorAll('.unread-badge-count');
+                badges.forEach(b => b.style.display = 'none');
+                if (window.Swal) {
+                    Swal.fire({ position: 'top-end', icon: 'success', title: 'All marked as read', showConfirmButton: false, timer: 1500 });
+                }
+            }
+        })
+        .catch(() => {});
+    }
+    window.diorMarkAllNotificationsRead = diorMarkAllNotificationsRead;
+
+    function diorRefreshNotifications() {
+        const tbody = document.getElementById('dior-notif-tbody');
+        const refreshIcon = document.querySelector('.action-btn-info i');
+        if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+        const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || (window.dior_vars && window.dior_vars.ajax_url) || '';
+        const nonce = (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || (window.dior_vars && window.dior_vars.nonce) || '';
+
+        const body = new URLSearchParams({
+            action: 'dior_patient_get_live_notifications',
+            nonce: nonce
+        });
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            body: body.toString()
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+            if (data && data.success && data.data && data.data.full_html && tbody) {
+                tbody.innerHTML = data.data.full_html;
+                diorNotifCurrentPage = 1;
+                diorRenderNotifPagination();
+                diorUpdateNotifSelectionCount();
+                if (window.Swal) {
+                    Swal.fire({ position: 'top-end', icon: 'success', title: 'Notifications Refreshed', showConfirmButton: false, timer: 1000 });
+                }
+            } else {
+                window.location.reload();
+            }
+        })
+        .catch(() => {
+            if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+            window.location.reload();
+        });
+    }
+    window.diorRefreshNotifications = diorRefreshNotifications;
+
+    let notifSortDirection = {};
+    function diorSortNotifTable(colIndex) {
+        const tbody = document.getElementById('dior-notif-tbody');
+        if (!tbody) return;
+        const rows = Array.from(tbody.querySelectorAll('tr:not(.dior-empty-state)'));
+        if (rows.length === 0) return;
+
+        notifSortDirection[colIndex] = !notifSortDirection[colIndex];
+        const asc = notifSortDirection[colIndex];
+
+        rows.sort((a, b) => {
+            const cellA = (a.querySelectorAll('td')[colIndex]?.innerText || '').trim();
+            const cellB = (b.querySelectorAll('td')[colIndex]?.innerText || '').trim();
+            return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+        });
+
+        rows.forEach(r => tbody.appendChild(r));
+        diorRenderNotifPagination();
+    }
+    window.diorSortNotifTable = diorSortNotifTable;
+
+    // View Notification Details modal / alert
+    document.addEventListener('click', function(e) {
+        const viewBtn = e.target.closest('.dior-view-notif-btn');
+        if (!viewBtn) return;
+        const notifId = viewBtn.getAttribute('data-notif-id');
+        const title = viewBtn.getAttribute('data-notif-title') || 'Notification';
+        const message = viewBtn.getAttribute('data-notif-message') || '';
+        const date = viewBtn.getAttribute('data-notif-date') || '';
+        const type = viewBtn.getAttribute('data-notif-type') || 'Info';
+        const actionUrl = viewBtn.getAttribute('data-notif-action') || '';
+
+        // Auto mark as read on view
+        if (notifId) {
+            const row = viewBtn.closest('tr');
+            const readBtn = row ? row.querySelector('.dior-mark-notification-read') : null;
+            if (readBtn) readBtn.click();
+        }
+
+        const hasAction = actionUrl && actionUrl.trim() !== '';
+        if (window.Swal) {
+            Swal.fire({
+                title: `<span style="font-size:18px;font-weight:700;color:#1e293b;">${title}</span>`,
+                html: `
+                    <div style="text-align:left;font-size:14px;color:#475569;line-height:1.6;margin-top:10px;">
+                        <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center;">
+                            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e0e7ff;color:#3730a3;">${type}</span>
+                            <span style="font-size:12px;color:#94a3b8;">${date}</span>
+                        </div>
+                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;color:#334155;white-space:pre-wrap;">${message}</div>
+                    </div>
+                `,
+                icon: 'info',
+                showCancelButton: hasAction,
+                confirmButtonText: hasAction ? 'Go to Page' : 'Close',
+                cancelButtonText: 'Close',
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#64748b'
+            }).then(result => {
+                if (result.isConfirmed && hasAction) {
+                    if (actionUrl.startsWith('#tab=')) {
+                        const tabName = actionUrl.replace('#tab=', '');
+                        if (typeof diorSwitchTab === 'function') {
+                            diorSwitchTab(tabName);
+                        } else {
+                            window.location.hash = actionUrl;
+                        }
+                    } else {
+                        window.location.href = actionUrl;
+                    }
+                }
+            });
+        } else {
+            alert(`${title}\n\n${message}\n\nDate: ${date}`);
+            if (hasAction) {
+                window.location.href = actionUrl;
+            }
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         diorRenderNotifPagination();
+        diorUpdateNotifSelectionCount();
     });
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
         diorRenderNotifPagination();
+        diorUpdateNotifSelectionCount();
     }
 
 // --- Extracted dashboard script 14 ---

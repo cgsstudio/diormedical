@@ -68,7 +68,15 @@ if (!defined('ABSPATH')) {
                     <tbody>
                         <?php
                         global $wpdb;
-                        $prescriptions = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}dior_prescriptions ORDER BY id DESC");
+                        // Restrict prescription visibility to the current doctor's records; administrators may view all.
+                        if (current_user_can('manage_options')) {
+                            $prescriptions = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}dior_prescriptions ORDER BY id DESC");
+                        } else {
+                            $prescriptions = $wpdb->get_results($wpdb->prepare(
+                                "SELECT * FROM {$wpdb->prefix}dior_prescriptions WHERE doctor_id = %d ORDER BY id DESC",
+                                get_current_user_id()
+                            ));
+                        }
                         
                         if ($prescriptions && count($prescriptions) > 0) {
                             foreach ($prescriptions as $p) {
@@ -81,19 +89,19 @@ if (!defined('ABSPATH')) {
                                 
                                 echo '<tr>';
                                 echo '<td class="text-center"><input type="checkbox" class="va-checkbox"></td>';
-                                echo '<td>' . esc_html($p->prescription_id) . '</td>';
+                                echo '<td>' . esc_html($p->prescription_id ?: $p->prescription_uid) . '</td>';
                                 echo '<td>
                                         <div class="va-user-profile">
                                             <img src="assets/images/users/default.png" onerror="this.src=\'https://ui-avatars.com/api/?name='.urlencode($p->patient_name).'&background=random\'" class="va-user-avatar" alt="User">
                                             <span class="va-user-name">' . esc_html($p->patient_name) . '</span>
                                         </div>
                                       </td>';
-                                echo '<td><i class="far fa-calendar va-icon-blue"></i> ' . esc_html(date('M d, Y', strtotime($p->prescription_date))) . '</td>';
-                                echo '<td>' . esc_html($p->medications) . '</td>';
+                                echo '<td><i class="far fa-calendar va-icon-blue"></i> ' . esc_html(date('M d, Y', strtotime($p->prescription_date ?: $p->created_at))) . '</td>';
+                                echo '<td>' . esc_html($p->medications ?: $p->medication) . '</td>';
                                 echo '<td>' . esc_html($p->dosage) . '</td>';
                                 echo '<td>' . esc_html($p->frequency) . '</td>';
                                 echo '<td>' . esc_html($p->duration) . '</td>';
-                                echo '<td>' . esc_html($p->doctor_name) . '</td>';
+                                echo '<td>' . esc_html($p->doctor_name ?: 'Doctor') . '</td>';
                                 echo '<td><span class="badge-solid ' . $badge_class . '" style="background-color: transparent; color: ' . $badge_color . '; padding: 6px 12px; border-radius: 6px; font-weight: 700;">' . esc_html($p->status) . '</span></td>';
                                 echo '<td>
                                         <div class="va-row-actions">
@@ -137,6 +145,7 @@ if (!defined('ABSPATH')) {
         </div>
         <div class="modal-body">
             <form novalidate class="register-form" id="dior-add-prescription-form">
+                <?php wp_nonce_field("dior_doctor_nonce", "nonce"); ?>
                 <div class="row" style="display: flex; flex-wrap: wrap; margin-left: -10px; margin-right: -10px;">
                     <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
                         <div>

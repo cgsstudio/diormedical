@@ -36,23 +36,56 @@
     }
 
     #tab-settings img.profile-avatar-img {
-        width: 90px !important;
-        height: 90px !important;
-        max-width: 90px !important;
-        max-height: 90px !important;
-        min-width: 90px !important;
-        min-height: 90px !important;
+        width: 96px !important;
+        height: 96px !important;
+        max-width: 96px !important;
+        max-height: 96px !important;
+        min-width: 96px !important;
+        min-height: 96px !important;
         border-radius: 50% !important;
         border: 4px solid #ffffff !important;
+        box-shadow: 0 4px 16px rgba(15, 43, 72, 0.16) !important;
         object-fit: cover !important;
         display: block !important;
+        background-color: #eaf3fb !important;
     }
 
     #tab-settings .profile-cover-gradient {
-        height: 100px !important;
-        background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 60%, #3b82f6 100%) !important;
+        height: 110px !important;
+        background: linear-gradient(135deg, #0d2b52 0%, #173f6c 50%, #225a92 100%) !important;
         width: 100% !important;
-        border-radius: 12px 12px 0 0 !important;
+        border-radius: 16px 16px 0 0 !important;
+        position: relative !important;
+    }
+
+    #tab-settings .profile-header-card {
+        border-radius: 16px !important;
+        border: 0.72px solid #2C6CB166 !important;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+        margin-bottom: 24px !important;
+        transition: border 0.2s ease, box-shadow 0.2s ease !important;
+    }
+
+    #tab-settings .profile-header-card:hover {
+        border: 0.99px solid #2C6CB166 !important;
+    }
+
+    #tab-settings .avatar-change-btn:hover {
+        background: #173f6c !important;
+        transform: scale(1.08) !important;
+    }
+
+    #tab-settings .dior-change-photo-btn:hover {
+        background: #225a92 !important;
+        color: #ffffff !important;
+        border-color: #225a92 !important;
+        box-shadow: 0 4px 12px rgba(34, 90, 146, 0.22) !important;
+    }
+
+    #tab-settings .dior-change-photo-btn:hover i {
+        color: #ffffff !important;
     }
 
     /* Sidebar nav pills text vertical stacking */
@@ -265,22 +298,62 @@
 
         <div class="section-body">
             
-            <div class="card profile-header-card mb-4 border-0 shadow-sm" style="border-radius: 12px; background: #ffffff; border: 1px solid #e7edf4; box-shadow: 0 4px 18px rgba(15,23,42,.05); overflow: hidden; margin-bottom: 24px;">
-                <div class="profile-cover-gradient" style="height: 100px; background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 60%, #3b82f6 100%); width: 100%;"></div>
-                <div class="card-body" style="padding: 0 24px 20px; position: relative; background: #ffffff;">
-                    <div style="display: flex; align-items: flex-end; gap: 20px; margin-top: -45px; flex-wrap: wrap;">
-                        <div class="avatar-edit-wrapper" style="position: relative; width: 90px; height: 90px; flex-shrink: 0;">
-                            <img id="dior-avatar-display-img" alt="Your profile photo" class="profile-avatar-img" src="<?php echo esc_url($settings_patient_avatar); ?>">
-                            <button type="button" title="Change profile photo" aria-label="Choose profile photo" class="avatar-change-btn" onclick="diorPatientOpenMediaLibrary()" style="position: absolute; bottom: 2px; right: 2px; background: #2563eb; color: #ffffff; border: 2px solid #ffffff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 5;">
-                                <i class="fas fa-camera" style="font-size: 11px;"></i>
-                            </button>
-                        </div>
-                        <div style="flex: 1 1 0%; min-width: 250px; padding-bottom: 4px;">
-                            <h4 class="profile-user-name dior-settings-profile-name" style="font-weight: 700; color: #1e293b; font-size: 20px; margin: 0 0 8px;"><?php echo esc_html($settings_patient_profile['full_name'] ?? $settings_patient_user->display_name); ?></h4>
-                            <div style="font-size: 13px; color: #64748b; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                <span><i class="fas fa-id-card" style="color: #2563eb !important; margin-right: 5px;"></i> Patient ID: <?php echo esc_html($settings_patient_profile['patient_id'] ?? ''); ?></span>
-                                <span><i class="far fa-envelope" style="color: #2563eb !important; margin-right: 5px;"></i> <span class="dior-settings-profile-email"><?php echo esc_html($settings_patient_profile['email'] ?? $settings_patient_user->user_email); ?></span></span>
+            <!-- Hidden file input for direct local device photo upload -->
+            <input type="file" id="dior-patient-avatar-file-input" accept="image/png, image/jpeg, image/jpg, image/webp, image/gif" style="display: none !important;" onchange="diorPatientHandleFileChosen(this)">
+
+            <div class="card profile-header-card mb-4 border-0 shadow-sm" style="border-radius: 16px; overflow: hidden; background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);">
+                <div class="profile-cover-gradient" style="height: 100px; background: linear-gradient(135deg, #0d2b52 0%, #173f6c 50%, #225a92 100%); width: 100%; position: relative;">
+                    <div style="position: absolute; right: 20px; top: 16px; display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(255,255,255,0.16); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; font-size: 11.5px; font-weight: 600; color: #ffffff; letter-spacing: 0.3px;">
+                            <i class="fas fa-shield-halved" style="color: #93c5fd; font-size: 11px;"></i> Patient Portal
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body" style="padding: 0 28px 22px; position: relative; background: #ffffff;">
+                    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-top: -46px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap; flex: 1 1 auto; min-width: 260px;">
+                            
+                            <!-- Profile Avatar with Camera Button Overlay -->
+                            <div class="avatar-edit-wrapper" style="position: relative; width: 96px; height: 96px; flex-shrink: 0;">
+                                <img id="dior-avatar-display-img" alt="Your profile photo" class="profile-avatar-img" src="<?php echo esc_url($settings_patient_avatar); ?>" style="width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 4px solid #ffffff; box-shadow: 0 4px 16px rgba(15,43,72,0.16); background-color: #f1f5f9; display: block;">
+                                
+                                <div id="dior-avatar-upload-spinner" style="display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.6); border-radius: 50%; align-items: center; justify-content: center; z-index: 10;">
+                                    <i class="fas fa-circle-notch fa-spin" style="color: #ffffff; font-size: 22px;"></i>
+                                </div>
+
+                                <button type="button" title="Upload new photo from your device" aria-label="Upload photo" class="avatar-change-btn" onclick="diorTriggerPatientAvatarUpload()" style="position: absolute; bottom: 2px; right: 2px; background: #225a92; color: #ffffff; border: 2.5px solid #ffffff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.25); z-index: 8; transition: all 0.2s ease;">
+                                    <i class="fas fa-camera" style="font-size: 12px;"></i>
+                                </button>
                             </div>
+
+                            <div style="flex: 1 1 0%; min-width: 240px; padding-bottom: 4px;">
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <h4 class="profile-user-name dior-settings-profile-name" style="font-weight: 700; color: #0f2b48; font-size: 22px; margin: 0; line-height: 1.2; font-family: 'DM Sans', 'Montserrat', sans-serif;">
+                                        <?php echo esc_html($settings_patient_profile['full_name'] ?? $settings_patient_user->display_name); ?>
+                                    </h4>
+                                    <span style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 14px; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i class="fas fa-circle-check" style="font-size: 9px;"></i> Active
+                                    </span>
+                                </div>
+                                <div style="font-size: 13px; color: #64748b; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <?php if (!empty($settings_patient_profile['patient_id'])): ?>
+                                    <span style="background: #f0f7ff; color: #1e5a96; border: 1px solid #d3e5f8; padding: 4px 11px; border-radius: 8px; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-id-card" style="color: #225a92;"></i> Patient ID: <?php echo esc_html($settings_patient_profile['patient_id']); ?>
+                                    </span>
+                                    <?php endif; ?>
+                                    <span style="background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; padding: 4px 11px; border-radius: 8px; font-weight: 500; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                                        <i class="far fa-envelope" style="color: #225a92;"></i> <span class="dior-settings-profile-email"><?php echo esc_html($settings_patient_profile['email'] ?? $settings_patient_user->user_email); ?></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button to upload directly from device files -->
+                        <div style="padding-bottom: 4px; flex-shrink: 0; display: flex; align-items: center; gap: 10px;">
+                            <button type="button" id="dior-change-photo-action-btn" class="dior-change-photo-btn" onclick="diorTriggerPatientAvatarUpload()" style="background: #f0f7ff; color: #1e5a96; border: 1px solid #cce1f7; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(34,90,146,0.06);">
+                                <i class="fas fa-cloud-arrow-up" style="color: #225a92; font-size: 13px;"></i>
+                                <span id="dior-change-photo-text">Upload Photo</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -356,7 +429,7 @@
                                     </div>
                                     <div class="dior-form-group">
                                         <label class="form-label" for="patient-settings-country">Country</label>
-                                        <input id="patient-settings-country" class="form-control" type="text" name="country" value="<?php echo esc_attr($settings_patient_profile['country'] ?? ''); ?>" autocomplete="country-name">
+                                        <input id="patient-settings-country" class="form-control" type="text" name="country" value="<?php echo esc_attr(!empty($settings_patient_profile['country']) ? $settings_patient_profile['country'] : 'United States of America'); ?>" autocomplete="country-name">
                                     </div>
                                 </div>
 
@@ -421,4 +494,192 @@
         </div>
     </div>
 </section>
+
+<script>
+(function() {
+    // Trigger direct local device file picker
+    window.diorTriggerPatientAvatarUpload = function() {
+        var fileInput = document.getElementById('dior-patient-avatar-file-input');
+        if (fileInput) {
+            fileInput.value = '';
+            fileInput.click();
+        }
+    };
+
+    // Update patient image everywhere on the dashboard
+    window.diorUpdateAllPatientAvatars = function(avatarUrl) {
+        if (!avatarUrl) return;
+
+        // 1. Settings page avatar
+        var settingsImg = document.getElementById('dior-avatar-display-img');
+        if (settingsImg) settingsImg.src = avatarUrl;
+
+        // 2. Sidebar bottom avatar
+        var sidebarImg = document.getElementById('dior-sidebar-avatar-img');
+        if (sidebarImg) {
+            sidebarImg.src = avatarUrl;
+        } else {
+            var sidebarBox = document.getElementById('dior-sidebar-avatar-box') || document.querySelector('.dior-sidebar-avatar-wrap');
+            if (sidebarBox) {
+                sidebarBox.innerHTML = '<img id="dior-sidebar-avatar-img" src="' + avatarUrl + '" alt="Profile Photo" style="width:100%;height:100%;object-fit:cover;">';
+            }
+        }
+
+        // 3. Topbar header pill avatar
+        var topbarImg = document.getElementById('dior-topbar-avatar-img');
+        if (topbarImg) {
+            topbarImg.src = avatarUrl;
+        } else {
+            var topbarBox = document.getElementById('dior-top-pill-avatar');
+            if (topbarBox) {
+                topbarBox.innerHTML = '<img id="dior-topbar-avatar-img" src="' + avatarUrl + '" alt="Profile Photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"><span class="dior-online-dot"></span>';
+            }
+        }
+
+        // 4. Overview tab patient card photo
+        var overviewImg = document.getElementById('dior-overview-patient-img');
+        if (overviewImg) {
+            overviewImg.src = avatarUrl;
+        } else {
+            var overviewBox = document.getElementById('dior-patient-photo-box') || document.querySelector('.patient-photo');
+            if (overviewBox) {
+                overviewBox.innerHTML = '<img id="dior-overview-patient-img" src="' + avatarUrl + '" alt="Profile Photo" style="width:100%;height:100%;object-fit:cover;">';
+            }
+        }
+
+        // 5. Catch any remaining patient avatar imgs across the portal
+        document.querySelectorAll('.dior-sidebar-avatar-wrap img, .dior-pill-avatar img, .patient-photo img, .dior-patient-avatar-sync').forEach(function(img) {
+            img.src = avatarUrl;
+        });
+
+        // 6. Update global dior_vars profile object if present
+        if (window.dior_vars && window.dior_vars.patient_profile) {
+            window.dior_vars.patient_profile.avatar_url = avatarUrl;
+        }
+    };
+
+    // Handle chosen file from local file dialog
+    window.diorPatientHandleFileChosen = function(input) {
+        if (!input || !input.files || !input.files[0]) return;
+        var file = input.files[0];
+
+        // Validate max size 5MB
+        if (file.size > 5 * 1024 * 1024) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'File Too Large',
+                    text: 'The selected photo exceeds the 5MB file size limit. Please choose a smaller image.',
+                    confirmButtonColor: '#2C6CB1'
+                });
+            } else {
+                alert('Image size exceeds 5MB limit. Please choose a smaller image.');
+            }
+            input.value = '';
+            return;
+        }
+
+        // Show instant preview
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var previewUrl = e.target.result;
+            var settingsImg = document.getElementById('dior-avatar-display-img');
+            if (settingsImg) settingsImg.src = previewUrl;
+        };
+        reader.readAsDataURL(file);
+
+        // UI Loading State
+        var spinner = document.getElementById('dior-avatar-upload-spinner');
+        if (spinner) spinner.style.display = 'flex';
+
+        var actionBtn = document.getElementById('dior-change-photo-action-btn');
+        var actionText = document.getElementById('dior-change-photo-text');
+        var origText = actionText ? actionText.innerText : 'Upload Photo';
+        if (actionBtn) {
+            actionBtn.disabled = true;
+            if (actionText) actionText.innerText = 'Uploading...';
+        }
+
+        // AJAX POST to dior_patient_upload_avatar
+        var formData = new FormData();
+        formData.append('action', 'dior_patient_upload_avatar');
+        formData.append('nonce', (window.dior_vars && window.dior_vars.nonce) ? window.dior_vars.nonce : '');
+        formData.append('avatar', file);
+
+        var ajaxUrl = (window.dior_vars && window.dior_vars.ajax_url) ? window.dior_vars.ajax_url : '/wp-admin/admin-ajax.php';
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        })
+        .then(function(res) { return res.text(); })
+        .then(function(text) {
+            if (spinner) spinner.style.display = 'none';
+            if (actionBtn) {
+                actionBtn.disabled = false;
+                if (actionText) actionText.innerText = origText;
+            }
+
+            var response;
+            try {
+                response = JSON.parse(text);
+            } catch(e) {
+                response = { success: false, data: { message: 'Server returned an invalid response.' } };
+            }
+
+            if (response && response.success) {
+                var newUrl = (response.data && response.data.avatar_url) ? response.data.avatar_url : '';
+                if (newUrl) {
+                    window.diorUpdateAllPatientAvatars(newUrl);
+                }
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Profile Photo Updated!',
+                        text: 'Saved directly to Media Library & updated across dashboard.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                } else {
+                    alert('Profile photo updated successfully!');
+                }
+            } else {
+                var errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to upload photo.';
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Upload Failed',
+                        text: errMsg,
+                        confirmButtonColor: '#2C6CB1'
+                    });
+                } else {
+                    alert('Upload failed: ' + errMsg);
+                }
+            }
+        })
+        .catch(function(err) {
+            console.error('[Patient Avatar Upload Error]', err);
+            if (spinner) spinner.style.display = 'none';
+            if (actionBtn) {
+                actionBtn.disabled = false;
+                if (actionText) actionText.innerText = origText;
+            }
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Error',
+                    text: 'A connection error occurred while uploading. Please try again.',
+                    confirmButtonColor: '#2C6CB1'
+                });
+            } else {
+                alert('Connection error during photo upload.');
+            }
+        });
+    };
+})();
+</script>
+
 

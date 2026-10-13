@@ -39,6 +39,18 @@
         var row = document.createElement('tr');
         row.dataset.feedbackId = String(review.id || '');
 
+        var cbCell = document.createElement('td');
+        cbCell.className = 'text-center';
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'va-checkbox dior-feedback-row-cb';
+        cb.value = String(review.id || '');
+        if (typeof window.diorUpdateFeedbackCheckState === 'function') {
+            cb.addEventListener('change', window.diorUpdateFeedbackCheckState);
+        }
+        cbCell.appendChild(cb);
+        row.appendChild(cbCell);
+
         function cellWithText(value, className) {
             var cell = document.createElement('td');
             var text = document.createElement('span');
@@ -82,7 +94,7 @@
         var statusContent = document.createElement('div');
         statusContent.className = 'cell-content';
         var statusBadge = document.createElement('div');
-        statusBadge.className = 'badge-solid col-amber';
+        statusBadge.className = 'badge-solid ' + (review.status === 'Published' ? 'col-green' : 'col-amber');
         statusBadge.textContent = review.status || 'Pending';
         statusContent.appendChild(statusBadge);
         statusCell.appendChild(statusContent);
@@ -98,16 +110,33 @@
         viewButton.innerHTML = '<i class="fa-regular fa-eye"></i>';
         viewButton.addEventListener('click', function () { window.diorViewPatientFeedback(viewButton); });
         actionCell.appendChild(viewButton);
+
+        var editButton = document.createElement('button');
+        editButton.type = 'button';
+        editButton.className = 'dior-feedback-edit-action';
+        editButton.setAttribute('aria-label', 'Edit feedback');
+        editButton.title = 'Edit feedback';
+        editButton.dataset.feedbackId = String(review.id || '');
+        editButton.dataset.feedback = JSON.stringify(review);
+        editButton.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+        editButton.addEventListener('click', function () { window.diorEditPatientFeedback(editButton); });
+        actionCell.appendChild(editButton);
+
+        var delButton = document.createElement('button');
+        delButton.type = 'button';
+        delButton.className = 'dior-feedback-delete-action';
+        delButton.setAttribute('aria-label', 'Delete feedback');
+        delButton.title = 'Delete feedback';
+        delButton.dataset.feedbackId = String(review.id || '');
+        delButton.innerHTML = '<i class="fa-solid fa-trash" style="color:#ef4444;"></i>';
+        delButton.addEventListener('click', function () { window.diorDeletePatientFeedback(delButton); });
+        actionCell.appendChild(delButton);
+
         row.appendChild(actionCell);
 
         tbody.prepend(row);
         var totalLabel = document.getElementById('dior-feedback-total-count');
         if (totalLabel) totalLabel.textContent = tbody.querySelectorAll('tr[data-feedback-id]').length + ' total feedback records';
-
-        var searchInput = document.querySelector('#tab-feedback .search-input');
-        if (searchInput && searchInput.value && typeof window.diorFilterStaticTable === 'function') {
-            window.diorFilterStaticTable(searchInput, 'dior-feedback-table');
-        }
     }
 
     window.diorViewPatientFeedback = function (button) {
@@ -280,21 +309,26 @@
                     var row = document.querySelector('tr[data-feedback-id="' + feedbackId + '"]');
                     if (row) {
                         var cells = row.querySelectorAll('td');
-                        if (cells.length >= 5) {
-                            cells[0].querySelector('.cell-text').textContent = result.data.review.subject || 'Patient Feedback';
-                            cells[2].querySelector('.cell-text').innerHTML = '<i class="fa-solid fa-star" style="color:#F59E0B;"></i> ' + (result.data.review.rating || 5) + '/5';
-                            cells[3].querySelector('.cell-text').textContent = result.data.review.message || '';
-                            var viewButton = row.querySelector('.dior-feedback-view-action');
-                            if (viewButton) {
-                                viewButton.dataset.feedback = JSON.stringify({
-                                    subject: result.data.review.subject,
-                                    doctor: result.data.review.doctor,
-                                    rating: result.data.review.rating,
-                                    message: result.data.review.message,
-                                    status: result.data.review.status
-                                });
-                            }
-                        }
+                        var subjCell = row.querySelector('.feedback-subject-cell .cell-text') || (cells.length > 7 ? cells[1].querySelector('.cell-text') : (cells[0] ? cells[0].querySelector('.cell-text') : null));
+                        if (subjCell) subjCell.textContent = result.data.review.subject || 'Patient Feedback';
+                        
+                        var ratingCell = row.querySelector('.feedback-rating-cell .cell-text') || (cells.length > 7 ? cells[3].querySelector('.cell-text') : (cells[2] ? cells[2].querySelector('.cell-text') : null));
+                        if (ratingCell) ratingCell.innerHTML = '<i class="fa-solid fa-star" style="color:#F59E0B;"></i> ' + (result.data.review.rating || 5) + '/5';
+                        
+                        var msgCell = row.querySelector('.feedback-message-cell .cell-text') || (cells.length > 7 ? cells[4].querySelector('.cell-text') : (cells[3] ? cells[3].querySelector('.cell-text') : null));
+                        if (msgCell) msgCell.textContent = result.data.review.message || '';
+
+                        var updatedData = JSON.stringify({
+                            subject: result.data.review.subject,
+                            doctor: result.data.review.doctor,
+                            rating: result.data.review.rating,
+                            message: result.data.review.message,
+                            status: result.data.review.status
+                        });
+                        var viewButton = row.querySelector('.dior-feedback-view-action');
+                        if (viewButton) viewButton.dataset.feedback = updatedData;
+                        var editButton = row.querySelector('.dior-feedback-edit-action');
+                        if (editButton) editButton.dataset.feedback = updatedData;
                     }
                 } else {
                     appendFeedbackRow(result.data.review || {});
@@ -370,6 +404,8 @@
         document.getElementById('dior-document-modal-title').textContent='Add Medical Document';
         document.getElementById('dior-document-save-btn').innerHTML='<i class="fa-solid fa-cloud-arrow-up"></i> Upload Document';
         document.getElementById('dior-document-file-wrap').style.display='block';
+        var dropzoneLabel = document.getElementById('dior-doc-file-label');
+        if (dropzoneLabel) dropzoneLabel.textContent = 'Choose File or Drag & Drop';
         modal.classList.add('is-open');
         modal.setAttribute('aria-hidden','false');
     };
@@ -419,7 +455,38 @@
                         var edit=row.querySelector('.edit-btn'); if(edit){edit.setAttribute('data-doc-title',title);edit.setAttribute('data-doc-category',category);}
                     }
                 } else if(result.data && result.data.document){
-                    window.location.reload();
+                    var doc = result.data.document;
+                    var tbody = document.getElementById('dior-docs-tbody');
+                    if(tbody){
+                        var emptyRow = tbody.querySelector('.dior-empty-state');
+                        if(emptyRow) emptyRow.closest('tr').remove();
+                        var tr = document.createElement('tr');
+                        tr.setAttribute('data-doc-id', doc.id || '');
+                        tr.setAttribute('data-doc-author-id', doc.author_id || '');
+                        var docTitle = doc.title || 'Medical Document';
+                        var docCategory = doc.category || 'Clinical Record';
+                        var docType = doc.file_type || 'PDF';
+                        var docDate = doc.date || 'Just now';
+                        var docSize = doc.size || '—';
+                        tr.innerHTML = '<td><input type="checkbox" class="dior-ic-52ff4d551f"></td>' +
+                            '<td><span class="cell-text dior-ic-794116ec9b">' + docTitle + '</span></td>' +
+                            '<td><span class="cell-text">' + docCategory + '</span></td>' +
+                            '<td><span class="cell-text">' + docType + '</span></td>' +
+                            '<td><div class="cell-content cell-icon-text"><i class="far fa-calendar cell-icon"></i><span class="cell-text">' + docDate + '</span></div></td>' +
+                            '<td><span class="cell-text">' + docSize + '</span></td>' +
+                            '<td><div class="cell-content"><div class="badge-solid col-green">Available</div></div></td>' +
+                            '<td><div class="cell-actions">' +
+                            '<button type="button" class="action-icon-btn edit-btn" title="Edit Document" data-doc-title="' + docTitle + '" data-doc-category="' + docCategory + '" onclick="diorEditDocument(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>' +
+                            '<button type="button" class="action-icon-btn delete-btn" title="Delete Document" onclick="diorDeleteStaticRow(this, \'document\')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>' +
+                            '</div></td>';
+                        tbody.insertBefore(tr, tbody.firstChild);
+
+                        var pageCount = document.getElementById('dior-docs-page-count');
+                        if (pageCount) {
+                            var totalRows = tbody.querySelectorAll('tr[data-doc-id]').length;
+                            pageCount.textContent = '0 selected / ' + totalRows + ' total';
+                        }
+                    }
                 }
                 diorCloseDocumentModal();
                 if(window.Swal) Swal.fire({position:'top-end',icon:'success',title:id?'Document Updated':'Document Uploaded',showConfirmButton:false,timer:1500});

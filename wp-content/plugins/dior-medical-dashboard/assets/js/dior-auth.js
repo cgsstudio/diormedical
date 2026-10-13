@@ -72,12 +72,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(res => res.json())
             .then(res => {
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = origText;
-                }
-
                 if (res.success) {
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span>Redirecting...</span>';
+                    }
                     if (msgBox) {
                         msgBox.classList.add('success');
                         msgBox.innerHTML = res.data.message || 'Login successful! Redirecting...';
@@ -86,8 +85,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     setTimeout(function() {
                         window.location.href = res.data.redirect || dior_auth_vars.home_url;
-                    }, 800);
+                    }, 250);
                 } else {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = origText;
+                    }
                     if (msgBox) {
                         msgBox.classList.add('error');
                         msgBox.innerHTML = res.data && res.data.message ? res.data.message : 'Invalid credentials. Please try again.';

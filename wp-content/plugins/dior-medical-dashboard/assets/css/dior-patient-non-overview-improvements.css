@@ -102,6 +102,11 @@
     border-radius: 16px !important;
     box-shadow: 0 5px 20px rgba(20, 63, 105, .055) !important;
     overflow: hidden !important;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dior-patient-portal-wrap .dior-tab-panel:not(#tab-overview) .master-table-card:hover {
+    border: 0.99px solid #2C6CB166 !important;
 }
 
 .dior-patient-portal-wrap .dior-tab-panel:not(#tab-overview) .master-table-header {
@@ -529,13 +534,42 @@
 }
 
 .dior-patient-portal-wrap .dior-static-modal-close {
-    width: 34px;
-    height: 34px;
-    border: 1px solid #E2E8F0;
-    background: #fff;
-    border-radius: 9px;
-    cursor: pointer;
-    color: #64748B;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1px solid #E2E8F0 !important;
+    background: #fff !important;
+    border-radius: 9px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    color: #64748B !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    transition: all 0.15s ease !important;
+}
+
+.dior-patient-portal-wrap .dior-static-modal-close:hover {
+    background: #F8FAFC !important;
+    color: #1E293B !important;
+    border-color: #CBD5E1 !important;
+}
+
+.dior-patient-portal-wrap .dior-static-modal-close i {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    font-size: 14px !important;
 }
 
 .dior-patient-portal-wrap .dior-static-modal-body {
@@ -1288,5 +1322,136 @@
         width: 100% !important;
         margin-left: 0 !important;
         justify-content: flex-end !important;
+    }
+}
+
+/* Telemedicine ACTIONS column alignment */
+#tab-telemedicine #dior-tele-table th:last-child,
+#tab-telemedicine #dior-tele-table td:last-child {
+    text-align: center !important;
+    vertical-align: middle !important;
+    width: 146px !important;
+    min-width: 146px !important;
+}
+#tab-telemedicine #dior-tele-table .cell-actions,
+.dior-patient-portal-wrap #tab-telemedicine #dior-tele-table .cell-actions {
+    display: inline-grid !important;
+    grid-template-columns: 34px 34px 34px !important;
+    grid-gap: 8px !important;
+    gap: 8px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    width: max-content !important;
+    vertical-align: middle !important;
+}
+#tab-telemedicine #dior-tele-table .cell-actions .edit-btn {
+    grid-column: 1 !important;
+}
+#tab-telemedicine #dior-tele-table .cell-actions .tele-join-btn,
+#tab-telemedicine #dior-tele-table .cell-actions a.action-icon-btn,
+#tab-telemedicine #dior-tele-table .cell-actions button:not(.edit-btn):not(.delete-btn) {
+    grid-column: 2 !important;
+}
+#tab-telemedicine #dior-tele-table .cell-actions .delete-btn {
+    grid-column: 3 !important;
+}
+#tab-telemedicine #dior-tele-table .action-icon-btn.is-disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    border-color: #E2E8F0 !important;
+    background: #F8FAFC !important;
+    color: #94A3B8 !important;
+}
+
+/* Notifications Center Table Line-Wrap & No Horizontal Scroll */
+#tab-notifications .master-table-card .table-content {
+    width: 100% !important;
+    overflow-x: auto !important;
+}
+#tab-notifications table#dior-notif-table {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+}
+#tab-notifications table#dior-notif-table th:nth-child(1),
+#tab-notifications table#dior-notif-table td:nth-child(1) {
+    width: 44px !important;
+    max-width: 44px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+}
+#tab-notifications table#dior-notif-table th:nth-child(2),
+#tab-notifications table#dior-notif-table td:nth-child(2),
+#tab-notifications .notif-title-col {
+    width: 20% !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
+#tab-notifications table#dior-notif-table th:nth-child(3),
+#tab-notifications table#dior-notif-table td:nth-child(3),
+#tab-notifications .notif-message-col {
+    width: 38% !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
+#tab-notifications table#dior-notif-table td:nth-child(3) .cell-text,
+#tab-notifications .notif-message-text {
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    display: block !important;
+    line-height: 1.55 !important;
+    font-size: 13.5px !important;
+    color: #334155 !important;
+}
+#tab-notifications table#dior-notif-table td:nth-child(2) .cell-text,
+#tab-notifications .notif-title-text {
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    display: block !important;
+    line-height: 1.4 !important;
+    font-weight: 600 !important;
+    color: #1E293B !important;
+}
+#tab-notifications table#dior-notif-table th:nth-child(4),
+#tab-notifications table#dior-notif-table td:nth-child(4) {
+    width: 78px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+#tab-notifications table#dior-notif-table th:nth-child(5),
+#tab-notifications table#dior-notif-table td:nth-child(5) {
+    width: 115px !important;
+    white-space: nowrap !important;
+}
+#tab-notifications table#dior-notif-table th:nth-child(6),
+#tab-notifications table#dior-notif-table td:nth-child(6) {
+    width: 90px !important;
+    white-space: nowrap !important;
+}
+#tab-notifications table#dior-notif-table th:nth-child(7),
+#tab-notifications table#dior-notif-table td:nth-child(7) {
+    width: 85px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+#tab-notifications table#dior-notif-table th:nth-child(8),
+#tab-notifications table#dior-notif-table td:nth-child(8) {
+    width: 85px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+@media (max-width: 991px) {
+    #tab-notifications table#dior-notif-table {
+        min-width: 760px !important;
+        table-layout: auto !important;
     }
 }

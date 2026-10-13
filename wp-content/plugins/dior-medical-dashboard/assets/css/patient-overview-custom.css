@@ -44,6 +44,7 @@
   height: 56px;
   padding: 0 29px;
   font-weight: 600;
+  font-size: 16px !important;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -81,6 +82,11 @@
   background: #FFFFFF;
   border: 0.72px solid #2C6CB166;
   border-radius: 20px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+#tab-overview.custom-patient-overview .card:hover {
+  border: 0.99px solid #2C6CB166;
 }
 
 #tab-overview.custom-patient-overview .stat-card {
@@ -331,7 +337,7 @@
 #tab-overview.custom-patient-overview th {
   text-align: left !important;
   color: #1763ad !important;
-  font-size: 13px !important;
+  font-size: 16px !important;
   font-weight: 600 !important;
   padding: 11px 10px !important;
   border: none !important;
@@ -343,7 +349,7 @@
 }
 
 #tab-overview.custom-patient-overview td {
-  font-size: 12px !important;
+  font-size: 16px !important;
   padding: 10px 10px !important;
   border: none !important;
   border-bottom: 1px solid #e2e8f0 !important;
@@ -475,8 +481,8 @@
 }
 
 #tab-overview.custom-patient-overview .doctor-role {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   margin-bottom: 8px;
   white-space: nowrap;
 }
@@ -568,18 +574,18 @@
 }
 
 #tab-overview.custom-patient-overview .consult-role {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   margin: 3px 0 9px;
 }
 
 #tab-overview.custom-patient-overview .consult-name {
-  font-size: 11px;
+  font-size: 14px;
   margin-bottom: 8px;
 }
 
 #tab-overview.custom-patient-overview .consult-meta {
-  font-size: 10px;
+  font-size: 12px;
   display: flex;
   gap: 18px;
   margin-bottom: 11px;
@@ -771,4 +777,47 @@
     width: 100px;
     height: 100px;
   }
+}
+
+/* Modal Close Button Perfect Alignment */
+.dior-patient-portal-wrap .dior-static-modal-close,
+.dior-patient-portal-wrap #dior-feedback-modal .dior-static-modal-close {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: #64748B !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.dior-patient-portal-wrap .dior-static-modal-close:hover,
+.dior-patient-portal-wrap #dior-feedback-modal .dior-static-modal-close:hover {
+  background: #F8FAFC !important;
+  color: #1E293B !important;
+  border-color: #CBD5E1 !important;
+}
+
+.dior-patient-portal-wrap .dior-static-modal-close i,
+.dior-patient-portal-wrap #dior-feedback-modal .dior-static-modal-close i {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  font-size: 15px !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }

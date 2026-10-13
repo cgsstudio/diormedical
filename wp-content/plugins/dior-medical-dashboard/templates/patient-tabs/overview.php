@@ -6,10 +6,10 @@
       <h1>Welcome Back, <?php echo esc_html(strtoupper($display_first_name)); ?></h1>
       <p class="subtitle">Manage your telehealth visits, prescriptions, and medical records.</p>
     </div>
-    <button class="gold-btn" data-switch-tab="appointments">
+    <a href="#tab=appointments" data-appt-subtab="book" class="gold-btn" onclick="event.preventDefault(); if(typeof diorSwitchTab==='function') diorSwitchTab('appointments'); if(typeof diorSwitchApptSubTab==='function') diorSwitchApptSubTab('book');" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px; font-size:16px !important; cursor:pointer;">
       <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>
       Book An Appointment
-    </button>
+    </a>
   </div>
 
   <div class="dashboard-grid">
@@ -24,11 +24,11 @@
       <div class="mid-grid">
         <div class="card patient-card">
           <div class="patient-top">
-            <div class="patient-photo">
+            <div class="patient-photo" id="dior-patient-photo-box">
                 <?php if (!empty($profile['avatar_url'])): ?>
-                <img src="<?php echo esc_url($profile['avatar_url']); ?>" alt="Profile">
+                <img id="dior-overview-patient-img" src="<?php echo esc_url($profile['avatar_url']); ?>" alt="Profile">
                 <?php else: ?>
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="Mia Song">
+                <img id="dior-overview-patient-img" src="<?php echo esc_url(get_avatar_url(get_current_user_id(), ['size' => 200])); ?>" alt="<?php echo esc_attr($profile['full_name'] ?? 'Profile'); ?>">
                 <?php endif; ?>
             </div>
             <div class="patient-info">

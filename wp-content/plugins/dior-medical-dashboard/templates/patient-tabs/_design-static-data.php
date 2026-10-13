@@ -11,41 +11,8 @@
 $dior_patient_design_static = true;
 $design_today = current_time('Y-m-d');
 
-$appointments = [
-    [
-        'id' => 'APT-2048', 'appt_uid' => 'APT-2048', 'patient_id' => $user_id,
-        'patient_user_id' => $user_id, 'doctor_id' => 101,
-        'doctor_name' => 'Dr. Sarah Smith', 'provider' => 'Dr. Sarah Smith',
-        'provider_spec' => 'Cardiology', 'date' => $design_today, 'appt_date' => $design_today,
-        'time' => '10:30 AM', 'appt_time' => '10:30 AM', 'status' => 'Confirmed',
-        'type' => 'Video Consultation', 'condition' => 'Routine Follow-up',
-        'visit_type' => 'Telehealth', 'duration' => '30 minutes',
-        'notes' => 'Follow-up consultation.'
-    ],
-    [
-        'id' => 'APT-2049', 'appt_uid' => 'APT-2049', 'patient_id' => $user_id,
-        'patient_user_id' => $user_id, 'doctor_id' => 102,
-        'doctor_name' => 'Dr. James Chen', 'provider' => 'Dr. James Chen',
-        'provider_spec' => 'Primary Care', 'date' => wp_date('Y-m-d', current_time('timestamp') + DAY_IN_SECONDS),
-        'appt_date' => wp_date('Y-m-d', current_time('timestamp') + DAY_IN_SECONDS),
-        'time' => '02:00 PM', 'appt_time' => '02:00 PM', 'status' => 'Scheduled',
-        'type' => 'Clinic Visit', 'condition' => 'General Checkup',
-        'visit_type' => 'In Person', 'duration' => '45 minutes',
-        'notes' => 'General health review.'
-    ],
-    [
-        'id' => 'APT-2047', 'appt_uid' => 'APT-2047', 'patient_id' => $user_id,
-        'patient_user_id' => $user_id, 'doctor_id' => 103,
-        'doctor_name' => 'Dr. Helen Miller', 'provider' => 'Dr. Helen Miller',
-        'provider_spec' => 'Internal Medicine',
-        'date' => wp_date('Y-m-d', current_time('timestamp') - DAY_IN_SECONDS),
-        'appt_date' => wp_date('Y-m-d', current_time('timestamp') - DAY_IN_SECONDS),
-        'time' => '09:30 AM', 'appt_time' => '09:30 AM', 'status' => 'Completed',
-        'type' => 'Video Consultation', 'condition' => 'Medication Review',
-        'visit_type' => 'Telehealth', 'duration' => '30 minutes',
-        'notes' => 'Medication review completed.'
-    ],
-];
+// Appointment data is supplied by the dashboard's database-backed data provider.
+;
 
 $prescriptions = [
     ['id'=>'RX-1001','order_id'=>'RX-1001','medication'=>'Cetirizine 10 mg','name'=>'Cetirizine 10 mg','dosage'=>'10 mg','quantity'=>'30 tablets','refills'=>'2','date_prescribed'=>$design_today,'prescribed_by'=>'Dr. Sarah Smith','condition'=>'Seasonal Allergy','status'=>'Active','instructions'=>'Take once daily.'],
@@ -64,22 +31,21 @@ $payments = [
     ['id'=>'PAY-1003','invoice_id'=>'#INV-2041','doctor_name'=>'Dr. Helen Miller','date'=>wp_date('M j, Y', current_time('timestamp') - 7 * DAY_IN_SECONDS),'amount'=>'$60','discount'=>'5%','tax'=>'$6','total'=>'$63','status'=>'Paid'],
 ];
 
-$documents = [
-    ['id'=>'DOC-1001','title'=>'Blood Test Report','category'=>'Laboratory','date'=>$design_today,'size'=>'1.2 MB','author'=>'Dr. Sarah Smith','type'=>'PDF','file_type'=>'PDF'],
-    ['id'=>'DOC-1002','title'=>'Consultation Summary','category'=>'Clinical','date'=>$design_today,'size'=>'840 KB','author'=>'Dr. James Chen','type'=>'PDF','file_type'=>'PDF'],
-    ['id'=>'DOC-1003','title'=>'Medication Report','category'=>'Prescription','date'=>wp_date('Y-m-d', current_time('timestamp') - 3 * DAY_IN_SECONDS),'size'=>'620 KB','author'=>'Dr. Helen Miller','type'=>'PDF','file_type'=>'PDF'],
-];
+if (empty($documents)) {
+    $documents = [
+        ['id'=>'DOC-1001','title'=>'Blood Test Report','category'=>'Laboratory','date'=>$design_today,'size'=>'1.2 MB','author'=>'Dr. Sarah Smith','type'=>'PDF','file_type'=>'PDF'],
+        ['id'=>'DOC-1002','title'=>'Consultation Summary','category'=>'Clinical','date'=>$design_today,'size'=>'840 KB','author'=>'Dr. James Chen','type'=>'PDF','file_type'=>'PDF'],
+        ['id'=>'DOC-1003','title'=>'Medication Report','category'=>'Prescription','date'=>wp_date('Y-m-d', current_time('timestamp') - 3 * DAY_IN_SECONDS),'size'=>'620 KB','author'=>'Dr. Helen Miller','type'=>'PDF','file_type'=>'PDF'],
+    ];
+}
 
 $questionnaires = [
     ['id'=>'Q-1001','title'=>'General Health Intake','status'=>'Submitted','updated_at'=>$design_today],
     ['id'=>'Q-1002','title'=>'Pre-Consultation Questionnaire','status'=>'Pending','updated_at'=>$design_today],
 ];
 
-$notifications = [
-    ['id'=>'N-1001','title'=>'Appointment Confirmed','message'=>'Your appointment with Dr. Sarah Smith is confirmed.','type'=>'Appointment','created_at'=>current_time('mysql'),'timestamp'=>current_time('timestamp'),'is_read'=>false,'action_url'=>'#tab=appointments'],
-    ['id'=>'N-1002','title'=>'Prescription Available','message'=>'A new prescription is available in your dashboard.','type'=>'Prescription','created_at'=>current_time('mysql'),'timestamp'=>current_time('timestamp'),'is_read'=>false,'action_url'=>'#tab=docs_meds'],
-    ['id'=>'N-1003','title'=>'Report Uploaded','message'=>'Your latest blood test report is available.','type'=>'Report','created_at'=>current_time('mysql'),'timestamp'=>current_time('timestamp'),'is_read'=>true,'action_url'=>'#tab=documents'],
-];
+// Notifications are dynamic from database and user meta — no static overwrite.
+
 
 $insurance_claims = [
     ['claim_id'=>'CLM-2048','policy_id'=>'POL-8891','claim_date'=>$design_today,'claim_type'=>'Consultation','claim_amount'=>'$120','approved_amount'=>'$108','submitted'=>'Submitted','status'=>'In Review'],
@@ -211,15 +177,8 @@ for ($i = count($questionnaires); $i < 10; $i++) {
     $questionnaires[] = ['id'=>'Q-'.(1003+$i),'title'=>['Medication History','Allergy Assessment','Lifestyle Intake','Travel Health Form','Consent Form','Wellness Review','Follow-up Assessment','Telehealth Consent'][$i-2] ?? 'Health Questionnaire','status'=>($i % 3 === 0 ? 'Pending' : 'Submitted'),'updated_at'=>wp_date('Y-m-d', current_time('timestamp') - $i * DAY_IN_SECONDS)];
 }
 
-for ($i = count($notifications); $i < 10; $i++) {
-    $types = ['Appointment','Prescription','Report','Billing','Telemedicine','Reminder','Message'];
-    $type = $types[$i % count($types)];
-    $notifications[] = [
-        'id'=>'N-'.(1004+$i),'title'=>$type.' Update','message'=>'This is a static notification for the patient portal design review.',
-        'type'=>$type,'created_at'=>wp_date('Y-m-d H:i:s', current_time('timestamp') - $i * DAY_IN_SECONDS),
-        'timestamp'=>current_time('timestamp') - $i * DAY_IN_SECONDS,'is_read'=>($i % 3 === 0),'action_url'=>'#tab=notifications'
-    ];
-}
+// Removed static notifications synthetic row generator to preserve dynamic notifications.
+
 
 for ($i = count($insurance_claims); $i < 10; $i++) {
     $insurance_claims[] = [

@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 class Dior_DB
 {
-    const DB_VERSION = '4.0.3';
+    const DB_VERSION = '4.0.4';
     const DB_VERSION_OPTION = 'dior_medical_db_version';
 
     /**
@@ -232,6 +232,14 @@ class Dior_DB
             patient_id BIGINT UNSIGNED NOT NULL,
             doctor_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             appointment_uid VARCHAR(64) NULL,
+            prescription_id VARCHAR(64) NULL,
+            patient_name VARCHAR(255) NULL,
+            prescription_date DATE NULL,
+            medications TEXT NULL,
+            dosage VARCHAR(255) NULL,
+            frequency VARCHAR(255) NULL,
+            duration VARCHAR(255) NULL,
+            doctor_name VARCHAR(255) NULL,
             medication VARCHAR(255) NOT NULL,
             instructions TEXT NULL,
             quantity VARCHAR(100) NULL,

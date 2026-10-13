@@ -1260,6 +1260,9 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                     const notifTableBody = document.querySelector('#dior-notif-tbody');
                     if (notifTableBody && d.full_html && d.latest_id !== diorLastKnownNotifId) {
                         notifTableBody.innerHTML = d.full_html;
+                        if (typeof diorRenderNotifPagination === 'function') {
+                            diorRenderNotifPagination();
+                        }
                         // Update stats cards
                         const totalCount = document.querySelector('.dior-patient-alert-stat:nth-child(1) strong');
                         const unreadCountEl = document.querySelector('.dior-patient-alert-stat:nth-child(2) strong');
@@ -2244,16 +2247,19 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                             avatarRemoveBtn.style.display = 'inline-flex';
                         }
 
-                        // Update sidebar avatar
-                        const sidebarAvatar = document.getElementById('dior-sidebar-avatar-box');
-                        if (sidebarAvatar && newUrl) {
-                            sidebarAvatar.innerHTML = `<img src="${newUrl}" alt="Profile Photo" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">`;
-                        }
-
-                        // Update topbar pill avatar
-                        const topPillAvatar = document.getElementById('dior-top-pill-avatar');
-                        if (topPillAvatar && newUrl) {
-                            topPillAvatar.innerHTML = `<img src="${newUrl}" alt="Profile Photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                        // Update all patient avatars across dashboard
+                        if (typeof window.diorUpdateAllPatientAvatars === 'function') {
+                            window.diorUpdateAllPatientAvatars(newUrl);
+                        } else {
+                            const sbImg = document.getElementById('dior-sidebar-avatar-img');
+                            if (sbImg) sbImg.src = newUrl;
+                            const topImg = document.getElementById('dior-topbar-avatar-img');
+                            if (topImg) topImg.src = newUrl;
+                            const ovImg = document.getElementById('dior-overview-patient-img');
+                            if (ovImg) ovImg.src = newUrl;
+                            document.querySelectorAll('.dior-sidebar-avatar-wrap img, .dior-pill-avatar img, .patient-photo img').forEach(el => {
+                                el.src = newUrl;
+                            });
                         }
 
                         if (window.dior_vars && window.dior_vars.patient_profile) {

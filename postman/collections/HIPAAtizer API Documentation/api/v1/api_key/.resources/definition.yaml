@@ -1,3 +1,0 @@
-$kind: collection
-description: Endpoints requiring API key authentication for secure access.
-order: 1000

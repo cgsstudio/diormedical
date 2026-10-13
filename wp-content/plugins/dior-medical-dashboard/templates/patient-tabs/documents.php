@@ -1,4 +1,11 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-documents">
+    <?php
+    $docs_user_id = get_current_user_id();
+    $real_documents = Dior_Patient_Portal_Data::get_patient_documents($docs_user_id);
+    if (!empty($real_documents)) {
+        $documents = $real_documents;
+    }
+    ?>
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
         <div>
@@ -114,31 +121,74 @@
 <!-- Patient document upload/edit modal -->
 <div id="dior-document-modal" class="dior-static-modal-backdrop" aria-hidden="true">
     <div class="dior-document-modal" role="dialog" aria-modal="true" aria-labelledby="dior-document-modal-title">
-        <button type="button" class="dior-document-modal-close" onclick="diorCloseDocumentModal()" aria-label="Close">&times;</button>
-        <h3 id="dior-document-modal-title">Add Medical Document</h3>
+        <button type="button" class="dior-document-modal-close" onclick="diorCloseDocumentModal()" aria-label="Close modal">
+            <i class="fas fa-xmark"></i>
+        </button>
+        
+        <div class="dior-doc-modal-header">
+            <div class="dior-doc-modal-badge">
+                <i class="fas fa-file-medical"></i> Medical Records
+            </div>
+            <h3 id="dior-document-modal-title" class="dior-doc-modal-title">Add Medical Document</h3>
+            <p class="dior-doc-modal-subtitle">Upload lab results, clinical records, or medical scans securely to your portal.</p>
+        </div>
+
         <form id="dior-document-form" enctype="multipart/form-data">
             <input type="hidden" id="dior-document-id" name="doc_id" value="">
+            
             <div class="dior-document-form-grid">
-                <label>Document Title<input type="text" id="dior-document-title" name="doc_title" required placeholder="e.g. Blood Test Report"></label>
-                <label>Category<select id="dior-document-category" name="doc_category">
-                    <option value="Clinical Record">Clinical Record</option>
-                    <option value="Laboratory">Laboratory</option>
-                    <option value="Diagnostic & Scans">Diagnostic &amp; Scans</option>
-                    <option value="Prescription">Prescription</option>
-                    <option value="Procedure">Procedure</option>
-                    <option value="Other">Other</option>
-                </select></label>
+                <div class="dior-doc-form-group">
+                    <label for="dior-document-title">Document Title <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="dior-document-title" name="doc_title" required placeholder="e.g. Blood Test Report" class="dior-doc-input">
+                </div>
+                <div class="dior-doc-form-group">
+                    <label for="dior-document-category">Category <span style="color:#ef4444;">*</span></label>
+                    <select id="dior-document-category" name="doc_category" class="dior-doc-input dior-doc-select">
+                        <option value="Clinical Record">Clinical Record</option>
+                        <option value="Laboratory">Laboratory</option>
+                        <option value="Diagnostic & Scans">Diagnostic &amp; Scans</option>
+                        <option value="Prescription">Prescription</option>
+                        <option value="Procedure">Procedure</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
             </div>
-            <div id="dior-document-file-wrap">
-                <label>Document File<input type="file" id="dior-document-file" name="doc_file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"></label>
-                <small>Allowed: PDF, PNG, JPG, DOC, DOCX. Maximum 25MB.</small>
+
+            <div id="dior-document-file-wrap" class="dior-doc-file-section">
+                <label>Document File <span style="color:#ef4444;">*</span></label>
+                <div class="dior-doc-dropzone" onclick="document.getElementById('dior-document-file').click()">
+                    <input type="file" id="dior-document-file" name="doc_file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" style="display:none;" onchange="diorUpdateDocFileName(this)">
+                    <div class="dior-doc-dropzone-icon">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                    </div>
+                    <div class="dior-doc-dropzone-text">
+                        <strong id="dior-doc-file-label">Choose File or Drag &amp; Drop</strong>
+                        <span>PDF, PNG, JPG, DOC, DOCX up to 25MB</span>
+                    </div>
+                    <button type="button" class="dior-doc-browse-btn" onclick="event.stopPropagation(); document.getElementById('dior-document-file').click();">Browse File</button>
+                </div>
             </div>
+
             <div class="dior-document-modal-actions">
-                <button type="button" class="btn btn-light" onclick="diorCloseDocumentModal()">Cancel</button>
-                <button type="submit" class="btn btn-primary" id="dior-document-save-btn"><i class="fas fa-cloud-arrow-up"></i> Upload Document</button>
+                <button type="button" class="dior-btn-modal-cancel" onclick="diorCloseDocumentModal()">Cancel</button>
+                <button type="submit" class="dior-btn-modal-submit" id="dior-document-save-btn">
+                    <i class="fas fa-cloud-arrow-up"></i> Upload Document
+                </button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+window.diorUpdateDocFileName = function(input) {
+    var label = document.getElementById('dior-doc-file-label');
+    if (!label) return;
+    if (input && input.files && input.files[0]) {
+        label.innerHTML = '<i class="fas fa-circle-check" style="color:#059669; margin-right:6px;"></i>' + input.files[0].name;
+    } else {
+        label.textContent = 'Choose File or Drag & Drop';
+    }
+};
+</script>
 
 </section>

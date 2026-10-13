@@ -25,10 +25,19 @@
         }
     }
     if (!$feedback_doctor_id) {
-        $feedback_doctors = get_users(['role' => 'doctor', 'orderby' => 'display_name', 'order' => 'ASC', 'number' => 1, 'fields' => 'ID']);
-        $feedback_doctor_id = !empty($feedback_doctors) ? (int) $feedback_doctors[0] : 0;
+        if (class_exists('Dior_Doctor_Resolver')) {
+            $feedback_doctor_id = Dior_Doctor_Resolver::get_default_doctor_id();
+        }
+        if (!$feedback_doctor_id) {
+            $feedback_doctors = get_users(['role__in' => ['doctor', 'administrator'], 'orderby' => 'ID', 'order' => 'ASC', 'number' => 1, 'fields' => 'ID']);
+            $feedback_doctor_id = !empty($feedback_doctors) ? (int) $feedback_doctors[0] : 1;
+        }
     }
     $feedback_doctor = $feedback_doctor_id ? get_userdata($feedback_doctor_id) : false;
+    if (!$feedback_doctor) {
+        $feedback_doctor = get_user_by('id', 1);
+        $feedback_doctor_id = $feedback_doctor ? (int) $feedback_doctor->ID : 1;
+    }
     $feedback_doctor_name = $feedback_doctor ? trim($feedback_doctor->first_name . ' ' . $feedback_doctor->last_name) : '';
     if ($feedback_doctor && $feedback_doctor_name === '')
         $feedback_doctor_name = $feedback_doctor->display_name;
@@ -60,22 +69,17 @@
                         <div class="header-actions-group">
                             <div class="docs-search-box">
                                 <i class="fas fa-magnifying-glass"></i>
-                                <input type="text" id="dior-bill-search-input" placeholder="Search records..."
-                                    aria-label="Search box" onkeyup="diorFilterBill()">
+                                <input type="text" id="dior-feedback-search-input" placeholder="Search feedback..."
+                                    aria-label="Search feedback" onkeyup="diorFilterFeedback(this.value)">
                             </div>
                             <div class="action-buttons">
-                                <button type="button" aria-label="Delete selected items" class="action-btn action-btn-danger" title="Delete Selected" onclick="diorBulkDeleteStaticRows(this)">
+                                <button type="button" aria-label="Delete selected items" class="action-btn action-btn-danger" title="Delete Selected" onclick="diorBulkDeleteFeedback()">
                                     <i class="fas fa-trash"></i>
                                 </button>
                                 <button type="button" class="action-btn action-btn-primary" title="Give Feedback"
-                                    onclick="diorOpenFeedbackModal()"><svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                        height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16"
-                                        style="background:transparent;">
-                                        <path
-                                            d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0" />
-                                    </svg></button>
-                                <button type="button" class="action-btn action-btn-success" title="Export"><i
-                                        class="fas fa-file-arrow-down"></i></button>
+                                    onclick="diorOpenFeedbackModal()"><i class="fas fa-plus"></i></button>
+                                <button type="button" class="action-btn action-btn-success" title="Export CSV"
+                                    onclick="diorDownloadFeedbackCSV()"><i class="fas fa-file-arrow-down"></i></button>
                                 <button type="button" class="action-btn action-btn-info" title="Refresh"
                                     onclick="window.location.reload()"><i class="fas fa-rotate-right"></i></button>
                             </div>
@@ -86,6 +90,7 @@
                     <table class="va-table" id="dior-feedback-table">
                         <thead>
                             <tr>
+                                <th style="width:40px;" class="text-center"><input type="checkbox" class="va-checkbox" id="dior-feedback-select-all" onchange="diorToggleAllFeedback(this)"></th>
                                 <th>Subject</th>
                                 <th>Doctor</th>
                                 <th>Rating</th>
@@ -114,6 +119,9 @@
                                 ]));
                                 ?>
                                 <tr data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>">
+                                    <td class="text-center">
+                                        <input type="checkbox" class="va-checkbox dior-feedback-row-cb" value="<?php echo (int) ($feedback['id'] ?? 0); ?>" onchange="diorUpdateFeedbackCheckState()">
+                                    </td>
                                     <td><span
                                             class="cell-text"><?php echo esc_html($feedback['subject'] ?? 'Patient Feedback'); ?></span>
                                     </td>
@@ -173,7 +181,7 @@
                             <?php endforeach; ?>
                             <?php if (empty($patient_feedback)): ?>
                                 <tr>
-                                    <td colspan="7" class="dior-empty-state">You have not submitted feedback yet.</td>
+                                    <td colspan="8" class="dior-empty-state">You have not submitted feedback yet.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -193,9 +201,10 @@
         aria-labelledby="dior-feedback-modal-title">
         <div class="dior-static-modal dior-feedback-modal">
             <div class="dior-static-modal-header">
-                <h3 id="dior-feedback-modal-title">Give Feedback</h3><button type="button"
-                    class="dior-static-modal-close" onclick="diorCloseStaticModal('dior-feedback-modal')"><i
-                        class="fas fa-xmark"></i></button>
+                <h3 id="dior-feedback-modal-title">Give Feedback</h3>
+                <button type="button" class="dior-static-modal-close" onclick="diorCloseStaticModal('dior-feedback-modal')" aria-label="Close modal" style="width:34px !important; height:34px !important; min-width:34px !important; max-width:34px !important; min-height:34px !important; max-height:34px !important; padding:0 !important; margin:0 !important; border:1px solid #E2E8F0 !important; border-radius:8px !important; background:#ffffff !important; color:#64748B !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; cursor:pointer !important; line-height:1 !important; box-sizing:border-box !important; flex-shrink:0 !important;">
+                    <i class="fas fa-xmark" style="display:inline-flex !important; align-items:center !important; justify-content:center !important; line-height:1 !important; font-size:15px !important; margin:0 !important; padding:0 !important;"></i>
+                </button>
             </div>
             <form id="dior-feedback-form" onsubmit="return diorSaveFeedback(event)">
                 <input type="hidden" name="feedback_id" id="dior-feedback-id" value="">
@@ -205,12 +214,8 @@
                     <div class="dior-feedback-recipient">
                         <i class="fas fa-user-doctor" aria-hidden="true"></i>
                         <span>Sending to</span>
-                        <strong><?php echo esc_html($feedback_doctor_name ?: 'Doctor unavailable'); ?></strong>
+                        <strong><?php echo esc_html($feedback_doctor_name ?: 'Care team'); ?></strong>
                     </div>
-                    <?php if (!$feedback_doctor_id): ?>
-                        <p class="dior-feedback-help">No doctor is linked to your account yet. Contact support to submit
-                            feedback.</p>
-                    <?php endif; ?>
                     <label for="dior-feedback-subject">Subject</label>
                     <input name="subject" id="dior-feedback-subject" maxlength="190" required
                         placeholder="What is your feedback about?">
@@ -237,11 +242,143 @@
                     <textarea name="message" id="dior-feedback-message" rows="5" maxlength="3000" required
                         placeholder="Tell us about your experience..."></textarea>
                 </div>
-                <div class="dior-static-modal-footer"><button type="button"
-                        onclick="diorCloseStaticModal('dior-feedback-modal')">Cancel</button><button type="submit"
-                        class="primary" id="dior-feedback-submit-btn" <?php disabled(!$feedback_doctor_id); ?>><i
-                            class="fas fa-paper-plane"></i> Submit Feedback</button></div>
+                <div class="dior-static-modal-footer">
+                    <button type="button" onclick="diorCloseStaticModal('dior-feedback-modal')">Cancel</button>
+                    <button type="submit" class="primary" id="dior-feedback-submit-btn"><i
+                            class="fas fa-paper-plane"></i> Submit Feedback</button>
+                </div>
             </form>
         </div>
     </div>
 </section>
+
+<script>
+window.diorFilterFeedback = function(val) {
+    var q = (val || '').toLowerCase().trim();
+    var table = document.getElementById('dior-feedback-table');
+    if (!table || !table.tBodies[0]) return;
+    var rows = Array.from(table.tBodies[0].querySelectorAll('tr[data-feedback-id]'));
+    var count = 0;
+    rows.forEach(function(row) {
+        var text = row.textContent.toLowerCase();
+        var match = !q || text.indexOf(q) !== -1;
+        row.style.display = match ? '' : 'none';
+        if (match) count++;
+    });
+    var totalLabel = document.getElementById('dior-feedback-total-count');
+    if (totalLabel) {
+        totalLabel.textContent = (q ? count + ' matching' : rows.length) + ' total feedback records';
+    }
+};
+
+window.diorToggleAllFeedback = function(master) {
+    document.querySelectorAll('.dior-feedback-row-cb').forEach(function(cb) {
+        cb.checked = master.checked;
+    });
+};
+
+window.diorUpdateFeedbackCheckState = function() {
+    var all = document.querySelectorAll('.dior-feedback-row-cb');
+    var checked = document.querySelectorAll('.dior-feedback-row-cb:checked');
+    var master = document.getElementById('dior-feedback-select-all');
+    if (master) {
+        master.checked = all.length > 0 && all.length === checked.length;
+    }
+};
+
+window.diorDownloadFeedbackCSV = function() {
+    var table = document.getElementById('dior-feedback-table');
+    if (!table || !table.tBodies[0]) return;
+    var rows = Array.from(table.tBodies[0].querySelectorAll('tr[data-feedback-id]'));
+    if (!rows.length) {
+        if (window.Swal) Swal.fire({ icon: 'info', title: 'No Records', text: 'No feedback records available to export.' });
+        else alert('No feedback records available to export.');
+        return;
+    }
+    var csv = ['"Subject","Doctor","Rating","Message","Date","Status"'];
+    rows.forEach(function(row) {
+        if (row.style.display === 'none') return;
+        var cells = row.querySelectorAll('td');
+        if (cells.length < 8) return;
+        var subject = (cells[1].innerText || '').trim().replace(/"/g, '""');
+        var doctor  = (cells[2].innerText || '').trim().replace(/"/g, '""');
+        var rating  = (cells[3].innerText || '').trim().replace(/"/g, '""');
+        var message = (cells[4].innerText || '').trim().replace(/"/g, '""');
+        var date    = (cells[5].innerText || '').trim().replace(/"/g, '""');
+        var status  = (cells[6].innerText || '').trim().replace(/"/g, '""');
+        csv.push('"' + subject + '","' + doctor + '","' + rating + '","' + message + '","' + date + '","' + status + '"');
+    });
+    var blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'patient_feedback_' + new Date().toISOString().slice(0,10) + '.csv';
+    link.click();
+};
+
+window.diorBulkDeleteFeedback = function() {
+    var checked = Array.from(document.querySelectorAll('.dior-feedback-row-cb:checked'));
+    if (!checked.length) {
+        if (window.Swal) Swal.fire({ icon: 'info', title: 'No Selection', text: 'Please select at least one feedback record to delete.' });
+        else alert('Please select at least one feedback record to delete.');
+        return;
+    }
+
+    var doBulkDelete = function() {
+        var cfg = window.dior_vars || window.dior_patient_dashboard || {};
+        var ajaxUrl = cfg.ajax_url || '/wp-admin/admin-ajax.php';
+        var nonce = cfg.nonce || cfg.portal_nonce || '';
+        var ids = checked.map(function(cb) { return cb.value; });
+
+        var fd = new FormData();
+        fd.append('action', 'dior_patient_bulk_delete_feedback');
+        fd.append('nonce', nonce);
+        ids.forEach(function(id) { fd.append('feedback_ids[]', id); });
+
+        fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res.success) {
+                    checked.forEach(function(cb) {
+                        var row = cb.closest('tr');
+                        if (row) row.remove();
+                    });
+                    var master = document.getElementById('dior-feedback-select-all');
+                    if (master) master.checked = false;
+                    var totalLabel = document.getElementById('dior-feedback-total-count');
+                    var tbody = document.querySelector('#dior-feedback-table tbody');
+                    var count = tbody ? tbody.querySelectorAll('tr[data-feedback-id]').length : 0;
+                    if (totalLabel) totalLabel.textContent = count + ' total feedback records';
+                    if (count === 0 && tbody) {
+                        tbody.innerHTML = '<tr><td colspan="8" class="dior-empty-state">You have not submitted feedback yet.</td></tr>';
+                    }
+                    if (window.Swal) Swal.fire({ position: 'top-end', icon: 'success', title: res.data.message || 'Records Deleted', showConfirmButton: false, timer: 1500 });
+                    else alert(res.data.message || 'Records deleted successfully.');
+                } else {
+                    if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: (res.data && res.data.message) || 'Bulk delete failed.' });
+                    else alert((res.data && res.data.message) || 'Bulk delete failed.');
+                }
+            })
+            .catch(function() {
+                if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Network error. Please try again.' });
+                else alert('Network error. Please try again.');
+            });
+    };
+
+    if (window.Swal) {
+        Swal.fire({
+            title: 'Delete ' + checked.length + ' feedback record(s)?',
+            text: 'This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#DC2626',
+            cancelButtonColor: '#94A3B8',
+            confirmButtonText: 'Yes, Delete',
+            cancelButtonText: 'Cancel'
+        }).then(function(r) {
+            if (r.isConfirmed) doBulkDelete();
+        });
+    } else if (confirm('Delete ' + checked.length + ' feedback record(s)?')) {
+        doBulkDelete();
+    }
+};
+</script>

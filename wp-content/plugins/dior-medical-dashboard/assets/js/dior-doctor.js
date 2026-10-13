@@ -23,6 +23,9 @@ function initDoctorDashboard() {
         const hash = window.location.hash.match(/^#tab=([^&]+)/);
         if (hash) initialTab = decodeURIComponent(hash[1]);
         if (!initialTab) initialTab = localStorage.getItem('diorDocLastTab');
+        if (initialTab === 'feedback' || initialTab === 'doc-feedback' || initialTab === 'patient-review' || initialTab === 'reviews') {
+            initialTab = 'doc-patient-review';
+        }
     } catch (e) { }
 
     let firstTabBtn = null;
@@ -833,6 +836,9 @@ function diorHydrateDoctorSourceTables() {
 }
 window.diorDocSwitchTab = function (tabId) {
     if (!tabId) return;
+    if (tabId === 'feedback' || tabId === 'doc-feedback' || tabId === 'patient-review' || tabId === 'reviews') {
+        tabId = 'doc-patient-review';
+    }
     try { localStorage.setItem('diorDocLastTab', tabId); } catch (e) { }
 
     const notifDropdown = document.getElementById('dior-doc-notif-dd');
@@ -863,12 +869,16 @@ window.diorDocSwitchTab = function (tabId) {
 
     // Update panels
     const panels = document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
-    panels.forEach(p => p.classList.remove('active'));
+    panels.forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none';
+    });
 
     const activePanel = document.getElementById(`tab-${tabId}`);
     if (activePanel) {
         activePanel.classList.add('active');
         activePanel.removeAttribute('hidden');
+        activePanel.style.display = 'block';
         // Refresh table pagination inside activated tab
         activePanel.querySelectorAll('.dior-doc-table').forEach(table => {
             if (table._diorRenderPage) {

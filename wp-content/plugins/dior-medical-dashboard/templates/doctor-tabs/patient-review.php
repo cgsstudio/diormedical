@@ -9,13 +9,18 @@ $ajax_url  = admin_url('admin-ajax.php');
 $doctor_id = get_current_user_id();
 
 // Keep doctor reviews scoped to the signed-in doctor; administrators can review all submissions.
-$reviews_sql = "SELECT r.*, p.first_name, p.last_name, p.avatar_url
+$reviews_sql = "SELECT r.*, 
+    COALESCE(NULLIF(TRIM(CONCAT(COALESCE(p.first_name, ''), ' ', COALESCE(p.last_name, ''))), ''), NULLIF(u.display_name, ''), u.user_login, 'Patient') AS patient_display_name,
+    COALESCE(p.avatar_url, '') AS avatar_url
     FROM {$wpdb->prefix}dior_reviews r
-    LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = r.patient_id";
+    LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = r.patient_id
+    LEFT JOIN {$wpdb->users} u ON u.ID = r.patient_id";
 if (!current_user_can('manage_options')) {
     $review_doctor_ids = Dior_Doctor_Resolver::get_accessible_doctor_ids($doctor_id);
-    $review_placeholders = implode(',', array_fill(0, count($review_doctor_ids), '%d'));
-    $reviews_sql .= $wpdb->prepare(" WHERE r.doctor_id IN ($review_placeholders)", ...$review_doctor_ids);
+    if (!empty($review_doctor_ids)) {
+        $review_placeholders = implode(',', array_fill(0, count($review_doctor_ids), '%d'));
+        $reviews_sql .= $wpdb->prepare(" WHERE r.doctor_id IN ($review_placeholders)", ...$review_doctor_ids);
+    }
 }
 $reviews = $wpdb->get_results($reviews_sql . ' ORDER BY r.created_at DESC LIMIT 200', ARRAY_A);
 
@@ -39,15 +44,15 @@ if (empty($patients)) {
 ?>
 <link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/view-appointment.css?v=' . time()); ?>">
 
-<section class="dior-tab-panel documents-tab-panel" id="tab-doc-patient-review" style="display:none;">
+<section class="dior-tab-panel documents-tab-panel" id="tab-doc-patient-review">
     <!-- Breadcrumb -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;">
-        <div><h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Patient Reviews</h4></div>
+        <div><h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Feedback &amp; Reviews</h4></div>
         <div>
             <ul class="va-breadcrumb-list" style="display:flex;gap:8px;list-style:none;padding:0;margin:0;align-items:center;">
                 <li><a href="#"><i class="fas fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
                 <li><span style="color:#94A3B8;">/</span></li>
-                <li class="active"><span style="color:#1E293B;font-weight:700;font-size:14px;">Patient Reviews</span></li>
+                <li class="active"><span style="color:#1E293B;font-weight:700;font-size:14px;">Feedback &amp; Reviews</span></li>
             </ul>
         </div>
     </div>
@@ -65,6 +70,12 @@ if (empty($patients)) {
                     <input type="text" id="rv-search" placeholder="Search reviews...">
                 </div>
                 <div class="va-actions-group">
+                    <button class="va-icon-btn va-btn-danger" id="rv-bulk-delete-btn" title="Delete Selected">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="va-icon-btn va-btn-success" id="rv-export-btn" title="Export CSV">
+                        <i class="fas fa-file-arrow-down"></i>
+                    </button>
                     <button class="va-icon-btn va-btn-info" id="rv-refresh-btn" title="Refresh">
                         <i class="fas fa-rotate-right"></i>
                     </button>
@@ -92,7 +103,7 @@ if (empty($patients)) {
                     <?php foreach ($reviews as $r):
                         $rid    = (int)($r['id'] ?? 0);
                         $pid    = (int)($r['patient_id'] ?? 0);
-                        $fname  = esc_html(trim(($r['first_name']??'').' '.($r['last_name']??''))) ?: 'Unknown';
+                        $fname  = esc_html($r['patient_display_name'] ?? 'Patient');
                         $avatar = esc_url($r['avatar_url'] ?? '');
                         $subject = esc_html($r['subject'] ?? '');
                         $rating = (int)($r['rating'] ?? 5);
@@ -226,22 +237,103 @@ window.rvViewReview = function(btn) {
 (function() {
     var ajaxUrl = '<?php echo esc_js($ajax_url); ?>';
     var nonce   = '<?php echo esc_js($nonce); ?>';
-    var allRows;
+    var allRows = [];
 
     function init() {
         allRows = Array.from(document.querySelectorAll('#rv-tbody tr[data-id]'));
-        document.getElementById('rv-select-all').addEventListener('change', function(){
-            document.querySelectorAll('.rv-row-check').forEach(function(cb){cb.checked=this.checked;},this);
-        });
-        document.getElementById('rv-refresh-btn').addEventListener('click', function(){location.reload();});
-        document.getElementById('rv-tbody').addEventListener('click', function(e) {
-            var editBtn = e.target.closest('.rv-edit-btn');
-            var delBtn  = e.target.closest('.rv-delete-btn');
-            if (editBtn) openEdit(editBtn);
-            if (delBtn)  deleteReview(delBtn);
-        });
+        
+        var selectAll = document.getElementById('rv-select-all');
+        if (selectAll) {
+            selectAll.addEventListener('change', function(){
+                document.querySelectorAll('.rv-row-check').forEach(function(cb){ cb.checked = selectAll.checked; });
+            });
+        }
+        
+        var refreshBtn = document.getElementById('rv-refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function(){ location.reload(); });
+        }
+        
+        var searchInput = document.getElementById('rv-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                var q = this.value.toLowerCase().trim();
+                allRows.forEach(function(row) {
+                    var text = row.textContent.toLowerCase();
+                    row.style.display = (!q || text.indexOf(q) !== -1) ? '' : 'none';
+                });
+            });
+        }
+
+        var exportBtn = document.getElementById('rv-export-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                var rows = Array.from(document.querySelectorAll('#rv-tbody tr[data-id]'));
+                if (!rows.length) { alert('No reviews to export.'); return; }
+                var csv = ['"Patient","Subject","Rating","Date","Comment","Status"'];
+                rows.forEach(function(row) {
+                    if (row.style.display === 'none') return;
+                    var name = (row.querySelector('.va-user-name') ? row.querySelector('.va-user-name').innerText : '').replace(/"/g, '""');
+                    var cells = row.querySelectorAll('td');
+                    var subject = (cells[2] ? cells[2].innerText.trim() : '').replace(/"/g, '""');
+                    var rating = 5;
+                    var editBtn = row.querySelector('.rv-edit-btn');
+                    if (editBtn) {
+                        try { rating = JSON.parse(editBtn.dataset.enc || '{}').rating || 5; } catch(e){}
+                    }
+                    var date = (cells[4] ? cells[4].innerText.trim() : '').replace(/"/g, '""');
+                    var comment = (cells[5] ? cells[5].innerText.trim() : '').replace(/"/g, '""');
+                    var status = (cells[6] ? cells[6].innerText.trim() : '').replace(/"/g, '""');
+                    csv.push('"' + name + '","' + subject + '","' + rating + '","' + date + '","' + comment + '","' + status + '"');
+                });
+                var blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'patient_reviews_' + new Date().toISOString().slice(0,10) + '.csv';
+                link.click();
+            });
+        }
+
+        var bulkDelBtn = document.getElementById('rv-bulk-delete-btn');
+        if (bulkDelBtn) {
+            bulkDelBtn.addEventListener('click', function() {
+                var checked = Array.from(document.querySelectorAll('.rv-row-check:checked'));
+                if (!checked.length) { alert('Please select at least one review to delete.'); return; }
+                if (!confirm('Delete ' + checked.length + ' selected review(s)? This cannot be undone.')) return;
+                var ids = checked.map(function(cb) { return cb.closest('tr').dataset.id; });
+                var data = new FormData();
+                data.append('action', 'dior_doc_review_bulk_delete');
+                data.append('nonce', nonce);
+                ids.forEach(function(id) { data.append('ids[]', id); });
+                fetch(ajaxUrl, { method: 'POST', body: data })
+                    .then(function(r) { return r.json(); })
+                    .then(function(res) {
+                        if (res.success) {
+                            checked.forEach(function(cb) {
+                                var row = cb.closest('tr');
+                                allRows = allRows.filter(function(r) { return r !== row; });
+                                row.remove();
+                            });
+                            if (selectAll) selectAll.checked = false;
+                        } else {
+                            alert(res.data && res.data.message ? res.data.message : 'Bulk delete failed.');
+                        }
+                    });
+            });
+        }
+
+        var tbody = document.getElementById('rv-tbody');
+        if (tbody) {
+            tbody.addEventListener('click', function(e) {
+                var editBtn = e.target.closest('.rv-edit-btn');
+                var delBtn  = e.target.closest('.rv-delete-btn');
+                if (editBtn) openEdit(editBtn);
+                if (delBtn)  deleteReview(delBtn);
+            });
+        }
         setupStarEditor();
-        document.getElementById('rv-save-btn').addEventListener('click', saveReview);
+        var saveBtn = document.getElementById('rv-save-btn');
+        if (saveBtn) saveBtn.addEventListener('click', saveReview);
     }
 
     function setupStarEditor() {

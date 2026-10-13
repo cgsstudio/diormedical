@@ -13,7 +13,7 @@ class Dior_Doctor_Dynamic {
         $actions = [
             'appointment_delete','appointment_update','patient_status','patient_delete','patient_bulk_delete',
             'get_patient_profile','save_consultation','delete_consultation','document_save','document_delete',
-            'review_save','review_delete','review_get','telemed_save','telemed_delete','notification_read',
+            'review_save','review_delete','review_bulk_delete','review_get','telemed_save','telemed_delete','notification_read',
             'notification_all_read','settings_save','chat_send','chat_get'
         ];
         foreach ($actions as $action) add_action('wp_ajax_dior_doc_' . $action, [__CLASS__, 'ajax_' . $action]);
@@ -45,8 +45,7 @@ class Dior_Doctor_Dynamic {
     private static function table($name) { global $wpdb; return $wpdb->prefix . 'dior_' . $name; }
 
     public static function install_schema() {
-        if(current_user_can('manage_options')) return true;
-        return in_array((int)($a['doctor_id']??0), self::doctor_scope_ids(), true);
+        global $wpdb;
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $cc = $wpdb->get_charset_collate();
         $tables = [];
@@ -173,8 +172,77 @@ class Dior_Doctor_Dynamic {
     public static function ajax_document_save(){ self::auth(); global $wpdb; $pid=(int)($_POST['patient_id']??0); self::ensure_patient_row($pid); if(!self::patient_belongs_to_doctor($pid,self::doctor_id())) wp_send_json_error(['message'=>'Access denied.']); $id=(int)($_POST['id']??0); $data=['patient_id'=>$pid,'author_id'=>self::doctor_id(),'title'=>sanitize_text_field($_POST['title']??'Document'),'category'=>sanitize_text_field($_POST['category']??'Clinical Record'),'file_name'=>sanitize_file_name($_POST['file_name']??'document.txt'),'file_path'=>sanitize_text_field($_POST['file_path']??''),'file_type'=>sanitize_text_field($_POST['file_type']??'TXT'),'content_html'=>wp_kses_post($_POST['content_html']??''),'updated_at'=>current_time('mysql')]; if($id){$wpdb->update(self::table('documents'),$data,['id'=>$id]);}else{$data['doc_uid']='DOC-'.wp_generate_uuid4();$data['created_at']=current_time('mysql');$wpdb->insert(self::table('documents'),$data);$id=$wpdb->insert_id;} wp_send_json_success(['message'=>'Document saved.','id'=>$id]); }
     public static function ajax_document_delete(){ self::auth(); global $wpdb; $id=(int)($_POST['id']??0); $doc=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('documents').' WHERE id=%d',$id),ARRAY_A); if(!$doc||!self::patient_belongs_to_doctor($doc['patient_id'],self::doctor_id())) wp_send_json_error(['message'=>'Access denied.']); $wpdb->delete(self::table('documents'),['id'=>$id],['%d']); wp_send_json_success(['message'=>'Document deleted.']); }
 
-    public static function ajax_review_save(){ self::auth(); global $wpdb; $pid=(int)($_POST['patient_id']??0); self::ensure_patient_row($pid); if(!self::patient_belongs_to_doctor($pid,self::doctor_id())) wp_send_json_error(['message'=>'Access denied.']); $id=(int)($_POST['id']??0); $data=['patient_id'=>$pid,'doctor_id'=>self::doctor_id(),'rating'=>max(1,min(5,(int)($_POST['rating']??5))),'comment'=>sanitize_textarea_field($_POST['comment']??''),'status'=>sanitize_text_field($_POST['status']??'Published'),'updated_at'=>current_time('mysql')]; if($id)$wpdb->update(self::table('reviews'),$data,['id'=>$id]);else{$data['review_uid']='REV-'.wp_generate_uuid4();$data['created_at']=current_time('mysql');$wpdb->insert(self::table('reviews'),$data);$id=$wpdb->insert_id;} wp_send_json_success(['message'=>'Review saved.','id'=>$id]); }
-    public static function ajax_review_delete(){ self::auth(); global $wpdb; $id=(int)($_POST['id']??0); $r=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('reviews').' WHERE id=%d',$id),ARRAY_A); if(!$r||(!current_user_can('manage_options')&&!in_array((int)$r['doctor_id'],self::doctor_scope_ids(),true)))wp_send_json_error(['message'=>'Access denied.']);$wpdb->delete(self::table('reviews'),['id'=>$id],['%d']);wp_send_json_success(['message'=>'Review deleted.']); }
+    public static function ajax_review_save(){
+        self::auth();
+        global $wpdb;
+        $id = (int)($_POST['id'] ?? 0);
+        $pid = (int)($_POST['patient_id'] ?? 0);
+        $rating = max(1, min(5, (int)($_POST['rating'] ?? 5)));
+        $comment = sanitize_textarea_field($_POST['comment'] ?? '');
+        $status = sanitize_text_field($_POST['status'] ?? 'Published');
+
+        if ($id) {
+            $r = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . self::table('reviews') . ' WHERE id=%d', $id), ARRAY_A);
+            if (!$r) wp_send_json_error(['message' => 'Review not found.']);
+            if (!current_user_can('manage_options') && !in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true)) {
+                wp_send_json_error(['message' => 'Access denied.'], 403);
+            }
+            $update_data = [
+                'rating'     => $rating,
+                'comment'    => $comment,
+                'status'     => $status,
+                'updated_at' => current_time('mysql'),
+            ];
+            if (!empty($_POST['subject'])) {
+                $update_data['subject'] = sanitize_text_field($_POST['subject']);
+            }
+            $wpdb->update(self::table('reviews'), $update_data, ['id' => $id]);
+            wp_send_json_success(['message' => 'Review saved successfully.', 'id' => $id]);
+        } else {
+            self::ensure_patient_row($pid);
+            $data = [
+                'review_uid' => 'REV-' . wp_generate_uuid4(),
+                'patient_id' => $pid,
+                'doctor_id'  => self::doctor_id(),
+                'subject'    => sanitize_text_field($_POST['subject'] ?? 'Doctor Review'),
+                'rating'     => $rating,
+                'comment'    => $comment,
+                'status'     => $status,
+                'created_at' => current_time('mysql'),
+                'updated_at' => current_time('mysql'),
+            ];
+            $wpdb->insert(self::table('reviews'), $data);
+            wp_send_json_success(['message' => 'Review created successfully.', 'id' => $wpdb->insert_id]);
+        }
+    }
+    public static function ajax_review_delete(){
+        self::auth();
+        global $wpdb;
+        $id = (int)($_POST['id'] ?? 0);
+        $r = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . self::table('reviews') . ' WHERE id=%d', $id), ARRAY_A);
+        if (!$r || (!current_user_can('manage_options') && !in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true))) {
+            wp_send_json_error(['message' => 'Access denied.'], 403);
+        }
+        $wpdb->delete(self::table('reviews'), ['id' => $id], ['%d']);
+        wp_send_json_success(['message' => 'Review deleted.']);
+    }
+    public static function ajax_review_bulk_delete(){
+        self::auth();
+        global $wpdb;
+        $ids = array_map('intval', (array)($_POST['ids'] ?? []));
+        if (empty($ids)) {
+            wp_send_json_error(['message' => 'No reviews selected.']);
+        }
+        $deleted = 0;
+        foreach ($ids as $id) {
+            $r = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . self::table('reviews') . ' WHERE id=%d', $id), ARRAY_A);
+            if ($r && (current_user_can('manage_options') || in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true))) {
+                $wpdb->delete(self::table('reviews'), ['id' => $id], ['%d']);
+                $deleted++;
+            }
+        }
+        wp_send_json_success(['message' => "$deleted review(s) deleted."]);
+    }
     public static function ajax_review_get(){ self::auth(); global $wpdb; $id=(int)($_POST['id']??0); $r=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('reviews').' WHERE id=%d',$id),ARRAY_A); if(!$r)wp_send_json_error(['message'=>'Review not found.']); wp_send_json_success(['review'=>$r,'patient'=>self::patient($r['patient_id'])]); }
 
     public static function ajax_telemed_save(){ self::auth(); global $wpdb; $pid=(int)($_POST['patient_id']??0); $appt=sanitize_text_field($_POST['appointment_uid']??''); if(!$pid||!self::patient_belongs_to_doctor($pid,self::doctor_id()))wp_send_json_error(['message'=>'Access denied.']);$id=(int)($_POST['id']??0);$data=['appointment_uid'=>$appt,'patient_id'=>$pid,'doctor_id'=>self::doctor_id(),'room_url'=>esc_url_raw($_POST['room_url']??''),'status'=>sanitize_text_field($_POST['status']??'Scheduled'),'notes'=>sanitize_textarea_field($_POST['notes']??''),'updated_at'=>current_time('mysql')];if($id)$wpdb->update(self::table('telemedicine'),$data,['id'=>$id]);else{$data['tele_uid']='TEL-'.wp_generate_uuid4();$data['created_at']=current_time('mysql');$wpdb->insert(self::table('telemedicine'),$data);$id=$wpdb->insert_id;}wp_send_json_success(['message'=>'Telemedicine record saved.','id'=>$id]);}
