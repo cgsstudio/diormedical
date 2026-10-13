@@ -1257,4 +1257,4 @@ window.diorCloseHipaaModal = diorCloseHipaaModal;
     </div>
 </div>
 <!-- Hidden Intake Form Content for Dashboard Popup -->
-
+<?php Dior_Medical_Auth::render_docbooker_booking_modal(); ?>

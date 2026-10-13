@@ -121,7 +121,7 @@
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn active" data-tab="doc-pharmacy-list">
+                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-pharmacy-list">
                                 <i class="fas fa-chevron-right"></i> Medicine List
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-pharmacy-add">
@@ -172,9 +172,6 @@
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-notifications-alerts">
-                                <i class="fas fa-chevron-right"></i> Alerts & Announcements
-                            </button>
                             <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-notifications-system">
                                 <i class="fas fa-chevron-right"></i> System Notifications
                             </button>
@@ -325,7 +322,6 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/telemedicine-video.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/telemedicine-records.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-review.php'; ?>
-                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/notifications-alerts.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/notifications-system.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/consultation-room.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/settings.php'; ?>

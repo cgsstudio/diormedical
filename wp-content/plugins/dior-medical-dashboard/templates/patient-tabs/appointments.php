@@ -2,7 +2,8 @@
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
         <div>
-            <h4 class="mb-0 text-dark" id="dior-appt-main-title" style="font-size:20px;font-weight:700;">Book Appointment</h4>
+            <h4 class="mb-0 text-dark" id="dior-appt-main-title" style="font-size:20px;font-weight:700;">Book
+                Appointment</h4>
         </div>
         <div>
             <ul class="va-breadcrumb-list">
@@ -86,34 +87,35 @@
 
         <!-- 1. Book Appointment -->
         <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-book">
-            <div class="medidash-page-header">
-                <h2>Book Appointment</h2>
-                <div class="medidash-breadcrumb">
-                    <i class="fas fa-house"></i> / Appointments / <span>Book Appointment</span>
+            <!-- DocBooker Consultation Trigger Card -->
+            <div class="dior-booking-banner-card" style="background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.25);">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.45); display: flex; align-items: center; justify-content: center; font-size: 24px; color: #d4af37;">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <span style="display: inline-block; padding: 2px 8px; background: rgba(212, 175, 55, 0.2); color: #d4af37; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">DocBooker Live</span>
+                            <span style="display: inline-block; padding: 2px 8px; background: rgba(16, 185, 129, 0.2); color: #10b981; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Single Doctor: Dr. Marcus Sterling, DO</span>
+                        </div>
+                        <h4 style="margin: 0 0 4px 0; color: #ffffff; font-size: 17px; font-weight: 700;">Telehealth Appointment Scheduler</h4>
+                        <p style="margin: 0; color: #94a3b8; font-size: 13px;">Complete your HIPAA intake form below or schedule your <strong>Video Visit (HD)</strong> or <strong>Phone Consultation</strong> directly.</p>
+                    </div>
                 </div>
+                <button type="button" onclick="diorOpenDocBookerModal();" class="dior-btn-gold-primary" style="background: linear-gradient(135deg, #d4af37 0%, #b89628 100%); color: #0f172a; border: none; font-weight: 700; padding: 12px 22px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); transition: all 0.2s ease;">
+                    <i class="fa-solid fa-calendar-plus"></i> Schedule Appointment Now
+                </button>
             </div>
 
-            <div class="medidash-card" style="border-radius: 16px; border: 1px solid #E2E8F0; background: #ffffff; box-shadow: 0 4px 20px rgba(15,23,42,0.05); overflow: hidden; margin-bottom: 24px;">
-                <div class="medidash-card-header" style="padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <div>
-                        <h3 class="medidash-card-title" style="margin: 0; font-size: 18px; font-weight: 700; color: #0F2B48; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-calendar-plus" style="color: #2C6CB1;"></i> Online Visit &amp; Medical Intake
-                        </h3>
-                        <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #64748B;">Complete your secure, HIPAA-compliant questionnaire and book your telehealth appointment.</p>
-                    </div>
-                    <span style="background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; font-size: 11.5px; font-weight: 600; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-shield-halved" style="color: #3B82F6;"></i> HIPAA Verified
-                    </span>
-                </div>
-                <div class="medidash-card-body" style="padding: 20px 24px;">
-                    <div class="dior-hipaa-embed-container" style="width: 100%; max-width: 100%; min-height: 750px; background: #ffffff; border-radius: 12px; overflow: hidden;">
+            <div class="medidash-card">
+                <div class="medidash-card-body">
+                    <div class="dior-hipaa-embed-container">
                         <?php if (shortcode_exists('hipaatizer')): ?>
                             <?php echo do_shortcode('[hipaatizer id="01a11515-b491-79dc-b59b-e4be2a345a49"]'); ?>
                         <?php else: ?>
                             <iframe id="dior-hipaatizer-tab-iframe"
                                 src="https://app.hipaatizer.com/workflow/01a11515-b491-79dc-b59b-e4be2a345a49"
-                                allow="microphone; camera; payment"
-                                title="HIPAAtizer Clinical Intake &amp; Booking Form"
+                                allow="microphone; camera; payment" title="HIPAAtizer Clinical Intake &amp; Booking Form"
                                 style="width: 100%; max-width: 100%; height: 850px; min-height: 750px; border: none; border-radius: 10px; display: block;"
                                 loading="lazy"></iframe>
                         <?php endif; ?>
@@ -139,7 +141,9 @@
                                         aria-label="Search box" onkeyup="diorFilterTodayAppointments()">
                                 </div>
                                 <div class="docs-actions-group">
-                                    <button type="button" aria-label="Delete selected items" class="docs-icon-btn docs-btn-danger" title="Delete Selected" onclick="diorBulkDeleteStaticRows(this)">
+                                    <button type="button" aria-label="Delete selected items"
+                                        class="docs-icon-btn docs-btn-danger" title="Delete Selected"
+                                        onclick="diorBulkDeleteStaticRows(this)">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                     <button type="button" aria-label="Export to CSV"
@@ -175,7 +179,8 @@
                                         $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
                                         $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
                                         $status = sanitize_text_field($apt_row['status'] ?? '');
-                                        if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true)) continue;
+                                        if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true))
+                                            continue;
                                         $today_mock[] = [
                                             $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                                             $apt_row['provider_spec'] ?? '—',
@@ -183,9 +188,11 @@
                                             $apt_row['time'] ?? ($apt_row['appt_time'] ?? '—'),
                                             $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
                                             $apt_row['phone'] ?? ($apt_row['contact'] ?? '—'),
-                                            $status ?: 'Scheduled', ''
+                                            $status ?: 'Scheduled',
+                                            ''
                                         ];
-                                    };
+                                    }
+                                    ;
                                     foreach ($today_mock as $tm):
                                         ?>
                                         <tr>
@@ -260,7 +267,12 @@
                                     <button type="button" aria-label="Add new record"
                                         class="docs-icon-btn docs-btn-primary" title="Book Appointment"
                                         data-switch-tab="appointments">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16"
+                                            style="background:transparent;">
+                                            <path
+                                                d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0" />
+                                        </svg>
                                     </button>
                                     <button type="button" aria-label="Export to CSV"
                                         class="docs-icon-btn docs-btn-success" title="Export to CSV"
@@ -299,7 +311,8 @@
                                         $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
                                         $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
                                         $status = sanitize_text_field($apt_row['status'] ?? 'Scheduled');
-                                        if (!$date_ymd || $date_ymd < $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled', 'completed', 'done'], true)) continue;
+                                        if (!$date_ymd || $date_ymd < $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled', 'completed', 'done'], true))
+                                            continue;
                                         $upcoming_mock[] = [
                                             $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                                             wp_date('M j, Y', strtotime($date_ymd)),
@@ -308,7 +321,8 @@
                                             $status,
                                             $apt_row['notes'] ?? '—'
                                         ];
-                                    };
+                                    }
+                                    ;
                                     foreach ($upcoming_mock as $um):
                                         ?>
                                         <tr>
@@ -343,7 +357,15 @@
                                             <td class="dior-ic-d5c209e67c">
                                                 <div class="cell-actions">
                                                     <button type="button" class="action-icon-btn edit-btn"
-                                                        title="Edit Record"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
+                                                        title="Edit Record"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="16" height="16" fill="currentColor"
+                                                            class="bi bi-vector-pen" viewBox="0 0 16 16"
+                                                            style="background:transparent;">
+                                                            <path fill-rule="evenodd"
+                                                                d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
+                                                            <path fill-rule="evenodd"
+                                                                d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
+                                                        </svg></button>
                                                     <button type="button" class="action-icon-btn delete-btn"
                                                         title="Delete Record"><i class="fas fa-trash"></i></button>
                                                 </div>
@@ -383,7 +405,9 @@
                                         aria-label="Search box" onkeyup="diorFilterPastAppointments()">
                                 </div>
                                 <div class="docs-actions-group">
-                                    <button type="button" aria-label="Delete selected items" class="docs-icon-btn docs-btn-danger" title="Delete Selected" onclick="diorBulkDeleteStaticRows(this)">
+                                    <button type="button" aria-label="Delete selected items"
+                                        class="docs-icon-btn docs-btn-danger" title="Delete Selected"
+                                        onclick="diorBulkDeleteStaticRows(this)">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                     <button type="button" aria-label="Export to CSV"
@@ -420,7 +444,8 @@
                                         $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
                                         $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
                                         $status = sanitize_text_field($apt_row['status'] ?? '');
-                                        if (!$date_ymd || ($date_ymd >= $today_ymd && !in_array(strtolower($status), ['completed', 'done', 'past'], true))) continue;
+                                        if (!$date_ymd || ($date_ymd >= $today_ymd && !in_array(strtolower($status), ['completed', 'done', 'past'], true)))
+                                            continue;
                                         $past_mock[] = [
                                             $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                                             wp_date('M j, Y', strtotime($date_ymd)),
@@ -429,9 +454,11 @@
                                             $apt_row['phone'] ?? '—',
                                             $apt_row['condition'] ?? '—',
                                             $apt_row['type'] ?? ($apt_row['visit_type'] ?? 'Consultation'),
-                                            '—', ''
+                                            '—',
+                                            ''
                                         ];
-                                    };
+                                    }
+                                    ;
                                     foreach ($past_mock as $pm):
                                         ?>
                                         <tr>

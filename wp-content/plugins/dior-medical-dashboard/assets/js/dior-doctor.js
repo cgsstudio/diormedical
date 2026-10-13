@@ -17,12 +17,15 @@ function initDoctorDashboard() {
         return;
     }
 
-    // Initialize first tab
-    let initialTab = null;
+    // Initialize tab: Strictly respect URL hash, default to 'doc-overview' (never redirect bare URL to doc-settings)
+    let initialTab = 'doc-overview';
     try {
-        const hash = window.location.hash.match(/^#tab=([^&]+)/);
-        if (hash) initialTab = decodeURIComponent(hash[1]);
-        if (!initialTab) initialTab = localStorage.getItem('diorDocLastTab');
+        const hashMatch = window.location.hash.match(/^#tab=([^&]+)/);
+        if (hashMatch && hashMatch[1]) {
+            initialTab = decodeURIComponent(hashMatch[1]);
+        } else {
+            try { localStorage.removeItem('diorDocLastTab'); } catch (e) { }
+        }
         if (initialTab === 'feedback' || initialTab === 'doc-feedback' || initialTab === 'patient-review' || initialTab === 'reviews') {
             initialTab = 'doc-patient-review';
         }
@@ -33,11 +36,12 @@ function initDoctorDashboard() {
         firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initialTab) + '"]');
     }
     if (!firstTabBtn) {
-        firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn.active') || document.querySelector('#dior-doc-sidebar .dior-nav-btn');
+        firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="doc-overview"]') ||
+                      document.querySelector('#dior-doc-sidebar .dior-nav-btn');
     }
 
     if (firstTabBtn) {
-        diorDocSwitchTab(firstTabBtn.getAttribute('data-tab'));
+        diorDocSwitchTab(firstTabBtn.getAttribute('data-tab'), false);
     }
 
     // Add click listeners to ALL nav buttons (must be inside DOMContentLoaded)
@@ -113,30 +117,36 @@ function initDoctorDashboard() {
     }
 
     // Doctor Avatar Media Library, Direct Upload & Removal Handler
-    const avatarRemoveBtn = document.getElementById('dior-btn-doctor-avatar-remove');
-    const avatarDisplayImg = document.getElementById('dior-doctor-avatar-display-img');
-    const avatarInitials = document.getElementById('dior-doctor-avatar-initials');
-    const doctorFileInput = document.getElementById('dior-doctor-avatar-file-input');
-
     window.diorDocOpenDirectUpload = function () {
+        if (typeof window.diorTriggerDoctorAvatarUpload === 'function') {
+            window.diorTriggerDoctorAvatarUpload();
+            return;
+        }
+        let doctorFileInput = document.getElementById('dior-doctor-avatar-file-input');
         if (doctorFileInput) {
             doctorFileInput.click();
         }
     };
 
-    if (doctorFileInput) {
-        doctorFileInput.addEventListener('change', function () {
-            const file = this.files && this.files[0];
+    // Attach delegated change listener for file input
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.id === 'dior-doctor-avatar-file-input') {
+            if (typeof window.diorDoctorHandleFileChosen === 'function') {
+                return; // already handled by window.diorDoctorHandleFileChosen
+            }
+            const file = e.target.files && e.target.files[0];
             if (!file) return;
 
             if (file.size > 5 * 1024 * 1024) {
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
-                        icon: 'error',
+                        icon: 'warning',
                         title: 'File Too Large',
                         text: 'Profile photo must be 5MB or less.',
                         confirmButtonColor: '#2C6CB1'
                     });
+                } else {
+                    alert('Profile photo must be 5MB or less.');
                 }
                 return;
             }
@@ -155,28 +165,35 @@ function initDoctorDashboard() {
 
             fetch(getDiorDocAjax(), {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'same-origin'
             })
-                .then(r => r.json())
+                .then(async r => {
+                    const raw = await r.text();
+                    try {
+                        return JSON.parse(raw);
+                    } catch (err) {
+                        const excerpt = raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 240);
+                        return { success: false, data: { message: excerpt ? 'Server returned: ' + excerpt : 'Server returned an empty response.' } };
+                    }
+                })
                 .then(res => {
                     if (directBtn) {
                         directBtn.disabled = false;
-                        directBtn.innerHTML = origHtml;
+                        directBtn.innerHTML = origHtml || '<i class="fas fa-cloud-arrow-up"></i> <span>Upload Photo</span>';
                     }
-                    if (res.success && res.data && res.data.avatar_url) {
+                    if (res && res.success && res.data && res.data.avatar_url) {
                         const avatarUrl = res.data.avatar_url;
-                        if (avatarDisplayImg) {
-                            avatarDisplayImg.src = avatarUrl;
-                            avatarDisplayImg.style.display = 'block';
+                        if (typeof window.diorUpdateAllDoctorAvatars === 'function') {
+                            window.diorUpdateAllDoctorAvatars(avatarUrl);
+                        } else {
+                            const dispImg = document.getElementById('dior-doctor-avatar-display-img') || document.querySelector('#tab-doc-settings .profile-avatar-img');
+                            if (dispImg) dispImg.src = avatarUrl;
+                            const formImg = document.getElementById('dior-form-doctor-avatar-img');
+                            if (formImg) formImg.src = avatarUrl;
+                            const topPill = document.getElementById('dior-doctor-top-avatar');
+                            if (topPill) topPill.innerHTML = `<img src="${avatarUrl}" alt="Provider Photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
                         }
-                        if (avatarInitials) {
-                            avatarInitials.style.display = 'none';
-                        }
-                        if (avatarRemoveBtn) {
-                            avatarRemoveBtn.style.display = 'inline-flex';
-                        }
-                        const sideImg = document.querySelector('#dior-doctor-sidebar-avatar img');
-                        if (sideImg) sideImg.src = avatarUrl;
 
                         if (typeof Swal !== 'undefined') {
                             Swal.fire({
@@ -188,24 +205,32 @@ function initDoctorDashboard() {
                             });
                         }
                     } else {
+                        const errMsg = (res && res.data && res.data.message) ? res.data.message : 'Could not upload photo.';
                         if (typeof Swal !== 'undefined') {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Upload Failed',
-                                text: (res.data && res.data.message) ? res.data.message : 'Could not upload photo.',
+                                text: errMsg,
                                 confirmButtonColor: '#2C6CB1'
                             });
+                        } else {
+                            alert(errMsg);
                         }
                     }
                 })
-                .catch(() => {
+                .catch((error) => {
                     if (directBtn) {
                         directBtn.disabled = false;
-                        directBtn.innerHTML = origHtml;
+                        directBtn.innerHTML = origHtml || '<i class="fas fa-cloud-arrow-up"></i> <span>Upload Photo</span>';
+                    }
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ icon: 'error', title: 'Upload Failed', text: error && error.message ? error.message : 'Network error while uploading photo.' });
+                    } else {
+                        alert('Upload failed: ' + (error && error.message ? error.message : 'Network error'));
                     }
                 });
-        });
-    }
+        }
+    });
 
     let doctorMediaFrame = null;
 
@@ -234,16 +259,8 @@ function initDoctorDashboard() {
                 const avatarUrl = attachment.url;
                 const attachId = attachment.id || 0;
 
-                // Update preview immediately
-                if (avatarDisplayImg) {
-                    avatarDisplayImg.src = avatarUrl;
-                    avatarDisplayImg.style.display = 'block';
-                }
-                if (avatarInitials) {
-                    avatarInitials.style.display = 'none';
-                }
-                if (avatarRemoveBtn) {
-                    avatarRemoveBtn.style.display = 'inline-flex';
+                if (typeof window.diorUpdateAllDoctorAvatars === 'function') {
+                    window.diorUpdateAllDoctorAvatars(avatarUrl);
                 }
 
                 // Send AJAX to save in database
@@ -260,16 +277,8 @@ function initDoctorDashboard() {
                     .then(res => res.json())
                     .then(response => {
                         if (response && response.success) {
-                            // Update sidebar avatar
-                            const sidebarAvatar = document.getElementById('dior-doctor-sidebar-avatar');
-                            if (sidebarAvatar) {
-                                sidebarAvatar.innerHTML = `<img src="${avatarUrl}" alt="Provider Photo" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">`;
-                            }
-
-                            // Update topbar pill avatar
-                            const topPillAvatar = document.getElementById('dior-doctor-top-avatar');
-                            if (topPillAvatar) {
-                                topPillAvatar.innerHTML = `<img src="${avatarUrl}" alt="Provider Photo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                            if (typeof window.diorUpdateAllDoctorAvatars === 'function') {
+                                window.diorUpdateAllDoctorAvatars(avatarUrl);
                             }
 
                             if (typeof Swal !== 'undefined') {
@@ -297,80 +306,72 @@ function initDoctorDashboard() {
                     })
                     .catch(err => {
                         console.error('[Doctor Media Avatar Error]', err);
-                        alert('Connection error while saving photo.');
                     });
             });
 
             doctorMediaFrame.open();
         } else {
-            alert('WordPress Media Library could not be loaded. Please refresh the page.');
+            // Graceful fallback to direct file upload
+            if (typeof window.diorTriggerDoctorAvatarUpload === 'function') {
+                window.diorTriggerDoctorAvatarUpload();
+            } else {
+                let input = document.getElementById('dior-doctor-avatar-file-input');
+                if (input) input.click();
+            }
         }
     };
 
-    if (avatarRemoveBtn) {
-        avatarRemoveBtn.addEventListener('click', function () {
+    // Global Removal Handler
+    window.diorDocRemoveAvatar = function () {
+        if (typeof window.diorDoctorRemoveAvatar === 'function') {
+            window.diorDoctorRemoveAvatar();
+            return;
+        }
+
+        const avatarRemoveBtn = document.getElementById('dior-btn-doctor-avatar-remove');
+        if (avatarRemoveBtn) {
             avatarRemoveBtn.disabled = true;
             avatarRemoveBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Removing...';
+        }
 
-            const formData = new FormData();
-            formData.append('action', 'dior_doctor_remove_avatar');
-            formData.append('nonce', getDiorDocNonce());
+        const formData = new FormData();
+        formData.append('action', 'dior_doctor_remove_avatar');
+        formData.append('nonce', getDiorDocNonce());
 
-            fetch(getDiorDocAjax(), {
-                method: 'POST',
-                body: formData
-            })
-                .then(res => res.json())
-                .then(response => {
+        fetch(getDiorDocAjax(), {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        })
+            .then(res => res.json())
+            .then(response => {
+                if (avatarRemoveBtn) {
                     avatarRemoveBtn.disabled = false;
                     avatarRemoveBtn.innerHTML = '<i class="fa-regular fa-trash-can"></i> Remove';
+                }
 
-                    if (response && response.success) {
-                        avatarRemoveBtn.style.display = 'none';
-                        const initials = (response.data && response.data.initials) ? response.data.initials : 'DR';
-
-                        if (avatarDisplayImg) {
-                            avatarDisplayImg.src = '';
-                            avatarDisplayImg.style.display = 'none';
-                        }
-                        if (avatarInitials) {
-                            avatarInitials.textContent = initials;
-                            avatarInitials.style.display = 'block';
-                        }
-
-                        // Revert sidebar avatar
-                        const sidebarAvatar = document.getElementById('dior-doctor-sidebar-avatar');
-                        if (sidebarAvatar) {
-                            sidebarAvatar.innerHTML = `<i class="fa-solid fa-user-doctor" style="color:#2C6CB1;font-size:18px;"></i>`;
-                        }
-
-                        // Revert topbar pill avatar
-                        const topPillAvatar = document.getElementById('dior-doctor-top-avatar');
-                        if (topPillAvatar) {
-                            topPillAvatar.innerHTML = `<i class="fa-solid fa-user-doctor" style="color:#FFFFFF;font-size:14px;"></i>`;
-                        }
-
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "Photo Removed",
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
-                    } else {
-                        const errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to remove photo.';
-                        alert(errMsg);
+                if (response && response.success) {
+                    if (avatarRemoveBtn) avatarRemoveBtn.style.display = 'none';
+                    const defaultAvatar = (response.data && response.data.avatar_url) ? response.data.avatar_url : '';
+                    if (typeof window.diorUpdateAllDoctorAvatars === 'function' && defaultAvatar) {
+                        window.diorUpdateAllDoctorAvatars(defaultAvatar);
                     }
-                })
-                .catch(() => {
-                    avatarRemoveBtn.disabled = false;
-                    avatarRemoveBtn.innerHTML = '<i class="fa-regular fa-trash-can"></i> Remove';
-                    alert('Connection error during photo removal.');
-                });
-        });
-    }
+
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Photo Removed",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                }
+            })
+            .catch(err => {
+                if (avatarRemoveBtn) avatarRemoveBtn.disabled = false;
+            });
+    };
 }
 
 // ── DOCTOR DIGITAL SIGNATURE MANAGEMENT (PNG TRANSPARENT) ──
@@ -834,12 +835,17 @@ function diorHydrateDoctorSourceTables() {
         if (stats[2]) stats[2].textContent = String(appointments.filter(a => ['confirmed', 'scheduled', 'pending', 'in-queue'].includes(String(a.status || '').toLowerCase())).length);
     }
 }
-window.diorDocSwitchTab = function (tabId) {
+window.diorDocSwitchTab = function (tabId, updateUrl) {
     if (!tabId) return;
     if (tabId === 'feedback' || tabId === 'doc-feedback' || tabId === 'patient-review' || tabId === 'reviews') {
         tabId = 'doc-patient-review';
     }
-    try { localStorage.setItem('diorDocLastTab', tabId); } catch (e) { }
+
+    if (updateUrl !== false) {
+        try {
+            history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
+        } catch (e) { }
+    }
 
     const notifDropdown = document.getElementById('dior-doc-notif-dd');
     if (notifDropdown) {
@@ -854,6 +860,17 @@ window.diorDocSwitchTab = function (tabId) {
     const activeBtn = document.querySelector(`#dior-doc-sidebar .dior-nav-btn[data-tab="${tabId}"]`);
     if (activeBtn) {
         activeBtn.classList.add('active');
+
+        // Automatically expand parent submenu if active tab is inside one
+        const parentSubmenu = activeBtn.closest('.dior-nav-item.has-submenu');
+        if (parentSubmenu) {
+            parentSubmenu.classList.add('open');
+            const subIcon = parentSubmenu.querySelector('.submenu-icon');
+            if (subIcon) {
+                subIcon.classList.remove('fa-plus');
+                subIcon.classList.add('fa-minus');
+            }
+        }
 
         // Dynamic Badge Dismissal: Hide notification/count badge once opened
         const badge = activeBtn.querySelector('.nav-count-badge');
@@ -2051,6 +2068,14 @@ window.diorDocMarkAllRead = function (e) {
 
     fetch(ajaxUrl, { method: 'POST', body: data })
         .then(r => r.json())
+        .then(response => {
+            if (!response || !response.success) return;
+            // Remove all items from the header dropdown after the server confirms read status.
+            document.querySelectorAll('#dior-doc-notif-dd .dior-notif-list, #dior-doc-notif-full .dior-full-notif-list').forEach(list => {
+                list.innerHTML = '<div class="dior-notif-empty">No notifications</div>';
+            });
+            document.querySelectorAll('.doc-unread-badge, .dior-notif-indicator, .nav-count-badge').forEach(el => el.remove());
+        })
         .catch(() => { });
 };
 
@@ -2868,13 +2893,27 @@ document.addEventListener('DOMContentLoaded', function () {
         var app = document.getElementById('dior-doctor-app');
         if (!app) return;
 
-        function switchTab(tabId) {
+        function fallbackSwitchTab(tabId, updateUrl) {
             if (!tabId) return;
-            try { localStorage.setItem('diorDocLastTab', tabId); } catch (e) { }
+            if (tabId === 'feedback' || tabId === 'doc-feedback' || tabId === 'patient-review' || tabId === 'reviews') {
+                tabId = 'doc-patient-review';
+            }
 
             var buttons = app.querySelectorAll('#dior-doc-sidebar .dior-nav-btn[data-tab]');
             buttons.forEach(function (btn) {
-                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+                var isActive = btn.getAttribute('data-tab') === tabId;
+                btn.classList.toggle('active', isActive);
+                if (isActive) {
+                    var parentSubmenu = btn.closest('.dior-nav-item.has-submenu');
+                    if (parentSubmenu) {
+                        parentSubmenu.classList.add('open');
+                        var subIcon = parentSubmenu.querySelector('.submenu-icon');
+                        if (subIcon) {
+                            subIcon.classList.remove('fa-plus');
+                            subIcon.classList.add('fa-minus');
+                        }
+                    }
+                }
             });
 
             var panels = app.querySelectorAll('#dior-doc-content > .dior-tab-panel');
@@ -2890,30 +2929,51 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            try {
-                history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
-            } catch (e) { }
+            if (updateUrl === true) {
+                try {
+                    history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
+                } catch (e) { }
+            }
         }
 
         if (typeof window.diorDocSwitchTab !== 'function') {
-            window.diorDocSwitchTab = switchTab;
+            window.diorDocSwitchTab = fallbackSwitchTab;
         }
 
         app.addEventListener('click', function (event) {
             var btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
             if (!btn) return;
-            if (window.diorDocSwitchTab === switchTab) {
+            var targetTab = btn.getAttribute('data-tab');
+            if (typeof window.diorDocSwitchTab === 'function') {
                 event.preventDefault();
                 event.stopPropagation();
-                switchTab(btn.getAttribute('data-tab'));
+                window.diorDocSwitchTab(targetTab, true);
             }
         }, true);
 
-        var hash = window.location.hash.match(/^#tab=([^&]+)/);
-        var initial = hash ? decodeURIComponent(hash[1]) : null;
-        if (!initial) { try { initial = localStorage.getItem('diorDocLastTab'); } catch (e) { } }
-        var fallback = app.querySelector('#dior-doc-sidebar .dior-nav-btn.active[data-tab]') || app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab]');
-        switchTab(initial && app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initial) + '"]') ? initial : (fallback ? fallback.getAttribute('data-tab') : 'doc-overview'));
+        function syncTabFromUrl(updateUrl) {
+            var hashMatch = window.location.hash.match(/^#tab=([^&]+)/);
+            var initial = hashMatch ? decodeURIComponent(hashMatch[1]) : 'doc-overview';
+            if (initial === 'feedback' || initial === 'doc-feedback' || initial === 'patient-review' || initial === 'reviews') {
+                initial = 'doc-patient-review';
+            }
+
+            var btn = app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initial) + '"]');
+            var tabToLoad = btn ? initial : 'doc-overview';
+
+            if (typeof window.diorDocSwitchTab === 'function') {
+                window.diorDocSwitchTab(tabToLoad, updateUrl);
+            } else {
+                fallbackSwitchTab(tabToLoad, updateUrl);
+            }
+        }
+
+        window.addEventListener('hashchange', function () {
+            syncTabFromUrl(false);
+        });
+
+        // Initial setup: strictly preserve current URL, do not add hash if opening bare page
+        syncTabFromUrl(false);
     }
 
     if (document.readyState === 'loading') {

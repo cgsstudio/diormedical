@@ -3,8 +3,110 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+
+global $wpdb;
+
+// Fetch patient list for prescription assignment dropdown
+$patients_query = $wpdb->get_results("SELECT ID, display_name, user_email FROM {$wpdb->users} ORDER BY display_name ASC LIMIT 100");
+$patients_list = [];
+foreach ($patients_query as $pq) {
+    $puid = get_user_meta($pq->ID, 'patient_id', true) ?: ('DM-' . (10000 + $pq->ID));
+    $patients_list[] = [
+        'id'   => $pq->ID,
+        'uid'  => $puid,
+        'name' => $pq->display_name ?: $pq->user_email
+    ];
+}
 ?>
 <link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/view-appointment.css?v=' . time()); ?>">
+<link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/dior-fda-prescription-modal.css?v=' . time()); ?>">
+<script src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/js/dior-fda-prescription-modal.js?v=' . time()); ?>"></script>
+
+<style>
+/* ── Digital Prescriptions Icon & Table Consistency ───────────────────────── */
+#tab-doc-e-prescriptions .va-icon-btn {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 18px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    cursor: pointer !important;
+    border: none !important;
+}
+#tab-doc-e-prescriptions .va-icon-btn i {
+    font-size: 18px !important;
+    line-height: 1 !important;
+}
+#tab-doc-e-prescriptions .va-btn-primary {
+    background-color: #4F46E5 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
+}
+#tab-doc-e-prescriptions .va-btn-primary:hover {
+    background-color: #4338CA !important;
+    transform: translateY(-2px) !important;
+}
+#tab-doc-e-prescriptions .va-btn-success {
+    background-color: #10B981 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25) !important;
+}
+#tab-doc-e-prescriptions .va-btn-success:hover {
+    background-color: #059669 !important;
+    transform: translateY(-2px) !important;
+}
+#tab-doc-e-prescriptions .va-btn-info {
+    background-color: #3B82F6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25) !important;
+}
+#tab-doc-e-prescriptions .va-btn-info:hover {
+    background-color: #2563EB !important;
+    transform: translateY(-2px) !important;
+}
+#tab-doc-e-prescriptions .va-action-btn-sm {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 15px !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease, background-color 0.15s ease !important;
+}
+#tab-doc-e-prescriptions .va-action-btn-sm i {
+    font-size: 15px !important;
+    line-height: 1 !important;
+}
+#tab-doc-e-prescriptions .va-btn-edit {
+    background: rgba(79, 70, 229, 0.1) !important;
+    color: #4F46E5 !important;
+}
+#tab-doc-e-prescriptions .va-btn-edit:hover {
+    background: #4F46E5 !important;
+    color: #ffffff !important;
+}
+#tab-doc-e-prescriptions .va-btn-delete {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #EF4444 !important;
+}
+#tab-doc-e-prescriptions .va-btn-delete:hover {
+    background: #EF4444 !important;
+    color: #ffffff !important;
+}
+#tab-doc-e-prescriptions .va-search-box i {
+    font-size: 15px !important;
+    color: #94A3B8 !important;
+}
+#tab-doc-e-prescriptions .va-breadcrumb-list i {
+    font-size: 15px !important;
+}
+</style>
 
 <section class="dior-tab-panel" id="tab-doc-e-prescriptions" style="display: none;">
     <!-- Breadcrumb Header -->
@@ -14,7 +116,7 @@ if (!defined('ABSPATH')) {
         </div>
         <div>
             <ul class="va-breadcrumb-list">
-                <li><a href="#"><i class="fas fa-house" style="font-size: 14px; color: #4F46E5;"></i></a></li>
+                <li><a href="#"><i class="fas fa-house" style="color: #4F46E5;"></i></a></li>
                 <li><span style="color: #94A3B8;">/</span></li>
                 <li class="active"><span>Digital Prescriptions</span></li>
             </ul>
@@ -35,12 +137,18 @@ if (!defined('ABSPATH')) {
                 <div class="va-actions-wrapper">
                     <div class="va-search-box">
                         <i class="fas fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search records...">
+                        <input type="text" placeholder="Search records..." onkeyup="diorFilterPrescriptions(this.value)">
                     </div>
                     <div class="va-actions-group">
-                        <button class="va-icon-btn va-btn-primary" aria-label="Add new record" onclick="document.getElementById('modal-doc-add-prescription').style.display='flex'"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg></button>
-                        <button class="va-icon-btn va-btn-success" aria-label="Export to Excel"><i class="fas fa-file-arrow-down"></i></button>
-                        <button class="va-icon-btn va-btn-info" aria-label="Refresh data"><i class="fas fa-rotate-right"></i></button>
+                        <button type="button" class="va-icon-btn va-btn-primary" aria-label="Add new prescription" title="Add Medication Prescription (FDA Approved)" onclick="diorOpenFdaPrescriptionModal()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="va-icon-btn va-btn-success" aria-label="Export to Excel" title="Export CSV" onclick="diorExportPrescriptionsCsv()">
+                            <i class="fas fa-file-arrow-down"></i>
+                        </button>
+                        <button type="button" class="va-icon-btn va-btn-info" aria-label="Refresh data" title="Refresh" onclick="window.location.reload()">
+                            <i class="fas fa-rotate-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -67,7 +175,6 @@ if (!defined('ABSPATH')) {
                     </thead>
                     <tbody>
                         <?php
-                        global $wpdb;
                         // Restrict prescription visibility to the current doctor's records; administrators may view all.
                         if (current_user_can('manage_options')) {
                             $prescriptions = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}dior_prescriptions ORDER BY id DESC");
@@ -89,30 +196,30 @@ if (!defined('ABSPATH')) {
                                 
                                 echo '<tr>';
                                 echo '<td class="text-center"><input type="checkbox" class="va-checkbox"></td>';
-                                echo '<td>' . esc_html($p->prescription_id ?: $p->prescription_uid) . '</td>';
+                                echo '<td><strong>' . esc_html($p->prescription_id ?: $p->prescription_uid) . '</strong></td>';
                                 echo '<td>
                                         <div class="va-user-profile">
-                                            <img src="assets/images/users/default.png" onerror="this.src=\'https://ui-avatars.com/api/?name='.urlencode($p->patient_name).'&background=random\'" class="va-user-avatar" alt="User">
+                                            <img src="https://ui-avatars.com/api/?name='.urlencode($p->patient_name).'&background=0c4a60&color=fff" class="va-user-avatar" alt="User">
                                             <span class="va-user-name">' . esc_html($p->patient_name) . '</span>
                                         </div>
                                       </td>';
                                 echo '<td><i class="far fa-calendar va-icon-blue"></i> ' . esc_html(date('M d, Y', strtotime($p->prescription_date ?: $p->created_at))) . '</td>';
-                                echo '<td>' . esc_html($p->medications ?: $p->medication) . '</td>';
+                                echo '<td><span style="font-weight:700; color:#0c4a60;">' . esc_html($p->medications ?: $p->medication) . '</span></td>';
                                 echo '<td>' . esc_html($p->dosage) . '</td>';
                                 echo '<td>' . esc_html($p->frequency) . '</td>';
                                 echo '<td>' . esc_html($p->duration) . '</td>';
-                                echo '<td>' . esc_html($p->doctor_name ?: 'Doctor') . '</td>';
+                                echo '<td>' . esc_html($p->doctor_name ?: 'Dr. Marcus Sterling, DO') . '</td>';
                                 echo '<td><span class="badge-solid ' . $badge_class . '" style="background-color: transparent; color: ' . $badge_color . '; padding: 6px 12px; border-radius: 6px; font-weight: 700;">' . esc_html($p->status) . '</span></td>';
                                 echo '<td>
                                         <div class="va-row-actions">
-                                            <button class="va-action-btn-sm va-btn-edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
-                                            <button class="va-action-btn-sm va-btn-delete"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
+                                            <button type="button" class="va-action-btn-sm va-btn-edit" title="Edit Prescription" onclick="diorOpenFdaPrescriptionModal()"><i class="fas fa-pen-to-square"></i></button>
+                                            <button type="button" class="va-action-btn-sm va-btn-delete" title="Delete Prescription" onclick="diorDeletePrescriptionRow(this)"><i class="fas fa-trash-can"></i></button>
                                         </div>
                                       </td>';
                                 echo '</tr>';
                             }
                         } else {
-                            echo '<tr><td colspan="11" class="text-center py-4">No digital prescriptions found. Click + to add one.</td></tr>';
+                            echo '<tr><td colspan="11" class="text-center py-4" style="color:#64748b;">No digital prescriptions found. Click + to add one.</td></tr>';
                         }
                         ?>
                     </tbody>
@@ -120,162 +227,343 @@ if (!defined('ABSPATH')) {
             </div>
 
             <div class="va-footer">
-                <div class="va-pagination-text">0 selected / 10 total</div>
+                <div class="va-pagination-text"><?php echo count($prescriptions ?: []); ?> total prescriptions</div>
             </div>
 
         </div>
     </div>
 </section>
 
-<!-- Add New Prescription Modal -->
-<div class="dior-modal-overlay" id="modal-doc-add-prescription" style="display: none; align-items: center; justify-content: center; z-index: 9999;">
-    <div class="modal-content" style="max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto;">
-        <div class="modal-header editRowModal">
-            <h4 id="modal-basic-title" class="modal-title" style="margin:0;">
-                <div class="table-modal-header" style="display: flex; align-items: center; gap: 12px;">
-                    <img alt="avatar" class="clickable-avatar" src="assets/images/users/default.png" style="width: 40px; border-radius: 50%;">
-                    <div class="modal-about">
-                        <div class="fw-bold p-t-10 font-17" style="font-weight: 600;">New Record</div>
-                    </div>
-                </div>
-            </h4>
-            <button type="button" aria-label="Close" class="close" onclick="document.getElementById('modal-doc-add-prescription').style.display='none'">
-                <span aria-hidden="true"><i class="fas fa-xmark"></i></span>
+<!-- ============================================================== -->
+<!-- FDA APPROVED DIGITAL PRESCRIPTION MODAL (REFERENCE DESIGN) -->
+<!-- ============================================================== -->
+<div class="dior-fda-modal-overlay" id="dior-fda-prescription-modal" role="dialog" aria-modal="true" aria-labelledby="dior-fda-title-text">
+    <div class="dior-fda-dialog">
+        <input type="hidden" id="dior-fda-nonce" value="<?php echo esc_attr(wp_create_nonce('dior_doctor_nonce')); ?>">
+
+        <!-- 1. Header: 1. SPORANOX CAPSULE -->
+        <div class="dior-fda-header">
+            <div class="dior-fda-header-title-wrap">
+                <h3 class="dior-fda-header-title" id="dior-fda-title-text" onclick="document.getElementById('dior-fda-med-search').focus()">1. SPORANOX CAPSULE</h3>
+            </div>
+            <button type="button" class="dior-fda-close-btn" onclick="diorCloseFdaPrescriptionModal()" aria-label="Close dialog">
+                <i class="fas fa-xmark"></i>
             </button>
         </div>
-        <div class="modal-body">
-            <form novalidate class="register-form" id="dior-add-prescription-form">
-                <?php wp_nonce_field("dior_doctor_nonce", "nonce"); ?>
-                <div class="row" style="display: flex; flex-wrap: wrap; margin-left: -10px; margin-right: -10px;">
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
-                        <div>
-                            <label>Prescription ID <span class="text-danger">*</span></label>
-                            <input name="prescription_id" class="form-control" type="text" placeholder="Prescription ID" required>
-                        </div>
+
+        <!-- 2. Scrollable Modal Body -->
+        <div class="dior-fda-body">
+            <!-- Patient & Date Selection Context -->
+            <div class="dior-fda-context-row">
+                <div class="dior-fda-context-field">
+                    <label><i class="fas fa-user-check me-1"></i> Prescribe For Patient *</label>
+                    <select id="dior-fda-patient-select" class="dior-fda-context-select" required>
+                        <?php
+                        if (!empty($patients_list)) {
+                            foreach ($patients_list as $pat) {
+                                echo '<option value="' . esc_attr($pat['id']) . '">' . esc_html($pat['name']) . ' (' . esc_html($pat['uid']) . ')</option>';
+                            }
+                        } else {
+                            echo '<option value="2">Default Patient (DM-10002)</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="dior-fda-context-field" style="max-width: 170px;">
+                    <label><i class="fas fa-calendar-day me-1"></i> Prescription Date</label>
+                    <input type="date" id="dior-fda-presc-date" class="dior-fda-context-input" value="<?php echo current_time('Y-m-d'); ?>">
+                </div>
+            </div>
+
+            <!-- Multi-Medication Cart / Added Items Section -->
+            <div id="dior-fda-prescribed-list-wrap" class="dior-fda-prescribed-list-wrap" style="display:none;">
+                <div class="dior-fda-prescribed-list-header">
+                    <span><i class="fas fa-list-check me-1"></i> Medications In This Prescription (<strong id="dior-fda-prescribed-count">0</strong>):</span>
+                    <span class="dior-fda-prescribed-hint">Add more below or click "Save &amp; Issue Prescription"</span>
+                </div>
+                <div id="dior-fda-prescribed-items" class="dior-fda-prescribed-items">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- FDA Live Medication Search Bar -->
+            <div class="dior-fda-search-section">
+                <div class="dior-fda-search-box-wrap">
+                    <i class="fas fa-magnifying-glass dior-fda-search-icon"></i>
+                    <input type="text" id="dior-fda-med-search" class="dior-fda-search-input" 
+                           placeholder="Search FDA Approved Medications (e.g., Sporanox, Amoxicillin, Lipitor...)"
+                           autocomplete="off" oninput="diorOnFdaSearchInput(this.value)">
+                    <span class="dior-fda-badge-verify">
+                        <i class="fas fa-shield-halved"></i> openFDA
+                    </span>
+                </div>
+                <!-- Autocomplete Dropdown -->
+                <div id="dior-fda-autocomplete-dropdown" class="dior-fda-autocomplete-dropdown"></div>
+            </div>
+
+            <!-- Generic Name Checkbox & Subtitle Row -->
+            <div class="dior-fda-generic-box">
+                <label class="dior-fda-checkbox-label">
+                    <input type="checkbox" id="dior-fda-check-generic" checked onchange="window.diorFdaState.includeGeneric = this.checked; diorFdaUpdateAllUI();">
+                    <span>Include generic medicine name in the prescription</span>
+                </label>
+                <div class="dior-fda-contains-row" id="dior-fda-generic-subrow">
+                    <span class="dior-fda-contains-text" id="dior-fda-contains-display">Contains: ITRACONAZOLE (100 MG)</span>
+                    <input type="text" id="dior-fda-contains-edit" class="dior-fda-contains-input" style="display:none;" onblur="diorToggleFreeText()" onkeydown="if(event.key==='Enter') diorToggleFreeText()">
+                    <button type="button" class="dior-fda-btn-freetext" onclick="diorToggleFreeText()">FREE TEXT</button>
+                </div>
+            </div>
+
+            <!-- Take / Apply & Dose Form & Route Row -->
+            <div class="dior-fda-form-route-row">
+                <div class="dior-fda-radio-group">
+                    <label class="dior-fda-radio-label">
+                        <input type="radio" name="dior_fda_take_apply" value="Take" checked onchange="diorSetTakeOrApply('Take')">
+                        <span>Take</span>
+                    </label>
+                    <label class="dior-fda-radio-label">
+                        <input type="radio" name="dior_fda_take_apply" value="Apply" onchange="diorSetTakeOrApply('Apply')">
+                        <span>Apply</span>
+                    </label>
+                </div>
+
+                <div class="dior-fda-field-wrap">
+                    <label class="dior-fda-field-title" id="dior-fda-take-apply-label">Take: (Dose Form)</label>
+                    <select class="dior-fda-select" id="dior-fda-dose-form" onchange="diorOnDoseFormChange(this.value)">
+                        <option value="Capsule(s)" selected>Capsule(s)</option>
+                        <option value="Tablet(s)">Tablet(s)</option>
+                        <option value="Syrup">Syrup</option>
+                        <option value="Injection">Injection</option>
+                        <option value="Drops">Drops</option>
+                        <option value="Cream">Cream</option>
+                        <option value="Ointment">Ointment</option>
+                        <option value="Inhaler">Inhaler</option>
+                        <option value="Lotion">Lotion</option>
+                        <option value="Patch">Patch</option>
+                        <option value="Suspension">Suspension</option>
+                        <option value="Powder">Powder</option>
+                    </select>
+                </div>
+
+                <div class="dior-fda-field-wrap">
+                    <label class="dior-fda-field-title">To be taken: (Route of Administration)</label>
+                    <select class="dior-fda-select" id="dior-fda-route" onchange="diorOnRouteChange(this.value)">
+                        <option value="Orally" selected>Orally</option>
+                        <option value="Topical">Topical</option>
+                        <option value="Sublingual">Sublingual</option>
+                        <option value="Intravenous (IV)">Intravenous (IV)</option>
+                        <option value="Intramuscular (IM)">Intramuscular (IM)</option>
+                        <option value="Inhalation">Inhalation</option>
+                        <option value="Nasal">Nasal</option>
+                        <option value="Ophthalmic (Eye)">Ophthalmic (Eye)</option>
+                        <option value="Otic (Ear)">Otic (Ear)</option>
+                        <option value="Rectal">Rectal</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- For: (Duration) Row -->
+            <div class="dior-fda-duration-row">
+                <div style="font-size:12px;font-weight:700;color:#0c4a60;margin-bottom:6px;">For: (Duration)</div>
+                <div class="dior-fda-duration-flex">
+                    <div class="dior-fda-stepper">
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDuration(-1)">&minus;</button>
+                        <input type="text" id="dior-fda-dur-val" class="dior-fda-step-val" value="1" readonly>
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDuration(1)">&#43;</button>
                     </div>
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
-                        <div>
-                            <label>Patient Name <span class="text-danger">*</span></label>
-                            <input name="patient_name" class="form-control" type="text" placeholder="Patient Name" required>
-                        </div>
+
+                    <label class="dior-fda-radio-label">
+                        <input type="radio" name="dior_fda_duration_unit" value="Day(s)" onchange="diorSetDurationUnit('Day(s)')">
+                        <span>Day(s)</span>
+                    </label>
+                    <label class="dior-fda-radio-label">
+                        <input type="radio" name="dior_fda_duration_unit" value="Week(s)" checked onchange="diorSetDurationUnit('Week(s)')">
+                        <span>Week(s)</span>
+                    </label>
+                    <label class="dior-fda-radio-label">
+                        <input type="radio" name="dior_fda_duration_unit" value="Month(s)" onchange="diorSetDurationUnit('Month(s)')">
+                        <span>Month(s)</span>
+                    </label>
+                    <label class="dior-fda-radio-label">
+                        <input type="radio" name="dior_fda_duration_unit" value="Till Next Review" onchange="diorSetDurationUnit('Till Next Review')">
+                        <span>Till Next Review</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Frequency & Intake Row -->
+            <div class="dior-fda-freq-intake-row">
+                <div class="dior-fda-field-wrap">
+                    <label class="dior-fda-field-title">Frequency</label>
+                    <select class="dior-fda-select" id="dior-fda-frequency" onchange="diorOnFrequencyChange(this.value)">
+                        <option value="Daily" selected>Daily</option>
+                        <option value="Twice Daily (BID)">Twice Daily (BID)</option>
+                        <option value="Thrice Daily (TID)">Thrice Daily (TID)</option>
+                        <option value="Four Times Daily (QID)">Four Times Daily (QID)</option>
+                        <option value="Every 8 Hours">Every 8 Hours</option>
+                        <option value="Every 12 Hours">Every 12 Hours</option>
+                        <option value="Once a Week">Once a Week</option>
+                        <option value="As Needed (PRN)">As Needed (PRN)</option>
+                        <option value="Alternate Days">Alternate Days</option>
+                    </select>
+                </div>
+
+                <div class="dior-fda-field-wrap">
+                    <label class="dior-fda-field-title">Intake</label>
+                    <div style="display:flex;align-items:center;gap:14px;padding:8px 0;">
+                        <label class="dior-fda-radio-label">
+                            <input type="radio" name="dior_fda_intake" value="Before Food" onchange="diorSetIntake('Before Food')">
+                            <span>Before Food</span>
+                        </label>
+                        <label class="dior-fda-radio-label">
+                            <input type="radio" name="dior_fda_intake" value="After Food" checked onchange="diorSetIntake('After Food')">
+                            <span>After Food</span>
+                        </label>
+                        <label class="dior-fda-radio-label">
+                            <input type="radio" name="dior_fda_intake" value="Not Applicable" onchange="diorSetIntake('Not Applicable')">
+                            <span>Not Applicable</span>
+                        </label>
                     </div>
                 </div>
-                
-                <div class="row" style="display: flex; flex-wrap: wrap; margin-left: -10px; margin-right: -10px;">
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
-                        <div>
-                            <label>Patient ID <span class="text-danger">*</span></label>
-                            <input name="patient_id" class="form-control" type="text" placeholder="Patient ID" required>
-                        </div>
+            </div>
+
+            <!-- Dosage Breakdown Cards (Morning, Noon, Evening, Night, Daily) -->
+            <div class="dior-fda-dosages-grid">
+                <!-- Morning -->
+                <div class="dior-fda-dose-card" id="dior-card-morning">
+                    <span class="dior-fda-dose-label">Morning (Qty)</span>
+                    <div class="dior-fda-stepper">
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('morning', -1)">&minus;</button>
+                        <input type="text" id="dior-fda-qty-morning" class="dior-fda-step-val" value="0" readonly>
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('morning', 1)">&#43;</button>
                     </div>
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
-                        <div>
-                            <label>Prescription Date <span class="text-danger">*</span></label>
-                            <input name="prescription_date" class="form-control" type="date" required>
-                        </div>
-                    </div>
+                    <span class="dior-fda-dose-sub">capsule(s)</span>
                 </div>
-                
-                <div class="row" style="display: flex; flex-wrap: wrap; margin-left: -10px; margin-right: -10px;">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12 mb-3" style="padding: 0 10px; flex: 0 0 100%; max-width: 100%;">
-                        <div>
-                            <label>Medications <span class="text-danger">*</span></label>
-                            <textarea name="medications" class="form-control" placeholder="Medications" required style="min-height: 100px; resize: vertical;"></textarea>
-                        </div>
+
+                <!-- Noon -->
+                <div class="dior-fda-dose-card" id="dior-card-noon">
+                    <span class="dior-fda-dose-label">Noon (Qty)</span>
+                    <div class="dior-fda-stepper">
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('noon', -1)">&minus;</button>
+                        <input type="text" id="dior-fda-qty-noon" class="dior-fda-step-val" value="0" readonly>
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('noon', 1)">&#43;</button>
                     </div>
+                    <span class="dior-fda-dose-sub">capsule(s)</span>
                 </div>
-                
-                <div class="row" style="display: flex; flex-wrap: wrap; margin-left: -10px; margin-right: -10px;">
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
-                        <div>
-                            <label>Dosage <span class="text-danger">*</span></label>
-                            <input name="dosage" class="form-control" type="text" placeholder="Dosage" required>
-                        </div>
+
+                <!-- Evening -->
+                <div class="dior-fda-dose-card" id="dior-card-evening">
+                    <span class="dior-fda-dose-label">Evening (Qty)</span>
+                    <div class="dior-fda-stepper">
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('evening', -1)">&minus;</button>
+                        <input type="text" id="dior-fda-qty-evening" class="dior-fda-step-val" value="0" readonly>
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('evening', 1)">&#43;</button>
                     </div>
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
-                        <div>
-                            <label>Frequency <span class="text-danger">*</span></label>
-                            <input name="frequency" class="form-control" type="text" placeholder="Frequency" required>
-                        </div>
-                    </div>
+                    <span class="dior-fda-dose-sub">capsule(s)</span>
                 </div>
-                
-                <div class="row" style="display: flex; flex-wrap: wrap; margin-left: -10px; margin-right: -10px;">
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
-                        <div>
-                            <label>Duration <span class="text-danger">*</span></label>
-                            <input name="duration" class="form-control" type="text" placeholder="Duration" required>
-                        </div>
+
+                <!-- Night (Active Highlighted as in Reference Image) -->
+                <div class="dior-fda-dose-card has-qty" id="dior-card-night">
+                    <span class="dior-fda-dose-label">Night (Qty)</span>
+                    <div class="dior-fda-stepper">
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('night', -1)">&minus;</button>
+                        <input type="text" id="dior-fda-qty-night" class="dior-fda-step-val" value="1" readonly>
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('night', 1)">&#43;</button>
                     </div>
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
-                        <div>
-                            <label>Doctor <span class="text-danger">*</span></label>
-                            <input name="doctor_name" class="form-control" type="text" placeholder="Doctor" required>
-                        </div>
+                    <span class="dior-fda-dose-sub">capsule(s)</span>
+                </div>
+
+                <!-- Daily -->
+                <div class="dior-fda-dose-card daily-card" id="dior-card-daily">
+                    <span class="dior-fda-dose-label">Daily (Qty)</span>
+                    <div class="dior-fda-stepper">
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('daily', -1)">&minus;</button>
+                        <input type="text" id="dior-fda-qty-daily" class="dior-fda-step-val" value="0" readonly>
+                        <button type="button" class="dior-fda-step-btn" onclick="diorStepDosage('daily', 1)">&#43;</button>
                     </div>
+                    <span class="dior-fda-dose-sub">capsule(s)</span>
                 </div>
-                
-                <div class="row" style="display: flex; flex-wrap: wrap; margin-left: -10px; margin-right: -10px;">
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xl-6 mb-3" style="padding: 0 10px; flex: 0 0 50%; max-width: 50%;">
-                        <div>
-                            <label>Status <span class="text-danger">*</span></label>
-                            <select name="status" class="form-select form-control" required>
-                                <option value="" selected disabled>Please select</option>
-                                <option value="Active">Active</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                    </div>
+            </div>
+
+            <!-- Dynamic Instructions Sentence -->
+            <div class="dior-fda-instruction-preview-box">
+                <div class="dior-fda-inst-line1" id="dior-fda-inst-line1">Take 1 capsule(s) in the night after food for 1 week</div>
+                <div class="dior-fda-inst-line2" id="dior-fda-inst-line2">To be taken: Orally</div>
+            </div>
+
+            <!-- Add Instructions/Notes Button & Drawer -->
+            <div>
+                <button type="button" class="dior-fda-btn-addnotes" onclick="diorToggleNotesDrawer()">
+                    <i class="fas fa-circle-plus"></i> ADD INSTRUCTIONS/NOTES
+                </button>
+                <div class="dior-fda-notes-drawer" id="dior-fda-notes-drawer">
+                    <textarea id="dior-fda-custom-notes" placeholder="Special doctor instructions (e.g. Take with plenty of water, avoid dairy products, etc.)..."></textarea>
                 </div>
-                
-                <div class="modal-footer" style="margin-top: 20px;">
-                    <button type="submit" class="btn btn-primary" id="btn-save-prescription">Submit</button>
-                    <button type="button" class="btn btn-light" onclick="document.getElementById('modal-doc-add-prescription').style.display='none'">Close</button>
-                </div>
-            </form>
+            </div>
+        </div>
+
+        <!-- 3. Modal Footer -->
+        <div class="dior-fda-footer">
+            <div class="dior-fda-footer-left">
+                <span class="dior-fda-total-calc" id="dior-fda-total-calc">Total 7 Capsules</span>
+                <label class="dior-fda-freq-check-label">
+                    <input type="checkbox" id="dior-fda-freq-used" onchange="window.diorFdaState.frequentlyUsed = this.checked;">
+                    <span>Add as 'Frequently Used Medicine'</span>
+                </label>
+            </div>
+
+            <div class="dior-fda-footer-actions">
+                <button type="button" id="dior-fda-btn-add-item" class="dior-fda-btn-addmedicine" onclick="diorFdaAddMedicineToList(event)" title="Add this medicine and configure next">
+                    <i class="fas fa-plus"></i> ADD MEDICINE
+                </button>
+                <button type="button" id="dior-fda-btn-submit" class="dior-fda-btn-saverx" onclick="diorSubmitFdaPrescription(event)" title="Save & Issue complete prescription">
+                    <i class="fas fa-file-prescription"></i> SAVE &amp; ISSUE PRESCRIPTION <span id="dior-fda-rx-btn-count" style="display:none; font-weight:800;">(1)</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById("dior-add-prescription-form");
-    if (form) {
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
-            const btn = document.getElementById("btn-save-prescription");
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Saving...";
-            btn.disabled = true;
+// Filter Prescriptions Table
+function diorFilterPrescriptions(val) {
+    var filter = (val || '').toLowerCase();
+    var rows = document.querySelectorAll('#tab-doc-e-prescriptions table.va-table tbody tr');
+    rows.forEach(function(row) {
+        var txt = (row.textContent || '').toLowerCase();
+        row.style.display = txt.indexOf(filter) !== -1 ? '' : 'none';
+    });
+}
 
-            const formData = new FormData(form);
-            formData.append("action", "dior_doctor_add_prescription");
-
-            fetch(dior_ajax.ajax_url, {
-                method: "POST",
-                body: formData
-            })
-            .then(res => res.json())
-            .then(res => {
-                btn.innerHTML = "Submit";
-                btn.disabled = false;
-                if(res.success) {
-                    alert("Prescription added successfully!");
-                    document.getElementById('modal-doc-add-prescription').style.display = 'none';
-                    form.reset();
-                    // Optionally refresh the page or dynamically insert the row
-                    window.location.reload();
-                } else {
-                    alert("Error: " + (res.data.message || "Unknown error"));
-                }
-            })
-            .catch(err => {
-                btn.innerHTML = "Submit";
-                btn.disabled = false;
-                alert("Request failed. Please try again.");
-                console.error(err);
-            });
+// Export Prescriptions to CSV
+function diorExportPrescriptionsCsv() {
+    var rows = document.querySelectorAll('#tab-doc-e-prescriptions table.va-table tr');
+    var csv = [];
+    rows.forEach(function(row) {
+        var cols = row.querySelectorAll('th, td');
+        var rowData = [];
+        cols.forEach(function(col, idx) {
+            if (idx === 0 || idx === cols.length - 1) return; // skip checkbox and actions
+            rowData.push('"' + col.innerText.replace(/"/g, '""').trim() + '"');
         });
+        if (rowData.length) csv.push(rowData.join(','));
+    });
+    var blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+    var url = window.URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'digital-prescriptions-' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+}
+
+// Delete Prescription Row (Visual + Feedback)
+function diorDeletePrescriptionRow(btn) {
+    if (confirm('Are you sure you want to delete this prescription record?')) {
+        var tr = btn.closest('tr');
+        if (tr) {
+            tr.style.opacity = '0.4';
+            setTimeout(function() { tr.remove(); }, 300);
+        }
     }
-});
+}
 </script>

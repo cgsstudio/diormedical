@@ -93,7 +93,14 @@ class Dior_Doctor_Dashboard
 
     private static function can_access()
     {
-        return current_user_can("administrator") || current_user_can("manage_options") || current_user_can("doctor");
+        if (current_user_can("administrator") || current_user_can("manage_options")) {
+            return true;
+        }
+        $user = wp_get_current_user();
+        if ($user && in_array('doctor', (array) $user->roles, true)) {
+            return true;
+        }
+        return current_user_can("doctor");
     }
 
     public static function get_doctor_profile($user_id)
@@ -110,6 +117,7 @@ class Dior_Doctor_Dashboard
         $avatar_url = get_user_meta($user_id, "dior_profile_image", true) 
             ?: get_user_meta($user_id, "doctor_avatar", true) 
             ?: get_user_meta($user_id, "profile_picture", true) 
+            ?: get_user_meta($user_id, "profile_image", true)
             ?: "";
             
         $initials = '';
@@ -128,11 +136,18 @@ class Dior_Doctor_Dashboard
             "avatar_url" => $avatar_url,
             "signature_url" => get_user_meta($user_id, "dior_doctor_signature", true) ?: "",
             "email"      => $user->user_email,
+            "user_email" => $user->user_email,
             "phone"      => get_user_meta($user_id, "phone", true) ?: "",
-            "specialty"  => get_user_meta($user_id, "doctor_specialty", true) ?: "",
-            "license_no" => get_user_meta($user_id, "doctor_license", true)   ?: "",
+            "specialty"  => get_user_meta($user_id, "doctor_specialty", true) ?: (get_user_meta($user_id, "specialty", true) ?: "Dermatology"),
+            "license_no" => get_user_meta($user_id, "doctor_license", true)   ?: (get_user_meta($user_id, "license_no", true) ?: ""),
             "npi"        => get_user_meta($user_id, "doctor_npi", true)        ?: "",
-            "bio"        => get_user_meta($user_id, "doctor_bio", true)        ?: "",
+            "bio"        => get_user_meta($user_id, "doctor_bio", true)        ?: (get_user_meta($user_id, "bio", true) ?: ""),
+            "qualifications" => get_user_meta($user_id, "doctor_qualifications", true) ?: (get_user_meta($user_id, "qualifications", true) ?: "MBBS, MD"),
+            "fee"            => get_user_meta($user_id, "doctor_fee", true) ?: (get_user_meta($user_id, "fee", true) ?: "INR 500"),
+            "duty_hours"     => get_user_meta($user_id, "doctor_duty_hours", true) ?: (get_user_meta($user_id, "duty_hours", true) ?: "MON - SAT 10:00 AM - 8:00 PM"),
+            "city"           => get_user_meta($user_id, "city", true) ?: "",
+            "country"        => get_user_meta($user_id, "country", true) ?: "",
+            "address"        => get_user_meta($user_id, "address", true) ?: "",
             "zoom_link"  => get_user_meta($user_id, "doctor_zoom_link", true) ?: "https://zoom.us/join",
             "initials"   => $initials,
             "optin_appointment_reminders" => (get_user_meta($user_id, "optin_appointment_reminders", true) !== '0') ? '1' : '0',
@@ -767,11 +782,17 @@ class Dior_Doctor_Dashboard
         $first_name = sanitize_text_field($_POST["first_name"] ?? "");
         $last_name  = sanitize_text_field($_POST["last_name"] ?? "");
         $phone      = sanitize_text_field($_POST["phone"] ?? "");
-        $specialty  = sanitize_text_field($_POST["doctor_specialty"] ?? "");
-        $license_no = sanitize_text_field($_POST["doctor_license"] ?? "");
-        $npi        = sanitize_text_field($_POST["doctor_npi"] ?? "");
-        $bio        = sanitize_textarea_field($_POST["doctor_bio"] ?? "");
-        $zoom_link  = esc_url_raw($_POST["doctor_zoom_link"] ?? "");
+        $specialty  = sanitize_text_field($_POST["doctor_specialty"] ?? ($_POST["specialty"] ?? ""));
+        $license_no = sanitize_text_field($_POST["doctor_license"] ?? ($_POST["license_no"] ?? ""));
+        $npi        = sanitize_text_field($_POST["doctor_npi"] ?? ($_POST["npi"] ?? ""));
+        $bio        = sanitize_textarea_field($_POST["doctor_bio"] ?? ($_POST["bio"] ?? ""));
+        $zoom_link  = esc_url_raw($_POST["doctor_zoom_link"] ?? ($_POST["zoom_link"] ?? ""));
+        $qualifications = sanitize_text_field($_POST["doctor_qualifications"] ?? ($_POST["qualifications"] ?? ""));
+        $fee        = sanitize_text_field($_POST["doctor_fee"] ?? ($_POST["fee"] ?? ""));
+        $duty_hours = sanitize_text_field($_POST["doctor_duty_hours"] ?? ($_POST["duty_hours"] ?? ""));
+        $city       = sanitize_text_field($_POST["city"] ?? "");
+        $country    = sanitize_text_field($_POST["country"] ?? "");
+        $address    = sanitize_text_field($_POST["address"] ?? "");
 
         // Required personal and credential fields validation
         $missing = [];
@@ -779,12 +800,10 @@ class Dior_Doctor_Dashboard
         if (empty($last_name))  $missing[] = 'Last Name';
         if (empty($phone))      $missing[] = 'Phone Number';
         if (empty($specialty))  $missing[] = 'Medical Specialty';
-        if (empty($license_no)) $missing[] = 'Medical License Number';
-        if (empty($npi))        $missing[] = 'NPI Number';
 
         if (!empty($missing)) {
             wp_send_json_error([
-                'message' => 'Please fill in all required fields: ' . implode(', ', $missing) . '.',
+                'message' => 'Please fill in required fields: ' . implode(', ', $missing) . '.',
                 'missing' => $missing
             ]);
         }
@@ -793,10 +812,36 @@ class Dior_Doctor_Dashboard
         update_user_meta($uid, "last_name", $last_name);
         update_user_meta($uid, "phone", $phone);
         update_user_meta($uid, "doctor_specialty", $specialty);
-        update_user_meta($uid, "doctor_license", $license_no);
-        update_user_meta($uid, "doctor_npi", $npi);
-        update_user_meta($uid, "doctor_bio", $bio);
-        update_user_meta($uid, "doctor_zoom_link", $zoom_link);
+        update_user_meta($uid, "specialty", $specialty);
+        if ($license_no) {
+            update_user_meta($uid, "doctor_license", $license_no);
+            update_user_meta($uid, "license_no", $license_no);
+        }
+        if ($npi) {
+            update_user_meta($uid, "doctor_npi", $npi);
+        }
+        if ($bio) {
+            update_user_meta($uid, "doctor_bio", $bio);
+            update_user_meta($uid, "bio", $bio);
+        }
+        if ($zoom_link) {
+            update_user_meta($uid, "doctor_zoom_link", $zoom_link);
+        }
+        if ($qualifications) {
+            update_user_meta($uid, "doctor_qualifications", $qualifications);
+            update_user_meta($uid, "qualifications", $qualifications);
+        }
+        if ($fee) {
+            update_user_meta($uid, "doctor_fee", $fee);
+            update_user_meta($uid, "fee", $fee);
+        }
+        if ($duty_hours) {
+            update_user_meta($uid, "doctor_duty_hours", $duty_hours);
+            update_user_meta($uid, "duty_hours", $duty_hours);
+        }
+        if ($city) update_user_meta($uid, "city", $city);
+        if ($country) update_user_meta($uid, "country", $country);
+        if ($address) update_user_meta($uid, "address", $address);
 
         if (isset($_POST["optin_appointment_reminders"])) {
             update_user_meta($uid, "optin_appointment_reminders", sanitize_text_field($_POST["optin_appointment_reminders"]) === '1' ? '1' : '0');
@@ -830,27 +875,47 @@ class Dior_Doctor_Dashboard
     public static function ajax_upload_avatar()
     {
         Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
-        if (!self::can_access()) wp_send_json_error(["message" => "Unauthorized"]);
+        if (!self::can_access()) {
+            wp_send_json_error(["message" => "Unauthorized access. Please ensure you are logged in as a provider."], 403);
+        }
 
         $uid = get_current_user_id();
         if (!$uid) {
-            wp_send_json_error(['message' => 'Authentication required. Please log in again.']);
+            wp_send_json_error(['message' => 'Authentication required. Please log in again.'], 401);
         }
 
         // Support selecting directly from WordPress Media Library (URL or ID passed)
         if (!empty($_POST['avatar_url'])) {
             $avatar_url = esc_url_raw($_POST['avatar_url']);
-            $attach_id = !empty($_POST['attachment_id']) ? (int)$_POST['attachment_id'] : 0;
+            $attach_id  = !empty($_POST['attachment_id']) ? (int)$_POST['attachment_id'] : 0;
 
             update_user_meta($uid, 'dior_profile_image', $avatar_url);
             update_user_meta($uid, 'doctor_avatar', $avatar_url);
             update_user_meta($uid, 'profile_picture', $avatar_url);
+            update_user_meta($uid, 'profile_image', $avatar_url);
             if ($attach_id) {
                 update_user_meta($uid, 'dior_profile_image_id', $attach_id);
             }
 
+            // Sync thumbnail to linked docbooker doctor post if any
+            $doc_posts = get_posts([
+                'post_type'      => 'wpddb_doctor',
+                'meta_key'       => '_wpddb_doctor_user_id',
+                'meta_value'     => (string) $uid,
+                'fields'         => 'ids',
+                'posts_per_page' => -1,
+                'post_status'    => 'any'
+            ]);
+            if (!empty($doc_posts) && $attach_id) {
+                foreach ($doc_posts as $pid) {
+                    set_post_thumbnail($pid, $attach_id);
+                    update_post_meta($pid, '_wpddb_doctor_avatar', $avatar_url);
+                    update_post_meta($pid, 'wpddb_doctor_avatar', $avatar_url);
+                }
+            }
+
             wp_send_json_success([
-                'message' => 'Provider profile photo selected from Media Library successfully!',
+                'message'    => 'Provider profile photo selected from Media Library successfully!',
                 'avatar_url' => $avatar_url
             ]);
         }
@@ -861,7 +926,47 @@ class Dior_Doctor_Dashboard
 
         $file = $_FILES['avatar'];
 
-        // Allowed image types
+        if (isset($file['error']) && (int) $file['error'] !== UPLOAD_ERR_OK) {
+            $upload_errors = [
+                UPLOAD_ERR_INI_SIZE   => 'The image exceeds the server upload_max_filesize limit.',
+                UPLOAD_ERR_FORM_SIZE  => 'The image exceeds the form upload size limit.',
+                UPLOAD_ERR_PARTIAL    => 'The image was only partially uploaded. Please try again.',
+                UPLOAD_ERR_NO_FILE    => 'Please choose an image file.',
+                UPLOAD_ERR_NO_TMP_DIR => 'The server temporary upload folder is missing.',
+                UPLOAD_ERR_CANT_WRITE => 'The server could not write the uploaded image. Check folder permissions.',
+                UPLOAD_ERR_EXTENSION  => 'The server blocked this image upload.',
+            ];
+            $code = (int) $file['error'];
+            wp_send_json_error(['message' => $upload_errors[$code] ?? 'The image upload failed on the server.']);
+        }
+
+        if (empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+            wp_send_json_error(['message' => 'The uploaded image could not be verified by the server. Please try again.']);
+        }
+
+        // Limit file size to 5MB
+        if (!empty($file['size']) && $file['size'] > 5 * 1024 * 1024) {
+            wp_send_json_error(['message' => 'Image size exceeds the maximum limit of 5MB.']);
+        }
+
+        // Validate image file extension
+        $file_info = wp_check_filetype($file['name']);
+        $ext = strtolower($file_info['ext'] ?: pathinfo($file['name'], PATHINFO_EXTENSION));
+        $valid_exts = ['jpg', 'jpeg', 'jpe', 'png', 'webp', 'gif', 'jfif'];
+        if (!in_array($ext, $valid_exts, true)) {
+            wp_send_json_error(['message' => 'Invalid image format. Please choose a JPG, PNG, WEBP, or GIF image.']);
+        }
+
+        // Validate image content with getimagesize
+        $image_size = @getimagesize($file['tmp_name']);
+        if (!$image_size || empty($image_size['mime']) || strpos($image_size['mime'], 'image/') !== 0) {
+            wp_send_json_error(['message' => 'Uploaded file is not a valid image. Please choose another image.']);
+        }
+
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
+
         $allowed_mimes = [
             'jpg|jpeg|jpe' => 'image/jpeg',
             'png'          => 'image/png',
@@ -869,38 +974,77 @@ class Dior_Doctor_Dashboard
             'gif'          => 'image/gif',
         ];
 
-        $check = wp_check_filetype_and_ext($file['tmp_name'], $file['name'], $allowed_mimes);
-        if (empty($check['type']) || !in_array($check['type'], $allowed_mimes, true)) {
-            wp_send_json_error(['message' => 'Invalid image format. Please upload a JPG, PNG, WEBP, or GIF image.']);
-        }
-
-        // Limit file size to 5MB
-        if ($file['size'] > 5 * 1024 * 1024) {
-            wp_send_json_error(['message' => 'Image size exceeds the maximum limit of 5MB.']);
-        }
-
-        require_once(ABSPATH . 'wp-admin/includes/file.php');
-        require_once(ABSPATH . 'wp-admin/includes/image.php');
-        require_once(ABSPATH . 'wp-admin/includes/media.php');
-
-        $upload_overrides = ['test_form' => false, 'mimes' => $allowed_mimes];
+        $upload_overrides = ['test_form' => false, 'test_upload' => false, 'mimes' => $allowed_mimes];
         $movefile = wp_handle_upload($file, $upload_overrides);
 
-        if ($movefile && !isset($movefile['error'])) {
-            $avatar_url = esc_url_raw($movefile['url']);
-            update_user_meta($uid, 'dior_profile_image', $avatar_url);
-            update_user_meta($uid, 'doctor_avatar', $avatar_url);
-            update_user_meta($uid, 'profile_picture', $avatar_url);
+        $avatar_url = '';
+        $uploaded_file_path = '';
 
-            wp_send_json_success([
-                'message' => 'Provider profile photo updated successfully!',
-                'avatar_url' => $avatar_url
-            ]);
+        if ($movefile && !isset($movefile['error']) && !empty($movefile['url'])) {
+            $avatar_url = esc_url_raw($movefile['url']);
+            $uploaded_file_path = !empty($movefile['file']) ? $movefile['file'] : '';
         } else {
-            wp_send_json_error([
-                'message' => !empty($movefile['error']) ? $movefile['error'] : 'Failed to save uploaded image. Please try again.'
-            ]);
+            // Bulletproof fallback using wp_upload_dir() & move_uploaded_file / copy
+            $upload_dir = wp_upload_dir();
+            $safe_name = wp_unique_filename($upload_dir['path'], sanitize_file_name($file['name']));
+            $target_path = $upload_dir['path'] . '/' . $safe_name;
+
+            if (@move_uploaded_file($file['tmp_name'], $target_path) || @copy($file['tmp_name'], $target_path)) {
+                $avatar_url = esc_url_raw($upload_dir['url'] . '/' . $safe_name);
+                $uploaded_file_path = $target_path;
+            } else {
+                $err = !empty($movefile['error']) ? $movefile['error'] : 'Failed to save uploaded image. Please check server folder permissions.';
+                wp_send_json_error(['message' => $err]);
+            }
         }
+
+        // Register in WordPress Media Library so it appears in the media library
+        $attach_id = 0;
+        if (!empty($uploaded_file_path) && file_exists($uploaded_file_path)) {
+            $filetype = wp_check_filetype(basename($uploaded_file_path), null);
+            $attachment = [
+                'guid'           => $avatar_url,
+                'post_mime_type' => $filetype['type'] ?: 'image/jpeg',
+                'post_title'     => preg_replace('/\.[^.]+$/', '', basename($uploaded_file_path)),
+                'post_content'   => '',
+                'post_status'    => 'inherit'
+            ];
+            $attach_id = wp_insert_attachment($attachment, $uploaded_file_path);
+            if ($attach_id && !is_wp_error($attach_id)) {
+                $attach_data = wp_generate_attachment_metadata($attach_id, $uploaded_file_path);
+                wp_update_attachment_metadata($attach_id, $attach_data);
+                update_user_meta($uid, 'dior_profile_image_id', $attach_id);
+            }
+        }
+
+        update_user_meta($uid, 'dior_profile_image', $avatar_url);
+        update_user_meta($uid, 'doctor_avatar', $avatar_url);
+        update_user_meta($uid, 'profile_picture', $avatar_url);
+        update_user_meta($uid, 'profile_image', $avatar_url);
+
+        // Sync thumbnail to linked docbooker doctor post if any
+        $doc_posts = get_posts([
+            'post_type'      => 'wpddb_doctor',
+            'meta_key'       => '_wpddb_doctor_user_id',
+            'meta_value'     => (string) $uid,
+            'fields'         => 'ids',
+            'posts_per_page' => -1,
+            'post_status'    => 'any'
+        ]);
+        if (!empty($doc_posts)) {
+            foreach ($doc_posts as $pid) {
+                if ($attach_id && !is_wp_error($attach_id)) {
+                    set_post_thumbnail($pid, $attach_id);
+                }
+                update_post_meta($pid, '_wpddb_doctor_avatar', $avatar_url);
+                update_post_meta($pid, 'wpddb_doctor_avatar', $avatar_url);
+            }
+        }
+
+        wp_send_json_success([
+            'message'    => 'Provider profile photo updated successfully!',
+            'avatar_url' => $avatar_url
+        ]);
     }
 
     /**
@@ -919,13 +1063,17 @@ class Dior_Doctor_Dashboard
         delete_user_meta($uid, 'dior_profile_image');
         delete_user_meta($uid, 'doctor_avatar');
         delete_user_meta($uid, 'profile_picture');
+        delete_user_meta($uid, 'profile_image');
+        delete_user_meta($uid, 'dior_profile_image_id');
 
         $profile = self::get_doctor_profile($uid);
         $initials = !empty($profile['initials']) ? $profile['initials'] : 'DR';
+        $default_avatar = DIOR_PORTAL_URL . 'assets/images/users/user-1.png';
 
         wp_send_json_success([
-            'message' => 'Provider photo removed successfully.',
-            'initials' => $initials
+            'message'    => 'Provider photo removed successfully.',
+            'initials'   => $initials,
+            'avatar_url' => $default_avatar
         ]);
     }
 

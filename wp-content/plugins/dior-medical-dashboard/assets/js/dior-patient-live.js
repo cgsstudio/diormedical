@@ -83,8 +83,29 @@
         });
 
         var hash = window.location.hash || '';
-        var requested = hash.indexOf('#tab=') === 0 ? decodeURIComponent(hash.substring(5)) : 'overview';
-        if (!switchTab(requested, false)) switchTab('overview', false);
+        var requestedTab = 'overview';
+        var requestedSub = null;
+        if (hash.indexOf('#tab=') === 0) {
+            var raw = hash.substring(5);
+            if (raw.indexOf('&subtab=') !== -1) {
+                var p = raw.split('&subtab=');
+                requestedTab = decodeURIComponent(p[0]);
+                requestedSub = decodeURIComponent(p[1]);
+            } else {
+                requestedTab = decodeURIComponent(raw);
+            }
+        }
+        if (requestedTab === 'appointments') {
+            switchTab('appointments', false);
+            var sub = requestedSub || (function(){
+                try { return sessionStorage.getItem('dior_active_appt_subtab'); } catch(e){ return null; }
+            })() || 'today';
+            if (typeof window.diorSwitchApptSubTab === 'function') {
+                window.diorSwitchApptSubTab(sub);
+            }
+        } else {
+            if (!switchTab(requestedTab, false)) switchTab('overview', false);
+        }
     }
 
     function bindProfileSave() {

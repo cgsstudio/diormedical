@@ -625,7 +625,16 @@
             try {
                 response = JSON.parse(text);
             } catch(e) {
-                response = { success: false, data: { message: 'Server returned an invalid response.' } };
+                // Surface a safe, short response excerpt to help identify PHP/server errors.
+                var responseExcerpt = (text || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 240);
+                response = {
+                    success: false,
+                    data: {
+                        message: responseExcerpt
+                            ? 'Server returned a non-JSON response: ' + responseExcerpt
+                            : 'Server returned an empty response. Check the WordPress/PHP error log and upload limits.'
+                    }
+                };
             }
 
             if (response && response.success) {

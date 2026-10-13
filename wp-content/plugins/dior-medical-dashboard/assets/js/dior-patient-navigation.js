@@ -76,14 +76,35 @@
             }
         }, true);
 
-        // Restore a valid tab from the URL, otherwise keep Overview active.
+        // Restore a valid tab and subtab from the URL, otherwise keep Overview active.
         var hash = window.location.hash || '';
+        var requestedTab = 'overview';
+        var requestedSubTab = null;
+
         if (hash.indexOf('#tab=') === 0) {
-            var requested = decodeURIComponent(hash.substring(5));
-            if (!activate(requested, false)) activate('overview', false);
+            var raw = hash.substring(5);
+            if (raw.indexOf('&subtab=') !== -1) {
+                var parts = raw.split('&subtab=');
+                requestedTab = decodeURIComponent(parts[0]);
+                requestedSubTab = decodeURIComponent(parts[1]);
+            } else {
+                requestedTab = decodeURIComponent(raw);
+            }
         } else {
             var active = app.querySelector('.dior-nav-btn.active[data-tab]');
-            activate(active ? active.getAttribute('data-tab') : 'overview', false);
+            requestedTab = active ? active.getAttribute('data-tab') : 'overview';
+        }
+
+        if (requestedTab === 'appointments') {
+            activate('appointments', false);
+            var sub = requestedSubTab || (function(){
+                try { return sessionStorage.getItem('dior_active_appt_subtab'); } catch(e){ return null; }
+            })() || 'today';
+            if (typeof window.diorSwitchApptSubTab === 'function') {
+                window.diorSwitchApptSubTab(sub);
+            }
+        } else {
+            if (!activate(requestedTab, false)) activate('overview', false);
         }
     }
 

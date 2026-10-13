@@ -685,6 +685,7 @@ let diorPastCurrentPage = 1;
 
 // --- Extracted dashboard script 5 ---
 window.diorSwitchApptSubTab = function(targetSubTab) {
+                        if (!targetSubTab) targetSubTab = 'today';
                         var navBtns = document.querySelectorAll('.dior-nav-btn');
                         var tabPanels = document.querySelectorAll('.dior-tab-panel');
                         
@@ -694,18 +695,29 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                             else b.classList.remove('active');
                         });
                         tabPanels.forEach(function(p) {
-                            if (p.id === 'tab-appointments') p.classList.add('active');
-                            else p.classList.remove('active');
+                            if (p.id === 'tab-appointments') {
+                                p.classList.add('active');
+                                p.style.setProperty('display', 'block', 'important');
+                                p.style.setProperty('visibility', 'visible', 'important');
+                                p.style.setProperty('opacity', '1', 'important');
+                            } else {
+                                p.classList.remove('active');
+                            }
                         });
 
                         // Switch inner tab
                         var panels = document.querySelectorAll('.dior-subtab-panel');
                         panels.forEach(function(panel) {
+                            var isTarget = panel.id === 'dior-subtab-' + targetSubTab;
                             panel.style.setProperty(
                                 'display',
-                                panel.id === 'dior-subtab-' + targetSubTab ? 'block' : 'none',
+                                isTarget ? 'block' : 'none',
                                 'important'
                             );
+                            if (isTarget) {
+                                panel.style.setProperty('visibility', 'visible', 'important');
+                                panel.style.setProperty('opacity', '1', 'important');
+                            }
                         });
 
                         // Update dynamic breadcrumb & headers
@@ -721,7 +733,13 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                         if (mainTitleEl) mainTitleEl.textContent = t;
                         if (crumbTitleEl) crumbTitleEl.textContent = t;
 
-                        // Highlight active dropdown item
+                        // Ensure dropdown is open and highlight active dropdown item
+                        var dropdownWrap = document.getElementById('dior-appt-dropdown-wrap');
+                        if (dropdownWrap) {
+                            dropdownWrap.classList.add('open');
+                            var chevron = dropdownWrap.querySelector('.fa-chevron-down');
+                            if (chevron) chevron.style.transform = 'rotate(180deg)';
+                        }
                         document.querySelectorAll('#dior-appt-dropdown-wrap .dior-nav-dropdown-item').forEach(function(item) {
                             if (item.getAttribute('data-appt-subtab') === targetSubTab) {
                                 item.classList.add('active');
@@ -729,6 +747,19 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                                 item.classList.remove('active');
                             }
                         });
+
+                        // Remember active subtab in sessionStorage and URL hash so reload works reliably
+                        try {
+                            sessionStorage.setItem('dior_active_appt_subtab', targetSubTab);
+                        } catch(e) {}
+                        if (window.history && window.history.replaceState) {
+                            window.history.replaceState(null, '', '#tab=appointments&subtab=' + encodeURIComponent(targetSubTab));
+                        }
+
+                        // Trigger resize for embedded forms / iframe layout recalculation
+                        setTimeout(function() {
+                            window.dispatchEvent(new Event('resize'));
+                        }, 120);
 
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     };
@@ -2555,9 +2586,24 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         // Restore hash only when it points to an actual panel.
         var hash = window.location.hash || '';
         if (hash.indexOf('#tab=') === 0) {
-            var requested = decodeURIComponent(hash.substring(5));
+            var raw = hash.substring(5);
+            var requested = raw;
+            var requestedSub = null;
+            if (raw.indexOf('&subtab=') !== -1) {
+                var p = raw.split('&subtab=');
+                requested = decodeURIComponent(p[0]);
+                requestedSub = decodeURIComponent(p[1]);
+            } else {
+                requested = decodeURIComponent(raw);
+            }
             if (document.getElementById('tab-' + requested)) {
                 switchPatientTab(requested, false);
+                if (requested === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
+                    var s = requestedSub || (function(){
+                        try { return sessionStorage.getItem('dior_active_appt_subtab'); } catch(e){ return null; }
+                    })() || 'today';
+                    window.diorSwitchApptSubTab(s);
+                }
             }
         }
     }

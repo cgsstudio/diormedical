@@ -7,9 +7,12 @@
     let originalNextSibling = null;
 
     function isAppointmentButton(element) {
+        if (element.closest('#dior-docbooker-modal') || element.closest('.dior-booking-banner-card')) {
+            return false;
+        }
         const text = (element.innerText || element.textContent || element.value || '')
             .replace(/\s+/g, ' ').trim().toLowerCase();
-        return text.includes('book an appointment');
+        return text.includes('book an appointment') && !text.includes('docbooker');
     }
 
     function openPopup() {

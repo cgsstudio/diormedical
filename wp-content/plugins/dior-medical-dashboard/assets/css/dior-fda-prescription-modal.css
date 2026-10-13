@@ -1,0 +1,761 @@
+/**
+ * Dior Medical - FDA Approved Medication & Digital Prescription Modal Styles
+ * Precisely matches the clinical prescription builder UI
+ */
+
+/* ── Modal Overlay & Dialog ──────────────────────────────────────────────── */
+.dior-fda-modal-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(15, 23, 42, 0.75) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 99999 !important;
+    display: none;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.dior-fda-modal-overlay.is-open {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+.dior-fda-dialog {
+    background: #ffffff !important;
+    border-radius: 14px !important;
+    width: 100% !important;
+    max-width: 680px !important;
+    max-height: 94vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+    overflow: hidden !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    color: #1e293b !important;
+    transform: translateY(12px) scale(0.98);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dior-fda-modal-overlay.is-open .dior-fda-dialog {
+    transform: translateY(0) scale(1) !important;
+}
+
+/* ── Modal Header ────────────────────────────────────────────────────────── */
+.dior-fda-header {
+    padding: 16px 24px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background: #ffffff !important;
+}
+
+.dior-fda-header-title-wrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex: 1 !important;
+}
+
+.dior-fda-header-title {
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    color: #0c4a60 !important;
+    margin: 0 !important;
+    letter-spacing: 0.3px !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+}
+
+.dior-fda-close-btn {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    background: #64748b !important;
+    color: #ffffff !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 15px !important;
+    transition: background-color 0.2s ease, transform 0.15s ease !important;
+    flex-shrink: 0 !important;
+}
+
+.dior-fda-close-btn:hover {
+    background: #475569 !important;
+    transform: scale(1.05) !important;
+}
+
+/* ── Modal Scrollable Body ───────────────────────────────────────────────── */
+.dior-fda-body {
+    padding: 20px 24px !important;
+    overflow-y: auto !important;
+    flex: 1 !important;
+    box-sizing: border-box !important;
+}
+
+/* ── Patient & Context Selection Bar ─────────────────────────────────────── */
+.dior-fda-context-row {
+    display: flex !important;
+    gap: 14px !important;
+    margin-bottom: 16px !important;
+    background: #f8fafc !important;
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.dior-fda-context-field {
+    flex: 1 !important;
+}
+
+.dior-fda-context-field label {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    color: #64748b !important;
+    margin-bottom: 4px !important;
+    display: block !important;
+}
+
+.dior-fda-context-select,
+.dior-fda-context-input {
+    width: 100% !important;
+    padding: 7px 10px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    color: #1e293b !important;
+    background: #ffffff !important;
+}
+
+/* ── FDA Live Medication Search Bar ──────────────────────────────────────── */
+.dior-fda-search-section {
+    position: relative !important;
+    margin-bottom: 16px !important;
+}
+
+.dior-fda-search-box-wrap {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.dior-fda-search-icon {
+    position: absolute !important;
+    left: 14px !important;
+    color: #0c4a60 !important;
+    font-size: 16px !important;
+    pointer-events: none !important;
+}
+
+.dior-fda-search-input {
+    width: 100% !important;
+    padding: 12px 115px 12px 42px !important;
+    font-size: 14px !important;
+    border: 2px solid #0c4a60 !important;
+    border-radius: 8px !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    color: #0c4a60 !important;
+    font-weight: 600 !important;
+    background: #fbfdfe !important;
+    transition: all 0.2s ease !important;
+}
+
+.dior-fda-search-input:focus {
+    box-shadow: 0 0 0 3px rgba(12, 74, 96, 0.15) !important;
+}
+
+.dior-fda-badge-verify {
+    position: absolute !important;
+    right: 10px !important;
+    background: #0c4a60 !important;
+    color: #ffffff !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 4px 8px !important;
+    border-radius: 5px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    letter-spacing: 0.3px !important;
+}
+
+/* ── FDA Autocomplete Dropdown ───────────────────────────────────────────── */
+.dior-fda-autocomplete-dropdown {
+    position: absolute !important;
+    top: calc(100% + 4px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15) !important;
+    z-index: 1000 !important;
+    max-height: 280px !important;
+    overflow-y: auto !important;
+    display: none;
+}
+
+.dior-fda-autocomplete-item {
+    padding: 10px 14px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    cursor: pointer !important;
+    transition: background 0.15s ease !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.dior-fda-autocomplete-item:last-child {
+    border-bottom: none !important;
+}
+
+.dior-fda-autocomplete-item:hover,
+.dior-fda-autocomplete-item.is-active {
+    background: #f0fdfa !important;
+}
+
+.dior-fda-item-main {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+.dior-fda-item-brand {
+    font-weight: 700 !important;
+    color: #0c4a60 !important;
+    font-size: 14px !important;
+}
+
+.dior-fda-item-generic {
+    font-size: 12px !important;
+    color: #64748b !important;
+}
+
+.dior-fda-item-badge {
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+    border-radius: 4px !important;
+    background: #e0f2fe !important;
+    color: #0369a1 !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+}
+
+/* ── Generic Name Checkbox & Subtitle Row ────────────────────────────────── */
+.dior-fda-generic-box {
+    margin-bottom: 18px !important;
+    padding-bottom: 14px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.dior-fda-checkbox-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 13px !important;
+    color: #475569 !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+    user-select: none !important;
+}
+
+.dior-fda-checkbox-label input[type="checkbox"] {
+    width: 17px !important;
+    height: 17px !important;
+    accent-color: #0c4a60 !important;
+    cursor: pointer !important;
+}
+
+.dior-fda-contains-row {
+    margin-top: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+}
+
+.dior-fda-contains-text {
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    color: #0c4a60 !important;
+    border-bottom: 2px solid #2dd4bf !important;
+    padding-bottom: 2px !important;
+    flex: 1 !important;
+    letter-spacing: 0.3px !important;
+}
+
+.dior-fda-contains-input {
+    width: 100% !important;
+    border: none !important;
+    border-bottom: 2px solid #2dd4bf !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    color: #0c4a60 !important;
+    outline: none !important;
+    background: transparent !important;
+    padding: 0 0 2px 0 !important;
+}
+
+.dior-fda-btn-freetext {
+    color: #ea580c !important;
+    font-size: 12.5px !important;
+    font-weight: 800 !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 4px 6px !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    transition: opacity 0.2s !important;
+}
+
+.dior-fda-btn-freetext:hover {
+    opacity: 0.8 !important;
+    text-decoration: underline !important;
+}
+
+/* ── Take / Apply & Dose Form & Route ────────────────────────────────────── */
+.dior-fda-form-route-row {
+    display: grid !important;
+    grid-template-columns: 140px 1fr 1fr !important;
+    gap: 16px !important;
+    align-items: flex-end !important;
+    margin-bottom: 20px !important;
+}
+
+.dior-fda-radio-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    margin-bottom: 8px !important;
+}
+
+.dior-fda-radio-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    cursor: pointer !important;
+}
+
+.dior-fda-radio-label input[type="radio"] {
+    width: 16px !important;
+    height: 16px !important;
+    accent-color: #0c4a60 !important;
+    cursor: pointer !important;
+}
+
+.dior-fda-field-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+}
+
+.dior-fda-field-title {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: #0c4a60 !important;
+}
+
+.dior-fda-select {
+    width: 100% !important;
+    padding: 8px 12px !important;
+    border: 1.5px solid #0c4a60 !important;
+    border-radius: 8px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #0c4a60 !important;
+    background: #ffffff !important;
+    cursor: pointer !important;
+    outline: none !important;
+}
+
+/* ── Duration Row ────────────────────────────────────────────────────────── */
+.dior-fda-duration-row {
+    margin-bottom: 20px !important;
+}
+
+.dior-fda-duration-flex {
+    display: flex !important;
+    align-items: center !important;
+    gap: 20px !important;
+    flex-wrap: wrap !important;
+}
+
+/* Stepper Component */
+.dior-fda-stepper {
+    display: inline-flex !important;
+    align-items: center !important;
+    border: 1.5px solid #0c4a60 !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+}
+
+.dior-fda-step-btn {
+    width: 32px !important;
+    height: 32px !important;
+    background: #0c4a60 !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.15s ease !important;
+}
+
+.dior-fda-step-btn:hover {
+    background: #072f3e !important;
+}
+
+.dior-fda-step-val {
+    width: 44px !important;
+    height: 32px !important;
+    border: none !important;
+    text-align: center !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #0c4a60 !important;
+    outline: none !important;
+    background: #ffffff !important;
+}
+
+/* ── Frequency & Intake Row ──────────────────────────────────────────────── */
+.dior-fda-freq-intake-row {
+    display: grid !important;
+    grid-template-columns: 240px 1fr !important;
+    gap: 24px !important;
+    align-items: flex-end !important;
+    margin-bottom: 20px !important;
+}
+
+/* ── Dosage Breakdown Cards (Morning, Noon, Evening, Night, Daily) ───────── */
+.dior-fda-dosages-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) 1.15fr !important;
+    gap: 8px !important;
+    margin-bottom: 18px !important;
+}
+
+.dior-fda-dose-card {
+    background: #fefce8 !important; /* soft cream for morning-night */
+    border: 1px solid #fef08a !important;
+    border-radius: 8px !important;
+    padding: 10px 8px !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+}
+
+.dior-fda-dose-card.daily-card {
+    background: #f0f9ff !important; /* soft blue for daily */
+    border-color: #bae6fd !important;
+}
+
+.dior-fda-dose-label {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: #0c4a60 !important;
+}
+
+/* Active Highlighted Stepper (when Qty > 0) */
+.dior-fda-dose-card.has-qty .dior-fda-stepper {
+    background: #0c4a60 !important;
+    border-color: #0c4a60 !important;
+}
+
+.dior-fda-dose-card.has-qty .dior-fda-step-val {
+    background: #0c4a60 !important;
+    color: #ffffff !important;
+}
+
+.dior-fda-dose-sub {
+    font-size: 11px !important;
+    color: #0c4a60 !important;
+    font-weight: 500 !important;
+    opacity: 0.85 !important;
+}
+
+/* ── Dynamic Instructions Text Preview ───────────────────────────────────── */
+.dior-fda-instruction-preview-box {
+    background: #f8fafc !important;
+    border-left: 3px solid #0c4a60 !important;
+    padding: 10px 14px !important;
+    border-radius: 0 6px 6px 0 !important;
+    margin-bottom: 14px !important;
+}
+
+.dior-fda-inst-line1 {
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    margin-bottom: 2px !important;
+}
+
+.dior-fda-inst-line2 {
+    font-size: 12.5px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+.dior-fda-btn-addnotes {
+    color: #ea580c !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 4px 0 !important;
+    margin-bottom: 14px !important;
+}
+
+.dior-fda-btn-addnotes:hover {
+    text-decoration: underline !important;
+}
+
+.dior-fda-notes-drawer {
+    display: none;
+    margin-bottom: 14px !important;
+}
+
+.dior-fda-notes-drawer textarea {
+    width: 100% !important;
+    padding: 10px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    box-sizing: border-box !important;
+    resize: vertical !important;
+    min-height: 60px !important;
+}
+
+/* ── Multiple Medications List / Drawer ─────────────────────────────────── */
+.dior-fda-prescribed-list-wrap {
+    background: #f0fdfa !important;
+    border: 1.5px solid #2dd4bf !important;
+    border-radius: 8px !important;
+    padding: 12px 14px !important;
+    margin-bottom: 16px !important;
+    box-shadow: 0 2px 6px rgba(13, 148, 136, 0.08) !important;
+}
+
+.dior-fda-prescribed-list-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #0f766e !important;
+    margin-bottom: 6px !important;
+}
+
+.dior-fda-prescribed-hint {
+    font-size: 11.5px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+.dior-fda-prescribed-items {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+.dior-fda-prescribed-chip {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background: #ffffff !important;
+    border: 1px solid #ccfbf1 !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    color: #1e293b !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+.dior-fda-chip-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+}
+
+.dior-fda-chip-badge {
+    background: #0c4a60 !important;
+    color: #ffffff !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+}
+
+.dior-fda-chip-name {
+    font-weight: 700 !important;
+    color: #0c4a60 !important;
+}
+
+.dior-fda-chip-dose {
+    color: #64748b !important;
+    font-size: 12px !important;
+}
+
+.dior-fda-chip-del {
+    background: none !important;
+    border: none !important;
+    color: #ef4444 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    padding: 4px 6px !important;
+    border-radius: 4px !important;
+    transition: background 0.15s ease !important;
+}
+
+.dior-fda-chip-del:hover {
+    background: #fee2e2 !important;
+}
+
+/* ── Modal Footer ────────────────────────────────────────────────────────── */
+.dior-fda-footer {
+    padding: 14px 24px !important;
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+}
+
+.dior-fda-footer-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+}
+
+.dior-fda-footer-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+}
+
+.dior-fda-total-calc {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: #0c4a60 !important;
+}
+
+.dior-fda-freq-check-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 13px !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+}
+
+.dior-fda-freq-check-label input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    accent-color: #ea580c !important;
+    cursor: pointer !important;
+}
+
+.dior-fda-btn-addmedicine {
+    background: #f97316 !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 800 !important;
+    font-size: 13.5px !important;
+    padding: 11px 18px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35) !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.dior-fda-btn-addmedicine:hover {
+    background: #ea580c !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.45) !important;
+}
+
+.dior-fda-btn-saverx {
+    background: #0c4a60 !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 800 !important;
+    font-size: 13.5px !important;
+    padding: 11px 20px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 4px 14px rgba(12, 74, 96, 0.3) !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.dior-fda-btn-saverx:hover {
+    background: #082f3d !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 18px rgba(12, 74, 96, 0.45) !important;
+}
+
+/* ── Responsive Rules for Prescription Modal ────────────────────────────── */
+@media (max-width: 720px) {
+    .dior-fda-form-route-row {
+        grid-template-columns: 1fr !important;
+    }
+    .dior-fda-freq-intake-row {
+        grid-template-columns: 1fr !important;
+    }
+    .dior-fda-dosages-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .dior-fda-footer {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        text-align: center !important;
+    }
+    .dior-fda-footer-left,
+    .dior-fda-footer-actions {
+        justify-content: center !important;
+    }
+    .dior-fda-btn-addmedicine,
+    .dior-fda-btn-saverx {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+}

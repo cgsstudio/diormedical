@@ -165,22 +165,57 @@
 
 /* Appointment dropdown stays functional, but follows the same sidebar visual language. */
 .dior-patient-portal-wrap .dior-nav-dropdown {
-    background: #0F1539 !important;
+    background: #090e29 !important;
     border-radius: 0 !important;
-    padding: 0 !important;
+    padding: 3px 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
 }
 
 .dior-patient-portal-wrap .dior-nav-dropdown-item {
-    min-height: 42px !important;
-    padding: 0 31px 0 64px !important;
+    min-height: 40px !important;
+    height: 40px !important;
+    padding: 0 16px 0 42px !important;
     color: #D9E4F0 !important;
     background: transparent !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    transition: all 0.2s ease !important;
 }
 
-.dior-patient-portal-wrap .dior-nav-dropdown-item:hover,
+.dior-patient-portal-wrap .dior-nav-dropdown-item i {
+    font-size: 10px !important;
+    color: inherit !important;
+    opacity: 0.75 !important;
+    flex-shrink: 0 !important;
+    transition: transform 0.2s ease, opacity 0.2s ease !important;
+}
+
+.dior-patient-portal-wrap .dior-nav-dropdown-item:hover {
+    background: rgba(23, 78, 135, 0.6) !important;
+    color: #fff !important;
+}
+
 .dior-patient-portal-wrap .dior-nav-dropdown-item.active {
     background: #174E87 !important;
     color: #fff !important;
+    font-weight: 600 !important;
+}
+
+.dior-patient-portal-wrap .dior-nav-dropdown-item:hover i,
+.dior-patient-portal-wrap .dior-nav-dropdown-item.active i {
+    opacity: 1 !important;
+    color: #fff !important;
+    transform: translateX(2px) !important;
 }
 
 /* Patient portal footer: matches the reference instead of the old profile card. */
