@@ -1,4 +1,17 @@
 
-wp-content/ai1wm-backups/*.wpress
-
+# ── Backup & Migration files (large, never commit) ──
 wp-content/ai1wm-backups/
+wp-content/plugins/All-In-One-WP-Migration-Pro-master/storage/
+*.wpress
+
+# ── WordPress runtime/generated files ──
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/upgrade-temp-backup/
+wp-content/wflogs/
+wp-content/cache/
+wp-content/wp-rocket-config/
+*.log
+
+# ── WP config with secrets ──
+wp-config.php
