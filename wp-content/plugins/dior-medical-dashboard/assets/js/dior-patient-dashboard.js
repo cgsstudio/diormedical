@@ -1510,8 +1510,7 @@ let diorNotifCurrentPage = 1;
         });
 
         if (checkedRows.length === 0) {
-            if (window.Swal) Swal.fire({ icon: 'info', title: 'No Notifications Selected', text: 'Please select at least one notification to delete.' });
-            else alert('Please select at least one notification to delete.');
+            Swal.fire({ icon: 'info', title: 'No Notifications Selected', text: 'Please select at least one notification to delete.' });
             return;
         }
 
@@ -1544,13 +1543,11 @@ let diorNotifCurrentPage = 1;
                         Swal.fire({ position: 'top-end', icon: 'success', title: data.data?.message || 'Notifications Deleted', showConfirmButton: false, timer: 1500 });
                     }
                 } else {
-                    if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: (data && data.data && data.data.message) || 'Failed to delete notifications.' });
-                    else alert('Failed to delete notifications.');
+                    Swal.fire({ icon: 'error', title: 'Error', text: (data && data.data && data.data.message) || 'Failed to delete notifications.' });
                 }
             })
             .catch(() => {
-                if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Network error deleting notifications.' });
-                else alert('Network error deleting notifications.');
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Network error deleting notifications.' });
             });
         };
 
@@ -1568,10 +1565,6 @@ let diorNotifCurrentPage = 1;
                     doDelete();
                 }
             });
-        } else {
-            if (confirm(`Delete ${checkedRows.length} selected notification(s)?`)) {
-                doDelete();
-            }
         }
     }
     window.diorBulkDeleteNotifications = diorBulkDeleteNotifications;
@@ -1579,8 +1572,7 @@ let diorNotifCurrentPage = 1;
     function diorMarkAllNotificationsRead() {
         const rows = Array.from(document.querySelectorAll('#dior-notif-tbody tr[data-notif-id]'));
         if (rows.length === 0) {
-            if (window.Swal) Swal.fire({ icon: 'info', title: 'No Notifications', text: 'There are no notifications to mark as read.' });
-            else alert('No notifications to mark as read.');
+            Swal.fire({ icon: 'info', title: 'No Notifications', text: 'There are no notifications to mark as read.' });
             return;
         }
 
@@ -1732,11 +1724,6 @@ let diorNotifCurrentPage = 1;
                     }
                 }
             });
-        } else {
-            alert(`${title}\n\n${message}\n\nDate: ${date}`);
-            if (hasAction) {
-                window.location.href = actionUrl;
-            }
         }
     });
 
@@ -1845,14 +1832,35 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             if (found && found.items && found.items.length) {
                 items = found.items;
             } else {
-                items = [{
-                    id: actualId + '-1',
-                    medication: (found ? (found.medication || found.name) : '') || fallbackMed || 'Prescription Medication',
-                    dosage: (found ? (found.dosage || found.dose) : '') || 'As Prescribed',
-                    instructions: (found ? (found.instructions || found.notes) : '') || fallbackInst || 'Take as directed by prescribing physician.',
-                    quantity: (found ? found.quantity : '') || 'As Prescribed',
-                    refills: (found ? found.refills : '') || '0 Refills Remaining'
-                }];
+                var rawMedText = (found ? (found.medication || found.name) : '') || fallbackMed || 'Prescription Medication';
+                var rawDosageText = (found ? (found.dosage || found.dose) : '') || 'As Prescribed';
+                var rawInstText = (found ? (found.instructions || found.notes) : '') || fallbackInst || 'Take as directed by prescribing physician.';
+
+                var medParts = rawMedText.split(/;\s*|\r\n|\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+                var doseParts = rawDosageText.split(/\|\s*|;\s*|\r\n|\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+                var instParts = rawInstText.split(/\|\|\s*|\r\n|\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+
+                if (medParts.length > 1) {
+                    items = medParts.map(function(m, idx) {
+                        return {
+                            id: actualId + '-' + (idx + 1),
+                            medication: m.replace(/^\d+\.\s*/, ''),
+                            dosage: doseParts[idx] ? doseParts[idx].replace(/^\d+\.\s*/, '') : rawDosageText,
+                            instructions: instParts[idx] ? instParts[idx].replace(/^\d+\.\s*/, '') : rawInstText,
+                            quantity: (found ? found.quantity : '') || 'As Prescribed',
+                            refills: (found ? found.refills : '') || '0 Refills Remaining'
+                        };
+                    });
+                } else {
+                    items = [{
+                        id: actualId + '-1',
+                        medication: rawMedText,
+                        dosage: rawDosageText,
+                        instructions: rawInstText,
+                        quantity: (found ? found.quantity : '') || 'As Prescribed',
+                        refills: (found ? found.refills : '') || '0 Refills Remaining'
+                    }];
+                }
             }
 
             if (tableBody) {
@@ -1925,11 +1933,14 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         };
 
         window.diorRequestRefill = function (rxId) {
-            if (typeof showToast === 'function') {
-                showToast('Refill request submitted electronically to prescribing physician for Rx #' + rxId, false);
-            } else {
-                alert('Refill request submitted electronically to prescribing physician for Rx #' + rxId);
-            }
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Refill Requested',
+                text: 'Refill request submitted electronically to prescribing physician for Rx #' + rxId,
+                showConfirmButton: false,
+                timer: 2500
+            });
         };
 
         window.diorViewDocumentModal = function (title, category, author, date, id) {
@@ -2291,7 +2302,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                     }
                 }
             }
-            if (!element) { alert('Prescription details not found for Rx #' + rxId); return; }
+            if (!element) { Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' }); return; }
 
             var cleanFileName = 'Dior-Prescription-' + String(rxId).replace(/[^a-zA-Z0-9]/g, '-') + '.pdf';
             var innerContent = element.innerHTML;

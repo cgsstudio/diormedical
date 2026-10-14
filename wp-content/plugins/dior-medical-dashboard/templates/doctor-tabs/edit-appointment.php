@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/book-appointment.css?v=' . time()); ?>">
-
 <section class="dior-tab-panel appointment-form-wrapper" id="tab-doc-appointments-edit" style="display: none;">
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center;">
@@ -233,35 +231,35 @@
                                         <div class="col-md-4 mb-3">
                                             <h6>Morning</h6>
                                             <div role="group" class="btn-group">
-                                                <input type="radio" name="timeSlot" class="btn-check" id="morning_edit_0">
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="morning_edit_0">
                                                 <label class="btn btn-outline-primary" for="morning_edit_0">09:00 AM</label>
-                                                <input type="radio" name="timeSlot" class="btn-check" id="morning_edit_1" checked>
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="morning_edit_1" checked>
                                                 <label class="btn btn-outline-primary" for="morning_edit_1">10:00 AM</label>
-                                                <input type="radio" name="timeSlot" class="btn-check" id="morning_edit_2">
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="morning_edit_2">
                                                 <label class="btn btn-outline-primary" for="morning_edit_2">11:00 AM</label>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <h6>Afternoon</h6>
                                             <div role="group" class="btn-group">
-                                                <input type="radio" name="timeSlot" class="btn-check" id="afternoon_edit_0">
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="afternoon_edit_0">
                                                 <label class="btn btn-outline-primary" for="afternoon_edit_0">01:00 PM</label>
-                                                <input type="radio" name="timeSlot" class="btn-check" id="afternoon_edit_1">
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="afternoon_edit_1">
                                                 <label class="btn btn-outline-primary" for="afternoon_edit_1">02:00 PM</label>
-                                                <input type="radio" name="timeSlot" class="btn-check" id="afternoon_edit_2">
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="afternoon_edit_2">
                                                 <label class="btn btn-outline-primary" for="afternoon_edit_2">03:00 PM</label>
-                                                <input type="radio" name="timeSlot" class="btn-check" id="afternoon_edit_3">
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="afternoon_edit_3">
                                                 <label class="btn btn-outline-primary" for="afternoon_edit_3">04:00 PM</label>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <h6>Evening</h6>
                                             <div role="group" class="btn-group">
-                                                <input type="radio" name="timeSlot" class="btn-check" id="evening_edit_0">
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="evening_edit_0">
                                                 <label class="btn btn-outline-primary" for="evening_edit_0">05:00 PM</label>
-                                                <input type="radio" name="timeSlot" class="btn-check" id="evening_edit_1">
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="evening_edit_1">
                                                 <label class="btn btn-outline-primary" for="evening_edit_1">06:00 PM</label>
-                                                <input type="radio" name="timeSlot" class="btn-check" id="evening_edit_2">
+                                                <input type="radio" name="timeSlot" class="btn-check form-check-input" id="evening_edit_2">
                                                 <label class="btn btn-outline-primary" for="evening_edit_2">07:00 PM</label>
                                             </div>
                                         </div>
@@ -287,7 +285,7 @@
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-5">
                                     <label class="mb-2">Upload Previous Medical Reports</label>
                                     <div class="file-upload-wrapper">
-                                        <input type="file" class="file-input" accept="*">
+                                        <input type="file" class="file-input form-control" accept="*">
                                         <div class="file-upload-area">
                                             <div class="upload-icon"><i class="fas fa-cloud-arrow-up"></i></div>
                                             <div class="upload-text">

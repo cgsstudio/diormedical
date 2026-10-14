@@ -233,6 +233,7 @@ class Dior_DB
             doctor_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             appointment_uid VARCHAR(64) NULL,
             prescription_id VARCHAR(64) NULL,
+            title VARCHAR(255) NULL,
             patient_name VARCHAR(255) NULL,
             prescription_date DATE NULL,
             medications TEXT NULL,

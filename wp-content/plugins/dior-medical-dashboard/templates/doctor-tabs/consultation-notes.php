@@ -41,8 +41,6 @@ if (empty($patients)) {
     }
 }
 ?>
-<link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/view-appointment.css?v=' . time()); ?>">
-
 <section class="dior-tab-panel" id="tab-doc-consultation-notes" style="display:none;">
     <!-- Breadcrumb -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 5px;">
@@ -64,14 +62,14 @@ if (empty($patients)) {
                 <div class="va-title-line"></div>
             </div>
             <div class="va-actions-box" style="display:flex;align-items:center;gap:10px;">
-                <div class="va-search-container" style="position:relative;">
-                    <i class="fas fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;"></i>
-                    <input type="text" id="cn-search" class="dior-search-input" placeholder="Search records..." style="padding:8px 12px 8px 36px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;width:220px;">
+                <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" id="cn-search" class="dior-search-input form-control border-start-0 ps-0" placeholder="Search records...">
                 </div>
-                <button class="va-icon-btn va-btn-primary" id="cn-add-btn" title="Add New Consultation Note">
+                <button class="va-icon-btn va-btn-primary btn" id="cn-add-btn" title="Add New Consultation Note">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg>
                 </button>
-                <button class="va-icon-btn va-btn-info" id="cn-refresh-btn" title="Refresh">
+                <button class="va-icon-btn va-btn-info btn" id="cn-refresh-btn" title="Refresh">
                     <i class="fas fa-rotate-right"></i>
                 </button>
             </div>
@@ -79,10 +77,10 @@ if (empty($patients)) {
 
         <!-- Table -->
         <div class="va-table-wrapper">
-            <table class="va-table" id="cn-table">
+            <table class="va-table table table-hover" id="cn-table">
                 <thead>
                     <tr>
-                        <th style="width:50px;text-align:center;"><input type="checkbox" class="va-checkbox" id="cn-select-all"></th>
+                        <th style="width:50px;text-align:center;"><input type="checkbox" class="va-checkbox form-check-input" id="cn-select-all"></th>
                         <th>ID</th>
                         <th>PATIENT NAME <i class="fas fa-sort" style="color:#ccc;"></i></th>
                         <th>DATE</th>
@@ -113,7 +111,7 @@ if (empty($patients)) {
                         ]));
                     ?>
                     <tr data-id="<?php echo $nid; ?>" data-pid="<?php echo $pid; ?>">
-                        <td style="text-align:center;"><input type="checkbox" class="va-checkbox cn-row-check"></td>
+                        <td style="text-align:center;"><input type="checkbox" class="va-checkbox cn-row-check form-check-input"></td>
                         <td style="font-size:12px;color:#64748b;"><?php echo substr($uid, 0, 10); ?>…</td>
                         <td>
                             <div class="va-user-profile">
@@ -128,10 +126,10 @@ if (empty($patients)) {
                         <td><span class="va-badge <?php echo $badge; ?>"><?php echo ucfirst($status); ?></span></td>
                         <td>
                             <div class="va-row-actions">
-                                <button class="va-action-btn-sm va-btn-edit cn-edit-btn"
+                                <button class="va-action-btn-sm va-btn-edit cn-edit-btn btn"
                                         data-note="<?php echo $note_enc; ?>"
                                         title="Edit Note"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
-                                <button class="va-action-btn-sm va-btn-delete cn-delete-btn"
+                                <button class="va-action-btn-sm va-btn-delete cn-delete-btn btn"
                                         data-id="<?php echo $nid; ?>"
                                         data-uid="<?php echo esc_attr($uid); ?>"
                                         data-pid="<?php echo $pid; ?>"
@@ -262,7 +260,7 @@ if (empty($patients)) {
         var pid = document.getElementById('cn-patient-select').value;
         var noteId = document.getElementById('cn-note-id').value;
         var noteUid = document.getElementById('cn-note-uid').value;
-        if (!pid && !noteId) { alert('Please select a patient.'); return; }
+        if (!pid && !noteId) { Swal.fire({ icon: 'warning', title: 'Selection Required', text: 'Please select a patient.' }); return; }
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i>Saving...';
         var data = new FormData();
@@ -279,30 +277,42 @@ if (empty($patients)) {
             .then(function(r){return r.json();})
             .then(function(res) {
                 if (res.success) { closeModal(); location.reload(); }
-                else { alert(res.data && res.data.message ? res.data.message : 'Save failed.'); }
-            }).catch(function(){alert('Network error.');})
+                else { Swal.fire({ icon: 'error', title: 'Save Failed', text: res.data && res.data.message ? res.data.message : 'Save failed.' }); }
+            }).catch(function(){ Swal.fire({ icon: 'error', title: 'Error', text: 'Network error.' }); })
             .finally(function(){ btn.disabled=false; btn.innerHTML='<i class="fas fa-check" style="margin-right:6px;"></i>Save Note'; });
     }
 
     function deleteNote(btn) {
-        if (!confirm('Delete this consultation note? This cannot be undone.')) return;
-        var data = new FormData();
-        data.append('action',    'dior_doc_delete_consultation');
-        data.append('nonce',     nonce);
-        data.append('note_id',   btn.dataset.uid);
-        data.append('patient_id',btn.dataset.pid);
-        fetch(ajaxUrl, {method:'POST',body:data})
-            .then(function(r){return r.json();})
-            .then(function(res) {
-                if (res.success) {
-                    var row = btn.closest('tr');
-                    row.remove();
-                    if (document.querySelectorAll('#cn-tbody tr[data-id]').length === 0) {
-                        document.getElementById('cn-tbody').innerHTML = '<tr id="cn-empty-row"><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No consultation notes found. Click <strong>+</strong> to add one.</td></tr>';
-                    }
-                    if (window.diorRenderStaticTables) window.diorRenderStaticTables();
-                } else { alert(res.data && res.data.message ? res.data.message : 'Delete failed.'); }
-            });
+        Swal.fire({
+            title: 'Delete Consultation Note?',
+            text: 'Are you sure you want to delete this consultation note? This cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#EF4444',
+            cancelButtonColor: '#64748B',
+            confirmButtonText: 'Yes, delete',
+            cancelButtonText: 'Cancel'
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+            var data = new FormData();
+            data.append('action',    'dior_doc_delete_consultation');
+            data.append('nonce',     nonce);
+            data.append('note_id',   btn.dataset.uid);
+            data.append('patient_id',btn.dataset.pid);
+            fetch(ajaxUrl, {method:'POST',body:data})
+                .then(function(r){return r.json();})
+                .then(function(res) {
+                    if (res.success) {
+                        var row = btn.closest('tr');
+                        row.remove();
+                        if (document.querySelectorAll('#cn-tbody tr[data-id]').length === 0) {
+                            document.getElementById('cn-tbody').innerHTML = '<tr id="cn-empty-row"><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No consultation notes found. Click <strong>+</strong> to add one.</td></tr>';
+                        }
+                        if (window.diorRenderStaticTables) window.diorRenderStaticTables();
+                        Swal.fire({ icon: 'success', title: 'Deleted', text: 'Consultation note deleted.', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+                    } else { Swal.fire({ icon: 'error', title: 'Delete Failed', text: res.data && res.data.message ? res.data.message : 'Delete failed.' }); }
+                });
+        });
     }
 
     if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);

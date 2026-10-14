@@ -22,7 +22,7 @@
                 <h2>Income Chart</h2>
             </div>
             <div class="va-actions-box">
-                <select class="va-form-control" style="width: auto;">
+                <select class="va-form-control form-select" style="width: auto;">
                     <option value="Daily">Daily</option>
                     <option value="Monthly">Monthly</option>
                     <option value="Yearly">Yearly</option>
@@ -42,7 +42,7 @@
                 <h2>Income Table</h2>
             </div>
             <div class="va-actions-box">
-                <select class="va-form-control" style="width: auto;">
+                <select class="va-form-control form-select" style="width: auto;">
                     <option value="2024">2024</option>
                     <option value="2023">2023</option>
                     <option value="2022">2022</option>
@@ -52,7 +52,7 @@
         </div>
 
         <div class="va-table-wrapper" style="border-top: 1px solid #EEF2F6;">
-            <table class="va-table">
+            <table class="va-table table table-hover">
                 <thead>
                     <tr>
                         <th>Department</th>

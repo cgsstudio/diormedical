@@ -232,19 +232,44 @@
      */
     window.diorSelectMedication = function(med) {
         var s = window.diorFdaState;
-        s.brandName = (med.brand_name || 'Medication').toUpperCase();
-        s.genericName = (med.generic_name || s.brandName).toUpperCase();
-        s.strength = (med.strength || '').toUpperCase();
-        s.doseForm = med.dosage_form || 'Capsule(s)';
+        s.brandName = (med.brand_name || 'Medication').trim();
+        s.genericName = (med.generic_name || s.brandName).trim();
+        s.strength = (med.strength || '500 mg').trim();
+        s.doseForm = med.dosage_form || 'Tablet(s)';
         s.route = med.route || 'Orally';
-
-        s.containsText = 'Contains: ' + s.genericName + (s.strength ? ' (' + s.strength + ')' : '');
 
         var dropdown = document.getElementById('dior-fda-autocomplete-dropdown');
         if (dropdown) dropdown.style.display = 'none';
 
         var searchInput = document.getElementById('dior-fda-med-search');
-        if (searchInput) searchInput.value = s.brandName;
+        if (searchInput) {
+            searchInput.value = window.diorFormatCleanMedName(s.brandName, s.strength);
+        }
+
+        var strengthInput = document.getElementById('dior-fda-strength');
+        if (strengthInput && s.strength) {
+            strengthInput.value = s.strength;
+        }
+
+        var doseFormSelect = document.getElementById('dior-fda-dose-form');
+        if (doseFormSelect && s.doseForm) {
+            for (var i = 0; i < doseFormSelect.options.length; i++) {
+                if (doseFormSelect.options[i].value.toLowerCase().indexOf(s.doseForm.toLowerCase().replace('(s)', '')) !== -1) {
+                    doseFormSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        var routeSelect = document.getElementById('dior-fda-route');
+        if (routeSelect && s.route) {
+            for (var j = 0; j < routeSelect.options.length; j++) {
+                if (routeSelect.options[j].value.toLowerCase().indexOf(s.route.toLowerCase()) !== -1) {
+                    routeSelect.selectedIndex = j;
+                    break;
+                }
+            }
+        }
 
         window.diorFdaUpdateAllUI();
     };
@@ -393,94 +418,33 @@
     };
 
     /**
+     * Clean Medication Name Formatter (e.g., Metformin (500 mg), Sporanox (100 mg))
+     */
+    window.diorFormatCleanMedName = function(name, strength) {
+        if (!name) return 'Medication';
+        var clean = name.toLowerCase().replace(/\b\w/g, function(l) { return l.toUpperCase(); }).trim();
+        var str = (strength || '').trim().replace(/[()]/g, '');
+        if (str && str.toLowerCase() !== 'standard dose') {
+            return clean + ' (' + str + ')';
+        }
+        return clean;
+    };
+
+    /**
      * Master Re-compute & Synchronize UI
      */
     window.diorFdaUpdateAllUI = function() {
         var s = window.diorFdaState;
 
-        // 1. Header Title
+        // Header Title
         var titleEl = document.getElementById('dior-fda-title-text');
         if (titleEl) {
-            var unitShort = s.doseForm.replace('(s)', '').toUpperCase();
-            titleEl.textContent = s.itemNumber + '. ' + s.brandName + ' ' + unitShort;
+            if (s.medicationsList.length > 0) {
+                titleEl.textContent = 'Clinical Prescription Builder (' + s.medicationsList.length + ' Added)';
+            } else {
+                titleEl.textContent = 'New Clinical Prescription';
+            }
         }
-
-        // 2. Generic name line
-        var containsDisplay = document.getElementById('dior-fda-contains-display');
-        var genericBox = document.getElementById('dior-fda-generic-subrow');
-        if (containsDisplay) containsDisplay.textContent = s.containsText;
-        if (genericBox) genericBox.style.display = s.includeGeneric ? 'flex' : 'none';
-
-        // 3. Stepper Inputs
-        var durInput = document.getElementById('dior-fda-dur-val');
-        if (durInput) durInput.value = s.durationVal;
-
-        var mInput = document.getElementById('dior-fda-qty-morning');
-        var nInput = document.getElementById('dior-fda-qty-noon');
-        var eInput = document.getElementById('dior-fda-qty-evening');
-        var ntInput = document.getElementById('dior-fda-qty-night');
-        var dInput = document.getElementById('dior-fda-qty-daily');
-
-        if (mInput) mInput.value = s.morning;
-        if (nInput) nInput.value = s.noon;
-        if (eInput) eInput.value = s.evening;
-        if (ntInput) ntInput.value = s.night;
-        if (dInput) dInput.value = s.daily;
-
-        // 4. Update Dose Card Active Highlights (solid dark teal when qty > 0)
-        var cardM = document.getElementById('dior-card-morning');
-        var cardN = document.getElementById('dior-card-noon');
-        var cardE = document.getElementById('dior-card-evening');
-        var cardNt = document.getElementById('dior-card-night');
-        var cardD = document.getElementById('dior-card-daily');
-
-        if (cardM) cardM.classList.toggle('has-qty', s.morning > 0);
-        if (cardN) cardN.classList.toggle('has-qty', s.noon > 0);
-        if (cardE) cardE.classList.toggle('has-qty', s.evening > 0);
-        if (cardNt) cardNt.classList.toggle('has-qty', s.night > 0);
-        if (cardD) cardD.classList.toggle('has-qty', s.daily > 0);
-
-        // 5. Update unit sublabels (capsule(s) vs tablet(s))
-        var sublabels = document.querySelectorAll('.dior-fda-dose-sub');
-        var singleUnit = s.doseForm.toLowerCase();
-        sublabels.forEach(function(sub) {
-            sub.textContent = singleUnit;
-        });
-
-        // 6. Generate live instruction sentence
-        var times = [];
-        if (s.morning > 0) times.push('in the morning (' + s.morning + ')');
-        if (s.noon > 0) times.push('in the afternoon (' + s.noon + ')');
-        if (s.evening > 0) times.push('in the evening (' + s.evening + ')');
-        if (s.night > 0) times.push('in the night (' + s.night + ')');
-        if (s.daily > 0) times.push('daily (' + s.daily + ')');
-
-        var totalDailyDose = s.morning + s.noon + s.evening + s.night + s.daily;
-        if (totalDailyDose === 0) totalDailyDose = 1;
-
-        var timingStr = times.length > 0 ? times.join(', ') : 'as directed';
-        var foodStr = (s.intake === 'Not Applicable') ? '' : (' ' + s.intake.toLowerCase());
-        var durStr = (s.durationUnit === 'Till Next Review') ? 'till next review' : ('for ' + s.durationVal + ' ' + s.durationUnit.toLowerCase().replace('(s)', s.durationVal > 1 ? 's' : ''));
-
-        var line1 = s.takeOrApply + ' ' + totalDailyDose + ' ' + singleUnit + ' ' + timingStr + foodStr + ' ' + durStr;
-        var line2 = 'To be taken: ' + s.route;
-
-        var inst1El = document.getElementById('dior-fda-inst-line1');
-        var inst2El = document.getElementById('dior-fda-inst-line2');
-        if (inst1El) inst1El.textContent = line1;
-        if (inst2El) inst2El.textContent = line2;
-
-        // 7. Calculate Total Capsules/Tablets
-        var daysMultiplier = 1;
-        if (s.durationUnit === 'Day(s)') daysMultiplier = s.durationVal;
-        else if (s.durationUnit === 'Week(s)') daysMultiplier = s.durationVal * 7;
-        else if (s.durationUnit === 'Month(s)') daysMultiplier = s.durationVal * 30;
-        else if (s.durationUnit === 'Till Next Review') daysMultiplier = 14;
-
-        var totalUnits = totalDailyDose * daysMultiplier;
-        var totalEl = document.getElementById('dior-fda-total-calc');
-        var pluralUnit = s.doseForm.replace('(s)', totalUnits > 1 ? 's' : '');
-        if (totalEl) totalEl.textContent = 'Total ' + totalUnits + ' ' + pluralUnit;
     };
 
     /**
@@ -490,63 +454,69 @@
         if (e && e.preventDefault) e.preventDefault();
         var s = window.diorFdaState;
 
-        if (!s.brandName || s.brandName.trim() === '') {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'warning', title: 'Medication Name Missing', text: 'Please search and select an FDA approved medication first.' });
-            } else {
-                alert('Please search and select a medication first.');
-            }
-            var searchInp = document.getElementById('dior-fda-med-search');
-            if (searchInp) searchInp.focus();
+        var searchInput = document.getElementById('dior-fda-med-search');
+        var rawMedName = searchInput ? searchInput.value.trim() : '';
+
+        if (!rawMedName && (!s.brandName || s.brandName.trim() === '')) {
+            Swal.fire({ icon: 'warning', title: 'Medication Name Missing', text: 'Please enter or search for a medication name first.' });
+            if (searchInput) searchInput.focus();
             return;
         }
 
-        var totalDailyDose = s.morning + s.noon + s.evening + s.night + s.daily;
-        if (totalDailyDose === 0) totalDailyDose = 1;
+        var strengthInput = document.getElementById('dior-fda-strength');
+        var currentStrength = strengthInput ? strengthInput.value.trim() : (s.strength || '');
 
-        var fullMedName = s.brandName + ' ' + s.doseForm;
-        if (s.includeGeneric && s.genericName) {
-            fullMedName += ' (' + s.genericName + (s.strength ? ' ' + s.strength : '') + ')';
-        }
+        var doseFormSelect = document.getElementById('dior-fda-dose-form');
+        var currentDoseForm = doseFormSelect ? doseFormSelect.value : (s.doseForm || 'Tablet(s)');
 
-        var fullDosage = totalDailyDose + ' ' + s.doseForm + ' ' + s.route;
-        var fullFrequency = s.frequency + ' (' + s.intake + ')';
-        var fullDuration = s.durationVal + ' ' + s.durationUnit;
+        var routeSelect = document.getElementById('dior-fda-route');
+        var currentRoute = routeSelect ? routeSelect.value : (s.route || 'Orally');
+
+        var freqSelect = document.getElementById('dior-fda-frequency');
+        var currentFreq = freqSelect ? freqSelect.value : 'Daily';
+
+        var intakeSelect = document.getElementById('dior-fda-intake');
+        var currentIntake = intakeSelect ? intakeSelect.value : 'After Food';
+
+        var durationSelect = document.getElementById('dior-fda-duration');
+        var currentDuration = durationSelect ? durationSelect.value : '7 Day(s)';
+
+        var qtyInput = document.getElementById('dior-fda-quantity');
+        var currentQty = qtyInput ? qtyInput.value.trim() : '30 Tablets';
+
+        var refillsSelect = document.getElementById('dior-fda-refills');
+        var currentRefills = refillsSelect ? refillsSelect.value : '0';
 
         var notesArea = document.getElementById('dior-fda-custom-notes');
         var customNotes = notesArea ? notesArea.value.trim() : '';
 
-        var line1 = (document.getElementById('dior-fda-inst-line1') ? document.getElementById('dior-fda-inst-line1').textContent : '');
-        var line2 = (document.getElementById('dior-fda-inst-line2') ? document.getElementById('dior-fda-inst-line2').textContent : '');
-        var generatedInstructions = line1 + ' | ' + line2;
+        var medTitle = rawMedName || s.brandName;
+        var fullMedName = window.diorFormatCleanMedName(medTitle, currentStrength);
+
+        var fullDosage = currentStrength + ' ' + currentDoseForm + ' (' + currentRoute + ')';
+        var fullFrequency = currentFreq + ' (' + currentIntake + ')';
+        var fullDuration = currentDuration;
+
+        var instructions = 'Take ' + currentDoseForm + ' ' + currentFreq + ' ' + currentIntake + ' for ' + currentDuration + ' (' + currentRoute + ')';
         if (customNotes) {
-            generatedInstructions += ' | Note: ' + customNotes;
+            instructions += ' | Note: ' + customNotes;
         }
 
-        var daysMultiplier = 1;
-        if (s.durationUnit === 'Day(s)') daysMultiplier = s.durationVal;
-        else if (s.durationUnit === 'Week(s)') daysMultiplier = s.durationVal * 7;
-        else if (s.durationUnit === 'Month(s)') daysMultiplier = s.durationVal * 30;
-        else if (s.durationUnit === 'Till Next Review') daysMultiplier = 14;
-        var totalUnits = totalDailyDose * daysMultiplier;
-
         var medItem = {
-            brandName: s.brandName,
-            genericName: s.genericName,
-            strength: s.strength,
-            doseForm: s.doseForm,
-            route: s.route,
-            takeOrApply: s.takeOrApply,
-            durationVal: s.durationVal,
-            durationUnit: s.durationUnit,
-            frequency: s.frequency,
-            intake: s.intake,
-            totalUnits: totalUnits,
+            brandName: medTitle,
+            strength: currentStrength,
+            doseForm: currentDoseForm,
+            route: currentRoute,
+            frequency: currentFreq,
+            intake: currentIntake,
+            duration: currentDuration,
+            quantity: currentQty,
+            refills: currentRefills,
             fullMedName: fullMedName,
             fullDosage: fullDosage,
             fullFrequency: fullFrequency,
             fullDuration: fullDuration,
-            instructions: generatedInstructions,
+            instructions: instructions,
             customNotes: customNotes
         };
 
@@ -559,12 +529,12 @@
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 2500,
+                timer: 2000,
                 timerProgressBar: true
             });
             Toast.fire({
                 icon: 'success',
-                title: 'Added: ' + medItem.brandName + ' (' + totalUnits + ' ' + s.doseForm + ')'
+                title: 'Added: ' + fullMedName
             });
         }
 
@@ -573,14 +543,7 @@
         s.brandName = "";
         s.genericName = "";
         s.strength = "";
-        s.containsText = "";
-        s.morning = 0;
-        s.noon = 0;
-        s.evening = 0;
-        s.night = 1;
-        s.daily = 0;
 
-        var searchInput = document.getElementById('dior-fda-med-search');
         if (searchInput) {
             searchInput.value = '';
             searchInput.focus();
@@ -588,12 +551,6 @@
         if (notesArea) notesArea.value = '';
 
         window.diorFdaUpdateAllUI();
-
-        // Update header title to reflect next item
-        var titleEl = document.getElementById('dior-fda-title-text');
-        if (titleEl) {
-            titleEl.textContent = s.itemNumber + '. [SEARCH NEXT MEDICATION]';
-        }
     };
 
     /**
@@ -665,30 +622,24 @@
         var patientName = patientSelect ? (patientSelect.options[patientSelect.selectedIndex].text.split('(')[0].trim()) : 'Patient';
 
         if (!patientId) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'warning', title: 'Select Patient', text: 'Please select a patient for this prescription.' });
-            } else {
-                alert('Please select a patient for this prescription.');
-            }
+            Swal.fire({ icon: 'warning', title: 'Select Patient', text: 'Please select a patient for this prescription.' });
             return;
         }
 
+        var searchInp = document.getElementById('dior-fda-med-search');
+        var typedMedName = searchInp ? searchInp.value.trim() : '';
+
         // If no medication is in the list yet, but the user filled out the form, auto-add it
         if (s.medicationsList.length === 0) {
-            if (s.brandName && s.brandName.trim() !== '') {
+            if (typedMedName || (s.brandName && s.brandName.trim() !== '')) {
                 window.diorFdaAddMedicineToList(e);
             } else {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ icon: 'warning', title: 'No Medication Added', text: 'Please search and add at least one medication to this prescription.' });
-                } else {
-                    alert('Please search and add at least one medication.');
-                }
-                var sInp = document.getElementById('dior-fda-med-search');
-                if (sInp) sInp.focus();
+                Swal.fire({ icon: 'warning', title: 'No Medication Added', text: 'Please search or type at least one medication name.' });
+                if (searchInp) searchInp.focus();
                 return;
             }
-        } else if (s.brandName && s.brandName.trim() !== '') {
-            // If user has another medication in the form that hasn't been clicked '+ Add Medicine', auto add it too!
+        } else if (typedMedName || (s.brandName && s.brandName.trim() !== '')) {
+            // If user has another medication in the form that hasn't been added yet, auto add it too
             window.diorFdaAddMedicineToList(e);
         }
 
@@ -725,14 +676,18 @@
         var compiledDuration = durations.join(' | ');
         var compiledInstructions = instructions.join(' || ');
 
+        var prescTitle = (document.getElementById('dior-fda-presc-title') ? document.getElementById('dior-fda-presc-title').value.trim() : '') || 'General Care Prescription';
+
         var formData = new FormData();
         formData.append('action', 'dior_doctor_add_prescription');
         var nonceVal = (document.getElementById('dior-fda-nonce') ? document.getElementById('dior-fda-nonce').value : '') ||
+                       (typeof dior_doctor_vars !== 'undefined' ? dior_doctor_vars.nonce : '') ||
                        (typeof dior_vars !== 'undefined' ? dior_vars.nonce : '');
         formData.append('nonce', nonceVal);
+        formData.append('title', prescTitle);
         formData.append('patient_id', patientId);
         formData.append('patient_name', patientName);
-        formData.append('prescription_id', 'RX-' + new Date().getFullYear().toString().substr(-2) + String(Math.floor(1000 + Math.random() * 9000)));
+        formData.append('prescription_id', 'RX-' + new Date().getFullYear().toString().substr(-2) + String(Math.floor(100000 + Math.random() * 900000)));
         formData.append('prescription_date', prescDate);
         formData.append('medications', compiledMedications);
         formData.append('dosage', compiledDosage);
@@ -742,7 +697,9 @@
         formData.append('quantity', s.medicationsList.length + ' Item(s)');
         formData.append('status', 'Active');
 
-        var ajaxUrl = (typeof dior_vars !== 'undefined' ? dior_vars.ajax_url : '') || (typeof dior_patient_dashboard !== 'undefined' ? dior_patient_dashboard.ajax_url : '/wp-admin/admin-ajax.php');
+        var ajaxUrl = (typeof dior_doctor_vars !== 'undefined' ? dior_doctor_vars.ajax_url : '') ||
+                      (typeof dior_vars !== 'undefined' ? dior_vars.ajax_url : '') ||
+                      (typeof dior_patient_dashboard !== 'undefined' ? dior_patient_dashboard.ajax_url : '/wp-admin/admin-ajax.php');
 
         fetch(ajaxUrl, {
             method: 'POST',
@@ -757,16 +714,20 @@
 
             if (res.success) {
                 var totalCount = s.medicationsList.length;
+                var savedTitle = (res.data && res.data.title) ? res.data.title : prescTitle;
+                var savedRxId = (res.data && res.data.prescription_id) ? res.data.prescription_id : ('RX-' + Date.now().toString().substr(-5));
 
                 // Live insert row into Digital Prescriptions table
                 window.diorInjectPrescriptionRow({
-                    prescription_id: res.data.prescription_id || ('RX-' + Date.now().toString().substr(-4)),
+                    prescription_id: savedRxId,
+                    title: savedTitle,
                     patient_name: patientName,
                     date: prescDate,
                     medications: compiledMedications,
                     dosage: compiledDosage,
                     frequency: compiledFrequency,
                     duration: compiledDuration,
+                    instructions: compiledInstructions,
                     doctor: 'Dr. Marcus Sterling, DO',
                     status: 'Active',
                     count: totalCount
@@ -777,23 +738,15 @@
                 window.diorFdaRenderPrescribedList();
                 window.diorCloseFdaPrescriptionModal();
 
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Prescription Issued!',
-                        html: '<strong>' + totalCount + ' medication(s)</strong> prescribed successfully to <strong>' + patientName + '</strong>.',
-                        confirmButtonColor: '#0c4a60'
-                    });
-                } else {
-                    alert('Prescription issued with ' + totalCount + ' medication(s) successfully!');
-                }
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Prescription Issued!',
+                    html: '<strong>' + totalCount + ' medication(s)</strong> prescribed successfully for <strong>' + patientName + '</strong> under <em>' + savedTitle + '</em>.',
+                    confirmButtonColor: '#0b1120'
+                });
             } else {
                 var msg = (res.data && res.data.message) ? res.data.message : 'Failed to save prescription.';
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({ icon: 'error', title: 'Error Saving Prescription', text: msg });
-                } else {
-                    alert('Error: ' + msg);
-                }
+                Swal.fire({ icon: 'error', title: 'Error Saving Prescription', text: msg });
             }
         })
         .catch(function(err) {
@@ -802,11 +755,7 @@
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-file-prescription"></i> SAVE &amp; ISSUE PRESCRIPTION';
             }
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'error', title: 'Network Error', text: 'Network request failed. Please check your connection and try again.' });
-            } else {
-                alert('Request failed. Please try again.');
-            }
+            Swal.fire({ icon: 'error', title: 'Network Error', text: 'Network request failed. Please check your connection and try again.' });
         });
     };
 
@@ -823,28 +772,63 @@
             emptyRow.closest('tr').remove();
         }
 
+        var viewDataJson = JSON.stringify({
+            id: p.prescription_id,
+            title: p.title || 'General Care Prescription',
+            patient_name: p.patient_name,
+            date: p.date,
+            medications: p.medications,
+            dosage: p.dosage,
+            frequency: p.frequency,
+            duration: p.duration,
+            doctor_name: p.doctor || 'Dr. Marcus Sterling, DO',
+            status: p.status || 'Active',
+            instructions: p.instructions || ''
+        }).replace(/"/g, '&quot;');
+
+        var formatCellLines = function(raw, delim) {
+            if (!raw) return '';
+            var parts = String(raw).split(delim || ';').map(function(s) { return s.trim(); }).filter(Boolean);
+            if (!parts.length) parts = [raw];
+            return '<div style="display:flex;flex-direction:column;gap:3px;">' + 
+                   parts.map(function(s) { return '<div style="white-space:normal;">' + s + '</div>'; }).join('') + 
+                   '</div>';
+        };
+
+        var medsHtml = formatCellLines(p.medications, ';');
+        var doseHtml = formatCellLines(p.dosage, '|');
+        var freqHtml = formatCellLines(p.frequency, '|');
+        var durHtml  = formatCellLines(p.duration, '|');
+
         var tr = document.createElement('tr');
         tr.style.animation = 'diorFadeIn 0.4s ease';
         tr.innerHTML = `
             <td class="text-center"><input type="checkbox" class="va-checkbox"></td>
             <td><strong>${p.prescription_id}</strong></td>
             <td>
+                <span class="dior-rx-title-badge" style="font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-file-waveform" style="color: #d4af37;"></i>
+                    ${p.title || 'General Care Prescription'}
+                </span>
+            </td>
+            <td>
                 <div class="va-user-profile">
-                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(p.patient_name)}&background=0c4a60&color=fff" class="va-user-avatar" alt="${p.patient_name}">
+                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(p.patient_name)}&background=0b1120&color=d4af37" class="va-user-avatar" alt="${p.patient_name}">
                     <span class="va-user-name">${p.patient_name}</span>
                 </div>
             </td>
             <td><i class="far fa-calendar va-icon-blue"></i> ${p.date}</td>
-            <td><span style="font-weight:700;color:#0c4a60;">${p.medications}</span></td>
-            <td>${p.dosage}</td>
-            <td>${p.frequency}</td>
-            <td>${p.duration}</td>
+            <td><div style="font-weight:700;color:#0f172a;">${medsHtml}</div></td>
+            <td>${doseHtml}</td>
+            <td>${freqHtml}</td>
+            <td>${durHtml}</td>
             <td>${p.doctor}</td>
             <td><span class="badge-solid col-green" style="background-color:transparent;color:#059669;padding:6px 12px;border-radius:6px;font-weight:700;">${p.status}</span></td>
             <td>
                 <div class="va-row-actions">
-                    <button class="va-action-btn-sm va-btn-edit" title="Edit"><i class="fas fa-pen-to-square"></i></button>
-                    <button class="va-action-btn-sm va-btn-delete" title="Delete"><i class="fas fa-trash-can"></i></button>
+                    <button type="button" class="va-action-btn-sm va-btn-view" title="View Prescription Details" onclick="diorOpenPrescriptionDetailModal(${viewDataJson})"><i class="fas fa-eye"></i></button>
+                    <button type="button" class="va-action-btn-sm va-btn-edit" title="Edit Prescription" onclick="diorOpenFdaPrescriptionModal()"><i class="fas fa-pen-to-square"></i></button>
+                    <button type="button" class="va-action-btn-sm va-btn-delete" title="Delete Prescription" onclick="diorDeletePrescriptionRow(this)"><i class="fas fa-trash-can"></i></button>
                 </div>
             </td>
         `;
@@ -857,6 +841,96 @@
             var current = parseInt(countEl.textContent.replace(/[^0-9]/g, ''), 10) || 0;
             countEl.textContent = '0 selected / ' + (current + 1) + ' total';
         }
+    };
+
+    /**
+     * View Prescription Details Modal Controller
+     */
+    window.diorOpenPrescriptionDetailModal = function(data) {
+        if (!data) return;
+        var modal = document.getElementById('dior-prescription-view-modal');
+        if (!modal) return;
+
+        var idEl = document.getElementById('dior-view-rx-id');
+        if (idEl) idEl.textContent = data.id || 'RX-000000';
+
+        var titleEl = document.getElementById('dior-view-rx-title');
+        if (titleEl) titleEl.textContent = data.title || 'General Care Prescription';
+
+        var patEl = document.getElementById('dior-view-rx-patient');
+        if (patEl) patEl.textContent = data.patient_name || 'Patient';
+
+        var docEl = document.getElementById('dior-view-rx-doctor');
+        if (docEl) docEl.textContent = data.doctor_name || 'Dr. Marcus Sterling, DO';
+
+        var dateEl = document.getElementById('dior-view-rx-date');
+        if (dateEl) dateEl.textContent = data.date || '';
+
+        var statusEl = document.getElementById('dior-view-rx-status');
+        if (statusEl) statusEl.textContent = data.status || 'Active';
+
+        var notesEl = document.getElementById('dior-view-rx-notes');
+        if (notesEl) {
+            notesEl.textContent = data.instructions ? data.instructions : 'No special clinical notes recorded.';
+        }
+
+        // Render clean medication list
+        var listContainer = document.getElementById('dior-view-rx-meds-list');
+        if (listContainer) {
+            listContainer.innerHTML = '';
+            var medsRaw = String(data.medications || '');
+            var dosagesRaw = String(data.dosage || '');
+            var freqsRaw = String(data.frequency || '');
+            var durRaw = String(data.duration || '');
+
+            var medItems = medsRaw.split(';').map(function(s) { return s.trim(); }).filter(Boolean);
+            var doseItems = dosagesRaw.split('|').map(function(s) { return s.trim(); }).filter(Boolean);
+            var freqItems = freqsRaw.split('|').map(function(s) { return s.trim(); }).filter(Boolean);
+            var durItems = durRaw.split('|').map(function(s) { return s.trim(); }).filter(Boolean);
+
+            if (medItems.length === 0) medItems = [medsRaw];
+
+            medItems.forEach(function(item, idx) {
+                var cleanItemName = item.replace(/^\d+\.\s*/, '').trim();
+                var doseVal = doseItems[idx] ? doseItems[idx].replace(/^\d+\.\s*/, '').trim() : (data.dosage || 'As prescribed');
+                var freqVal = freqItems[idx] ? freqItems[idx].replace(/^\d+\.\s*/, '').trim() : (data.frequency || 'Daily');
+                var durVal = durItems[idx] ? durItems[idx].replace(/^\d+\.\s*/, '').trim() : (data.duration || 'As directed');
+
+                var card = document.createElement('div');
+                card.className = 'dior-view-rx-card';
+                card.innerHTML = `
+                    <div class="dior-view-rx-card-header">
+                        <div class="dior-view-rx-card-index">${idx + 1}</div>
+                        <div class="dior-view-rx-card-title">
+                            <h4>${cleanItemName}</h4>
+                            <span class="dior-view-rx-badge"><i class="fa-solid fa-capsules"></i> ${doseVal}</span>
+                        </div>
+                    </div>
+                    <div class="dior-view-rx-grid">
+                        <div class="dior-view-rx-stat">
+                            <span class="label"><i class="fa-regular fa-clock"></i> Frequency</span>
+                            <span class="val">${freqVal}</span>
+                        </div>
+                        <div class="dior-view-rx-stat">
+                            <span class="label"><i class="fa-regular fa-calendar-check"></i> Duration</span>
+                            <span class="val">${durVal}</span>
+                        </div>
+                        <div class="dior-view-rx-stat">
+                            <span class="label"><i class="fa-solid fa-stethoscope"></i> Route</span>
+                            <span class="val">Orally / Clinical Route</span>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        modal.classList.add('is-open');
+    };
+
+    window.diorClosePrescriptionDetailModal = function() {
+        var modal = document.getElementById('dior-prescription-view-modal');
+        if (modal) modal.classList.remove('is-open');
     };
 
     // Close autocomplete when clicking outside

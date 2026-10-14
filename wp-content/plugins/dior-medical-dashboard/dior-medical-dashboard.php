@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.0.6
+ * Version: 17.2.0
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.0.6');
+define('DIOR_PORTAL_VERSION', '17.2.0');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -514,47 +514,100 @@ class Dior_Patient_Portal_Data
     {
         global $wpdb;
         $table = $wpdb->prefix . 'dior_prescriptions';
+        $results = [];
+
         if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
             $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE patient_id=%d AND status != 'Deleted' ORDER BY created_at DESC", (int) $user_id), ARRAY_A);
             if (!empty($rows)) {
-                return array_map(static function ($row) {
+                $results = array_map(static function ($row) use ($user_id) {
+                    $pid = !empty($row['patient_id']) ? (int) $row['patient_id'] : (int) $user_id;
+                    $rx_uid = !empty($row['prescription_uid']) ? $row['prescription_uid'] : (!empty($row['prescription_id']) ? $row['prescription_id'] : ('RX-' . $row['id']));
+                    $title = !empty($row['title']) ? $row['title'] : 'General Medical Prescription';
+                    $med_name = !empty($row['medications']) ? $row['medications'] : ($row['medication'] ?? 'Prescription Medication');
+
+                    // Parse individual medications if multiple exist
+                    $med_lines = preg_split('/;\s*(?:\r?\n)?|\r?\n/', trim((string) $med_name));
+                    $dosage_parts = explode('|', (string) ($row['dosage'] ?? ''));
+                    $freq_parts = explode('|', (string) ($row['frequency'] ?? ''));
+                    $dur_parts = explode('|', (string) ($row['duration'] ?? ''));
+                    $inst_parts = explode('||', (string) ($row['instructions'] ?? ''));
+
+                    $items = [];
+                    $idx = 0;
+                    foreach ($med_lines as $m_line) {
+                        $m_clean = trim(preg_replace('/^\d+\.\s*/', '', trim($m_line)));
+                        if ($m_clean === '') continue;
+                        $d_clean = isset($dosage_parts[$idx]) ? trim(preg_replace('/^\d+\.\s*/', '', trim($dosage_parts[$idx]))) : ($row['dosage'] ?? 'As prescribed');
+                        $f_clean = isset($freq_parts[$idx]) ? trim(preg_replace('/^\d+\.\s*/', '', trim($freq_parts[$idx]))) : ($row['frequency'] ?? '');
+                        $du_clean = isset($dur_parts[$idx]) ? trim(preg_replace('/^\d+\.\s*/', '', trim($dur_parts[$idx]))) : ($row['duration'] ?? '');
+                        $in_clean = isset($inst_parts[$idx]) ? trim(preg_replace('/^\d+\.\s*/', '', trim($inst_parts[$idx]))) : ($row['instructions'] ?? '');
+
+                        $items[] = [
+                            'id' => $rx_uid . '-' . ($idx + 1),
+                            'medication' => $m_clean,
+                            'dosage' => $d_clean ?: 'As prescribed',
+                            'frequency' => $f_clean,
+                            'duration' => $du_clean,
+                            'instructions' => $in_clean ?: 'Take as directed by physician.',
+                            'quantity' => $row['quantity'] ?? '1 Unit',
+                            'refills' => $row['refills'] ?? 0,
+                        ];
+                        $idx++;
+                    }
+
+                    if (empty($items)) {
+                        $items[] = [
+                            'id' => $rx_uid,
+                            'medication' => $row['medication'] ?? $med_name,
+                            'dosage' => $row['dosage'] ?? 'As prescribed',
+                            'frequency' => $row['frequency'] ?? '',
+                            'duration' => $row['duration'] ?? '',
+                            'instructions' => $row['instructions'] ?? 'Take as directed by physician.',
+                            'quantity' => $row['quantity'] ?? '1 Unit',
+                            'refills' => $row['refills'] ?? 0,
+                        ];
+                    }
+
+                    $date_prescribed = !empty($row['prescription_date']) ? $row['prescription_date'] : (!empty($row['created_at']) ? substr($row['created_at'], 0, 10) : date('Y-m-d'));
+                    $doctor_name = !empty($row['doctor_name']) ? $row['doctor_name'] : ('Dr. ' . ((get_userdata((int) ($row['doctor_id'] ?? 0))->display_name ?? 'Doctor')));
+
                     return [
-                        'id' => $row['prescription_uid'],
-                        'order_id' => $row['prescription_uid'],
-                        'group_id' => $row['prescription_uid'],
-                        'name' => !empty($row['medications']) ? $row['medications'] : $row['medication'],
-                        'medication' => !empty($row['medications']) ? $row['medications'] : $row['medication'],
+                        'id' => $rx_uid,
+                        'order_id' => $rx_uid,
+                        'group_id' => $rx_uid,
+                        'prescription_uid' => $rx_uid,
+                        'title' => $title,
+                        'condition' => $title,
+                        'diagnosis' => $title,
+                        'name' => $med_name,
+                        'medication' => $med_name,
                         'dosage' => $row['dosage'] ?? '',
                         'frequency' => $row['frequency'] ?? '',
                         'duration' => $row['duration'] ?? '',
-                        'quantity' => $row['quantity'],
-                        'refills' => $row['refills'],
-                        'instructions' => $row['instructions'],
-                        'notes' => $row['instructions'],
-                        'status' => $row['status'],
-                        'is_active' => ($row['status'] === 'Active'),
-                        'date_prescribed' => !empty($row['prescription_date']) ? $row['prescription_date'] : $row['created_at'],
-                        'prescribed_by' => !empty($row['doctor_name']) ? $row['doctor_name'] : ('Dr. ' . ((get_userdata((int) $row['doctor_id'])->display_name ?? 'Doctor'))),
-                        'pharmacy' => get_user_meta($user_id, 'preferred_pharmacy_name', true),
-                        'items' => [
-                            [
-                                'id' => $row['prescription_uid'],
-                                'medication' => $row['medication'],
-                                'dosage' => $row['medication'],
-                                'quantity' => $row['quantity'],
-                                'refills' => $row['refills'],
-                                'instructions' => $row['instructions']
-                            ]
-                        ]
+                        'quantity' => $row['quantity'] ?? '1 Unit',
+                        'refills' => $row['refills'] ?? 0,
+                        'instructions' => $row['instructions'] ?? '',
+                        'notes' => $row['instructions'] ?? '',
+                        'status' => $row['status'] ?? 'Active',
+                        'is_active' => (strtolower($row['status'] ?? 'active') === 'active'),
+                        'date_prescribed' => $date_prescribed,
+                        'date' => $date_prescribed,
+                        'prescribed_by' => $doctor_name,
+                        'pharmacy' => get_user_meta($pid, 'preferred_pharmacy_name', true) ?: 'Dior Partner Pharmacy',
+                        'items' => $items,
                     ];
                 }, $rows);
             }
         }
 
-        $prescriptions = get_user_meta($user_id, 'dior_prescriptions', true);
-        if (!is_array($prescriptions))
-            $prescriptions = [];
-        return self::group_prescriptions($prescriptions);
+        if (empty($results)) {
+            $legacy_prescriptions = get_user_meta($user_id, 'dior_prescriptions', true);
+            if (is_array($legacy_prescriptions) && !empty($legacy_prescriptions)) {
+                $results = self::group_prescriptions($legacy_prescriptions);
+            }
+        }
+
+        return $results;
     }
 
     /**
@@ -799,59 +852,65 @@ class Dior_Medical_Auth
             '6.5.1'
         );
 
-        // ── Auth Page Stylesheet ──────────────────────────────────────────────
-        // Covers: Login, Register, Forgot Password pages.
-        $auth_css_ver = file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-auth.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-auth.css') : DIOR_PORTAL_VERSION;
+        // Bootstrap Icons for native Bootstrap iconography
         wp_enqueue_style(
-            'dior-auth-css',
-            DIOR_AUTH_URL . 'assets/css/dior-auth.css',
-            ['font-awesome-6'],
-            $auth_css_ver
-        );
-
-        // SweetAlert2 Stylesheet (Fixes distorted / missing animation icons)
-        wp_enqueue_style(
-            'sweetalert2-css',
-            'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css',
+            'bootstrap-icons',
+            'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',
             [],
-            '11.0.0'
+            '1.11.3'
         );
 
-        $js_ver = file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-dashboard.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-dashboard.js') : DIOR_PORTAL_VERSION;
-
-        // ── Patient Dashboard Stylesheet (Merged) ─────────────────────────────
-        // Merged from: patient-dashboard.css, dior-dashboard.css,
-        // dior-patient-dashboard-refactor.css, patient-dashboard-shell-match.css,
-        // dior-patient-non-overview-improvements.css, dior-static-responsive-fix.css,
-        // dior-static-table-interactions.css, dior-doctor-tabs-unify.css,
-        // patient-overview-custom.css, patient-profile.css, notifications.css,
-        // book-appointment.css
+        // ── 1. Bootstrap 5.3.3 Core Framework CSS ─────────────────────────────
+        $bs_css_ver = file_exists(DIOR_PORTAL_PATH . 'assets/css/bootstrap.min.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/bootstrap.min.css') : '5.3.3';
         wp_enqueue_style(
-            'dior-patient-css',
-            DIOR_PORTAL_URL . 'assets/css/dior-patient.css',
-            ['dior-auth-css', 'sweetalert2-css'],
-            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-patient.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-patient.css') : DIOR_PORTAL_VERSION
+            'dior-bootstrap-css',
+            DIOR_PORTAL_URL . 'assets/css/bootstrap.min.css',
+            [],
+            $bs_css_ver
         );
 
-        // ── Doctor Dashboard Stylesheet (Merged) ──────────────────────────────
-        // Merged from: dior-dashboard.css, dior-doctor-dashboard-refactor.css,
-        // dior-doctor-tabs-unify.css, dior-doctor-calendar-rebuild.css,
-        // dior-static-responsive-fix.css, dior-static-table-interactions.css,
-        // view-appointment.css, documents.css, dior-analytics.css,
-        // edit-patient.css, notifications.css
+        // ── 2. Unified Custom Stylesheet (All Custom CSS Consolidated in 1 File)
+        $custom_css_ver = file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-custom.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-custom.css') : DIOR_PORTAL_VERSION;
         wp_enqueue_style(
-            'dior-doctor-css',
-            DIOR_PORTAL_URL . 'assets/css/dior-doctor.css',
-            ['dior-auth-css', 'sweetalert2-css'],
-            file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-doctor.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-doctor.css') : DIOR_PORTAL_VERSION
+            'dior-custom-css',
+            DIOR_PORTAL_URL . 'assets/css/dior-custom.css',
+            ['dior-bootstrap-css'],
+            $custom_css_ver
         );
 
+        // Alias handles to dior-custom-css to prevent any extra duplicate CSS downloads
+        wp_register_style('dior-auth-css', false, ['dior-custom-css']);
+        wp_register_style('dior-bootstrap-unify-css', false, ['dior-custom-css']);
+        wp_register_style('dior-patient-css', false, ['dior-custom-css']);
+        wp_register_style('dior-doctor-css', false, ['dior-custom-css']);
+        wp_register_style('dior-docbooker-modal-css', false, ['dior-custom-css']);
+        wp_register_style('dior-fda-prescription-modal-css', false, ['dior-custom-css']);
+        wp_register_style('dior-hipaatizer-popup-v17', false, ['dior-custom-css']);
+
+        $bs_js_ver = file_exists(DIOR_PORTAL_PATH . 'assets/js/bootstrap.bundle.min.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/bootstrap.bundle.min.js') : '5.3.3';
+        wp_enqueue_script(
+            'dior-bootstrap-js',
+            DIOR_PORTAL_URL . 'assets/js/bootstrap.bundle.min.js',
+            ['jquery'],
+            $bs_js_ver,
+            true
+        );
+
+        // ── Native Bootstrap SweetAlert Engine (Zero external CSS or JS) ──────
+        $bs_alert_ver = file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-bootstrap-alert.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-bootstrap-alert.js') : DIOR_PORTAL_VERSION;
         wp_enqueue_script(
             'sweetalert2',
-            'https://cdn.jsdelivr.net/npm/sweetalert2@11',
-            [],
-            '11.0.0',
-            false
+            DIOR_PORTAL_URL . 'assets/js/dior-bootstrap-alert.js',
+            ['dior-bootstrap-js'],
+            $bs_alert_ver,
+            true
+        );
+        wp_register_script(
+            'dior-bootstrap-alert',
+            DIOR_PORTAL_URL . 'assets/js/dior-bootstrap-alert.js',
+            ['dior-bootstrap-js'],
+            $bs_alert_ver,
+            true
         );
 
         // Animation libraries removed for clean native browser scrolling
@@ -943,20 +1002,12 @@ class Dior_Medical_Auth
         wp_enqueue_script(
             'dior-static-table-interactions',
             DIOR_PORTAL_URL . 'assets/js/dior-static-table-interactions.js',
-            ['dior-patient-dashboard-page-js', 'dior-doctor-dashboard-page-js'],
+            ['jquery'],
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-static-table-interactions.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-static-table-interactions.js') : DIOR_PORTAL_VERSION,
             true
         );
 
-        // ── DocBooker Booking Modal Stylesheet & Controller ──────────────────
-        $db_modal_css_ver = file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-docbooker-modal.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-docbooker-modal.css') : DIOR_PORTAL_VERSION;
-        wp_enqueue_style(
-            'dior-docbooker-modal-css',
-            DIOR_PORTAL_URL . 'assets/css/dior-docbooker-modal.css',
-            ['font-awesome-6'],
-            $db_modal_css_ver
-        );
-
+        // ── DocBooker Booking Modal Controller ─────────────────────────────
         $db_modal_js_ver = file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-docbooker-modal.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-docbooker-modal.js') : DIOR_PORTAL_VERSION;
         wp_enqueue_script(
             'dior-docbooker-modal-js',
@@ -966,15 +1017,7 @@ class Dior_Medical_Auth
             true
         );
 
-        // ── FDA Prescription Modal Stylesheet & Controller ───────────────────
-        $fda_modal_css_ver = file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-fda-prescription-modal.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-fda-prescription-modal.css') : DIOR_PORTAL_VERSION;
-        wp_enqueue_style(
-            'dior-fda-prescription-modal-css',
-            DIOR_PORTAL_URL . 'assets/css/dior-fda-prescription-modal.css',
-            ['font-awesome-6'],
-            $fda_modal_css_ver
-        );
-
+        // ── FDA Prescription Modal Controller ────────────────────────────────
         $fda_modal_js_ver = file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-fda-prescription-modal.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-fda-prescription-modal.js') : DIOR_PORTAL_VERSION;
         wp_enqueue_script(
             'dior-fda-prescription-modal-js',
@@ -1040,7 +1083,7 @@ class Dior_Medical_Auth
             'rest_nonce' => wp_create_nonce('wp_rest'),
             'portal_nonce' => wp_create_nonce('dior_portal_nonce'),
             'dashboard_url' => home_url('/patient-dashboard/'),
-            'refactor_css_url' => DIOR_PORTAL_URL . 'assets/css/dior-patient-dashboard-refactor.css',
+            'refactor_css_url' => DIOR_PORTAL_URL . 'assets/css/dior-custom.css',
             'patient' => [
                 'name' => $profile_data['full_name'] ?? '',
                 'email' => $current_user_id ? (wp_get_current_user()->user_email ?? '') : '',
@@ -1080,7 +1123,7 @@ class Dior_Medical_Auth
                 'dashboard_data' => ($is_doctor_user && class_exists('Dior_Doctor_Dashboard'))
                     ? Dior_Doctor_Dashboard::get_dashboard_data($current_user_id)
                     : [],
-                'refactor_css_url' => DIOR_PORTAL_URL . 'assets/css/dior-doctor-dashboard-refactor.css'
+                'refactor_css_url' => DIOR_PORTAL_URL . 'assets/css/dior-custom.css'
             ]);
         }
     }
@@ -1793,7 +1836,7 @@ class Dior_Medical_Auth
             </div>
 
             <button type="button" class="dior-btn-google"
-                onclick="alert('Google Login will be implemented once Client ID is available.');">
+                onclick="Swal.fire({ icon: 'info', title: 'Google Login', text: 'Google Login will be implemented once Client ID is available.' });">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo"
                     class="google-logo">
                 Sign In With Google
@@ -2287,7 +2330,7 @@ class Dior_Medical_Auth
      * Shortcode: [dior_patient_dashboard]
      * Complete luxury Patient Dashboard with all 6 modules
      */
-    public static function render_patient_dashboard($atts)
+    public static function render_patient_dashboard($atts = [])
     {
         // If not logged in, redirect directly to login page
         if (!is_user_logged_in()) {
@@ -2298,6 +2341,8 @@ class Dior_Medical_Auth
             }
             return '<meta http-equiv="refresh" content="0;url=' . esc_url($login_url) . '">';
         }
+
+        self::enqueue_assets();
 
         $logo_url = self::get_logo_url();
         $user_id = get_current_user_id();
@@ -2317,13 +2362,11 @@ class Dior_Medical_Auth
         // Do not inject demo appointments; empty results must remain empty until real bookings exist.
         $dior_demo_mode = false;
 
-        if (empty($prescriptions)) {
-            $dior_demo_mode = true;
-            $prescriptions = [
-                ['id' => 'DEMO-RX-001', 'order_id' => 'DEMO-RX-001', 'medication' => 'Cetirizine 10 mg', 'name' => 'Cetirizine 10 mg', 'dosage' => '10 mg', 'quantity' => '30 tablets', 'refills' => '2', 'date_prescribed' => $demo_today, 'prescribed_by' => 'Dr. Sarah Smith', 'condition' => 'Seasonal Allergy', 'status' => 'Active', 'instructions' => 'Take once daily.'],
-                ['id' => 'DEMO-RX-002', 'order_id' => 'DEMO-RX-002', 'medication' => 'Vitamin D3 1000 IU', 'name' => 'Vitamin D3 1000 IU', 'dosage' => '1000 IU', 'quantity' => '60 capsules', 'refills' => '1', 'date_prescribed' => $demo_today, 'prescribed_by' => 'Dr. James Chen', 'condition' => 'Vitamin Supplement', 'status' => 'Active', 'instructions' => 'Take with food.'],
-            ];
+        // Empty prescriptions remain empty until prescribed by a doctor
+        if (!is_array($prescriptions)) {
+            $prescriptions = [];
         }
+
         if (empty($payments)) {
             $dior_demo_mode = true;
             $payments = [
@@ -5201,12 +5244,7 @@ if ( ! class_exists( 'Dior_HIPAAtizer_Appointment_Popup_V17' ) ) {
                 return;
             }
 
-            wp_enqueue_style(
-                'dior-hipaatizer-popup-v17',
-                DIOR_PORTAL_URL . 'assets/css/dior-hipaatizer-popup.css',
-                [],
-                DIOR_PORTAL_VERSION
-            );
+            // Note: dior-hipaatizer-popup.css is already merged into dior-custom.css
 
             // SweetAlert2 is already enqueued by the dashboard; declare dependency.
             wp_enqueue_script(

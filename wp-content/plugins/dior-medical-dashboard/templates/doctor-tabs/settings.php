@@ -310,7 +310,7 @@
                                 </div>
 
                                 <button type="button" title="Upload new photo from your device"
-                                    class="avatar-change-btn" onclick="diorTriggerDoctorAvatarUpload()"
+                                    class="avatar-change-btn btn" onclick="diorTriggerDoctorAvatarUpload()"
                                     style="position: absolute; bottom: 2px; right: 2px; background: #2563eb; color: #ffffff; border: 2.5px solid #ffffff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); z-index: 8; transition: all 0.2s ease;">
                                     <i class="fas fa-camera" style="font-size: 12px;"></i>
                                 </button>
@@ -350,7 +350,7 @@
                         <!-- Action Buttons on the right of banner -->
                         <div
                             style="padding-bottom: 4px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                            <button type="button" id="dior-btn-doctor-direct-upload" class="dior-change-photo-btn"
+                            <button type="button" id="dior-btn-doctor-direct-upload" class="dior-change-photo-btn btn"
                                 onclick="diorTriggerDoctorAvatarUpload()"
                                 style="background: #2563eb; color: #ffffff; border: none; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(37,99,235,0.25);">
                                 <i class="fas fa-cloud-arrow-up" style="font-size: 13px;"></i>
@@ -384,7 +384,7 @@
                             style="display: flex; flex-direction: column; gap: 8px;">
 
                             <!-- Tab 1: Clinical Profile -->
-                            <button type="button" class="nav-link text-start active dior-doc-nav-item"
+                            <button type="button" class="nav-link text-start active dior-doc-nav-item btn"
                                 data-tab-pane="doc-tab-clinical"
                                 onclick="diorDocSelectSettingsTab(this, 'doc-tab-clinical')">
                                 <i class="fas fa-user-md icon-tab text-primary"
@@ -400,7 +400,7 @@
                             </button>
 
                             <!-- Tab 2: Security & Password -->
-                            <button type="button" class="nav-link text-start dior-doc-nav-item"
+                            <button type="button" class="nav-link text-start dior-doc-nav-item btn"
                                 data-tab-pane="doc-tab-security"
                                 onclick="diorDocSelectSettingsTab(this, 'doc-tab-security')">
                                 <i class="fas fa-shield-alt icon-tab text-danger"
@@ -416,7 +416,7 @@
                             </button>
 
                             <!-- Tab 3: Practice & Schedule -->
-                            <button type="button" class="nav-link text-start dior-doc-nav-item"
+                            <button type="button" class="nav-link text-start dior-doc-nav-item btn"
                                 data-tab-pane="doc-tab-practice"
                                 onclick="diorDocSelectSettingsTab(this, 'doc-tab-practice')">
                                 <i class="fas fa-calendar-check icon-tab text-purple"
@@ -432,7 +432,7 @@
                             </button>
 
                             <!-- Tab 4: Doctor Alerts -->
-                            <button type="button" class="nav-link text-start dior-doc-nav-item"
+                            <button type="button" class="nav-link text-start dior-doc-nav-item btn"
                                 data-tab-pane="doc-tab-alerts"
                                 onclick="diorDocSelectSettingsTab(this, 'doc-tab-alerts')">
                                 <i class="fas fa-bell icon-tab text-amber"
@@ -942,16 +942,12 @@
 
         // Validate size (5MB max)
         if (file.size > 5 * 1024 * 1024) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'File Too Large',
-                    text: 'The selected photo exceeds the 5MB file size limit. Please choose a smaller image.',
-                    confirmButtonColor: '#2563eb'
-                });
-            } else {
-                alert('Image size exceeds 5MB limit. Please choose a smaller image.');
-            }
+            Swal.fire({
+                icon: 'warning',
+                title: 'File Too Large',
+                text: 'The selected photo exceeds the 5MB file size limit. Please choose a smaller image.',
+                confirmButtonColor: '#2563eb'
+            });
             input.value = '';
             return;
         }
@@ -1016,30 +1012,22 @@
                     const newUrl = res.data.avatar_url;
                     window.diorUpdateAllDoctorAvatars(newUrl);
 
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'success',
-                            title: 'Profile Photo Updated!',
-                            text: 'Saved directly to Media Library & updated across dashboard.',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    } else {
-                        alert('Profile photo updated successfully!');
-                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Profile Photo Updated!',
+                        text: 'Saved directly to Media Library & updated across dashboard.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
                 } else {
                     const errMsg = (res && res.data && res.data.message) ? res.data.message : 'Could not upload photo.';
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Upload Failed',
-                            text: errMsg,
-                            confirmButtonColor: '#2563eb'
-                        });
-                    } else {
-                        alert('Upload failed: ' + errMsg);
-                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Upload Failed',
+                        text: errMsg,
+                        confirmButtonColor: '#2563eb'
+                    });
                 }
                 if (input) input.value = '';
             })
@@ -1050,16 +1038,12 @@
                     directBtn.disabled = false;
                     directBtn.innerHTML = origHtml || '<i class="fas fa-cloud-arrow-up"></i> <span>Upload Photo</span>';
                 }
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Upload Error',
-                        text: err && err.message ? err.message : 'Network error occurred.',
-                        confirmButtonColor: '#2563eb'
-                    });
-                } else {
-                    alert('Upload error: ' + (err && err.message ? err.message : 'Network error'));
-                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Error',
+                    text: err && err.message ? err.message : 'Network error occurred.',
+                    confirmButtonColor: '#2563eb'
+                });
             });
     };
 
@@ -1112,35 +1096,27 @@
                         }
                     } else {
                         const msg = (res && res.data && res.data.message) ? res.data.message : 'Could not remove photo.';
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({ icon: 'error', title: 'Error', text: msg, confirmButtonColor: '#2563eb' });
-                        } else {
-                            alert(msg);
-                        }
+                        Swal.fire({ icon: 'error', title: 'Error', text: msg, confirmButtonColor: '#2563eb' });
                     }
                 })
                 .catch(function (err) {
                     if (spinner) spinner.style.display = 'none';
-                    alert('Failed to remove avatar.');
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to remove avatar.', confirmButtonColor: '#2563eb' });
                 });
         };
 
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                title: 'Remove Profile Photo?',
-                text: 'Your photo will be removed and reset to the default icon.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#94a3b8',
-                confirmButtonText: 'Yes, Remove Photo',
-                cancelButtonText: 'Cancel'
-            }).then(function (result) {
-                if (result.isConfirmed) doRemove();
-            });
-        } else {
-            if (confirm('Are you sure you want to remove your profile photo?')) doRemove();
-        }
+        Swal.fire({
+            title: 'Remove Profile Photo?',
+            text: 'Your photo will be removed and reset to the default icon.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#94a3b8',
+            confirmButtonText: 'Yes, Remove Photo',
+            cancelButtonText: 'Cancel'
+        }).then(function (result) {
+            if (result.isConfirmed) doRemove();
+        });
     };
 
     // 5. Open WordPress Media Library with Fallback
@@ -1264,25 +1240,17 @@
                         const specEl = document.querySelector('.dior-doc-profile-display-specialty');
                         if (specEl && profile.specialty) specEl.textContent = profile.specialty;
                     }
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            position: 'top-end',
-                            icon: 'success',
-                            title: 'Profile Saved!',
-                            text: res.data && res.data.message ? res.data.message : 'Clinical profile details saved successfully.',
-                            showConfirmButton: false,
-                            timer: 1800
-                        });
-                    } else {
-                        alert('Clinical profile updated successfully!');
-                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Profile Saved!',
+                        text: res.data && res.data.message ? res.data.message : 'Clinical profile details saved successfully.',
+                        showConfirmButton: false,
+                        timer: 1800
+                    });
                 } else {
                     const msg = (res && res.data && res.data.message) ? res.data.message : 'Failed to save profile.';
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({ icon: 'warning', title: 'Could Not Save', text: msg, confirmButtonColor: '#2563eb' });
-                    } else {
-                        alert(msg);
-                    }
+                    Swal.fire({ icon: 'warning', title: 'Could Not Save', text: msg, confirmButtonColor: '#2563eb' });
                 }
             })
             .catch(function (err) {
@@ -1290,7 +1258,7 @@
                     btn.disabled = false;
                     btn.innerHTML = origHtml || '<i class="fas fa-save" style="margin-right: 5px;"></i> Save Clinical Profile';
                 }
-                alert('Network error while saving profile.');
+                Swal.fire({ icon: 'error', title: 'Network Error', text: 'Network error while saving profile.', confirmButtonColor: '#2563eb' });
             });
     };
 </script>

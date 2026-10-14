@@ -13,7 +13,6 @@ if (empty($pp_patients)) {
     }
 }
 ?>
-<link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/patient-profile.css?v=' . time()); ?>">
 
 <!-- Select Patient Popup -->
 <div id="pp-select-patient-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
@@ -80,7 +79,7 @@ if (empty($pp_patients)) {
                 </div>
             </div>
             <div>
-                <button type="button" class="pp-ai-btn">
+                <button type="button" class="pp-ai-btn btn">
                     <i class="fas fa-wand-magic-sparkles"></i> AI Case Synthesis
                 </button>
             </div>
@@ -113,10 +112,10 @@ if (empty($pp_patients)) {
                             </div>
                         </div>
                         <div class="pp-ai-alert-actions">
-                            <button type="button" class="pp-btn-outline primary">
+                            <button type="button" class="pp-btn-outline primary btn">
                                 <i class="fas fa-wand-magic-sparkles"></i> Re-Synthesize Chart
                             </button>
-                            <button type="button" class="pp-btn-outline">
+                            <button type="button" class="pp-btn-outline btn">
                                 <i class="far fa-copy"></i> Copy Summary
                             </button>
                         </div>
@@ -156,7 +155,7 @@ if (empty($pp_patients)) {
                                 <i class="fas fa-pills" style="color: #4F46E5;"></i> Active Prescription & Interaction Analysis
                             </h6>
                         </div>
-                        <table class="pp-table">
+                        <table class="pp-table table">
                             <thead>
                                 <tr>
                                     <th>Medication</th>
@@ -194,7 +193,7 @@ if (empty($pp_patients)) {
                 <div class="pp-tab-pane" id="pp-pane-personal">
                     <div class="pp-info-grid">
                         <div class="pp-info-col">
-                            <table class="pp-info-table">
+                            <table class="pp-info-table table">
                                 <tr><th>Date of Birth:</th><td>1989-05-15</td></tr>
                                 <tr><th>Marital Status:</th><td>Married</td></tr>
                                 <tr><th>National ID:</th><td>NAT123456789</td></tr>
@@ -205,7 +204,7 @@ if (empty($pp_patients)) {
                         </div>
                         <div class="pp-info-col">
                             <h5 class="pp-section-title">Emergency Contact</h5>
-                            <table class="pp-info-table">
+                            <table class="pp-info-table table">
                                 <tr><th>Name:</th><td>John Smith</td></tr>
                                 <tr><th>Relation:</th><td>Husband</td></tr>
                                 <tr><th>Phone:</th><td>+1 (987) 654-3210</td></tr>
@@ -244,7 +243,7 @@ if (empty($pp_patients)) {
 
                 <!-- Admission Details Pane -->
                 <div class="pp-tab-pane" id="pp-pane-admission">
-                    <table class="pp-info-table">
+                    <table class="pp-info-table table">
                         <tr><th>Admission Date:</th><td>2023-11-10</td></tr>
                         <tr><th>Discharge Date:</th><td>2023-11-15</td></tr>
                         <tr><th>Doctor Assigned:</th><td>Dr. Jacob Ryan</td></tr>
@@ -258,7 +257,7 @@ if (empty($pp_patients)) {
                 <!-- Visit History Pane -->
                 <div class="pp-tab-pane" id="pp-pane-visits">
                     <div style="width: 100%; overflow-x: auto;">
-                        <table class="pp-table">
+                        <table class="pp-table table">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -379,7 +378,7 @@ if (empty($pp_patients)) {
                     window.diorSelectedPatientId = select.value;
                     window.diorLoadPatientProfile(select.value);
                 } else {
-                    alert('Please select a patient first.');
+                    Swal.fire({ icon: 'warning', title: 'Selection Required', text: 'Please select a patient first.' });
                 }
             });
         }

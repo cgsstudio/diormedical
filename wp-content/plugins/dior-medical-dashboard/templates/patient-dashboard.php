@@ -21,7 +21,7 @@
                         <img src="<?php echo esc_url($logo_url); ?>" alt="Dior Medical" class="brand-logo">
                     </a>
                 </div>
-                <!-- <button type="button" class="dior-side-close" id="dior-side-close" onclick="diorCloseMobileDrawer()"
+                <!-- <button type="button" class="dior-side-close btn" id="dior-side-close" onclick="diorCloseMobileDrawer()"
                     aria-label="Close sidebar">
                     <i class="fas fa-xmark"></i>
                 </button> -->
@@ -30,12 +30,12 @@
             <!-- Navigation Links -->
             <nav class="dior-side-nav">
                 <div class="grp">
-                    <button type="button" class="dior-nav-btn active" data-tab="overview">
+                    <button type="button" class="dior-nav-btn active btn" data-tab="overview">
                         <i class="fas fa-gauge-high"></i>
                         <span class="nav-label">Dashboard</span>
                     </button>
                     <div class="dior-nav-item-has-children" id="dior-appt-dropdown-wrap">
-                        <button type="button" class="dior-nav-btn"
+                        <button type="button" class="dior-nav-btn btn"
                             onclick="var w=document.getElementById('dior-appt-dropdown-wrap');w.classList.toggle('open');this.querySelector('.fa-chevron-down').style.transform=w.classList.contains('open')?'rotate(180deg)':'rotate(0deg)';diorSwitchTab('appointments');diorSwitchApptSubTab('today');">
                             <i class="far fa-calendar"></i>
                             <span class="nav-label">Appointments</span>
@@ -52,47 +52,47 @@
                                     class="fas fa-angle-right"></i> Past Appointments</a>
                         </div>
                     </div>
-                    <button type="button" class="dior-nav-btn" data-tab="docs_meds">
+                    <button type="button" class="dior-nav-btn btn" data-tab="docs_meds">
                         <i class="fas fa-prescription-bottle-medical"></i>
                         <span class="nav-label">Prescriptions</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="telemedicine">
+                    <button type="button" class="dior-nav-btn btn" data-tab="telemedicine">
                         <i class="fas fa-video"></i>
                         <span class="nav-label">Telemedicine</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="medical_record">
+                    <button type="button" class="dior-nav-btn btn" data-tab="medical_record">
                         <i class="fas fa-notes-medical"></i>
                         <span class="nav-label">Medical Record</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="payments">
+                    <button type="button" class="dior-nav-btn btn" data-tab="payments">
                         <i class="fas fa-wallet"></i>
                         <span class="nav-label">Billing &amp; Payment</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="insurance">
+                    <button type="button" class="dior-nav-btn btn" data-tab="insurance">
                         <i class="fas fa-shield-heart"></i>
                         <span class="nav-label">Insurance Claim</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="documents">
+                    <button type="button" class="dior-nav-btn btn" data-tab="documents">
                         <i class="fas fa-file-lines"></i>
                         <span class="nav-label">Documents &amp; Report</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="emergency">
+                    <button type="button" class="dior-nav-btn btn" data-tab="emergency">
                         <i class="fas fa-kit-medical"></i>
                         <span class="nav-label">Emergency support</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="feedback">
+                    <button type="button" class="dior-nav-btn btn" data-tab="feedback">
                         <i class="fas fa-comments"></i>
                         <span class="nav-label">Feedback &amp; Support</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="notifications">
+                    <button type="button" class="dior-nav-btn btn" data-tab="notifications">
                         <i class="fas fa-bell"></i>
                         <span class="nav-label">Notification</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="consultation">
+                    <button type="button" class="dior-nav-btn btn" data-tab="consultation">
                         <i class="fas fa-door-open"></i>
                         <span class="nav-label">Consultation Room</span>
                     </button>
-                    <button type="button" class="dior-nav-btn" data-tab="settings">
+                    <button type="button" class="dior-nav-btn btn" data-tab="settings">
                         <i class="fas fa-gear"></i>
                         <span class="nav-label">Settings</span>
                     </button>
@@ -126,27 +126,27 @@
             <!-- Top Bar Header -->
             <header class="dior-topbar">
                 <div class="dior-topbar-left">
-                    <button type="button" class="dior-mobile-menu-toggle" id="dior-mobile-menu-toggle"
+                    <button type="button" class="dior-mobile-menu-toggle btn" id="dior-mobile-menu-toggle"
                         onclick="diorOpenMobileDrawer()" aria-label="Open navigation menu">
                         <i class="fas fa-bars"></i>
                     </button>
 
                     <!-- Search Bar (Clean Reference UI) -->
                     <div class="dior-top-search">
-                        <i class="fas fa-magnifying-glass"></i>
+                        <i class="bi bi-search"></i>
                         <input type="text" placeholder="Search appointments, prescriptions, records. .">
                     </div>
                 </div>
 
                 <div class="dior-topbar-right">
                     <!-- Messages Icon -->
-                    <button type="button" class="dior-msg-btn dior-ic-f2136e6b50" aria-label="Messages">
+                    <button type="button" class="dior-msg-btn dior-ic-f2136e6b50 btn" aria-label="Messages">
                         <i class="far fa-envelope"></i>
                     </button>
 
                     <!-- Notification Bell Dropdown -->
                     <div class="dior-notif-wrap" id="dior-notif-dropdown-wrap">
-                        <button type="button" class="dior-notif-btn" onclick="diorToggleNotifDropdown(event)"
+                        <button type="button" class="dior-notif-btn btn" onclick="diorToggleNotifDropdown(event)"
                             aria-label="Notifications">
                             <i class="fas fa-bell"></i>
                             <?php if ($unread_count > 0): ?>
@@ -192,7 +192,7 @@
 
                     <!-- User Quick Profile Pill & Dropdown -->
                     <div class="dior-user-pill-wrap">
-                        <button type="button" class="dior-user-pill-btn" onclick="diorToggleProfileDropdown(event)"
+                        <button type="button" class="dior-user-pill-btn btn" onclick="diorToggleProfileDropdown(event)"
                             aria-label="User Profile">
                             <div class="dior-user-pill-card">
                                 <div class="dior-pill-avatar" id="dior-top-pill-avatar">
@@ -270,7 +270,7 @@
                                 </span>
                             </div>
                         </div>
-                        <button type="button" class="dior-btn-gold-primary dior-ic-4ee0445c2a" onclick="diorOpenHipaaPopup()">
+                        <button type="button" class="dior-btn-gold-primary dior-ic-4ee0445c2a btn" onclick="diorOpenHipaaPopup()">
                             <i class="fas fa-id-card"></i> Complete Profile Now
                         </button>
                     </div>
@@ -314,7 +314,7 @@
                     <span class="dior-ic-23927a389b"><i class="fas fa-shield-heart dior-ic-236b5f0eb0"></i>
                         HIPAA-Compliant Medical Intake &amp; Booking</span>
                 </div>
-                <button type="button" class="dior-modal-close"
+                <button type="button" class="dior-modal-close btn"
                     onclick="diorCloseModal('modal-book-appointment')">&times;</button>
             </div>
             <div class="dior-modal-body dior-ic-1d15569872">
@@ -334,7 +334,7 @@
         <div class="dior-modal-dialog">
             <div class="dior-modal-header">
                 <h3><i class="far fa-calendar"></i> Reschedule Consultation</h3>
-                <button type="button" class="dior-modal-close"
+                <button type="button" class="dior-modal-close btn"
                     onclick="diorCloseModal('modal-reschedule-appointment')">&times;</button>
             </div>
             <div class="dior-modal-body">
@@ -370,13 +370,13 @@
                     <div class="dior-form-group dior-ic-fb6bc20a7f">
                         <label for="resched_notes">Reason for Rescheduling (Optional)</label>
                         <input type="text" id="resched_notes" name="notes"
-                            placeholder="e.g. Schedule conflict, personal travel" class="dior-ic-3638e808c4">
+                            placeholder="e.g. Schedule conflict, personal travel" class="dior-ic-3638e808c4 form-control">
                     </div>
 
                     <div class="dior-modal-footer dior-ic-78874ad7d4">
-                        <button type="button" class="dior-btn-gold-secondary"
+                        <button type="button" class="dior-btn-gold-secondary btn"
                             onclick="diorCloseModal('modal-reschedule-appointment')">Keep Current Time</button>
-                        <button type="submit" id="dior-btn-submit-resched" class="dior-btn-gold-primary">
+                        <button type="submit" id="dior-btn-submit-resched" class="dior-btn-gold-primary btn">
                             <i class="fas fa-check"></i> Save New Time Slot
                         </button>
                     </div>
@@ -390,7 +390,7 @@
         <div class="dior-modal-dialog">
             <div class="dior-modal-header">
                 <h3><i class="fas fa-kit-medical dior-ic-557c97e141"></i> Cancel Consultation</h3>
-                <button type="button" class="dior-modal-close"
+                <button type="button" class="dior-modal-close btn"
                     onclick="diorCloseModal('modal-cancel-appointment')">&times;</button>
             </div>
             <div class="dior-modal-body">
@@ -417,9 +417,9 @@
                     </div>
 
                     <div class="dior-modal-footer dior-ic-78874ad7d4">
-                        <button type="button" class="dior-btn-gold-secondary"
+                        <button type="button" class="dior-btn-gold-secondary btn"
                             onclick="diorCloseModal('modal-cancel-appointment')">Keep Appointment</button>
-                        <button type="submit" id="dior-btn-submit-cancel" class="dior-btn-danger dior-ic-02e790ac8d">
+                        <button type="submit" id="dior-btn-submit-cancel" class="dior-btn-danger dior-ic-02e790ac8d btn">
                             <i class="fas fa-xmark"></i> Confirm Cancellation
                         </button>
                     </div>
@@ -433,7 +433,7 @@
         <div class="dior-modal-dialog">
             <div class="dior-modal-header">
                 <h3><i class="fas fa-bell dior-ic-b2113a5eea"></i> Send Appointment Reminder</h3>
-                <button type="button" class="dior-modal-close"
+                <button type="button" class="dior-modal-close btn"
                     onclick="diorCloseModal('modal-appointment-reminder')">&times;</button>
             </div>
             <div class="dior-modal-body">
@@ -455,12 +455,12 @@
                         </div>
                         <div class="dior-ic-dce101ce6e">
                             <label class="dior-ic-8b80aded64">
-                                <input type="checkbox" checked disabled class="dior-ic-ce15c82e4d">
+                                <input type="checkbox" checked disabled class="dior-ic-ce15c82e4d form-check-input">
                                 <span><strong>Email Notification</strong> (Delivered to both patient & attending
                                     doctor)</span>
                             </label>
                             <label class="dior-ic-8b80aded64">
-                                <input type="checkbox" checked disabled class="dior-ic-ce15c82e4d">
+                                <input type="checkbox" checked disabled class="dior-ic-ce15c82e4d form-check-input">
                                 <span><strong>Dashboard In-App Alert</strong> (Added to notification inbox for patient &
                                     doctor)</span>
                             </label>
@@ -468,10 +468,10 @@
                     </div>
 
                     <div class="dior-modal-footer dior-ic-78874ad7d4">
-                        <button type="button" class="dior-btn-gold-secondary"
+                        <button type="button" class="dior-btn-gold-secondary btn"
                             onclick="diorCloseModal('modal-appointment-reminder')">Close</button>
                         <button type="submit" id="dior-btn-submit-reminder"
-                            class="dior-btn-gold-primary dior-ic-2e8ec92046">
+                            class="dior-btn-gold-primary dior-ic-2e8ec92046 btn">
                             <i class="fas fa-bell"></i> Send Reminder Now
                         </button>
                     </div>
@@ -485,7 +485,7 @@
         <div class="dior-modal-dialog dior-modal-lg">
             <div class="dior-modal-header">
                 <h3 id="modal-qn-title"><i class="fas fa-clipboard-question"></i> Clinical Intake & E-Sign</h3>
-                <button type="button" class="dior-modal-close"
+                <button type="button" class="dior-modal-close btn"
                     onclick="diorCloseModal('modal-questionnaire-intake')">&times;</button>
             </div>
             <div class="dior-modal-body">
@@ -527,7 +527,7 @@
                             <i class="fas fa-cloud-arrow-up"></i>
                             <span>Click to upload or drag and drop image (JPG, PNG, PDF up to 10MB)</span>
                             <input type="file" id="qn_file_upload" name="file_upload" accept="image/*,application/pdf"
-                                class="dior-ic-44a70a0420">
+                                class="dior-ic-44a70a0420 form-control">
                         </div>
                         <div id="dior-upload-preview" class="dior-ic-7287548b65"></div>
                     </div>
@@ -557,9 +557,9 @@
                     </div>
 
                     <div class="dior-modal-footer">
-                        <button type="button" class="dior-btn-gold-secondary"
+                        <button type="button" class="dior-btn-gold-secondary btn"
                             onclick="diorCloseModal('modal-questionnaire-intake')">Cancel</button>
-                        <button type="submit" class="dior-btn-gold-primary" id="dior-submit-intake-btn">
+                        <button type="submit" class="dior-btn-gold-primary btn" id="dior-submit-intake-btn">
                             <i class="fas fa-paper-plane"></i> Submit Clinical Intake to Doctor &rarr;
                         </button>
                     </div>
@@ -573,7 +573,7 @@
         <div class="dior-modal-dialog">
             <div class="dior-modal-header">
                 <h3><i class="fas fa-store"></i> Update Preferred Pharmacy</h3>
-                <button type="button" class="dior-modal-close"
+                <button type="button" class="dior-modal-close btn"
                     onclick="diorCloseModal('modal-change-pharmacy')">&times;</button>
             </div>
             <div class="dior-modal-body">
@@ -612,9 +612,9 @@
                     </div>
 
                     <div class="dior-modal-footer">
-                        <button type="button" class="dior-btn-gold-secondary"
+                        <button type="button" class="dior-btn-gold-secondary btn"
                             onclick="diorCloseModal('modal-change-pharmacy')">Cancel</button>
-                        <button type="submit" class="dior-btn-gold-primary">Save Pharmacy</button>
+                        <button type="submit" class="dior-btn-gold-primary btn">Save Pharmacy</button>
                     </div>
                 </form>
             </div>
@@ -628,7 +628,7 @@
                 <h3 class="dior-ic-b5eb34332b">
                     <i class="fas fa-receipt dior-ic-5d59a9a58e"></i> Telehealth Itemized Receipt
                 </h3>
-                <button type="button" class="dior-modal-close dior-ic-926a99defe"
+                <button type="button" class="dior-modal-close dior-ic-926a99defe btn"
                     onclick="diorCloseModal('modal-view-receipt')">&times;</button>
             </div>
 
@@ -642,7 +642,7 @@
                         Official Medical Statement &amp; Receipt
                     </div>
 
-                    <table class="receipt-info-table dior-ic-7bae9c829a">
+                    <table class="receipt-info-table dior-ic-7bae9c829a table">
                         <tr class="dior-ic-d81e5f9193">
                             <td class="dior-ic-b78f557455">
                                 Invoice #:</td>
@@ -691,13 +691,13 @@
             </div>
 
             <div class="dior-modal-footer dior-ic-e61c613459">
-                <button type="button" class="dior-btn-gold-secondary dior-ic-2cc983c6d0"
+                <button type="button" class="dior-btn-gold-secondary dior-ic-2cc983c6d0 btn"
                     onclick="diorCloseModal('modal-view-receipt')">Close</button>
-                <button type="button" class="dior-btn-gold-secondary dior-ic-fd09076f26"
+                <button type="button" class="dior-btn-gold-secondary dior-ic-fd09076f26 btn"
                     onclick="diorPrintReceiptModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16" style="background:transparent;"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1"/></svg> Print
                 </button>
-                <button type="button" class="dior-btn-gold-primary dior-ic-99a13c029f"
+                <button type="button" class="dior-btn-gold-primary dior-ic-99a13c029f btn"
                     onclick="diorDownloadReceiptPdf()">
                     <i class="fas fa-file-arrow-down"></i> Download PDF
                 </button>
@@ -712,7 +712,7 @@
                 <h3 id="doc-modal-header-title" class="dior-ic-b5eb34332b">
                     <i class="fas fa-file-shield dior-ic-5d59a9a58e"></i> Certified Medical Document
                 </h3>
-                <button type="button" class="dior-modal-close dior-ic-926a99defe"
+                <button type="button" class="dior-modal-close dior-ic-926a99defe btn"
                     onclick="diorCloseModal('modal-view-document')">&times;</button>
             </div>
 
@@ -763,9 +763,9 @@
             </div>
 
             <div class="dior-modal-footer dior-ic-e90aec0c99">
-                <button type="button" class="dior-btn-gold-secondary dior-ic-2cc983c6d0"
+                <button type="button" class="dior-btn-gold-secondary dior-ic-2cc983c6d0 btn"
                     onclick="diorCloseModal('modal-view-document')">Close</button>
-                <button type="button" class="dior-btn-gold-primary dior-ic-99a13c029f"
+                <button type="button" class="dior-btn-gold-primary dior-ic-99a13c029f btn"
                     onclick="diorDownloadCurrentDocumentPdf()">
                     <i class="fas fa-file-arrow-down"></i> Print / Download PDF
                 </button>
@@ -780,7 +780,7 @@
                 <h3 class="dior-ic-55d820b400">
                     <i class="fas fa-calendar-check dior-ic-5d59a9a58e"></i> Appointment Details
                 </h3>
-                <button type="button" class="dior-modal-close dior-ic-f476a9f033"
+                <button type="button" class="dior-modal-close dior-ic-f476a9f033 btn"
                     onclick="diorCloseModal('modal-view-appointment-detail')">&times;</button>
             </div>
 
@@ -855,7 +855,7 @@
             </div>
 
             <div class="dior-modal-footer dior-ic-9b6b762386">
-                <button type="button" class="dior-btn-gold-secondary dior-ic-d8eb827f48"
+                <button type="button" class="dior-btn-gold-secondary dior-ic-d8eb827f48 btn"
                     onclick="diorCloseModal('modal-view-appointment-detail')">Close</button>
             </div>
         </div>
@@ -880,7 +880,7 @@
                         </span>
                     </div>
                 </div>
-                <button type="button" class="dior-modal-close dior-ic-9305d040bf"
+                <button type="button" class="dior-modal-close dior-ic-9305d040bf btn"
                     onclick="diorCloseModal('modal-view-rx-detail')">&times;</button>
             </div>
 
@@ -1015,7 +1015,7 @@
                     </div>
 
                     <!-- Clean Structured Medication Table (Images 3 & 4) -->
-                    <table class="dior-rx-med-table">
+                    <table class="dior-rx-med-table table">
                         <thead>
                             <tr>
                                 <th class="dior-ic-5ad98bfc70">#</th>
@@ -1103,15 +1103,15 @@
 
             <!-- Modal Action Footer (Permanently Pinned, Full Visibility) -->
             <div class="dior-modal-footer dior-ic-003eb72b4a">
-                <button type="button" id="pat-modal-rx-refill-btn" class="dior-ic-aef0d9cdb6">
+                <button type="button" id="pat-modal-rx-refill-btn" class="dior-ic-aef0d9cdb6 btn">
                     <i class="fas fa-arrows-rotate dior-ic-1a809d86ac"></i> Request Refill
                 </button>
                 <div class="dior-ic-6c5b3070b0">
-                    <button type="button" id="pat-modal-rx-pdf-btn" class="dior-ic-1d1379760d">
+                    <button type="button" id="pat-modal-rx-pdf-btn" class="dior-ic-1d1379760d btn">
                         <i class="fas fa-file-arrow-down"></i> Download Official PDF
                     </button>
                     <button type="button" onclick="diorCloseModal('modal-view-rx-detail')"
-                        class="dior-ic-a340556f29">Close</button>
+                        class="dior-ic-a340556f29 btn">Close</button>
                 </div>
             </div>
         </div>
@@ -1119,56 +1119,7 @@
 
 
 </div> <!-- /#dior-patient-portal-app -->
-<!-- Global Table Sorting Initialization -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    function initSorting() {
-        if (typeof jQuery === 'undefined') return;
-        jQuery(function($) {
-            if ($.fn.DataTable) {
-                applySorting($);
-            } else {
-                $.getScript("https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js", function() {
-                    $("<link/>", {
-                       rel: "stylesheet",
-                       type: "text/css",
-                       href: "https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
-                    }).appendTo("head");
-                    
-                    // Small delay to ensure CSS loads and doesn't FOUC tables weirdly
-                    setTimeout(function() { applySorting($); }, 100);
-                });
-            }
-        });
-    }
-    
-    function applySorting($) {
-        var tables = $('table.va-table, table.dior-ref-table, table.table').not('.dataTable');
-        tables.each(function() {
-            var $t = $(this);
-            // Remove manual empty colspan rows so DataTables doesn't crash
-            $t.find('tbody tr').each(function() {
-                var cells = $(this).children('td');
-                if (cells.length === 1 && cells.first().attr('colspan')) {
-                    $(this).remove();
-                }
-            });
-            
-            if ($t.find('thead th').length > 0) {
-                $t.DataTable({
-                    "order": [[0, "desc"]],
-                    "paging": false,
-                    "info": false,
-                    "searching": false,
-                    "retrieve": true
-                });
-            }
-        });
-    }
-    
-    initSorting();
-});
-
 // Hipaatizer Popup logic
 function diorLoadHipaaFrame() {
     const frame = document.getElementById('dior-hipaatizer-intake-frame');

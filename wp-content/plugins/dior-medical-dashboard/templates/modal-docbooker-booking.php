@@ -53,7 +53,7 @@ $today_ymd = current_time('Y-m-d');
                 <h3 id="dior-db-modal-title" class="dior-db-title">Schedule Telehealth Appointment</h3>
                 <p class="dior-db-subtitle">Complete your booking details below to schedule your consultation.</p>
             </div>
-            <button type="button" class="dior-db-close-btn" onclick="diorCloseDocBookerModal()" aria-label="Close dialog">
+            <button type="button" class="dior-db-close-btn btn" onclick="diorCloseDocBookerModal()" aria-label="Close dialog">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -130,7 +130,7 @@ $today_ymd = current_time('Y-m-d');
                     
                     <div class="dior-form-group">
                         <label for="dior-db-date-input">Consultation Date *</label>
-                        <input type="date" id="dior-db-date-input" name="date" class="dior-db-input"
+                        <input type="date" id="dior-db-date-input" name="date" class="dior-db-input form-control"
                                min="<?php echo esc_attr($today_ymd); ?>"
                                value="<?php echo esc_attr($today_ymd); ?>"
                                onchange="diorOnDateChanged(this.value)" required>
@@ -146,13 +146,13 @@ $today_ymd = current_time('Y-m-d');
                         </div>
                         <div id="dior-db-slots-grid" class="dior-db-slots-grid">
                             <!-- Slots populated via JS / server defaults -->
-                            <button type="button" class="dior-db-slot-btn active" data-time="09:00 AM - 10:00 AM" onclick="diorSelectTimeSlot('09:00 AM - 10:00 AM', this)">09:00 AM - 10:00 AM</button>
-                            <button type="button" class="dior-db-slot-btn" data-time="10:00 AM - 11:00 AM" onclick="diorSelectTimeSlot('10:00 AM - 11:00 AM', this)">10:00 AM - 11:00 AM</button>
-                            <button type="button" class="dior-db-slot-btn" data-time="11:00 AM - 12:00 PM" onclick="diorSelectTimeSlot('11:00 AM - 12:00 PM', this)">11:00 AM - 12:00 PM</button>
-                            <button type="button" class="dior-db-slot-btn" data-time="01:00 PM - 02:00 PM" onclick="diorSelectTimeSlot('01:00 PM - 02:00 PM', this)">01:00 PM - 02:00 PM</button>
-                            <button type="button" class="dior-db-slot-btn" data-time="02:00 PM - 03:00 PM" onclick="diorSelectTimeSlot('02:00 PM - 03:00 PM', this)">02:00 PM - 03:00 PM</button>
-                            <button type="button" class="dior-db-slot-btn" data-time="03:00 PM - 04:00 PM" onclick="diorSelectTimeSlot('03:00 PM - 04:00 PM', this)">03:00 PM - 04:00 PM</button>
-                            <button type="button" class="dior-db-slot-btn" data-time="04:00 PM - 05:00 PM" onclick="diorSelectTimeSlot('04:00 PM - 05:00 PM', this)">04:00 PM - 05:00 PM</button>
+                            <button type="button" class="dior-db-slot-btn active btn" data-time="09:00 AM - 10:00 AM" onclick="diorSelectTimeSlot('09:00 AM - 10:00 AM', this)">09:00 AM - 10:00 AM</button>
+                            <button type="button" class="dior-db-slot-btn btn" data-time="10:00 AM - 11:00 AM" onclick="diorSelectTimeSlot('10:00 AM - 11:00 AM', this)">10:00 AM - 11:00 AM</button>
+                            <button type="button" class="dior-db-slot-btn btn" data-time="11:00 AM - 12:00 PM" onclick="diorSelectTimeSlot('11:00 AM - 12:00 PM', this)">11:00 AM - 12:00 PM</button>
+                            <button type="button" class="dior-db-slot-btn btn" data-time="01:00 PM - 02:00 PM" onclick="diorSelectTimeSlot('01:00 PM - 02:00 PM', this)">01:00 PM - 02:00 PM</button>
+                            <button type="button" class="dior-db-slot-btn btn" data-time="02:00 PM - 03:00 PM" onclick="diorSelectTimeSlot('02:00 PM - 03:00 PM', this)">02:00 PM - 03:00 PM</button>
+                            <button type="button" class="dior-db-slot-btn btn" data-time="03:00 PM - 04:00 PM" onclick="diorSelectTimeSlot('03:00 PM - 04:00 PM', this)">03:00 PM - 04:00 PM</button>
+                            <button type="button" class="dior-db-slot-btn btn" data-time="04:00 PM - 05:00 PM" onclick="diorSelectTimeSlot('04:00 PM - 05:00 PM', this)">04:00 PM - 05:00 PM</button>
                         </div>
                     </div>
                 </div>
@@ -164,22 +164,22 @@ $today_ymd = current_time('Y-m-d');
                     <div class="dior-form-row-2">
                         <div class="dior-form-group">
                             <label for="dior-db-patient-name">Full Name *</label>
-                            <input type="text" name="name" id="dior-db-patient-name" class="dior-db-input" value="<?php echo esc_attr($patient_name); ?>" placeholder="Your Full Name" required>
+                            <input type="text" name="name" id="dior-db-patient-name" class="dior-db-input form-control" value="<?php echo esc_attr($patient_name); ?>" placeholder="Your Full Name" required>
                         </div>
                         <div class="dior-form-group">
                             <label for="dior-db-patient-email">Email Address *</label>
-                            <input type="email" name="email" id="dior-db-patient-email" class="dior-db-input" value="<?php echo esc_attr($patient_email); ?>" placeholder="you@example.com" required>
+                            <input type="email" name="email" id="dior-db-patient-email" class="dior-db-input form-control" value="<?php echo esc_attr($patient_email); ?>" placeholder="you@example.com" required>
                         </div>
                     </div>
 
                     <div class="dior-form-row-2">
                         <div class="dior-form-group">
                             <label for="dior-db-patient-phone">Phone Number *</label>
-                            <input type="tel" name="phone" id="dior-db-patient-phone" class="dior-db-input" value="<?php echo esc_attr($patient_phone); ?>" placeholder="(555) 000-0000" required>
+                            <input type="tel" name="phone" id="dior-db-patient-phone" class="dior-db-input form-control" value="<?php echo esc_attr($patient_phone); ?>" placeholder="(555) 000-0000" required>
                         </div>
                         <div class="dior-form-group">
                             <label for="dior-db-patient-notes">Reason / Symptoms</label>
-                            <input type="text" name="notes" id="dior-db-patient-notes" class="dior-db-input" value="<?php echo esc_attr($patient_reason); ?>" placeholder="e.g. Follow-up consultation">
+                            <input type="text" name="notes" id="dior-db-patient-notes" class="dior-db-input form-control" value="<?php echo esc_attr($patient_reason); ?>" placeholder="e.g. Follow-up consultation">
                         </div>
                     </div>
                 </div>
@@ -189,11 +189,11 @@ $today_ymd = current_time('Y-m-d');
 
                 <!-- Modal Actions (Clean Registration Action Button) -->
                 <div class="dior-reg-submit-wrap">
-                    <button type="submit" id="dior-db-submit-btn" class="dior-btn-reg-submit">
+                    <button type="submit" id="dior-db-submit-btn" class="dior-btn-reg-submit btn">
                         <span class="dior-db-btn-text"><i class="fa-solid fa-calendar-check me-2"></i> Confirm &amp; Book Appointment</span>
                         <span class="dior-db-btn-spinner" style="display: none;"><i class="fa-solid fa-circle-notch fa-spin me-2"></i> Scheduling Appointment...</span>
                     </button>
-                    <button type="button" class="dior-db-cancel-link" onclick="diorCloseDocBookerModal()">
+                    <button type="button" class="dior-db-cancel-link btn" onclick="diorCloseDocBookerModal()">
                         Cancel
                     </button>
                 </div>
@@ -232,7 +232,7 @@ $today_ymd = current_time('Y-m-d');
             </div>
 
             <div class="dior-reg-submit-wrap" style="margin-top: 20px;">
-                <button type="button" class="dior-btn-reg-submit" onclick="diorOnBookingSuccessDone()">
+                <button type="button" class="dior-btn-reg-submit btn" onclick="diorOnBookingSuccessDone()">
                     <i class="fa-solid fa-arrow-right me-2"></i> View in Appointments Tab
                 </button>
             </div>

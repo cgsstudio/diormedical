@@ -588,8 +588,8 @@ class Dior_Medical_Secure_Files
 </head>
 <body>
     <div class="print-bar">
-        <button class="print-btn" onclick="window.print()">Print Document</button>
-        <button class="close-btn" onclick="window.close()">Close</button>
+        <button class="print-btn btn" onclick="window.print()">Print Document</button>
+        <button class="close-btn btn" onclick="window.close()">Close</button>
     </div>
     <div class="letter-wrap">
         <div class="letter-head">

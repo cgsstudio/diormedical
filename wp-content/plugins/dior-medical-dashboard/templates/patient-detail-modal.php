@@ -555,7 +555,7 @@ $rxs = class_exists('Dior_Patient_Portal_Data') ? Dior_Patient_Portal_Data::get_
             <a href="<?php echo esc_url($zoom_url); ?>" target="_blank" rel="noopener noreferrer" class="dior-chart-btn-video">
                 Start Video Call
             </a>
-            <button type="button" class="dior-chart-btn-close" onclick="diorDocCloseModal()">&times;</button>
+            <button type="button" class="dior-chart-btn-close btn" onclick="diorDocCloseModal()">&times;</button>
         </div>
     </header>
 
@@ -580,19 +580,19 @@ $rxs = class_exists('Dior_Patient_Portal_Data') ? Dior_Patient_Portal_Data::get_
     <!-- 3. LINEAR TAB NAVIGATION                                                 -->
     <!-- ========================================================================= -->
     <nav class="dior-chart-nav">
-        <button type="button" class="dior-chart-nav-btn active" data-target="cpanel-intake" onclick="pchartSwitchTab(this, 'cpanel-intake')">
+        <button type="button" class="dior-chart-nav-btn active btn" data-target="cpanel-intake" onclick="pchartSwitchTab(this, 'cpanel-intake')">
             Medical Intake (39 Questions) <span class="dior-chart-nav-badge"><?php echo $answered_count; ?>/39</span>
         </button>
-        <button type="button" class="dior-chart-nav-btn" data-target="cpanel-soap" onclick="pchartSwitchTab(this, 'cpanel-soap')">
+        <button type="button" class="dior-chart-nav-btn btn" data-target="cpanel-soap" onclick="pchartSwitchTab(this, 'cpanel-soap')">
             Clinical SOAP Notes <span class="dior-chart-nav-badge"><?php echo count($notes); ?></span>
         </button>
-        <button type="button" class="dior-chart-nav-btn" data-target="cpanel-docs" onclick="pchartSwitchTab(this, 'cpanel-docs')">
+        <button type="button" class="dior-chart-nav-btn btn" data-target="cpanel-docs" onclick="pchartSwitchTab(this, 'cpanel-docs')">
             Documents &amp; Labs <span class="dior-chart-nav-badge"><?php echo count($docs); ?></span>
         </button>
-        <button type="button" class="dior-chart-nav-btn" data-target="cpanel-excuse" onclick="pchartSwitchTab(this, 'cpanel-excuse')">
+        <button type="button" class="dior-chart-nav-btn btn" data-target="cpanel-excuse" onclick="pchartSwitchTab(this, 'cpanel-excuse')">
             Work Excuse Studio
         </button>
-        <button type="button" class="dior-chart-nav-btn" data-target="cpanel-profile" onclick="pchartSwitchTab(this, 'cpanel-profile')">
+        <button type="button" class="dior-chart-nav-btn btn" data-target="cpanel-profile" onclick="pchartSwitchTab(this, 'cpanel-profile')">
             Profile &amp; Rx <span class="dior-chart-nav-badge"><?php echo count($rxs); ?></span>
         </button>
     </nav>
@@ -861,9 +861,9 @@ $rxs = class_exists('Dior_Patient_Portal_Data') ? Dior_Patient_Portal_Data::get_
             <!-- Quick Presets -->
             <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                 <span style="font-size:12px; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.04em;">Presets:</span>
-                <button type="button" class="dior-pchart-preset" onclick="pchartApplySoapPreset('Uncomplicated UTI', 'Patient reports burning sensation with urination for 2 days. No fever or flank pain.', 'Vitals stable. Abdomen soft, non-tender. No CVA tenderness.', 'Acute Cystitis (N30.00)', 'Nitrofurantoin 100mg PO BID x 5 days. Increase fluid intake.')">UTI / Cystitis</button>
-                <button type="button" class="dior-pchart-preset" onclick="pchartApplySoapPreset('Allergic Rhinitis', 'Patient reports itchy watery eyes, nasal congestion and sneezing.', 'Nasal turbinates pale and boggy. Clear rhinorrhea. Clear lungs.', 'Allergic Rhinitis (J30.9)', 'Fluticasone Propionate 50mcg nasal spray 2 sprays each nostril daily. Cetirizine 10mg PO daily.')">Allergy / Sinus</button>
-                <button type="button" class="dior-pchart-preset" onclick="pchartApplySoapPreset('Upper Respiratory Infection', 'Cough, sore throat, mild congestion for 3 days.', 'Pharynx mildly erythematous without exudate. Lungs clear bilaterally.', 'Acute URI (J06.9)', 'Symptomatic care. Hydration, honey for cough, rest. Return if dyspnea or high fever.')">URI / Cold</button>
+                <button type="button" class="dior-pchart-preset btn" onclick="pchartApplySoapPreset('Uncomplicated UTI', 'Patient reports burning sensation with urination for 2 days. No fever or flank pain.', 'Vitals stable. Abdomen soft, non-tender. No CVA tenderness.', 'Acute Cystitis (N30.00)', 'Nitrofurantoin 100mg PO BID x 5 days. Increase fluid intake.')">UTI / Cystitis</button>
+                <button type="button" class="dior-pchart-preset btn" onclick="pchartApplySoapPreset('Allergic Rhinitis', 'Patient reports itchy watery eyes, nasal congestion and sneezing.', 'Nasal turbinates pale and boggy. Clear rhinorrhea. Clear lungs.', 'Allergic Rhinitis (J30.9)', 'Fluticasone Propionate 50mcg nasal spray 2 sprays each nostril daily. Cetirizine 10mg PO daily.')">Allergy / Sinus</button>
+                <button type="button" class="dior-pchart-preset btn" onclick="pchartApplySoapPreset('Upper Respiratory Infection', 'Cough, sore throat, mild congestion for 3 days.', 'Pharynx mildly erythematous without exudate. Lungs clear bilaterally.', 'Acute URI (J06.9)', 'Symptomatic care. Hydration, honey for cough, rest. Return if dyspnea or high fever.')">URI / Cold</button>
             </div>
 
             <!-- SOAP Form -->
@@ -900,7 +900,7 @@ $rxs = class_exists('Dior_Patient_Portal_Data') ? Dior_Patient_Portal_Data::get_
                         </div>
 
                         <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:4px;">
-                            <button type="button" class="dior-chart-btn-primary" onclick="pchartSaveSoapNote(this)">
+                            <button type="button" class="dior-chart-btn-primary btn" onclick="pchartSaveSoapNote(this)">
                                 Sign &amp; Save SOAP Note
                             </button>
                         </div>
@@ -942,7 +942,7 @@ $rxs = class_exists('Dior_Patient_Portal_Data') ? Dior_Patient_Portal_Data::get_
             <div class="dior-csec-card">
                 <div class="dior-csec-head">
                     <h4>Patient Medical Records &amp; Lab Reports</h4>
-                    <button type="button" class="dior-chart-btn-accent" onclick="diorOpenDoctorUploadModal(<?php echo (int)$pid; ?>)">
+                    <button type="button" class="dior-chart-btn-accent btn" onclick="diorOpenDoctorUploadModal(<?php echo (int)$pid; ?>)">
                         Upload File
                     </button>
                 </div>
@@ -1008,7 +1008,7 @@ $rxs = class_exists('Dior_Patient_Portal_Data') ? Dior_Patient_Portal_Data::get_
                         </div>
 
                         <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:4px;">
-                            <button type="button" class="dior-chart-btn-warning" onclick="pchartIssueExcuseLetter(this)">
+                            <button type="button" class="dior-chart-btn-warning btn" onclick="pchartIssueExcuseLetter(this)">
                                 Issue Excuse Letter
                             </button>
                         </div>
@@ -1126,7 +1126,7 @@ function pchartApplySoapPreset(diag, s, o, a, p) {
 function pchartSaveSoapNote(button) {
     const diag = (document.getElementById('soap_diagnosis') && document.getElementById('soap_diagnosis').value.trim()) || '';
     if (!diag) {
-        alert('Please enter an Assessment / Primary Diagnosis before signing.');
+        Swal.fire({ icon: 'warning', title: 'Diagnosis Required', text: 'Please enter an Assessment / Primary Diagnosis before signing.' });
         return;
     }
     
@@ -1159,22 +1159,22 @@ function pchartSaveSoapNote(button) {
         button.innerHTML = origText;
         button.disabled = false;
         if (data.success) {
-            alert('SOAP Clinical Encounter Note successfully signed and saved to patient record!');
+            Swal.fire({ icon: 'success', title: 'Encounter Note Saved', text: 'SOAP Clinical Encounter Note successfully signed and saved to patient record!' });
             if (typeof diorDocViewPatient === 'function') {
                 diorDocViewPatient(pid);
             }
         } else {
-            alert('Note saved: ' + (data.data?.message || 'Recorded in patient chart.'));
+            Swal.fire({ icon: 'info', title: 'Clinical Note Recorded', text: data.data?.message || 'Recorded in patient chart.' });
         }
     })
     .catch(err => {
         button.innerHTML = origText;
         button.disabled = false;
-        alert('Encounter note signed & recorded successfully!');
+        Swal.fire({ icon: 'success', title: 'Encounter Note Saved', text: 'Encounter note signed & recorded successfully!' });
     });
 }
 
 function pchartIssueExcuseLetter(button) {
-    alert('Certified Work/School Excuse Letter successfully generated and delivered to patient dashboard!');
+    Swal.fire({ icon: 'success', title: 'Excuse Letter Issued', text: 'Certified Work/School Excuse Letter successfully generated and delivered to patient dashboard!' });
 }
 </script>

@@ -38,7 +38,7 @@ $patients = get_users([
                     </div>
                     
                     <div class="table-content">
-                        <table class="va-table" id="dior-form-test-api-table">
+                        <table class="va-table table table-hover" id="dior-form-test-api-table">
                             <thead>
                                 <tr>
                                     <th>Patient</th>
@@ -53,7 +53,7 @@ $patients = get_users([
                                         <td><span class="cell-text"><strong><?php echo esc_html($p->display_name); ?></strong></span></td>
                                         <td><span class="cell-text"><?php echo esc_html($p->user_email); ?></span></td>
                                         <td>
-                                            <button class="dior-btn-gold-primary dior-btn-sm" onclick="fetchHipaaIntake(<?php echo $p->ID; ?>)">
+                                            <button class="dior-btn-gold-primary dior-btn-sm btn" onclick="fetchHipaaIntake(<?php echo $p->ID; ?>)">
                                                 <i class="fas fa-download"></i> Fetch Data via API
                                             </button>
                                         </td>

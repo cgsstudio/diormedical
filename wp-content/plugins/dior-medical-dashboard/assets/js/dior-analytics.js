@@ -433,8 +433,12 @@
          * Display report in modal
          */
         displayReportModal: function (report) {
-            alert('Report generated: ' + JSON.stringify(report, null, 2));
-            // TODO: Create fancy modal for report display
+            Swal.fire({
+                title: 'Analytics Report',
+                html: '<pre class="text-start bg-light p-3 rounded" style="max-height:300px;overflow:auto;font-size:12px;">' + JSON.stringify(report, null, 2) + '</pre>',
+                icon: 'info',
+                confirmButtonColor: '#00346C'
+            });
         },
 
         /**

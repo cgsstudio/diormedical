@@ -88,21 +88,31 @@
         <!-- 1. Book Appointment -->
         <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-book">
             <!-- DocBooker Consultation Trigger Card -->
-            <div class="dior-booking-banner-card" style="background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.25);">
+            <div class="dior-booking-banner-card"
+                style="background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.25);">
                 <div style="display: flex; align-items: center; gap: 16px;">
-                    <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.45); display: flex; align-items: center; justify-content: center; font-size: 24px; color: #d4af37;">
+                    <div
+                        style="width: 52px; height: 52px; border-radius: 12px; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.45); display: flex; align-items: center; justify-content: center; font-size: 24px; color: #d4af37;">
                         <i class="fa-solid fa-calendar-check"></i>
                     </div>
                     <div>
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                            <span style="display: inline-block; padding: 2px 8px; background: rgba(212, 175, 55, 0.2); color: #d4af37; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">DocBooker Live</span>
-                            <span style="display: inline-block; padding: 2px 8px; background: rgba(16, 185, 129, 0.2); color: #10b981; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Single Doctor: Dr. Marcus Sterling, DO</span>
+                            <span
+                                style="display: inline-block; padding: 2px 8px; background: rgba(212, 175, 55, 0.2); color: #d4af37; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">DocBooker
+                                Live</span>
+                            <span
+                                style="display: inline-block; padding: 2px 8px; background: rgba(16, 185, 129, 0.2); color: #10b981; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Single
+                                Doctor: Dr. Marcus Sterling, DO</span>
                         </div>
-                        <h4 style="margin: 0 0 4px 0; color: #ffffff; font-size: 17px; font-weight: 700;">Telehealth Appointment Scheduler</h4>
-                        <p style="margin: 0; color: #94a3b8; font-size: 13px;">Complete your HIPAA intake form below or schedule your <strong>Video Visit (HD)</strong> or <strong>Phone Consultation</strong> directly.</p>
+                        <h4 style="margin: 0 0 4px 0; color: #ffffff; font-size: 17px; font-weight: 700;">Telehealth
+                            Appointment Scheduler</h4>
+                        <p style="margin: 0; color: #94a3b8; font-size: 13px;">Complete your HIPAA intake form below or
+                            schedule your <strong>Video Visit (HD)</strong> or <strong>Phone Consultation</strong>
+                            directly.</p>
                     </div>
                 </div>
-                <button type="button" onclick="diorOpenDocBookerModal();" class="dior-btn-gold-primary" style="background: linear-gradient(135deg, #d4af37 0%, #b89628 100%); color: #0f172a; border: none; font-weight: 700; padding: 12px 22px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); transition: all 0.2s ease;">
+                <button type="button" onclick="diorOpenDocBookerModal();" class="dior-btn-gold-primary btn"
+                    style="background: linear-gradient(135deg, #d4af37 0%, #b89628 100%); color: #0f172a; border: none; font-weight: 700; padding: 12px 22px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); transition: all 0.2s ease;">
                     <i class="fa-solid fa-calendar-plus"></i> Schedule Appointment Now
                 </button>
             </div>
@@ -111,10 +121,10 @@
                 <div class="medidash-card-body">
                     <div class="dior-hipaa-embed-container">
                         <?php if (shortcode_exists('hipaatizer')): ?>
-                            <?php echo do_shortcode('[hipaatizer id="01a11515-b491-79dc-b59b-e4be2a345a49"]'); ?>
+                            <?php echo do_shortcode('[hipaatizer id="01a12050-38e5-74ba-967b-60dacc2bd7f7"]'); ?>
                         <?php else: ?>
                             <iframe id="dior-hipaatizer-tab-iframe"
-                                src="https://app.hipaatizer.com/workflow/01a11515-b491-79dc-b59b-e4be2a345a49"
+                                src="https://app.hipaatizer.com/workflow/01a12050-38e5-74ba-967b-60dacc2bd7f7"
                                 allow="microphone; camera; payment" title="HIPAAtizer Clinical Intake &amp; Booking Form"
                                 style="width: 100%; max-width: 100%; height: 850px; min-height: 750px; border: none; border-radius: 10px; display: block;"
                                 loading="lazy"></iframe>
@@ -135,31 +145,32 @@
                                 <div class="docs-title-line"></div>
                             </div>
                             <div class="docs-actions-wrapper">
-                                <div class="docs-search-box">
-                                    <i class="fas fa-magnifying-glass"></i>
-                                    <input type="text" id="dior-today-search-input" placeholder="Search records..."
+                                <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
+                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="dior-today-search-input" class="form-control border-start-0 ps-0" placeholder="Search records..."
                                         aria-label="Search box" onkeyup="diorFilterTodayAppointments()">
                                 </div>
                                 <div class="docs-actions-group">
                                     <button type="button" aria-label="Delete selected items"
-                                        class="docs-icon-btn docs-btn-danger" title="Delete Selected"
+                                        class="docs-icon-btn docs-btn-danger btn" title="Delete Selected"
                                         onclick="diorBulkDeleteStaticRows(this)">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                     <button type="button" aria-label="Export to CSV"
-                                        class="docs-icon-btn docs-btn-success" title="Export to CSV"
+                                        class="docs-icon-btn docs-btn-success btn" title="Export to CSV"
                                         onclick="diorDownloadTodayAppointmentsCSV()">
                                         <i class="fas fa-file-arrow-down"></i>
                                     </button>
-                                    <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info"
-                                        title="Refresh Page" onclick="window.location.reload()">
+                                    <button type="button" aria-label="Refresh data"
+                                        class="docs-icon-btn docs-btn-info btn" title="Refresh Page"
+                                        onclick="window.location.reload()">
                                         <i class="fas fa-rotate-right"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div class="docs-table-wrapper">
-                            <table class="docs-table" id="dior-today-appointments-table">
+                            <table class="docs-table table table-hover" id="dior-today-appointments-table">
                                 <thead>
                                     <tr>
                                         <th>DOCTOR <i class="fas fa-sort"></i></th>
@@ -230,10 +241,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="docs-pagination-container">
-                            <span class="docs-showing-text" id="dior-today-page-count">0 selected /
-                                <?php echo count($today_mock); ?> total</span>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -252,20 +260,20 @@
                                 <div class="docs-title-line"></div>
                             </div>
                             <div class="docs-actions-wrapper">
-                                <div class="docs-search-box">
-                                    <i class="fas fa-magnifying-glass"></i>
-                                    <input type="text" id="dior-upcoming-search-input" placeholder="Search records..."
+                                <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
+                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="dior-upcoming-search-input" class="form-control border-start-0 ps-0" placeholder="Search records..."
                                         aria-label="Search box" onkeyup="diorFilterUpcomingAppointments()">
                                 </div>
                                 <div class="docs-actions-group">
                                     <button type="button" aria-label="Delete selected items"
-                                        class="docs-icon-btn docs-btn-danger dior-ic-44a70a0420"
+                                        class="docs-icon-btn docs-btn-danger dior-ic-44a70a0420 btn"
                                         id="dior-upcoming-bulk-delete-btn" title="Delete Selected"
                                         onclick="diorBulkDeleteUpcomingRows()">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                     <button type="button" aria-label="Add new record"
-                                        class="docs-icon-btn docs-btn-primary" title="Book Appointment"
+                                        class="docs-icon-btn docs-btn-primary btn" title="Book Appointment"
                                         data-switch-tab="appointments">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16"
@@ -275,23 +283,25 @@
                                         </svg>
                                     </button>
                                     <button type="button" aria-label="Export to CSV"
-                                        class="docs-icon-btn docs-btn-success" title="Export to CSV"
+                                        class="docs-icon-btn docs-btn-success btn" title="Export to CSV"
                                         onclick="diorDownloadUpcomingAppointmentsCSV()">
                                         <i class="fas fa-file-arrow-down"></i>
                                     </button>
-                                    <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info"
-                                        title="Refresh Page" onclick="window.location.reload()">
+                                    <button type="button" aria-label="Refresh data"
+                                        class="docs-icon-btn docs-btn-info btn" title="Refresh Page"
+                                        onclick="window.location.reload()">
                                         <i class="fas fa-rotate-right"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div class="docs-table-wrapper">
-                            <table class="docs-table" id="dior-upcoming-appointments-table">
+                            <table class="docs-table table table-hover" id="dior-upcoming-appointments-table">
                                 <thead>
                                     <tr>
                                         <th class="dior-ic-5c9987d36c">
-                                            <input type="checkbox" id="dior-select-all-upcoming" class="master-checkbox"
+                                            <input type="checkbox" id="dior-select-all-upcoming"
+                                                class="master-checkbox form-check-input"
                                                 onclick="diorToggleSelectAllUpcoming(this)">
                                         </th>
                                         <th>DOCTOR <i class="fas fa-sort"></i></th>
@@ -327,7 +337,8 @@
                                         ?>
                                         <tr>
                                             <td class="dior-ic-d5c209e67c">
-                                                <input type="checkbox" class="master-checkbox upcoming-row-checkbox"
+                                                <input type="checkbox"
+                                                    class="master-checkbox upcoming-row-checkbox form-check-input"
                                                     onclick="diorUpdateUpcomingSelectedCount()">
                                             </td>
                                             <td>
@@ -356,7 +367,7 @@
                                             </td>
                                             <td class="dior-ic-d5c209e67c">
                                                 <div class="cell-actions">
-                                                    <button type="button" class="action-icon-btn edit-btn"
+                                                    <button type="button" class="action-icon-btn edit-btn btn"
                                                         title="Edit Record"><svg xmlns="http://www.w3.org/2000/svg"
                                                             width="16" height="16" fill="currentColor"
                                                             class="bi bi-vector-pen" viewBox="0 0 16 16"
@@ -366,7 +377,7 @@
                                                             <path fill-rule="evenodd"
                                                                 d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
                                                         </svg></button>
-                                                    <button type="button" class="action-icon-btn delete-btn"
+                                                    <button type="button" class="action-icon-btn delete-btn btn"
                                                         title="Delete Record"><i class="fas fa-trash"></i></button>
                                                 </div>
                                             </td>
@@ -374,11 +385,6 @@
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="docs-pagination-container">
-                            <span class="docs-showing-text" id="dior-upcoming-page-count">0 selected /
-                                <?php echo count($upcoming_mock); ?> total</span>
-                            <div id="dior-upcoming-pagination"></div>
                         </div>
                     </div>
                 </div>
@@ -399,31 +405,32 @@
                                 <div class="docs-title-line"></div>
                             </div>
                             <div class="docs-actions-wrapper">
-                                <div class="docs-search-box">
-                                    <i class="fas fa-magnifying-glass"></i>
-                                    <input type="text" id="dior-past-search-input" placeholder="Search records..."
+                                <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
+                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="dior-past-search-input" class="form-control border-start-0 ps-0" placeholder="Search records..."
                                         aria-label="Search box" onkeyup="diorFilterPastAppointments()">
                                 </div>
                                 <div class="docs-actions-group">
                                     <button type="button" aria-label="Delete selected items"
-                                        class="docs-icon-btn docs-btn-danger" title="Delete Selected"
+                                        class="docs-icon-btn docs-btn-danger btn" title="Delete Selected"
                                         onclick="diorBulkDeleteStaticRows(this)">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                     <button type="button" aria-label="Export to CSV"
-                                        class="docs-icon-btn docs-btn-success" title="Export to CSV"
+                                        class="docs-icon-btn docs-btn-success btn" title="Export to CSV"
                                         onclick="diorDownloadPastAppointmentsCSV()">
                                         <i class="fas fa-file-arrow-down"></i>
                                     </button>
-                                    <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info"
-                                        title="Refresh Page" onclick="window.location.reload()">
+                                    <button type="button" aria-label="Refresh data"
+                                        class="docs-icon-btn docs-btn-info btn" title="Refresh Page"
+                                        onclick="window.location.reload()">
                                         <i class="fas fa-rotate-right"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div class="docs-table-wrapper">
-                            <table class="docs-table" id="dior-past-appointments-table">
+                            <table class="docs-table table table-hover" id="dior-past-appointments-table">
                                 <thead>
                                     <tr>
                                         <th>DOCTOR <i class="fas fa-sort"></i></th>
@@ -491,11 +498,6 @@
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="docs-pagination-container">
-                            <span class="docs-showing-text" id="dior-past-page-count">0 selected /
-                                <?php echo count($past_mock); ?> total</span>
-                            <div id="dior-past-pagination"></div>
                         </div>
                     </div>
                 </div>

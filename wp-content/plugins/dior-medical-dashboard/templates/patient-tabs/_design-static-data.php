@@ -11,19 +11,12 @@
 $dior_patient_design_static = true;
 $design_today = current_time('Y-m-d');
 
-// Appointment data is supplied by the dashboard's database-backed data provider.
-;
+// Appointment and prescription data are supplied by the dashboard's database-backed data provider.
+if (!isset($prescriptions) || !is_array($prescriptions)) {
+    $prescriptions = [];
+}
+$patient_rx_rows = $prescriptions;
 
-$prescriptions = [
-    ['id'=>'RX-1001','order_id'=>'RX-1001','medication'=>'Cetirizine 10 mg','name'=>'Cetirizine 10 mg','dosage'=>'10 mg','quantity'=>'30 tablets','refills'=>'2','date_prescribed'=>$design_today,'prescribed_by'=>'Dr. Sarah Smith','condition'=>'Seasonal Allergy','status'=>'Active','instructions'=>'Take once daily.'],
-    ['id'=>'RX-1002','order_id'=>'RX-1002','medication'=>'Vitamin D3 1000 IU','name'=>'Vitamin D3 1000 IU','dosage'=>'1000 IU','quantity'=>'60 capsules','refills'=>'1','date_prescribed'=>$design_today,'prescribed_by'=>'Dr. James Chen','condition'=>'Vitamin Supplement','status'=>'Active','instructions'=>'Take with food.'],
-];
-
-$patient_rx_rows = [
-    ['prescription_id'=>'RX-1001','medications'=>'Cetirizine 10 mg','doctor_name'=>'Dr. Sarah Smith','prescription_date'=>$design_today,'dosage'=>'10 mg — Once daily'],
-    ['prescription_id'=>'RX-1002','medications'=>'Vitamin D3 1000 IU','doctor_name'=>'Dr. James Chen','prescription_date'=>$design_today,'dosage'=>'1000 IU — Once daily'],
-    ['prescription_id'=>'RX-0998','medications'=>'Lisinopril 10 mg','doctor_name'=>'Dr. Helen Miller','prescription_date'=>wp_date('Y-m-d', current_time('timestamp') - 7 * DAY_IN_SECONDS),'dosage'=>'10 mg — Morning'],
-];
 
 $payments = [
     ['id'=>'PAY-1001','invoice_id'=>'#INV-2048','doctor_name'=>'Dr. Sarah Smith','date'=>wp_date('M j, Y', current_time('timestamp')),'amount'=>'$120','discount'=>'10%','tax'=>'$11','total'=>'$119','status'=>'Paid'],

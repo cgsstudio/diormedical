@@ -321,7 +321,7 @@
                                     <i class="fas fa-circle-notch fa-spin" style="color: #ffffff; font-size: 22px;"></i>
                                 </div>
 
-                                <button type="button" title="Upload new photo from your device" aria-label="Upload photo" class="avatar-change-btn" onclick="diorTriggerPatientAvatarUpload()" style="position: absolute; bottom: 2px; right: 2px; background: #225a92; color: #ffffff; border: 2.5px solid #ffffff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.25); z-index: 8; transition: all 0.2s ease;">
+                                <button type="button" title="Upload new photo from your device" aria-label="Upload photo" class="avatar-change-btn btn" onclick="diorTriggerPatientAvatarUpload()" style="position: absolute; bottom: 2px; right: 2px; background: #225a92; color: #ffffff; border: 2.5px solid #ffffff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.25); z-index: 8; transition: all 0.2s ease;">
                                     <i class="fas fa-camera" style="font-size: 12px;"></i>
                                 </button>
                             </div>
@@ -350,7 +350,7 @@
 
                         <!-- Action Button to upload directly from device files -->
                         <div style="padding-bottom: 4px; flex-shrink: 0; display: flex; align-items: center; gap: 10px;">
-                            <button type="button" id="dior-change-photo-action-btn" class="dior-change-photo-btn" onclick="diorTriggerPatientAvatarUpload()" style="background: #f0f7ff; color: #1e5a96; border: 1px solid #cce1f7; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(34,90,146,0.06);">
+                            <button type="button" id="dior-change-photo-action-btn" class="dior-change-photo-btn btn" onclick="diorTriggerPatientAvatarUpload()" style="background: #f0f7ff; color: #1e5a96; border: 1px solid #cce1f7; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(34,90,146,0.06);">
                                 <i class="fas fa-cloud-arrow-up" style="color: #225a92; font-size: 13px;"></i>
                                 <span id="dior-change-photo-text">Upload Photo</span>
                             </button>
@@ -565,16 +565,12 @@
 
         // Validate max size 5MB
         if (file.size > 5 * 1024 * 1024) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'File Too Large',
-                    text: 'The selected photo exceeds the 5MB file size limit. Please choose a smaller image.',
-                    confirmButtonColor: '#2C6CB1'
-                });
-            } else {
-                alert('Image size exceeds 5MB limit. Please choose a smaller image.');
-            }
+            Swal.fire({
+                icon: 'warning',
+                title: 'File Too Large',
+                text: 'The selected photo exceeds the 5MB file size limit. Please choose a smaller image.',
+                confirmButtonColor: '#2C6CB1'
+            });
             input.value = '';
             return;
         }
@@ -643,30 +639,22 @@
                     window.diorUpdateAllPatientAvatars(newUrl);
                 }
 
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Profile Photo Updated!',
-                        text: 'Saved directly to Media Library & updated across dashboard.',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                } else {
-                    alert('Profile photo updated successfully!');
-                }
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Profile Photo Updated!',
+                    text: 'Saved directly to Media Library & updated across dashboard.',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
             } else {
                 var errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to upload photo.';
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Upload Failed',
-                        text: errMsg,
-                        confirmButtonColor: '#2C6CB1'
-                    });
-                } else {
-                    alert('Upload failed: ' + errMsg);
-                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Failed',
+                    text: errMsg,
+                    confirmButtonColor: '#2C6CB1'
+                });
             }
         })
         .catch(function(err) {
@@ -676,16 +664,12 @@
                 actionBtn.disabled = false;
                 if (actionText) actionText.innerText = origText;
             }
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Upload Error',
-                    text: 'A connection error occurred while uploading. Please try again.',
-                    confirmButtonColor: '#2C6CB1'
-                });
-            } else {
-                alert('Connection error during photo upload.');
-            }
+            Swal.fire({
+                icon: 'error',
+                title: 'Upload Error',
+                text: 'A connection error occurred while uploading. Please try again.',
+                confirmButtonColor: '#2C6CB1'
+            });
         });
     };
 })();

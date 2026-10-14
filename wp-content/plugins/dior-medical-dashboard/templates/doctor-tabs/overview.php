@@ -119,9 +119,9 @@
                             </div>
                             <div class="s-appt-right">
                                 <div class="s-appt-actions">
-                                    <button class="s-btn-icon"><i class="far fa-calendar-days"></i></button>
-                                    <button class="s-btn-icon mail-icon"><i class="far fa-envelope"></i></button>
-                                    <button class="s-btn-join"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg> Join Now</button>
+                                    <button class="s-btn-icon btn"><i class="far fa-calendar-days"></i></button>
+                                    <button class="s-btn-icon mail-icon btn"><i class="far fa-envelope"></i></button>
+                                    <button class="s-btn-join btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg> Join Now</button>
                                 </div>
                                 <span class="s-appt-status s-upcoming">Upcoming</span>
                             </div>
@@ -149,40 +149,40 @@
                                 <td>Mia Song</td>
                                 <td>Sep 10, 2026</td>
                                 <td>Fever</td>
-                                <td><button class="action-btn">Prescription</button><button
-                                        class="action-btn outline">Details</button></td>
+                                <td><button class="action-btn btn">Prescription</button><button
+                                        class="action-btn outline btn">Details</button></td>
                             </tr>
                             <tr>
                                 <td>APP00111</td>
                                 <td>John Johnson</td>
                                 <td>Sep 05, 2026</td>
                                 <td>Cholera</td>
-                                <td><button class="action-btn">Prescription</button><button
-                                        class="action-btn outline">Details</button></td>
+                                <td><button class="action-btn btn">Prescription</button><button
+                                        class="action-btn outline btn">Details</button></td>
                             </tr>
                             <tr>
                                 <td>APP00112</td>
                                 <td>Elizabeth Brown</td>
                                 <td>Aug 26, 2026</td>
                                 <td>Jaundice</td>
-                                <td><button class="action-btn">Prescription</button><button
-                                        class="action-btn outline">Details</button></td>
+                                <td><button class="action-btn btn">Prescription</button><button
+                                        class="action-btn outline btn">Details</button></td>
                             </tr>
                             <tr>
                                 <td>APP00112</td>
                                 <td>Elizabeth Brown</td>
                                 <td>Aug 26, 2026</td>
                                 <td>Typhoid</td>
-                                <td><button class="action-btn">Prescription</button><button
-                                        class="action-btn outline">Details</button></td>
+                                <td><button class="action-btn btn">Prescription</button><button
+                                        class="action-btn outline btn">Details</button></td>
                             </tr>
                             <tr>
                                 <td>APP00112</td>
                                 <td>Elizabeth Brown</td>
                                 <td>Aug 26, 2026</td>
                                 <td>Malaria</td>
-                                <td><button class="action-btn">Prescription</button><button
-                                        class="action-btn outline">Details</button></td>
+                                <td><button class="action-btn btn">Prescription</button><button
+                                        class="action-btn outline btn">Details</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -255,7 +255,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="edit">Edit Profile</button>
+                <button class="edit btn">Edit Profile</button>
             </section>
             <section class="card tasks">
                 <div class="panel-title">Pending Tasks</div>
@@ -290,16 +290,16 @@
                         src="https://ui-avatars.com/api/?name=Mia+Song&background=eef2ff&color=4f46e5" alt="Avatar">
                     <div class="follow-info"><b>Mia Song | PAT00123</b><small>Routine Checkup</small><small><i
                                 class="far fa-calendar"></i> Oct 2, 2026</small></div>
-                    <div class="follow-buttons"><button class="square"><i
-                                class="far fa-envelope"></i></button><button class="square"><i
+                    <div class="follow-buttons"><button class="square btn"><i
+                                class="far fa-envelope"></i></button><button class="square btn"><i
                                 class="fas fa-phone"></i></button></div>
                 </div>
                 <div class="follow-item"><img class="avatar"
                         src="https://ui-avatars.com/api/?name=John+Johnson&background=f0fdf4&color=166534" alt="Avatar">
                     <div class="follow-info"><b>John Johnson | PAT00111</b><small>Routine Checkup</small><small><i
                                 class="far fa-calendar"></i> Oct 2, 2026</small></div>
-                    <div class="follow-buttons"><button class="square"><i
-                                class="far fa-envelope"></i></button><button class="square"><i
+                    <div class="follow-buttons"><button class="square btn"><i
+                                class="far fa-envelope"></i></button><button class="square btn"><i
                                 class="fas fa-phone"></i></button></div>
                 </div>
                 <div class="follow-item"><img class="avatar"
@@ -307,8 +307,8 @@
                         alt="Avatar">
                     <div class="follow-info"><b>Richard Davis | PAT00238</b><small>Routine Checkup</small><small><i
                                 class="far fa-calendar"></i> Oct 2, 2026</small></div>
-                    <div class="follow-buttons"><button class="square"><i
-                                class="far fa-envelope"></i></button><button class="square"><i
+                    <div class="follow-buttons"><button class="square btn"><i
+                                class="far fa-envelope"></i></button><button class="square btn"><i
                                 class="fas fa-phone"></i></button></div>
                 </div>
                 <div class="follow-item"><img class="avatar"
@@ -316,8 +316,8 @@
                         alt="Avatar">
                     <div class="follow-info"><b>Elizabeth Brown | PAT00112</b><small>Routine Checkup</small><small><i
                                 class="far fa-calendar"></i> Oct 2, 2026</small></div>
-                    <div class="follow-buttons"><button class="square"><i
-                                class="far fa-envelope"></i></button><button class="square"><i
+                    <div class="follow-buttons"><button class="square btn"><i
+                                class="far fa-envelope"></i></button><button class="square btn"><i
                                 class="fas fa-phone"></i></button></div>
                 </div>
             </section>
@@ -346,8 +346,8 @@
                         <td>Sep 10, 2026</td>
                         <td><span class="pill active">Ready</span></td>
                         <td>
-                            <div class="lab-actions"><button class="round-action"><i
-                                        class="fas fa-info"></i></button><button class="round-action"><i
+                            <div class="lab-actions"><button class="round-action btn"><i
+                                        class="fas fa-info"></i></button><button class="round-action btn"><i
                                         class="fas fa-download"></i></button></div>
                         </td>
                     </tr>
@@ -358,8 +358,8 @@
                         <td>Sep 10, 2026</td>
                         <td><span class="pill inactive">Pending</span></td>
                         <td>
-                            <div class="lab-actions"><button class="round-action"><i
-                                        class="fas fa-info"></i></button><button class="round-action"><i
+                            <div class="lab-actions"><button class="round-action btn"><i
+                                        class="fas fa-info"></i></button><button class="round-action btn"><i
                                         class="fas fa-download"></i></button></div>
                         </td>
                     </tr>
@@ -370,8 +370,8 @@
                         <td>Sep 10, 2026</td>
                         <td><span class="pill active">In Progress</span></td>
                         <td>
-                            <div class="lab-actions"><button class="round-action"><i
-                                        class="fas fa-info"></i></button><button class="round-action"><i
+                            <div class="lab-actions"><button class="round-action btn"><i
+                                        class="fas fa-info"></i></button><button class="round-action btn"><i
                                         class="fas fa-download"></i></button></div>
                         </td>
                     </tr>
@@ -382,8 +382,8 @@
                         <td>Sep 10, 2026</td>
                         <td><span class="pill active">Normal</span></td>
                         <td>
-                            <div class="lab-actions"><button class="round-action"><i
-                                        class="fas fa-info"></i></button><button class="round-action"><i
+                            <div class="lab-actions"><button class="round-action btn"><i
+                                        class="fas fa-info"></i></button><button class="round-action btn"><i
                                         class="fas fa-download"></i></button></div>
                         </td>
                     </tr>
@@ -468,8 +468,8 @@
                                 class="far fa-clock"></i> 05:30 PM</span>
                     </div>
                     <div class="session-actions">
-                        <button class="reschedule">Reschedule</button>
-                        <button class="join">Join Now</button>
+                        <button class="reschedule btn">Reschedule</button>
+                        <button class="join btn">Join Now</button>
                     </div>
                 </div>
                 <div class="session">
@@ -482,8 +482,8 @@
                                 class="far fa-clock"></i> 11:00 AM</span>
                     </div>
                     <div class="session-actions">
-                        <button class="reschedule">Reschedule</button>
-                        <button class="join">Join Now</button>
+                        <button class="reschedule btn">Reschedule</button>
+                        <button class="join btn">Join Now</button>
                     </div>
                 </div>
                 <div class="session">
@@ -497,12 +497,12 @@
                                 class="far fa-clock"></i> 11:00 AM</span>
                     </div>
                     <div class="session-actions">
-                        <button class="reschedule">Reschedule</button>
-                        <button class="join">Join Now</button>
+                        <button class="reschedule btn">Reschedule</button>
+                        <button class="join btn">Join Now</button>
                     </div>
                 </div>
             </div>
         </section>
     </div>
-    <button class="float"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg></button>
+    <button class="float btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg></button>
 </section>

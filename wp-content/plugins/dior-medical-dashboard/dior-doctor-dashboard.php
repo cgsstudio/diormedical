@@ -493,7 +493,7 @@ class Dior_Doctor_Dashboard
         ];
     }
 
-    public static function render($atts)
+    public static function render($atts = [])
     {
         if (!is_user_logged_in()) {
             $login_url = home_url("/diro-login/");
@@ -505,6 +505,10 @@ class Dior_Doctor_Dashboard
         }
         if (!self::can_access()) {
             return "<div style='text-align:center;padding:60px 20px;background:#FEF2F2;border-radius:12px;'><h3 style='color:#DC2626;'>Access Denied</h3><p>You do not have permission to view this page.</p></div>";
+        }
+
+        if (class_exists('Dior_Medical_Auth')) {
+            Dior_Medical_Auth::enqueue_assets();
         }
 
         $user_id       = get_current_user_id();
@@ -1315,7 +1319,7 @@ class Dior_Doctor_Dashboard
                     </div>
                     <div class="notif-full-actions">
                         <?php if (empty($n['is_read'])): ?>
-                            <button type="button" class="dior-btn-table-icon dior-mark-single-read"
+                            <button type="button" class="dior-btn-table-icon dior-mark-single-read btn"
                                 title="Mark as Read"
                                 onclick="diorDocMarkSingleRead('<?php echo esc_js($n['id']); ?>', this)">
                                 <i class="fa-solid fa-check"></i>
@@ -1421,9 +1425,14 @@ class Dior_Doctor_Dashboard
             $doctor_name = 'Dr. ' . $doctor_name;
         }
 
+        $title = sanitize_text_field($_POST['title'] ?? '');
+        if ($title === '') {
+            $title = 'General Medical Prescription';
+        }
+
         $prescription_id = sanitize_text_field($_POST['prescription_id'] ?? '');
-        if ($prescription_id === '') {
-            $prescription_id = 'RX-' . gmdate('ymd') . '-' . strtoupper(wp_generate_password(5, false, false));
+        if ($prescription_id === '' || $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_name WHERE prescription_uid = %s LIMIT 1", $prescription_id))) {
+            $prescription_id = 'RX-' . gmdate('ymd') . '-' . strtoupper(wp_generate_password(6, false, false));
         }
         $prescription_date = sanitize_text_field($_POST['prescription_date'] ?? current_time('Y-m-d'));
         $parsed_date = DateTime::createFromFormat('Y-m-d', $prescription_date);
@@ -1459,6 +1468,7 @@ class Dior_Doctor_Dashboard
         $inserted = $wpdb->insert($table_name, [
             'prescription_uid' => $prescription_id,
             'prescription_id' => $prescription_id,
+            'title' => $title,
             'patient_id' => $patient_id,
             'patient_name' => $patient_user->display_name,
             'doctor_id' => $current_user_id,
@@ -1479,7 +1489,8 @@ class Dior_Doctor_Dashboard
         ]);
 
         if (!$inserted) {
-            wp_send_json_error(["message" => "Database error. The prescription could not be saved."]);
+            $err = $wpdb->last_error ? (': ' . $wpdb->last_error) : '';
+            wp_send_json_error(["message" => "Database error. The prescription could not be saved" . $err]);
         }
 
         // Keep legacy prescription data available for older dashboard components.
@@ -1488,6 +1499,7 @@ class Dior_Doctor_Dashboard
         array_unshift($legacy, [
             'id' => $prescription_id,
             'order_id' => $prescription_id,
+            'title' => $title,
             'name' => $medications,
             'medication' => $medications,
             'dosage' => $dosage,
@@ -1512,7 +1524,11 @@ class Dior_Doctor_Dashboard
             wp_mail($patient_user->user_email, $subject, $message);
         }
 
-        wp_send_json_success(["message" => "Prescription saved successfully.", "prescription_id" => $prescription_id]);
+        wp_send_json_success([
+            "message" => "Prescription saved successfully.",
+            "prescription_id" => $prescription_id,
+            "title" => $title
+        ]);
     }
 
     public static function ajax_save_soap_note()

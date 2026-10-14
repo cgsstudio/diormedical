@@ -67,30 +67,30 @@
                             <div class="title-accent"></div>
                         </div>
                         <div class="header-actions-group">
-                            <div class="docs-search-box">
-                                <i class="fas fa-magnifying-glass"></i>
-                                <input type="text" id="dior-feedback-search-input" placeholder="Search feedback..."
+                            <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
+                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                <input type="text" id="dior-feedback-search-input" class="form-control border-start-0 ps-0" placeholder="Search feedback..."
                                     aria-label="Search feedback" onkeyup="diorFilterFeedback(this.value)">
                             </div>
                             <div class="action-buttons">
-                                <button type="button" aria-label="Delete selected items" class="action-btn action-btn-danger" title="Delete Selected" onclick="diorBulkDeleteFeedback()">
+                                <button type="button" aria-label="Delete selected items" class="action-btn action-btn-danger btn" title="Delete Selected" onclick="diorBulkDeleteFeedback()">
                                     <i class="fas fa-trash"></i>
                                 </button>
-                                <button type="button" class="action-btn action-btn-primary" title="Give Feedback"
+                                <button type="button" class="action-btn action-btn-primary btn" title="Give Feedback"
                                     onclick="diorOpenFeedbackModal()"><i class="fas fa-plus"></i></button>
-                                <button type="button" class="action-btn action-btn-success" title="Export CSV"
+                                <button type="button" class="action-btn action-btn-success btn" title="Export CSV"
                                     onclick="diorDownloadFeedbackCSV()"><i class="fas fa-file-arrow-down"></i></button>
-                                <button type="button" class="action-btn action-btn-info" title="Refresh"
+                                <button type="button" class="action-btn action-btn-info btn" title="Refresh"
                                     onclick="window.location.reload()"><i class="fas fa-rotate-right"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="table-content">
-                    <table class="va-table" id="dior-feedback-table">
+                    <table class="va-table table table-hover" id="dior-feedback-table">
                         <thead>
                             <tr>
-                                <th style="width:40px;" class="text-center"><input type="checkbox" class="va-checkbox" id="dior-feedback-select-all" onchange="diorToggleAllFeedback(this)"></th>
+                                <th style="width:40px;" class="text-center"><input type="checkbox" class="va-checkbox form-check-input" id="dior-feedback-select-all" onchange="diorToggleAllFeedback(this)"></th>
                                 <th>Subject</th>
                                 <th>Doctor</th>
                                 <th>Rating</th>
@@ -120,7 +120,7 @@
                                 ?>
                                 <tr data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>">
                                     <td class="text-center">
-                                        <input type="checkbox" class="va-checkbox dior-feedback-row-cb" value="<?php echo (int) ($feedback['id'] ?? 0); ?>" onchange="diorUpdateFeedbackCheckState()">
+                                        <input type="checkbox" class="va-checkbox dior-feedback-row-cb form-check-input" value="<?php echo (int) ($feedback['id'] ?? 0); ?>" onchange="diorUpdateFeedbackCheckState()">
                                     </td>
                                     <td><span
                                             class="cell-text"><?php echo esc_html($feedback['subject'] ?? 'Patient Feedback'); ?></span>
@@ -143,7 +143,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button type="button" class="dior-feedback-view-action" aria-label="View feedback"
+                                        <button type="button" class="dior-feedback-view-action btn" aria-label="View feedback"
                                             title="View feedback" data-feedback="<?php echo $feedback_view_data; ?>"
                                             onclick="diorViewPatientFeedback(this)"><svg xmlns="http://www.w3.org/2000/svg"
                                                 width="16" height="16" fill="#3b82f6" class="bi bi-eye" viewBox="0 0 16 16"
@@ -153,7 +153,7 @@
                                                 <path
                                                     d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
                                             </svg></button>
-                                        <button type="button" class="dior-feedback-edit-action" aria-label="Edit feedback"
+                                        <button type="button" class="dior-feedback-edit-action btn" aria-label="Edit feedback"
                                             title="Edit feedback"
                                             data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>"
                                             data-feedback="<?php echo $feedback_view_data; ?>"
@@ -165,7 +165,7 @@
                                                 <path fill-rule="evenodd"
                                                     d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
                                             </svg></button>
-                                        <button type="button" class="dior-feedback-delete-action"
+                                        <button type="button" class="dior-feedback-delete-action btn"
                                             aria-label="Delete feedback" title="Delete feedback"
                                             data-feedback-id="<?php echo (int) ($feedback['id'] ?? 0); ?>"
                                             onclick="diorDeletePatientFeedback(this)"><svg
@@ -202,7 +202,7 @@
         <div class="dior-static-modal dior-feedback-modal">
             <div class="dior-static-modal-header">
                 <h3 id="dior-feedback-modal-title">Give Feedback</h3>
-                <button type="button" class="dior-static-modal-close" onclick="diorCloseStaticModal('dior-feedback-modal')" aria-label="Close modal" style="width:34px !important; height:34px !important; min-width:34px !important; max-width:34px !important; min-height:34px !important; max-height:34px !important; padding:0 !important; margin:0 !important; border:1px solid #E2E8F0 !important; border-radius:8px !important; background:#ffffff !important; color:#64748B !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; cursor:pointer !important; line-height:1 !important; box-sizing:border-box !important; flex-shrink:0 !important;">
+                <button type="button" class="dior-static-modal-close btn" onclick="diorCloseStaticModal('dior-feedback-modal')" aria-label="Close modal" style="width:34px !important; height:34px !important; min-width:34px !important; max-width:34px !important; min-height:34px !important; max-height:34px !important; padding:0 !important; margin:0 !important; border:1px solid #E2E8F0 !important; border-radius:8px !important; background:#ffffff !important; color:#64748B !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; cursor:pointer !important; line-height:1 !important; box-sizing:border-box !important; flex-shrink:0 !important;">
                     <i class="fas fa-xmark" style="display:inline-flex !important; align-items:center !important; justify-content:center !important; line-height:1 !important; font-size:15px !important; margin:0 !important; padding:0 !important;"></i>
                 </button>
             </div>
@@ -244,7 +244,7 @@
                 </div>
                 <div class="dior-static-modal-footer">
                     <button type="button" onclick="diorCloseStaticModal('dior-feedback-modal')">Cancel</button>
-                    <button type="submit" class="primary" id="dior-feedback-submit-btn"><i
+                    <button type="submit" class="primary btn" id="dior-feedback-submit-btn"><i
                             class="fas fa-paper-plane"></i> Submit Feedback</button>
                 </div>
             </form>
@@ -291,8 +291,7 @@ window.diorDownloadFeedbackCSV = function() {
     if (!table || !table.tBodies[0]) return;
     var rows = Array.from(table.tBodies[0].querySelectorAll('tr[data-feedback-id]'));
     if (!rows.length) {
-        if (window.Swal) Swal.fire({ icon: 'info', title: 'No Records', text: 'No feedback records available to export.' });
-        else alert('No feedback records available to export.');
+        Swal.fire({ icon: 'info', title: 'No Records', text: 'No feedback records available to export.' });
         return;
     }
     var csv = ['"Subject","Doctor","Rating","Message","Date","Status"'];
@@ -318,8 +317,7 @@ window.diorDownloadFeedbackCSV = function() {
 window.diorBulkDeleteFeedback = function() {
     var checked = Array.from(document.querySelectorAll('.dior-feedback-row-cb:checked'));
     if (!checked.length) {
-        if (window.Swal) Swal.fire({ icon: 'info', title: 'No Selection', text: 'Please select at least one feedback record to delete.' });
-        else alert('Please select at least one feedback record to delete.');
+        Swal.fire({ icon: 'info', title: 'No Selection', text: 'Please select at least one feedback record to delete.' });
         return;
     }
 
@@ -351,34 +349,27 @@ window.diorBulkDeleteFeedback = function() {
                     if (count === 0 && tbody) {
                         tbody.innerHTML = '<tr><td colspan="8" class="dior-empty-state">You have not submitted feedback yet.</td></tr>';
                     }
-                    if (window.Swal) Swal.fire({ position: 'top-end', icon: 'success', title: res.data.message || 'Records Deleted', showConfirmButton: false, timer: 1500 });
-                    else alert(res.data.message || 'Records deleted successfully.');
+                    Swal.fire({ position: 'top-end', icon: 'success', title: res.data.message || 'Records Deleted', showConfirmButton: false, timer: 1500 });
                 } else {
-                    if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: (res.data && res.data.message) || 'Bulk delete failed.' });
-                    else alert((res.data && res.data.message) || 'Bulk delete failed.');
+                    Swal.fire({ icon: 'error', title: 'Error', text: (res.data && res.data.message) || 'Bulk delete failed.' });
                 }
             })
             .catch(function() {
-                if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Network error. Please try again.' });
-                else alert('Network error. Please try again.');
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Network error. Please try again.' });
             });
     };
 
-    if (window.Swal) {
-        Swal.fire({
-            title: 'Delete ' + checked.length + ' feedback record(s)?',
-            text: 'This action cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#DC2626',
-            cancelButtonColor: '#94A3B8',
-            confirmButtonText: 'Yes, Delete',
-            cancelButtonText: 'Cancel'
-        }).then(function(r) {
-            if (r.isConfirmed) doBulkDelete();
-        });
-    } else if (confirm('Delete ' + checked.length + ' feedback record(s)?')) {
-        doBulkDelete();
-    }
+    Swal.fire({
+        title: 'Delete ' + checked.length + ' feedback record(s)?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DC2626',
+        cancelButtonColor: '#94A3B8',
+        confirmButtonText: 'Yes, Delete',
+        cancelButtonText: 'Cancel'
+    }).then(function(r) {
+        if (r.isConfirmed) doBulkDelete();
+    });
 };
 </script>

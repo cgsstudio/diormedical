@@ -101,8 +101,9 @@ class Dior_Medical_Analytics
             'nonce' => wp_create_nonce('dior_analytics_nonce'),
         ]);
 
-        // Styles
-        wp_enqueue_style('dior-analytics-css', DIOR_PORTAL_URL . 'assets/css/dior-analytics.css', [], DIOR_PORTAL_VERSION);
+        // Styles - Consolidated Bootstrap + Custom CSS
+        wp_enqueue_style('dior-bootstrap-css', DIOR_PORTAL_URL . 'assets/css/bootstrap.min.css', [], '5.3.3');
+        wp_enqueue_style('dior-custom-css', DIOR_PORTAL_URL . 'assets/css/dior-custom.css', ['dior-bootstrap-css'], DIOR_PORTAL_VERSION);
     }
 
     /**
@@ -581,7 +582,7 @@ class Dior_Medical_Analytics
                         <option value="365">Last Year</option>
                     </select>
                 </label>
-                <button class="button button-primary" id="dior-refresh-btn">Refresh Data</button>
+                <button class="button button-primary btn" id="dior-refresh-btn">Refresh Data</button>
             </div>
 
             <div class="dior-stats-grid">

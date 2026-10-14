@@ -29,157 +29,157 @@
                 <div class="grp">
                     <span class="grp-title">PROVIDER MENU</span>
 
-                    <button type="button" class="dior-nav-btn active" data-tab="doc-overview"><i
+                    <button type="button" class="dior-nav-btn active btn" data-tab="doc-overview"><i
                             class="fas fa-gauge-high"></i><span class="nav-label">Dashboard</span></button>
 
                     <div class="dior-nav-item has-submenu" id="appointments-menu-item">
-                        <button type="button" class="dior-nav-btn"
+                        <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'appointments-menu-item')">
                             <i class="far fa-calendar"></i><span class="nav-label">Appointments</span>
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-appointments">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments">
                                 <i class="fas fa-chevron-right"></i> Appointment Calendar
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-appointments-view">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments-view">
                                 <i class="fas fa-chevron-right"></i> View Appointment
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-appointments-book">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments-book">
                                 <i class="fas fa-chevron-right"></i> Book Appointment
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-appointments-edit">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments-edit">
                                 <i class="fas fa-chevron-right"></i> Edit Appointment
                             </button>
                         </div>
                     </div>
                     <div class="dior-nav-item has-submenu" id="patients-menu-item">
-                        <button type="button" class="dior-nav-btn"
+                        <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'patients-menu-item')">
                             <i class="fas fa-users"></i><span class="nav-label">Patients</span>
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-patients-all">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-all">
                                 <i class="fas fa-chevron-right"></i> All Patients
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-patients-add">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-add">
                                 <i class="fas fa-chevron-right"></i> Add Patient
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-patients-edit">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-edit">
                                 <i class="fas fa-chevron-right"></i> Edit Patient
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-patients-records">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-records">
                                 <i class="fas fa-chevron-right"></i> Patient Records
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-patients-profile">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-profile">
                                 <i class="fas fa-chevron-right"></i> Patient Profile
                             </button>
                         </div>
                     </div>
                     
-                    <button type="button" class="dior-nav-btn" data-tab="doc-analytics"><i
+                    <button type="button" class="dior-nav-btn btn" data-tab="doc-analytics"><i
                             class="fas fa-chart-line"></i><span class="nav-label">Analytics</span></button>
                     <div class="dior-nav-item has-submenu" id="accounts-menu-item">
-                        <button type="button" class="dior-nav-btn"
+                        <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'accounts-menu-item')">
                             <i class="fas fa-wallet"></i><span class="nav-label">Accounts</span>
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-bill-list">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-bill-list">
                                 <i class="fas fa-chevron-right"></i> Bill List
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-add-bill">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-add-bill">
                                 <i class="fas fa-chevron-right"></i> Add Bill
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-income">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-income">
                                 <i class="fas fa-chevron-right"></i> Income
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-expenses">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-expenses">
                                 <i class="fas fa-chevron-right"></i> Expenses
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn"
+                            <button type="button" class="dior-nav-btn submenu-btn btn"
                                 data-tab="doc-accounts-income-report">
                                 <i class="fas fa-chevron-right"></i> Income Report
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-accounts-invoice">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-invoice">
                                 <i class="fas fa-chevron-right"></i> Invoice
                             </button>
                         </div>
                     </div>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-consultation-notes"><i
+                    <button type="button" class="dior-nav-btn btn" data-tab="doc-consultation-notes"><i
                             class="fas fa-notes-medical"></i><span class="nav-label">Consultations
                             Notes</span></button>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-e-prescriptions"><i
+                    <button type="button" class="dior-nav-btn btn" data-tab="doc-e-prescriptions"><i
                             class="fas fa-prescription-bottle-medical"></i><span class="nav-label">E -
                             Prescriptions</span></button>
                     <div class="dior-nav-item has-submenu" id="pharmacy-menu-item">
-                        <button type="button" class="dior-nav-btn"
+                        <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'pharmacy-menu-item')">
                             <i class="fas fa-pills"></i><span class="nav-label">Pharmacy</span>
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-pharmacy-list">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-pharmacy-list">
                                 <i class="fas fa-chevron-right"></i> Medicine List
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-pharmacy-add">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-pharmacy-add">
                                 <i class="fas fa-chevron-right"></i> Add Medicine
                             </button>
                         </div>
                     </div>
                     <div class="dior-nav-item has-submenu" id="documents-menu-item">
-                        <button type="button" class="dior-nav-btn"
+                        <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'documents-menu-item')">
                             <i class="fas fa-file-medical"></i><span class="nav-label">Documents & Report</span>
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn active"
+                            <button type="button" class="dior-nav-btn submenu-btn active btn"
                                 data-tab="doc-documents-upload">
                                 <i class="fas fa-chevron-right"></i> Upload Documents
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-documents-templates">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-documents-templates">
                                 <i class="fas fa-chevron-right"></i> Consent Templates
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-documents-signed">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-documents-signed">
                                 <i class="fas fa-chevron-right"></i> Signed Consent
                             </button>
                         </div>
                     </div>
                     <div class="dior-nav-item has-submenu" id="telemedicine-menu-item">
-                        <button type="button" class="dior-nav-btn"
+                        <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'telemedicine-menu-item')">
                             <i class="fas fa-video"></i><span class="nav-label">Telemedicine</span>
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-telemed-video">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-telemed-video">
                                 <i class="fas fa-chevron-right"></i> Video Consultation
                             </button>
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-telemed-records">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-telemed-records">
                                 <i class="fas fa-chevron-right"></i> Virtual Visit Records
                             </button>
                         </div>
                     </div>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-patient-review"><i
+                    <button type="button" class="dior-nav-btn btn" data-tab="doc-patient-review"><i
                             class="fas fa-star"></i><span class="nav-label">Feedback &amp; Reviews</span></button>
                     <div class="dior-nav-item has-submenu" id="notifications-menu-item">
-                        <button type="button" class="dior-nav-btn"
+                        <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'notifications-menu-item')">
                             <i class="fas fa-bell"></i><span class="nav-label">Notification</span>
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn" data-tab="doc-notifications-system">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-notifications-system">
                                 <i class="fas fa-chevron-right"></i> System Notifications
                             </button>
                         </div>
                     </div>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-consultation"><i
+                    <button type="button" class="dior-nav-btn btn" data-tab="doc-consultation"><i
                             class="fas fa-door-open"></i><span class="nav-label">Consultation Room</span></button>
-                    <button type="button" class="dior-nav-btn" data-tab="doc-settings"><i
+                    <button type="button" class="dior-nav-btn btn" data-tab="doc-settings"><i
                             class="fas fa-gear"></i><span class="nav-label">Settings</span></button>
                 </div>
             </nav>
@@ -204,7 +204,7 @@
             <!-- Topbar -->
             <header class="dior-topbar">
                 <div class="dior-topbar-left">
-                    <button type="button" class="dior-mobile-menu-toggle" onclick="diorDocOpenMobile()">
+                    <button type="button" class="dior-mobile-menu-toggle btn" onclick="diorDocOpenMobile()">
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="dior-top-search">
@@ -215,11 +215,11 @@
                     </div>
                 </div>
                 <div class="dior-topbar-right">
-                    <button type="button" class="dior-msg-btn dior-ic-fa44d4cb47">
+                    <button type="button" class="dior-msg-btn dior-ic-fa44d4cb47 btn">
                         <i class="far fa-envelope"></i>
                     </button>
                     <div class="dior-notif-wrap">
-                        <button type="button" class="dior-notif-btn" onclick="diorDocToggleNotif(event)">
+                        <button type="button" class="dior-notif-btn btn" onclick="diorDocToggleNotif(event)">
                             <i class="far fa-bell"></i>
                             <?php if ($unread_count > 0): ?>
                                 <span class="dior-notif-indicator doc-unread-badge"><?php echo $unread_count; ?></span>
@@ -256,7 +256,7 @@
                     </div>
                     <!-- User Quick Profile Pill & Dropdown -->
                     <div class="dior-user-pill-wrap">
-                        <button type="button" class="dior-user-pill-btn" onclick="diorToggleProfileDropdown(event)"
+                        <button type="button" class="dior-user-pill-btn btn" onclick="diorToggleProfileDropdown(event)"
                             aria-label="Provider Profile">
                             <div class="dior-pill-avatar dior-ic-fc0f6bfbac" id="dior-doctor-top-avatar">
                                 <?php if (!empty($doctor['avatar_url'])): ?>
@@ -335,7 +335,7 @@
     <div class="dior-modal-dialog dior-modal-lg dior-ic-c1484e0c1a">
         <div class="dior-modal-header dior-ic-28da7fda03">
             <h3 id="modal-doc-patient-title" class="dior-ic-be828fc992">Patient Detail</h3>
-            <button type="button" class="dior-modal-close" onclick="diorDocCloseModal()">&times;</button>
+            <button type="button" class="dior-modal-close btn" onclick="diorDocCloseModal()">&times;</button>
         </div>
         <div class="dior-modal-body" id="modal-doc-patient-body">
             <div class="dior-ic-36e7e62c1c">
@@ -352,7 +352,7 @@
             <h3 class="dior-ic-0ae9980015">
                 <i class="fas fa-cloud-arrow-up dior-ic-1b148c2304"></i> Upload Clinical Document
             </h3>
-            <button type="button" class="dior-modal-close dior-ic-244c10381e"
+            <button type="button" class="dior-modal-close dior-ic-244c10381e btn"
                 onclick="diorDocCloseUploadModal()">&times;</button>
         </div>
         <div class="dior-modal-body dior-ic-1fcfc7bdca">
@@ -360,12 +360,12 @@
                 <div class="dior-ic-a70f3b9fde">
                     <label class="dior-ic-a1f28435ce">Select
                         Patient <span class="dior-ic-f336360291">*</span></label>
-                    <select name="patient_id" required class="dior-ic-52d2e4f754">
+                    <select name="patient_id" required class="dior-ic-52d2e4f754 form-select">
                         <option value="">-- Select Patient --</option>
                         <?php if (!empty($patients)): ?>
                             <?php foreach ($patients as $p): ?>
-                                <option value="<?php echo (int) $p['user_id']; ?>">
-                                    <?php echo esc_html($p['full_name']); ?> (<?php echo esc_html($p['patient_id']); ?>)
+                                <option value="<?php echo (int) ($p['user_id'] ?? 0); ?>">
+                                    <?php echo esc_html($p['full_name'] ?? ($p['name'] ?? 'Patient')); ?> (<?php echo esc_html($p['patient_id'] ?? ('PAT-' . str_pad((int)($p['user_id'] ?? 0), 4, '0', STR_PAD_LEFT))); ?>)
                                 </option>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -376,7 +376,7 @@
                     <div>
                         <label class="dior-ic-a1f28435ce">Category
                             <span class="dior-ic-f336360291">*</span></label>
-                        <select name="doc_category" required class="dior-ic-52d2e4f754">
+                        <select name="doc_category" required class="dior-ic-52d2e4f754 form-select">
                             <option value="Lab Report">Lab Report</option>
                             <option value="Imaging / Radiology">Imaging / Radiology</option>
                             <option value="Medical Record">Medical Record</option>
@@ -391,7 +391,7 @@
                         <label class="dior-ic-a1f28435ce">Document
                             Title <span class="dior-ic-f336360291">*</span></label>
                         <input type="text" name="doc_title" required placeholder="e.g. CBC & Metabolic Lab Panel"
-                            class="dior-ic-0f28e8b5ba">
+                            class="dior-ic-0f28e8b5ba form-control">
                     </div>
                 </div>
 
@@ -400,7 +400,7 @@
                         File (PDF, PNG, JPG, DOCX) <span class="dior-ic-f336360291">*</span></label>
                     <div class="dior-ic-bd2577932d">
                         <input type="file" name="doc_file" id="doc_file_input" required
-                            accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" class="dior-ic-dac75c1e6b">
+                            accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" class="dior-ic-dac75c1e6b form-control">
                         <span class="dior-ic-ed2d0b4047">Max file size:
                             25MB. Files are automatically stored in the secure protected vault.</span>
                     </div>
@@ -411,16 +411,16 @@
                         Notes / Remarks (Optional)</label>
                     <textarea name="doc_notes" rows="2"
                         placeholder="Add confidential clinical context or review notes..."
-                        class="dior-ic-a34cd74157"></textarea>
+                        class="dior-ic-a34cd74157 form-control"></textarea>
                 </div>
 
                 <div class="dior-ic-f4f4b02bb7">
-                    <button type="button" class="dior-btn-sm dior-btn-ghost dior-ic-0d30ad5105"
+                    <button type="button" class="dior-btn-sm dior-btn-ghost dior-ic-0d30ad5105 btn"
                         onclick="diorDocCloseUploadModal()">
                         Cancel
                     </button>
                     <button type="submit" id="doc-upload-submit-btn"
-                        class="dior-btn-sm dior-btn-primary dior-ic-242205d8db">
+                        class="dior-btn-sm dior-btn-primary dior-ic-242205d8db btn">
                         <i class="fas fa-cloud-arrow-up"></i> Upload & Secure File
                     </button>
                 </div>
@@ -435,7 +435,7 @@
         <div class="dior-ic-2b0eae5150">
             <h3 id="dior-call-alert-title" class="dior-ic-76c82d37bf"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg> Video
                 Consultation</h3>
-            <button type="button" onclick="diorDocCloseCallAlert()" class="dior-ic-5e552e6636">&times;</button>
+            <button type="button" onclick="diorDocCloseCallAlert()" class="dior-ic-5e552e6636 btn">&times;</button>
         </div>
         <div class="dior-ic-b7c3fa3e2e">
             <div id="dior-call-alert-icon-wrap" class="dior-ic-a70f3b9fde">
@@ -443,10 +443,10 @@
             </div>
             <div id="dior-call-alert-msg" class="dior-ic-20fb3a3573"></div>
             <div class="dior-ic-ad9b37d7f7">
-                <button type="button" onclick="diorDocCloseCallAlert()" class="dior-ic-c1e95b8cb0">
+                <button type="button" onclick="diorDocCloseCallAlert()" class="dior-ic-c1e95b8cb0 btn">
                     Close
                 </button>
-                <button type="button" id="dior-call-alert-override" class="dior-ic-50a199bacc">
+                <button type="button" id="dior-call-alert-override" class="dior-ic-50a199bacc btn">
                     <i class="fas fa-arrow-up-right-from-square"></i> Launch Room Anyway
                 </button>
             </div>
@@ -470,7 +470,7 @@
                     </div>
                 </div>
                 <button type="button" onclick="diorDocCloseRxConfirmModal()" title="Close Preview"
-                    class="dior-ic-99328beefc">&times;</button>
+                    class="dior-ic-99328beefc btn">&times;</button>
             </div>
 
             <!-- Verification Banner -->
@@ -577,7 +577,7 @@
 
                         <!-- Medications Clinical Table -->
                         <div class="dior-ic-42532a74dc">
-                            <table class="dior-ic-c96d2fb209">
+                            <table class="dior-ic-c96d2fb209 table">
                                 <thead>
                                     <tr class="dior-ic-4aab391456">
                                         <th class="dior-ic-a3416f48a6">#</th>
@@ -636,65 +636,15 @@
 
             <!-- Modal Action Footer -->
             <div class="dior-ic-2c5e2ef6ce">
-                <button type="button" class="dior-btn-sm dior-btn-ghost dior-ic-17c1cfabc5"
+                <button type="button" class="dior-btn-sm dior-btn-ghost dior-ic-17c1cfabc5 btn"
                     onclick="diorDocCloseRxConfirmModal()">
                     <i class="fas fa-arrow-left"></i> Back to Edit
                 </button>
                 <button type="button" id="btn-doc-confirm-transmit-rx" onclick="diorDocExecutePrescriptionTransmit()"
-                    class="dior-ic-7d8eddec80">
+                    class="dior-ic-7d8eddec80 btn">
                     <i class="fas fa-paper-plane"></i> Confirm &amp; Transmit e-Rx
                 </button>
             </div>
 
         </div>
     </div>
-<!-- Global Table Sorting Initialization -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    function initSorting() {
-        if (typeof jQuery === 'undefined') return;
-        jQuery(function($) {
-            if ($.fn.DataTable) {
-                applySorting($);
-            } else {
-                $.getScript("https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js", function() {
-                    $("<link/>", {
-                       rel: "stylesheet",
-                       type: "text/css",
-                       href: "https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
-                    }).appendTo("head");
-                    
-                    // Small delay to ensure CSS loads and doesn't FOUC tables weirdly
-                    setTimeout(function() { applySorting($); }, 100);
-                });
-            }
-        });
-    }
-    
-    function applySorting($) {
-        var tables = $('table.va-table, table.dior-ref-table, table.table').not('.dataTable');
-        tables.each(function() {
-            var $t = $(this);
-            // Remove manual empty colspan rows so DataTables doesn't crash
-            $t.find('tbody tr').each(function() {
-                var cells = $(this).children('td');
-                if (cells.length === 1 && cells.first().attr('colspan')) {
-                    $(this).remove();
-                }
-            });
-            
-            if ($t.find('thead th').length > 0) {
-                $t.DataTable({
-                    "order": [[0, "desc"]],
-                    "paging": false,
-                    "info": false,
-                    "searching": false,
-                    "retrieve": true
-                });
-            }
-        });
-    }
-    
-    initSorting();
-});
-</script>

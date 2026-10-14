@@ -1,12 +1,11 @@
 <section class="dior-tab-panel active custom-patient-overview" id="tab-overview">
-<link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/patient-overview-custom.css?v=' . time()); ?>">
   <div class="content-head">
     <div>
       <?php $display_first_name = !empty($profile['first_name']) ? ucfirst(strtolower($profile['first_name'])) : 'Mia'; ?>
       <h1>Welcome Back, <?php echo esc_html(strtoupper($display_first_name)); ?></h1>
       <p class="subtitle">Manage your telehealth visits, prescriptions, and medical records.</p>
     </div>
-    <a href="#tab=appointments" data-appt-subtab="book" class="gold-btn" onclick="event.preventDefault(); if(typeof diorSwitchTab==='function') diorSwitchTab('appointments'); if(typeof diorSwitchApptSubTab==='function') diorSwitchApptSubTab('book');" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px; font-size:16px !important; cursor:pointer;">
+    <a href="#tab=appointments" data-appt-subtab="book" class="gold-btn btn" onclick="event.preventDefault(); if(typeof diorSwitchTab==='function') diorSwitchTab('appointments'); if(typeof diorSwitchApptSubTab==='function') diorSwitchApptSubTab('book');" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px; font-size:16px !important; cursor:pointer;">
       <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>
       Book An Appointment
     </a>
@@ -57,7 +56,7 @@
               </div>
             </div>
           </div>
-          <button class="edit-btn" data-switch-tab="profile">Edit Profile</button>
+          <button class="edit-btn btn" data-switch-tab="profile">Edit Profile</button>
         </div>
 
         <div class="card goals-card">
@@ -124,7 +123,7 @@
           <h3 class="section-title">Latest Lab Results</h3>
         </div>
         <div class="table-wrap">
-        <table class="lab-table">
+        <table class="lab-table table">
           <thead><tr><th style="width:29%">Test Name</th><th style="width:20%">Date</th><th style="width:18%">Status</th><th style="width:29%">Ordered By</th><th style="width:8%">Action</th></tr></thead>
           <tbody>
             <?php
@@ -201,8 +200,8 @@
           </div>
         </div>
         <div class="doctor-actions">
-          <button class="primary-btn" data-switch-tab="consultation">Join Video Consultation Room</button>
-          <button class="outline-btn" data-switch-tab="appointments">Reschedule</button>
+          <button class="primary-btn btn" data-switch-tab="consultation">Join Video Consultation Room</button>
+          <button class="outline-btn btn" data-switch-tab="appointments">Reschedule</button>
         </div>
       </div>
 
@@ -251,7 +250,7 @@
             <div class="consult-role"><?php echo esc_html($doc_spec); ?></div>
             <div class="consult-name"><?php echo esc_html($doc_name); ?></div>
             <div class="consult-meta"><span>▦ <?php echo esc_html($apt['date']); ?></span><span>◷ <?php echo esc_html($apt['time']); ?></span></div>
-            <button class="reschedule" data-switch-tab="appointments">Reschedule</button>
+            <button class="reschedule btn" data-switch-tab="appointments">Reschedule</button>
           </div>
         </div>
         <?php endforeach; ?>
@@ -264,23 +263,43 @@
         </div>
         <?php
         $rx_display = array_slice($prescriptions, 0, 4);
-        if (empty($rx_display)) {
-            $rx_display = [
-                ['name' => 'Cetirizine 10 mg', 'prescribed_by' => 'Dr. Diorca Aquino de la Cruz', 'status' => 'Active'],
-                ['name' => 'Vitamin D3 1,000 IU', 'prescribed_by' => 'Dr. Diorca Aquino de la Cruz', 'status' => 'Active'],
-                ['name' => 'Ibuprofen 200 mg', 'prescribed_by' => 'Dr. Diorca Aquino de la Cruz', 'status' => 'Inactive'],
-                ['name' => 'Omeprazole 20 mg', 'prescribed_by' => 'Dr. Diorca Aquino de la Cruz', 'status' => 'Inactive'],
-            ];
-        }
-        foreach($rx_display as $rx):
-            $rx_name   = !empty($rx['medication_name']) ? $rx['medication_name'] : (!empty($rx['drug_name']) ? $rx['drug_name'] : (!empty($rx['name']) ? $rx['name'] : 'Medication'));
-            $rx_dosage = !empty($rx['dosage']) ? ' ' . $rx['dosage'] : '';
-            $rx_by     = !empty($rx['prescribed_by']) ? $rx['prescribed_by'] : 'Provider';
-            $rx_status = !empty($rx['status']) ? $rx['status'] : 'Active';
-            $rx_badge  = (strtolower($rx_status) === 'active') ? 'rx-active' : 'rx-inactive';
+        if (empty($rx_display)):
         ?>
-        <div class="rx"><div><div class="rx-name"><?php echo esc_html($rx_name . $rx_dosage); ?></div><div class="rx-doctor"><?php echo esc_html($rx_by); ?></div></div><span class="rx-status <?php echo esc_attr($rx_badge); ?>"><?php echo esc_html(ucfirst($rx_status)); ?></span></div>
-        <?php endforeach; ?>
+            <div style="padding: 28px 16px; text-align: center; color: #94A3B8; font-size: 13px;">
+                <i class="fas fa-prescription-bottle-medical" style="font-size:24px;color:#CBD5E1;margin-bottom:8px;display:block;"></i>
+                No active prescriptions yet.
+            </div>
+        <?php
+        else:
+            foreach($rx_display as $rx):
+                $rx_name   = !empty($rx['title']) && $rx['title'] !== 'General Medical Prescription' ? $rx['title'] : (!empty($rx['name']) ? $rx['name'] : (!empty($rx['medication']) ? $rx['medication'] : 'Medication'));
+                $rx_sub    = !empty($rx['medication']) && $rx['medication'] !== $rx_name ? $rx['medication'] : '';
+                $rx_by     = !empty($rx['prescribed_by']) ? $rx['prescribed_by'] : 'Provider';
+                $rx_status = !empty($rx['status']) ? $rx['status'] : 'Active';
+                $rx_badge  = (strtolower($rx_status) === 'active') ? 'rx-active' : 'rx-inactive';
+            ?>
+            <div class="rx">
+                <div>
+                    <div class="rx-name"><?php echo esc_html($rx_name); ?></div>
+                    <?php if ($rx_sub !== ''): ?>
+                        <?php
+                        $sub_lines = preg_split('/;\s*|\r\n|\n/', trim($rx_sub));
+                        $sub_lines = array_filter(array_map('trim', (array)$sub_lines));
+                        if (empty($sub_lines)) { $sub_lines = [$rx_sub]; }
+                        ?>
+                        <div style="font-size:11px;color:#64748B;display:flex;flex-direction:column;gap:2px;margin-top:2px;">
+                            <?php foreach ($sub_lines as $sl): ?>
+                                <div><?php echo esc_html($sl); ?></div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="rx-doctor"><?php echo esc_html($rx_by); ?></div>
+                </div>
+                <span class="rx-status <?php echo esc_attr($rx_badge); ?>"><?php echo esc_html(ucfirst($rx_status)); ?></span>
+            </div>
+            <?php endforeach;
+        endif;
+        ?>
       </div>
     </div>
 

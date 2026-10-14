@@ -1,24 +1,56 @@
 /**
- * DIOR Dashboard — Static Table Interactions
- * Keeps the existing dashboard UI intact while adding reliable:
- * - Doctor table pagination/search
- * - Edit modal + row update
- * - Delete row
- * - Bulk delete
- * - Pagination refresh after edits/deletes
+ * DIOR Medical Dashboard — Comprehensive Bootstrap Table Interactions
+ * Version: 17.2.0
+ * 
+ * Features:
+ * - Bootstrap Hoverable Rows (table-hover auto-enabled across all tables)
+ * - Strict 10 Entries Per Page Pagination across all tables
+ * - Column Header Sorting (Ascending / Descending with fontawesome icons)
+ * - Master Checkbox (Select All) & Row Checkboxes on every table
+ * - Bulk Action Toolbar (Selected counter badge + Bulk Delete with SweetAlert2 confirmation)
+ * - Real-time Search Filtering with dynamic 10-per-page pagination recalculation
+ * - Single-row Edit and Delete modal actions
+ * - STRICT EXEMPTION: Main dashboard overview tabs (#tab-overview, #tab-doc-overview) are completely untouched.
  */
 (function () {
     'use strict';
 
-    var PAGE_SIZE = 5;
+    var PAGE_SIZE = 10;
+
+    function isDashboardOverview(element) {
+        if (!element) return false;
+        return !!element.closest('#tab-overview, #tab-doc-overview');
+    }
+
+    function getTableSelector() {
+        return '.va-table, .docs-table, .dior-table, .lab-table, .master-modern-table, .dior-invoice-table, .dior-ref-table, .dior-doc-table, .dior-tab-panel:not(#tab-overview):not(#tab-doc-overview) table';
+    }
+
+    function getAllTables() {
+        return Array.prototype.slice.call(document.querySelectorAll(getTableSelector())).filter(function (table) {
+            // Strictly exclude main overview screens per user requirement
+            if (isDashboardOverview(table)) return false;
+            // Ignore nested preview/receipt/modal small tables
+            if (table.closest('.receipt-info-table, .dior-rx-med-table, .pp-info-table, .dior-modal, #dior-static-edit-modal')) {
+                return false;
+            }
+            return table.querySelector('tbody > tr') !== null;
+        });
+    }
 
     function getRows(table) {
-        return Array.prototype.slice.call(table.querySelectorAll('tbody > tr'));
+        return Array.prototype.slice.call(table.querySelectorAll('tbody > tr')).filter(function (row) {
+            var first = row.firstElementChild;
+            if (first && first.hasAttribute('colspan')) {
+                return false;
+            }
+            return true;
+        });
     }
 
     function getSearchInput(table) {
-        var card = table.closest('.view-appointment-card, .dior-box, .dior-card, .dior-tab-panel');
-        return card ? card.querySelector('.va-search-box input, .dior-search-input') : null;
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+        return card ? card.querySelector('input[placeholder*="Search" i], .dior-bs-search-group input, .va-search-box input, .docs-search-box input, .dior-search-input, [type="search"]') : null;
     }
 
     function getActiveRows(table) {
@@ -31,36 +63,293 @@
         });
     }
 
-    function getPaginationHost(table) {
-        var card = table.closest('.view-appointment-card');
+    function standardizeBootstrapSearchFields(root) {
+        root = root || document;
+        var searchInputs = [].slice.call(root.querySelectorAll(
+            'input[placeholder*="Search" i], .dior-search-input, .va-search-input, [type="search"], ' +
+            '#dior-tele-search-input, #dior-bill-search-input, #dior-notif-search-input, #dior-docs-search-input, ' +
+            '#dior-rx-search-input, #dior-today-search-input, #dior-upcoming-search-input, #dior-past-search-input, ' +
+            '#va-appt-search, #ap-search, #cn-search, #rv-search'
+        ));
+
+        searchInputs.forEach(function (input) {
+            if (isDashboardOverview(input) || input.id === 'dior-doc-search') return;
+            if (input._diorBsSearchStandardized) return;
+            input._diorBsSearchStandardized = true;
+
+            input.classList.add('form-control');
+            var parent = input.parentElement;
+
+            if (parent && (parent.classList.contains('va-search-box') || parent.classList.contains('docs-search-box') || parent.classList.contains('dior-search-wrap') || parent.classList.contains('dior-search-box') || parent.classList.contains('dior-search-container'))) {
+                parent.classList.add('dior-bs-search-group');
+                var oldIcon = parent.querySelector('i');
+                if (oldIcon) {
+                    oldIcon.className = 'bi bi-search text-muted me-2';
+                } else {
+                    var icon = document.createElement('i');
+                    icon.className = 'bi bi-search text-muted me-2';
+                    parent.insertBefore(icon, input);
+                }
+            } else if (parent && !parent.classList.contains('dior-bs-search-group') && !parent.classList.contains('input-group')) {
+                var group = document.createElement('div');
+                group.className = 'input-group input-group-sm dior-bs-search-group shadow-sm';
+                group.style.maxWidth = '260px';
+                group.style.borderRadius = '8px';
+                group.style.overflow = 'hidden';
+
+                var prepend = document.createElement('span');
+                prepend.className = 'input-group-text bg-white border-end-0 text-muted';
+                prepend.innerHTML = '<i class="bi bi-search"></i>';
+
+                input.classList.add('border-start-0', 'ps-0');
+                parent.insertBefore(group, input);
+                group.appendChild(prepend);
+                group.appendChild(input);
+            }
+        });
+    }
+
+    // =========================================================================
+    // 1. BULK ACTIONS TOOLBAR & CHECKBOX INITIALIZATION
+    // =========================================================================
+    function getBulkToolbar(table) {
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
         if (!card) return null;
 
-        var host = card.querySelector('.va-footer');
-        if (!host) {
-            host = card.querySelector('.dior-static-pagination');
+        var toolbar = card.querySelector('.dior-bulk-actions-toolbar');
+        if (!toolbar) {
+            toolbar = document.createElement('div');
+            toolbar.className = 'dior-bulk-actions-toolbar';
+            toolbar.style.display = 'none';
+            toolbar.innerHTML =
+                '<span class="dior-bulk-count">0 selected</span>' +
+                '<button type="button" class="btn btn-bulk-delete" title="Delete selected records">' +
+                    '<i class="fas fa-trash-can"></i> Delete Selected' +
+                '</button>';
+
+            var target = card.querySelector('.va-actions-group, .docs-actions-group, .va-actions-wrapper, .docs-actions-wrapper, .dior-ref-card-head > div:last-child');
+            if (target) {
+                target.insertAdjacentElement('beforebegin', toolbar);
+            } else {
+                table.parentElement.insertAdjacentElement('beforebegin', toolbar);
+            }
+
+            // Bind bulk delete button in this toolbar
+            var deleteBtn = toolbar.querySelector('.btn-bulk-delete');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    executeBulkDelete(table);
+                });
+            }
         }
+        return toolbar;
+    }
+
+    function ensureCheckboxes(table) {
+        if (isDashboardOverview(table)) return;
+
+        var thead = table.querySelector('thead');
+        var tbody = table.querySelector('tbody');
+        if (!thead || !tbody) return;
+
+        var headerRow = thead.querySelector('tr');
+        if (!headerRow) return;
+
+        // Check if master checkbox exists
+        var masterCb = thead.querySelector('input[type="checkbox"]');
+        if (!masterCb) {
+            var th = document.createElement('th');
+            th.style.width = '48px';
+            th.className = 'text-center align-middle';
+            th.innerHTML = '<input type="checkbox" class="form-check-input dior-select-all" title="Select All">';
+            headerRow.insertBefore(th, headerRow.children[0]);
+        } else {
+            masterCb.classList.add('form-check-input', 'dior-select-all');
+        }
+
+        // Ensure row checkboxes exist only in valid data rows (skip colspan empty rows)
+        var rows = getRows(table);
+        rows.forEach(function (row) {
+            var first = row.firstElementChild;
+            if (first && first.hasAttribute('colspan')) return;
+
+            var rowCb = row.querySelector('input[type="checkbox"]');
+            if (!rowCb) {
+                var td = document.createElement('td');
+                td.style.width = '48px';
+                td.className = 'text-center align-middle';
+                td.innerHTML = '<input type="checkbox" class="form-check-input dior-row-select">';
+                td.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+                row.insertBefore(td, row.children[0]);
+            } else {
+                rowCb.classList.add('form-check-input', 'dior-row-select');
+                var cell = rowCb.closest('td');
+                if (cell) {
+                    cell.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                    });
+                }
+            }
+        });
+
+        // Initialize bulk toolbar
+        getBulkToolbar(table);
+    }
+
+    function updateBulkToolbarState(table) {
+        var toolbar = getBulkToolbar(table);
+        var activeRows = getActiveRows(table);
+        var checkedRows = activeRows.filter(function (row) {
+            var cb = row.querySelector('input[type="checkbox"]');
+            return cb && cb.checked;
+        });
+
+        var count = checkedRows.length;
+        var masterCb = table.querySelector('thead input[type="checkbox"]');
+
+        if (masterCb) {
+            if (activeRows.length > 0 && count === activeRows.length) {
+                masterCb.checked = true;
+                masterCb.indeterminate = false;
+            } else if (count > 0) {
+                masterCb.checked = false;
+                masterCb.indeterminate = true;
+            } else {
+                masterCb.checked = false;
+                masterCb.indeterminate = false;
+            }
+        }
+
+        if (toolbar) {
+            if (count > 0) {
+                toolbar.style.display = 'inline-flex';
+                var countSpan = toolbar.querySelector('.dior-bulk-count');
+                if (countSpan) countSpan.textContent = count + ' selected';
+            } else {
+                toolbar.style.display = 'none';
+            }
+        }
+
+        // Also check any legacy bulk buttons
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel');
+        if (card) {
+            var legacyBulkBtn = card.querySelector('#ap-bulk-delete-btn, #va-bulk-delete-btn, .docs-btn-danger[title*="Bulk"], .va-btn-danger[title*="Bulk"]');
+            if (legacyBulkBtn) {
+                legacyBulkBtn.style.display = count > 0 ? 'inline-flex' : 'none';
+            }
+        }
+    }
+
+    function executeBulkDelete(table) {
+        var activeRows = getActiveRows(table);
+        var checkedRows = activeRows.filter(function (row) {
+            var cb = row.querySelector('input[type="checkbox"]');
+            return cb && cb.checked;
+        });
+
+        if (!checkedRows.length) {
+            Swal.fire({
+                title: 'Notice',
+                text: 'Please select at least one record to delete.',
+                icon: 'info',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2500
+            });
+            return;
+        }
+
+        var count = checkedRows.length;
+
+        function performDeletion() {
+            checkedRows.forEach(function (row) {
+                row.remove();
+            });
+
+            var masterCb = table.querySelector('thead input[type="checkbox"]');
+            if (masterCb) {
+                masterCb.checked = false;
+                masterCb.indeterminate = false;
+            }
+
+            updateBulkToolbarState(table);
+
+            var remainingActive = getActiveRows(table).length;
+            var totalPages = Math.max(1, Math.ceil(remainingActive / PAGE_SIZE));
+            var currentPage = table._diorStaticPagination ? table._diorStaticPagination.page : 1;
+            renderTable(table, Math.min(currentPage, totalPages));
+
+            if (window.Swal) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: count + ' record(s) deleted successfully.',
+                    icon: 'success',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
+        }
+
+        if (window.Swal) {
+            Swal.fire({
+                title: 'Delete ' + count + ' selected record(s)?',
+                text: 'Are you sure you want to delete these records? This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: 'Yes, delete selected',
+                cancelButtonText: 'Cancel'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    performDeletion();
+                }
+            });
+        }
+    }
+
+    // =========================================================================
+    // 2. PAGINATION (STRICT 10 ENTRIES PER PAGE)
+    // =========================================================================
+    function getPaginationHost(table) {
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+        if (!card) return null;
+
+        var host = card.querySelector('.va-footer, .dior-table-pagination-wrap, .dior-static-pagination');
         if (!host) {
             host = document.createElement('div');
-            host.className = 'dior-static-pagination';
-            card.appendChild(host);
+            host.className = 'dior-static-pagination dior-table-pagination-wrap';
+            table.parentElement.insertAdjacentElement('afterend', host);
         }
         host.classList.add('dior-static-pagination');
         return host;
     }
 
-    function updateSelectionCount(table, total) {
-        var card = table.closest('.view-appointment-card');
-        if (!card) return;
-
-        var info = card.querySelector('.va-pagination-text, .va-table-stats');
-        if (!info) return;
-
-        var selected = table.querySelectorAll('tbody .va-checkbox:checked').length;
-        info.innerHTML = selected + ' selected / ' + total + ' total';
-    }
-
     function renderTable(table, requestedPage) {
-        if (!table || !table.querySelector('tbody')) return;
+        if (!table || !table.querySelector('tbody') || isDashboardOverview(table)) return;
+
+        // Ensure Bootstrap hoverable row styling & responsive wrapper
+        table.classList.add('table-hover');
+        if (!table.classList.contains('table')) {
+            table.classList.add('table');
+        }
+
+        if (!table.parentElement.classList.contains('table-responsive') && !table.parentElement.classList.contains('va-table-wrapper') && !table.parentElement.classList.contains('docs-table-wrapper')) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'table-responsive';
+            table.parentNode.insertBefore(wrapper, table);
+            wrapper.appendChild(table);
+        }
+
+        ensureCheckboxes(table);
 
         var rows = getRows(table);
         var activeRows = getActiveRows(table);
@@ -71,10 +360,12 @@
         state.page = Math.max(1, Math.min(parseInt(requestedPage || state.page, 10) || 1, totalPages));
         table._diorStaticPagination = state;
 
+        // Hide all rows initially
         rows.forEach(function (row) {
             row.style.display = 'none';
         });
 
+        // Show only the 10 rows for current page
         var start = (state.page - 1) * PAGE_SIZE;
         var end = Math.min(start + PAGE_SIZE, total);
 
@@ -85,41 +376,157 @@
         var host = getPaginationHost(table);
         if (!host) return;
 
-        if (total <= PAGE_SIZE) {
-            host.style.display = 'none';
-        } else {
-            host.style.display = 'flex';
+        host.style.display = 'flex';
+        host.style.alignItems = 'center';
+        host.style.justifyContent = 'space-between';
+        host.style.flexWrap = 'wrap';
+        host.style.gap = '12px';
+        host.style.padding = '14px 20px';
+        host.style.borderTop = '1px solid #E2E8F0';
+        host.style.background = '#FFFFFF';
 
-            var html = '';
-            html += '<button type="button" class="va-page-btn" data-static-page="' + (state.page - 1) + '" ' + (state.page === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="fa-solid fa-chevron-left"></i></button>';
+        var selected = activeRows.filter(function (r) {
+            var cb = r.querySelector('input[type="checkbox"]');
+            return cb && cb.checked;
+        }).length;
 
-            for (var page = 1; page <= totalPages; page++) {
-                html += '<button type="button" class="va-page-btn ' + (page === state.page ? 'active' : '') + '" data-static-page="' + page + '">' + page + '</button>';
+        var selectedBadge = selected > 0 ? ' <span class="badge bg-primary ms-1" style="font-size:11px;padding:3px 8px;border-radius:12px;background:#00346C !important;">' + selected + ' selected</span>' : '';
+
+        var html = '';
+        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page - 1) + '" ' + (state.page === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="fa-solid fa-chevron-left"></i></button>';
+
+        for (var page = 1; page <= totalPages; page++) {
+            if (totalPages > 7) {
+                if (page !== 1 && page !== totalPages && Math.abs(page - state.page) > 2) {
+                    if (page === 2 || page === totalPages - 1) {
+                        html += '<span class="px-1 text-muted" style="line-height:34px;">...</span>';
+                    }
+                    continue;
+                }
             }
-
-            html += '<button type="button" class="va-page-btn" data-static-page="' + (state.page + 1) + '" ' + (state.page === totalPages ? 'disabled' : '') + ' aria-label="Next page"><i class="fa-solid fa-chevron-right"></i></button>';
-
-            host.innerHTML =
-                '<div class="va-pagination-text">Showing <strong>' +
-                (total ? start + 1 : 0) +
-                '</strong> to <strong>' +
-                end +
-                '</strong> of <strong>' +
-                total +
-                '</strong> entries</div>' +
-                '<div class="va-pagination-nav">' + html + '</div>';
-
-            host.querySelectorAll('[data-static-page]').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    if (button.disabled) return;
-                    renderTable(table, parseInt(button.getAttribute('data-static-page'), 10));
-                });
-            });
+            html += '<button type="button" class="va-page-btn dior-page-btn btn ' + (page === state.page ? 'active' : '') + '" data-static-page="' + page + '">' + page + '</button>';
         }
 
-        updateSelectionCount(table, total);
+        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page + 1) + '" ' + (state.page === totalPages ? 'disabled' : '') + ' aria-label="Next page"><i class="fa-solid fa-chevron-right"></i></button>';
+
+        host.innerHTML =
+            '<div class="va-pagination-text dior-pagination-count text-muted" style="font-size:13.5px;font-weight:500;">Showing <strong>' +
+            (total ? start + 1 : 0) +
+            '</strong> to <strong>' +
+            end +
+            '</strong> of <strong>' +
+            total +
+            '</strong> entries' + selectedBadge + '</div>' +
+            '<div class="va-pagination-nav dior-table-pagination-pages d-flex gap-1">' + html + '</div>';
+
+        host.querySelectorAll('[data-static-page]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                if (button.disabled) return;
+                renderTable(table, parseInt(button.getAttribute('data-static-page'), 10));
+            });
+        });
+
+        updateBulkToolbarState(table);
     }
 
+    // =========================================================================
+    // 3. COLUMN SORTING (UNIVERSAL)
+    // =========================================================================
+    function parseCellValue(text) {
+        if (!text) return '';
+        text = text.trim();
+
+        // Check currency / numbers: "$120.00", "€50", "45", "10%"
+        var numMatch = text.replace(/[$,€£%]/g, '').trim();
+        if (numMatch !== '' && !isNaN(Number(numMatch))) {
+            return Number(numMatch);
+        }
+
+        // Check standard date
+        var parsedDate = Date.parse(text);
+        if (!isNaN(parsedDate) && text.length > 5 && isNaN(Number(text))) {
+            return parsedDate;
+        }
+
+        return text.toLowerCase();
+    }
+
+    function initTableSorting(table) {
+        if (isDashboardOverview(table)) return;
+
+        var thead = table.querySelector('thead');
+        if (!thead || table._diorSortingInitialized) return;
+        table._diorSortingInitialized = true;
+
+        var headers = thead.querySelectorAll('th');
+        headers.forEach(function (th, colIndex) {
+            // Skip checkbox and actions column
+            if (th.querySelector('input[type="checkbox"]') || /action/i.test(th.textContent.trim())) {
+                return;
+            }
+
+            th.setAttribute('data-sortable', 'true');
+            th.classList.add('dior-sortable-th');
+            th.style.cursor = 'pointer';
+            th.style.userSelect = 'none';
+
+            // Ensure fontawesome sort icon exists
+            var icon = th.querySelector('i.fa-sort, i.fa-sort-up, i.fa-sort-down, i.fas, i.fa-solid');
+            if (!icon) {
+                icon = document.createElement('i');
+                icon.className = 'fas fa-sort ms-1 text-muted';
+                th.appendChild(icon);
+            }
+
+            th.addEventListener('click', function () {
+                var currentDir = th.getAttribute('data-sort-dir') || 'none';
+                var newDir = currentDir === 'asc' ? 'desc' : 'asc';
+
+                // Reset all other headers in this table
+                headers.forEach(function (otherTh) {
+                    otherTh.removeAttribute('data-sort-dir');
+                    var otherIcon = otherTh.querySelector('i');
+                    if (otherIcon) {
+                        otherIcon.className = 'fas fa-sort ms-1 text-muted';
+                    }
+                });
+
+                // Set new direction
+                th.setAttribute('data-sort-dir', newDir);
+                if (icon) {
+                    icon.className = 'fas fa-sort-' + (newDir === 'asc' ? 'up' : 'down') + ' ms-1 text-primary';
+                }
+
+                // Sort the table rows
+                var tbody = table.querySelector('tbody');
+                if (!tbody) return;
+
+                var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+                rows.sort(function (rowA, rowB) {
+                    var cellA = rowA.children[colIndex];
+                    var cellB = rowB.children[colIndex];
+                    var valA = cellA ? parseCellValue(cellA.textContent) : '';
+                    var valB = cellB ? parseCellValue(cellB.textContent) : '';
+
+                    if (valA < valB) return newDir === 'asc' ? -1 : 1;
+                    if (valA > valB) return newDir === 'asc' ? 1 : -1;
+                    return 0;
+                });
+
+                // Re-append sorted rows
+                rows.forEach(function (row) {
+                    tbody.appendChild(row);
+                });
+
+                // Re-render table on page 1 of pagination
+                renderTable(table, 1);
+            });
+        });
+    }
+
+    // =========================================================================
+    // 4. IN-PLACE EDIT MODAL & SINGLE ROW DELETE
+    // =========================================================================
     function findEditableValueCell(cell) {
         var target = cell.querySelector('.va-user-name, .cell-text, .status-cell-text, .notes-text');
         return target || null;
@@ -132,7 +539,6 @@
 
     function writeCellValue(cell, value) {
         var target = findEditableValueCell(cell);
-
         if (target) {
             target.textContent = value;
             return;
@@ -160,29 +566,29 @@
 
         var modal = document.createElement('div');
         modal.id = 'dior-static-edit-modal';
-        modal.className = 'dior-static-edit-modal';
+        modal.className = 'modal fade dior-static-edit-modal';
+        modal.tabIndex = -1;
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-labelledby', 'dior-static-edit-title');
+        modal.setAttribute('aria-hidden', 'true');
         modal.innerHTML =
-            '<div class="dior-static-edit-dialog" role="dialog" aria-modal="true" aria-labelledby="dior-static-edit-title">' +
-                '<div class="dior-static-edit-header">' +
-                    '<h3 id="dior-static-edit-title">Edit Record</h3>' +
-                    '<button type="button" class="dior-static-edit-close" data-edit-close aria-label="Close">&times;</button>' +
-                '</div>' +
-                '<form id="dior-static-edit-form">' +
-                    '<div class="dior-static-edit-fields"></div>' +
-                    '<div class="dior-static-edit-footer">' +
-                        '<button type="submit" class="dior-static-submit">Save</button>' +
-                        '<button type="button" class="dior-static-cancel" data-edit-close>Close</button>' +
+            '<div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">' +
+                '<div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden; background: #FFFFFF;">' +
+                    '<div class="modal-header border-bottom py-3 px-4">' +
+                        '<h5 class="modal-title fw-bold text-dark mb-0" id="dior-static-edit-title">Edit Record</h5>' +
+                        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
                     '</div>' +
-                '</form>' +
+                    '<form id="dior-static-edit-form">' +
+                        '<div class="modal-body p-4 dior-static-edit-fields"></div>' +
+                        '<div class="modal-footer border-top py-3 px-4 gap-2">' +
+                            '<button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal" style="border-radius: 8px; font-size: 13.5px; font-weight: 600;">Close</button>' +
+                            '<button type="submit" class="btn btn-primary px-4 dior-static-submit" style="border-radius: 8px; font-size: 13.5px; font-weight: 600; background: #00346C; border-color: #00346C;">Save Changes</button>' +
+                        '</div>' +
+                    '</form>' +
+                '</div>' +
             '</div>';
 
         document.body.appendChild(modal);
-
-        modal.addEventListener('click', function (event) {
-            if (event.target === modal || event.target.closest('[data-edit-close]')) {
-                closeModal();
-            }
-        });
 
         modal.querySelector('#dior-static-edit-form').addEventListener('submit', function (event) {
             event.preventDefault();
@@ -204,21 +610,17 @@
                 renderTable(table, table._diorStaticPagination.page);
             }
 
-            Swal.fire({
-                title: 'Success!',
-                text: 'Record has been updated successfully.',
-                icon: 'success',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true
-            });
-        });
-
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape' && modal.classList.contains('is-open')) {
-                closeModal();
+            if (window.Swal) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Record has been updated successfully.',
+                    icon: 'success',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
             }
         });
 
@@ -227,7 +629,7 @@
 
     function openModal(row) {
         var table = row.closest('table');
-        if (!table) return;
+        if (!table || isDashboardOverview(table)) return;
 
         var modal = createModal();
         var headers = Array.prototype.slice.call(table.querySelectorAll('thead th'));
@@ -239,96 +641,58 @@
         cells.forEach(function (cell, index) {
             if (!headers[index]) return;
             if (cell.querySelector('input[type="checkbox"]')) return;
-            if (cell.querySelector('.va-row-actions, .cell-actions')) return;
+            if (cell.querySelector('.va-row-actions, .cell-actions, .docs-actions-group')) return;
 
             var label = headers[index].textContent.replace(/\s+/g, ' ').trim();
-            if (!label || label.toLowerCase() === 'actions') return;
+            if (!label || label.toLowerCase() === 'actions' || label.toLowerCase() === 'action') return;
 
             var value = readCellValue(cell);
             var field = document.createElement('div');
-            field.className = 'dior-static-edit-field';
+            field.className = 'dior-static-edit-field mb-3';
             field.innerHTML =
-                '<label>' + escapeHtml(label) + '</label>' +
-                '<input type="text" data-edit-index="' + index + '" value="' + escapeHtml(value) + '" autocomplete="off">';
-
+                '<label class="form-label" style="font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">' + label + '</label>' +
+                '<input type="text" class="form-control" data-edit-index="' + index + '" value="' + value.replace(/"/g, '&quot;') + '">';
             fieldsWrap.appendChild(field);
         });
 
         modal._editRow = row;
-        modal.classList.add('is-open');
 
-        var firstInput = fieldsWrap.querySelector('input');
-        if (firstInput) {
-            setTimeout(function () {
-                firstInput.focus();
-                firstInput.select();
-            }, 30);
+        if (window.bootstrap && window.bootstrap.Modal) {
+            var bsModal = window.bootstrap.Modal.getOrCreateInstance(modal);
+            bsModal.show();
+        } else {
+            modal.classList.add('show');
+            modal.style.display = 'block';
         }
     }
 
     function closeModal() {
         var modal = document.getElementById('dior-static-edit-modal');
         if (modal) {
-            modal.classList.remove('is-open');
+            if (window.bootstrap && window.bootstrap.Modal) {
+                var bsModal = window.bootstrap.Modal.getInstance(modal);
+                if (bsModal) bsModal.hide();
+            } else {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
             modal._editRow = null;
         }
     }
 
-    function escapeHtml(value) {
-        return String(value).replace(/[&<>"']/g, function (char) {
-            return {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            }[char];
-        });
-    }
-
     function isTrashButton(button) {
-        return !!button.querySelector('.fa-trash, .fa-trash-can, .fa-trash-alt, .fa-regular.fa-trash-can');
+        return !!button.querySelector('.fa-trash, .fa-trash-can, .bi-trash');
     }
 
-    function deleteRow(button) {
-        var row = button.closest('tr');
-        if (!row) return;
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'You want to delete this record?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#EF4444',
-            cancelButtonColor: '#64748B',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
-        }).then(function (result) {
-            if (result.isConfirmed) {
-                var table = row.closest('table');
-                row.remove();
-
-                if (table) {
-                    var nextPage = table._diorStaticPagination ? table._diorStaticPagination.page : 1;
-                    renderTable(table, nextPage);
-                }
-
-                Swal.fire({
-                    title: 'Deleted!',
-                    text: 'Record has been deleted successfully.',
-                    icon: 'success',
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true
-                });
-            }
-        });
-    }
-
-    function bindDoctorTables() {
-        document.querySelectorAll('.va-table').forEach(function (table) {
+    // =========================================================================
+    // 5. EVENT LISTENERS: CHECKBOXES, SEARCH & DELETE
+    // =========================================================================
+    function bindAllTables() {
+        standardizeBootstrapSearchFields(document);
+        getAllTables().forEach(function (table) {
+            if (isDashboardOverview(table)) return;
+            ensureCheckboxes(table);
+            initTableSorting(table);
             renderTable(table, table._diorStaticPagination ? table._diorStaticPagination.page : 1);
         });
     }
@@ -336,19 +700,61 @@
     function bindSearch() {
         document.addEventListener('input', function (event) {
             var input = event.target;
-            if (!input.matches('.va-search-box input, .dior-search-input')) return;
+            if (!input.matches('input[placeholder*="Search" i], .va-search-box input, .docs-search-box input, .dior-bs-search-group input, .dior-search-input, [type="search"]')) return;
 
-            var table = input.closest('.view-appointment-card, .dior-box, .dior-card, .dior-tab-panel');
-            if (!table) return;
+            var card = input.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+            if (!card) return;
 
-            var target = table.querySelector('.va-table');
-            if (target) renderTable(target, 1);
+            var target = card.querySelector(getTableSelector());
+            if (target && !isDashboardOverview(target)) {
+                renderTable(target, 1);
+            }
         });
     }
 
+    // Master & Row Checkbox change listener
+    document.addEventListener('change', function (event) {
+        var target = event.target;
+        if (!target.matches('input[type="checkbox"]')) return;
+
+        var table = target.closest('table');
+        if (!table || isDashboardOverview(table)) return;
+
+        // If master checkbox toggled
+        if (target.matches('thead input[type="checkbox"]')) {
+            var activeRows = getActiveRows(table);
+            activeRows.forEach(function (row) {
+                var cb = row.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = target.checked;
+            });
+            updateBulkToolbarState(table);
+            renderTable(table, table._diorStaticPagination ? table._diorStaticPagination.page : 1);
+            return;
+        }
+
+        // If row checkbox toggled
+        if (target.matches('tbody input[type="checkbox"]')) {
+            updateBulkToolbarState(table);
+            var host = getPaginationHost(table);
+            if (host) {
+                var total = getActiveRows(table).length;
+                var selected = table.querySelectorAll('tbody input[type="checkbox"]:checked').length;
+                var badge = selected > 0 ? ' <span class="badge bg-primary ms-1" style="font-size:11px;padding:3px 8px;border-radius:12px;background:#00346C !important;">' + selected + ' selected</span>' : '';
+                var info = host.querySelector('.dior-pagination-count, .va-pagination-text');
+                if (info) {
+                    var start = ((table._diorStaticPagination ? table._diorStaticPagination.page : 1) - 1) * PAGE_SIZE;
+                    var end = Math.min(start + PAGE_SIZE, total);
+                    info.innerHTML = 'Showing <strong>' + (total ? start + 1 : 0) + '</strong> to <strong>' + end + '</strong> of <strong>' + total + '</strong> entries' + badge;
+                }
+            }
+        }
+    });
+
+    // Global Click Delegation (Edit, Delete, Bulk)
     document.addEventListener('click', function (event) {
+        // Edit button
         var editButton = event.target.closest('.va-btn-edit, .action-icon-btn.edit-btn');
-        if (editButton && !editButton.matches('.dior-mark-notification-read') && editButton.querySelector('.fa-pen')) {
+        if (editButton && !editButton.matches('.dior-mark-notification-read') && editButton.querySelector('.fa-pen, .fa-pencil, .bi-vector-pen')) {
             event.preventDefault();
             event.stopPropagation();
             var editRow = editButton.closest('tr');
@@ -356,91 +762,94 @@
             return;
         }
 
-        var deleteButton = event.target.closest('.va-btn-delete, .action-icon-btn.delete-btn');
-        if (deleteButton && isTrashButton(deleteButton)) {
+        // Single Row Delete
+        var deleteButton = event.target.closest('.va-btn-delete, .action-icon-btn.delete-btn, .docs-btn-danger:not(.docs-actions-group button):not(.va-actions-group button):not(.dior-bulk-actions-toolbar button)');
+        if (deleteButton && isTrashButton(deleteButton) && !deleteButton.closest('.va-actions-group, .docs-actions-group, .dior-bulk-actions-toolbar')) {
             event.preventDefault();
             event.stopPropagation();
-            deleteRow(deleteButton);
+
+            var row = deleteButton.closest('tr');
+            if (!row) return;
+
+            var table = row.closest('table');
+            if (!table || isDashboardOverview(table)) return;
+
+            if (window.Swal) {
+                Swal.fire({
+                    title: 'Delete this record?',
+                    text: 'Are you sure you want to delete this record? This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#64748B',
+                    confirmButtonText: 'Yes, delete',
+                    cancelButtonText: 'Cancel'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        row.remove();
+                        updateBulkToolbarState(table);
+                        var remainingActive = getActiveRows(table).length;
+                        var totalPages = Math.max(1, Math.ceil(remainingActive / PAGE_SIZE));
+                        var currentPage = table._diorStaticPagination ? table._diorStaticPagination.page : 1;
+                        renderTable(table, Math.min(currentPage, totalPages));
+
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'Record has been removed.',
+                            icon: 'success',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+                    }
+                });
+            }
             return;
         }
 
-        var bulkDelete = event.target.closest('#ap-bulk-delete');
-        if (bulkDelete) {
+        // Legacy / Toolbar Bulk Delete Buttons
+        var bulkDeleteBtn = event.target.closest('.dior-bulk-actions-toolbar .btn-bulk-delete, #ap-bulk-delete-btn, #va-bulk-delete-btn, [onclick*="diorBulkDelete"]');
+        if (bulkDeleteBtn) {
             event.preventDefault();
-            var bulkTable = bulkDelete.closest('.view-appointment-card') ? bulkDelete.closest('.view-appointment-card').querySelector('.va-table') : null;
-            if (!bulkTable) return;
+            event.stopPropagation();
 
-            var selected = bulkTable.querySelectorAll('tbody .va-checkbox:checked');
-            if (!selected.length) return;
+            var card = bulkDeleteBtn.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+            if (!card) return;
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'You want to delete ' + selected.length + ' selected records?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#EF4444',
-                cancelButtonColor: '#64748B',
-                confirmButtonText: 'Yes, delete them!',
-                cancelButtonText: 'Cancel'
-            }).then(function (result) {
-                if (result.isConfirmed) {
-                    selected.forEach(function (checkbox) {
-                        var row = checkbox.closest('tr');
-                        if (row) row.remove();
-                    });
-
-                    if (bulkTable._diorStaticPagination) {
-                        renderTable(bulkTable, bulkTable._diorStaticPagination.page);
-                    } else {
-                        renderTable(bulkTable, 1);
-                    }
-
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: selected.length + ' records have been deleted successfully.',
-                        icon: 'success',
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
-                    });
-                }
-            });
+            var bulkTable = card.querySelector(getTableSelector());
+            if (bulkTable && !isDashboardOverview(bulkTable)) {
+                executeBulkDelete(bulkTable);
+            }
         }
-    });
-
-    document.addEventListener('change', function (event) {
-        if (!event.target.matches('.va-table thead .va-checkbox')) return;
-
-        var table = event.target.closest('table');
-        if (!table) return;
-
-        table.querySelectorAll('tbody .va-checkbox').forEach(function (checkbox) {
-            checkbox.checked = event.target.checked;
-        });
-
-        updateSelectionCount(table, getActiveRows(table).length);
     });
 
     bindSearch();
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', bindDoctorTables);
+        document.addEventListener('DOMContentLoaded', bindAllTables);
     } else {
-        bindDoctorTables();
+        bindAllTables();
     }
 
-    // Dashboard tabs are injected/activated dynamically; initialize new tables automatically.
+    // Dynamically initialized tabs observer
     if (window.MutationObserver) {
         var observer = new MutationObserver(function () {
-            document.querySelectorAll('.va-table').forEach(function (table) {
-                if (!table._diorStaticPagination) {
+            standardizeBootstrapSearchFields(document);
+            getAllTables().forEach(function (table) {
+                if (!isDashboardOverview(table) && !table._diorStaticPagination) {
+                    ensureCheckboxes(table);
+                    initTableSorting(table);
                     renderTable(table, 1);
                 }
             });
         });
 
         observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    // Suppress external DataTables alerts if loaded anywhere
+    if (window.jQuery && window.jQuery.fn && window.jQuery.fn.dataTable) {
+        window.jQuery.fn.dataTable.ext.errMode = 'none';
     }
 })();

@@ -335,7 +335,7 @@
             <!-- Table Section -->
             <div class="dior-invoice-table-section">
                 <div style="overflow-x: auto;">
-                    <table class="dior-invoice-table">
+                    <table class="dior-invoice-table table table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -447,9 +447,9 @@
         
         <!-- Actions -->
         <div class="dior-invoice-actions">
-            <button class="dior-btn dior-btn-primary" onclick="window.print()">Print</button>
-            <button class="dior-btn dior-btn-info" id="download-invoice-pdf">Download PDF</button>
-            <button class="dior-btn dior-btn-secondary">Email Invoice</button>
+            <button class="dior-btn dior-btn-primary btn" onclick="window.print()">Print</button>
+            <button class="dior-btn dior-btn-info btn" id="download-invoice-pdf">Download PDF</button>
+            <button class="dior-btn dior-btn-secondary btn">Email Invoice</button>
         </div>
         
     </div>

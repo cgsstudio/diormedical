@@ -120,8 +120,7 @@
             var nonce = cfg.nonce || cfg.portal_nonce || form.getAttribute('data-nonce');
             if (!ajaxUrl || !nonce) {
                 var configError = 'Unable to start the profile update. Refresh the page and try again.';
-                if (window.Swal) Swal.fire({ icon: 'error', title: 'Update Failed', text: configError });
-                else alert(configError);
+                Swal.fire({ icon: 'error', title: 'Update Failed', text: configError });
                 return;
             }
 
@@ -159,15 +158,10 @@
                     if (settingsName && profile.full_name) settingsName.textContent = profile.full_name;
                     var settingsEmail = document.querySelector('#tab-settings .dior-settings-profile-email');
                     if (settingsEmail && profile.email) settingsEmail.textContent = profile.email;
-                    if (window.Swal) {
-                        Swal.fire({ icon: 'success', title: 'Profile Updated', text: 'Your profile details have been saved.', timer: 1800, showConfirmButton: false });
-                    } else {
-                        alert('Profile updated successfully.');
-                    }
+                    Swal.fire({ icon: 'success', title: 'Profile Updated', text: 'Your profile details have been saved.', timer: 1800, showConfirmButton: false });
                 })
                 .catch(function (error) {
-                    if (window.Swal) Swal.fire({ icon: 'error', title: 'Update Failed', text: error.message });
-                    else alert(error.message);
+                    Swal.fire({ icon: 'error', title: 'Update Failed', text: error.message });
                 })
                 .finally(function () {
                     if (button) { button.disabled = false; button.innerHTML = original; }

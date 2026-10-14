@@ -17,7 +17,6 @@
 
     function openPopup() {
         if (!window.Swal) {
-            window.alert('Appointment form is not ready. Please try again.');
             return;
         }
 

@@ -33,8 +33,8 @@ class Dior_Demo_Data {
             <p><strong>Demo doctor:</strong> <?php echo esc_html($doctor ? $doctor->user_email : 'Not created'); ?></p>
             <p><strong>Demo patients:</strong> <?php echo esc_html(count($patients)); ?></p>
             <p>
-                <a class="button button-primary" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=dior_seed_demo_data'), 'dior_seed_demo_data')); ?>">Create / Refresh Demo Data</a>
-                <a class="button" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=dior_clear_demo_data'), 'dior_clear_demo_data')); ?>" style="margin-left:8px">Delete Demo Data</a>
+                <a class="button button-primary btn" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=dior_seed_demo_data'), 'dior_seed_demo_data')); ?>">Create / Refresh Demo Data</a>
+                <a class="button btn" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=dior_clear_demo_data'), 'dior_clear_demo_data')); ?>" style="margin-left:8px">Delete Demo Data</a>
             </p>
             <p><em>Demo records are marked internally with <code>dior_demo_record = 1</code>, so cleanup only targets seeded records.</em></p>
         </div>

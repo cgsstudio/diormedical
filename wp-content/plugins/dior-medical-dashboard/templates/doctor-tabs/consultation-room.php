@@ -48,19 +48,19 @@
 
             <!-- Controls Dock -->
             <div class="dior-ic-0d29c8fc6a">
-                <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc" title="Mute Microphone">
+                <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc btn" title="Mute Microphone">
                     <i class="fas fa-microphone"></i>
                 </button>
-                <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc" title="Turn Off Camera">
+                <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc btn" title="Turn Off Camera">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg>
                 </button>
-                <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc" title="Screen Share">
+                <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc btn" title="Screen Share">
                     <i class="fas fa-desktop"></i>
                 </button>
-                <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc" title="Open Chat">
+                <button type="button" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" class="dior-ic-df9983a8cc btn" title="Open Chat">
                     <i class="far fa-comment-dots"></i>
                 </button>
-                <button type="button" onmouseover="this.style.background='#DC2626'" onmouseout="this.style.background='#EF4444'" class="dior-ic-7c877a95fa" title="End Call">
+                <button type="button" onmouseover="this.style.background='#DC2626'" onmouseout="this.style.background='#EF4444'" class="dior-ic-7c877a95fa btn" title="End Call">
                     <i class="fas fa-phone-slash"></i>
                 </button>
             </div>
@@ -69,13 +69,13 @@
         <!-- Chat Panel -->
         <div class="dior-ic-f6cf83e34f">
             <div class="dior-ic-5c4ccb1aea">
-                <button type="button" class="dior-ic-fef1baf303">
+                <button type="button" class="dior-ic-fef1baf303 btn">
                     <i class="far fa-comments dior-ic-736c9ca116"></i> Live Chat
                 </button>
-                <button type="button" class="dior-ic-ac80b8900c">
+                <button type="button" class="dior-ic-ac80b8900c btn">
                     <i class="far fa-clipboard dior-ic-736c9ca116"></i> E-Rx
                 </button>
-                <button type="button" class="dior-ic-ac80b8900c">
+                <button type="button" class="dior-ic-ac80b8900c btn">
                     <i class="fas fa-file-medical dior-ic-736c9ca116"></i> Notes
                 </button>
             </div>
@@ -128,8 +128,8 @@
 
             <div class="dior-ic-c5c02ad633">
                 <div class="dior-ic-f487d8d9d8">
-                    <input type="text" id="dior-doc-chat-input" placeholder="Type a message..." class="dior-ic-011b57cbc6">
-                    <button type="button" id="dior-doc-chat-send-btn" class="dior-ic-5104258266">
+                    <input type="text" id="dior-doc-chat-input" placeholder="Type a message..." class="dior-ic-011b57cbc6 form-control">
+                    <button type="button" id="dior-doc-chat-send-btn" class="dior-ic-5104258266 btn">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>

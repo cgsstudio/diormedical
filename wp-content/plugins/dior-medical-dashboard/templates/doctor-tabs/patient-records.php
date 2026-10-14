@@ -25,9 +25,9 @@
             </div>
             
             <div class="va-header-actions" style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                <div class="va-search-wrapper" style="position: relative;">
-                    <i class="fas fa-magnifying-glass va-search-icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94A3B8; font-size: 14px;"></i>
-                    <input type="text" class="va-search-input" placeholder="Search records..." style="padding-left: 36px; padding-right: 15px; height: 38px; border: 1px solid #E2E8F0; border-radius: 6px; font-size: 14px; outline: none; width: 220px;" onkeyup="diorDocFilterPatientRecords(this.value)">
+                <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" class="va-search-input form-control border-start-0 ps-0" placeholder="Search records..." onkeyup="diorDocFilterPatientRecords(this.value)">
                 </div>
                 
                 <button type="button" class="btn btn-sm" id="dior-pr-bulk-delete" style="display: none; background-color: #EF4444; color: white; height: 38px; width: 38px; padding: 0; border-radius: 6px; border: none; display: none; align-items: center; justify-content: center;">
@@ -46,11 +46,11 @@
         </div>
 
         <div class="va-table-wrapper">
-            <table class="va-table dior-doc-table" id="dior-patient-records-table">
+            <table class="va-table dior-doc-table table table-hover" id="dior-patient-records-table">
                 <thead>
                     <tr>
                         <th style="width: 40px; text-align: center;">
-                            <input type="checkbox" id="pr-select-all" class="dior-checkbox">
+                            <input type="checkbox" id="pr-select-all" class="dior-checkbox form-check-input">
                         </th>
                         <th>PATIENT ID <i class="fas fa-sort" style="color: #CBD5E1; margin-left: 5px; font-size: 10px;"></i></th>
                         <th>FULL NAME <i class="fas fa-sort" style="color: #CBD5E1; margin-left: 5px; font-size: 10px;"></i></th>
@@ -81,7 +81,7 @@
                     ?>
                     <tr class="pr-row" data-search="<?php echo strtolower(esc_attr($r[1] . ' ' . $r[0] . ' ' . $r[5])); ?>">
                         <td style="text-align: center;">
-                            <input type="checkbox" class="dior-checkbox pr-row-checkbox">
+                            <input type="checkbox" class="dior-checkbox pr-row-checkbox form-check-input">
                         </td>
                         <td><?php echo esc_html($r[0]); ?></td>
                         <td style="font-weight: 500; color: #1E293B;"><?php echo esc_html($r[1]); ?></td>
@@ -109,8 +109,8 @@
                         </td>
                         <td>
                             <div class="va-row-actions" style="justify-content: center;">
-                                <button class="va-action-btn-sm va-btn-edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
-                                <button class="va-action-btn-sm va-btn-delete"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
+                                <button class="va-action-btn-sm va-btn-edit btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
+                                <button class="va-action-btn-sm va-btn-delete btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
                             </div>
                         </td>
                     </tr>

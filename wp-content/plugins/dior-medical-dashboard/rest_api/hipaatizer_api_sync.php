@@ -64,16 +64,16 @@ final class Dior_HIPAAtizer_API_Sync {
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
         echo '<input type="hidden" name="action" value="dior_hipaatizer_save_settings">';
         wp_nonce_field('dior_hipaatizer_save_settings');
-        echo '<table class="form-table"><tbody>';
-        echo '<tr><th><label for="dior_hipaa_api_key">HIPAAtizer API Key</label></th><td><input type="password" autocomplete="new-password" class="regular-text" id="dior_hipaa_api_key" name="api_key" value="" placeholder="' . esc_attr($settings['api_key'] ? 'Saved — leave blank to keep current key' : 'Paste API key') . '"><p class="description">Key is stored server-side and never displayed after saving. If DIOR_HIPAATIZER_API_KEY is defined in wp-config.php, that constant takes precedence.</p></td></tr>';
-        echo '<tr><th><label for="dior_hipaa_workflow_id">Workflow ID</label></th><td><input type="text" class="regular-text" id="dior_hipaa_workflow_id" name="workflow_id" value="' . esc_attr($settings['workflow_id']) . '" required><p class="description">Copy this from HIPAAtizer → Form Settings → Integrations → REST API Helper.</p></td></tr>';
-        echo '</tbody></table><p><button class="button button-primary">Save Settings</button></p></form>';
+        echo '<table class="form-table table"><tbody>';
+        echo '<tr><th><label for="dior_hipaa_api_key">HIPAAtizer API Key</label></th><td><input type="password" autocomplete="new-password" class="regular-text form-control" id="dior_hipaa_api_key" name="api_key" value="" placeholder="' . esc_attr($settings['api_key'] ? 'Saved — leave blank to keep current key' : 'Paste API key') . '"><p class="description">Key is stored server-side and never displayed after saving. If DIOR_HIPAATIZER_API_KEY is defined in wp-config.php, that constant takes precedence.</p></td></tr>';
+        echo '<tr><th><label for="dior_hipaa_workflow_id">Workflow ID</label></th><td><input type="text" class="regular-text form-control" id="dior_hipaa_workflow_id" name="workflow_id" value="' . esc_attr($settings['workflow_id']) . '" required><p class="description">Copy this from HIPAAtizer → Form Settings → Integrations → REST API Helper.</p></td></tr>';
+        echo '</tbody></table><p><button class="button button-primary btn">Save Settings</button></p></form>';
         echo '<hr><h2>Manual Sync</h2><p>Fetch submissions and import only records whose email matches an existing WordPress patient. This process does not display patient data.</p>';
         echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '"><input type="hidden" name="action" value="dior_hipaatizer_sync_now">';
         wp_nonce_field('dior_hipaatizer_sync_now');
-        echo '<button class="button button-secondary">Sync Now</button></form>';
+        echo '<button class="button button-secondary btn">Sync Now</button></form>';
         if (is_array($last) && !empty($last['time'])) {
-            echo '<h2>Last Sync Summary</h2><table class="widefat striped" style="max-width:650px"><tbody>';
+            echo '<h2>Last Sync Summary</h2><table class="widefat striped table" style="max-width:650px"><tbody>';
             echo '<tr><th>Time</th><td>' . esc_html($last['time']) . '</td></tr>';
             echo '<tr><th>Status</th><td>' . esc_html($last['status'] ?? 'unknown') . '</td></tr>';
             echo '<tr><th>Found</th><td>' . absint($last['found'] ?? 0) . '</td></tr>';

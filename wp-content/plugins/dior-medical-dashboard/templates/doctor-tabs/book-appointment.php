@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/book-appointment.css?v=' . time()); ?>">
-
 <section class="dior-tab-panel appointment-form-wrapper" id="tab-doc-appointments-book" style="display: none;">
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center;">

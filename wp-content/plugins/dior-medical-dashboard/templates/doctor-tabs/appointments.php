@@ -59,9 +59,9 @@
                         
                         <!-- Left Controls: Navigation + Today Button -->
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <button type="button" class="cal-nav-btn" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;"><i class="fas fa-chevron-left"></i></button>
-                            <button type="button" class="cal-nav-btn" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;"><i class="fas fa-chevron-right"></i></button>
-                            <button type="button" class="cal-today-btn" style="background: #6366f1; color: #ffffff; border: none; border-radius: 20px; padding: 6px 18px; font-size: 12px; font-weight: 600; cursor: pointer;">today</button>
+                            <button type="button" class="cal-nav-btn btn" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;"><i class="fas fa-chevron-left"></i></button>
+                            <button type="button" class="cal-nav-btn btn" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;"><i class="fas fa-chevron-right"></i></button>
+                            <button type="button" class="cal-today-btn btn" style="background: #6366f1; color: #ffffff; border: none; border-radius: 20px; padding: 6px 18px; font-size: 12px; font-weight: 600; cursor: pointer;">today</button>
                         </div>
 
                         <!-- Center Month Title -->
@@ -69,10 +69,10 @@
 
                         <!-- Right View Toggles -->
                         <div class="cal-view-toggles" style="display: flex; background: #f1f5f9; border-radius: 20px; padding: 3px; gap: 2px;">
-                            <button type="button" class="cal-view-btn active" style="background: #6366f1; color: #ffffff; border: none; border-radius: 16px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">month</button>
-                            <button type="button" class="cal-view-btn" style="background: transparent; color: #64748b; border: none; border-radius: 16px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">week</button>
-                            <button type="button" class="cal-view-btn" style="background: transparent; color: #64748b; border: none; border-radius: 16px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">day</button>
-                            <button type="button" class="cal-view-btn" style="background: transparent; color: #64748b; border: none; border-radius: 16px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">list</button>
+                            <button type="button" class="cal-view-btn active btn" style="background: #6366f1; color: #ffffff; border: none; border-radius: 16px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">month</button>
+                            <button type="button" class="cal-view-btn btn" style="background: transparent; color: #64748b; border: none; border-radius: 16px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">week</button>
+                            <button type="button" class="cal-view-btn btn" style="background: transparent; color: #64748b; border: none; border-radius: 16px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">day</button>
+                            <button type="button" class="cal-view-btn btn" style="background: transparent; color: #64748b; border: none; border-radius: 16px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">list</button>
                         </div>
 
                     </div>

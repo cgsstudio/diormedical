@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/css/notifications.css?v=' . time()); ?>">
-
 <section class="dior-tab-panel notifications-tab-panel" id="tab-doc-notifications-system" style="display: none; background-color: #f8fafc; padding: 20px; position: relative; overflow: hidden;">
     
     <!-- Header & Breadcrumb -->
@@ -122,16 +120,16 @@
                     <div class="filters-bar px-4 py-3 border-top" style="padding: 14px 24px; background: #f8fafc; border-bottom: 1px solid #edf1f5;">
                         <div class="row align-items-center g-3" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; width: 100%; margin: 0;">
                             <div style="flex: 1 1 300px; min-width: 0;">
-                                <div class="search-input-group">
-                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                    <input type="text" id="dior-sys-notif-search" onkeyup="diorSearchSystemNotifications()" placeholder="Search notifications by title or message..." class="form-control">
+                                <div class="input-group input-group-sm dior-bs-search-group">
+                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="dior-sys-notif-search" onkeyup="diorSearchSystemNotifications()" placeholder="Search notifications by title or message..." class="form-control border-start-0 ps-0">
                                 </div>
                             </div>
                             <div style="flex: 0 0 auto;">
                                 <div class="segmented-nav">
-                                    <button type="button" class="segmented-tab active" onclick="diorFilterSystemNotif(this, 'all')"> All <span class="count-pill">8</span></button>
-                                    <button type="button" class="segmented-tab" onclick="diorFilterSystemNotif(this, 'unread')"> Unread <span class="count-pill">4</span></button>
-                                    <button type="button" class="segmented-tab" onclick="diorFilterSystemNotif(this, 'read')"> Read <span class="count-pill">4</span></button>
+                                    <button type="button" class="segmented-tab active btn" onclick="diorFilterSystemNotif(this, 'all')"> All <span class="count-pill">8</span></button>
+                                    <button type="button" class="segmented-tab btn" onclick="diorFilterSystemNotif(this, 'unread')"> Unread <span class="count-pill">4</span></button>
+                                    <button type="button" class="segmented-tab btn" onclick="diorFilterSystemNotif(this, 'read')"> Read <span class="count-pill">4</span></button>
                                 </div>
                             </div>
                         </div>

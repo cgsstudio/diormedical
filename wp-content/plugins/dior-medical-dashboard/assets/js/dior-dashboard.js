@@ -747,7 +747,7 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                     }
                 });
             } else {
-                alert('Please complete your Personal Information in your Profile before booking.');
+                Swal.fire({ title: 'Complete Profile', text: 'Please complete your Personal Information in your Profile before booking.', icon: 'warning', confirmButtonColor: '#2C6CB1' });
                 switchTab('profile');
             }
         }
@@ -1464,11 +1464,7 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                 const todayStr = new Date().toISOString().split('T')[0];
                 if (newDate < todayStr) {
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({ title: 'Invalid Date', text: 'Reschedule date cannot be in the past.', icon: 'warning', confirmButtonColor: '#2C6CB1' });
-                    } else {
-                        alert('Reschedule date cannot be in the past.');
-                    }
+                    Swal.fire({ title: 'Invalid Date', text: 'Reschedule date cannot be in the past.', icon: 'warning', confirmButtonColor: '#2C6CB1' });
                     return;
                 }
 
@@ -1593,10 +1589,6 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                             doSubmitCancellation(aid, reasonVal);
                         }
                     });
-                } else {
-                    if (confirm('Are you sure you wish to cancel this consultation?')) {
-                        doSubmitCancellation(aid, reasonVal);
-                    }
                 }
             });
 
@@ -2404,7 +2396,7 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                 patientMediaFrame.open();
             } else {
-                alert('WordPress Media Library could not be loaded. Please refresh the page.');
+                Swal.fire({ title: 'Media Library Error', text: 'WordPress Media Library could not be loaded. Please refresh the page.', icon: 'error' });
             }
         };
 
@@ -2480,10 +2472,6 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                             doRemove();
                         }
                     });
-                } else {
-                    if (confirm('Are you sure you want to remove your profile photo?')) {
-                        doRemove();
-                    }
                 }
             });
         }
@@ -2706,7 +2694,7 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                 patSigMediaFrame.open();
             } else {
-                alert('WordPress Media Library could not be loaded. Please refresh the page.');
+                Swal.fire({ title: 'Media Library Error', text: 'WordPress Media Library could not be loaded. Please refresh the page.', icon: 'error' });
             }
         };
 
@@ -2772,10 +2760,6 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                         doRemove();
                     }
                 });
-            } else {
-                if (confirm('Are you sure you want to remove your electronic signature?')) {
-                    doRemove();
-                }
             }
         };
 
@@ -3295,14 +3279,35 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                 if (found && found.items && found.items.length) {
                     items = found.items;
                 } else {
-                    items = [{
-                        id: actualId + '-1',
-                        medication: (found ? (found.medication || found.name) : '') || fallbackMed || 'Prescription Medication',
-                        dosage: (found ? (found.dosage || found.dose) : '') || 'As Prescribed',
-                        instructions: (found ? (found.instructions || found.notes) : '') || fallbackInst || 'Take as directed by prescribing physician.',
-                        quantity: (found ? found.quantity : '') || 'As Prescribed',
-                        refills: (found ? found.refills : '') || '0 Refills Remaining'
-                    }];
+                    var rawMedText = (found ? (found.medication || found.name) : '') || fallbackMed || 'Prescription Medication';
+                    var rawDosageText = (found ? (found.dosage || found.dose) : '') || 'As Prescribed';
+                    var rawInstText = (found ? (found.instructions || found.notes) : '') || fallbackInst || 'Take as directed by prescribing physician.';
+
+                    var medParts = rawMedText.split(/;\s*|\r\n|\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+                    var doseParts = rawDosageText.split(/\|\s*|;\s*|\r\n|\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+                    var instParts = rawInstText.split(/\|\|\s*|\r\n|\n/).map(function(s) { return s.trim(); }).filter(Boolean);
+
+                    if (medParts.length > 1) {
+                        items = medParts.map(function(m, idx) {
+                            return {
+                                id: actualId + '-' + (idx + 1),
+                                medication: m.replace(/^\d+\.\s*/, ''),
+                                dosage: doseParts[idx] ? doseParts[idx].replace(/^\d+\.\s*/, '') : rawDosageText,
+                                instructions: instParts[idx] ? instParts[idx].replace(/^\d+\.\s*/, '') : rawInstText,
+                                quantity: (found ? found.quantity : '') || 'As Prescribed',
+                                refills: (found ? found.refills : '') || '0 Refills Remaining'
+                            };
+                        });
+                    } else {
+                        items = [{
+                            id: actualId + '-1',
+                            medication: rawMedText,
+                            dosage: rawDosageText,
+                            instructions: rawInstText,
+                            quantity: (found ? found.quantity : '') || 'As Prescribed',
+                            refills: (found ? found.refills : '') || '0 Refills Remaining'
+                        }];
+                    }
                 }
 
                 if (tableBody) {
@@ -3373,16 +3378,19 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
                 window.diorOpenModal('modal-view-rx-detail');
             } else {
-                alert('Prescription #' + rxId);
+                Swal.fire({ title: 'Prescription Details', text: 'Prescription #' + rxId, icon: 'info' });
             }
         };
 
         window.diorRequestRefill = function(rxId) {
-            if (typeof showToast === 'function') {
-                showToast('Refill request submitted electronically to prescribing physician for Rx #' + rxId, false);
-            } else {
-                alert('Refill request submitted electronically to prescribing physician for Rx #' + rxId);
-            }
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Refill Requested',
+                text: 'Refill request submitted electronically to prescribing physician for Rx #' + rxId,
+                showConfirmButton: false,
+                timer: 2500
+            });
         };
 
         window.diorViewAppointmentDetails = function(apptId) {
@@ -3460,7 +3468,7 @@ window.diorDownloadRxPdf = function(rxId) {
             }
         }
     }
-    if (!element) { alert('Prescription details not found for Rx #' + rxId); return; }
+    if (!element) { Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' }); return; }
     
     var cleanFileName = 'Dior-Prescription-' + String(rxId).replace(/[^a-zA-Z0-9]/g, '-') + '.pdf';
     var innerContent = element.innerHTML;

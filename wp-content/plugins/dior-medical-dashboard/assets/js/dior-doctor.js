@@ -138,16 +138,12 @@ function initDoctorDashboard() {
             if (!file) return;
 
             if (file.size > 5 * 1024 * 1024) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'File Too Large',
-                        text: 'Profile photo must be 5MB or less.',
-                        confirmButtonColor: '#2C6CB1'
-                    });
-                } else {
-                    alert('Profile photo must be 5MB or less.');
-                }
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'File Too Large',
+                    text: 'Profile photo must be 5MB or less.',
+                    confirmButtonColor: '#2C6CB1'
+                });
                 return;
             }
 
@@ -206,16 +202,12 @@ function initDoctorDashboard() {
                         }
                     } else {
                         const errMsg = (res && res.data && res.data.message) ? res.data.message : 'Could not upload photo.';
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Upload Failed',
-                                text: errMsg,
-                                confirmButtonColor: '#2C6CB1'
-                            });
-                        } else {
-                            alert(errMsg);
-                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Upload Failed',
+                            text: errMsg,
+                            confirmButtonColor: '#2C6CB1'
+                        });
                     }
                 })
                 .catch((error) => {
@@ -223,11 +215,7 @@ function initDoctorDashboard() {
                         directBtn.disabled = false;
                         directBtn.innerHTML = origHtml || '<i class="fas fa-cloud-arrow-up"></i> <span>Upload Photo</span>';
                     }
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({ icon: 'error', title: 'Upload Failed', text: error && error.message ? error.message : 'Network error while uploading photo.' });
-                    } else {
-                        alert('Upload failed: ' + (error && error.message ? error.message : 'Network error'));
-                    }
+                    Swal.fire({ icon: 'error', title: 'Upload Failed', text: error && error.message ? error.message : 'Network error while uploading photo.' });
                 });
         }
     });
@@ -292,16 +280,12 @@ function initDoctorDashboard() {
                             }
                         } else {
                             const errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to update photo.';
-                            if (typeof Swal !== 'undefined') {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Photo Update Failed',
-                                    text: errMsg,
-                                    confirmButtonColor: '#2C6CB1'
-                                });
-                            } else {
-                                alert(errMsg);
-                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Photo Update Failed',
+                                text: errMsg,
+                                confirmButtonColor: '#2C6CB1'
+                            });
                         }
                     })
                     .catch(err => {
@@ -387,7 +371,7 @@ window.diorDocHandleSigFileSelect = function (input) {
     const file = input.files[0];
 
     if (!file.type.match('image/png') && !file.type.match('image/webp')) {
-        alert('Please upload a PNG image with a transparent background.');
+        Swal.fire({ icon: 'warning', title: 'Invalid File', text: 'Please upload a PNG image with a transparent background.' });
         return;
     }
 
@@ -415,19 +399,15 @@ window.diorDocHandleSigFileSelect = function (input) {
             }
             if (res.success && res.data && res.data.signature_url) {
                 window.diorDocApplySignatureUI(res.data.signature_url);
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        position: "top-end",
-                        icon: "success",
-                        title: "Signature Uploaded",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                } else {
-                    alert('Doctor signature uploaded successfully!');
-                }
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Signature Uploaded",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             } else {
-                alert((res.data && res.data.message) ? res.data.message : 'Error uploading signature.');
+                Swal.fire({ icon: 'error', title: 'Upload Failed', text: (res.data && res.data.message) ? res.data.message : 'Error uploading signature.' });
             }
         })
         .catch(() => {
@@ -435,7 +415,7 @@ window.diorDocHandleSigFileSelect = function (input) {
                 uploadBtn.disabled = false;
                 uploadBtn.innerHTML = origHtml;
             }
-            alert('Network error while uploading signature.');
+            Swal.fire({ icon: 'error', title: 'Upload Error', text: 'Network error while uploading signature.' });
         });
 };
 
@@ -478,76 +458,72 @@ window.diorDocOpenSigMediaLibrary = function () {
                 .then(response => {
                     if (response && response.success) {
                         window.diorDocApplySignatureUI(sigUrl);
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "Signature Selected",
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Signature Selected",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
                     } else {
-                        alert((response && response.data && response.data.message) ? response.data.message : 'Failed to save signature.');
+                        Swal.fire({ icon: 'error', title: 'Failed', text: (response && response.data && response.data.message) ? response.data.message : 'Failed to save signature.' });
                     }
                 })
-                .catch(() => alert('Connection error while saving signature.'));
+                .catch(() => Swal.fire({ icon: 'error', title: 'Connection Error', text: 'Connection error while saving signature.' }));
         });
 
         doctorSigMediaFrame.open();
     } else {
-        alert('WordPress Media Library could not be loaded.');
+        Swal.fire({ icon: 'error', title: 'Media Library Error', text: 'WordPress Media Library could not be loaded.' });
     }
 };
 
 window.diorDocRemoveSignature = function () {
-    if (!confirm('Are you sure you want to remove your digital signature?')) return;
+    Swal.fire({
+        title: 'Remove Signature?',
+        text: 'Are you sure you want to remove your digital signature?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#EF4444',
+        cancelButtonColor: '#64748B',
+        confirmButtonText: 'Yes, remove',
+        cancelButtonText: 'Cancel'
+    }).then(function (result) {
+        if (!result.isConfirmed) return;
 
-    const removeBtn = document.getElementById('dior-btn-doctor-sig-remove');
-    const origHtml = removeBtn ? removeBtn.innerHTML : '';
-    if (removeBtn) {
-        removeBtn.disabled = true;
-        removeBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Removing...';
-    }
+        const removeBtn = document.getElementById('dior-btn-doctor-sig-remove');
+        const origHtml = removeBtn ? removeBtn.innerHTML : '';
+        if (removeBtn) {
+            removeBtn.disabled = true;
+            removeBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Removing...';
+        }
 
-    const formData = new FormData();
-    formData.append('action', 'dior_doctor_remove_signature');
-    formData.append('nonce', window.diorDocNonce || (typeof getDiorDocNonce === 'function' ? getDiorDocNonce() : ''));
+        const formData = new FormData();
+        formData.append('action', 'dior_doctor_remove_signature');
+        formData.append('nonce', window.diorDocNonce || (typeof getDiorDocNonce === 'function' ? getDiorDocNonce() : ''));
 
-    fetch(window.diorDocAjax || (typeof getDiorDocAjax === 'function' ? getDiorDocAjax() : '/wp-admin/admin-ajax.php'), {
-        method: 'POST',
-        body: formData
-    })
+        fetch(window.diorDocAjax || (typeof getDiorDocAjax === 'function' ? getDiorDocAjax() : '/wp-admin/admin-ajax.php'), {
+            method: 'POST',
+            body: formData
+        })
         .then(r => r.json())
         .then(res => {
-            if (removeBtn) {
-                removeBtn.disabled = false;
-                removeBtn.innerHTML = origHtml;
-            }
             if (res.success) {
-                window.diorDocClearSignatureUI();
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        position: "top-end",
-                        icon: "success",
-                        title: "Signature Removed",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                } else {
-                    alert('Signature removed.');
-                }
+                const preview = document.getElementById('dior-doc-sig-preview');
+                if (preview) preview.innerHTML = '<div class="dior-sig-empty-state"><i class="fa-solid fa-signature"></i><p>No digital signature on file.</p></div>';
+                if (removeBtn) removeBtn.style.display = 'none';
+                Swal.fire({ icon: 'success', title: 'Removed', text: 'Digital signature removed successfully.', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
             } else {
-                alert(res.data ? res.data.message : 'Error removing signature.');
+                Swal.fire({ icon: 'error', title: 'Error', text: res.data || 'Failed to remove signature.' });
             }
         })
-        .catch(() => {
+        .finally(() => {
             if (removeBtn) {
                 removeBtn.disabled = false;
                 removeBtn.innerHTML = origHtml;
             }
-            alert('Network error removing signature.');
         });
+    });
 };
 
 window.diorDocApplySignatureUI = function (sigUrl) {
@@ -1013,10 +989,6 @@ window.diorDocSendApptReminder = function (apptId) {
                 doSendReminder(apptId);
             }
         });
-    } else {
-        if (confirm('Send appointment reminder to patient and doctor?')) {
-            doSendReminder(apptId);
-        }
     }
 
     function doSendReminder(aid) {
@@ -1041,33 +1013,21 @@ window.diorDocSendApptReminder = function (apptId) {
             .then(r => r.json())
             .then(res => {
                 if (res.success) {
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "success",
-                            title: "Reminder Sent!",
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    } else {
-                        alert(res.data.message || 'Reminder sent successfully!');
-                    }
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Reminder Sent!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                 } else {
                     const msg = (res.data && res.data.message) ? res.data.message : 'Could not send reminder.';
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({ title: 'Notice', text: msg, icon: 'error', confirmButtonColor: '#2C6CB1' });
-                    } else {
-                        alert(msg);
-                    }
+                    Swal.fire({ title: 'Notice', text: msg, icon: 'error', confirmButtonColor: '#2C6CB1' });
                 }
-            })
-            .catch(() => {
-                if (typeof Swal !== 'undefined') {
+                })
+                .catch(() => {
                     Swal.fire('Error', 'Network connection error.', 'error');
-                } else {
-                    alert('Network error');
-                }
-            });
+                });
     }
 };
 
@@ -1092,13 +1052,9 @@ window.diorDocUpdateApptStatus = function (selectEl, patientId, apptId) {
                 if (result.isConfirmed) {
                     commitStatusUpdate(selectEl, patientId, apptId, status);
                 } else {
-                    // Revert select dropdown
                     selectEl.value = prevStatus || 'Confirmed';
                 }
             });
-            return;
-        } else if (!confirm('Are you sure you wish to cancel this appointment?')) {
-            selectEl.value = prevStatus || 'Confirmed';
             return;
         }
     }
@@ -1153,17 +1109,13 @@ window.diorDocUpdateApptStatus = function (selectEl, patientId, apptId) {
                     }
                 } else {
                     el.value = el.getAttribute('data-prev-status') || 'Confirmed';
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire('Error', res.data.message || 'Error updating status', 'error');
-                    } else {
-                        alert(res.data.message || 'Error updating status');
-                    }
+                    Swal.fire('Error', res.data.message || 'Error updating status', 'error');
                 }
             })
             .catch(() => {
                 el.disabled = false;
                 el.value = el.getAttribute('data-prev-status') || 'Confirmed';
-                alert('Network error');
+                Swal.fire('Error', 'Network error', 'error');
             });
     }
 };
@@ -1522,7 +1474,7 @@ window.diorDocAddMedToList = function () {
     const notes = document.getElementById('rx-notes').value.trim();
 
     if (!name || !dose) {
-        alert("Please enter Medication Name and Dosage.");
+        Swal.fire({ icon: 'warning', title: 'Missing Info', text: 'Please enter Medication Name and Dosage.' });
         return;
     }
 
@@ -1588,11 +1540,11 @@ window.diorDocPreviewPrescriptionConfirmation = function () {
     const patientId = pSelect ? pSelect.value : '';
 
     if (!patientId) {
-        alert("Please select a patient first.");
+        Swal.fire({ icon: 'warning', title: 'Patient Required', text: 'Please select a patient first.' });
         return;
     }
     if (!window.diorRxMedicationsList || window.diorRxMedicationsList.length === 0) {
-        alert("Please add at least one medication to the prescription.");
+        Swal.fire({ icon: 'warning', title: 'Medications Required', text: 'Please add at least one medication to the prescription.' });
         return;
     }
 
@@ -1707,7 +1659,7 @@ window.diorDocExecutePrescriptionTransmit = function () {
     const msg = document.getElementById('dior-rx-msg');
 
     if (!patientId || !window.diorRxMedicationsList || window.diorRxMedicationsList.length === 0) {
-        alert("Please ensure a patient and medications are selected.");
+        Swal.fire({ icon: 'warning', title: 'Incomplete Prescription', text: 'Please ensure a patient and medications are selected.' });
         return;
     }
 
@@ -1797,7 +1749,7 @@ window.diorDocExecutePrescriptionTransmit = function () {
                     msg.className = 'dior-st error';
                     msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + (res.data.message || 'Error transmitting prescription.');
                 }
-                alert((res.data && res.data.message) ? res.data.message : 'Failed to transmit prescription.');
+                Swal.fire({ icon: 'error', title: 'Transmission Failed', text: (res.data && res.data.message) ? res.data.message : 'Failed to transmit prescription.' });
             }
         })
         .catch(() => {
@@ -1806,7 +1758,7 @@ window.diorDocExecutePrescriptionTransmit = function () {
                 transmitBtn.innerHTML = origHtml;
             }
             window.diorDocCloseRxConfirmModal();
-            alert('Connection error while transmitting prescription.');
+            Swal.fire({ icon: 'error', title: 'Connection Error', text: 'Connection error while transmitting prescription.' });
         });
 };
 
@@ -1890,8 +1842,6 @@ window.diorDocSaveProfile = function (e) {
                 confirmButtonColor: '#2C6CB1',
                 focusConfirm: true
             });
-        } else {
-            alert('Please fill all required fields: ' + missingList.join(', '));
         }
         return;
     }
@@ -2398,7 +2348,7 @@ window.pchartApplySoapPreset = function (diag, s, o, a, p) {
 window.pchartSaveSoapNote = function (button) {
     const diag = (document.getElementById('soap_diagnosis') && document.getElementById('soap_diagnosis').value.trim()) || '';
     if (!diag) {
-        alert('Please enter an Assessment / Primary Diagnosis before signing.');
+        Swal.fire({ icon: 'warning', title: 'Diagnosis Required', text: 'Please enter an Assessment / Primary Diagnosis before signing.' });
         return;
     }
 
@@ -2432,23 +2382,42 @@ window.pchartSaveSoapNote = function (button) {
             button.innerHTML = origText;
             button.disabled = false;
             if (data.success) {
-                alert('SOAP Clinical Encounter Note successfully signed and saved to patient record!');
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "SOAP Note Signed & Saved",
+                    showConfirmButton: false,
+                    timer: 1800
+                });
                 if (typeof window.diorDocViewPatient === 'function' && pid) {
                     window.diorDocViewPatient(pid);
                 }
             } else {
-                alert('Note saved: ' + (data.data && data.data.message ? data.data.message : 'Recorded in patient chart.'));
+                Swal.fire({ icon: 'warning', title: 'Note Saved', text: (data.data && data.data.message ? data.data.message : 'Recorded in patient chart.') });
             }
         })
         .catch(err => {
             button.innerHTML = origText;
             button.disabled = false;
-            alert('Encounter note signed & recorded successfully!');
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Encounter Note Recorded",
+                showConfirmButton: false,
+                timer: 1800
+            });
         });
 };
 
 window.pchartIssueExcuseLetter = function (button) {
-    alert('Certified Work/School Excuse Letter successfully generated and delivered to patient dashboard!');
+    Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Excuse Letter Generated",
+        text: "Certified Work/School Excuse Letter delivered to patient dashboard!",
+        showConfirmButton: false,
+        timer: 2000
+    });
 };
 
 window.diorOpenDoctorUploadModal = function (patientId) {
@@ -2618,7 +2587,7 @@ window.diorDocSubmitStandaloneLetter = function (e) {
     const select = document.getElementById('doc_gen_patient_select');
     const pid = select.value;
     if (!pid) {
-        alert('Please select a patient first.');
+        Swal.fire({ icon: 'warning', title: 'Patient Required', text: 'Please select a patient first.' });
         return;
     }
 
@@ -2652,25 +2621,20 @@ window.diorDocSubmitStandaloneLetter = function (e) {
             btn.disabled = false;
             btn.innerHTML = origHtml;
             if (res.success) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Medical Letter Published!',
-                        text: 'The certified medical letter has been published to the patient portal.',
-                        confirmButtonColor: '#00A896'
-                    }).then(() => window.location.reload());
-                } else {
-                    alert(res.data.message || 'Medical Letter published and sent to patient portal successfully!');
-                    window.location.reload();
-                }
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Medical Letter Published!',
+                    text: 'The certified medical letter has been published to the patient portal.',
+                    confirmButtonColor: '#00A896'
+                }).then(() => window.location.reload());
             } else {
-                alert(res.data.message || 'Error publishing letter.');
+                Swal.fire({ icon: 'error', title: 'Publishing Error', text: res.data.message || 'Error publishing letter.' });
             }
         })
         .catch(err => {
             btn.disabled = false;
             btn.innerHTML = origHtml;
-            alert('Network error publishing letter.');
+            Swal.fire({ icon: 'error', title: 'Network Error', text: 'Network error publishing letter.' });
         });
 };
 
@@ -2776,15 +2740,15 @@ window.diorDocSubmitUpload = function (e) {
     const submitBtn = document.getElementById('doc-upload-submit-btn');
 
     if (!patientSelect || !patientSelect.value) {
-        alert('Please select a patient.');
+        Swal.fire({ icon: 'warning', title: 'Patient Required', text: 'Please select a patient.' });
         return;
     }
     if (!titleInput || !titleInput.value.trim()) {
-        alert('Please enter a document title.');
+        Swal.fire({ icon: 'warning', title: 'Title Required', text: 'Please enter a document title.' });
         return;
     }
     if (!fileInput || !fileInput.files || !fileInput.files.length) {
-        alert('Please select a file to upload.');
+        Swal.fire({ icon: 'warning', title: 'File Required', text: 'Please select a file to upload.' });
         return;
     }
 
@@ -2809,11 +2773,19 @@ window.diorDocSubmitUpload = function (e) {
                 submitBtn.innerHTML = origBtnHtml;
             }
             if (res.success) {
-                alert(res.data.message || 'Document uploaded and secured successfully!');
-                window.diorDocCloseUploadModal();
-                window.location.reload();
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Document Uploaded",
+                    text: res.data.message || 'Document uploaded and secured successfully!',
+                    showConfirmButton: false,
+                    timer: 1800
+                }).then(() => {
+                    window.diorDocCloseUploadModal();
+                    window.location.reload();
+                });
             } else {
-                alert(res.data.message || 'Error uploading document.');
+                Swal.fire({ icon: 'error', title: 'Upload Failed', text: res.data.message || 'Error uploading document.' });
             }
         })
         .catch(err => {
@@ -2821,22 +2793,29 @@ window.diorDocSubmitUpload = function (e) {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = origBtnHtml;
             }
-            alert('Network error during file upload.');
+            Swal.fire({ icon: 'error', title: 'Network Error', text: 'Network error during file upload.' });
         });
 };
 
-// Handle Document Deletion
 window.diorDocDeleteDocument = function (docId, btn) {
-    if (!confirm('Are you sure you want to delete this document from the secure vault? This action cannot be undone.')) {
-        return;
-    }
+    Swal.fire({
+        title: 'Delete Document?',
+        text: 'Are you sure you want to delete this document from the secure vault? This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#EF4444',
+        cancelButtonColor: '#64748B',
+        confirmButtonText: 'Yes, delete',
+        cancelButtonText: 'Cancel'
+    }).then(function (result) {
+        if (!result.isConfirmed) return;
 
-    const row = btn ? btn.closest('tr') : null;
-    const origHtml = btn ? btn.innerHTML : '';
-    if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-    }
+        const row = btn ? btn.closest('tr') : null;
+        const origHtml = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        }
 
     const fd = new FormData();
     fd.append('action', 'dior_delete_document');
@@ -2863,7 +2842,7 @@ window.diorDocDeleteDocument = function (docId, btn) {
                     btn.disabled = false;
                     btn.innerHTML = origHtml;
                 }
-                alert(res.data.message || 'Error deleting document.');
+                Swal.fire({ icon: 'error', title: 'Delete Failed', text: res.data.message || 'Error deleting document.' });
             }
         })
         .catch(err => {
@@ -2871,7 +2850,7 @@ window.diorDocDeleteDocument = function (docId, btn) {
                 btn.disabled = false;
                 btn.innerHTML = origHtml;
             }
-            alert('Network error deleting document.');
+            Swal.fire({ icon: 'error', title: 'Network Error', text: 'Network error deleting document.' });
         });
 };
 

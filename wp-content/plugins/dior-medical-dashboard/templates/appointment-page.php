@@ -73,13 +73,13 @@ $doctors = get_users(['role' => 'dior_doctor']);
                         <h4 id="summary-doc-name">Dr. Name</h4>
                         <span id="summary-doc-spec" class="spec">Specialty</span>
                     </div>
-                    <button type="button" class="dior-btn-change-doc" onclick="diorGoBackToStep1()">Change</button>
+                    <button type="button" class="dior-btn-change-doc btn" onclick="diorGoBackToStep1()">Change</button>
                 </div>
 
                 <div class="dior-datetime-picker">
                     <div class="dior-date-col">
                         <h4><i class="far fa-calendar-days"></i> Choose Date</h4>
-                        <input type="date" id="dior_appointment_date" class="dior-glass-input" min="<?php echo date('Y-m-d'); ?>" required>
+                        <input type="date" id="dior_appointment_date" class="dior-glass-input form-control" min="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                     <div class="dior-time-col">
                         <h4><i class="far fa-clock"></i> Choose Time Slot</h4>
@@ -90,8 +90,8 @@ $doctors = get_users(['role' => 'dior_doctor']);
                 </div>
 
                 <div class="dior-booking-actions">
-                    <button type="button" class="dior-btn-secondary" onclick="diorGoBackToStep1()">Back</button>
-                    <button type="button" class="dior-btn-primary" onclick="diorProceedToStep3()">Continue <i class="fas fa-arrow-right"></i></button>
+                    <button type="button" class="dior-btn-secondary btn" onclick="diorGoBackToStep1()">Back</button>
+                    <button type="button" class="dior-btn-primary btn" onclick="diorProceedToStep3()">Continue <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
 
@@ -129,12 +129,12 @@ $doctors = get_users(['role' => 'dior_doctor']);
 
                     <div class="dior-reason-field">
                         <label>Reason for Visit (Optional)</label>
-                        <textarea id="dior_appointment_reason" class="dior-glass-input" rows="3" placeholder="Briefly describe your symptoms or request..."></textarea>
+                        <textarea id="dior_appointment_reason" class="dior-glass-input form-control" rows="3" placeholder="Briefly describe your symptoms or request..."></textarea>
                     </div>
 
                     <div class="dior-booking-actions">
-                        <button type="button" class="dior-btn-secondary" onclick="diorGoBackToStep2()">Back</button>
-                        <button type="button" class="dior-btn-gold" id="btn-confirm-booking" onclick="diorSubmitBooking()">
+                        <button type="button" class="dior-btn-secondary btn" onclick="diorGoBackToStep2()">Back</button>
+                        <button type="button" class="dior-btn-gold btn" id="btn-confirm-booking" onclick="diorSubmitBooking()">
                             <span>Confirm & Book Appointment</span>
                             <i class="fas fa-check"></i>
                         </button>
@@ -218,11 +218,11 @@ function diorProceedToStep3() {
     const date = document.getElementById('dior_appointment_date').value;
     
     if (!date) {
-        alert("Please select a date.");
+        Swal.fire({ icon: 'warning', title: 'Date Required', text: 'Please select a date.' });
         return;
     }
     if (!diorSelectedTime) {
-        alert("Please select a time slot.");
+        Swal.fire({ icon: 'warning', title: 'Time Slot Required', text: 'Please select a time slot.' });
         return;
     }
 
@@ -256,12 +256,12 @@ function diorSubmitBooking() {
             document.getElementById('dior-step-3').style.display = 'none';
             document.getElementById('dior-step-success').style.display = 'block';
         } else {
-            alert(response.data || "An error occurred while booking.");
+            Swal.fire({ icon: 'error', title: 'Booking Failed', text: response.data || 'An error occurred while booking.' });
             btn.innerHTML = '<span>Confirm & Book Appointment</span><i class="fas fa-check"></i>';
             btn.disabled = false;
         }
     }).fail(function() {
-        alert("Server error. Please try again.");
+        Swal.fire({ icon: 'error', title: 'Server Error', text: 'Server error. Please try again.' });
         btn.innerHTML = '<span>Confirm & Book Appointment</span><i class="fas fa-check"></i>';
         btn.disabled = false;
     });

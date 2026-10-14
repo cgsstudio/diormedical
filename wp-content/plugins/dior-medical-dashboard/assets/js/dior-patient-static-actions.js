@@ -153,16 +153,12 @@
             '',
             feedback.message || ''
         ].join('\n');
-        if (window.Swal) {
-            Swal.fire({
-                title: feedback.subject || 'Patient Feedback',
-                text: details,
-                icon: 'info',
-                confirmButtonColor: '#2C6CB1'
-            });
-        } else {
-            window.alert((feedback.subject || 'Patient Feedback') + '\n\n' + details);
-        }
+        Swal.fire({
+            title: feedback.subject || 'Patient Feedback',
+            text: details,
+            icon: 'info',
+            confirmButtonColor: '#2C6CB1'
+        });
     };
 
     window.diorEditPatientFeedback = function (button) {
@@ -211,9 +207,6 @@
                     diorConfirmDeleteFeedback(feedbackId, row);
                 }
             });
-        } else if (window.confirm('Are you sure you want to delete this feedback?')) {
-            diorConfirmDeleteFeedback(feedbackId, row);
-        }
     };
 
     function diorConfirmDeleteFeedback(feedbackId, row) {
@@ -222,8 +215,7 @@
         var nonce = cfg.nonce || cfg.portal_nonce || '';
 
         if (!nonce) {
-            if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Session expired. Please refresh the page.' });
-            else window.alert('Session expired. Please refresh the page.');
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Session expired. Please refresh the page.' });
             return;
         }
 
@@ -243,25 +235,19 @@
                         var count = tbody ? tbody.querySelectorAll('tr[data-feedback-id]').length : 0;
                         totalLabel.textContent = count + ' total feedback records';
                     }
-                    if (window.Swal) {
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "success",
-                            title: "Feedback Deleted",
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    } else {
-                        window.alert('Feedback deleted successfully.');
-                    }
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Feedback Deleted",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                 } else {
-                    if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: result.data.message || 'Failed to delete feedback.' });
-                    else window.alert(result.data.message || 'Failed to delete feedback.');
+                    Swal.fire({ icon: 'error', title: 'Error', text: result.data.message || 'Failed to delete feedback.' });
                 }
             })
             .catch(function (error) {
-                if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Network error. Please try again.' });
-                else window.alert('Network error. Please try again.');
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Network error. Please try again.' });
             });
     }
 
@@ -274,8 +260,7 @@
         var nonce = cfg.nonce || cfg.portal_nonce || '';
         if (!form || !nonce) {
             var configError = 'Your secure session is missing. Refresh the page and try again.';
-            if (window.Swal) Swal.fire({ icon: 'error', title: 'Feedback Not Sent', text: configError });
-            else window.alert(configError);
+            Swal.fire({ icon: 'error', title: 'Feedback Not Sent', text: configError });
             return false;
         }
 
@@ -349,12 +334,11 @@
                         timer: 1500
                     });
                 } else {
-                    window.alert(result.data.message);
+                    Swal.fire({ icon: 'error', title: 'Error', text: result.data.message || 'Could not save feedback.' });
                 }
             })
             .catch(function (error) {
-                if (window.Swal) Swal.fire({ icon: 'error', title: 'Feedback Not Sent', text: error.message });
-                else window.alert(error.message);
+                Swal.fire({ icon: 'error', title: 'Feedback Not Sent', text: error.message });
             })
             .finally(function () {
                 if (button) {
@@ -370,7 +354,16 @@
         if (!row) return;
         if (type !== 'document') {
             var label = type === 'telemedicine' ? 'telemedicine session' : (type === 'emergency contact' ? 'emergency contact' : 'feedback');
-            if (window.confirm('Delete this ' + label + '?')) row.remove();
+            Swal.fire({
+                title: 'Delete ' + label + '?',
+                text: 'Are you sure you want to delete this ' + label + '?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                confirmButtonText: 'Delete'
+            }).then(function(r) {
+                if (r.isConfirmed) row.remove();
+            });
             return;
         }
         var docId = row.getAttribute('data-doc-id') || '';
@@ -387,14 +380,21 @@
                 .then(function(result){
                     if(!result.success) throw new Error((result.data && result.data.message) || 'Could not delete document.');
                     row.remove();
-                    if(window.Swal) Swal.fire({position:'top-end',icon:'success',title:'Document Deleted',showConfirmButton:false,timer:1400});
+                    Swal.fire({position:'top-end',icon:'success',title:'Document Deleted',showConfirmButton:false,timer:1400});
                 }).catch(function(err){
-                    if(window.Swal) Swal.fire({icon:'error',title:'Delete Failed',text:err.message}); else window.alert(err.message);
+                    Swal.fire({icon:'error',title:'Delete Failed',text:err.message});
                 });
         };
-        if(window.Swal){
-            Swal.fire({title:'Delete Document?',text:'This document will be removed from your medical records.',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',confirmButtonText:'Delete'}).then(function(r){if(r.isConfirmed) doDelete();});
-        } else if(window.confirm('Delete this document?')) doDelete();
+        Swal.fire({
+            title: 'Delete Document?',
+            text: 'This document will be removed from your medical records.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            confirmButtonText: 'Delete'
+        }).then(function(r) {
+            if (r.isConfirmed) doDelete();
+        });
     };
 
     window.diorOpenDocumentUploadModal = function(){
@@ -491,7 +491,7 @@
                 diorCloseDocumentModal();
                 if(window.Swal) Swal.fire({position:'top-end',icon:'success',title:id?'Document Updated':'Document Uploaded',showConfirmButton:false,timer:1500});
             })
-            .catch(function(err){if(window.Swal) Swal.fire({icon:'error',title:'Document Not Saved',text:err.message});else window.alert(err.message);})
+            .catch(function(err){Swal.fire({icon:'error',title:'Document Not Saved',text:err.message});})
             .finally(function(){btn.disabled=false;});
     });
 
@@ -502,7 +502,12 @@
         var doctor = cells[2] ? cells[2].innerText.trim() : 'Attending Physician';
         var date = cells[4] ? cells[4].innerText.trim() : '—';
         var time = cells[5] ? cells[5].innerText.trim() : '—';
-        window.alert('Telemedicine Session\n\nDoctor: ' + doctor + '\nDate: ' + date + '\nTime: ' + time);
+        Swal.fire({
+            title: 'Telemedicine Session',
+            html: '<div class="text-start"><strong>Doctor:</strong> ' + doctor + '<br><strong>Date:</strong> ' + date + '<br><strong>Time:</strong> ' + time + '</div>',
+            icon: 'info',
+            confirmButtonColor: '#2C6CB1'
+        });
     };
 
     window.diorFilterStaticTable = function (input, tableId) {
@@ -529,8 +534,7 @@
         if (!table) return;
         var checkedBoxes = table.querySelectorAll('tbody input[type="checkbox"]:checked');
         if (checkedBoxes.length === 0) {
-            if (window.Swal) Swal.fire({ icon: 'info', title: 'No Rows Selected', text: 'Please select at least one row to delete.' });
-            else window.alert('Please select at least one row to delete.');
+            Swal.fire({ icon: 'info', title: 'No Rows Selected', text: 'Please select at least one row to delete.' });
             return;
         }
 
@@ -565,10 +569,5 @@
                     Swal.fire({ position: 'top-end', icon: 'success', title: 'Records Deleted', showConfirmButton: false, timer: 1500 });
                 }
             });
-        } else {
-            if (window.confirm('Delete ' + checkedBoxes.length + ' selected records?')) {
-                performDelete();
-            }
-        }
     };
 }());
