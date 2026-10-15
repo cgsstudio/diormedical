@@ -84,8 +84,9 @@ $status_badges = [
                 </div>
                 <div class="va-actions-wrapper">
                     <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" id="va-appt-search" class="form-control border-start-0 ps-0" placeholder="Search appointments...">
+
+                        <input type="text" id="va-appt-search" class="form-control border-start-0 ps-0"
+                            placeholder="Search appointments...">
                     </div>
                     <div class="va-actions-group">
                         <select id="va-status-filter"

@@ -67,8 +67,9 @@ $status_badges = [
                 </div>
                 <div class="va-actions-wrapper">
                     <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" id="ap-search" class="form-control border-start-0 ps-0" placeholder="Search patients...">
+
+                        <input type="text" id="ap-search" class="form-control border-start-0 ps-0"
+                            placeholder="Search patients...">
                     </div>
                     <div class="va-actions-group">
                         <button class="va-icon-btn va-btn-danger btn" id="ap-bulk-delete-btn" title="Bulk Delete"

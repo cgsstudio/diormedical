@@ -207,6 +207,7 @@
                     diorConfirmDeleteFeedback(feedbackId, row);
                 }
             });
+        }
     };
 
     function diorConfirmDeleteFeedback(feedbackId, row) {
@@ -397,103 +398,9 @@
         });
     };
 
-    window.diorOpenDocumentUploadModal = function(){
-        var modal=document.getElementById('dior-document-modal'); if(!modal) return;
-        var form=document.getElementById('dior-document-form'); if(form) form.reset();
-        document.getElementById('dior-document-id').value='';
-        document.getElementById('dior-document-modal-title').textContent='Add Medical Document';
-        document.getElementById('dior-document-save-btn').innerHTML='<i class="fa-solid fa-cloud-arrow-up"></i> Upload Document';
-        document.getElementById('dior-document-file-wrap').style.display='block';
-        var dropzoneLabel = document.getElementById('dior-doc-file-label');
-        if (dropzoneLabel) dropzoneLabel.textContent = 'Choose File or Drag & Drop';
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden','false');
-    };
-
-    window.diorEditDocument = function(button){
-        var row=button.closest('tr'); if(!row) return;
-        var modal=document.getElementById('dior-document-modal'); if(!modal) return;
-        var id=row.getAttribute('data-doc-id') || '';
-        var title=button.getAttribute('data-doc-title') || (row.cells[1] ? row.cells[1].innerText.trim() : 'Medical Document');
-        var category=button.getAttribute('data-doc-category') || (row.cells[2] ? row.cells[2].innerText.trim() : 'Clinical Record');
-        document.getElementById('dior-document-id').value=id;
-        document.getElementById('dior-document-title').value=title;
-        document.getElementById('dior-document-category').value=category;
-        document.getElementById('dior-document-modal-title').textContent='Update Medical Document';
-        document.getElementById('dior-document-save-btn').innerHTML='<i class="fa-solid fa-save"></i> Save Changes';
-        document.getElementById('dior-document-file-wrap').style.display='none';
-        modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false');
-    };
-
-    window.diorCloseDocumentModal = function(){
-        var modal=document.getElementById('dior-document-modal'); if(!modal) return;
-        modal.classList.remove('is-open'); modal.setAttribute('aria-hidden','true');
-    };
-
-    document.addEventListener('submit', function(event){
-        if(event.target.id !== 'dior-document-form') return;
-        event.preventDefault();
-        var form=event.target, cfg=window.dior_vars || window.dior_patient_dashboard || {};
-        var id=document.getElementById('dior-document-id').value || '';
-        var btn=document.getElementById('dior-document-save-btn');
-        var fd=new FormData(form);
-        fd.append('action', id ? 'dior_update_document' : 'dior_upload_document');
-        fd.append('nonce', cfg.nonce || cfg.portal_nonce || '');
-        fd.append('patient_id', cfg.current_user_id || '');
-        btn.disabled=true;
-        fetch(cfg.ajax_url || '/wp-admin/admin-ajax.php',{method:'POST',credentials:'same-origin',body:fd})
-            .then(function(r){return r.json();})
-            .then(function(result){
-                if(!result.success) throw new Error((result.data && result.data.message) || 'Unable to save document.');
-                if(id){
-                    var row=document.querySelector('#dior-docs-tbody tr[data-doc-id="'+CSS.escape(id)+'"]');
-                    if(row){
-                        var title=result.data.title || fd.get('doc_title');
-                        var category=result.data.category || fd.get('doc_category');
-                        if(row.cells[1] && row.cells[1].querySelector('.cell-text')) row.cells[1].querySelector('.cell-text').textContent=title;
-                        if(row.cells[2] && row.cells[2].querySelector('.cell-text')) row.cells[2].querySelector('.cell-text').textContent=category;
-                        var edit=row.querySelector('.edit-btn'); if(edit){edit.setAttribute('data-doc-title',title);edit.setAttribute('data-doc-category',category);}
-                    }
-                } else if(result.data && result.data.document){
-                    var doc = result.data.document;
-                    var tbody = document.getElementById('dior-docs-tbody');
-                    if(tbody){
-                        var emptyRow = tbody.querySelector('.dior-empty-state');
-                        if(emptyRow) emptyRow.closest('tr').remove();
-                        var tr = document.createElement('tr');
-                        tr.setAttribute('data-doc-id', doc.id || '');
-                        tr.setAttribute('data-doc-author-id', doc.author_id || '');
-                        var docTitle = doc.title || 'Medical Document';
-                        var docCategory = doc.category || 'Clinical Record';
-                        var docType = doc.file_type || 'PDF';
-                        var docDate = doc.date || 'Just now';
-                        var docSize = doc.size || '—';
-                        tr.innerHTML = '<td><input type="checkbox" class="dior-ic-52ff4d551f"></td>' +
-                            '<td><span class="cell-text dior-ic-794116ec9b">' + docTitle + '</span></td>' +
-                            '<td><span class="cell-text">' + docCategory + '</span></td>' +
-                            '<td><span class="cell-text">' + docType + '</span></td>' +
-                            '<td><div class="cell-content cell-icon-text"><i class="far fa-calendar cell-icon"></i><span class="cell-text">' + docDate + '</span></div></td>' +
-                            '<td><span class="cell-text">' + docSize + '</span></td>' +
-                            '<td><div class="cell-content"><div class="badge-solid col-green">Available</div></div></td>' +
-                            '<td><div class="cell-actions">' +
-                            '<button type="button" class="action-icon-btn edit-btn" title="Edit Document" data-doc-title="' + docTitle + '" data-doc-category="' + docCategory + '" onclick="diorEditDocument(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>' +
-                            '<button type="button" class="action-icon-btn delete-btn" title="Delete Document" onclick="diorDeleteStaticRow(this, \'document\')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>' +
-                            '</div></td>';
-                        tbody.insertBefore(tr, tbody.firstChild);
-
-                        var pageCount = document.getElementById('dior-docs-page-count');
-                        if (pageCount) {
-                            var totalRows = tbody.querySelectorAll('tr[data-doc-id]').length;
-                            pageCount.textContent = '0 selected / ' + totalRows + ' total';
-                        }
-                    }
-                }
-                diorCloseDocumentModal();
-                if(window.Swal) Swal.fire({position:'top-end',icon:'success',title:id?'Document Updated':'Document Uploaded',showConfirmButton:false,timer:1500});
-            })
-            .catch(function(err){Swal.fire({icon:'error',title:'Document Not Saved',text:err.message});})
-            .finally(function(){btn.disabled=false;});
-    });
+    window.diorOpenDocumentUploadModal = function(){};
+    window.diorEditDocument = function(){};
+    window.diorCloseDocumentModal = function(){};
 
     window.diorViewTelemedicine = function (button) {
         var row = button.closest('tr');
@@ -569,5 +476,6 @@
                     Swal.fire({ position: 'top-end', icon: 'success', title: 'Records Deleted', showConfirmButton: false, timer: 1500 });
                 }
             });
+        }
     };
 }());

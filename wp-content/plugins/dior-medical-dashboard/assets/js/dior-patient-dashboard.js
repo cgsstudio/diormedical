@@ -685,7 +685,7 @@ let diorPastCurrentPage = 1;
 
 // --- Extracted dashboard script 5 ---
 window.diorSwitchApptSubTab = function(targetSubTab) {
-                        if (!targetSubTab) targetSubTab = 'today';
+                        if (!targetSubTab) targetSubTab = 'calendar';
                         var navBtns = document.querySelectorAll('.dior-nav-btn');
                         var tabPanels = document.querySelectorAll('.dior-tab-panel');
                         
@@ -722,12 +722,13 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
 
                         // Update dynamic breadcrumb & headers
                         var titles = {
+                            'calendar': 'Appointment Calendar',
                             'book': 'Book Appointment',
                             'today': "Today's Appointments",
                             'upcoming': 'Upcoming Appointments',
                             'past': 'Past Appointments'
                         };
-                        var t = titles[targetSubTab] || 'Appointments';
+                        var t = titles[targetSubTab] || 'Appointment Calendar';
                         var mainTitleEl = document.getElementById('dior-appt-main-title');
                         var crumbTitleEl = document.getElementById('dior-appt-breadcrumb-title');
                         if (mainTitleEl) mainTitleEl.textContent = t;
@@ -748,6 +749,11 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                             }
                         });
 
+                        // If switching to calendar, trigger render
+                        if (targetSubTab === 'calendar' && typeof window.diorRenderBootstrapCalendar === 'function') {
+                            setTimeout(window.diorRenderBootstrapCalendar, 50);
+                        }
+
                         // Remember active subtab in sessionStorage and URL hash so reload works reliably
                         try {
                             sessionStorage.setItem('dior_active_appt_subtab', targetSubTab);
@@ -763,6 +769,508 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
 
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     };
+
+/* ==============================================================
+ * DIOR MEDICAL — PURE BOOTSTRAP 5 APPOINTMENT CALENDAR ENGINE
+ * ============================================================== */
+(function() {
+    var calCurrentDate = new Date(); // Month/year being viewed
+    var calSelectedDate = null;      // 'YYYY-MM-DD'
+    var calViewMode = 'month';       // 'month' or 'agenda'
+    var calTypeFilter = 'all';       // 'all', 'video', 'phone', 'clinic'
+    var calStatusFilter = 'all';     // 'all', 'confirmed', 'completed', 'cancelled'
+    var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    function normalizeYmd(raw) {
+        if (!raw) return '';
+        var str = String(raw).trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+        var parts;
+        if (/^\d{2}[-\/.]\d{2}[-\/.]\d{4}$/.test(str)) {
+            parts = str.split(/[-\/.]/);
+            return parts[2] + '-' + parts[0].padStart(2, '0') + '-' + parts[1].padStart(2, '0');
+        }
+        var d = new Date(str);
+        if (!isNaN(d.getTime())) {
+            var y = d.getFullYear();
+            var m = String(d.getMonth() + 1).padStart(2, '0');
+            var day = String(d.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + day;
+        }
+        return '';
+    }
+
+    function getAppointments() {
+        var raw = [];
+        if (Array.isArray(window.dior_patient_appts_data) && window.dior_patient_appts_data.length > 0) {
+            raw = window.dior_patient_appts_data;
+        } else if (Array.isArray(window.dior_inline_appts_data) && window.dior_inline_appts_data.length > 0) {
+            raw = window.dior_inline_appts_data;
+        } else if (window.dior_patient_dashboard && Array.isArray(window.dior_patient_dashboard.appointments)) {
+            raw = window.dior_patient_dashboard.appointments;
+        }
+        
+        return raw.map(function(item, idx) {
+            var dateRaw = item.date || item.appt_date || '';
+            var ymd = item.ymd || normalizeYmd(dateRaw);
+            var id = item.id || item.appt_uid || ('APT-' + (1000 + idx));
+            var doc = item.doc || item.provider || item.doctor_name || 'Dr. Marcus Sterling, DO';
+            var spec = item.spec || item.provider_spec || 'Telehealth Urgent Care';
+            var time = item.time || item.appt_time || '09:00 AM - 10:00 AM';
+            var status = item.status || item.appt_status || 'Confirmed';
+            var type = item.type || item.visit_type || 'Video Visit (HD)';
+            var join_url = item.join_url || 'https://zoom.us/join';
+            var notes = item.notes || item.condition || 'Telehealth Consultation';
+            return {
+                id: id,
+                doc: doc,
+                spec: spec,
+                date: dateRaw,
+                ymd: ymd,
+                time: time,
+                status: status,
+                type: type,
+                join_url: join_url,
+                notes: notes
+            };
+        });
+    }
+
+    function filterAppointments(list) {
+        return list.filter(function(a) {
+            if (calTypeFilter !== 'all') {
+                var t = (a.type || '').toLowerCase();
+                if (calTypeFilter === 'video' && t.indexOf('video') === -1 && t.indexOf('telehealth') === -1) return false;
+                if (calTypeFilter === 'phone' && t.indexOf('phone') === -1 && t.indexOf('audio') === -1) return false;
+                if (calTypeFilter === 'clinic' && t.indexOf('clinic') === -1 && t.indexOf('person') === -1) return false;
+            }
+            if (calStatusFilter !== 'all') {
+                var s = (a.status || '').toLowerCase();
+                if (calStatusFilter === 'confirmed' && s !== 'confirmed' && s !== 'scheduled' && s !== 'in-queue') return false;
+                if (calStatusFilter === 'completed' && s !== 'completed' && s !== 'done' && s !== 'past') return false;
+                if (calStatusFilter === 'cancelled' && s !== 'cancelled') return false;
+            }
+            return true;
+        });
+    }
+
+    function formatFullDate(ymd) {
+        if (!ymd) return '';
+        var parts = ymd.split('-');
+        if (parts.length !== 3) return ymd;
+        var d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return dayNames[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+    }
+
+    function renderMonthGrid() {
+        var gridBody = document.getElementById('dior-bs-cal-grid-body');
+        var titleEl = document.getElementById('dior-bs-cal-title');
+        if (!gridBody) return;
+
+        var year = calCurrentDate.getFullYear();
+        var month = calCurrentDate.getMonth();
+
+        if (titleEl) {
+            titleEl.textContent = monthNames[month] + ' ' + year;
+        }
+
+        var appts = filterAppointments(getAppointments());
+        var apptsByYmd = {};
+        appts.forEach(function(a) {
+            if (a.ymd) {
+                if (!apptsByYmd[a.ymd]) apptsByYmd[a.ymd] = [];
+                apptsByYmd[a.ymd].push(a);
+            }
+        });
+
+        var today = new Date();
+        var todayYmd = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        if (!calSelectedDate) {
+            calSelectedDate = todayYmd;
+        }
+
+        var firstDayIndex = new Date(year, month, 1).getDay(); // 0 (Sun) to 6 (Sat)
+        var daysInMonth = new Date(year, month + 1, 0).getDate();
+        var daysInPrevMonth = new Date(year, month, 0).getDate();
+
+        var html = '';
+        var dayCounter = 1;
+        var nextMonthDayCounter = 1;
+
+        var totalCells = (firstDayIndex + daysInMonth > 35) ? 42 : 35;
+        for (var i = 0; i < totalCells; i++) {
+            if (i % 7 === 0) html += '<tr>';
+
+            var cellYmd = '';
+            var cellDayNum = 0;
+            var isOtherMonth = false;
+            var isToday = false;
+            var isSelected = false;
+
+            if (i < firstDayIndex) {
+                isOtherMonth = true;
+                cellDayNum = daysInPrevMonth - (firstDayIndex - i - 1);
+                var prevM = month === 0 ? 12 : month;
+                var prevY = month === 0 ? year - 1 : year;
+                cellYmd = prevY + '-' + String(prevM).padStart(2, '0') + '-' + String(cellDayNum).padStart(2, '0');
+            } else if (dayCounter <= daysInMonth) {
+                cellDayNum = dayCounter;
+                cellYmd = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(cellDayNum).padStart(2, '0');
+                dayCounter++;
+            } else {
+                isOtherMonth = true;
+                cellDayNum = nextMonthDayCounter++;
+                var nextM = month === 11 ? 1 : month + 2;
+                var nextY = month === 11 ? year + 1 : year;
+                cellYmd = nextY + '-' + String(nextM).padStart(2, '0') + '-' + String(cellDayNum).padStart(2, '0');
+            }
+
+            if (cellYmd === todayYmd) isToday = true;
+            if (cellYmd === calSelectedDate) isSelected = true;
+
+            var cellEvents = apptsByYmd[cellYmd] || [];
+
+            html += '<td class="dior-bs-cal-cell' + 
+                    (isOtherMonth ? ' dior-bs-cal-other-month' : '') + 
+                    (isToday ? ' dior-bs-cal-today' : '') + 
+                    (isSelected ? ' dior-bs-cal-selected' : '') + 
+                    '" data-date="' + cellYmd + '">';
+
+            html += '<div class="dior-bs-cal-day-header">';
+            html += '<span class="dior-bs-cal-day-num">' + cellDayNum + '</span>';
+            if (cellEvents.length > 0) {
+                html += '<span class="badge rounded-pill bg-primary" style="font-size: 10px; padding: 2px 5px;">' + cellEvents.length + '</span>';
+            }
+            html += '</div>';
+
+            html += '<div class="dior-bs-cal-events-wrap">';
+            var maxDisplay = 2;
+            for (var evIdx = 0; evIdx < Math.min(cellEvents.length, maxDisplay); evIdx++) {
+                var apt = cellEvents[evIdx];
+                var typeLc = (apt.type || '').toLowerCase();
+                var statusLc = (apt.status || '').toLowerCase();
+                var evClass = 'event-video';
+                var icon = 'fa-video';
+                if (statusLc === 'completed') {
+                    evClass = 'event-completed';
+                    icon = 'fa-check';
+                } else if (statusLc === 'cancelled') {
+                    evClass = 'event-cancelled';
+                    icon = 'fa-ban';
+                } else if (typeLc.indexOf('phone') !== -1) {
+                    evClass = 'event-phone';
+                    icon = 'fa-phone';
+                }
+                var shortTime = (apt.time || '').split('-')[0].trim();
+                html += '<div class="dior-bs-cal-event ' + evClass + '" onclick="event.stopPropagation(); if (typeof diorViewAppointmentDetails === \'function\') diorViewAppointmentDetails(\'' + apt.id + '\');" title="' + (apt.type || '') + ' - ' + (apt.doc || '') + '">';
+                html += '<i class="fas ' + icon + ' me-1" style="font-size:10px;"></i>';
+                html += '<strong style="font-size:10.5px;">' + shortTime + '</strong> ';
+                html += '<span class="text-truncate" style="max-width: 65px; display:inline-block; vertical-align:bottom; font-size:10.5px;">' + apt.doc.replace('Dr. ', '') + '</span>';
+                html += '</div>';
+            }
+            if (cellEvents.length > maxDisplay) {
+                html += '<div class="small text-muted fw-bold px-1" style="font-size: 10px;">+' + (cellEvents.length - maxDisplay) + ' more</div>';
+            }
+            html += '</div>';
+
+            html += '</td>';
+
+            if (i % 7 === 6) html += '</tr>';
+        }
+
+        gridBody.innerHTML = html;
+
+        gridBody.querySelectorAll('.dior-bs-cal-cell').forEach(function(cell) {
+            cell.addEventListener('click', function() {
+                var d = this.getAttribute('data-date');
+                if (!d) return;
+                calSelectedDate = d;
+                gridBody.querySelectorAll('.dior-bs-cal-cell').forEach(function(c) {
+                    c.classList.remove('dior-bs-cal-selected');
+                });
+                this.classList.add('dior-bs-cal-selected');
+                renderDaySchedule();
+            });
+        });
+
+        renderDaySchedule();
+    }
+
+    function renderAgendaList() {
+        var agendaListEl = document.getElementById('dior-bs-cal-agenda-list');
+        if (!agendaListEl) return;
+
+        var appts = filterAppointments(getAppointments());
+        appts.sort(function(a, b) {
+            return (a.ymd || '').localeCompare(b.ymd || '');
+        });
+
+        if (appts.length === 0) {
+            agendaListEl.innerHTML = '<div class="card border-0 bg-light p-4 text-center text-muted rounded-4">' +
+                '<i class="far fa-calendar-xmark fs-2 text-secondary mb-2"></i>' +
+                '<p class="mb-2 fw-medium">No appointments match the selected filters.</p>' +
+                '<div><button type="button" class="btn btn-primary btn-sm rounded-pill" onclick="diorOpenDocBookerModal();"><i class="fas fa-calendar-plus me-1"></i> Book New Consultation</button></div>' +
+                '</div>';
+            return;
+        }
+
+        var html = '';
+        var currentGroupDate = '';
+
+        appts.forEach(function(apt) {
+            if (apt.ymd !== currentGroupDate) {
+                currentGroupDate = apt.ymd;
+                html += '<div class="d-flex align-items-center gap-2 mt-2 pt-2 border-top">';
+                html += '<span class="badge bg-primary rounded-pill px-3 py-1.5 fw-semibold fs-7"><i class="far fa-calendar me-1"></i> ' + formatFullDate(apt.ymd) + '</span>';
+                html += '<span class="text-muted small">(' + apt.ymd + ')</span>';
+                html += '</div>';
+            }
+
+            var statusLc = (apt.status || '').toLowerCase();
+            var statusBadge = 'bg-primary-subtle text-primary';
+            if (statusLc === 'confirmed') statusBadge = 'bg-success-subtle text-success';
+            else if (statusLc === 'completed') statusBadge = 'bg-secondary-subtle text-secondary';
+            else if (statusLc === 'cancelled') statusBadge = 'bg-danger-subtle text-danger';
+
+            var isVideo = (apt.type || '').toLowerCase().indexOf('video') !== -1;
+            var canJoin = isVideo && (statusLc === 'confirmed' || statusLc === 'scheduled' || statusLc === 'in-queue');
+
+            html += '<div class="card border-0 shadow-sm rounded-3 p-3 bg-white">';
+            html += '<div class="d-flex flex-wrap align-items-center justify-content-between gap-3">';
+            
+            html += '<div class="d-flex align-items-center gap-3">';
+            html += '<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 44px; height: 44px; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); font-size: 14px;">';
+            html += '<i class="fas ' + (isVideo ? 'fa-video' : 'fa-user-doctor') + '"></i>';
+            html += '</div>';
+            html += '<div>';
+            html += '<div class="d-flex align-items-center gap-2">';
+            html += '<h6 class="mb-0 fw-bold text-dark">' + apt.doc + '</h6>';
+            html += '<span class="badge ' + statusBadge + ' rounded-pill px-2 py-0.5 small">' + apt.status + '</span>';
+            html += '</div>';
+            html += '<div class="text-muted small mt-0.5">' + apt.spec + ' &bull; <span class="text-dark fw-semibold">' + apt.type + '</span></div>';
+            html += '<div class="text-primary small fw-semibold mt-1"><i class="far fa-clock me-1"></i>' + apt.time + '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '<div class="d-flex flex-wrap align-items-center gap-2">';
+            if (canJoin) {
+                html += '<a href="' + (apt.join_url || 'https://zoom.us/join') + '" target="_blank" class="btn btn-success btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">';
+                html += '<i class="fas fa-video"></i> Join Visit';
+                html += '</a>';
+            }
+            html += '<button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="if (typeof diorViewAppointmentDetails === \'function\') diorViewAppointmentDetails(\'' + apt.id + '\');">';
+            html += '<i class="fas fa-eye me-1"></i> Details';
+            html += '</button>';
+            html += '<button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="if (typeof diorOpenRescheduleModal === \'function\') diorOpenRescheduleModal(\'' + apt.id + '\', \'' + apt.date + '\');">';
+            html += '<i class="fas fa-arrows-rotate me-1"></i> Reschedule';
+            html += '</button>';
+            html += '</div>';
+
+            html += '</div>';
+            html += '</div>';
+        });
+
+        agendaListEl.innerHTML = html;
+    }
+
+    function renderDaySchedule() {
+        var headerEl = document.getElementById('dior-bs-cal-selected-header');
+        var countEl = document.getElementById('dior-bs-cal-selected-count');
+        var bodyEl = document.getElementById('dior-bs-cal-selected-body');
+        if (!bodyEl) return;
+
+        var ymd = calSelectedDate;
+        if (headerEl) {
+            headerEl.textContent = formatFullDate(ymd);
+        }
+
+        var appts = filterAppointments(getAppointments()).filter(function(a) {
+            return a.ymd === ymd;
+        });
+
+        if (countEl) {
+            countEl.textContent = appts.length + ' Visit' + (appts.length === 1 ? '' : 's');
+        }
+
+        if (appts.length === 0) {
+            bodyEl.innerHTML = '<div class="text-center py-4 text-muted">' +
+                '<div class="mb-3" style="font-size: 2.2rem; color: #cbd5e1;"><i class="far fa-calendar-xmark"></i></div>' +
+                '<h6 class="text-dark fw-bold mb-1">No Consultations</h6>' +
+                '<p class="small text-muted mb-3">There are no appointments scheduled for this date.</p>' +
+                '<button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold shadow-sm" onclick="diorOpenDocBookerModal();">' +
+                '<i class="fas fa-calendar-plus me-1"></i> Schedule Consultation' +
+                '</button>' +
+                '</div>';
+            return;
+        }
+
+        var html = '<div class="d-flex flex-column gap-3">';
+        appts.forEach(function(apt) {
+            var statusLc = (apt.status || '').toLowerCase();
+            var statusBadge = 'bg-primary-subtle text-primary';
+            if (statusLc === 'confirmed') statusBadge = 'bg-success-subtle text-success';
+            else if (statusLc === 'completed') statusBadge = 'bg-secondary-subtle text-secondary';
+            else if (statusLc === 'cancelled') statusBadge = 'bg-danger-subtle text-danger';
+
+            var isVideo = (apt.type || '').toLowerCase().indexOf('video') !== -1;
+            var canJoin = isVideo && (statusLc === 'confirmed' || statusLc === 'scheduled' || statusLc === 'in-queue');
+
+            html += '<div class="card border border-light-subtle rounded-3 p-3 bg-white shadow-sm">';
+            
+            html += '<div class="d-flex align-items-center justify-content-between mb-2">';
+            html += '<span class="badge ' + statusBadge + ' rounded-pill px-2.5 py-1 small fw-bold">' + apt.status + '</span>';
+            html += '<span class="text-muted small fw-medium" style="font-size:11px;"><i class="fas fa-hashtag me-0.5"></i>' + apt.id + '</span>';
+            html += '</div>';
+
+            html += '<div class="d-flex align-items-center gap-2 mb-2">';
+            html += '<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 38px; height: 38px; background: #4f46e5; font-size: 13px; flex-shrink: 0;">';
+            html += '<i class="fas ' + (isVideo ? 'fa-video' : 'fa-user-doctor') + '"></i>';
+            html += '</div>';
+            html += '<div class="lh-sm overflow-hidden">';
+            html += '<h6 class="mb-0 text-dark fw-bold text-truncate" style="font-size: 13.5px;">' + apt.doc + '</h6>';
+            html += '<small class="text-muted text-truncate d-block" style="font-size: 11.5px;">' + apt.spec + '</small>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '<div class="p-2 rounded-2 bg-light mb-3 text-secondary small" style="font-size: 12px;">';
+            html += '<div class="d-flex align-items-center justify-content-between mb-1">';
+            html += '<span><i class="far fa-clock me-1 text-primary"></i> <strong>Time:</strong></span>';
+            html += '<span class="text-dark fw-bold">' + apt.time + '</span>';
+            html += '</div>';
+            html += '<div class="d-flex align-items-center justify-content-between">';
+            html += '<span><i class="fas fa-stethoscope me-1 text-info"></i> <strong>Type:</strong></span>';
+            html += '<span class="text-dark fw-medium">' + apt.type + '</span>';
+            html += '</div>';
+            html += '</div>';
+
+            if (canJoin) {
+                html += '<a href="' + (apt.join_url || 'https://zoom.us/join') + '" target="_blank" class="btn btn-success btn-sm w-100 fw-bold mb-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5 py-1.5">';
+                html += '<i class="fas fa-video"></i> Join Telehealth Room';
+                html += '</a>';
+            }
+
+            html += '<div class="d-flex gap-2">';
+            html += '<button type="button" class="btn btn-outline-primary btn-sm flex-fill" onclick="if (typeof diorViewAppointmentDetails === \'function\') diorViewAppointmentDetails(\'' + apt.id + '\');">';
+            html += '<i class="fas fa-eye me-1"></i> Details';
+            html += '</button>';
+            html += '<button type="button" class="btn btn-outline-secondary btn-sm flex-fill" onclick="if (typeof diorOpenRescheduleModal === \'function\') diorOpenRescheduleModal(\'' + apt.id + '\', \'' + apt.date + '\');">';
+            html += '<i class="fas fa-arrows-rotate me-1"></i> Reschedule';
+            html += '</button>';
+            html += '</div>';
+
+            html += '</div>';
+        });
+        html += '</div>';
+
+        bodyEl.innerHTML = html;
+    }
+
+    window.diorInitBootstrapCalendar = function() {
+        var container = document.getElementById('dior-subtab-calendar');
+        if (!container) return;
+
+        var prevBtn = document.getElementById('dior-bs-cal-prev');
+        if (prevBtn && !prevBtn.__diorBound) {
+            prevBtn.__diorBound = true;
+            prevBtn.addEventListener('click', function() {
+                calCurrentDate.setMonth(calCurrentDate.getMonth() - 1);
+                renderMonthGrid();
+            });
+        }
+
+        var nextBtn = document.getElementById('dior-bs-cal-next');
+        if (nextBtn && !nextBtn.__diorBound) {
+            nextBtn.__diorBound = true;
+            nextBtn.addEventListener('click', function() {
+                calCurrentDate.setMonth(calCurrentDate.getMonth() + 1);
+                renderMonthGrid();
+            });
+        }
+
+        var todayBtn = document.getElementById('dior-bs-cal-today');
+        if (todayBtn && !todayBtn.__diorBound) {
+            todayBtn.__diorBound = true;
+            todayBtn.addEventListener('click', function() {
+                calCurrentDate = new Date();
+                var today = new Date();
+                calSelectedDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+                renderMonthGrid();
+            });
+        }
+
+        var typeSelect = document.getElementById('dior-bs-cal-type-filter');
+        if (typeSelect && !typeSelect.__diorBound) {
+            typeSelect.__diorBound = true;
+            typeSelect.addEventListener('change', function() {
+                calTypeFilter = this.value;
+                if (calViewMode === 'month') renderMonthGrid();
+                else renderAgendaList();
+            });
+        }
+
+        var statusSelect = document.getElementById('dior-bs-cal-status-filter');
+        if (statusSelect && !statusSelect.__diorBound) {
+            statusSelect.__diorBound = true;
+            statusSelect.addEventListener('change', function() {
+                calStatusFilter = this.value;
+                if (calViewMode === 'month') renderMonthGrid();
+                else renderAgendaList();
+            });
+        }
+
+        var viewMonthBtn = document.getElementById('dior-bs-cal-view-month');
+        var viewAgendaBtn = document.getElementById('dior-bs-cal-view-agenda');
+        var monthWrap = document.getElementById('dior-bs-cal-month-wrap');
+        var agendaWrap = document.getElementById('dior-bs-cal-agenda-wrap');
+
+        if (viewMonthBtn && !viewMonthBtn.__diorBound) {
+            viewMonthBtn.__diorBound = true;
+            viewMonthBtn.addEventListener('click', function() {
+                calViewMode = 'month';
+                viewMonthBtn.classList.add('btn-primary', 'active');
+                viewMonthBtn.classList.remove('btn-outline-secondary');
+                if (viewAgendaBtn) {
+                    viewAgendaBtn.classList.remove('btn-primary', 'active');
+                    viewAgendaBtn.classList.add('btn-outline-secondary');
+                }
+                if (monthWrap) monthWrap.style.display = 'block';
+                if (agendaWrap) agendaWrap.style.display = 'none';
+                renderMonthGrid();
+            });
+        }
+
+        if (viewAgendaBtn && !viewAgendaBtn.__diorBound) {
+            viewAgendaBtn.__diorBound = true;
+            viewAgendaBtn.addEventListener('click', function() {
+                calViewMode = 'agenda';
+                viewAgendaBtn.classList.add('btn-primary', 'active');
+                viewAgendaBtn.classList.remove('btn-outline-secondary');
+                if (viewMonthBtn) {
+                    viewMonthBtn.classList.remove('btn-primary', 'active');
+                    viewMonthBtn.classList.add('btn-outline-secondary');
+                }
+                if (monthWrap) monthWrap.style.display = 'none';
+                if (agendaWrap) agendaWrap.style.display = 'block';
+                renderAgendaList();
+            });
+        }
+
+        renderMonthGrid();
+    };
+
+    window.diorRenderBootstrapCalendar = function() {
+        if (calViewMode === 'month') renderMonthGrid();
+        else renderAgendaList();
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', window.diorInitBootstrapCalendar);
+    } else {
+        setTimeout(window.diorInitBootstrapCalendar, 60);
+    }
+})();
 
 // --- Extracted dashboard script 6 ---
 let diorBillCurrentPage = 1;
@@ -1751,6 +2259,12 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         window.diorCloseModal = function (modalId) {
             var el = document.getElementById(modalId);
             if (el) {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    var bsInst = bootstrap.Modal.getInstance(el);
+                    if (bsInst) {
+                        bsInst.hide();
+                    }
+                }
                 el.classList.remove('open');
                 el.style.display = 'none';
                 document.body.style.overflow = '';
@@ -1802,8 +2316,8 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             if (dateEl) dateEl.textContent = actualDate;
             var padDateEl = document.getElementById('pat-modal-rx-pad-date');
             if (padDateEl) padDateEl.textContent = actualDate;
-            if (routingEl) routingEl.innerHTML = '<i class="fa-solid fa-circle-check dior-ic-2eb9f328f2"></i> ' + actualRouting;
-            if (statusBadge) statusBadge.innerHTML = '<i class="fa-solid fa-check"></i> ' + (found.routing_status || (actualRouting === 'Sent to Pharmacy' ? 'Transmission Confirmed' : actualRouting));
+            if (routingEl) routingEl.textContent = 'Routed Electronically via Surescripts NCPDP EDI (' + actualRouting + ')';
+            if (statusBadge) statusBadge.textContent = (found.routing_status || (actualRouting === 'Sent to Pharmacy' ? 'Transmission Confirmed' : actualRouting));
             if (pharmNameEl) pharmNameEl.textContent = actualPharm;
             if (sigNameEl) sigNameEl.textContent = '/s/ ' + cleanDoc + ', MD';
             if (sigDateEl) sigDateEl.textContent = 'SHA256 Encrypted \u2022 Issued ' + actualDate;
@@ -1885,27 +2399,25 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                     }
 
                     html += '<tr>' +
-                        '<td class="dior-rx-item-num dior-ic-02d53e1d05">' + (j + 1) + '</td>' +
+                        '<td class="text-center text-secondary fw-semibold">' + (j + 1) + '</td>' +
                         '<td>' +
-                        '<div class="dior-rx-item-name">' + formattedMed + '</div>' +
-                        '<div class="dior-rx-item-sub">' +
-                        '<span class="dior-ic-63711f3415">Rx Item: ' + escapeHtml(itemUid) + '</span>' +
-                        '<span class="dior-rx-fda-badge"><i class="fa-solid fa-check"></i> FDA Approved</span>' +
-                        '<span>Oral Formulation &bull; Single Patient Use</span>' +
+                        '<div class="fw-bold text-dark">' + formattedMed + '</div>' +
+                        '<div class="text-secondary small mt-1">' +
+                        '<span class="badge bg-light text-secondary border me-1">Rx Item: ' + escapeHtml(itemUid) + '</span>' +
+                        '<span class="badge bg-light text-secondary border me-1">FDA Approved</span>' +
+                        '<span>Oral Formulation</span>' +
                         '</div>' +
                         '</td>' +
                         '<td>' +
-                        '<div class="dior-rx-item-sig">' +
-                        '<strong>SIG:</strong> ' + sigStr +
-                        '</div>' +
-                        '<div class="dior-ic-6b2d8fe92e">' +
-                        'Dosage: <strong class="dior-ic-1a7e4c871d">' + doseStr + '</strong> &bull; Route: Oral' +
+                        '<div><strong>SIG:</strong> ' + sigStr + '</div>' +
+                        '<div class="text-secondary small mt-1">' +
+                        'Dosage: <strong class="text-dark">' + doseStr + '</strong> &bull; Route: Oral' +
                         '</div>' +
                         '</td>' +
                         '<td>' +
-                        '<div class="dior-rx-item-qty">Qty: ' + qtyStr + '</div>' +
-                        '<div class="dior-rx-item-refill">' + refillStr + '</div>' +
-                        '<div class="dior-rx-item-daw">DAW-0 (Generic Auth)</div>' +
+                        '<div class="fw-semibold text-dark">Qty: ' + qtyStr + '</div>' +
+                        '<div class="text-secondary small">' + refillStr + '</div>' +
+                        '<div class="text-muted small">' + escapeHtml(found.daw || 'DAW-0 (Generic Auth)') + '</div>' +
                         '</td>' +
                         '</tr>';
                 }
@@ -1929,7 +2441,14 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 refillBtn.onclick = function () { window.diorRequestRefill(actualId); };
             }
 
-            window.diorOpenModal('modal-view-rx-detail');
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                var rxModalEl = document.getElementById('modal-view-rx-detail');
+                if (rxModalEl) {
+                    bootstrap.Modal.getOrCreateInstance(rxModalEl).show();
+                }
+            } else if (typeof window.diorOpenModal === 'function') {
+                window.diorOpenModal('modal-view-rx-detail');
+            }
         };
 
         window.diorRequestRefill = function (rxId) {
@@ -2289,41 +2808,42 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         };
 
         window.diorDownloadRxPdf = function (rxId) {
-            var element = document.getElementById('rx-pdf-template-' + rxId);
-            if (!element) {
-                var allTemplates = document.querySelectorAll('[id^="rx-pdf-template-"]');
-                if (allTemplates && allTemplates.length > 0) {
-                    for (var k = 0; k < allTemplates.length; k++) {
-                        var rawIds = (allTemplates[k].getAttribute('data-raw-ids') || '').split(',');
-                        if (allTemplates[k].id.indexOf(rxId) !== -1 || rawIds.indexOf(String(rxId)) !== -1) {
-                            element = allTemplates[k];
-                            break;
-                        }
-                    }
-                }
+            if (typeof window.diorViewRxDetails === 'function') {
+                window.diorViewRxDetails(rxId);
             }
-            if (!element) { Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' }); return; }
+
+            var element = document.getElementById('pat-modal-rx-sheet');
+            if (!element) {
+                element = document.getElementById('rx-pdf-template-' + rxId);
+            }
+            if (!element) {
+                element = document.querySelector('#modal-view-rx-detail .modal-body');
+            }
+            if (!element) { 
+                if (window.Swal) Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' }); 
+                return; 
+            }
 
             var cleanFileName = 'Dior-Prescription-' + String(rxId).replace(/[^a-zA-Z0-9]/g, '-') + '.pdf';
             var innerContent = element.innerHTML;
 
             var tempContainer = document.createElement('div');
             tempContainer.style.position = 'fixed';
-            tempContainer.style.left = '0';
+            tempContainer.style.left = '-9999px';
             tempContainer.style.top = '0';
-            tempContainer.style.width = '750px';
+            tempContainer.style.width = '794px';
             tempContainer.style.background = '#FFFFFF';
+            tempContainer.style.padding = '24px';
+            tempContainer.style.boxSizing = 'border-box';
             tempContainer.style.zIndex = '-999999';
             tempContainer.style.opacity = '1';
-            tempContainer.style.pointerEvents = 'none';
-            tempContainer.style.margin = '0';
-            tempContainer.style.padding = '0';
+            tempContainer.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
             tempContainer.innerHTML = innerContent;
             document.body.appendChild(tempContainer);
 
             if (typeof html2pdf !== 'undefined' && html2pdf) {
                 var opt = {
-                    margin: [6, 6, 6, 6],
+                    margin: [8, 8, 8, 8],
                     filename: cleanFileName,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: {
@@ -2338,22 +2858,30 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
                 };
                 try {
-                    html2pdf().set(opt).from(tempContainer.firstElementChild || tempContainer).save().then(function () {
+                    html2pdf().set(opt).from(tempContainer).save().then(function () {
                         if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
+                        if (window.Swal) {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Prescription Downloaded',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
                     }).catch(function (err) {
                         console.error('PDF export error:', err);
                         if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                        fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
+                        window.print();
                     });
                 } catch (e) {
                     console.error('PDF generation error:', e);
                     if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                    fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
+                    window.print();
                 }
             } else {
-                console.warn('html2pdf library not loaded, falling back to print');
                 if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
+                window.print();
             }
         };
 
@@ -2576,7 +3104,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 switchPatientTab(tabId);
 
                 if (tabId === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
-                    window.diorSwitchApptSubTab('today');
+                    window.diorSwitchApptSubTab('calendar');
                 }
             }, true);
         }
@@ -2612,7 +3140,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 if (requested === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
                     var s = requestedSub || (function(){
                         try { return sessionStorage.getItem('dior_active_appt_subtab'); } catch(e){ return null; }
-                    })() || 'today';
+                    })() || 'calendar';
                     window.diorSwitchApptSubTab(s);
                 }
             }
@@ -2634,3 +3162,175 @@ document.addEventListener('click', function (event) {
     if (typeof window.diorSwitchTab === 'function') window.diorSwitchTab('appointments');
     if (typeof window.diorSwitchApptSubTab === 'function') window.diorSwitchApptSubTab(link.getAttribute('data-appt-subtab'));
 }, false);
+
+
+/* v17.2.1: prescription details use a clean native Bootstrap modal. */
+(function () {
+  'use strict';
+  function esc(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[ch];
+    });
+  }
+  // Retain main diorViewRxDetails without override
+})();
+
+/* ==============================================================
+   EMERGENCY CONTACT & ASSISTANCE MODAL LOGIC
+   ============================================================== */
+(function () {
+    'use strict';
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        var d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    window.diorOpenEmergencyModal = function () {
+        var modalEl = document.getElementById('modal-emergency-contact');
+        if (modalEl) {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            } else if (typeof window.diorOpenModal === 'function') {
+                window.diorOpenModal('modal-emergency-contact');
+            }
+        }
+    };
+
+    window.diorEmergencyCall = function (type) {
+        if (type === 'ambulance') {
+            window.location.href = 'tel:911';
+        } else if (type === 'doctor') {
+            window.location.href = 'tel:18005553467';
+        } else {
+            window.diorOpenEmergencyModal();
+        }
+    };
+
+    window.diorSaveEmergencyContact = function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+
+        var nameInput = document.getElementById('modal_emerg_name');
+        var relSelect = document.getElementById('modal_emerg_rel');
+        var phoneInput = document.getElementById('modal_emerg_phone');
+        var prioritySelect = document.getElementById('modal_emerg_priority');
+        var submitBtn = document.getElementById('dior-emerg-submit-btn');
+
+        if (!nameInput || !phoneInput) return;
+
+        var name = nameInput.value.trim();
+        var rel = relSelect ? relSelect.value : 'Spouse';
+        var phone = phoneInput.value.trim();
+        var priority = prioritySelect ? prioritySelect.value : 'Emergency';
+
+        if (!name || !phone) {
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Required Information',
+                    text: 'Please provide both contact name and phone number.'
+                });
+            } else {
+                alert('Please provide both contact name and phone number.');
+            }
+            return;
+        }
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+        }
+
+        var ajaxUrl = (window.dior_vars && window.dior_vars.ajax_url) || (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || '/wp-admin/admin-ajax.php';
+        var nonce = (window.dior_vars && window.dior_vars.nonce) || (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || '';
+
+        var formData = new FormData();
+        formData.append('action', 'dior_patient_save_emergency_contact');
+        formData.append('nonce', nonce);
+        formData.append('emergency_name', name);
+        formData.append('emergency_relation', rel);
+        formData.append('emergency_phone', phone);
+        formData.append('emergency_priority', priority);
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (res) {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Emergency Contact';
+            }
+
+            if (res && res.success) {
+                // Update quick contact card inside modal
+                var cardName = document.getElementById('emerg-modal-card-name');
+                var cardDesc = document.getElementById('emerg-modal-card-desc');
+                var cardCallBtn = document.getElementById('emerg-modal-card-call-btn');
+                if (cardName) cardName.textContent = name;
+                if (cardDesc) cardDesc.textContent = rel + ' \u2022 ' + phone;
+                if (cardCallBtn) {
+                    cardCallBtn.href = 'tel:' + phone.replace(/[^0-9+]/g, '');
+                    cardCallBtn.classList.remove('disabled');
+                }
+
+                // Update emergency table
+                var tbody = document.getElementById('dior-emerg-tbody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr>' +
+                        '<td><input type="checkbox" class="dior-ic-52ff4d551f form-check-input"></td>' +
+                        '<td><span class="cell-text">' + escapeHtml(name) + '</span></td>' +
+                        '<td><span class="cell-text">' + escapeHtml(rel) + '</span></td>' +
+                        '<td>' +
+                            '<div class="cell-content cell-icon-text"><i class="fas fa-phone cell-icon" style="font-size: 13px; color: #2C6CB1; margin-right: 6px;"></i><span class="cell-text">' + escapeHtml(phone) + '</span></div>' +
+                        '</td>' +
+                        '<td><div class="cell-content"><div class="badge-solid col-red">' + escapeHtml(priority) + '</div></div></td>' +
+                        '<td><div class="cell-actions"><button type="button" class="action-icon-btn edit-btn btn" title="Edit Emergency Contact" onclick="diorOpenEmergencyModal()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button></div></td>' +
+                    '</tr>';
+                }
+
+                // Also keep settings inputs in sync if loaded
+                var settingsName = document.getElementById('patient-settings-emergency-name');
+                var settingsRel = document.getElementById('patient-settings-emergency-relation');
+                var settingsPhone = document.getElementById('patient-settings-emergency-phone');
+                if (settingsName) settingsName.value = name;
+                if (settingsRel) settingsRel.value = rel;
+                if (settingsPhone) settingsPhone.value = phone;
+
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Emergency Contact Saved',
+                        text: 'Emergency contact information has been updated successfully.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+
+                if (typeof window.diorCloseModal === 'function') {
+                    window.diorCloseModal('modal-emergency-contact');
+                }
+            } else {
+                var msg = (res && res.data && res.data.message) || (res && res.message) || 'Failed to save emergency contact.';
+                if (window.Swal) {
+                    Swal.fire({ icon: 'error', title: 'Error', text: msg });
+                } else {
+                    alert(msg);
+                }
+            }
+        })
+        .catch(function (err) {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Emergency Contact';
+            }
+            console.error('Error saving emergency contact:', err);
+            if (window.Swal) {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Network error while saving emergency contact.' });
+            }
+        });
+    };
+})();

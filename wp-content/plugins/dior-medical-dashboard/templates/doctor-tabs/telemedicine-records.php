@@ -37,7 +37,7 @@ $virtual_records = [
 
             <div class="docs-actions-wrapper">
                 <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+
                     <input type="text" class="form-control border-start-0 ps-0" placeholder="Search records...">
                 </div>
                 <div class="docs-actions-group">

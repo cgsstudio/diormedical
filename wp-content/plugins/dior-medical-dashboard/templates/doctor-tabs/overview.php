@@ -1,27 +1,75 @@
 <?php
-// PHP logic here
-// Using static images and exact data as provided in the reference HTML, but replaced unicode with FontAwesome icons
+// Dashboard overview uses only live records passed by the dashboard controller.
+$today = current_time('Y-m-d');
+$today_appointments = [];
+$upcoming_appointments = [];
+foreach ((array)$appointments as $appointment) {
+    $date = (string)($appointment['appt_date'] ?? $appointment['date'] ?? '');
+    $status = strtolower((string)($appointment['status'] ?? ''));
+    if ($date === $today) $today_appointments[] = $appointment;
+    if ($date >= $today && in_array($status, ['scheduled', 'confirmed', 'in-queue', 'in_queue'], true)) $upcoming_appointments[] = $appointment;
+}
+usort($today_appointments, static function($a, $b) {
+    return strcmp((string)($a['appt_time'] ?? $a['time'] ?? ''), (string)($b['appt_time'] ?? $b['time'] ?? ''));
+});
+$completed_today = count(array_filter($today_appointments, static fn($a) => in_array(strtolower((string)($a['status'] ?? '')), ['completed','done'], true)));
+$upcoming_today = count(array_filter($today_appointments, static fn($a) => in_array(strtolower((string)($a['status'] ?? '')), ['scheduled','confirmed','in-queue','in_queue'], true)));
+$cancelled_today = count(array_filter($today_appointments, static fn($a) => in_array(strtolower((string)($a['status'] ?? '')), ['cancelled','canceled','cancel'], true)));
+$current_month = current_time('Y-m');
+$new_patients_this_month = 0;
+foreach ((array)$patients as $patient) {
+    $registered = strtotime((string)($patient['registered'] ?? ''));
+    if ($registered && wp_date('Y-m', $registered) === $current_month) $new_patients_this_month++;
+}
+$recent_appointments = array_slice(array_reverse((array)$appointments), 0, 5);
+
+// Dynamic patient reviews for the doctor overview panel
+global $wpdb;
+$current_doc_user_id = get_current_user_id();
+$reviews_query = "SELECT r.*, 
+    COALESCE(NULLIF(TRIM(CONCAT(COALESCE(p.first_name, ''), ' ', COALESCE(p.last_name, ''))), ''), NULLIF(u.display_name, ''), u.user_login, 'Patient') AS patient_display_name,
+    COALESCE(p.avatar_url, '') AS avatar_url
+    FROM {$wpdb->prefix}dior_reviews r
+    LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = r.patient_id
+    LEFT JOIN {$wpdb->users} u ON u.ID = r.patient_id";
+
+if (!current_user_can('manage_options')) {
+    $scoped_doctor_ids = class_exists('Dior_Doctor_Resolver') 
+        ? Dior_Doctor_Resolver::get_accessible_doctor_ids($current_doc_user_id) 
+        : [$current_doc_user_id];
+    if (!empty($scoped_doctor_ids)) {
+        $scoped_placeholders = implode(',', array_fill(0, count($scoped_doctor_ids), '%d'));
+        $reviews_query .= $wpdb->prepare(" WHERE (r.doctor_id IN ($scoped_placeholders) OR r.doctor_id = 0)", ...$scoped_doctor_ids);
+    } else {
+        $reviews_query .= $wpdb->prepare(" WHERE (r.doctor_id = %d OR r.doctor_id = 0)", $current_doc_user_id);
+    }
+}
+$overview_reviews = $wpdb->get_results($reviews_query . " ORDER BY r.created_at DESC LIMIT 15", ARRAY_A);
+if (!is_array($overview_reviews)) {
+    $overview_reviews = [];
+}
 ?>
+
 
 <section class="dior-tab-panel active" id="tab-doc-overview">
     <section class="stats">
         <div class="card stat">
-            <div class="num">20</div>
+            <div class="num"><?php echo esc_html(number_format_i18n(count((array)$appointments))); ?></div>
             <div class="stat-icon"><i class="far fa-calendar-days"></i></div>
             <div class="label">Appointments</div>
         </div>
         <div class="card stat">
-            <div class="num">90</div>
+            <div class="num"><?php echo esc_html(number_format_i18n(count($upcoming_appointments))); ?></div>
             <div class="stat-icon"><i class="fas fa-clock-rotate-left"></i></div>
             <div class="label">Upcoming Appointments</div>
         </div>
         <div class="card stat">
-            <div class="num">23</div>
+            <div class="num"><?php echo esc_html(number_format_i18n($new_patients_this_month)); ?></div>
             <div class="stat-icon"><i class="fas fa-user-doctor"></i></div>
             <div class="label">New Patients</div>
         </div>
         <div class="card stat">
-            <div class="num">$500.00</div>
+            <div class="num">—</div>
             <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
             <div class="label">Total Earning</div>
         </div>
@@ -33,102 +81,33 @@
                 <div class="schedule-header">
                     <h2 class="schedule-title">Today's Schedule</h2>
                     <div class="schedule-badges">
-                        <span class="s-badge b-completed">2 Completed</span>
-                        <span class="s-badge b-upcoming">3 Upcoming</span>
-                        <span class="s-badge b-cancel">1 Cancel</span>
+                        <span class="s-badge b-completed"><?php echo esc_html($completed_today); ?> Completed</span>
+                        <span class="s-badge b-upcoming"><?php echo esc_html($upcoming_today); ?> Upcoming</span>
+                        <span class="s-badge b-cancel"><?php echo esc_html($cancelled_today); ?> Cancel</span>
                     </div>
                 </div>
                 <div class="schedule-body">
+                    <?php if (empty($today_appointments)): ?>
+                        <div class="schedule-slot"><div class="schedule-appt"><div class="s-appt-left"><div><h3 class="s-patient-name">No appointments scheduled for today.</h3></div></div></div></div>
+                    <?php else: foreach ($today_appointments as $appointment):
+                        $patient_name = (string)($appointment['patient_name'] ?? 'Patient');
+                        $patient_id = (string)($appointment['patient_id_num'] ?? '');
+                        $time = (string)($appointment['appt_time'] ?? $appointment['time'] ?? '—');
+                        $status = (string)($appointment['status'] ?? 'Scheduled');
+                        $status_key = strtolower($status);
+                        $status_class = in_array($status_key, ['completed','done'], true) ? 's-completed' : (in_array($status_key, ['cancelled','canceled','cancel'], true) ? 's-cancelled' : (in_array($status_key, ['in progress','in-progress','in-queue'], true) ? 's-progress' : 's-upcoming'));
+                        $avatar = 'https://ui-avatars.com/api/?name=' . rawurlencode($patient_name) . '&background=eef2ff&color=4f46e5';
+                    ?>
                     <div class="schedule-slot">
-                        <div class="schedule-time">2:00 PM</div>
-                        <div class="schedule-timeline">
-                            <div class="schedule-dot"></div>
-                        </div>
+                        <div class="schedule-time"><?php echo esc_html($time); ?></div>
+                        <div class="schedule-timeline"><div class="schedule-dot"></div></div>
                         <div class="schedule-appt">
-                            <div class="s-appt-left">
-                                <img class="s-patient-img"
-                                    src="https://ui-avatars.com/api/?name=Mia+Song&background=eef2ff&color=4f46e5"
-                                    alt="Mia Song">
-                                <div>
-                                    <h3 class="s-patient-name">Mia Song</h3>
-                                    <p class="s-patient-id">PAT00123</p>
-                                </div>
-                            </div>
-                            <div class="s-appt-right">
-                                <span class="s-appt-status s-progress">In Progress</span>
-                            </div>
+                            <div class="s-appt-left"><img class="s-patient-img" src="<?php echo esc_url($avatar); ?>" alt="<?php echo esc_attr($patient_name); ?>"><div><h3 class="s-patient-name"><?php echo esc_html($patient_name); ?></h3><p class="s-patient-id"><?php echo esc_html($patient_id); ?></p></div></div>
+                            <div class="s-appt-right"><span class="s-appt-status <?php echo esc_attr($status_class); ?>"><?php echo esc_html(ucwords($status)); ?></span></div>
                         </div>
                     </div>
-
-                    <div class="schedule-slot">
-                        <div class="schedule-time">1:00 PM</div>
-                        <div class="schedule-timeline">
-                            <div class="schedule-dot"></div>
-                        </div>
-                        <div class="schedule-appt">
-                            <div class="s-appt-left">
-                                <img class="s-patient-img"
-                                    src="https://ui-avatars.com/api/?name=John+Johnson&background=f0fdf4&color=166534"
-                                    alt="John Johnson">
-                                <div>
-                                    <h3 class="s-patient-name">John Johnson</h3>
-                                    <p class="s-patient-id">PAT00111</p>
-                                </div>
-                            </div>
-                            <div class="s-appt-right">
-                                <span class="s-appt-status s-completed">Completed</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="schedule-slot">
-                        <div class="schedule-time">12:00 PM</div>
-                        <div class="schedule-timeline">
-                            <div class="schedule-dot"></div>
-                        </div>
-                        <div class="schedule-appt">
-                            <div class="s-appt-left">
-                                <img class="s-patient-img"
-                                    src="https://ui-avatars.com/api/?name=Richard+Davis&background=fff1f2&color=be123c"
-                                    alt="Richard Davis">
-                                <div>
-                                    <h3 class="s-patient-name">Richard Davis</h3>
-                                    <p class="s-patient-id">PAT00238</p>
-                                </div>
-                            </div>
-                            <div class="s-appt-right">
-                                <span class="s-appt-status s-cancelled">Cancelled</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="schedule-slot">
-                        <div class="schedule-time">3:00 PM</div>
-                        <div class="schedule-timeline">
-                            <div class="schedule-dot"></div>
-                        </div>
-                        <div class="schedule-appt">
-                            <div class="s-appt-left">
-                                <img class="s-patient-img"
-                                    src="https://ui-avatars.com/api/?name=Elizabeth+Brown&background=fef3c7&color=b45309"
-                                    alt="Elizabeth Brown">
-                                <div>
-                                    <h3 class="s-patient-name">Elizabeth Brown</h3>
-                                    <p class="s-patient-id">PAT00112</p>
-                                </div>
-                            </div>
-                            <div class="s-appt-right">
-                                <div class="s-appt-actions">
-                                    <button class="s-btn-icon btn"><i class="far fa-calendar-days"></i></button>
-                                    <button class="s-btn-icon mail-icon btn"><i class="far fa-envelope"></i></button>
-                                    <button class="s-btn-join btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg> Join Now</button>
-                                </div>
-                                <span class="s-appt-status s-upcoming">Upcoming</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <?php endforeach; endif; ?>
+                </div>            </div>
 
             <section class="card table-card">
                 <div class="panel-title">Latest Appointments</div>
@@ -144,46 +123,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>APP00123</td>
-                                <td>Mia Song</td>
-                                <td>Sep 10, 2026</td>
-                                <td>Fever</td>
-                                <td><button class="action-btn btn">Prescription</button><button
-                                        class="action-btn outline btn">Details</button></td>
-                            </tr>
-                            <tr>
-                                <td>APP00111</td>
-                                <td>John Johnson</td>
-                                <td>Sep 05, 2026</td>
-                                <td>Cholera</td>
-                                <td><button class="action-btn btn">Prescription</button><button
-                                        class="action-btn outline btn">Details</button></td>
-                            </tr>
-                            <tr>
-                                <td>APP00112</td>
-                                <td>Elizabeth Brown</td>
-                                <td>Aug 26, 2026</td>
-                                <td>Jaundice</td>
-                                <td><button class="action-btn btn">Prescription</button><button
-                                        class="action-btn outline btn">Details</button></td>
-                            </tr>
-                            <tr>
-                                <td>APP00112</td>
-                                <td>Elizabeth Brown</td>
-                                <td>Aug 26, 2026</td>
-                                <td>Typhoid</td>
-                                <td><button class="action-btn btn">Prescription</button><button
-                                        class="action-btn outline btn">Details</button></td>
-                            </tr>
-                            <tr>
-                                <td>APP00112</td>
-                                <td>Elizabeth Brown</td>
-                                <td>Aug 26, 2026</td>
-                                <td>Malaria</td>
-                                <td><button class="action-btn btn">Prescription</button><button
-                                        class="action-btn outline btn">Details</button></td>
-                            </tr>
+                            <?php if (empty($recent_appointments)): ?>
+                                <tr><td colspan="5">No appointment records found.</td></tr>
+                            <?php else: foreach ($recent_appointments as $appointment):
+                                $appointment_id = (string)($appointment['appt_uid'] ?? $appointment['id'] ?? '');
+                                $patient_name = (string)($appointment['patient_name'] ?? 'Patient');
+                                $date = (string)($appointment['appt_date'] ?? $appointment['date'] ?? '');
+                                $condition = (string)($appointment['condition'] ?? $appointment['reason'] ?? $appointment['visit_type'] ?? '—');
+                            ?>
+                                <tr>
+                                    <td><?php echo esc_html($appointment_id ?: '—'); ?></td>
+                                    <td><?php echo esc_html($patient_name); ?></td>
+                                    <td><?php echo esc_html($date ? wp_date('M j, Y', strtotime($date)) : '—'); ?></td>
+                                    <td><?php echo esc_html($condition); ?></td>
+                                    <td><button class="action-btn btn" type="button">Prescription</button><button class="action-btn outline btn" type="button">Details</button></td>
+                                </tr>
+                            <?php endforeach; endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -393,64 +348,85 @@
     </section>
 
     <div class="bottom">
-        <section class="card reviews">
-            <div class="panel-title">Patient Review</div>
+        <section class="card reviews" id="dior-doc-overview-reviews-card">
+            <div class="panel-title">
+                <span>Patient Review</span>
+                <a href="#tab=doc-patient-review" onclick="if(typeof diorDocSwitchTab === 'function'){ diorDocSwitchTab('doc-patient-review'); } return false;" class="dior-panel-view-all" title="View all reviews and feedback" style="font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:#4F46E5;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s ease;">
+                    <span>View All</span>
+                    <i class="fas fa-arrow-right" style="font-size:11px;"></i>
+                </a>
+            </div>
             <div class="reviews-scroll">
-                <div class="review">
-                    <img class="avatar" src="https://ui-avatars.com/api/?name=Mia+Song&background=eef2ff&color=4f46e5"
-                        alt="Mia Song">
-                    <div class="review-body">
-                        <div class="review-row1">
-                            <span class="review-name">Mia Song</span>
-                            <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i></span>
+                <?php if (!empty($overview_reviews)): 
+                    $palette_list = [
+                        ['bg' => 'eef2ff', 'color' => '4f46e5'],
+                        ['bg' => 'f0fdf4', 'color' => '166534'],
+                        ['bg' => 'fef3c7', 'color' => 'b45309'],
+                        ['bg' => 'fff1f2', 'color' => 'be123c'],
+                        ['bg' => 'f3e8ff', 'color' => '7e22ce'],
+                        ['bg' => 'ecfeff', 'color' => '0e7490'],
+                    ];
+                    foreach ($overview_reviews as $idx => $rev):
+                        $p_name = !empty($rev['patient_display_name']) ? trim($rev['patient_display_name']) : 'Patient';
+                        $p_id   = (int)($rev['patient_id'] ?? 0);
+                        $rating = max(1, min(5, (int)($rev['rating'] ?? 5)));
+                        $comment = !empty($rev['comment']) ? trim($rev['comment']) : (!empty($rev['subject']) ? trim($rev['subject']) : 'Great service and professional care.');
+                        $subject = !empty($rev['subject']) ? trim($rev['subject']) : '';
+                        
+                        $palette = $palette_list[$idx % count($palette_list)];
+                        $fallback_avatar = 'https://ui-avatars.com/api/?name=' . rawurlencode($p_name) . '&background=' . $palette['bg'] . '&color=' . $palette['color'];
+                        
+                        $avatar = !empty($rev['avatar_url']) ? $rev['avatar_url'] : '';
+                        if (!$avatar && $p_id > 0) {
+                            $avatar = get_user_meta($p_id, 'dior_profile_image', true) ?: get_user_meta($p_id, 'profile_image', true) ?: '';
+                        }
+                        if (!$avatar) {
+                            $avatar = $fallback_avatar;
+                        }
+
+                        $date_label = '';
+                        if (!empty($rev['created_at']) && $rev['created_at'] !== '0000-00-00 00:00:00') {
+                            $ts = strtotime($rev['created_at']);
+                            if ($ts) {
+                                $date_label = wp_date('M j, Y', $ts);
+                            }
+                        }
+                ?>
+                    <div class="review" style="cursor:pointer;" onclick="if(typeof diorDocSwitchTab === 'function'){ diorDocSwitchTab('doc-patient-review'); }" title="Click to view details in Feedback & Reviews">
+                        <img class="avatar" src="<?php echo esc_url($avatar); ?>"
+                            alt="<?php echo esc_attr($p_name); ?>"
+                            onerror="this.src='<?php echo esc_url($fallback_avatar); ?>'">
+                        <div class="review-main review-body">
+                            <div class="review-top review-row1">
+                                <span class="review-name" title="<?php echo esc_attr($p_name); ?>">
+                                    <?php echo esc_html($p_name); ?>
+                                    <?php if (!empty($date_label)): ?>
+                                        <span class="review-date-badge" style="font-size:11px;font-weight:400;color:#94A3B8;margin-left:6px;">&bull; <?php echo esc_html($date_label); ?></span>
+                                    <?php endif; ?>
+                                </span>
+                                <span class="stars" title="<?php echo esc_attr($rating); ?> out of 5 stars">
+                                    <?php for ($s = 1; $s <= 5; $s++): ?>
+                                        <i class="<?php echo $s <= $rating ? 'fas' : 'far'; ?> fa-star"<?php if ($s > $rating) echo ' style="color:#CBD5E1;"'; ?>></i>
+                                    <?php endfor; ?>
+                                </span>
+                            </div>
+                            <div class="review-text" title="<?php echo esc_attr($comment); ?>" style="word-break:break-word;overflow-wrap:anywhere;">
+                                <?php if (!empty($subject) && strtolower($subject) !== 'patient review' && strtolower($subject) !== strtolower($comment)): ?>
+                                    <strong style="color:#334155;"><?php echo esc_html($subject); ?>:</strong>
+                                <?php endif; ?>
+                                <?php echo esc_html($comment); ?>
+                            </div>
                         </div>
-                        <div class="review-text">Excellent doctor! Very professional and caring.</div>
                     </div>
-                </div>
-                <div class="review">
-                    <img class="avatar"
-                        src="https://ui-avatars.com/api/?name=John+Johnson&background=f0fdf4&color=166534"
-                        alt="John Johnson">
-                    <div class="review-body">
-                        <div class="review-row1">
-                            <span class="review-name">John Johnson</span>
-                            <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i></span>
+                <?php endforeach; else: ?>
+                    <div class="dior-empty-reviews" style="padding:48px 24px;text-align:center;color:#64748B;">
+                        <div style="width:48px;height:48px;margin:0 auto 12px;background:#F1F5F9;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:20px;">
+                            <i class="far fa-comment-dots"></i>
                         </div>
-                        <div class="review-text">Great experience. Highly recommended!</div>
+                        <div style="font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:#334155;margin-bottom:4px;">No Patient Reviews Yet</div>
+                        <div style="font-size:13px;color:#94A3B8;max-width:260px;margin:0 auto;line-height:1.5;">When patients submit feedback and reviews, they will appear here dynamically.</div>
                     </div>
-                </div>
-                <div class="review">
-                    <img class="avatar"
-                        src="https://ui-avatars.com/api/?name=Elizabeth+Brown&background=fef3c7&color=b45309"
-                        alt="Elizabeth Brown">
-                    <div class="review-body">
-                        <div class="review-row1">
-                            <span class="review-name">Elizabeth Brown</span>
-                            <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i></span>
-                        </div>
-                        <div class="review-text">Very knowledgeable and patient.</div>
-                    </div>
-                </div>
-                <div class="review">
-                    <img class="avatar"
-                        src="https://ui-avatars.com/api/?name=Richard+Davis&background=fff1f2&color=be123c"
-                        alt="Richard Davis">
-                    <div class="review-body">
-                        <div class="review-row1">
-                            <span class="review-name">Richard Davis</span>
-                            <span class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i></span>
-                        </div>
-                        <div class="review-text">Excellent doctor! Very professional and caring.</div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </section>
 

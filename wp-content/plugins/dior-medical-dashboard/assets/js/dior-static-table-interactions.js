@@ -124,7 +124,7 @@
             toolbar.innerHTML =
                 '<span class="dior-bulk-count">0 selected</span>' +
                 '<button type="button" class="btn btn-bulk-delete" title="Delete selected records">' +
-                    '<i class="fas fa-trash-can"></i> Delete Selected' +
+                    '<i class="bi bi-trash3"></i> Delete Selected' +
                 '</button>';
 
             var target = card.querySelector('.va-actions-group, .docs-actions-group, .va-actions-wrapper, .docs-actions-wrapper, .dior-ref-card-head > div:last-child');
@@ -393,7 +393,7 @@
         var selectedBadge = selected > 0 ? ' <span class="badge bg-primary ms-1" style="font-size:11px;padding:3px 8px;border-radius:12px;background:#00346C !important;">' + selected + ' selected</span>' : '';
 
         var html = '';
-        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page - 1) + '" ' + (state.page === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="fa-solid fa-chevron-left"></i></button>';
+        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page - 1) + '" ' + (state.page === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="bi bi-chevron-left"></i></button>';
 
         for (var page = 1; page <= totalPages; page++) {
             if (totalPages > 7) {
@@ -407,7 +407,7 @@
             html += '<button type="button" class="va-page-btn dior-page-btn btn ' + (page === state.page ? 'active' : '') + '" data-static-page="' + page + '">' + page + '</button>';
         }
 
-        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page + 1) + '" ' + (state.page === totalPages ? 'disabled' : '') + ' aria-label="Next page"><i class="fa-solid fa-chevron-right"></i></button>';
+        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page + 1) + '" ' + (state.page === totalPages ? 'disabled' : '') + ' aria-label="Next page"><i class="bi bi-chevron-right"></i></button>';
 
         host.innerHTML =
             '<div class="va-pagination-text dior-pagination-count text-muted" style="font-size:13.5px;font-weight:500;">Showing <strong>' +
@@ -470,11 +470,11 @@
             th.style.cursor = 'pointer';
             th.style.userSelect = 'none';
 
-            // Ensure fontawesome sort icon exists
-            var icon = th.querySelector('i.fa-sort, i.fa-sort-up, i.fa-sort-down, i.fas, i.fa-solid');
+            // Ensure Bootstrap sort icon exists
+            var icon = th.querySelector('i.bi-arrow-down-up, i.bi-arrow-up, i.bi-arrow-down, i.fa-sort, i.fas, i.fa-solid, i.bi');
             if (!icon) {
                 icon = document.createElement('i');
-                icon.className = 'fas fa-sort ms-1 text-muted';
+                icon.className = 'bi bi-arrow-down-up ms-1 text-muted';
                 th.appendChild(icon);
             }
 
@@ -487,14 +487,14 @@
                     otherTh.removeAttribute('data-sort-dir');
                     var otherIcon = otherTh.querySelector('i');
                     if (otherIcon) {
-                        otherIcon.className = 'fas fa-sort ms-1 text-muted';
+                        otherIcon.className = 'bi bi-arrow-down-up ms-1 text-muted';
                     }
                 });
 
                 // Set new direction
                 th.setAttribute('data-sort-dir', newDir);
                 if (icon) {
-                    icon.className = 'fas fa-sort-' + (newDir === 'asc' ? 'up' : 'down') + ' ms-1 text-primary';
+                    icon.className = 'bi bi-arrow-' + (newDir === 'asc' ? 'up' : 'down') + ' ms-1 text-primary';
                 }
 
                 // Sort the table rows
@@ -528,7 +528,7 @@
     // 4. IN-PLACE EDIT MODAL & SINGLE ROW DELETE
     // =========================================================================
     function findEditableValueCell(cell) {
-        var target = cell.querySelector('.va-user-name, .cell-text, .status-cell-text, .notes-text');
+        var target = cell.querySelector('.va-user-name, .cell-text, .status-cell-text, .notes-text, .badge, .status, .dior-ref-badge');
         return target || null;
     }
 
@@ -541,6 +541,15 @@
         var target = findEditableValueCell(cell);
         if (target) {
             target.textContent = value;
+            if (target.classList.contains('status-cell-text')) {
+                target.classList.remove('status-confirm', 'status-upcoming', 'status-completed', 'status-cancelled', 'status-pending');
+                var valLower = value.toLowerCase().trim();
+                if (valLower === 'confirmed') target.classList.add('status-confirm');
+                else if (valLower === 'cancelled' || valLower === 'canceled') target.classList.add('status-cancelled');
+                else if (valLower === 'pending') target.classList.add('status-pending');
+                else if (valLower === 'completed') target.classList.add('status-completed');
+                else target.classList.add('status-upcoming');
+            }
             return;
         }
 
@@ -558,6 +567,44 @@
         }
 
         cell.textContent = value;
+    }
+
+    function getStatusOptions(table, currentValue) {
+        var tableText = '';
+        if (table) {
+            var container = table.closest('.dior-tab-panel, .view-appointment-card, .docs-card, .medidash-card, .dior-ref-card') || table;
+            tableText = ((container.id || '') + ' ' + (container.className || '') + ' ' + (table.className || '')).toLowerCase();
+        }
+
+        var list;
+        if (/appt|appointment|consult/i.test(tableText)) {
+            // Appointments & Consultations
+            list = ['Confirmed', 'Scheduled', 'In Progress', 'Pending', 'Completed', 'Cancelled'];
+        } else if (/prescri|rx|\bmeds?\b/i.test(tableText)) {
+            // Prescriptions
+            list = ['Active', 'Refill Needed', 'Pending', 'Completed', 'Cancelled', 'Expired'];
+        } else if (/bill|pay|invoice|income/i.test(tableText)) {
+            // Billing & Payments
+            list = ['Paid', 'Pending', 'Overdue', 'Failed', 'Refunded', 'Cancelled'];
+        } else if (/lab|diagnostic|\b(test|tests|document|documents)\b/i.test(tableText)) {
+            // Labs & Diagnostic Results
+            list = ['Normal', 'Abnormal', 'Pending', 'Completed', 'Reviewed'];
+        } else {
+            // Default Medical Status List
+            list = ['Confirmed', 'Scheduled', 'In Progress', 'Pending', 'Completed', 'Cancelled'];
+        }
+
+        if (currentValue && currentValue.trim()) {
+            var valTrimmed = currentValue.trim();
+            var exists = list.some(function (item) {
+                return item.toLowerCase() === valTrimmed.toLowerCase();
+            });
+            if (!exists) {
+                list.unshift(valTrimmed);
+            }
+        }
+
+        return list;
     }
 
     function createModal() {
@@ -649,9 +696,25 @@
             var value = readCellValue(cell);
             var field = document.createElement('div');
             field.className = 'dior-static-edit-field mb-3';
-            field.innerHTML =
-                '<label class="form-label" style="font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">' + label + '</label>' +
-                '<input type="text" class="form-control" data-edit-index="' + index + '" value="' + value.replace(/"/g, '&quot;') + '">';
+
+            var isStatus = /status/i.test(label);
+            if (isStatus) {
+                var options = getStatusOptions(table, value);
+                var optionsHtml = options.map(function (opt) {
+                    var isSelected = opt.toLowerCase() === value.trim().toLowerCase();
+                    return '<option value="' + opt.replace(/"/g, '&quot;') + '"' + (isSelected ? ' selected' : '') + '>' + opt + '</option>';
+                }).join('');
+
+                field.innerHTML =
+                    '<label class="form-label" style="font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">' + label + '</label>' +
+                    '<select class="form-select dior-static-edit-select" data-edit-index="' + index + '" style="border-radius: 6px; font-size: 14px; font-weight: 500; min-height: 42px; border: 1px solid #E2E8F0; color: #0F172A; background-color: #FFFFFF !important; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\'%3e%3cpath fill=\'none\' stroke=\'%23334155\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'m2 5 6 6 6-6\'/%3e%3c/svg%3e&quot;) !important; background-repeat: no-repeat !important; background-position: right 14px center !important; background-size: 16px 12px !important; cursor: pointer; padding: 10px 36px 10px 14px !important; outline: none;">' +
+                        optionsHtml +
+                    '</select>';
+            } else {
+                field.innerHTML =
+                    '<label class="form-label" style="font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">' + label + '</label>' +
+                    '<input type="text" class="form-control" data-edit-index="' + index + '" value="' + value.replace(/"/g, '&quot;') + '">';
+            }
             fieldsWrap.appendChild(field);
         });
 
@@ -681,7 +744,7 @@
     }
 
     function isTrashButton(button) {
-        return !!button.querySelector('.fa-trash, .fa-trash-can, .bi-trash');
+        return !!button.querySelector('.fa-trash, .fa-trash-can, .bi-trash, .bi-trash3');
     }
 
     // =========================================================================
@@ -754,7 +817,7 @@
     document.addEventListener('click', function (event) {
         // Edit button
         var editButton = event.target.closest('.va-btn-edit, .action-icon-btn.edit-btn');
-        if (editButton && !editButton.matches('.dior-mark-notification-read') && editButton.querySelector('.fa-pen, .fa-pencil, .bi-vector-pen')) {
+        if (editButton && !editButton.matches('.dior-mark-notification-read') && editButton.querySelector('.fa-pen, .fa-pencil, .bi-vector-pen, .bi-pencil-square, .bi-pencil')) {
             event.preventDefault();
             event.stopPropagation();
             var editRow = editButton.closest('tr');

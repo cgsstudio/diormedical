@@ -136,7 +136,7 @@
                             <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn active btn"
+                            <button type="button" class="dior-nav-btn submenu-btn btn"
                                 data-tab="doc-documents-upload">
                                 <i class="fas fa-chevron-right"></i> Upload Documents
                             </button>
@@ -165,18 +165,9 @@
                     </div>
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-patient-review"><i
                             class="fas fa-star"></i><span class="nav-label">Feedback &amp; Reviews</span></button>
-                    <div class="dior-nav-item has-submenu" id="notifications-menu-item">
-                        <button type="button" class="dior-nav-btn btn"
-                            onclick="diorToggleSubmenu(event, 'notifications-menu-item')">
-                            <i class="fas fa-bell"></i><span class="nav-label">Notification</span>
-                            <i class="fas fa-minus submenu-icon"></i>
-                        </button>
-                        <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-notifications-system">
-                                <i class="fas fa-chevron-right"></i> System Notifications
-                            </button>
-                        </div>
-                    </div>
+                    <button type="button" class="dior-nav-btn btn" data-tab="doc-notifications-system">
+                        <i class="bi bi-bell"></i><span class="nav-label">Notifications</span>
+                    </button>
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-consultation"><i
                             class="fas fa-door-open"></i><span class="nav-label">Consultation Room</span></button>
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-settings"><i

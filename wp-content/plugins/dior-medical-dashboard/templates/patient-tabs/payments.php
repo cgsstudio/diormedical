@@ -21,21 +21,21 @@
             </div>
             <div class="docs-actions-wrapper">
                 <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                    <input type="text" id="dior-bill-search-input" class="form-control border-start-0 ps-0" placeholder="Search records..."
-                        aria-label="Search box" onkeyup="diorFilterBill()">
+
+                    <input type="text" id="dior-bill-search-input" class="form-control border-start-0 ps-0"
+                        placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterBill()">
                 </div>
                 <div class="docs-actions-group">
-                    <button type="button" aria-label="Delete selected items" class="docs-icon-btn docs-btn-danger btn"
+                    <button type="button" aria-label="Delete selected items" class="btn btn-sm btn-danger"
                         title="Delete Selected" onclick="diorBulkDeleteStaticRows(this)">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success btn"
+                    <button type="button" aria-label="Export to CSV" class="btn btn-sm btn-success"
                         title="Export to CSV" onclick="diorDownloadBillCSV()">
                         <i class="fas fa-file-arrow-down"></i>
                     </button>
-                    <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info btn"
-                        title="Refresh Page" onclick="window.location.reload()">
+                    <button type="button" aria-label="Refresh data" class="btn btn-sm btn-info" title="Refresh Page"
+                        onclick="window.location.reload()">
                         <i class="fas fa-rotate-right"></i>
                     </button>
                 </div>
@@ -88,28 +88,15 @@
                             <td><span class="cell-text"><?php echo esc_html($bm[5]); ?></span></td>
                             <td><span class="cell-text"><?php echo esc_html($bm[6]); ?></span></td>
                             <td>
-                                <div class="cell-content action-cell dior-ic-b568c61cf9">
-                                    <button type="button" class="action-btn action-btn-success dior-ic-49777d7482 btn"
-                                        title="Download Bill">
-                                        <i class="fas fa-download dior-ic-d0ad57ff03"></i>
+                                <div class="cell-content action-cell" style="gap:8px;">
+                                    <button type="button" class="btn btn-sm btn-success" title="Download Bill">
+                                        <i class="fas fa-download"></i>
                                     </button>
-                                    <button type="button" class="action-btn action-btn-info dior-ic-43535b6eba btn"
-                                        title="View Bill">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#3b82f6"
-                                            class="bi bi-eye" viewBox="0 0 16 16" style="background:transparent;">
-                                            <path
-                                                d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                                            <path
-                                                d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                                        </svg>
+                                    <button type="button" class="btn btn-sm btn-info" title="View Bill">
+                                        <i class="fas fa-eye"></i>
                                     </button>
-                                    <button type="button" class="action-btn dior-ic-1d598d91fe btn" title="Print Bill">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                            class="bi bi-printer" viewBox="0 0 16 16" style="background:transparent;">
-                                            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
-                                            <path
-                                                d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1" />
-                                        </svg>
+                                    <button type="button" class="btn btn-sm btn-secondary" title="Print Bill">
+                                        <i class="fas fa-print"></i>
                                     </button>
                                 </div>
                             </td>

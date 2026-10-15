@@ -476,20 +476,32 @@ class Dior_Appointment_Service
         ), ARRAY_A);
 
         if (!$results) {
-            return [];
+            $legacy = get_user_meta($patient_id, 'dior_appointments', true);
+            if (is_array($legacy) && !empty($legacy)) {
+                $results = $legacy;
+            } else {
+                return [];
+            }
         }
 
         foreach ($results as &$r) {
-            $r['id'] = $r['appt_uid'];
-            $r['date'] = $r['appt_date'];
-            $r['time'] = $r['appt_time'];
-            $r['condition'] = $r['condition_name'];
-            $r['type'] = $r['visit_type'];
+            $r['id'] = !empty($r['appt_uid']) ? $r['appt_uid'] : (!empty($r['id']) ? $r['id'] : 'APT-' . rand(1000, 9999));
+            $r['appt_uid'] = $r['id'];
+            $r['date'] = !empty($r['appt_date']) ? $r['appt_date'] : (!empty($r['date']) ? $r['date'] : '');
+            $r['appt_date'] = $r['date'];
+            $r['time'] = !empty($r['appt_time']) ? $r['appt_time'] : (!empty($r['time']) ? $r['time'] : '');
+            $r['appt_time'] = $r['time'];
+            $r['condition'] = !empty($r['condition_name']) ? $r['condition_name'] : (!empty($r['condition']) ? $r['condition'] : 'Telehealth Consultation');
+            $r['condition_name'] = $r['condition'];
+            $r['type'] = !empty($r['visit_type']) ? $r['visit_type'] : (!empty($r['type']) ? $r['type'] : 'Video Visit (HD)');
+            $r['visit_type'] = $r['type'];
 
-            $doc_id = (int)$r['doctor_id'];
-            $doc_user_id = 0;
+            $doc_id = (int)($r['doctor_id'] ?? 0);
+            $doc_user_id = (int)($r['doctor_user_id'] ?? 0);
             $doc_name = '';
             $doc_spec = '';
+            $doc_avatar = '';
+
             if ($doc_id) {
                 $candidate = get_userdata($doc_id);
                 $merged_doctor_id = $candidate ? (int) get_user_meta($candidate->ID, '_dior_merged_into_doctor_id', true) : 0;
@@ -509,21 +521,44 @@ class Dior_Appointment_Service
                         $doc_user_id = (int)Dior_Doctor_Resolver::resolve_doctor_user_id($doc_id);
                         $doc_name = $doctor_post->post_title;
                         $doc_spec = get_post_meta($doc_id, 'wpddb_doctor_speciality', true);
+                        $doc_avatar = get_post_meta($doc_id, '_wpddb_doctor_avatar', true)
+                            ?: get_post_meta($doc_id, 'wpddb_doctor_avatar', true)
+                            ?: get_the_post_thumbnail_url($doc_id, 'medium');
                     }
                 }
             }
             $doc_user = $doc_user_id ? get_userdata($doc_user_id) : null;
             if ($doc_name === '') {
-                $doc_name = $doc_user ? (trim($doc_user->first_name . ' ' . $doc_user->last_name) ?: $doc_user->display_name) : 'Attending Physician';
+                $doc_name = !empty($r['provider']) ? $r['provider'] : (!empty($r['doctor_name']) ? $r['doctor_name'] : ($doc_user ? (trim($doc_user->first_name . ' ' . $doc_user->last_name) ?: $doc_user->display_name) : 'Attending Physician'));
             }
             $doc_name = preg_replace('/^(?:dr\.?\s*)+/i', '', trim($doc_name));
             if ($doc_name !== '' && $doc_name !== 'Attending Physician') $doc_name = 'Dr. ' . $doc_name;
+
+            if (empty($doc_avatar) && $doc_user_id) {
+                $doc_avatar = get_user_meta($doc_user_id, 'dior_profile_image', true)
+                    ?: get_user_meta($doc_user_id, 'doctor_avatar', true)
+                    ?: get_user_meta($doc_user_id, 'profile_picture', true)
+                    ?: get_user_meta($doc_user_id, 'profile_image', true)
+                    ?: get_user_meta($doc_user_id, 'avatar_url', true)
+                    ?: get_avatar_url($doc_user_id, ['size' => 120]);
+            }
+            if (empty($doc_avatar) && !empty($r['avatar'])) {
+                $doc_avatar = $r['avatar'];
+            }
+            if (empty($doc_avatar)) {
+                $default_doc_img = site_url('/wp-content/uploads/2026/10/diormedical-experts-1.webp');
+                $doc_avatar = $default_doc_img;
+            }
+
             $r['doctor_user_id'] = $doc_user_id;
             $r['provider'] = $doc_name;
             $r['doctor_name'] = $doc_name;
-            $r['provider_spec'] = $doc_spec ?: ($doc_user ? (get_user_meta($doc_user->ID, 'doctor_specialty', true) ?: 'Telehealth Physician') : 'Telehealth Physician');
+            $r['provider_spec'] = $doc_spec ?: (!empty($r['provider_spec']) ? $r['provider_spec'] : ($doc_user ? (get_user_meta($doc_user->ID, 'doctor_specialty', true) ?: 'Telehealth Physician') : 'Telehealth Physician'));
+            $r['avatar'] = $doc_avatar;
+            $r['doctor_avatar'] = $doc_avatar;
 
             $status = $r['status'] ?? 'Confirmed';
+            $r['status'] = $status;
             $r['can_reschedule'] = in_array($status, ['Confirmed', 'Pending', 'Scheduled', 'In-Queue'], true);
             $r['can_cancel'] = in_array($status, ['Confirmed', 'Pending', 'Scheduled', 'In-Queue'], true);
             $r['can_join'] = in_array($status, ['Confirmed', 'In Progress', 'Scheduled', 'In-Queue'], true);

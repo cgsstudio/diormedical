@@ -67,7 +67,7 @@
             event.stopImmediatePropagation();
             switchTab(tab, true);
             if (tab === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
-                window.diorSwitchApptSubTab('today');
+                window.diorSwitchApptSubTab('calendar');
             }
         }, true);
 

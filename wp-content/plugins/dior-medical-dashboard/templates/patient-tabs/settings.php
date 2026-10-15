@@ -433,6 +433,17 @@
                                     </div>
                                 </div>
 
+                                <div class="dior-form-row-2">
+                                    <div class="dior-form-group">
+                                        <label class="form-label" for="patient-settings-height">Height (e.g. 175 cm or 5'9")</label>
+                                        <input id="patient-settings-height" class="form-control" type="text" name="height" value="<?php echo esc_attr($settings_patient_profile['height'] ?? ''); ?>" placeholder="e.g. 175 cm">
+                                    </div>
+                                    <div class="dior-form-group">
+                                        <label class="form-label" for="patient-settings-weight">Weight (e.g. 70 kg or 154 lbs)</label>
+                                        <input id="patient-settings-weight" class="form-control" type="text" name="weight" value="<?php echo esc_attr($settings_patient_profile['weight'] ?? ''); ?>" placeholder="e.g. 70 kg">
+                                    </div>
+                                </div>
+
                                 <h6 style="margin: 24px 0 16px; color: #2b70b8; font-size: 14px; font-weight: 700;">Emergency Contact</h6>
                                 <div class="dior-form-row-3">
                                     <div class="dior-form-group">

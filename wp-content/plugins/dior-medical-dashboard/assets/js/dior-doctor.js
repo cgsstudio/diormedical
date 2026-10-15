@@ -840,7 +840,7 @@ window.diorDocSwitchTab = function (tabId, updateUrl) {
         // Automatically expand parent submenu if active tab is inside one
         const parentSubmenu = activeBtn.closest('.dior-nav-item.has-submenu');
         if (parentSubmenu) {
-            parentSubmenu.classList.add('open');
+            parentSubmenu.classList.add('active', 'open');
             const subIcon = parentSubmenu.querySelector('.submenu-icon');
             if (subIcon) {
                 subIcon.classList.remove('fa-plus');
@@ -2852,6 +2852,7 @@ window.diorDocDeleteDocument = function (docId, btn) {
             }
             Swal.fire({ icon: 'error', title: 'Network Error', text: 'Network error deleting document.' });
         });
+    });
 };
 
 
@@ -2885,7 +2886,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (isActive) {
                     var parentSubmenu = btn.closest('.dior-nav-item.has-submenu');
                     if (parentSubmenu) {
-                        parentSubmenu.classList.add('open');
+                        parentSubmenu.classList.add('active', 'open');
                         var subIcon = parentSubmenu.querySelector('.submenu-icon');
                         if (subIcon) {
                             subIcon.classList.remove('fa-plus');
@@ -2960,4 +2961,24 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         bootStaticDoctorNavigation();
     }
+})();
+
+
+/* v17.2.1: desktop and mobile share the same sidebar toggle entry point. */
+(function(){
+  if (typeof window === 'undefined') return;
+  window.diorDocOpenMobile = function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var sidebar = document.querySelector('#dior-doc-sidebar, #dior-sidebar, .dior-sidebar, .dior-side-nav, .dior-sidebar-wrap');
+    var backdrop = document.getElementById('dior-drawer-backdrop');
+    if (window.innerWidth > 1024) {
+      var wrap = document.querySelector('.dior-patient-portal-wrap') || document.querySelector('.dior-app') || document.querySelector('.dior-doctor-dashboard-wrap');
+      if (wrap) wrap.classList.toggle('dior-sidebar-collapsed');
+      else if (sidebar) sidebar.classList.toggle('collapsed');
+      return;
+    }
+    if (sidebar) sidebar.classList.toggle('mobile-open');
+    if (backdrop) backdrop.classList.toggle('active');
+    document.body.style.overflow = sidebar && sidebar.classList.contains('mobile-open') ? 'hidden' : '';
+  };
 })();

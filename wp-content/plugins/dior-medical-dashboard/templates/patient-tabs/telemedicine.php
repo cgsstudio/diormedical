@@ -126,9 +126,9 @@
             </div>
             <div class="docs-actions-wrapper">
                 <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                    <input type="text" id="dior-tele-search-input" class="form-control border-start-0 ps-0" placeholder="Search records..."
-                        aria-label="Search box" onkeyup="diorFilterTele()">
+
+                    <input type="text" id="dior-tele-search-input" class="form-control border-start-0 ps-0"
+                        placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterTele()">
                 </div>
                 <div class="docs-actions-group">
                     <button type="button" aria-label="Delete selected items" class="docs-icon-btn docs-btn-danger btn"
@@ -192,8 +192,9 @@
                                         class="cell-text"><?php echo esc_html($apt['provider_spec'] ?? 'Telehealth Physician'); ?></span>
                                 </td>
                                 <td>
-                                    <div class="cell-content cell-icon-text"><i class="material-icons-outlined cell-icon">
-                                        </i><span class="cell-text"><?php echo esc_html($tele_date); ?></span></div>
+                                    <div class="cell-content cell-icon-text">
+                                        <span class="cell-text"><?php echo esc_html($tele_date); ?></span>
+                                    </div>
                                 </td>
                                 <td><span class="cell-text"><?php echo esc_html($tele_time); ?></span></td>
                                 <td><span class="cell-text"><?php echo esc_html($apt['duration'] ?? '30 minutes'); ?></span>

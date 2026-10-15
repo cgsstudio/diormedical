@@ -67,7 +67,7 @@
             activate(tabId, true);
 
             if (tabId === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
-                window.diorSwitchApptSubTab('today');
+                window.diorSwitchApptSubTab('calendar');
             }
 
             // Close the mobile drawer after a successful selection.

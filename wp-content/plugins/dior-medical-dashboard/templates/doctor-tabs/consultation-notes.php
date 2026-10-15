@@ -4,10 +4,10 @@
  * Actions: Add (popup with patient select), Edit, Delete
  */
 global $wpdb;
-$nonce     = wp_create_nonce('dior_doctor_nonce');
-$ajax_url  = admin_url('admin-ajax.php');
+$nonce = wp_create_nonce('dior_doctor_nonce');
+$ajax_url = admin_url('admin-ajax.php');
 $doctor_id = get_current_user_id();
-$doc_name  = wp_get_current_user()->display_name;
+$doc_name = wp_get_current_user()->display_name;
 
 // Fetch consultation notes (encounters)
 $notes = $wpdb->get_results(
@@ -29,14 +29,14 @@ $patients = $wpdb->get_results(
     ARRAY_A
 );
 if (empty($patients)) {
-    $wp_users = get_users(['role__in' => ['patient','subscriber','customer'], 'number' => 100]);
+    $wp_users = get_users(['role__in' => ['patient', 'subscriber', 'customer'], 'number' => 100]);
     $patients = [];
     foreach ($wp_users as $u) {
         $patients[] = [
-            'user_id'    => $u->ID,
+            'user_id' => $u->ID,
             'first_name' => $u->first_name ?: $u->display_name,
-            'last_name'  => $u->last_name,
-            'patient_uid'=> get_user_meta($u->ID, 'patient_id', true) ?: 'DM-'.(10000+$u->ID),
+            'last_name' => $u->last_name,
+            'patient_uid' => get_user_meta($u->ID, 'patient_id', true) ?: 'DM-' . (10000 + $u->ID),
         ];
     }
 }
@@ -44,7 +44,9 @@ if (empty($patients)) {
 <section class="dior-tab-panel" id="tab-doc-consultation-notes" style="display:none;">
     <!-- Breadcrumb -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 5px;">
-        <div><h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Consultation Notes</h4></div>
+        <div>
+            <h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Consultation Notes</h4>
+        </div>
         <div>
             <ul class="va-breadcrumb-list">
                 <li><a href="#"><i class="fas fa-house"></i></a></li>
@@ -63,11 +65,16 @@ if (empty($patients)) {
             </div>
             <div class="va-actions-box" style="display:flex;align-items:center;gap:10px;">
                 <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                    <input type="text" id="cn-search" class="dior-search-input form-control border-start-0 ps-0" placeholder="Search records...">
+
+                    <input type="text" id="cn-search" class="dior-search-input form-control border-start-0 ps-0"
+                        placeholder="Search records...">
                 </div>
                 <button class="va-icon-btn va-btn-primary btn" id="cn-add-btn" title="Add New Consultation Note">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;">
+                        <path
+                            d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0" />
+                    </svg>
                 </button>
                 <button class="va-icon-btn va-btn-info btn" id="cn-refresh-btn" title="Refresh">
                     <i class="fas fa-rotate-right"></i>
@@ -80,7 +87,8 @@ if (empty($patients)) {
             <table class="va-table table table-hover" id="cn-table">
                 <thead>
                     <tr>
-                        <th style="width:50px;text-align:center;"><input type="checkbox" class="va-checkbox form-check-input" id="cn-select-all"></th>
+                        <th style="width:50px;text-align:center;"><input type="checkbox"
+                                class="va-checkbox form-check-input" id="cn-select-all"></th>
                         <th>ID</th>
                         <th>PATIENT NAME <i class="fas fa-sort" style="color:#ccc;"></i></th>
                         <th>DATE</th>
@@ -92,55 +100,78 @@ if (empty($patients)) {
                     </tr>
                 </thead>
                 <tbody id="cn-tbody">
-                <?php if (!empty($notes)): ?>
-                    <?php foreach ($notes as $n):
-                        $uid    = esc_html($n['encounter_uid'] ?? '');
-                        $nid    = (int)($n['id'] ?? 0);
-                        $pid    = (int)($n['patient_id'] ?? 0);
-                        $fname  = esc_html(trim(($n['first_name']??'') . ' ' . ($n['last_name']??''))) ?: 'Unknown';
-                        $init   = strtoupper(substr($fname, 0, 1));
-                        $date_f = !empty($n['created_at']) ? date('M d, Y', strtotime($n['created_at'])) : '—';
-                        $complaint = esc_html($n['subjective'] ?? '—');
-                        $diagnosis = esc_html($n['diagnosis'] ?? '—');
-                        $status = esc_html($n['status'] ?? 'finalized');
-                        $badge = ($status === 'finalized') ? 'va-badge-completed' : (($status === 'draft') ? 'va-badge-pending' : 'va-badge-confirmed');
-                        $note_enc = esc_attr(json_encode([
-                            'id'=> $nid,'uid'=>$uid,'patient_id'=>$pid,'note'=>$n['subjective']??'',
-                            'assessment'=>$n['assessment']??'','plan'=>$n['plan']??'','diagnosis'=>$n['diagnosis']??'',
-                            'follow_up'=>$n['follow_up']??''
-                        ]));
-                    ?>
-                    <tr data-id="<?php echo $nid; ?>" data-pid="<?php echo $pid; ?>">
-                        <td style="text-align:center;"><input type="checkbox" class="va-checkbox cn-row-check form-check-input"></td>
-                        <td style="font-size:12px;color:#64748b;"><?php echo substr($uid, 0, 10); ?>…</td>
-                        <td>
-                            <div class="va-user-profile">
-                                <div style="width:36px;height:36px;border-radius:50%;background:#E0E7FF;display:flex;align-items:center;justify-content:center;font-weight:700;color:#4F46E5;font-size:14px;flex-shrink:0;"><?php echo $init; ?></div>
-                                <span class="va-user-name"><?php echo $fname; ?></span>
-                            </div>
-                        </td>
-                        <td><i class="far fa-calendar va-icon-blue"></i> <?php echo $date_f; ?></td>
-                        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="<?php echo $complaint; ?>"><?php echo $complaint; ?></td>
-                        <td><?php echo $diagnosis; ?></td>
-                        <td><?php echo esc_html($n['attestation_author'] ?? $doc_name); ?></td>
-                        <td><span class="va-badge <?php echo $badge; ?>"><?php echo ucfirst($status); ?></span></td>
-                        <td>
-                            <div class="va-row-actions">
-                                <button class="va-action-btn-sm va-btn-edit cn-edit-btn btn"
-                                        data-note="<?php echo $note_enc; ?>"
-                                        title="Edit Note"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button>
-                                <button class="va-action-btn-sm va-btn-delete cn-delete-btn btn"
-                                        data-id="<?php echo $nid; ?>"
-                                        data-uid="<?php echo esc_attr($uid); ?>"
-                                        data-pid="<?php echo $pid; ?>"
-                                        title="Delete Note"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444" class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr id="cn-empty-row"><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No consultation notes found. Click <strong>+</strong> to add one.</td></tr>
-                <?php endif; ?>
+                    <?php if (!empty($notes)): ?>
+                        <?php foreach ($notes as $n):
+                            $uid = esc_html($n['encounter_uid'] ?? '');
+                            $nid = (int) ($n['id'] ?? 0);
+                            $pid = (int) ($n['patient_id'] ?? 0);
+                            $fname = esc_html(trim(($n['first_name'] ?? '') . ' ' . ($n['last_name'] ?? ''))) ?: 'Unknown';
+                            $init = strtoupper(substr($fname, 0, 1));
+                            $date_f = !empty($n['created_at']) ? date('M d, Y', strtotime($n['created_at'])) : '—';
+                            $complaint = esc_html($n['subjective'] ?? '—');
+                            $diagnosis = esc_html($n['diagnosis'] ?? '—');
+                            $status = esc_html($n['status'] ?? 'finalized');
+                            $badge = ($status === 'finalized') ? 'va-badge-completed' : (($status === 'draft') ? 'va-badge-pending' : 'va-badge-confirmed');
+                            $note_enc = esc_attr(json_encode([
+                                'id' => $nid,
+                                'uid' => $uid,
+                                'patient_id' => $pid,
+                                'note' => $n['subjective'] ?? '',
+                                'assessment' => $n['assessment'] ?? '',
+                                'plan' => $n['plan'] ?? '',
+                                'diagnosis' => $n['diagnosis'] ?? '',
+                                'follow_up' => $n['follow_up'] ?? ''
+                            ]));
+                            ?>
+                            <tr data-id="<?php echo $nid; ?>" data-pid="<?php echo $pid; ?>">
+                                <td style="text-align:center;"><input type="checkbox"
+                                        class="va-checkbox cn-row-check form-check-input"></td>
+                                <td style="font-size:12px;color:#64748b;"><?php echo substr($uid, 0, 10); ?>…</td>
+                                <td>
+                                    <div class="va-user-profile">
+                                        <div
+                                            style="width:36px;height:36px;border-radius:50%;background:#E0E7FF;display:flex;align-items:center;justify-content:center;font-weight:700;color:#4F46E5;font-size:14px;flex-shrink:0;">
+                                            <?php echo $init; ?></div>
+                                        <span class="va-user-name"><?php echo $fname; ?></span>
+                                    </div>
+                                </td>
+                                <td><i class="far fa-calendar va-icon-blue"></i> <?php echo $date_f; ?></td>
+                                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"
+                                    title="<?php echo $complaint; ?>"><?php echo $complaint; ?></td>
+                                <td><?php echo $diagnosis; ?></td>
+                                <td><?php echo esc_html($n['attestation_author'] ?? $doc_name); ?></td>
+                                <td><span class="va-badge <?php echo $badge; ?>"><?php echo ucfirst($status); ?></span></td>
+                                <td>
+                                    <div class="va-row-actions">
+                                        <button class="va-action-btn-sm va-btn-edit cn-edit-btn btn"
+                                            data-note="<?php echo $note_enc; ?>" title="Edit Note"><svg
+                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;">
+                                                <path fill-rule="evenodd"
+                                                    d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
+                                            </svg></button>
+                                        <button class="va-action-btn-sm va-btn-delete cn-delete-btn btn"
+                                            data-id="<?php echo $nid; ?>" data-uid="<?php echo esc_attr($uid); ?>"
+                                            data-pid="<?php echo $pid; ?>" title="Delete Note"><svg
+                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444"
+                                                class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;">
+                                                <path
+                                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                <path
+                                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                            </svg></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr id="cn-empty-row">
+                            <td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No consultation notes
+                                found. Click <strong>+</strong> to add one.</td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -148,52 +179,70 @@ if (empty($patients)) {
 </section>
 
 <!-- Add/Edit Consultation Note Modal -->
-<div id="cn-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:16px;padding:32px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+<div id="cn-modal"
+    style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
+    <div
+        style="background:#fff;border-radius:16px;padding:32px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
             <h3 id="cn-modal-title" style="margin:0;font-size:18px;font-weight:700;color:#1e293b;">
                 <i class="fas fa-notes-medical" style="color:#4f46e5;margin-right:8px;"></i>New Consultation Note
             </h3>
-            <button id="cn-modal-close" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;">&times;</button>
+            <button id="cn-modal-close"
+                style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;">&times;</button>
         </div>
         <input type="hidden" id="cn-note-id" value="">
         <input type="hidden" id="cn-note-uid" value="">
         <div style="display:flex;flex-direction:column;gap:16px;">
             <div id="cn-patient-select-wrap">
-                <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Select Patient <span style="color:red;">*</span></label>
-                <select id="cn-patient-select" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;">
+                <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Select
+                    Patient <span style="color:red;">*</span></label>
+                <select id="cn-patient-select"
+                    style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;">
                     <option value="">— Select Patient —</option>
                     <?php foreach ($patients as $p):
-                        $pname = esc_html(trim(($p['first_name']??'').' '.($p['last_name']??'')));
-                    ?>
-                    <option value="<?php echo (int)$p['user_id']; ?>"><?php echo $pname; ?> (<?php echo esc_html($p['patient_uid']??''); ?>)</option>
+                        $pname = esc_html(trim(($p['first_name'] ?? '') . ' ' . ($p['last_name'] ?? '')));
+                        ?>
+                        <option value="<?php echo (int) $p['user_id']; ?>"><?php echo $pname; ?>
+                            (<?php echo esc_html($p['patient_uid'] ?? ''); ?>)</option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div>
-                <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Chief Complaint / Notes</label>
-                <textarea id="cn-note-text" rows="3" placeholder="Patient's chief complaint, symptoms..." style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;resize:vertical;"></textarea>
+                <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Chief
+                    Complaint / Notes</label>
+                <textarea id="cn-note-text" rows="3" placeholder="Patient's chief complaint, symptoms..."
+                    style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;resize:vertical;"></textarea>
             </div>
             <div>
-                <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Diagnosis</label>
-                <input type="text" id="cn-diagnosis" placeholder="e.g. Migraine, Type 2 Diabetes..." style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;">
+                <label
+                    style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Diagnosis</label>
+                <input type="text" id="cn-diagnosis" placeholder="e.g. Migraine, Type 2 Diabetes..."
+                    style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;">
             </div>
             <div>
-                <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Assessment</label>
-                <textarea id="cn-assessment" rows="2" placeholder="Clinical assessment..." style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;resize:vertical;"></textarea>
+                <label
+                    style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Assessment</label>
+                <textarea id="cn-assessment" rows="2" placeholder="Clinical assessment..."
+                    style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;resize:vertical;"></textarea>
             </div>
             <div>
-                <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Plan</label>
-                <textarea id="cn-plan" rows="2" placeholder="Treatment plan, medications..." style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;resize:vertical;"></textarea>
+                <label
+                    style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Plan</label>
+                <textarea id="cn-plan" rows="2" placeholder="Treatment plan, medications..."
+                    style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;resize:vertical;"></textarea>
             </div>
             <div>
-                <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Follow-up</label>
-                <input type="text" id="cn-followup" placeholder="e.g. 7-10 days, As needed..." style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;">
+                <label
+                    style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Follow-up</label>
+                <input type="text" id="cn-followup" placeholder="e.g. 7-10 days, As needed..."
+                    style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;">
             </div>
         </div>
         <div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end;">
-            <button id="cn-modal-cancel" style="padding:10px 20px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;color:#64748b;font-size:14px;cursor:pointer;">Cancel</button>
-            <button id="cn-save-btn" style="padding:10px 24px;border:none;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">
+            <button id="cn-modal-cancel"
+                style="padding:10px 20px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;color:#64748b;font-size:14px;cursor:pointer;">Cancel</button>
+            <button id="cn-save-btn"
+                style="padding:10px 24px;border:none;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">
                 <i class="fas fa-check" style="margin-right:6px;"></i>Save Note
             </button>
         </div>
@@ -201,121 +250,121 @@ if (empty($patients)) {
 </div>
 
 <script>
-(function() {
-    var ajaxUrl = '<?php echo esc_js($ajax_url); ?>';
-    var nonce   = '<?php echo esc_js($nonce); ?>';
+    (function () {
+        var ajaxUrl = '<?php echo esc_js($ajax_url); ?>';
+        var nonce = '<?php echo esc_js($nonce); ?>';
 
-    function init() {
-        document.getElementById('cn-select-all').addEventListener('change', function() {
-            document.querySelectorAll('.cn-row-check').forEach(function(cb){cb.checked=this.checked;},this);
-        });
-        document.getElementById('cn-add-btn').addEventListener('click', openAddModal);
-        document.getElementById('cn-modal-close').addEventListener('click', closeModal);
-        document.getElementById('cn-modal-cancel').addEventListener('click', closeModal);
-        document.getElementById('cn-refresh-btn').addEventListener('click', function(){location.reload();});
-        document.getElementById('cn-save-btn').addEventListener('click', saveNote);
-        document.getElementById('cn-tbody').addEventListener('click', function(e) {
-            var editBtn = e.target.closest('.cn-edit-btn');
-            var delBtn  = e.target.closest('.cn-delete-btn');
-            if (editBtn) openEditModal(editBtn);
-            if (delBtn)  deleteNote(delBtn);
-        });
-    }
+        function init() {
+            document.getElementById('cn-select-all').addEventListener('change', function () {
+                document.querySelectorAll('.cn-row-check').forEach(function (cb) { cb.checked = this.checked; }, this);
+            });
+            document.getElementById('cn-add-btn').addEventListener('click', openAddModal);
+            document.getElementById('cn-modal-close').addEventListener('click', closeModal);
+            document.getElementById('cn-modal-cancel').addEventListener('click', closeModal);
+            document.getElementById('cn-refresh-btn').addEventListener('click', function () { location.reload(); });
+            document.getElementById('cn-save-btn').addEventListener('click', saveNote);
+            document.getElementById('cn-tbody').addEventListener('click', function (e) {
+                var editBtn = e.target.closest('.cn-edit-btn');
+                var delBtn = e.target.closest('.cn-delete-btn');
+                if (editBtn) openEditModal(editBtn);
+                if (delBtn) deleteNote(delBtn);
+            });
+        }
 
-    function openAddModal() {
-        document.getElementById('cn-modal-title').innerHTML = '<i class="fas fa-notes-medical" style="color:#4f46e5;margin-right:8px;"></i>New Consultation Note';
-        document.getElementById('cn-note-id').value  = '';
-        document.getElementById('cn-note-uid').value = '';
-        document.getElementById('cn-patient-select').value = '';
-        document.getElementById('cn-patient-select-wrap').style.display = 'block';
-        document.getElementById('cn-note-text').value  = '';
-        document.getElementById('cn-diagnosis').value  = '';
-        document.getElementById('cn-assessment').value = '';
-        document.getElementById('cn-plan').value       = '';
-        document.getElementById('cn-followup').value   = '';
-        document.getElementById('cn-modal').style.display = 'flex';
-    }
+        function openAddModal() {
+            document.getElementById('cn-modal-title').innerHTML = '<i class="fas fa-notes-medical" style="color:#4f46e5;margin-right:8px;"></i>New Consultation Note';
+            document.getElementById('cn-note-id').value = '';
+            document.getElementById('cn-note-uid').value = '';
+            document.getElementById('cn-patient-select').value = '';
+            document.getElementById('cn-patient-select-wrap').style.display = 'block';
+            document.getElementById('cn-note-text').value = '';
+            document.getElementById('cn-diagnosis').value = '';
+            document.getElementById('cn-assessment').value = '';
+            document.getElementById('cn-plan').value = '';
+            document.getElementById('cn-followup').value = '';
+            document.getElementById('cn-modal').style.display = 'flex';
+        }
 
-    function openEditModal(btn) {
-        var note = JSON.parse(btn.dataset.note);
-        document.getElementById('cn-modal-title').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg>Edit Consultation Note';
-        document.getElementById('cn-note-id').value   = note.id;
-        document.getElementById('cn-note-uid').value  = note.uid;
-        document.getElementById('cn-patient-select').value = note.patient_id;
-        document.getElementById('cn-patient-select-wrap').style.display = 'none';
-        document.getElementById('cn-note-text').value   = note.note;
-        document.getElementById('cn-diagnosis').value   = note.diagnosis;
-        document.getElementById('cn-assessment').value  = note.assessment;
-        document.getElementById('cn-plan').value        = note.plan;
-        document.getElementById('cn-followup').value    = note.follow_up;
-        document.getElementById('cn-modal').style.display = 'flex';
-    }
+        function openEditModal(btn) {
+            var note = JSON.parse(btn.dataset.note);
+            document.getElementById('cn-modal-title').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg>Edit Consultation Note';
+            document.getElementById('cn-note-id').value = note.id;
+            document.getElementById('cn-note-uid').value = note.uid;
+            document.getElementById('cn-patient-select').value = note.patient_id;
+            document.getElementById('cn-patient-select-wrap').style.display = 'none';
+            document.getElementById('cn-note-text').value = note.note;
+            document.getElementById('cn-diagnosis').value = note.diagnosis;
+            document.getElementById('cn-assessment').value = note.assessment;
+            document.getElementById('cn-plan').value = note.plan;
+            document.getElementById('cn-followup').value = note.follow_up;
+            document.getElementById('cn-modal').style.display = 'flex';
+        }
 
-    function closeModal() {
-        document.getElementById('cn-modal').style.display = 'none';
-    }
+        function closeModal() {
+            document.getElementById('cn-modal').style.display = 'none';
+        }
 
-    function saveNote() {
-        var btn = document.getElementById('cn-save-btn');
-        var pid = document.getElementById('cn-patient-select').value;
-        var noteId = document.getElementById('cn-note-id').value;
-        var noteUid = document.getElementById('cn-note-uid').value;
-        if (!pid && !noteId) { Swal.fire({ icon: 'warning', title: 'Selection Required', text: 'Please select a patient.' }); return; }
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i>Saving...';
-        var data = new FormData();
-        data.append('action',     'dior_doc_save_consultation');
-        data.append('nonce',      nonce);
-        data.append('patient_id', pid || document.querySelector('#cn-tbody tr[data-id="'+noteId+'"]')?.dataset.pid || '');
-        data.append('note_id',    noteUid);
-        data.append('note',       document.getElementById('cn-note-text').value);
-        data.append('diagnosis',  document.getElementById('cn-diagnosis').value);
-        data.append('assessment', document.getElementById('cn-assessment').value);
-        data.append('plan',       document.getElementById('cn-plan').value);
-        data.append('follow_up',  document.getElementById('cn-followup').value);
-        fetch(ajaxUrl, {method:'POST',body:data})
-            .then(function(r){return r.json();})
-            .then(function(res) {
-                if (res.success) { closeModal(); location.reload(); }
-                else { Swal.fire({ icon: 'error', title: 'Save Failed', text: res.data && res.data.message ? res.data.message : 'Save failed.' }); }
-            }).catch(function(){ Swal.fire({ icon: 'error', title: 'Error', text: 'Network error.' }); })
-            .finally(function(){ btn.disabled=false; btn.innerHTML='<i class="fas fa-check" style="margin-right:6px;"></i>Save Note'; });
-    }
-
-    function deleteNote(btn) {
-        Swal.fire({
-            title: 'Delete Consultation Note?',
-            text: 'Are you sure you want to delete this consultation note? This cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#EF4444',
-            cancelButtonColor: '#64748B',
-            confirmButtonText: 'Yes, delete',
-            cancelButtonText: 'Cancel'
-        }).then(function (result) {
-            if (!result.isConfirmed) return;
+        function saveNote() {
+            var btn = document.getElementById('cn-save-btn');
+            var pid = document.getElementById('cn-patient-select').value;
+            var noteId = document.getElementById('cn-note-id').value;
+            var noteUid = document.getElementById('cn-note-uid').value;
+            if (!pid && !noteId) { Swal.fire({ icon: 'warning', title: 'Selection Required', text: 'Please select a patient.' }); return; }
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i>Saving...';
             var data = new FormData();
-            data.append('action',    'dior_doc_delete_consultation');
-            data.append('nonce',     nonce);
-            data.append('note_id',   btn.dataset.uid);
-            data.append('patient_id',btn.dataset.pid);
-            fetch(ajaxUrl, {method:'POST',body:data})
-                .then(function(r){return r.json();})
-                .then(function(res) {
-                    if (res.success) {
-                        var row = btn.closest('tr');
-                        row.remove();
-                        if (document.querySelectorAll('#cn-tbody tr[data-id]').length === 0) {
-                            document.getElementById('cn-tbody').innerHTML = '<tr id="cn-empty-row"><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No consultation notes found. Click <strong>+</strong> to add one.</td></tr>';
-                        }
-                        if (window.diorRenderStaticTables) window.diorRenderStaticTables();
-                        Swal.fire({ icon: 'success', title: 'Deleted', text: 'Consultation note deleted.', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
-                    } else { Swal.fire({ icon: 'error', title: 'Delete Failed', text: res.data && res.data.message ? res.data.message : 'Delete failed.' }); }
-                });
-        });
-    }
+            data.append('action', 'dior_doc_save_consultation');
+            data.append('nonce', nonce);
+            data.append('patient_id', pid || document.querySelector('#cn-tbody tr[data-id="' + noteId + '"]')?.dataset.pid || '');
+            data.append('note_id', noteUid);
+            data.append('note', document.getElementById('cn-note-text').value);
+            data.append('diagnosis', document.getElementById('cn-diagnosis').value);
+            data.append('assessment', document.getElementById('cn-assessment').value);
+            data.append('plan', document.getElementById('cn-plan').value);
+            data.append('follow_up', document.getElementById('cn-followup').value);
+            fetch(ajaxUrl, { method: 'POST', body: data })
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                    if (res.success) { closeModal(); location.reload(); }
+                    else { Swal.fire({ icon: 'error', title: 'Save Failed', text: res.data && res.data.message ? res.data.message : 'Save failed.' }); }
+                }).catch(function () { Swal.fire({ icon: 'error', title: 'Error', text: 'Network error.' }); })
+                .finally(function () { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check" style="margin-right:6px;"></i>Save Note'; });
+        }
 
-    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
-    else init();
-})();
+        function deleteNote(btn) {
+            Swal.fire({
+                title: 'Delete Consultation Note?',
+                text: 'Are you sure you want to delete this consultation note? This cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel'
+            }).then(function (result) {
+                if (!result.isConfirmed) return;
+                var data = new FormData();
+                data.append('action', 'dior_doc_delete_consultation');
+                data.append('nonce', nonce);
+                data.append('note_id', btn.dataset.uid);
+                data.append('patient_id', btn.dataset.pid);
+                fetch(ajaxUrl, { method: 'POST', body: data })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (res.success) {
+                            var row = btn.closest('tr');
+                            row.remove();
+                            if (document.querySelectorAll('#cn-tbody tr[data-id]').length === 0) {
+                                document.getElementById('cn-tbody').innerHTML = '<tr id="cn-empty-row"><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No consultation notes found. Click <strong>+</strong> to add one.</td></tr>';
+                            }
+                            if (window.diorRenderStaticTables) window.diorRenderStaticTables();
+                            Swal.fire({ icon: 'success', title: 'Deleted', text: 'Consultation note deleted.', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+                        } else { Swal.fire({ icon: 'error', title: 'Delete Failed', text: res.data && res.data.message ? res.data.message : 'Delete failed.' }); }
+                    });
+            });
+        }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+    })();
 </script>

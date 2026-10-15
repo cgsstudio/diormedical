@@ -6,9 +6,8 @@
             <h4 class="mb-0 text-dark" style="font-size:20px;font-weight:700;">Prescriptions</h4>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-            <button type="button" class="dior-btn-gold-secondary dior-ic-9a404bf6a0 btn"
-                onclick="diorOpenModal('modal-change-pharmacy')"
-                style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:13px;">
+            <button type="button" class="btn btn-sm btn-outline-primary"
+                onclick="diorOpenModal('modal-change-pharmacy')">
                 <i class="fas fa-store"></i> Update Pharmacy
             </button>
             <ul class="va-breadcrumb-list">
@@ -30,21 +29,20 @@
                     </div>
                     <div class="docs-actions-wrapper">
                         <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                            <input type="text" id="dior-rx-search-input" class="form-control border-start-0 ps-0" placeholder="Search records..."
-                                aria-label="Search box" onkeyup="diorFilterRxTable()">
+
+                            <input type="text" id="dior-rx-search-input" class="form-control border-start-0 ps-0"
+                                placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterRxTable()">
                         </div>
                         <div class="docs-actions-group">
-                            <button type="button" aria-label="Delete selected items"
-                                class="docs-icon-btn docs-btn-danger btn" title="Delete Selected"
-                                onclick="diorBulkDeleteRxRows()">
+                            <button type="button" aria-label="Delete selected items" class="btn btn-sm btn-danger"
+                                title="Delete Selected" onclick="diorBulkDeleteRxRows()">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success btn"
+                            <button type="button" aria-label="Export to CSV" class="btn btn-sm btn-success"
                                 title="Export to CSV" onclick="diorDownloadRxCSV()">
                                 <i class="fas fa-file-arrow-down"></i>
                             </button>
-                            <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info btn"
+                            <button type="button" aria-label="Refresh data" class="btn btn-sm btn-info"
                                 title="Refresh Page" onclick="window.location.reload()">
                                 <i class="fas fa-rotate-right"></i>
                             </button>
@@ -138,13 +136,13 @@
                                             class="status-cell-text <?php echo esc_attr($rx_st_cls); ?>"><?php echo esc_html(ucfirst($rx_status)); ?></span>
                                     </td>
                                     <td>
-                                        <div class="cell-content action-cell" style="gap:6px;">
-                                            <button type="button" class="docs-icon-btn docs-btn-primary btn"
+                                        <div class="cell-content action-cell" style="gap:8px;">
+                                            <button type="button" class="btn btn-sm btn-primary"
                                                 title="View Prescription Details"
                                                 onclick="diorViewRxDetails('<?php echo esc_js($rx_id); ?>', '<?php echo esc_js($rx_name); ?>', '<?php echo esc_js($rx['instructions'] ?? ''); ?>')">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button type="button" class="docs-icon-btn docs-btn-info btn" title="Download"
+                                            <button type="button" class="btn btn-sm btn-info" title="Download"
                                                 onclick="diorDownloadRxPdf('<?php echo esc_js($rx_id); ?>')">
                                                 <i class="fas fa-download"></i>
                                             </button>

@@ -402,26 +402,94 @@
                 }
             }
 
-            // 2. Increment Overview Counters
-            var statCards = document.querySelectorAll('.stat-card .stat-num');
-            if (statCards.length >= 2) {
-                var totalEl = statCards[0];
-                var upEl = statCards[1];
-                if (totalEl) {
-                    var curT = parseInt(totalEl.textContent, 10) || 0;
-                    totalEl.textContent = String(curT + 1).padStart(2, '0');
+            // 2. Increment Overview Counters by label
+            document.querySelectorAll('.stat-card').forEach(function(sc) {
+                var lbl = sc.querySelector('.stat-label');
+                var num = sc.querySelector('.stat-num');
+                if (lbl && num) {
+                    var txt = lbl.textContent.trim().toLowerCase();
+                    if (txt.indexOf('total') !== -1) {
+                        var curT = parseInt(num.textContent, 10) || 0;
+                        num.textContent = String(curT + 1).padStart(2, '0');
+                    } else if (txt.indexOf('upcoming') !== -1) {
+                        var curU = parseInt(num.textContent, 10) || 0;
+                        num.textContent = String(curU + 1).padStart(2, '0');
+                    }
                 }
-                if (upEl) {
-                    var curU = parseInt(upEl.textContent, 10) || 0;
-                    upEl.textContent = String(curU + 1).padStart(2, '0');
+            });
+
+            // 3. Update Doctor Card (Next Scheduled Visit) in Overview
+            var docCard = document.getElementById('dior-overview-doctor-card');
+            if (docCard) {
+                var dType = docCard.querySelector('.doctor-type');
+                if (dType) dType.textContent = 'Next Scheduled Consultation';
+                var dName = docCard.querySelector('.doctor-name');
+                if (dName) dName.textContent = appt.doctor || 'Attending Physician';
+                var dRole = docCard.querySelector('.doctor-role');
+                if (dRole && appt.spec) dRole.textContent = appt.spec;
+                var dMeta = docCard.querySelector('.meta');
+                if (dMeta) {
+                    dMeta.innerHTML = `
+                        <span><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#333;fill:none;stroke-width:1.5;"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>${appt.date}</span>
+                        <span><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#333;fill:none;stroke-width:1.5;"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>${appt.time}</span>
+                    `;
+                }
+                var dActions = docCard.querySelector('.doctor-actions');
+                if (dActions) {
+                    var joinUrl = appt.join_url || 'https://zoom.us/join';
+                    var apptUid = appt.id || ('APT-' + Math.floor(Math.random() * 9000 + 1000));
+                    dActions.innerHTML = `
+                        <a href="${joinUrl}" target="_blank" class="primary-btn btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+                            <i class="fas fa-video"></i> Join Video Consultation Room
+                        </a>
+                        <button class="outline-btn btn" data-switch-tab="appointments" onclick="if(typeof diorOpenRescheduleModal==='function'){diorOpenRescheduleModal('${apptUid}');}else if(typeof diorSwitchTab==='function'){diorSwitchTab('appointments');}">
+                            <i class="bi bi-arrow-repeat me-1"></i> Reschedule
+                        </button>
+                    `;
                 }
             }
 
-            // 3. Update Next Appointment Card in Overview
-            var nextDocName = document.querySelector('.hero-appointment-card .doctor-name');
-            var nextDocDate = document.querySelector('.hero-appointment-card .appointment-date');
-            if (nextDocName) nextDocName.textContent = appt.doctor;
-            if (nextDocDate) nextDocDate.textContent = appt.date + ' at ' + appt.time;
+            // 4. Update Overview Upcoming Consultation Card List
+            var upList = document.getElementById('dior-overview-upcoming-list');
+            if (upList) {
+                var emptyPlaceholder = upList.querySelector('.dior-upcoming-empty');
+                if (emptyPlaceholder) emptyPlaceholder.remove();
+
+                var defaultImg = '/wp-content/uploads/2026/10/diormedical-experts-1.webp';
+                var consultAvatar = appt.avatar || defaultImg;
+                var consultId = appt.id || ('APT-' + Math.floor(Math.random() * 9000 + 1000));
+                var joinBtnHtml = (appt.type && appt.type.toLowerCase().indexOf('phone') === -1)
+                    ? `<a href="${appt.join_url || 'https://zoom.us/join'}" target="_blank" class="btn btn-sm" style="font-size:11px; font-weight:600; padding:3px 12px; border-radius:14px; background:#2c71b7; border:1px solid #2c71b7; color:#fff; text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="fas fa-video"></i> Join Room</a>`
+                    : '';
+
+                var consultItemHtml = `
+                    <div class="consult" data-appt-id="${consultId}">
+                      <div class="consult-photo">
+                        <img src="${consultAvatar}" alt="${appt.doctor || 'Doctor'}" onerror="this.onerror=null;this.src='${defaultImg}';">
+                      </div>
+                      <div class="consult-body flex-grow-1">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                          <div class="consult-role" style="margin:0; font-size:14px;">${appt.spec || 'Telehealth Urgent Care'}</div>
+                          <span class="badge" style="background:#ECFDF5; color:#059669; font-size:10px; font-weight:600; padding:2px 8px; border-radius:12px; border:1px solid #A7F3D0;">
+                            Confirmed
+                          </span>
+                        </div>
+                        <div class="consult-name" style="font-weight:600; color:#1E293B; margin-bottom:5px; font-size:13px;">${appt.doctor || 'Attending Physician'}</div>
+                        <div class="consult-meta" style="font-size:11.5px; margin-bottom:8px;">
+                          <span><i class="bi bi-calendar-event me-1 text-primary"></i> ${appt.date}</span>
+                          <span><i class="bi bi-clock me-1 text-primary"></i> ${appt.time}</span>
+                        </div>
+                        <div class="consult-actions" style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+                          ${joinBtnHtml}
+                          <button type="button" class="btn btn-sm btn-outline-primary" onclick="if(typeof diorOpenRescheduleModal==='function'){diorOpenRescheduleModal('${consultId}');}else if(typeof diorSwitchTab==='function'){diorSwitchTab('appointments');}" style="font-size:11px; font-weight:600; padding:3px 12px; border-radius:14px;">
+                            <i class="bi bi-arrow-repeat me-1"></i> Reschedule
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                `;
+                upList.insertAdjacentHTML('afterbegin', consultItemHtml);
+            }
 
         } catch (err) {
             console.error('[Dior Medical] Live DOM update warning:', err);
@@ -436,7 +504,7 @@
         if (typeof diorSwitchTab === 'function') {
             diorSwitchTab('appointments');
             if (typeof diorSwitchApptSubTab === 'function') {
-                diorSwitchApptSubTab('today');
+                diorSwitchApptSubTab('calendar');
             }
         } else {
             window.location.hash = '#tab=appointments';

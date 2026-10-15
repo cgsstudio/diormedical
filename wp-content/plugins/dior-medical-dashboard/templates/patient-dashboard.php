@@ -36,12 +36,14 @@
                     </button>
                     <div class="dior-nav-item-has-children" id="dior-appt-dropdown-wrap">
                         <button type="button" class="dior-nav-btn btn"
-                            onclick="var w=document.getElementById('dior-appt-dropdown-wrap');w.classList.toggle('open');this.querySelector('.fa-chevron-down').style.transform=w.classList.contains('open')?'rotate(180deg)':'rotate(0deg)';diorSwitchTab('appointments');diorSwitchApptSubTab('today');">
-                            <i class="far fa-calendar"></i>
-                            <span class="nav-label">Appointments</span>
+                            onclick="var w=document.getElementById('dior-appt-dropdown-wrap');w.classList.toggle('open');this.querySelector('.fa-chevron-down').style.transform=w.classList.contains('open')?'rotate(180deg)':'rotate(0deg)';diorSwitchTab('appointments');diorSwitchApptSubTab('calendar');">
+                            <i class="far fa-calendar-alt"></i>
+                            <span class="nav-label">Appointment Calendar</span>
                             <i class="fas fa-chevron-down dior-ic-fdf55d6c0a"></i>
                         </button>
                         <div class="dior-nav-dropdown">
+                            <a href="#" class="dior-nav-dropdown-item active" data-appt-subtab="calendar"><i
+                                    class="fas fa-angle-right"></i> Appointment Calendar</a>
                             <a href="#" class="dior-nav-dropdown-item" data-appt-subtab="book"><i
                                     class="fas fa-angle-right"></i> Book Appointment</a>
                             <a href="#" class="dior-nav-dropdown-item" data-appt-subtab="today"><i
@@ -862,260 +864,333 @@
     </div> <!-- /#modal-view-appointment-detail -->
 
     <!-- 9. PRESCRIPTION DETAIL MODAL (PATIENT PORTAL) -->
-    <div class="dior-modal-overlay dior-ic-9049d9cd09" id="modal-view-rx-detail">
-        <div class="dior-modal-dialog dior-ic-e270dbf307">
+    <div class="modal fade" id="modal-view-rx-detail" tabindex="-1" aria-labelledby="modal-view-rx-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
-            <!-- Modal Top Action Header -->
-            <div class="dior-modal-header dior-ic-bf0665f2de">
-                <div class="dior-ic-2fa3fca1f7">
-                    <div class="dior-ic-20a4bac022">
-                        <i class="fas fa-prescription-bottle-medical"></i>
-                    </div>
+                <!-- Modal Header -->
+                <div class="modal-header border-bottom py-3 px-4 bg-white d-flex justify-content-between align-items-center">
                     <div>
-                        <h3 class="dior-ic-5993936b7f">
-                            Official Telehealth Prescription (e-Rx)
-                        </h3>
-                        <span class="dior-ic-25f3b27ac7">
-                            DEA &bull; NPI Registered Practice &bull; Surescripts e-Rx Certified
-                        </span>
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="modal-view-rx-title">Official Telehealth Prescription</h5>
+                        <div class="text-secondary small">DEA &bull; NPI Registered Practice &bull; Surescripts e-Rx Certified</div>
                     </div>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" onclick="diorCloseModal('modal-view-rx-detail')" aria-label="Close"></button>
                 </div>
-                <button type="button" class="dior-modal-close dior-ic-9305d040bf btn"
-                    onclick="diorCloseModal('modal-view-rx-detail')">&times;</button>
-            </div>
 
-            <!-- Modal Body: Letterhead Sheet (Image 2, 3, 4) -->
-            <div class="dior-modal-body dior-ic-6714f5aeeb">
+                <!-- Modal Body: Clean Printable Letterhead Sheet -->
+                <div class="modal-body p-3 p-md-4 bg-light-subtle">
+                    <div class="bg-white border rounded-3 p-4 shadow-sm" id="pat-modal-rx-sheet">
 
-                <div class="dior-rx-letterhead-sheet dior-ic-cc0172605f">
-
-                    <!-- Top Clinic & Doctor Header (Images 2 & 3) -->
-                    <div class="dior-ic-f9030d0190">
-                        <div>
-                            <div class="dior-rx-doc-name dior-ic-3752d6b3fd" id="pat-modal-rx-doc-header">
-                                <span id="pat-modal-rx-doc">Dr. Marcus Sterling, MD</span>
+                        <!-- Clinic & Physician Header -->
+                        <div class="row align-items-start pb-3 mb-3 border-bottom g-3">
+                            <div class="col-sm-7 col-12">
+                                <h5 class="fw-bold text-dark mb-1" id="pat-modal-rx-doc-header">
+                                    <span id="pat-modal-rx-doc">Dr. Marcus Sterling, MD</span>
+                                </h5>
+                                <div class="text-secondary small mb-1">
+                                    QUALIFICATION: M.B.B.S, M.D. &bull; DEA: MV8492019 &bull; NPI: 1849201948
+                                </div>
+                                <div class="fw-semibold text-dark small">DIOR MEDICAL TELEHEALTH &amp; URGENT CARE</div>
+                                <div class="text-secondary small">Clinical Telemedicine Division &bull; Surescripts e-Rx Certified</div>
                             </div>
-                            <div class="dior-rx-doc-creds dior-ic-fb6f89aea5">
-                                QUALIFICATION: M.B.B.S, M.D. &bull; DEA: MV8492019 &bull; NPI: 1849201948
-                            </div>
-                            <div class="dior-rx-clinic-sub dior-ic-502f59757f">
-                                <strong class="dior-ic-25e0cc2c47">DIOR MEDICAL TELEHEALTH &amp; URGENT
-                                    CARE</strong><br>
-                                Clinical Telemedicine Division &bull; Surescripts e-Rx Certified
+                            <div class="col-sm-5 col-12 text-sm-end">
+                                <div class="fw-bold fs-5 text-primary mb-1">DIOR MEDICAL</div>
+                                <div class="badge bg-light text-primary border mb-2">Digital Rx Service</div>
+                                <div class="small text-secondary">
+                                    <div>Prescription Date: <span class="fw-semibold text-dark" id="pat-modal-rx-date">—</span></div>
+                                    <div>Unique Rx UID: <strong class="text-dark" id="pat-modal-rx-id">Rx #ORDER</strong></div>
+                                    <div class="font-monospace text-muted small" id="pat-modal-rx-barcode-txt">*RX-000000*</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Clinic Logo & Caduceus Symbol -->
-                        <div class="dior-ic-32c53658c7">
-                            <?php
-                            $disp_logo = !empty($logo_url) ? $logo_url : site_url('/wp-content/uploads/2026/08/logo.png');
-                            ?>
-                            <img src="<?php echo esc_url($disp_logo); ?>" alt="Dior Medical" class="dior-ic-ac19460d69">
-                            <div class="dior-ic-17c0ef557f">
-                                <i class="fas fa-staff-snake dior-ic-2cc80aed32"></i>
-                                <span class="dior-ic-03cc0d21b0">Digital Rx Service</span>
-                            </div>
-                            <span class="dior-ic-4d08c3d882">
-                                <i class="fas fa-circle-check"></i> NCPDP Real-Time EDI Script
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Barcode & Issuance Line (Image 3) -->
-                    <div class="dior-ic-7b94dc2c83">
-                        <div class="dior-rx-barcode-wrap">
-                            <div class="dior-rx-barcode-lines">
-                                <span class="dior-ic-8c313dc613"></span><span class="dior-ic-5375fe8cf1"></span><span
-                                    class="dior-ic-a4f6c77c37"></span><span class="dior-ic-0399ac9254"></span>
-                                <span class="dior-ic-9dc00e0931"></span><span class="dior-ic-c7fe51ade1"></span><span
-                                    class="dior-ic-8c313dc613"></span><span class="dior-ic-a4f6c77c37"></span>
-                                <span class="dior-ic-0399ac9254"></span><span class="dior-ic-9dc00e0931"></span><span
-                                    class="dior-ic-5375fe8cf1"></span><span class="dior-ic-a4f6c77c37"></span>
-                                <span class="dior-ic-8c313dc613"></span><span class="dior-ic-9dc00e0931"></span><span
-                                    class="dior-ic-0399ac9254"></span><span class="dior-ic-a4f6c77c37"></span>
-                            </div>
-                            <span class="dior-rx-barcode-txt" id="pat-modal-rx-barcode-txt">*RX-000000*</span>
-                        </div>
-                        <div class="dior-ic-5fd58752b8">
-                            <div>Prescription Date: <span id="pat-modal-rx-date" class="dior-ic-01276c62f3">—</span>
-                            </div>
-                            <div class="dior-ic-5e92856bee">
-                                Unique Rx UID: <strong id="pat-modal-rx-id" class="dior-ic-7b6e16631f">Rx
-                                    #ORDER</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Patient Demographics: Classical Prescription Pad Underline Layout (Exact Match to User's Image 2) -->
-                    <div class="dior-rx-patient-pad-box dior-ic-4638e80c10">
-                        <!-- Row 1: Patient Name & Date -->
-                        <div class="dior-ic-06b21f47ad">
-                            <div class="dior-ic-afcc30d60e">
-                                <span class="dior-ic-0904e4e822">Patient
-                                    Name:</span>
-                                <span id="pat-modal-rx-pat-name"
-                                    class="dior-ic-b252d41b17"><?php echo esc_html($profile['full_name']); ?></span>
-                            </div>
-                            <div class="dior-ic-d866ca125a">
-                                <span class="dior-ic-0904e4e822">Date:</span>
-                                <span id="pat-modal-rx-pad-date" class="dior-ic-b252d41b17">—</span>
-                            </div>
-                        </div>
-
-                        <!-- Row 2: Age, Gender, Weight -->
-                        <div class="dior-ic-d11db2d048">
-                            <div class="dior-ic-7ac7cda799">
-                                <span class="dior-ic-0904e4e822">Age:</span>
-                                <span id="pat-modal-rx-pat-age" class="dior-ic-b252d41b17"><?php
-                                $modal_age = '18+ (Adult)';
-                                if (!empty($profile['dob'])) {
-                                    $modal_dob_timestamp = strtotime($profile['dob']);
-                                    if ($modal_dob_timestamp) {
-                                        $modal_age_years = date('Y') - date('Y', $modal_dob_timestamp);
-                                        if (date('md') < date('md', $modal_dob_timestamp)) {
-                                            $modal_age_years--;
+                        <!-- Patient Demographics Box -->
+                        <div class="border rounded-2 p-3 bg-light-subtle mb-3">
+                            <div class="row g-2 small">
+                                <div class="col-sm-6 col-12">
+                                    <span class="text-secondary">Patient Name:</span>
+                                    <strong class="text-dark ms-1" id="pat-modal-rx-pat-name"><?php echo esc_html($profile['full_name']); ?></strong>
+                                </div>
+                                <div class="col-sm-6 col-12 text-sm-end">
+                                    <span class="text-secondary">Date:</span>
+                                    <span class="text-dark fw-semibold ms-1" id="pat-modal-rx-pad-date">—</span>
+                                </div>
+                                <div class="col-4">
+                                    <span class="text-secondary">Age:</span>
+                                    <span class="text-dark fw-semibold ms-1" id="pat-modal-rx-pat-age"><?php
+                                    $modal_age = '18+ (Adult)';
+                                    if (!empty($profile['dob'])) {
+                                        $modal_dob_timestamp = strtotime($profile['dob']);
+                                        if ($modal_dob_timestamp) {
+                                            $modal_age_years = date('Y') - date('Y', $modal_dob_timestamp);
+                                            if (date('md') < date('md', $modal_dob_timestamp)) {
+                                                $modal_age_years--;
+                                            }
+                                            $modal_age = $modal_age_years . ' years';
                                         }
-                                        $modal_age = $modal_age_years . ' years';
                                     }
-                                }
-                                echo esc_html($modal_age);
-                                ?></span>
-                            </div>
-                            <div class="dior-ic-4a82ebc967">
-                                <span class="dior-ic-0904e4e822">Gender:</span>
-                                <span id="pat-modal-rx-pat-gender"
-                                    class="dior-ic-b252d41b17"><?php echo esc_html($profile['gender'] ?? 'Female'); ?></span>
-                            </div>
-                            <div class="dior-ic-4a82ebc967">
-                                <span class="dior-ic-0904e4e822">Weight:</span>
-                                <span id="pat-modal-rx-pat-weight"
-                                    class="dior-ic-b252d41b17"><?php echo esc_html($profile['weight'] ?? 'NKDA (Verified)'); ?></span>
+                                    echo esc_html($modal_age);
+                                    ?></span>
+                                </div>
+                                <div class="col-4">
+                                    <span class="text-secondary">Gender:</span>
+                                    <span class="text-dark fw-semibold ms-1" id="pat-modal-rx-pat-gender"><?php echo esc_html($profile['gender'] ?? 'Female'); ?></span>
+                                </div>
+                                <div class="col-4">
+                                    <span class="text-secondary">Weight:</span>
+                                    <span class="text-dark fw-semibold ms-1" id="pat-modal-rx-pat-weight"><?php echo esc_html($profile['weight'] ?? 'NKDA (Verified)'); ?></span>
+                                </div>
+                                <div class="col-12 pt-2 mt-2 border-top">
+                                    <span class="text-secondary">Diagnosis:</span>
+                                    <span class="text-dark ms-1" id="pat-modal-rx-diagnosis">Clinical Telehealth Consultation &bull; General Wellness</span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Row 3: Diagnosis -->
-                        <div class="dior-ic-395b20a3ba">
-                            <span class="dior-ic-0904e4e822">Diagnosis:</span>
-                            <span id="pat-modal-rx-diagnosis" class="dior-ic-956613932b">Clinical
-                                Telehealth Consultation &bull; General Wellness</span>
+                        <!-- Prescription Directive Heading -->
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom">
+                            <div class="fw-bold text-dark small">OFFICIAL PRESCRIPTION DIRECTIVE (Rx)</div>
+                            <span class="badge bg-light text-secondary border">Schedule VI / Legend Non-Controlled</span>
                         </div>
-                    </div>
 
-                    <!-- Classical ℞ Prescription Order Bar (Image 3) -->
-                    <div class="dior-rx-title-bar">
-                        <div class="dior-ic-f725034276">
-                            <span class="dior-rx-symbol">&#8478;</span>
-                            <span class="dior-ic-0a18e0c67b">
-                                Official Prescription Directive
+                        <!-- Clean Medication Table -->
+                        <div class="table-responsive mb-3">
+                            <table class="table table-bordered align-middle mb-0">
+                                <thead class="table-light small">
+                                    <tr>
+                                        <th class="text-center" style="width: 40px;">#</th>
+                                        <th>Medicine Name &amp; Formulation</th>
+                                        <th>Dosage &amp; Usage Instructions (SIG)</th>
+                                        <th style="width: 150px;">Dispense / Refills</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pat-modal-rx-table-body" class="small">
+                                    <!-- Populated dynamically via diorViewRxDetails() -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Advice Given & Clinical Instructions -->
+                        <div class="border rounded-2 p-3 bg-light-subtle mb-3">
+                            <div class="fw-bold small text-dark mb-1">Advice Given &amp; Clinical Instructions:</div>
+                            <div class="small text-secondary" id="pat-modal-rx-advice">
+                                &bull; Take medication strictly as directed with a full glass of water.<br>
+                                &bull; Complete the full course of treatment unless instructed otherwise by your doctor.<br>
+                                &bull; Avoid alcohol during the active course of treatment.
+                            </div>
+                        </div>
+
+                        <!-- Designated Fulfillment Pharmacy -->
+                        <div class="border rounded-2 p-3 bg-white mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <span class="small text-secondary">Designated Fulfillment Pharmacy:</span>
+                                <strong class="small text-dark ms-1" id="pat-modal-rx-pharm-name">
+                                    <?php echo esc_html(!empty($profile['pharmacy_name']) ? $profile['pharmacy_name'] : 'Preferred Pharmacy on File'); ?>
+                                </strong>
+                                <div class="small text-muted" id="pat-modal-rx-routing">Routed Electronically via Surescripts NCPDP EDI</div>
+                            </div>
+                            <span id="pat-modal-rx-status-badge" class="badge bg-success-subtle text-success border border-success-subtle">
+                                Transmission Confirmed
                             </span>
                         </div>
-                        <span class="dior-ic-9b6818a37f">
-                            Schedule VI / Legend Non-Controlled
-                        </span>
-                    </div>
 
-                    <!-- Clean Structured Medication Table (Images 3 & 4) -->
-                    <table class="dior-rx-med-table table">
-                        <thead>
-                            <tr>
-                                <th class="dior-ic-5ad98bfc70">#</th>
-                                <th class="dior-ic-d44a12258f">Medicine Name &amp; Formulation</th>
-                                <th class="dior-ic-06e9f6de59">Dosage &amp; Usage Instructions (SIG)</th>
-                                <th class="dior-ic-a13ed7aa9b">Dispense / Refills</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pat-modal-rx-table-body">
-                            <!-- Populated dynamically via diorViewRxDetails() -->
-                        </tbody>
-                    </table>
-
-                    <!-- Advice Given / Clinical Instructions (Image 3) -->
-                    <div class="dior-rx-advice-card">
-                        <div class="dior-rx-advice-title">
-                            <i class="fas fa-notes-medical"></i> Advice Given &amp; Clinical Instructions:
-                        </div>
-                        <div class="dior-rx-advice-body" id="pat-modal-rx-advice">
-                            &bull; Take medication strictly as prescribed. Do not exceed the stated dose.<br>
-                            &bull; Take with a full glass of water. Avoid alcohol and heavy unprescribed
-                            interactions.<br>
-                            &bull; If any hypersensitivity, rash, or adverse effect occurs, discontinue immediately and
-                            contact the clinic.
-                        </div>
-                    </div>
-
-                    <!-- Designated Pharmacy Routing EDI Box -->
-                    <div class="dior-rx-pharmacy-line">
-                        <div>
-                            <strong class="dior-ic-049494d350">
-                                Designated Fulfillment Pharmacy:
-                            </strong>
-                            <span id="pat-modal-rx-pharm-name" class="dior-ic-0aff6f1541">
-                                <?php echo esc_html(!empty($profile['pharmacy_name']) ? $profile['pharmacy_name'] : 'Preferred Pharmacy on File'); ?>
-                            </span>
-                            <span id="pat-modal-rx-routing" class="dior-ic-e3862574c4">
-                                <i class="fas fa-circle-check"></i> Routed Electronically via Surescripts NCPDP EDI
-                            </span>
-                        </div>
-                        <span id="pat-modal-rx-status-badge" class="dior-ic-ef921fe83b">
-                            <i class="fas fa-check"></i> Transmission Confirmed
-                        </span>
-                    </div>
-
-                    <!-- Physician Digital Signature & Telehealth Legal Notice (Images 2 & 4) -->
-                    <div class="dior-rx-sig-container">
-                        <div class="dior-rx-legal-notice">
-                            <strong class="dior-ic-03cc0d21b0">TELEHEALTH LEGAL CERTIFICATION:</strong><br>
-                            This prescription was electronically reviewed, approved, and digitally signed by an
-                            authorized healthcare provider pursuant to a valid telehealth encounter under DEA 21 CFR
-                            Part 1311 and state medical practice acts.
-                        </div>
-                        <div class="dior-rx-sig-block">
-                            <div class="dior-rx-sig-line">
-                                <img id="pat-modal-rx-sig-img" src="" alt="Doctor Signature" class="dior-ic-3771746c5d">
-                                <span id="pat-modal-rx-sig-name" class="dior-rx-sig-script">
-                                    /s/ Dr. Marcus Sterling, MD
-                                </span>
+                        <!-- Physician Digital Signature & Telehealth Certification -->
+                        <div class="row g-3 align-items-end pt-3 border-top">
+                            <div class="col-sm-7 col-12">
+                                <div class="small text-muted">
+                                    <strong class="text-dark">TELEHEALTH LEGAL CERTIFICATION:</strong><br>
+                                    This prescription was electronically reviewed, approved, and digitally signed by an authorized healthcare provider pursuant to a valid telehealth encounter under DEA 21 CFR Part 1311 and state medical practice acts.
+                                </div>
                             </div>
-                            <div class="dior-rx-sig-lbl">
-                                Authorized Physician Signature
-                            </div>
-                            <div id="pat-modal-rx-sig-date" class="dior-rx-sig-stamp">
-                                SHA256 Encrypted &bull; Issued Sep 14, 2026
+                            <div class="col-sm-5 col-12 text-sm-end">
+                                <div class="border-bottom pb-1 d-inline-block text-center" style="min-width: 180px;">
+                                    <img id="pat-modal-rx-sig-img" src="" alt="Doctor Signature" style="max-height: 40px; display: none;" class="mb-1">
+                                    <div id="pat-modal-rx-sig-name" class="fw-bold text-dark font-monospace small">/s/ Dr. Marcus Sterling, MD</div>
+                                </div>
+                                <div class="small text-secondary mt-1">Authorized Physician Signature</div>
+                                <div id="pat-modal-rx-sig-date" class="text-muted" style="font-size: 11px;">SHA256 Encrypted &bull; Issued Sep 14, 2026</div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Letterhead Bottom Clinic Footer Details (Image 2) -->
-                    <div class="dior-rx-footer-line">
-                        <div>
-                            <i class="fas fa-location-dot dior-ic-9043ac3683"></i> 100
-                            Medical Plaza, Suite 400 &bull; Dior Medical Telehealth Group
+                        <!-- Letterhead Bottom Clinic Footer Details -->
+                        <div class="mt-3 pt-2 border-top text-center text-muted" style="font-size: 11px;">
+                            100 Medical Plaza, Suite 400 &bull; Dior Medical Telehealth Group &bull; (800) 555-DIOR &bull; concierge@diormedical.com
                         </div>
-                        <div>
-                            <i class="fas fa-phone dior-ic-9043ac3683"></i> (800) 555-DIOR
-                            &bull; concierge@diormedical.com
-                        </div>
-                    </div>
 
-                </div> <!-- /dior-rx-letterhead-sheet -->
+                    </div> <!-- /#pat-modal-rx-sheet -->
+                </div> <!-- /.modal-body -->
 
-            </div> <!-- /dior-modal-body -->
-
-            <!-- Modal Action Footer (Permanently Pinned, Full Visibility) -->
-            <div class="dior-modal-footer dior-ic-003eb72b4a">
-                <button type="button" id="pat-modal-rx-refill-btn" class="dior-ic-aef0d9cdb6 btn">
-                    <i class="fas fa-arrows-rotate dior-ic-1a809d86ac"></i> Request Refill
-                </button>
-                <div class="dior-ic-6c5b3070b0">
-                    <button type="button" id="pat-modal-rx-pdf-btn" class="dior-ic-1d1379760d btn">
-                        <i class="fas fa-file-arrow-down"></i> Download Official PDF
+                <!-- Modal Action Footer -->
+                <div class="modal-footer border-top py-3 px-4 bg-white d-flex justify-content-between align-items-center">
+                    <button type="button" id="pat-modal-rx-refill-btn" class="btn btn-outline-secondary btn-sm rounded-3 fw-semibold">
+                        Request Refill
                     </button>
-                    <button type="button" onclick="diorCloseModal('modal-view-rx-detail')"
-                        class="dior-ic-a340556f29 btn">Close</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="pat-modal-rx-pdf-btn" class="btn btn-primary btn-sm rounded-3 fw-semibold shadow-sm">
+                            Download Official PDF
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm rounded-3" data-bs-dismiss="modal" onclick="diorCloseModal('modal-view-rx-detail')">
+                            Close
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div> <!-- /#modal-view-rx-detail -->
+
+    <!-- 10. EMERGENCY CONTACT & ASSISTANCE MODAL (PATIENT PORTAL) -->
+    <div class="modal fade" id="modal-emergency-contact" tabindex="-1" aria-labelledby="modal-emergency-contact-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+                <!-- Modal Header -->
+                <div class="modal-header border-bottom py-3 px-4 bg-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="modal-emergency-contact-title">Emergency Assistance &amp; Contacts</h5>
+                        <div class="text-secondary small">Direct Emergency Reachout &bull; Designated Contact Management</div>
+                    </div>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" onclick="diorCloseModal('modal-emergency-contact')" aria-label="Close"></button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body p-3 p-md-4 bg-light-subtle">
+
+                    <!-- Critical Notice Banner -->
+                    <div class="alert alert-danger border-0 rounded-3 p-3 mb-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div>
+                            <strong class="d-block mb-1">Life-Threatening Emergency Notice</strong>
+                            <span class="small">If you or someone around you is in immediate medical danger, please call 911 immediately.</span>
+                        </div>
+                        <a href="tel:911" class="btn btn-danger btn-sm rounded-3 fw-bold px-3 shadow-sm text-nowrap">
+                            Call 911 Now
+                        </a>
+                    </div>
+
+                    <!-- Direct Emergency Dispatch / Contact Options -->
+                    <div class="row g-3 mb-3">
+                        <!-- 1. Ambulance Dispatch -->
+                        <div class="col-md-4 col-12">
+                            <div class="card border rounded-3 p-3 h-100 bg-white shadow-sm d-flex flex-column justify-content-between">
+                                <div>
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill mb-2">Ambulance</span>
+                                    <div class="fw-bold text-dark small mb-1">Emergency Paramedics</div>
+                                    <div class="text-secondary small mb-3">Instant ambulance dispatch for severe trauma or urgent hospital transport.</div>
+                                </div>
+                                <a href="tel:911" class="btn btn-outline-danger btn-sm rounded-3 fw-semibold w-100">
+                                    Call 911 Dispatch
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 2. On-Call Emergency Doctor -->
+                        <div class="col-md-4 col-12">
+                            <div class="card border rounded-3 p-3 h-100 bg-white shadow-sm d-flex flex-column justify-content-between">
+                                <div>
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill mb-2">On-Call MD</span>
+                                    <div class="fw-bold text-dark small mb-1">Urgent Care Doctor</div>
+                                    <div class="text-secondary small mb-3">Direct connection with Dior Medical 24/7 on-call telemedicine physician.</div>
+                                </div>
+                                <a href="tel:18005553467" class="btn btn-outline-warning text-dark btn-sm rounded-3 fw-semibold w-100">
+                                    Call (800) 555-DIOR
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 3. Designated Emergency Contact -->
+                        <div class="col-md-4 col-12">
+                            <div class="card border rounded-3 p-3 h-100 bg-white shadow-sm d-flex flex-column justify-content-between">
+                                <div>
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill mb-2">Personal Contact</span>
+                                    <div class="fw-bold text-dark small mb-1" id="emerg-modal-card-name">
+                                        <?php echo esc_html(!empty($profile['emergency_name']) ? $profile['emergency_name'] : 'No Contact on File'); ?>
+                                    </div>
+                                    <div class="text-secondary small mb-3" id="emerg-modal-card-desc">
+                                        <?php 
+                                        $rel_str = !empty($profile['emergency_relation']) ? $profile['emergency_relation'] : 'Designated Contact';
+                                        $phone_str = !empty($profile['emergency_phone']) ? $profile['emergency_phone'] : 'No phone number';
+                                        echo esc_html($rel_str . ' • ' . $phone_str);
+                                        ?>
+                                    </div>
+                                </div>
+                                <a id="emerg-modal-card-call-btn" href="<?php echo !empty($profile['emergency_phone']) ? 'tel:' . esc_attr(preg_replace('/[^0-9+]/', '', $profile['emergency_phone'])) : '#'; ?>" class="btn btn-outline-primary btn-sm rounded-3 fw-semibold w-100 <?php echo empty($profile['emergency_phone']) ? 'disabled' : ''; ?>">
+                                    Call Contact
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add / Edit Emergency Contact Section -->
+                    <div class="card border-0 rounded-3 p-3 bg-white shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-0">Designated Emergency Contact Details</h6>
+                                <span class="text-secondary small">Add or update who Dior Medical should contact in an emergency</span>
+                            </div>
+                            <span class="badge bg-light text-secondary border">Priority 1</span>
+                        </div>
+
+                        <form id="dior-form-emergency-contact" onsubmit="diorSaveEmergencyContact(event)">
+                            <div class="row g-3">
+                                <div class="col-sm-6 col-12">
+                                    <label class="form-label small fw-semibold text-secondary mb-1" for="modal_emerg_name">
+                                        Full Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control rounded-3" id="modal_emerg_name" name="emergency_name"
+                                        value="<?php echo esc_attr($profile['emergency_name'] ?? ''); ?>"
+                                        placeholder="e.g. Michael Johnson" required>
+                                </div>
+                                <div class="col-sm-6 col-12">
+                                    <label class="form-label small fw-semibold text-secondary mb-1" for="modal_emerg_rel">
+                                        Relationship <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select rounded-3" id="modal_emerg_rel" name="emergency_relation" required>
+                                        <?php
+                                        $user_em_rel = strtolower($profile['emergency_relation'] ?? '');
+                                        $rel_options = ['Spouse', 'Parent', 'Child', 'Sibling', 'Partner', 'Relative', 'Friend', 'Legal Guardian', 'Caregiver', 'Other'];
+                                        foreach ($rel_options as $opt):
+                                            $selected = (strtolower($opt) === $user_em_rel) ? 'selected' : '';
+                                            echo '<option value="' . esc_attr($opt) . '" ' . $selected . '>' . esc_html($opt) . '</option>';
+                                        endforeach;
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 col-12">
+                                    <label class="form-label small fw-semibold text-secondary mb-1" for="modal_emerg_phone">
+                                        Phone Number <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="tel" class="form-control rounded-3" id="modal_emerg_phone" name="emergency_phone"
+                                        value="<?php echo esc_attr($profile['emergency_phone'] ?? ''); ?>"
+                                        placeholder="e.g. +1 (555) 014-2099" required>
+                                </div>
+                                <div class="col-sm-6 col-12">
+                                    <label class="form-label small fw-semibold text-secondary mb-1" for="modal_emerg_priority">
+                                        Priority Level
+                                    </label>
+                                    <select class="form-select rounded-3" id="modal_emerg_priority" name="emergency_priority">
+                                        <option value="Emergency" selected>Emergency (Primary)</option>
+                                        <option value="High Priority">High Priority</option>
+                                        <option value="Secondary">Secondary Contact</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 pt-3 mt-3 border-top">
+                                <button type="button" class="btn btn-outline-secondary btn-sm rounded-3" data-bs-dismiss="modal" onclick="diorCloseModal('modal-emergency-contact')">
+                                    Cancel
+                                </button>
+                                <button type="submit" id="dior-emerg-submit-btn" class="btn btn-primary btn-sm rounded-3 fw-semibold shadow-sm px-3">
+                                    Save Emergency Contact
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div> <!-- /.modal-body -->
+
+            </div>
+        </div>
+    </div> <!-- /#modal-emergency-contact -->
 
 
 </div> <!-- /#dior-patient-portal-app -->

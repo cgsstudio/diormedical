@@ -24,19 +24,31 @@
                         </div>
                         <div class="header-actions-group">
                             <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                                <input type="text" id="dior-bill-search-input" class="form-control border-start-0 ps-0" placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterBill()">
-                            </div>                            <div class="action-buttons">
-                                <button type="button" aria-label="Delete selected items" class="action-btn action-btn-danger btn" title="Delete Selected" onclick="diorBulkDeleteStaticRows(this)">
+
+                                <input type="text" id="dior-bill-search-input" class="form-control border-start-0 ps-0"
+                                    placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterBill()">
+                            </div>
+                            <div class="action-buttons">
+                                <button type="button" aria-label="Delete selected items"
+                                    class="btn btn-sm btn-danger btn" title="Delete Selected"
+                                    onclick="diorBulkDeleteStaticRows(this)">
                                     <i class="fas fa-trash"></i>
                                 </button>
-                                <button type="button" aria-label="Add new record" class="action-btn action-btn-primary dior-ic-54410f9b78 btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;"><path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0"/></svg>
+                                <button type="button" aria-label="Add new record"
+                                    class="action-btn action-btn-primary dior-ic-54410f9b78 btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-file-plus-fill" viewBox="0 0 16 16"
+                                        style="background:transparent;">
+                                        <path
+                                            d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0" />
+                                    </svg>
                                 </button>
-                                <button type="button" aria-label="Export to CSV" class="action-btn action-btn-success btn" title="Export to CSV" onclick="diorDownloadInsuranceCSV()">
+                                <button type="button" aria-label="Export to CSV" class="btn btn-sm btn-success btn"
+                                    title="Export to CSV" onclick="diorDownloadInsuranceCSV()">
                                     <i class="fas fa-file-arrow-down"></i>
                                 </button>
-                                <button type="button" aria-label="Refresh data" class="action-btn action-btn-info btn" title="Refresh Page" onclick="window.location.reload()">
+                                <button type="button" aria-label="Refresh data" class="btn btn-sm btn-info btn"
+                                    title="Refresh Page" onclick="window.location.reload()">
                                     <i class="fas fa-rotate-right"></i>
                                 </button>
                             </div>
@@ -72,34 +84,62 @@
                                 <?php foreach ($insurance_claims as $claim): ?>
                                     <tr>
                                         <td><input type="checkbox" class="dior-ic-52ff4d551f form-check-input"></td>
-                                        <td><span class="cell-text"><?php echo esc_html($claim['claim_id'] ?? '—'); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($claim['policy_id'] ?? '—'); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($claim['claim_date'] ?? '—'); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($claim['claim_type'] ?? '—'); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($claim['claim_amount'] ?? '0'); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($claim['approved_amount'] ?? '0'); ?></span></td>
-                                        <td><span class="cell-text"><?php echo esc_html($claim['submitted'] ?? '—'); ?></span></td>
-                                        <td><div class="cell-content"><div class="badge-solid col-indigo"><?php echo esc_html($claim['status'] ?? 'Under Review'); ?></div></div></td>
-                                        <td><div class="cell-actions"><button type="button" class="action-icon-btn edit-btn btn" title="View"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#3b82f6" class="bi bi-eye" viewBox="0 0 16 16" style="background:transparent;"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg></button></div></td>
+                                        <td><span class="cell-text"><?php echo esc_html($claim['claim_id'] ?? '—'); ?></span>
+                                        </td>
+                                        <td><span class="cell-text"><?php echo esc_html($claim['policy_id'] ?? '—'); ?></span>
+                                        </td>
+                                        <td><span class="cell-text"><?php echo esc_html($claim['claim_date'] ?? '—'); ?></span>
+                                        </td>
+                                        <td><span class="cell-text"><?php echo esc_html($claim['claim_type'] ?? '—'); ?></span>
+                                        </td>
+                                        <td><span
+                                                class="cell-text"><?php echo esc_html($claim['claim_amount'] ?? '0'); ?></span>
+                                        </td>
+                                        <td><span
+                                                class="cell-text"><?php echo esc_html($claim['approved_amount'] ?? '0'); ?></span>
+                                        </td>
+                                        <td><span class="cell-text"><?php echo esc_html($claim['submitted'] ?? '—'); ?></span>
+                                        </td>
+                                        <td>
+                                            <div class="cell-content">
+                                                <div class="badge-solid col-indigo">
+                                                    <?php echo esc_html($claim['status'] ?? 'Under Review'); ?>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="cell-actions"><button type="button" class="action-icon-btn edit-btn btn"
+                                                    title="View"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        fill="#3b82f6" class="bi bi-eye" viewBox="0 0 16 16"
+                                                        style="background:transparent;">
+                                                        <path
+                                                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                                                        <path
+                                                            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                                                    </svg></button></div>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <tr><td colspan="10" class="dior-empty-state">No insurance claims available.</td></tr>
+                                <tr>
+                                    <td colspan="10" class="dior-empty-state">No insurance claims available.</td>
+                                </tr>
                             <?php endif; ?>
-</tbody>
+                        </tbody>
                     </table>
                 </div>
-                <div class="master-table-footer">
-                    <span class="page-count" id="dior-insurance-page-count">0 selected / <?php echo count($insurance_claims); ?> total</span>
-                    
+                <!-- <div class="master-table-footer">
+                    <span class="page-count" id="dior-insurance-page-count">0 selected /
+                        <?php echo count($insurance_claims); ?> total</span>
+
                     <div class="master-pagination" id="dior-insurance-pagination">
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
-    
+
 </section>
-                <!-- ============================================================== -->
-                <!-- 4. DOCS & MEDS (Documents + Prescriptions) TAB -->
-                <!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- 4. DOCS & MEDS (Documents + Prescriptions) TAB -->
+<!-- ============================================================== -->

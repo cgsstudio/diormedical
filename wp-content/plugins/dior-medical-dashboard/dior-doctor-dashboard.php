@@ -518,40 +518,14 @@ class Dior_Doctor_Dashboard
         $notifications = self::get_doctor_notifications($user_id);
         $documents     = self::get_all_documents($patients);
 
-        // Temporary UI demo fallback: only used when the doctor has no real records.
-        // Nothing is written to the database and real records always take precedence.
+        // Dashboard cards must reflect live records only; never inject demo patients,
+        // appointments, notifications, or documents into a production dashboard.
         $dior_demo_mode = false;
-        $demo_today = current_time('Y-m-d');
-        if (empty($patients)) {
-            $dior_demo_mode = true;
-            $patients = [
-                ['user_id' => 0, 'patient_id' => 'DEMO-P001', 'first_name' => 'Sarah', 'last_name' => 'Johnson', 'full_name' => 'Sarah Johnson', 'email' => 'sarah.demo@example.com', 'phone' => '+1 555 0101', 'dob' => '1991-04-12', 'gender' => 'Female', 'blood_group' => 'A+', 'address' => 'Demo Address', 'registered' => 'Sep 20, 2026', 'has_intake' => true, 'has_active_appt' => true, 'next_appt_date' => $demo_today, 'next_appt_time' => '10:30 AM', 'next_appt_status' => 'Confirmed', 'initials' => 'SJ'],
-                ['user_id' => 0, 'patient_id' => 'DEMO-P002', 'first_name' => 'Michael', 'last_name' => 'Brown', 'full_name' => 'Michael Brown', 'email' => 'michael.demo@example.com', 'phone' => '+1 555 0102', 'dob' => '1986-08-23', 'gender' => 'Male', 'blood_group' => 'O+', 'address' => 'Demo Address', 'registered' => 'Sep 18, 2026', 'has_intake' => true, 'has_active_appt' => false, 'next_appt_date' => '', 'next_appt_time' => '', 'next_appt_status' => '', 'initials' => 'MB'],
-                ['user_id' => 0, 'patient_id' => 'DEMO-P003', 'first_name' => 'Emily', 'last_name' => 'Davis', 'full_name' => 'Emily Davis', 'email' => 'emily.demo@example.com', 'phone' => '+1 555 0103', 'dob' => '1994-02-09', 'gender' => 'Female', 'blood_group' => 'B+', 'address' => 'Demo Address', 'registered' => 'Sep 15, 2026', 'has_intake' => false, 'has_active_appt' => true, 'next_appt_date' => wp_date('Y-m-d', current_time('timestamp') + DAY_IN_SECONDS), 'next_appt_time' => '02:00 PM', 'next_appt_status' => 'Scheduled', 'initials' => 'ED'],
-            ];
-        }
-        if (empty($appointments)) {
-            $dior_demo_mode = true;
-            $appointments = [
-                ['id' => 'DEMO-DOC-APT-001', 'appt_uid' => 'DEMO-DOC-APT-001', 'patient_id' => 0, 'patient_user_id' => 0, 'patient_name' => 'Sarah Johnson', 'patient_id_num' => 'DEMO-P001', 'doctor_id' => $user_id, 'doctor_name' => $doctor['full_name'], 'date' => $demo_today, 'appt_date' => $demo_today, 'time' => '10:30 AM', 'appt_time' => '10:30 AM', 'duration' => '30 minutes', 'type' => 'Video Visit', 'visit_type' => 'Video Visit', 'status' => 'Confirmed', 'condition' => 'Routine Follow-up'],
-                ['id' => 'DEMO-DOC-APT-002', 'appt_uid' => 'DEMO-DOC-APT-002', 'patient_id' => 0, 'patient_user_id' => 0, 'patient_name' => 'Emily Davis', 'patient_id_num' => 'DEMO-P003', 'doctor_id' => $user_id, 'doctor_name' => $doctor['full_name'], 'date' => wp_date('Y-m-d', current_time('timestamp') + DAY_IN_SECONDS), 'appt_date' => wp_date('Y-m-d', current_time('timestamp') + DAY_IN_SECONDS), 'time' => '02:00 PM', 'appt_time' => '02:00 PM', 'duration' => '30 minutes', 'type' => 'Clinic Visit', 'visit_type' => 'Clinic Visit', 'status' => 'Scheduled', 'condition' => 'General Checkup'],
-                ['id' => 'DEMO-DOC-APT-003', 'appt_uid' => 'DEMO-DOC-APT-003', 'patient_id' => 0, 'patient_user_id' => 0, 'patient_name' => 'Michael Brown', 'patient_id_num' => 'DEMO-P002', 'doctor_id' => $user_id, 'doctor_name' => $doctor['full_name'], 'date' => wp_date('Y-m-d', current_time('timestamp') - DAY_IN_SECONDS), 'appt_date' => wp_date('Y-m-d', current_time('timestamp') - DAY_IN_SECONDS), 'time' => '11:30 AM', 'appt_time' => '11:30 AM', 'duration' => '30 minutes', 'type' => 'Video Visit', 'visit_type' => 'Video Visit', 'status' => 'Completed', 'condition' => 'Follow-up'],
-            ];
-        }
-        if (empty($notifications)) {
-            $dior_demo_mode = true;
-            $notifications = [
-                ['id' => 'DEMO-DN-001', 'title' => 'New Appointment', 'message' => 'Sarah Johnson booked a video consultation.', 'created_at' => current_time('mysql'), 'is_read' => false, 'action_url' => '#tab=doc-appointments'],
-                ['id' => 'DEMO-DN-002', 'title' => 'Patient Record Updated', 'message' => 'Emily Davis updated her intake information.', 'created_at' => current_time('mysql'), 'is_read' => false, 'action_url' => '#tab=doc-patients'],
-            ];
-        }
-        if (empty($documents)) {
-            $dior_demo_mode = true;
-            $documents = [
-                ['id' => 'DEMO-DR-001', 'patient_id_num' => 'DEMO-P001', 'patient_name' => 'Sarah Johnson', 'patient_user_id' => 0, 'title' => 'Blood Test Report', 'category' => 'Laboratory', 'date' => $demo_today, 'created_at' => $demo_today, 'author' => $doctor['full_name'], 'priority' => 'Normal'],
-                ['id' => 'DEMO-DR-002', 'patient_id_num' => 'DEMO-P003', 'patient_name' => 'Emily Davis', 'patient_user_id' => 0, 'title' => 'Consultation Summary', 'category' => 'Clinical', 'date' => $demo_today, 'created_at' => $demo_today, 'author' => $doctor['full_name'], 'priority' => 'Normal'],
-            ];
-        }
+        $patients = is_array($patients) ? $patients : [];
+        $appointments = is_array($appointments) ? $appointments : [];
+        $notifications = is_array($notifications) ? $notifications : [];
+        $documents = is_array($documents) ? $documents : [];
+
         $logo_url      = "";
         $logo_id       = get_theme_mod("custom_logo");
         if ($logo_id) $logo_url = wp_get_attachment_image_url($logo_id, "full");

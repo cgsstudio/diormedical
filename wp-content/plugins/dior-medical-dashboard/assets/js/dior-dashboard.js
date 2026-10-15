@@ -998,6 +998,12 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         window.diorCloseModal = function(modalId) {
             const overlay = document.getElementById(modalId);
             if (overlay) {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const bsInst = bootstrap.Modal.getInstance(overlay);
+                    if (bsInst) {
+                        bsInst.hide();
+                    }
+                }
                 overlay.classList.remove('open');
                 document.body.style.overflow = '';
             }
@@ -1511,6 +1517,22 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                         cached.status = 'Confirmed';
                     }
 
+                    // Update Overview upcoming consultation item & doctor card if matching aid
+                    const upItem = document.querySelector(`.consult[data-appt-id="${aid}"]`);
+                    if (upItem) {
+                        const metaEl = upItem.querySelector('.consult-meta');
+                        if (metaEl) {
+                            metaEl.innerHTML = `<span><i class="bi bi-calendar-event me-1 text-primary"></i> ${newDate}</span><span><i class="bi bi-clock me-1 text-primary"></i> ${newTime}</span>`;
+                        }
+                    }
+                    const docCard = document.getElementById('dior-overview-doctor-card');
+                    if (docCard && docCard.querySelector(`[onclick*="${aid}"]`)) {
+                        const dMeta = docCard.querySelector('.meta');
+                        if (dMeta) {
+                            dMeta.innerHTML = `<span><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#333;fill:none;stroke-width:1.5;"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>${newDate}</span><span><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#333;fill:none;stroke-width:1.5;"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>${newTime}</span>`;
+                        }
+                    }
+
                     // Update hero countdown if present
                     const heroCountdown = document.getElementById('dior-live-hero-countdown');
                     if (heroCountdown) {
@@ -1641,6 +1663,35 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                         cached.can_reschedule = false;
                         cached.can_cancel = false;
                     }
+
+                    // Remove from overview upcoming list
+                    const upItem = document.querySelector(`.consult[data-appt-id="${aid}"]`);
+                    if (upItem) {
+                        upItem.remove();
+                        const upList = document.getElementById('dior-overview-upcoming-list');
+                        if (upList && !upList.querySelector('.consult')) {
+                            upList.innerHTML = `
+                                <div class="dior-upcoming-empty" style="padding: 28px 16px; text-align: center; color: #94A3B8;">
+                                    <i class="bi bi-calendar2-check" style="font-size: 28px; color: #CBD5E1; margin-bottom: 8px; display: block;"></i>
+                                    <div style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 4px;">No upcoming consultations</div>
+                                    <div style="font-size: 12px; color: #94A3B8; margin-bottom: 12px;">Your upcoming consultations will appear here.</div>
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="if(typeof diorSwitchTab==='function'){diorSwitchTab('appointments');if(typeof diorSwitchApptSubTab==='function')diorSwitchApptSubTab('book');}" style="background:#2c71b7; border-color:#2c71b7; color:#fff; font-size:11.5px; font-weight:600; padding:6px 16px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+                                      <i class="bi bi-plus-lg"></i> Book Consultation
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    // Decrement upcoming counter
+                    document.querySelectorAll('.stat-card').forEach(function(sc) {
+                        const lbl = sc.querySelector('.stat-label');
+                        const num = sc.querySelector('.stat-num');
+                        if (lbl && num && lbl.textContent.toLowerCase().indexOf('upcoming') !== -1) {
+                            const curU = Math.max(0, (parseInt(num.textContent, 10) || 0) - 1);
+                            num.textContent = String(curU).padStart(2, '0');
+                        }
+                    });
 
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
@@ -3249,8 +3300,8 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                 if (dateEl) dateEl.textContent = actualDate;
                 var padDateEl = document.getElementById('pat-modal-rx-pad-date');
                 if (padDateEl) padDateEl.textContent = actualDate;
-                if (routingEl) routingEl.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#059669;"></i> ' + actualRouting;
-                if (statusBadge) statusBadge.innerHTML = '<i class="fa-solid fa-check"></i> ' + (found.routing_status || (actualRouting === 'Sent to Pharmacy' ? 'Transmission Confirmed' : actualRouting));
+                if (routingEl) routingEl.textContent = 'Routed Electronically via Surescripts NCPDP EDI (' + actualRouting + ')';
+                if (statusBadge) statusBadge.textContent = (found.routing_status || (actualRouting === 'Sent to Pharmacy' ? 'Transmission Confirmed' : actualRouting));
                 if (pharmNameEl) pharmNameEl.textContent = actualPharm;
                 if (sigNameEl) sigNameEl.textContent = '/s/ ' + cleanDoc + ', MD';
                 if (sigDateEl) sigDateEl.textContent = 'SHA256 Encrypted \u2022 Issued ' + actualDate;
@@ -3332,27 +3383,23 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                         }
 
                         html += '<tr>' +
-                            '<td class="dior-rx-item-num" style="font-size:11px;font-weight:600;color:#64748B;">' + (j + 1) + '</td>' +
+                            '<td class="text-center text-secondary fw-semibold">' + (j + 1) + '</td>' +
                             '<td>' +
-                                '<div class="dior-rx-item-name">' + formattedMed + '</div>' +
-                                '<div class="dior-rx-item-sub">' +
-                                    '<span style="font-family:monospace;font-size:9.5px;color:#00A896;background:#F0FDFA;border:1px solid #CCFBF1;padding:1px 5px;border-radius:4px;font-weight:600;">Rx Item: ' + escapeHtml(itemUid) + '</span>' +
-                                    '<span class="dior-rx-fda-badge"><i class="fa-solid fa-check"></i> FDA Approved</span>' +
-                                    '<span>Oral Formulation &bull; Single Patient Use</span>' +
+                                '<div class="fw-bold text-dark">' + formattedMed + '</div>' +
+                                '<div class="text-secondary small mt-1">' +
+                                    '<span class="badge bg-light text-secondary border me-1">Rx Item: ' + escapeHtml(itemUid) + '</span>' +
+                                    '<span class="badge bg-light text-secondary border me-1">FDA Approved</span>' +
+                                    '<span>Oral Formulation</span>' +
                                 '</div>' +
                             '</td>' +
                             '<td>' +
-                                '<div class="dior-rx-item-sig">' +
-                                    '<strong>SIG:</strong> ' + sigStr +
-                                '</div>' +
-                                '<div style="font-size:10.5px;color:#64748B;margin-top:2px;">' +
-                                    'Dosage: <strong style="color:#334155;font-weight:600;">' + doseStr + '</strong> &bull; Route: Oral' +
-                                '</div>' +
+                                '<div><strong>SIG:</strong> ' + sigStr + '</div>' +
+                                '<div class="text-secondary small mt-1">Dosage: <strong class="text-dark">' + doseStr + '</strong> &bull; Route: Oral</div>' +
                             '</td>' +
                             '<td>' +
-                                '<div class="dior-rx-item-qty">Qty: ' + qtyStr + '</div>' +
-                                '<div class="dior-rx-item-refill">' + refillStr + '</div>' +
-                                '<div class="dior-rx-item-daw">' + (found.daw || 'DAW-0 (Generic Auth)') + '</div>' +
+                                '<div class="fw-semibold text-dark">Qty: ' + qtyStr + '</div>' +
+                                '<div class="text-secondary small">' + refillStr + '</div>' +
+                                '<div class="text-muted small">' + escapeHtml(found.daw || 'DAW-0 (Generic Auth)') + '</div>' +
                             '</td>' +
                         '</tr>';
                     }
@@ -3376,7 +3423,14 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                     refillBtn.onclick = function() { window.diorRequestRefill(actualId); };
                 }
 
-                window.diorOpenModal('modal-view-rx-detail');
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    var rxModalEl = document.getElementById('modal-view-rx-detail');
+                    if (rxModalEl) {
+                        bootstrap.Modal.getOrCreateInstance(rxModalEl).show();
+                    }
+                } else if (typeof window.diorOpenModal === 'function') {
+                    window.diorOpenModal('modal-view-rx-detail');
+                }
             } else {
                 Swal.fire({ title: 'Prescription Details', text: 'Prescription #' + rxId, icon: 'info' });
             }
@@ -3455,41 +3509,42 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 })(jQuery);
 
 window.diorDownloadRxPdf = function(rxId) {
-    var element = document.getElementById('rx-pdf-template-' + rxId);
-    if (!element) {
-        var allTemplates = document.querySelectorAll('[id^="rx-pdf-template-"]');
-        if (allTemplates && allTemplates.length > 0) {
-            for (var k = 0; k < allTemplates.length; k++) {
-                var rawIds = (allTemplates[k].getAttribute('data-raw-ids') || '').split(',');
-                if (allTemplates[k].id.indexOf(rxId) !== -1 || rawIds.indexOf(String(rxId)) !== -1) {
-                    element = allTemplates[k];
-                    break;
-                }
-            }
-        }
+    if (typeof window.diorViewRxDetails === 'function') {
+        window.diorViewRxDetails(rxId);
     }
-    if (!element) { Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' }); return; }
+    
+    var element = document.getElementById('pat-modal-rx-sheet');
+    if (!element) {
+        element = document.getElementById('rx-pdf-template-' + rxId);
+    }
+    if (!element) {
+        element = document.querySelector('#modal-view-rx-detail .modal-body');
+    }
+    if (!element) {
+        if (window.Swal) Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' });
+        return;
+    }
     
     var cleanFileName = 'Dior-Prescription-' + String(rxId).replace(/[^a-zA-Z0-9]/g, '-') + '.pdf';
     var innerContent = element.innerHTML;
 
     var tempContainer = document.createElement('div');
     tempContainer.style.position = 'fixed';
-    tempContainer.style.left = '0';
+    tempContainer.style.left = '-9999px';
     tempContainer.style.top = '0';
-    tempContainer.style.width = '750px';
+    tempContainer.style.width = '794px';
     tempContainer.style.background = '#FFFFFF';
+    tempContainer.style.padding = '24px';
+    tempContainer.style.boxSizing = 'border-box';
     tempContainer.style.zIndex = '-999999';
     tempContainer.style.opacity = '1';
-    tempContainer.style.pointerEvents = 'none';
-    tempContainer.style.margin = '0';
-    tempContainer.style.padding = '0';
+    tempContainer.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
     tempContainer.innerHTML = innerContent;
     document.body.appendChild(tempContainer);
 
     if (typeof html2pdf !== 'undefined' && html2pdf) {
         var opt = {
-            margin:       [6, 6, 6, 6],
+            margin:       [8, 8, 8, 8],
             filename:     cleanFileName,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { 
@@ -3504,42 +3559,30 @@ window.diorDownloadRxPdf = function(rxId) {
             pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
         };
         try {
-            html2pdf().set(opt).from(tempContainer.firstElementChild || tempContainer).save().then(function() {
+            html2pdf().set(opt).from(tempContainer).save().then(function() {
                 if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
+                if (window.Swal) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Prescription Downloaded',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
             }).catch(function(err) {
                 console.error('PDF export error:', err);
                 if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                if (typeof fallbackPrintWindow === 'function') {
-                    fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
-                } else {
-                    window.print();
-                }
+                window.print();
             });
         } catch(e) {
             console.error('PDF generation error:', e);
             if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-            if (typeof fallbackPrintWindow === 'function') {
-                fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
-            } else {
-                window.print();
-            }
+            window.print();
         }
     } else {
-        console.warn('html2pdf library not loaded, falling back to print');
         if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-        if (typeof fallbackPrintWindow === 'function') {
-            fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
-        } else {
-            var printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.write('<html><head><title>Prescription #' + rxId + '</title></head><body style="margin:20px;background:#fff;font-family:Arial,sans-serif;">' + innerContent + '</body></html>');
-                printWindow.document.close();
-                printWindow.focus();
-                setTimeout(function() { printWindow.print(); }, 250);
-            } else {
-                window.print();
-            }
-        }
+        window.print();
     }
 };
 
@@ -3605,4 +3648,164 @@ window.diorToggleReminderOptin = function(channel, value) {
         });
     }
 };
+
+/* ==============================================================
+   EMERGENCY CONTACT & ASSISTANCE MODAL LOGIC
+   ============================================================== */
+(function () {
+    'use strict';
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        var d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    window.diorOpenEmergencyModal = function () {
+        var modalEl = document.getElementById('modal-emergency-contact');
+        if (modalEl) {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            } else if (typeof window.diorOpenModal === 'function') {
+                window.diorOpenModal('modal-emergency-contact');
+            }
+        }
+    };
+
+    window.diorEmergencyCall = function (type) {
+        if (type === 'ambulance') {
+            window.location.href = 'tel:911';
+        } else if (type === 'doctor') {
+            window.location.href = 'tel:18005553467';
+        } else {
+            window.diorOpenEmergencyModal();
+        }
+    };
+
+    window.diorSaveEmergencyContact = function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+
+        var nameInput = document.getElementById('modal_emerg_name');
+        var relSelect = document.getElementById('modal_emerg_rel');
+        var phoneInput = document.getElementById('modal_emerg_phone');
+        var prioritySelect = document.getElementById('modal_emerg_priority');
+        var submitBtn = document.getElementById('dior-emerg-submit-btn');
+
+        if (!nameInput || !phoneInput) return;
+
+        var name = nameInput.value.trim();
+        var rel = relSelect ? relSelect.value : 'Spouse';
+        var phone = phoneInput.value.trim();
+        var priority = prioritySelect ? prioritySelect.value : 'Emergency';
+
+        if (!name || !phone) {
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Required Information',
+                    text: 'Please provide both contact name and phone number.'
+                });
+            } else {
+                alert('Please provide both contact name and phone number.');
+            }
+            return;
+        }
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+        }
+
+        var ajaxUrl = (window.dior_vars && window.dior_vars.ajax_url) || (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || '/wp-admin/admin-ajax.php';
+        var nonce = (window.dior_vars && window.dior_vars.nonce) || (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || '';
+
+        var formData = new FormData();
+        formData.append('action', 'dior_patient_save_emergency_contact');
+        formData.append('nonce', nonce);
+        formData.append('emergency_name', name);
+        formData.append('emergency_relation', rel);
+        formData.append('emergency_phone', phone);
+        formData.append('emergency_priority', priority);
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (res) {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Emergency Contact';
+            }
+
+            if (res && res.success) {
+                // Update quick contact card inside modal
+                var cardName = document.getElementById('emerg-modal-card-name');
+                var cardDesc = document.getElementById('emerg-modal-card-desc');
+                var cardCallBtn = document.getElementById('emerg-modal-card-call-btn');
+                if (cardName) cardName.textContent = name;
+                if (cardDesc) cardDesc.textContent = rel + ' \u2022 ' + phone;
+                if (cardCallBtn) {
+                    cardCallBtn.href = 'tel:' + phone.replace(/[^0-9+]/g, '');
+                    cardCallBtn.classList.remove('disabled');
+                }
+
+                // Update emergency table
+                var tbody = document.getElementById('dior-emerg-tbody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr>' +
+                        '<td><input type="checkbox" class="dior-ic-52ff4d551f form-check-input"></td>' +
+                        '<td><span class="cell-text">' + escapeHtml(name) + '</span></td>' +
+                        '<td><span class="cell-text">' + escapeHtml(rel) + '</span></td>' +
+                        '<td>' +
+                            '<div class="cell-content cell-icon-text"><i class="fas fa-phone cell-icon" style="font-size: 13px; color: #2C6CB1; margin-right: 6px;"></i><span class="cell-text">' + escapeHtml(phone) + '</span></div>' +
+                        '</td>' +
+                        '<td><div class="cell-content"><div class="badge-solid col-red">' + escapeHtml(priority) + '</div></div></td>' +
+                        '<td><div class="cell-actions"><button type="button" class="action-icon-btn edit-btn btn" title="Edit Emergency Contact" onclick="diorOpenEmergencyModal()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button></div></td>' +
+                    '</tr>';
+                }
+
+                // Also keep settings inputs in sync if loaded
+                var settingsName = document.getElementById('patient-settings-emergency-name');
+                var settingsRel = document.getElementById('patient-settings-emergency-relation');
+                var settingsPhone = document.getElementById('patient-settings-emergency-phone');
+                if (settingsName) settingsName.value = name;
+                if (settingsRel) settingsRel.value = rel;
+                if (settingsPhone) settingsPhone.value = phone;
+
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Emergency Contact Saved',
+                        text: 'Emergency contact information has been updated successfully.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+
+                if (typeof window.diorCloseModal === 'function') {
+                    window.diorCloseModal('modal-emergency-contact');
+                }
+            } else {
+                var msg = (res && res.data && res.data.message) || (res && res.message) || 'Failed to save emergency contact.';
+                if (window.Swal) {
+                    Swal.fire({ icon: 'error', title: 'Error', text: msg });
+                } else {
+                    alert(msg);
+                }
+            }
+        })
+        .catch(function (err) {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Emergency Contact';
+            }
+            console.error('Error saving emergency contact:', err);
+            if (window.Swal) {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Network error while saving emergency contact.' });
+            }
+        });
+    };
+})();
 
