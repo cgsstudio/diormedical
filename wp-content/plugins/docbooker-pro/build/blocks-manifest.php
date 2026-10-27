@@ -3907,7 +3907,7 @@ return array(
 			),
 			'ledeText' => array(
 				'type' => 'string',
-				'default' => 'Find the right specialist, choose a time that works, and confirm in minutes — with an SMS in your hand before you close the tab.'
+				'default' => 'Find the right specialist, choose a time that works, and book in minutes — with a confirmation before you close the tab.'
 			),
 			'showPrimaryBtn' => array(
 				'type' => 'boolean',
@@ -4134,7 +4134,7 @@ return array(
 			),
 			'acFootText' => array(
 				'type' => 'string',
-				'default' => 'Secure payment · SMS confirmation · no account needed'
+				'default' => 'Real open slots · instant confirmation · no account needed'
 			),
 			'acDataMode' => array(
 				'type' => 'string',

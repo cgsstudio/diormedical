@@ -480,11 +480,26 @@ final class Dior_HIPAAtizer_API_Sync {
                         continue;
                     }
 
-                    // Flatten the fields for the importer and explicitly bind the matched patient account.
-                    $detail_payload = ['data' => $fields];
-                    $detail_payload['data']['user_id'] = (int) $user->ID;
-                    $detail_payload['data']['email'] = $email;
+                    // Normalize the fields once and explicitly bind the matched patient.
+                    // HIPAAtizer's detail endpoint may omit the email or submission ID from
+                    // its fields object, even though those values are known from the search.
+                    $fields['user_id'] = (int) $user->ID;
+                    $fields['email'] = $email;
+                    $fields['Email Address'] = $email;
+                    $fields['submission_id'] = $id;
+                    $fields['Submission Id'] = $id;
+                    if (empty($fields['workflowId'])) {
+                        $fields['workflowId'] = $settings['workflow_id'];
+                    }
+                    // Preserve HIPAAtizer envelope metadata for accurate IDs and submission timestamps.
+                    $detail_payload = [
+                        'id' => $id,
+                        'workflowId' => (string) ($detail['workflowId'] ?? $settings['workflow_id']),
+                        'createdAt' => (string) ($detail['createdAt'] ?? ($item['createdAt'] ?? '')),
+                        'data' => $fields,
+                    ];
 
+                    // Keep the existing legacy intake import path for current dashboard features.
                     if (function_exists('dior_fallback_save_hipaa_intake')) {
                         dior_fallback_save_hipaa_intake($detail_payload);
                     } elseif (class_exists('Dior_Patient_Portal_Data') && method_exists('Dior_Patient_Portal_Data', 'save_hipaa_intake')) {
@@ -493,11 +508,29 @@ final class Dior_HIPAAtizer_API_Sync {
                         $summary['message'] = 'Dior intake importer is unavailable.';
                         return self::finish($summary);
                     }
-                    // Confirm that the importer actually persisted intake data for this patient.
-                    // Do not mark the submission as synced if the save function returned early.
+
+                    // The patient-profile Medical Questionnaire tab reads
+                    // user_meta `dior_medical_questionnaire`, not only `dior_hipaa_intake`.
+                    // Import through the central questionnaire service as well so both views
+                    // use the same mapped, structured record.
+                    $questionnaire_result = ['success' => false];
+                    if (class_exists('Dior_Questionnaire_Service') && method_exists('Dior_Questionnaire_Service', 'process_hipaatizer_questionnaire')) {
+                        $questionnaire_result = Dior_Questionnaire_Service::process_hipaatizer_questionnaire($detail_payload);
+                    }
+
+                    // Confirm the exact submission was persisted before marking it synced.
+                    // Matching email alone is insufficient: it can incorrectly accept stale data.
+                    $saved_questionnaire = get_user_meta((int) $user->ID, 'dior_medical_questionnaire', true);
+                    $saved_q_id = is_array($saved_questionnaire) ? sanitize_text_field((string) ($saved_questionnaire['submission_id'] ?? '')) : '';
+                    $questionnaire_saved = !empty($questionnaire_result['success'])
+                        && is_array($saved_questionnaire)
+                        && $saved_q_id === $id;
+
                     $saved_intake = get_user_meta((int) $user->ID, 'dior_hipaa_intake', true);
                     $saved_email = is_array($saved_intake) ? sanitize_email((string) ($saved_intake['email'] ?? '')) : '';
-                    if (is_array($saved_intake) && $saved_email !== '' && strtolower($saved_email) === strtolower($email)) {
+                    $intake_saved = is_array($saved_intake) && $saved_email !== '' && strtolower($saved_email) === strtolower($email);
+
+                    if ($questionnaire_saved && $intake_saved) {
                         $new_seen[] = $id;
                         $seen_lookup[$id] = true;
                         $summary['imported']++;

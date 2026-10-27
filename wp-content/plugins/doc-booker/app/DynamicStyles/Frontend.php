@@ -22,6 +22,7 @@ $doctor_bg_color          = WpddbOptions::get_option( 'wpddb_doctor_bg_color', '
 ?>
 :root {
 --wpddb-primary-color: <?php echo esc_html( $primary_color ? $primary_color : '#5d3dfd' ); ?>;
+--wpddb-primary-text: <?php echo esc_html( Helper::readable_text_color( $primary_color ? $primary_color : '#5d3dfd' ) ); ?>;
 --wpddb-secondary-color: <?php echo esc_html( $secondary_color ? $secondary_color : '#ebf3fc' ); ?>;
 --wpddb-border-color: <?php echo esc_html( $border_color ? $border_color : '#dedede' ); ?>;
 }
@@ -36,7 +37,8 @@ $doctor_bg_color          = WpddbOptions::get_option( 'wpddb_doctor_bg_color', '
 <?php if ( $doctor_content_color ) {
     ?>
     .wpddbdoctor-items  .wpddb-doctor-des,
-    .wpddb-doctor-items  p{
+    .wpddb-doctor-items  p,
+    .wpddb-doctor-items .doctor-item p{
         color:<?php echo esc_html( $doctor_content_color ); ?>;
     }
 <?php } ?>
@@ -83,7 +85,8 @@ $doctor_bg_color          = WpddbOptions::get_option( 'wpddb_doctor_bg_color', '
 <?php if ( $clinic_content_color ) {
     ?>
     .wpddbclinic-items  .wpddb-clinic-des,
-    .wpddb-clinic-items p{
+    .wpddb-clinic-items p,
+    .wpddb-clinic-items .clinic-item p{
         color:<?php echo esc_html( $clinic_content_color ); ?>;
     }
 <?php } ?>

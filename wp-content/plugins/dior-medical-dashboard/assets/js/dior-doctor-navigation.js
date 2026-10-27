@@ -123,16 +123,25 @@
         if (activeBtn) {
             activeBtn.classList.add('active');
 
-            // Expand parent submenu if button is inside one
+            // Strict Accordion: Expand parent submenu if inside one, close all others
             var parentSubmenu = activeBtn.closest('.dior-nav-item.has-submenu');
-            if (parentSubmenu) {
-                parentSubmenu.classList.add('active', 'open');
-                var subIcon = parentSubmenu.querySelector('.submenu-icon');
-                if (subIcon) {
-                    subIcon.classList.remove('fa-plus');
-                    subIcon.classList.add('fa-minus');
+            document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(sub) {
+                if (parentSubmenu && sub === parentSubmenu) {
+                    sub.classList.add('active', 'open');
+                    var subIcon = sub.querySelector('.submenu-icon');
+                    if (subIcon) {
+                        subIcon.classList.remove('fa-plus');
+                        subIcon.classList.add('fa-minus');
+                    }
+                } else {
+                    sub.classList.remove('active', 'open');
+                    var subIcon = sub.querySelector('.submenu-icon');
+                    if (subIcon) {
+                        subIcon.classList.remove('fa-minus');
+                        subIcon.classList.add('fa-plus');
+                    }
                 }
-            }
+            });
 
             // Dismiss badge with transition if present
             var badge = activeBtn.querySelector('.nav-count-badge');
@@ -177,6 +186,11 @@
                     window.diorDoctorInitTablePagination(table, 5);
                 }
             });
+        }
+
+        // Trigger doctor appointment calendar re-render if switching to calendar tab
+        if (normalizedId === 'doc-appointments' && typeof window.diorRenderDoctorCalendar === 'function') {
+            setTimeout(window.diorRenderDoctorCalendar, 40);
         }
 
         // Close mobile drawer on selection

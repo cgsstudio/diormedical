@@ -19,17 +19,20 @@
 
     function isDashboardOverview(element) {
         if (!element) return false;
-        return !!element.closest('#tab-overview, #tab-doc-overview');
+        return !!element.closest('#tab-overview, #tab-doc-overview, #tab-doc-appointments, #tab-appointments, #tab-doc-appointments-view, .dior-bs-calendar-container, #dior-doc-cal-month-wrap, .dior-bs-cal-table');
     }
 
     function getTableSelector() {
-        return '.va-table, .docs-table, .dior-table, .lab-table, .master-modern-table, .dior-invoice-table, .dior-ref-table, .dior-doc-table, .dior-tab-panel:not(#tab-overview):not(#tab-doc-overview) table';
+        return '.va-table, .docs-table, .dior-table, .lab-table, .master-modern-table, .dior-invoice-table, .dior-ref-table, .dior-doc-table, .dior-tab-panel:not(#tab-overview):not(#tab-doc-overview):not(#tab-doc-appointments):not(#tab-doc-appointments-view):not(#tab-appointments) table:not(.dior-bs-cal-table)';
     }
 
     function getAllTables() {
         return Array.prototype.slice.call(document.querySelectorAll(getTableSelector())).filter(function (table) {
-            // Strictly exclude main overview screens per user requirement
+            // Strictly exclude main overview screens, appointments view and calendars per user requirement
             if (isDashboardOverview(table)) return false;
+            if (table.classList.contains('dior-bs-cal-table') || table.closest('.dior-bs-calendar-container, #dior-doc-cal-month-wrap, #tab-doc-appointments, #tab-doc-appointments-view, #tab-appointments')) {
+                return false;
+            }
             // Ignore nested preview/receipt/modal small tables
             if (table.closest('.receipt-info-table, .dior-rx-med-table, .pp-info-table, .dior-modal, #dior-static-edit-modal')) {
                 return false;
@@ -65,15 +68,34 @@
 
     function standardizeBootstrapSearchFields(root) {
         root = root || document;
+
+        // Strictly exclude and clean up any accidental search-group injected inside topbar search
+        var topSearches = [].slice.call(root.querySelectorAll('.dior-top-search'));
+        topSearches.forEach(function (topWrap) {
+            var nestedGroup = topWrap.querySelector('.dior-bs-search-group');
+            if (nestedGroup) {
+                var innerInput = nestedGroup.querySelector('input');
+                if (innerInput) {
+                    innerInput.classList.remove('form-control', 'border-start-0', 'ps-0');
+                    topWrap.appendChild(innerInput);
+                }
+                nestedGroup.remove();
+            }
+        });
+
         var searchInputs = [].slice.call(root.querySelectorAll(
             'input[placeholder*="Search" i], .dior-search-input, .va-search-input, [type="search"], ' +
             '#dior-tele-search-input, #dior-bill-search-input, #dior-notif-search-input, #dior-docs-search-input, ' +
             '#dior-rx-search-input, #dior-today-search-input, #dior-upcoming-search-input, #dior-past-search-input, ' +
             '#va-appt-search, #ap-search, #cn-search, #rv-search'
-        ));
+        )).filter(function (input) {
+            return !isDashboardOverview(input) &&
+                   input.id !== 'dior-doc-search' &&
+                   input.id !== 'dior-patient-search' &&
+                   !input.closest('.dior-top-search, .dior-topbar, header');
+        });
 
         searchInputs.forEach(function (input) {
-            if (isDashboardOverview(input) || input.id === 'dior-doc-search') return;
             if (input._diorBsSearchStandardized) return;
             input._diorBsSearchStandardized = true;
 
@@ -84,10 +106,10 @@
                 parent.classList.add('dior-bs-search-group');
                 var oldIcon = parent.querySelector('i');
                 if (oldIcon) {
-                    oldIcon.className = 'bi bi-search text-muted me-2';
+                    oldIcon.className = 'fas fa-magnifying-glass text-muted me-2';
                 } else {
                     var icon = document.createElement('i');
-                    icon.className = 'bi bi-search text-muted me-2';
+                    icon.className = 'fas fa-magnifying-glass text-muted me-2';
                     parent.insertBefore(icon, input);
                 }
             } else if (parent && !parent.classList.contains('dior-bs-search-group') && !parent.classList.contains('input-group')) {
@@ -99,7 +121,7 @@
 
                 var prepend = document.createElement('span');
                 prepend.className = 'input-group-text bg-white border-end-0 text-muted';
-                prepend.innerHTML = '<i class="bi bi-search"></i>';
+                prepend.innerHTML = '<i class="fas fa-magnifying-glass"></i>';
 
                 input.classList.add('border-start-0', 'ps-0');
                 parent.insertBefore(group, input);
@@ -113,38 +135,62 @@
     // 1. BULK ACTIONS TOOLBAR & CHECKBOX INITIALIZATION
     // =========================================================================
     function getBulkToolbar(table) {
+        // Center bulk toolbar removed per user requirement.
+        // Clean up any rogue center toolbar if present.
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+        if (card) {
+            var oldToolbars = card.querySelectorAll('.dior-bulk-actions-toolbar');
+            oldToolbars.forEach(function (tb) { tb.remove(); });
+        }
+        return null;
+    }
+
+    function getRightTrashBtn(table) {
         var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
         if (!card) return null;
 
-        var toolbar = card.querySelector('.dior-bulk-actions-toolbar');
-        if (!toolbar) {
-            toolbar = document.createElement('div');
-            toolbar.className = 'dior-bulk-actions-toolbar';
-            toolbar.style.display = 'none';
-            toolbar.innerHTML =
-                '<span class="dior-bulk-count">0 selected</span>' +
-                '<button type="button" class="btn btn-bulk-delete" title="Delete selected records">' +
-                    '<i class="bi bi-trash3"></i> Delete Selected' +
-                '</button>';
+        // Clean up any rogue center toolbar if present
+        var oldToolbars = card.querySelectorAll('.dior-bulk-actions-toolbar');
+        oldToolbars.forEach(function (tb) { tb.remove(); });
 
-            var target = card.querySelector('.va-actions-group, .docs-actions-group, .va-actions-wrapper, .docs-actions-wrapper, .dior-ref-card-head > div:last-child');
-            if (target) {
-                target.insertAdjacentElement('beforebegin', toolbar);
-            } else {
-                table.parentElement.insertAdjacentElement('beforebegin', toolbar);
+        var trashBtn = card.querySelector('.docs-actions-group .docs-btn-danger, .va-actions-group .va-btn-danger, .docs-actions-group button[title*="Delete"], .va-actions-group button[title*="Delete"], #ap-bulk-delete-btn, #va-bulk-delete-btn, #rv-bulk-delete-btn, #dior-pr-bulk-delete, #dior-upcoming-bulk-delete-btn, #dior-clinical-bulk-delete');
+
+        if (!trashBtn) {
+            var icon = card.querySelector('.docs-actions-group .fa-trash, .docs-actions-group .fa-trash-can, .va-actions-group .fa-trash, .va-actions-group .fa-trash-can');
+            if (icon) {
+                trashBtn = icon.closest('button');
             }
+        }
 
-            // Bind bulk delete button in this toolbar
-            var deleteBtn = toolbar.querySelector('.btn-bulk-delete');
-            if (deleteBtn) {
-                deleteBtn.addEventListener('click', function (e) {
+        // If the right-side actions group exists but doesn't have a trash button, inject one as the first icon button!
+        if (!trashBtn) {
+            var group = card.querySelector('.docs-actions-group, .va-actions-group');
+            if (group) {
+                trashBtn = document.createElement('button');
+                trashBtn.type = 'button';
+                trashBtn.className = group.classList.contains('docs-actions-group')
+                    ? 'docs-icon-btn docs-btn-danger btn'
+                    : 'va-icon-btn va-btn-danger btn';
+                trashBtn.title = 'Delete Selected';
+                trashBtn.setAttribute('aria-label', 'Delete selected items');
+                trashBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                group.insertBefore(trashBtn, group.firstChild);
+            }
+        }
+
+        if (trashBtn) {
+            trashBtn.classList.add('position-relative');
+            if (!trashBtn._diorBulkBound) {
+                trashBtn._diorBulkBound = true;
+                trashBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     executeBulkDelete(table);
                 });
             }
         }
-        return toolbar;
+
+        return trashBtn;
     }
 
     function ensureCheckboxes(table) {
@@ -196,12 +242,17 @@
             }
         });
 
-        // Initialize bulk toolbar
-        getBulkToolbar(table);
+        // Initialize right-side bulk trash button
+        getRightTrashBtn(table);
     }
 
     function updateBulkToolbarState(table) {
-        var toolbar = getBulkToolbar(table);
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+        if (card) {
+            var oldToolbars = card.querySelectorAll('.dior-bulk-actions-toolbar');
+            oldToolbars.forEach(function (tb) { tb.remove(); });
+        }
+
         var activeRows = getActiveRows(table);
         var checkedRows = activeRows.filter(function (row) {
             var cb = row.querySelector('input[type="checkbox"]');
@@ -224,22 +275,33 @@
             }
         }
 
-        if (toolbar) {
-            if (count > 0) {
-                toolbar.style.display = 'inline-flex';
-                var countSpan = toolbar.querySelector('.dior-bulk-count');
-                if (countSpan) countSpan.textContent = count + ' selected';
-            } else {
-                toolbar.style.display = 'none';
-            }
-        }
+        // Update the right-side trash icon button
+        var trashBtn = getRightTrashBtn(table);
+        if (trashBtn) {
+            trashBtn.classList.add('position-relative');
+            var existingBadge = trashBtn.querySelector('.dior-bulk-count-badge');
 
-        // Also check any legacy bulk buttons
-        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel');
-        if (card) {
-            var legacyBulkBtn = card.querySelector('#ap-bulk-delete-btn, #va-bulk-delete-btn, .docs-btn-danger[title*="Bulk"], .va-btn-danger[title*="Bulk"]');
-            if (legacyBulkBtn) {
-                legacyBulkBtn.style.display = count > 0 ? 'inline-flex' : 'none';
+            if (count > 0) {
+                if (!existingBadge) {
+                    existingBadge = document.createElement('span');
+                    existingBadge.className = 'dior-bulk-count-badge badge bg-danger text-white rounded-pill position-absolute top-0 start-100 translate-middle shadow-sm';
+                    existingBadge.style.fontSize = '10px';
+                    existingBadge.style.padding = '2px 6px';
+                    existingBadge.style.pointerEvents = 'none';
+                    existingBadge.style.zIndex = '5';
+                    existingBadge.style.fontWeight = '700';
+                    existingBadge.style.lineHeight = '1';
+                    trashBtn.appendChild(existingBadge);
+                }
+                existingBadge.textContent = count;
+                trashBtn.title = 'Delete ' + count + ' selected record' + (count > 1 ? 's' : '');
+                trashBtn.setAttribute('aria-label', 'Delete ' + count + ' selected records');
+            } else {
+                if (existingBadge) {
+                    existingBadge.remove();
+                }
+                trashBtn.title = 'Delete Selected';
+                trashBtn.setAttribute('aria-label', 'Delete selected items');
             }
         }
     }
@@ -393,7 +455,7 @@
         var selectedBadge = selected > 0 ? ' <span class="badge bg-primary ms-1" style="font-size:11px;padding:3px 8px;border-radius:12px;background:#00346C !important;">' + selected + ' selected</span>' : '';
 
         var html = '';
-        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page - 1) + '" ' + (state.page === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="bi bi-chevron-left"></i></button>';
+        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page - 1) + '" ' + (state.page === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="fas fa-chevron-left"></i></button>';
 
         for (var page = 1; page <= totalPages; page++) {
             if (totalPages > 7) {
@@ -407,7 +469,7 @@
             html += '<button type="button" class="va-page-btn dior-page-btn btn ' + (page === state.page ? 'active' : '') + '" data-static-page="' + page + '">' + page + '</button>';
         }
 
-        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page + 1) + '" ' + (state.page === totalPages ? 'disabled' : '') + ' aria-label="Next page"><i class="bi bi-chevron-right"></i></button>';
+        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page + 1) + '" ' + (state.page === totalPages ? 'disabled' : '') + ' aria-label="Next page"><i class="fas fa-chevron-right"></i></button>';
 
         host.innerHTML =
             '<div class="va-pagination-text dior-pagination-count text-muted" style="font-size:13.5px;font-weight:500;">Showing <strong>' +
@@ -470,11 +532,11 @@
             th.style.cursor = 'pointer';
             th.style.userSelect = 'none';
 
-            // Ensure Bootstrap sort icon exists
-            var icon = th.querySelector('i.bi-arrow-down-up, i.bi-arrow-up, i.bi-arrow-down, i.fa-sort, i.fas, i.fa-solid, i.bi');
+            // Ensure sort icon exists
+            var icon = th.querySelector('i.bi-arrow-down-up, i.bi-arrow-up, i.bi-arrow-down, i.fa-sort, i.fa-sort-up, i.fa-sort-down, i.fas, i.fa-solid, i.bi');
             if (!icon) {
                 icon = document.createElement('i');
-                icon.className = 'bi bi-arrow-down-up ms-1 text-muted';
+                icon.className = 'fas fa-sort ms-1 text-muted';
                 th.appendChild(icon);
             }
 
@@ -487,14 +549,14 @@
                     otherTh.removeAttribute('data-sort-dir');
                     var otherIcon = otherTh.querySelector('i');
                     if (otherIcon) {
-                        otherIcon.className = 'bi bi-arrow-down-up ms-1 text-muted';
+                        otherIcon.className = 'fas fa-sort ms-1 text-muted';
                     }
                 });
 
                 // Set new direction
                 th.setAttribute('data-sort-dir', newDir);
                 if (icon) {
-                    icon.className = 'bi bi-arrow-' + (newDir === 'asc' ? 'up' : 'down') + ' ms-1 text-primary';
+                    icon.className = 'fas fa-sort-' + (newDir === 'asc' ? 'up' : 'down') + ' ms-1 text-primary';
                 }
 
                 // Sort the table rows
@@ -528,7 +590,7 @@
     // 4. IN-PLACE EDIT MODAL & SINGLE ROW DELETE
     // =========================================================================
     function findEditableValueCell(cell) {
-        var target = cell.querySelector('.va-user-name, .cell-text, .status-cell-text, .notes-text, .badge, .status, .dior-ref-badge');
+        var target = cell.querySelector('.va-user-name, .cell-text, .status-cell-text, .notes-text');
         return target || null;
     }
 
@@ -541,15 +603,6 @@
         var target = findEditableValueCell(cell);
         if (target) {
             target.textContent = value;
-            if (target.classList.contains('status-cell-text')) {
-                target.classList.remove('status-confirm', 'status-upcoming', 'status-completed', 'status-cancelled', 'status-pending');
-                var valLower = value.toLowerCase().trim();
-                if (valLower === 'confirmed') target.classList.add('status-confirm');
-                else if (valLower === 'cancelled' || valLower === 'canceled') target.classList.add('status-cancelled');
-                else if (valLower === 'pending') target.classList.add('status-pending');
-                else if (valLower === 'completed') target.classList.add('status-completed');
-                else target.classList.add('status-upcoming');
-            }
             return;
         }
 
@@ -567,44 +620,6 @@
         }
 
         cell.textContent = value;
-    }
-
-    function getStatusOptions(table, currentValue) {
-        var tableText = '';
-        if (table) {
-            var container = table.closest('.dior-tab-panel, .view-appointment-card, .docs-card, .medidash-card, .dior-ref-card') || table;
-            tableText = ((container.id || '') + ' ' + (container.className || '') + ' ' + (table.className || '')).toLowerCase();
-        }
-
-        var list;
-        if (/appt|appointment|consult/i.test(tableText)) {
-            // Appointments & Consultations
-            list = ['Confirmed', 'Scheduled', 'In Progress', 'Pending', 'Completed', 'Cancelled'];
-        } else if (/prescri|rx|\bmeds?\b/i.test(tableText)) {
-            // Prescriptions
-            list = ['Active', 'Refill Needed', 'Pending', 'Completed', 'Cancelled', 'Expired'];
-        } else if (/bill|pay|invoice|income/i.test(tableText)) {
-            // Billing & Payments
-            list = ['Paid', 'Pending', 'Overdue', 'Failed', 'Refunded', 'Cancelled'];
-        } else if (/lab|diagnostic|\b(test|tests|document|documents)\b/i.test(tableText)) {
-            // Labs & Diagnostic Results
-            list = ['Normal', 'Abnormal', 'Pending', 'Completed', 'Reviewed'];
-        } else {
-            // Default Medical Status List
-            list = ['Confirmed', 'Scheduled', 'In Progress', 'Pending', 'Completed', 'Cancelled'];
-        }
-
-        if (currentValue && currentValue.trim()) {
-            var valTrimmed = currentValue.trim();
-            var exists = list.some(function (item) {
-                return item.toLowerCase() === valTrimmed.toLowerCase();
-            });
-            if (!exists) {
-                list.unshift(valTrimmed);
-            }
-        }
-
-        return list;
     }
 
     function createModal() {
@@ -696,25 +711,9 @@
             var value = readCellValue(cell);
             var field = document.createElement('div');
             field.className = 'dior-static-edit-field mb-3';
-
-            var isStatus = /status/i.test(label);
-            if (isStatus) {
-                var options = getStatusOptions(table, value);
-                var optionsHtml = options.map(function (opt) {
-                    var isSelected = opt.toLowerCase() === value.trim().toLowerCase();
-                    return '<option value="' + opt.replace(/"/g, '&quot;') + '"' + (isSelected ? ' selected' : '') + '>' + opt + '</option>';
-                }).join('');
-
-                field.innerHTML =
-                    '<label class="form-label" style="font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">' + label + '</label>' +
-                    '<select class="form-select dior-static-edit-select" data-edit-index="' + index + '" style="border-radius: 6px; font-size: 14px; font-weight: 500; min-height: 42px; border: 1px solid #E2E8F0; color: #0F172A; background-color: #FFFFFF !important; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\'%3e%3cpath fill=\'none\' stroke=\'%23334155\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'m2 5 6 6 6-6\'/%3e%3c/svg%3e&quot;) !important; background-repeat: no-repeat !important; background-position: right 14px center !important; background-size: 16px 12px !important; cursor: pointer; padding: 10px 36px 10px 14px !important; outline: none;">' +
-                        optionsHtml +
-                    '</select>';
-            } else {
-                field.innerHTML =
-                    '<label class="form-label" style="font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">' + label + '</label>' +
-                    '<input type="text" class="form-control" data-edit-index="' + index + '" value="' + value.replace(/"/g, '&quot;') + '">';
-            }
+            field.innerHTML =
+                '<label class="form-label" style="font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">' + label + '</label>' +
+                '<input type="text" class="form-control" data-edit-index="' + index + '" value="' + value.replace(/"/g, '&quot;') + '">';
             fieldsWrap.appendChild(field);
         });
 
@@ -817,7 +816,7 @@
     document.addEventListener('click', function (event) {
         // Edit button
         var editButton = event.target.closest('.va-btn-edit, .action-icon-btn.edit-btn');
-        if (editButton && !editButton.matches('.dior-mark-notification-read') && editButton.querySelector('.fa-pen, .fa-pencil, .bi-vector-pen, .bi-pencil-square, .bi-pencil')) {
+        if (editButton && !editButton.matches('.dior-mark-notification-read, .rv-edit-btn, .va-edit-appt-btn') && !editButton.closest('#rv-table, #va-appointments-tbody, #doc-uploaded-tbody, #dior-docs-tbody') && editButton.querySelector('.fa-pen, .fa-pencil, .bi-vector-pen, .bi-pencil-square, .bi-pencil')) {
             event.preventDefault();
             event.stopPropagation();
             var editRow = editButton.closest('tr');
@@ -871,8 +870,8 @@
             return;
         }
 
-        // Legacy / Toolbar Bulk Delete Buttons
-        var bulkDeleteBtn = event.target.closest('.dior-bulk-actions-toolbar .btn-bulk-delete, #ap-bulk-delete-btn, #va-bulk-delete-btn, [onclick*="diorBulkDelete"]');
+        // Right-side Toolbar Bulk Delete Buttons
+        var bulkDeleteBtn = event.target.closest('.dior-bulk-actions-toolbar .btn-bulk-delete, #ap-bulk-delete-btn, #va-bulk-delete-btn, #rv-bulk-delete-btn, #dior-pr-bulk-delete, #dior-upcoming-bulk-delete-btn, #dior-clinical-bulk-delete, .docs-actions-group .docs-btn-danger, .va-actions-group .va-btn-danger, [onclick*="diorBulkDelete"]');
         if (bulkDeleteBtn) {
             event.preventDefault();
             event.stopPropagation();

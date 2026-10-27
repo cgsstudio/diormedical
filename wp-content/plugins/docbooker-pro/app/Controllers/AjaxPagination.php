@@ -25,18 +25,32 @@ class AjaxPagination
      */
     public function handle_load_posts() {
         // Verify nonce for security
-        if (!wp_verify_nonce($_POST['_ajax_nonce'], wpddb()->nonceText)) {
+        $nonce = isset($_POST['_ajax_nonce']) ? sanitize_text_field(wp_unslash($_POST['_ajax_nonce'])) : '';
+        if (!wp_verify_nonce($nonce, wpddb()->nonceText)) {
             wp_send_json_error('Security check failed');
             return;
         }
 
         $settings=[];
         // Sanitize and validate input
-        $page = isset($_POST['page']) ? absint($_POST['page']) : 1;
-        $posts_per_page = isset($_POST['posts_per_page']) ? absint($_POST['posts_per_page']) : 10;
-        $post_type = isset($_POST['post_type']) ? sanitize_text_field($_POST['post_type']) : 'post';
+        $page = isset($_POST['page']) ? max(1, absint($_POST['page'])) : 1;
+        // Anyone can call this, so a page is capped rather than taken as asked.
+        $posts_per_page = isset($_POST['posts_per_page']) ? min(50, max(1, absint($_POST['posts_per_page']))) : 10;
+        $post_type = isset($_POST['post_type']) ? sanitize_key($_POST['post_type']) : '';
         $layout = isset($_POST['layout']) ? sanitize_text_field($_POST['layout']) : 'layout-1';
-        $template = isset($_POST['template']) ? sanitize_text_field($_POST['template']) : '';
+        $template = isset($_POST['template']) ? sanitize_text_field(wp_unslash($_POST['template'])) : '';
+
+        // Only the two shortcode post types page through here, and only with
+        // their own shortcode layouts: the template name ends up in an include.
+        $kinds = [ wpddb()->post_type_doctor => 'doctor', wpddb()->post_type_clinic => 'clinic' ];
+        if (!isset($kinds[$post_type])) {
+            wp_send_json_error('Invalid request');
+            return;
+        }
+        if ('' !== $template && !preg_match('#^shortcode/' . $kinds[$post_type] . '/layouts/[a-z0-9_-]+$#', $template)) {
+            wp_send_json_error('Invalid request');
+            return;
+        }
         $order_by = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : 'date';
         $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
 

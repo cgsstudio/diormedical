@@ -14,14 +14,13 @@ function diorPagerChevron(direction) {
 }
 
 function diorBuildPagerHtml(currentPage, totalPages, goFunctionName) {
-    if (!totalPages || totalPages < 2) {
-        return '';
-    }
+    totalPages = Math.max(1, totalPages || 1);
+    currentPage = Math.max(1, Math.min(currentPage || 1, totalPages));
 
     var html = '';
 
     html += '<button type="button" class="dior-page-btn" ' + (currentPage <= 1 ? 'disabled' : '') +
-        ' onclick="' + goFunctionName + '(' + (currentPage - 1) + ')" title="Previous Page">' +
+        ' onclick="' + goFunctionName + '(' + (currentPage - 1) + ')" title="Previous Page" aria-label="Previous Page">' +
         diorPagerChevron('left') + '</button>';
 
     if (totalPages <= 7) {
@@ -41,7 +40,7 @@ function diorBuildPagerHtml(currentPage, totalPages, goFunctionName) {
     }
 
     html += '<button type="button" class="dior-page-btn" ' + (currentPage >= totalPages ? 'disabled' : '') +
-        ' onclick="' + goFunctionName + '(' + (currentPage + 1) + ')" title="Next Page">' +
+        ' onclick="' + goFunctionName + '(' + (currentPage + 1) + ')" title="Next Page" aria-label="Next Page">' +
         diorPagerChevron('right') + '</button>';
 
     return html;
@@ -402,31 +401,84 @@ function diorDownloadTodayAppointmentsCSV() {
                                 URL.revokeObjectURL(url);
                             }
 
-                            function diorFilterTodayAppointments() {
-                                const input = document.getElementById('dior-today-search-input');
-                                const filter = input ? input.value.toLowerCase() : '';
-                                const rows = document.querySelectorAll('#dior-today-appointments-tbody tr');
-                                let visibleCount = 0;
+let diorTodayCurrentPage = 1;
+const diorTodayRowsPerPage = 10;
 
-                                rows.forEach(function(row) {
-                                    const text = row.innerText.toLowerCase();
-                                    if (text.includes(filter)) {
-                                        row.style.display = '';
-                                        visibleCount++;
-                                    } else {
-                                        row.style.display = 'none';
-                                    }
-                                });
+function diorGetTodayActiveRows() {
+    const input = document.getElementById('dior-today-search-input');
+    const filter = input ? input.value.toLowerCase() : '';
+    const allRows = Array.from(document.querySelectorAll('#dior-today-appointments-tbody tr'));
+    return allRows.filter(function(row) {
+        return row.innerText.toLowerCase().includes(filter);
+    });
+}
 
-                                const pageCountEl = document.getElementById('dior-today-page-count');
-                                if (pageCountEl) {
-                                    pageCountEl.innerText = `0 selected / ${visibleCount} total`;
-                                }
-                            }
+function diorRenderTodayPagination() {
+    const activeRows = diorGetTodayActiveRows();
+    const allRows = Array.from(document.querySelectorAll('#dior-today-appointments-tbody tr'));
+    const totalPages = Math.ceil(activeRows.length / diorTodayRowsPerPage) || 1;
+
+    if (diorTodayCurrentPage > totalPages) diorTodayCurrentPage = totalPages;
+    if (diorTodayCurrentPage < 1) diorTodayCurrentPage = 1;
+
+    allRows.forEach(row => row.style.display = 'none');
+
+    const startIndex = (diorTodayCurrentPage - 1) * diorTodayRowsPerPage;
+    const endIndex = startIndex + diorTodayRowsPerPage;
+    const pageRows = activeRows.slice(startIndex, endIndex);
+
+    pageRows.forEach(row => row.style.display = '');
+
+    const pagContainer = document.getElementById('dior-today-pagination');
+    if (pagContainer) {
+        pagContainer.innerHTML = diorBuildPagerHtml(diorTodayCurrentPage, totalPages, 'diorGoTodayPage');
+    }
+
+    diorUpdateTodaySelectedCount(activeRows.length);
+}
+
+function diorGoTodayPage(page) {
+    diorTodayCurrentPage = page;
+    diorRenderTodayPagination();
+}
+
+function diorFilterTodayAppointments() {
+    diorTodayCurrentPage = 1;
+    diorRenderTodayPagination();
+}
+
+function diorToggleSelectAllToday(master) {
+    const activeRows = diorGetTodayActiveRows();
+    activeRows.forEach(function(row) {
+        const cb = row.querySelector('.today-row-checkbox');
+        if (cb) cb.checked = master.checked;
+    });
+    diorUpdateTodaySelectedCount();
+}
+
+function diorUpdateTodaySelectedCount(customVisibleCount) {
+    const checkboxes = document.querySelectorAll('.today-row-checkbox');
+    let selectedCount = 0;
+    let visibleCount = 0;
+
+    checkboxes.forEach(function(cb) {
+        const row = cb.closest('tr');
+        if (row) {
+            visibleCount++;
+            if (cb.checked) selectedCount++;
+        }
+    });
+
+    const total = (typeof customVisibleCount === 'number') ? customVisibleCount : visibleCount;
+    const pageCountEl = document.getElementById('dior-today-page-count');
+    if (pageCountEl) {
+        pageCountEl.innerText = `${selectedCount} selected / ${total} total`;
+    }
+}
 
 // --- Extracted dashboard script 3 ---
 let diorUpcomingCurrentPage = 1;
-                            const diorUpcomingRowsPerPage = 5;
+                            const diorUpcomingRowsPerPage = 10;
 
                             function diorGetUpcomingActiveRows() {
                                 const input = document.getElementById('dior-upcoming-search-input');
@@ -576,105 +628,136 @@ let diorUpcomingCurrentPage = 1;
 
 // --- Extracted dashboard script 4 ---
 let diorPastCurrentPage = 1;
-                            const diorPastRowsPerPage = 5;
+const diorPastRowsPerPage = 10;
 
-                            function diorGetPastActiveRows() {
-                                const input = document.getElementById('dior-past-search-input');
-                                const filter = input ? input.value.toLowerCase() : '';
-                                const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
-                                
-                                return allRows.filter(function(row) {
-                                    const text = row.innerText.toLowerCase();
-                                    return text.includes(filter);
-                                });
-                            }
+function diorGetPastActiveRows() {
+    const input = document.getElementById('dior-past-search-input');
+    const filter = input ? input.value.toLowerCase() : '';
+    const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
+    
+    return allRows.filter(function(row) {
+        const text = row.innerText.toLowerCase();
+        return text.includes(filter);
+    });
+}
 
-                            function diorRenderPastPagination() {
-                                const activeRows = diorGetPastActiveRows();
-                                const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
-                                const totalPages = Math.ceil(activeRows.length / diorPastRowsPerPage) || 1;
+function diorRenderPastPagination() {
+    const activeRows = diorGetPastActiveRows();
+    const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
+    const totalPages = Math.ceil(activeRows.length / diorPastRowsPerPage) || 1;
 
-                                if (diorPastCurrentPage > totalPages) {
-                                    diorPastCurrentPage = totalPages;
-                                }
-                                if (diorPastCurrentPage < 1) {
-                                    diorPastCurrentPage = 1;
-                                }
+    if (diorPastCurrentPage > totalPages) {
+        diorPastCurrentPage = totalPages;
+    }
+    if (diorPastCurrentPage < 1) {
+        diorPastCurrentPage = 1;
+    }
 
-                                allRows.forEach(row => row.style.display = 'none');
+    allRows.forEach(row => row.style.display = 'none');
 
-                                const startIndex = (diorPastCurrentPage - 1) * diorPastRowsPerPage;
-                                const endIndex = startIndex + diorPastRowsPerPage;
-                                const pageRows = activeRows.slice(startIndex, endIndex);
+    const startIndex = (diorPastCurrentPage - 1) * diorPastRowsPerPage;
+    const endIndex = startIndex + diorPastRowsPerPage;
+    const pageRows = activeRows.slice(startIndex, endIndex);
 
-                                pageRows.forEach(row => row.style.display = '');
+    pageRows.forEach(row => row.style.display = '');
 
-                                const pagContainer = document.getElementById('dior-past-pagination');
-                                if (pagContainer) {
-                                    pagContainer.innerHTML = diorBuildPagerHtml(diorPastCurrentPage, totalPages, 'diorGoPastPage');
-                                }
+    const pagContainer = document.getElementById('dior-past-pagination');
+    if (pagContainer) {
+        pagContainer.innerHTML = diorBuildPagerHtml(diorPastCurrentPage, totalPages, 'diorGoPastPage');
+    }
 
-                                const pageCountEl = document.getElementById('dior-past-page-count');
-                                if (pageCountEl) {
-                                    pageCountEl.innerText = `0 selected / ${activeRows.length} total`;
-                                }
-                            }
+    diorUpdatePastSelectedCount(activeRows.length);
+}
 
-                            function diorGoPastPage(page) {
-                                diorPastCurrentPage = page;
-                                diorRenderPastPagination();
-                            }
+function diorGoPastPage(page) {
+    diorPastCurrentPage = page;
+    diorRenderPastPagination();
+}
 
-                            function diorFilterPastAppointments() {
-                                diorPastCurrentPage = 1;
-                                diorRenderPastPagination();
-                            }
-                            
-                            function diorDownloadPastAppointmentsCSV() {
-                                const table = document.getElementById('dior-past-appointments-table');
-                                if (!table) return;
+function diorFilterPastAppointments() {
+    diorPastCurrentPage = 1;
+    diorRenderPastPagination();
+}
 
-                                let csv = [];
-                                csv.push(['Doctor', 'Date', 'Time', 'Email', 'Mobile', 'Injury', 'Type', 'Next Appointment'].join(','));
+function diorToggleSelectAllPast(master) {
+    const activeRows = diorGetPastActiveRows();
+    activeRows.forEach(function(row) {
+        const cb = row.querySelector('.past-row-checkbox');
+        if (cb) cb.checked = master.checked;
+    });
+    diorUpdatePastSelectedCount();
+}
 
-                                const activeRows = diorGetPastActiveRows();
-                                activeRows.forEach(function(row) {
-                                    const cols = row.querySelectorAll('td');
-                                    if (cols.length >= 8) {
-                                        let doctor = cols[0].innerText.replace(/\s+/g, ' ').trim();
-                                        let date = cols[1].innerText.replace(/\s+/g, ' ').trim();
-                                        let time = cols[2].innerText.replace(/\s+/g, ' ').trim();
-                                        let email = cols[3].innerText.replace(/\s+/g, ' ').trim();
-                                        let mobile = cols[4].innerText.replace(/\s+/g, ' ').trim();
-                                        let injury = cols[5].innerText.replace(/\s+/g, ' ').trim();
-                                        let type = cols[6].innerText.replace(/\s+/g, ' ').trim();
-                                        let nextAppt = cols[7].innerText.replace(/\s+/g, ' ').trim();
+function diorUpdatePastSelectedCount(customVisibleCount) {
+    const checkboxes = document.querySelectorAll('.past-row-checkbox');
+    let selectedCount = 0;
+    let visibleCount = 0;
 
-                                        let rowData = [
-                                            `"${doctor.replace(/"/g, '""')}"`,
-                                            `"${date.replace(/"/g, '""')}"`,
-                                            `"${time.replace(/"/g, '""')}"`,
-                                            `"${email.replace(/"/g, '""')}"`,
-                                            `"${mobile.replace(/"/g, '""')}"`,
-                                            `"${injury.replace(/"/g, '""')}"`,
-                                            `"${type.replace(/"/g, '""')}"`,
-                                            `"${nextAppt.replace(/"/g, '""')}"`
-                                        ];
-                                        csv.push(rowData.join(','));
-                                    }
-                                });
+    checkboxes.forEach(function(cb) {
+        const row = cb.closest('tr');
+        if (row) {
+            visibleCount++;
+            if (cb.checked) selectedCount++;
+        }
+    });
 
-                                const csvString = csv.join('\r\n');
-                                const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-                                const url = URL.createObjectURL(blob);
-                                const link = document.createElement('a');
-                                link.setAttribute('href', url);
-                                link.setAttribute('download', 'past_appointments.csv');
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                                URL.revokeObjectURL(url);
-                            }
+    const total = (typeof customVisibleCount === 'number') ? customVisibleCount : visibleCount;
+    const pageCountEl = document.getElementById('dior-past-page-count');
+    if (pageCountEl) {
+        pageCountEl.innerText = `${selectedCount} selected / ${total} total`;
+    }
+}
+
+function diorDownloadPastAppointmentsCSV() {
+    const table = document.getElementById('dior-past-appointments-table');
+    if (!table) return;
+
+    let csv = [];
+    csv.push(['Patient Name', 'Appointment Date', 'Time', 'Email', 'Mobile', 'Gender', 'Status', 'Address', 'Disease', 'Last Visit'].join(','));
+
+    const activeRows = diorGetPastActiveRows();
+    activeRows.forEach(function(row) {
+        const cols = row.querySelectorAll('td');
+        if (cols.length >= 11) {
+            let name = cols[1].innerText.replace(/\s+/g, ' ').trim();
+            let date = cols[2].innerText.replace(/\s+/g, ' ').trim();
+            let time = cols[3].innerText.replace(/\s+/g, ' ').trim();
+            let email = cols[4].innerText.replace(/\s+/g, ' ').trim();
+            let mobile = cols[5].innerText.replace(/\s+/g, ' ').trim();
+            let gender = cols[6].innerText.replace(/\s+/g, ' ').trim();
+            let status = cols[7].innerText.replace(/\s+/g, ' ').trim();
+            let address = cols[8].innerText.replace(/\s+/g, ' ').trim();
+            let disease = cols[9].innerText.replace(/\s+/g, ' ').trim();
+            let lastVisit = cols[10].innerText.replace(/\s+/g, ' ').trim();
+
+            let rowData = [
+                `"${name.replace(/"/g, '""')}"`,
+                `"${date.replace(/"/g, '""')}"`,
+                `"${time.replace(/"/g, '""')}"`,
+                `"${email.replace(/"/g, '""')}"`,
+                `"${mobile.replace(/"/g, '""')}"`,
+                `"${gender.replace(/"/g, '""')}"`,
+                `"${status.replace(/"/g, '""')}"`,
+                `"${address.replace(/"/g, '""')}"`,
+                `"${disease.replace(/"/g, '""')}"`,
+                `"${lastVisit.replace(/"/g, '""')}"`
+            ];
+            csv.push(rowData.join(','));
+        }
+    });
+
+    const csvString = csv.join('\r\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'past_appointments.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
 
                             document.addEventListener('DOMContentLoaded', function() {
                                 diorRenderPastPagination();
@@ -683,9 +766,20 @@ let diorPastCurrentPage = 1;
                                 diorRenderPastPagination();
                             }
 
+                            window.diorRenderUpcomingPagination = diorRenderUpcomingPagination;
+                            window.diorGoUpcomingPage = diorGoUpcomingPage;
+                            window.diorFilterUpcomingAppointments = diorFilterUpcomingAppointments;
+                            window.diorToggleSelectAllUpcoming = diorToggleSelectAllUpcoming;
+                            window.diorBulkDeleteUpcomingRows = diorBulkDeleteUpcomingRows;
+                            window.diorUpdateUpcomingSelectedCount = diorUpdateUpcomingSelectedCount;
+
+                            window.diorRenderPastPagination = diorRenderPastPagination;
+                            window.diorGoPastPage = diorGoPastPage;
+                            window.diorFilterPastAppointments = diorFilterPastAppointments;
+
 // --- Extracted dashboard script 5 ---
 window.diorSwitchApptSubTab = function(targetSubTab) {
-                        if (!targetSubTab) targetSubTab = 'calendar';
+                        if (!targetSubTab || targetSubTab === 'calendar') targetSubTab = 'today';
                         var navBtns = document.querySelectorAll('.dior-nav-btn');
                         var tabPanels = document.querySelectorAll('.dior-tab-panel');
                         
@@ -722,13 +816,12 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
 
                         // Update dynamic breadcrumb & headers
                         var titles = {
-                            'calendar': 'Appointment Calendar',
                             'book': 'Book Appointment',
                             'today': "Today's Appointments",
                             'upcoming': 'Upcoming Appointments',
                             'past': 'Past Appointments'
                         };
-                        var t = titles[targetSubTab] || 'Appointment Calendar';
+                        var t = titles[targetSubTab] || "Today's Appointments";
                         var mainTitleEl = document.getElementById('dior-appt-main-title');
                         var crumbTitleEl = document.getElementById('dior-appt-breadcrumb-title');
                         if (mainTitleEl) mainTitleEl.textContent = t;
@@ -748,10 +841,23 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                                 item.classList.remove('active');
                             }
                         });
+                        document.querySelectorAll('.dior-subtab-pill').forEach(function(item) {
+                            if (item.getAttribute('data-appt-subtab') === targetSubTab) {
+                                item.classList.add('active');
+                            } else {
+                                item.classList.remove('active');
+                            }
+                        });
 
                         // If switching to calendar, trigger render
                         if (targetSubTab === 'calendar' && typeof window.diorRenderBootstrapCalendar === 'function') {
                             setTimeout(window.diorRenderBootstrapCalendar, 50);
+                        }
+                        if (targetSubTab === 'upcoming' && typeof window.diorRenderUpcomingPagination === 'function') {
+                            setTimeout(window.diorRenderUpcomingPagination, 30);
+                        }
+                        if (targetSubTab === 'past' && typeof window.diorRenderPastPagination === 'function') {
+                            setTimeout(window.diorRenderPastPagination, 30);
                         }
 
                         // Remember active subtab in sessionStorage and URL hash so reload works reliably
@@ -966,8 +1072,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                 var shortTime = (apt.time || '').split('-')[0].trim();
                 html += '<div class="dior-bs-cal-event ' + evClass + '" onclick="event.stopPropagation(); if (typeof diorViewAppointmentDetails === \'function\') diorViewAppointmentDetails(\'' + apt.id + '\');" title="' + (apt.type || '') + ' - ' + (apt.doc || '') + '">';
                 html += '<i class="fas ' + icon + ' me-1" style="font-size:10px;"></i>';
-                html += '<strong style="font-size:10.5px;">' + shortTime + '</strong> ';
-                html += '<span class="text-truncate" style="max-width: 65px; display:inline-block; vertical-align:bottom; font-size:10.5px;">' + apt.doc.replace('Dr. ', '') + '</span>';
+                html += '<strong style="font-size:10.5px;">' + shortTime + '</strong>';
                 html += '</div>';
             }
             if (cellEvents.length > maxDisplay) {
@@ -1749,11 +1854,11 @@ let diorDocsCurrentPage = 1;
             button.addEventListener('click', function () {
                 var filter = button.getAttribute('data-filter') || 'ALL';
                 buttons.forEach(function (b) {
-                    b.classList.remove('is-active', 'btn-primary');
-                    b.classList.add('btn-light');
+                    b.classList.remove('is-active', 'btn-primary', 'shadow-sm', 'text-white', 'btn-light');
+                    b.classList.add('btn-outline-primary');
                 });
-                button.classList.add('is-active', 'btn-primary');
-                button.classList.remove('btn-light');
+                button.classList.remove('btn-outline-primary', 'btn-light');
+                button.classList.add('is-active', 'btn-primary', 'shadow-sm', 'text-white');
                 items.forEach(function (item) {
                     var type = item.getAttribute('data-record-type') || '';
                     item.style.display = (filter === 'ALL' || type === filter || (filter === 'CONSULTATION' && (type === 'CONSULTATION' || type === 'APPOINTMENT'))) ? '' : 'none';
@@ -2259,12 +2364,6 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         window.diorCloseModal = function (modalId) {
             var el = document.getElementById(modalId);
             if (el) {
-                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                    var bsInst = bootstrap.Modal.getInstance(el);
-                    if (bsInst) {
-                        bsInst.hide();
-                    }
-                }
                 el.classList.remove('open');
                 el.style.display = 'none';
                 document.body.style.overflow = '';
@@ -2303,7 +2402,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
 
             var actualId = found ? (found.id || rxId) : rxId;
             var rawDoc = found ? (found.prescribed_by || 'Dr. Marcus Sterling') : 'Dr. Marcus Sterling';
-            var cleanDoc = rawDoc.replace(/^(Dr\.?\s*)+/i, 'Dr. ');
+            var cleanDoc = rawDoc.replace(/^(Dr\.?\s*)+/i, 'Dr. ').replace(/\s*\(NPI:[^)]*\)/i, '').replace(/,\s*MD\b/i, '').replace(/\s*\bMD\b/i, '').trim();
             var actualDate = found ? (found.date_prescribed || found.date || '—') : '—';
             var actualRouting = found ? (found.routing_status || 'Sent to Pharmacy') : 'Sent to Pharmacy';
             var actualPharm = found ? (found.pharmacy || 'Preferred Pharmacy on File') : 'Preferred Pharmacy on File';
@@ -2316,8 +2415,44 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             if (dateEl) dateEl.textContent = actualDate;
             var padDateEl = document.getElementById('pat-modal-rx-pad-date');
             if (padDateEl) padDateEl.textContent = actualDate;
-            if (routingEl) routingEl.textContent = 'Routed Electronically via Surescripts NCPDP EDI (' + actualRouting + ')';
-            if (statusBadge) statusBadge.textContent = (found.routing_status || (actualRouting === 'Sent to Pharmacy' ? 'Transmission Confirmed' : actualRouting));
+
+            // Dynamically populate patient demographics (Patient Name, Date, Age, Gender, Weight, Diagnosis)
+            var patNameEl = document.getElementById('pat-modal-rx-pat-name');
+            var patAgeEl = document.getElementById('pat-modal-rx-pat-age');
+            var patGenderEl = document.getElementById('pat-modal-rx-pat-gender');
+            var patWeightEl = document.getElementById('pat-modal-rx-pat-weight');
+            var patDiagEl = document.getElementById('pat-modal-rx-diagnosis');
+
+            var profileObj = (window.dior_vars && window.dior_vars.patient_profile) || {};
+            var patName = (found && (found.patient_name || found.patient)) || profileObj.full_name || (window.dior_patient_dashboard && window.dior_patient_dashboard.patient && window.dior_patient_dashboard.patient.name) || 'Patient';
+            var patGender = (found && found.patient_gender) || profileObj.gender || '—';
+            var rawWeight = (found && found.patient_weight) || profileObj.weight || '';
+            var patWeight = rawWeight ? (isFinite(rawWeight) ? rawWeight + ' kg' : rawWeight) : '—';
+            var patDiag = (found && (found.diagnosis || found.condition || found.title)) || 'Clinical Telehealth Consultation';
+            if (patDiag === 'General Medical Prescription' || patDiag === 'Prescription') {
+                patDiag = 'Clinical Telehealth Consultation';
+            }
+
+            var patAge = '—';
+            var dob = (found && found.patient_dob) || profileObj.dob;
+            if (dob) {
+                var d = new Date(dob);
+                if (!isNaN(d.getTime())) {
+                    var ageDiff = new Date().getFullYear() - d.getFullYear();
+                    patAge = ageDiff + ' years';
+                }
+            } else if (found && found.patient_age) {
+                patAge = found.patient_age;
+            }
+
+            if (patNameEl) patNameEl.textContent = patName;
+            if (patAgeEl) patAgeEl.textContent = patAge;
+            if (patGenderEl) patGenderEl.textContent = patGender ? (patGender.charAt(0).toUpperCase() + patGender.slice(1)) : '—';
+            if (patWeightEl) patWeightEl.textContent = patWeight;
+            if (patDiagEl) patDiagEl.textContent = patDiag;
+
+            if (routingEl) routingEl.innerHTML = '<i class="fa-solid fa-circle-check dior-ic-2eb9f328f2"></i> ' + actualRouting;
+            if (statusBadge) statusBadge.innerHTML = '<i class="fa-solid fa-check"></i> ' + (found.routing_status || (actualRouting === 'Sent to Pharmacy' ? 'Transmission Confirmed' : actualRouting));
             if (pharmNameEl) pharmNameEl.textContent = actualPharm;
             if (sigNameEl) sigNameEl.textContent = '/s/ ' + cleanDoc + ', MD';
             if (sigDateEl) sigDateEl.textContent = 'SHA256 Encrypted \u2022 Issued ' + actualDate;
@@ -2399,25 +2534,23 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                     }
 
                     html += '<tr>' +
-                        '<td class="text-center text-secondary fw-semibold">' + (j + 1) + '</td>' +
-                        '<td>' +
-                        '<div class="fw-bold text-dark">' + formattedMed + '</div>' +
-                        '<div class="text-secondary small mt-1">' +
-                        '<span class="badge bg-light text-secondary border me-1">Rx Item: ' + escapeHtml(itemUid) + '</span>' +
-                        '<span class="badge bg-light text-secondary border me-1">FDA Approved</span>' +
-                        '<span>Oral Formulation</span>' +
+                        '<td class="text-secondary small fw-bold text-center align-top pt-3" style="width: 32px;">' + (j + 1) + '</td>' +
+                        '<td class="align-top py-2.5">' +
+                        '<div class="fw-bold text-dark fs-6 mb-1">' + formattedMed + '</div>' +
+                        '<div class="d-flex align-items-center gap-2 flex-wrap small">' +
+                        '<span class="badge bg-light text-secondary border">Rx Item: ' + escapeHtml(itemUid) + '</span>' +
+                        '<span class="badge bg-success-subtle text-success border border-success-subtle"><i class="fa-solid fa-check me-1"></i>FDA Approved</span>' +
+                        '<span class="text-muted small">Oral Formulation &bull; Single Patient</span>' +
                         '</div>' +
                         '</td>' +
-                        '<td>' +
-                        '<div><strong>SIG:</strong> ' + sigStr + '</div>' +
-                        '<div class="text-secondary small mt-1">' +
-                        'Dosage: <strong class="text-dark">' + doseStr + '</strong> &bull; Route: Oral' +
-                        '</div>' +
+                        '<td class="align-top py-2.5">' +
+                        '<div class="small mb-1"><strong class="text-primary text-uppercase me-1">SIG:</strong> <span class="text-dark fw-medium">' + sigStr + '</span></div>' +
+                        '<div class="small text-muted">Dosage: <strong class="text-dark">' + doseStr + '</strong> &bull; Route: Oral</div>' +
                         '</td>' +
-                        '<td>' +
-                        '<div class="fw-semibold text-dark">Qty: ' + qtyStr + '</div>' +
-                        '<div class="text-secondary small">' + refillStr + '</div>' +
-                        '<div class="text-muted small">' + escapeHtml(found.daw || 'DAW-0 (Generic Auth)') + '</div>' +
+                        '<td class="align-top py-2.5 text-nowrap">' +
+                        '<div class="fw-bold text-dark small mb-0.5">Qty: ' + qtyStr + '</div>' +
+                        '<div class="small text-secondary mb-1">' + refillStr + '</div>' +
+                        '<span class="badge bg-light text-secondary border small">DAW-0 (Generic Auth)</span>' +
                         '</td>' +
                         '</tr>';
                 }
@@ -2441,14 +2574,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 refillBtn.onclick = function () { window.diorRequestRefill(actualId); };
             }
 
-            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                var rxModalEl = document.getElementById('modal-view-rx-detail');
-                if (rxModalEl) {
-                    bootstrap.Modal.getOrCreateInstance(rxModalEl).show();
-                }
-            } else if (typeof window.diorOpenModal === 'function') {
-                window.diorOpenModal('modal-view-rx-detail');
-            }
+            window.diorOpenModal('modal-view-rx-detail');
         };
 
         window.diorRequestRefill = function (rxId) {
@@ -2808,42 +2934,41 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         };
 
         window.diorDownloadRxPdf = function (rxId) {
-            if (typeof window.diorViewRxDetails === 'function') {
-                window.diorViewRxDetails(rxId);
-            }
-
-            var element = document.getElementById('pat-modal-rx-sheet');
+            var element = document.getElementById('rx-pdf-template-' + rxId);
             if (!element) {
-                element = document.getElementById('rx-pdf-template-' + rxId);
+                var allTemplates = document.querySelectorAll('[id^="rx-pdf-template-"]');
+                if (allTemplates && allTemplates.length > 0) {
+                    for (var k = 0; k < allTemplates.length; k++) {
+                        var rawIds = (allTemplates[k].getAttribute('data-raw-ids') || '').split(',');
+                        if (allTemplates[k].id.indexOf(rxId) !== -1 || rawIds.indexOf(String(rxId)) !== -1) {
+                            element = allTemplates[k];
+                            break;
+                        }
+                    }
+                }
             }
-            if (!element) {
-                element = document.querySelector('#modal-view-rx-detail .modal-body');
-            }
-            if (!element) { 
-                if (window.Swal) Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' }); 
-                return; 
-            }
+            if (!element) { Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' }); return; }
 
             var cleanFileName = 'Dior-Prescription-' + String(rxId).replace(/[^a-zA-Z0-9]/g, '-') + '.pdf';
             var innerContent = element.innerHTML;
 
             var tempContainer = document.createElement('div');
             tempContainer.style.position = 'fixed';
-            tempContainer.style.left = '-9999px';
+            tempContainer.style.left = '0';
             tempContainer.style.top = '0';
-            tempContainer.style.width = '794px';
+            tempContainer.style.width = '750px';
             tempContainer.style.background = '#FFFFFF';
-            tempContainer.style.padding = '24px';
-            tempContainer.style.boxSizing = 'border-box';
             tempContainer.style.zIndex = '-999999';
             tempContainer.style.opacity = '1';
-            tempContainer.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            tempContainer.style.pointerEvents = 'none';
+            tempContainer.style.margin = '0';
+            tempContainer.style.padding = '0';
             tempContainer.innerHTML = innerContent;
             document.body.appendChild(tempContainer);
 
             if (typeof html2pdf !== 'undefined' && html2pdf) {
                 var opt = {
-                    margin: [8, 8, 8, 8],
+                    margin: [6, 6, 6, 6],
                     filename: cleanFileName,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: {
@@ -2858,30 +2983,22 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
                 };
                 try {
-                    html2pdf().set(opt).from(tempContainer).save().then(function () {
+                    html2pdf().set(opt).from(tempContainer.firstElementChild || tempContainer).save().then(function () {
                         if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                        if (window.Swal) {
-                            Swal.fire({
-                                position: 'top-end',
-                                icon: 'success',
-                                title: 'Prescription Downloaded',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
                     }).catch(function (err) {
                         console.error('PDF export error:', err);
                         if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                        window.print();
+                        fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
                     });
                 } catch (e) {
                     console.error('PDF generation error:', e);
                     if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                    window.print();
+                    fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
                 }
             } else {
+                console.warn('html2pdf library not loaded, falling back to print');
                 if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                window.print();
+                fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
             }
         };
 
@@ -3056,6 +3173,15 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             }
         });
 
+        // Sync subtab pills in in-page navigation bars
+        document.querySelectorAll('.dior-subtab-pill[data-patient-tab]').forEach(function(pill) {
+            if (pill.getAttribute('data-patient-tab') === tabId) {
+                pill.classList.add('active');
+            } else {
+                pill.classList.remove('active');
+            }
+        });
+
         var title = document.getElementById('dior-current-page-title');
         var titles = {
             overview: 'Patient Overview',
@@ -3074,6 +3200,15 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             questionnaire: 'Clinical Intake Questionnaires'
         };
         if (title && titles[tabId]) title.textContent = titles[tabId];
+
+        if (tabId !== 'appointments') {
+            var w = document.getElementById('dior-appt-dropdown-wrap');
+            if (w) {
+                w.classList.remove('open');
+                var ch = w.querySelector('.fa-chevron-down');
+                if (ch) ch.style.transform = 'rotate(0deg)';
+            }
+        }
 
         if (updateHash !== false && window.history && window.history.replaceState) {
             window.history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
@@ -3096,15 +3231,41 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 var btn = event.target.closest('.dior-nav-btn[data-tab]');
                 if (!btn || !app.contains(btn)) return;
 
-                // Appointments has its own dropdown but must still open its main panel.
                 var tabId = btn.getAttribute('data-tab');
                 if (!tabId) return;
 
                 event.preventDefault();
-                switchPatientTab(tabId);
+                event.stopImmediatePropagation();
 
-                if (tabId === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
-                    window.diorSwitchApptSubTab('calendar');
+                if (tabId === 'appointments') {
+                    var now = Date.now();
+                    if (now - (window._diorLastApptToggleTime || 0) < 300) {
+                        return;
+                    }
+                    if (typeof window.diorToggleApptDropdown === 'function') {
+                        window.diorToggleApptDropdown(event);
+                    } else {
+                        window._diorLastApptToggleTime = now;
+                        var w = document.getElementById('dior-appt-dropdown-wrap');
+                        if (w) {
+                            var isOpen = w.classList.contains('open');
+                            if (isOpen) {
+                                w.classList.remove('open');
+                                var ch = w.querySelector('.fa-chevron-down');
+                                if (ch) ch.style.transform = 'rotate(0deg)';
+                            } else {
+                                w.classList.add('open');
+                                var ch = w.querySelector('.fa-chevron-down');
+                                if (ch) ch.style.transform = 'rotate(180deg)';
+                                switchPatientTab('appointments');
+                                if (typeof window.diorSwitchApptSubTab === 'function') {
+                                    window.diorSwitchApptSubTab('today');
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    switchPatientTab(tabId);
                 }
             }, true);
         }
@@ -3140,7 +3301,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 if (requested === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
                     var s = requestedSub || (function(){
                         try { return sessionStorage.getItem('dior_active_appt_subtab'); } catch(e){ return null; }
-                    })() || 'calendar';
+                    })() || 'today';
                     window.diorSwitchApptSubTab(s);
                 }
             }
@@ -3172,165 +3333,279 @@ document.addEventListener('click', function (event) {
       return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[ch];
     });
   }
-  // Retain main diorViewRxDetails without override
+  window.diorViewRxDetails = function (rxId, fallbackMed, fallbackInst) {
+    var list = Array.isArray(window.dior_patient_rxs_data) ? window.dior_patient_rxs_data : [];
+    var found = null;
+    list.some(function (rx) {
+      var ids = [rx.id].concat(Array.isArray(rx.raw_ids) ? rx.raw_ids : []).map(String);
+      if (ids.some(function (id) { return id.toLowerCase() === String(rxId).toLowerCase(); })) { found = rx; return true; }
+      return false;
+    });
+    var rx = found || {};
+    var title = rx.title || rx.name || rx.medication || fallbackMed || 'Prescription';
+    var instruction = rx.instructions || rx.sig || fallbackInst || 'No additional instructions available.';
+    var prescribedBy = rx.prescribed_by || rx.doctor_name || '—';
+    var date = rx.date_prescribed || rx.date || rx.created_at || '—';
+    var status = rx.status || rx.routing_status || '—';
+    var modal = document.getElementById('dior-bootstrap-rx-details-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'dior-bootstrap-rx-details-modal';
+      modal.className = 'modal fade';
+      modal.tabIndex = -1;
+      modal.setAttribute('aria-labelledby', 'dior-bootstrap-rx-details-title');
+      modal.setAttribute('aria-hidden', 'true');
+      modal.innerHTML = '<div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow"><div class="modal-header"><div><h5 class="modal-title" id="dior-bootstrap-rx-details-title">Prescription Details</h5><div class="small text-muted">Review the medication information below</div></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><dl class="row mb-0"><dt class="col-sm-4">Prescription ID</dt><dd class="col-sm-8" data-rx-field="id"></dd><dt class="col-sm-4">Medication</dt><dd class="col-sm-8 fw-semibold" data-rx-field="title"></dd><dt class="col-sm-4">Prescribed by</dt><dd class="col-sm-8" data-rx-field="doctor"></dd><dt class="col-sm-4">Date prescribed</dt><dd class="col-sm-8" data-rx-field="date"></dd><dt class="col-sm-4">Status</dt><dd class="col-sm-8" data-rx-field="status"></dd><dt class="col-sm-4">Instructions</dt><dd class="col-sm-8" data-rx-field="instructions"></dd></dl></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button></div></div></div>';
+      document.body.appendChild(modal);
+    }
+    modal.querySelector('[data-rx-field="id"]').textContent = rx.id || rxId || '—';
+    modal.querySelector('[data-rx-field="title"]').textContent = title;
+    modal.querySelector('[data-rx-field="doctor"]').textContent = prescribedBy;
+    modal.querySelector('[data-rx-field="date"]').textContent = date;
+    modal.querySelector('[data-rx-field="status"]').textContent = status;
+    modal.querySelector('[data-rx-field="instructions"]').textContent = instruction;
+    if (window.bootstrap && window.bootstrap.Modal) window.bootstrap.Modal.getOrCreateInstance(modal).show();
+    else { modal.classList.add('show'); modal.style.display = 'block'; modal.removeAttribute('aria-hidden'); }
+  };
 })();
 
-/* ==============================================================
-   EMERGENCY CONTACT & ASSISTANCE MODAL LOGIC
-   ============================================================== */
+/* Health Goals Modal & Dynamic Actions (100% Bootstrap 5) */
 (function () {
-    'use strict';
+  'use strict';
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        var d = document.createElement('div');
-        d.textContent = str;
-        return d.innerHTML;
+  function esc(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[ch];
+    });
+  }
+
+  function getAjaxUrl() {
+    return (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || (window.dior_vars && window.dior_vars.ajax_url) || '/wp-admin/admin-ajax.php';
+  }
+
+  function getNonce() {
+    return (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || (window.dior_vars && window.dior_vars.nonce) || '';
+  }
+
+  function updateModalGoalsList(goals) {
+    var modalList = document.getElementById('dior-modal-goals-list');
+    if (!modalList) return;
+    if (!goals || goals.length === 0) {
+      modalList.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-muted small">No goals recorded yet.</td></tr>';
+      return;
+    }
+    var html = '';
+    goals.forEach(function (g, idx) {
+      var pct = Math.min(100, Math.max(0, parseInt(g.pct || 0, 10)));
+      html += '<tr>';
+      html += '  <td class="ps-3 py-2 fw-semibold text-dark small">' + esc(g.name) + '</td>';
+      html += '  <td class="py-2 text-secondary small">' + esc(g.val) + '</td>';
+      html += '  <td class="py-2 text-center text-secondary small">' + pct + '%</td>';
+      html += '  <td class="pe-3 py-2 text-end"><button type="button" class="btn btn-sm btn-link text-danger p-0 border-0 text-decoration-none dior-modal-del-goal-btn fw-semibold small" data-goal-index="' + idx + '">Delete</button></td>';
+      html += '</tr>';
+    });
+    modalList.innerHTML = html;
+  }
+
+  function renderGoalsList(goals) {
+    var container = document.getElementById('dior-goals-card-body');
+    if (!container) return;
+    if (!goals || goals.length === 0) {
+      container.innerHTML = '<div class="text-center py-4 text-muted small" id="dior-no-goals-msg">No health goals set yet. Click the <strong>+</strong> button above to add your goals.</div>';
+      updateModalGoalsList(goals);
+      return;
     }
 
-    window.diorOpenEmergencyModal = function () {
-        var modalEl = document.getElementById('modal-emergency-contact');
-        if (modalEl) {
-            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                bootstrap.Modal.getOrCreateInstance(modalEl).show();
-            } else if (typeof window.diorOpenModal === 'function') {
-                window.diorOpenModal('modal-emergency-contact');
-            }
-        }
-    };
+    var html = '';
+    goals.forEach(function (goal, idx) {
+      var pct = Math.min(100, Math.max(0, parseInt(goal.pct || 0, 10)));
+      html += '<div class="goal mb-2" data-goal-index="' + idx + '">';
+      html += '  <div class="d-flex justify-content-between align-items-center mb-1">';
+      html += '    <span class="fw-bold text-dark small">' + esc(goal.name) + '</span>';
+      html += '    <span class="text-secondary small">' + esc(goal.val) + '</span>';
+      html += '  </div>';
+      html += '  <div class="progress dior-progress-sm rounded-pill bg-light">';
+      html += '    <div class="progress-bar rounded-pill dior-progress-orange" role="progressbar" style="width: ' + pct + '%;" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"></div>';
+      html += '  </div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+    updateModalGoalsList(goals);
+  }
 
-    window.diorEmergencyCall = function (type) {
-        if (type === 'ambulance') {
-            window.location.href = 'tel:911';
-        } else if (type === 'doctor') {
-            window.location.href = 'tel:18005553467';
-        } else {
-            window.diorOpenEmergencyModal();
-        }
-    };
+  document.addEventListener('DOMContentLoaded', function () {
+    // Quick goal pills in modal
+    document.querySelectorAll('.dior-quick-goal').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var name = this.getAttribute('data-name');
+        var val = this.getAttribute('data-val');
+        var pct = this.getAttribute('data-pct');
+        var nameInput = document.getElementById('goal_name');
+        var valInput = document.getElementById('goal_val');
+        var pctInput = document.getElementById('goal_pct');
+        if (nameInput && name) nameInput.value = name;
+        if (valInput && val) valInput.value = val;
+        if (pctInput && pct) pctInput.value = pct;
+      });
+    });
 
-    window.diorSaveEmergencyContact = function (e) {
-        if (e && e.preventDefault) e.preventDefault();
+    // Form submission
+    var form = document.getElementById('dior-form-add-health-goal');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var alertBox = document.getElementById('dior-goal-form-alert');
+        if (alertBox) { alertBox.classList.add('d-none'); alertBox.textContent = ''; }
 
-        var nameInput = document.getElementById('modal_emerg_name');
-        var relSelect = document.getElementById('modal_emerg_rel');
-        var phoneInput = document.getElementById('modal_emerg_phone');
-        var prioritySelect = document.getElementById('modal_emerg_priority');
-        var submitBtn = document.getElementById('dior-emerg-submit-btn');
-
-        if (!nameInput || !phoneInput) return;
-
-        var name = nameInput.value.trim();
-        var rel = relSelect ? relSelect.value : 'Spouse';
-        var phone = phoneInput.value.trim();
-        var priority = prioritySelect ? prioritySelect.value : 'Emergency';
-
-        if (!name || !phone) {
-            if (window.Swal) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Required Information',
-                    text: 'Please provide both contact name and phone number.'
-                });
-            } else {
-                alert('Please provide both contact name and phone number.');
-            }
-            return;
-        }
-
+        var submitBtn = document.getElementById('dior-btn-save-goal');
+        var origText = submitBtn ? submitBtn.innerHTML : 'Save Vitals & Goal';
         if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Saving...';
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Saving...';
         }
 
-        var ajaxUrl = (window.dior_vars && window.dior_vars.ajax_url) || (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || '/wp-admin/admin-ajax.php';
-        var nonce = (window.dior_vars && window.dior_vars.nonce) || (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || '';
+        var heightInput = document.getElementById('goal_height');
+        var weightInput = document.getElementById('goal_weight');
+        var goalNameInput = document.getElementById('goal_name');
+        var goalValInput = document.getElementById('goal_val');
+        var goalPctInput = document.getElementById('goal_pct');
 
-        var formData = new FormData();
-        formData.append('action', 'dior_patient_save_emergency_contact');
-        formData.append('nonce', nonce);
-        formData.append('emergency_name', name);
-        formData.append('emergency_relation', rel);
-        formData.append('emergency_phone', phone);
-        formData.append('emergency_priority', priority);
+        var height = (heightInput ? heightInput.value : '').trim();
+        var weight = (weightInput ? weightInput.value : '').trim();
+        var goalName = (goalNameInput ? goalNameInput.value : '').trim();
+        var goalVal = (goalValInput ? goalValInput.value : '').trim();
+        var goalPct = parseInt(goalPctInput ? goalPctInput.value : '50', 10);
 
-        fetch(ajaxUrl, {
-            method: 'POST',
-            body: formData
+        var body = new URLSearchParams({
+          action: 'dior_patient_add_health_goal',
+          nonce: getNonce(),
+          height: height,
+          weight: weight,
+          goal_name: goalName,
+          goal_val: goalVal,
+          goal_pct: isNaN(goalPct) ? 50 : Math.min(100, Math.max(0, goalPct))
+        });
+
+        fetch(getAjaxUrl(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+          body: body.toString()
         })
         .then(function (res) { return res.json(); })
-        .then(function (res) {
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Save Emergency Contact';
+        .then(function (data) {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origText;
+          }
+          if (data && data.success) {
+            // Clear goal specific fields
+            if (goalNameInput) goalNameInput.value = '';
+            if (goalValInput) goalValInput.value = '';
+            if (goalPctInput) goalPctInput.value = '50';
+
+            var modalEl = document.getElementById('diorHealthGoalsModal');
+            if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+              var inst = window.bootstrap.Modal.getInstance(modalEl);
+              if (inst) inst.hide();
             }
 
-            if (res && res.success) {
-                // Update quick contact card inside modal
-                var cardName = document.getElementById('emerg-modal-card-name');
-                var cardDesc = document.getElementById('emerg-modal-card-desc');
-                var cardCallBtn = document.getElementById('emerg-modal-card-call-btn');
-                if (cardName) cardName.textContent = name;
-                if (cardDesc) cardDesc.textContent = rel + ' \u2022 ' + phone;
-                if (cardCallBtn) {
-                    cardCallBtn.href = 'tel:' + phone.replace(/[^0-9+]/g, '');
-                    cardCallBtn.classList.remove('disabled');
-                }
+            // Update patient card metrics dynamically
+            if (data.data && typeof data.data.height_display !== 'undefined') {
+              var hElem = document.getElementById('dior-patient-metric-height');
+              if (hElem) hElem.textContent = data.data.height_display;
+            }
+            if (data.data && typeof data.data.weight_display !== 'undefined') {
+              var wElem = document.getElementById('dior-patient-metric-weight');
+              if (wElem) wElem.textContent = data.data.weight_display;
+            }
+            if (heightInput && data.data && typeof data.data.height !== 'undefined') {
+              heightInput.value = data.data.height;
+            }
+            if (weightInput && data.data && typeof data.data.weight !== 'undefined') {
+              weightInput.value = data.data.weight;
+            }
 
-                // Update emergency table
-                var tbody = document.getElementById('dior-emerg-tbody');
-                if (tbody) {
-                    tbody.innerHTML = '<tr>' +
-                        '<td><input type="checkbox" class="dior-ic-52ff4d551f form-check-input"></td>' +
-                        '<td><span class="cell-text">' + escapeHtml(name) + '</span></td>' +
-                        '<td><span class="cell-text">' + escapeHtml(rel) + '</span></td>' +
-                        '<td>' +
-                            '<div class="cell-content cell-icon-text"><i class="fas fa-phone cell-icon" style="font-size: 13px; color: #2C6CB1; margin-right: 6px;"></i><span class="cell-text">' + escapeHtml(phone) + '</span></div>' +
-                        '</td>' +
-                        '<td><div class="cell-content"><div class="badge-solid col-red">' + escapeHtml(priority) + '</div></div></td>' +
-                        '<td><div class="cell-actions"><button type="button" class="action-icon-btn edit-btn btn" title="Edit Emergency Contact" onclick="diorOpenEmergencyModal()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg></button></div></td>' +
-                    '</tr>';
-                }
+            renderGoalsList(data.data.goals || []);
 
-                // Also keep settings inputs in sync if loaded
-                var settingsName = document.getElementById('patient-settings-emergency-name');
-                var settingsRel = document.getElementById('patient-settings-emergency-relation');
-                var settingsPhone = document.getElementById('patient-settings-emergency-phone');
-                if (settingsName) settingsName.value = name;
-                if (settingsRel) settingsRel.value = rel;
-                if (settingsPhone) settingsPhone.value = phone;
-
-                if (window.Swal) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Emergency Contact Saved',
-                        text: 'Emergency contact information has been updated successfully.',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-
-                if (typeof window.diorCloseModal === 'function') {
-                    window.diorCloseModal('modal-emergency-contact');
-                }
+            if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                icon: 'success',
+                title: 'Saved Successfully!',
+                text: (data.data && data.data.message) ? data.data.message : 'Your vitals and health goals have been updated.',
+                timer: 1800,
+                showConfirmButton: false
+              });
+            }
+          } else {
+            var msg = (data && data.data && data.data.message) ? data.data.message : 'Failed to save health goal.';
+            if (alertBox) {
+              alertBox.textContent = msg;
+              alertBox.classList.remove('d-none');
+            } else if (typeof Swal !== 'undefined') {
+              Swal.fire({ icon: 'error', title: 'Error', text: msg });
             } else {
-                var msg = (res && res.data && res.data.message) || (res && res.message) || 'Failed to save emergency contact.';
-                if (window.Swal) {
-                    Swal.fire({ icon: 'error', title: 'Error', text: msg });
-                } else {
-                    alert(msg);
-                }
+              alert(msg);
             }
+          }
         })
-        .catch(function (err) {
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Save Emergency Contact';
-            }
-            console.error('Error saving emergency contact:', err);
-            if (window.Swal) {
-                Swal.fire({ icon: 'error', title: 'Error', text: 'Network error while saving emergency contact.' });
-            }
+        .catch(function () {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origText;
+          }
+          if (alertBox) {
+            alertBox.textContent = 'Network or server error. Please try again.';
+            alertBox.classList.remove('d-none');
+          }
         });
-    };
+      });
+    }
+
+    // Delete goal event delegation (handles modal delete buttons & card delete buttons)
+    document.addEventListener('click', function (e) {
+      var delBtn = e.target.closest('.dior-delete-goal-btn, .dior-modal-del-goal-btn');
+      if (!delBtn) return;
+      e.preventDefault();
+      var goalIndex = delBtn.getAttribute('data-goal-index');
+      if (goalIndex === null || goalIndex === undefined) return;
+
+      var doDelete = function () {
+        var body = new URLSearchParams({
+          action: 'dior_patient_delete_health_goal',
+          nonce: getNonce(),
+          goal_index: goalIndex
+        });
+
+        fetch(getAjaxUrl(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+          body: body.toString()
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data && data.success) {
+            renderGoalsList(data.data.goals || []);
+          }
+        });
+      };
+
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          title: 'Remove Goal?',
+          text: 'Are you sure you want to remove this health goal?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'Yes, remove',
+          cancelButtonText: 'Cancel'
+        }).then(function (result) {
+          if (result.isConfirmed) {
+            doDelete();
+          }
+        });
+      } else if (confirm('Are you sure you want to remove this health goal?')) {
+        doDelete();
+      }
+    });
+  });
 })();

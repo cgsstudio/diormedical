@@ -4,6 +4,8 @@
  */
 namespace WpDreamers\WPDDB\Controllers\Abstracts\Discount;
 
+use WpDreamers\WPDDB\Controllers\Helper\Helper;
+
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,12 +52,24 @@ abstract class Discount {
         $start         = strtotime( $this->options['start_date'] );
         $end           = strtotime( $this->options['end_date'] );
 
-        if ( $this->options['global_check'] ) {
+        if ( $this->options['global_check'] || ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+
+        // Give a new owner a week with the free plugin before any offer.
+        $activated = (int) get_option( 'wpddb_plugin_activation_time' );
+        if ( ! $activated ) {
+            // Sites that updated in place never ran activation: start counting now.
+            $activated = $current;
+            update_option( 'wpddb_plugin_activation_time', $activated );
+        }
+        if ( $current < $activated + 7 * DAY_IN_SECONDS ) {
             return;
         }
 
         // Black Friday Notice.
-        if ( ! wpddb()->has_pro() && $start <= $current && $current <= $end ) {
+        // Only for sites without Pro at all (an outdated Pro still counts as owned).
+        if ( ! function_exists( 'wpddbp' ) && $start <= $current && $current <= $end ) {
             if ( get_option( $this->options['option_name'] ) != '1' ) {
                 if ( ! isset( $GLOBALS['docbooker__notice'] ) ) {
                     $GLOBALS['docbooker__notice'] = 'docbooker__notice';
@@ -80,6 +94,10 @@ abstract class Discount {
         add_action(
             'admin_notices',
             function () {
+                // Only where the owner is working with DocBooker, never site-wide.
+                if ( ! Helper::is_plugin_list_screen() ) {
+                    return;
+                }
                 ?>
                 <style>
                     .notice.docbooker-offer-notice {
@@ -98,6 +116,11 @@ abstract class Discount {
                         grid-row: 1 / 4;
                         align-self: center;
                         justify-self: center;
+                    }
+
+                    @media (max-width: 600px) {
+                        .notice.docbooker-offer-notice { grid-template-columns: 1fr; }
+                        .docbooker-offer-notice img { display: none; }
                     }
 
                     .docbooker-offer-notice h3,
@@ -154,15 +177,15 @@ abstract class Discount {
                          src="<?php echo esc_url( $this->options['image_url'] ); ?>"
                          width="100px"
                          height="100px"/>
-                    <h3><?php echo sprintf( '%s – %s', esc_html( $this->options['plugin_name'] ), esc_html( $this->options['notice_for'] ) ); ?></h3>
+                    <h3><?php echo esc_html( $this->options['notice_for'] ); ?></h3>
 
                     <p class="notice-text">
                         <?php echo wp_kses_post( $this->options['notice_message'] ); ?>
                     </p>
                     <p>
                         <a class="button button-primary"
-                           href="<?php echo esc_url( $this->options['download_link'] ); ?>" target="_blank">Buy Now</a>
-                        <a class="button button-dismiss" href="#">Dismiss</a>
+                           href="<?php echo esc_url( $this->options['download_link'] ); ?>" target="_blank"><?php esc_html_e( 'See Pro features', 'doc-booker' ); ?></a>
+                        <a class="button button-dismiss" href="#"><?php esc_html_e( 'Dismiss', 'doc-booker' ); ?></a>
                     </p>
                 </div>
 
@@ -173,21 +196,21 @@ abstract class Discount {
         add_action(
             'admin_footer',
             function () {
+                if ( ! Helper::is_plugin_list_screen() ) {
+                    return;
+                }
                 ?>
                 <script type="text/javascript">
                     (function ($) {
-                        $(function () {
-                            setTimeout(function () {
-                                $('div[data-docbookerdismissable] .notice-dismiss, div[data-docbookerdismissable] .button-dismiss')
-                                    .on('click', function (e) {
-                                        e.preventDefault();
-                                        $.post(ajaxurl, {
-                                            'action': 'docbooker_dismiss_offer_admin_notice',
-                                            'nonce': <?php echo wp_json_encode( wp_create_nonce( 'docbooker-offer-dismissible-notice' ) ); ?>
-                                        });
-                                        $(e.target).closest('.is-dismissible').remove();
-                                    });
-                            }, 1000);
+                        // Delegated, so it works from the first click and also covers the
+                        // close (×) button WordPress adds to the notice after page load.
+                        $(document).on('click', 'div[data-docbookerdismissable] .notice-dismiss, div[data-docbookerdismissable] .button-dismiss', function (e) {
+                            e.preventDefault();
+                            $.post(ajaxurl, {
+                                'action': 'docbooker_dismiss_offer_admin_notice',
+                                'nonce': <?php echo wp_json_encode( wp_create_nonce( 'docbooker-offer-dismissible-notice' ) ); ?>
+                            });
+                            $(e.target).closest('.is-dismissible').remove();
                         });
                     })(jQuery);
                 </script>
@@ -199,6 +222,9 @@ abstract class Discount {
             'wp_ajax_docbooker_dismiss_offer_admin_notice',
             function () {
                 check_ajax_referer( 'docbooker-offer-dismissible-notice', 'nonce' );
+                if ( ! current_user_can( 'manage_options' ) ) {
+                    wp_die( '', '', 403 );
+                }
                 if ( ! empty( $this->options['option_name'] ) ) {
                     update_option( $this->options['option_name'], '1' );
                 }

@@ -60,7 +60,7 @@ if (empty($patients)) {
         <!-- Header -->
         <div class="va-header-container">
             <div class="va-title-box">
-                <h2>Consultation Notes</h2>
+                <h2><i class="fas fa-notes-medical text-primary me-2"></i>Consultation Notes</h2>
                 <div class="va-title-line"></div>
             </div>
             <div class="va-actions-box" style="display:flex;align-items:center;gap:10px;">
@@ -70,11 +70,7 @@ if (empty($patients)) {
                         placeholder="Search records...">
                 </div>
                 <button class="va-icon-btn va-btn-primary btn" id="cn-add-btn" title="Add New Consultation Note">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;">
-                        <path
-                            d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0" />
-                    </svg>
+                    <i class="fas fa-plus"></i>
                 </button>
                 <button class="va-icon-btn va-btn-info btn" id="cn-refresh-btn" title="Refresh">
                     <i class="fas fa-rotate-right"></i>
@@ -131,7 +127,8 @@ if (empty($patients)) {
                                     <div class="va-user-profile">
                                         <div
                                             style="width:36px;height:36px;border-radius:50%;background:#E0E7FF;display:flex;align-items:center;justify-content:center;font-weight:700;color:#4F46E5;font-size:14px;flex-shrink:0;">
-                                            <?php echo $init; ?></div>
+                                            <?php echo $init; ?>
+                                        </div>
                                         <span class="va-user-name"><?php echo $fname; ?></span>
                                     </div>
                                 </td>
@@ -144,24 +141,12 @@ if (empty($patients)) {
                                 <td>
                                     <div class="va-row-actions">
                                         <button class="va-action-btn-sm va-btn-edit cn-edit-btn btn"
-                                            data-note="<?php echo $note_enc; ?>" title="Edit Note"><svg
-                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;">
-                                                <path fill-rule="evenodd"
-                                                    d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                                            </svg></button>
+                                            data-note="<?php echo $note_enc; ?>" title="Edit Note"><i
+                                                class="fas fa-pen"></i></button>
                                         <button class="va-action-btn-sm va-btn-delete cn-delete-btn btn"
                                             data-id="<?php echo $nid; ?>" data-uid="<?php echo esc_attr($uid); ?>"
-                                            data-pid="<?php echo $pid; ?>" title="Delete Note"><svg
-                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444"
-                                                class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;">
-                                                <path
-                                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                                <path
-                                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                            </svg></button>
+                                            data-pid="<?php echo $pid; ?>" title="Delete Note"><i
+                                                class="fas fa-trash"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -287,7 +272,7 @@ if (empty($patients)) {
 
         function openEditModal(btn) {
             var note = JSON.parse(btn.dataset.note);
-            document.getElementById('cn-modal-title').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;"><path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/><path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/></svg>Edit Consultation Note';
+            document.getElementById('cn-modal-title').innerHTML = '<i class="fas fa-pen"></i>Edit Consultation Note';
             document.getElementById('cn-note-id').value = note.id;
             document.getElementById('cn-note-uid').value = note.uid;
             document.getElementById('cn-patient-select').value = note.patient_id;

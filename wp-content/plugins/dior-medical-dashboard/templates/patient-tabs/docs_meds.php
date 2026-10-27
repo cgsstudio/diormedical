@@ -18,6 +18,16 @@
         </div>
     </div>
 
+    <!-- Subtab Navigation Bar -->
+    <div class="dior-subtab-nav-bar px-3 px-md-4 mb-4">
+        <button type="button" class="dior-subtab-pill btn active" data-patient-tab="docs_meds" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('docs_meds');">
+            <i class="fas fa-prescription-bottle-medical"></i> Prescriptions
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-patient-tab="documents" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('documents');">
+            <i class="fas fa-file-lines"></i> Documents & Report
+        </button>
+    </div>
+
     <!-- Prescriptions Table (same design as Appointments) -->
     <div class="va-table-wrapper">
         <div class="va-table-wrapper">
@@ -34,15 +44,15 @@
                                 placeholder="Search records..." aria-label="Search box" onkeyup="diorFilterRxTable()">
                         </div>
                         <div class="docs-actions-group">
-                            <button type="button" aria-label="Delete selected items" class="btn btn-sm btn-danger"
+                            <button type="button" aria-label="Delete selected items" class="docs-icon-btn docs-btn-danger btn"
                                 title="Delete Selected" onclick="diorBulkDeleteRxRows()">
                                 <i class="fas fa-trash"></i>
                             </button>
-                            <button type="button" aria-label="Export to CSV" class="btn btn-sm btn-success"
+                            <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success btn"
                                 title="Export to CSV" onclick="diorDownloadRxCSV()">
                                 <i class="fas fa-file-arrow-down"></i>
                             </button>
-                            <button type="button" aria-label="Refresh data" class="btn btn-sm btn-info"
+                            <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info btn"
                                 title="Refresh Page" onclick="window.location.reload()">
                                 <i class="fas fa-rotate-right"></i>
                             </button>
@@ -50,24 +60,24 @@
                     </div>
                 </div>
 
-                <div class="docs-table-wrapper">
-                    <table class="docs-table table table-hover" id="dior-rx-table">
-                        <thead>
+                <div class="table-responsive mb-0">
+                    <table class="table table-hover align-middle mb-0" id="dior-rx-table">
+                        <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
                             <tr>
-                                <th style="width:36px;">
+                                <th style="width: 40px;" class="ps-3">
                                     <input type="checkbox" id="dior-select-all-rx"
                                         class="master-checkbox form-check-input" onclick="diorToggleSelectAllRx(this)">
                                 </th>
-                                <th>ID <i class="fas fa-sort"></i></th>
-                                <th>MEDICATION <i class="fas fa-sort"></i></th>
-                                <th>PRESCRIBED BY <i class="fas fa-sort"></i></th>
-                                <th>DATE <i class="fas fa-sort"></i></th>
-                                <th>CONDITION <i class="fas fa-sort"></i></th>
-                                <th>STATUS <i class="fas fa-sort"></i></th>
-                                <th>ACTIONS <i class="fas fa-sort"></i></th>
+                                <th>ID <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>MEDICATION <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>PRESCRIBED BY <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>DATE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>CONDITION <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>STATUS <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th class="text-end pe-3">ACTIONS</th>
                             </tr>
                         </thead>
-                        <tbody id="dior-rx-tbody">
+                        <tbody id="dior-rx-tbody" class="border-top-0">
                             <?php
                             $patient_rx_rows = is_array($prescriptions ?? []) ? $prescriptions : [];
                             foreach ($patient_rx_rows as $rx):
@@ -98,10 +108,7 @@
                                     </td>
                                     <td>
                                         <div class="cell-content cell-image-name" style="align-items: flex-start;">
-                                            <div
-                                                style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
-                                                <i class="fas fa-pills" style="color:#fff;font-size:13px;"></i>
-                                            </div>
+
                                             <div style="display:flex;flex-direction:column;gap:3px;">
                                                 <?php if ($rx_title !== '' && $rx_title !== $rx_name && $rx_title !== 'General Medical Prescription'): ?>
                                                     <strong class="cell-text"
@@ -137,12 +144,12 @@
                                     </td>
                                     <td>
                                         <div class="cell-content action-cell" style="gap:8px;">
-                                            <button type="button" class="btn btn-sm btn-primary"
+                                            <button type="button" class="action-icon-btn edit-btn btn"
                                                 title="View Prescription Details"
                                                 onclick="diorViewRxDetails('<?php echo esc_js($rx_id); ?>', '<?php echo esc_js($rx_name); ?>', '<?php echo esc_js($rx['instructions'] ?? ''); ?>')">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-info" title="Download"
+                                            <button type="button" class="action-icon-btn btn" title="Download"
                                                 onclick="diorDownloadRxPdf('<?php echo esc_js($rx_id); ?>')">
                                                 <i class="fas fa-download"></i>
                                             </button>
@@ -156,7 +163,7 @@
                                         <div style="padding:40px;text-align:center;">
                                             <i class="fas fa-prescription-bottle-medical"
                                                 style="font-size:40px;color:#CBD5E1;margin-bottom:12px;display:block;"></i>
-                                            <p style="color:#94A3B8;margin:0;font-size:14px;">No prescriptions available
+                                            <p style="color:#94A3B8;margin:0;">No prescriptions available
                                                 yet.</p>
                                         </div>
                                     </td>

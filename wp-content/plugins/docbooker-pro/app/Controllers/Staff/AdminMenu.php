@@ -37,6 +37,10 @@ class AdminMenu {
 	}
 
 	public function register_submenu( $parent_menu_slug, $menu_capability ) {
+		// With the DocBooker app able to hold it, the page lives there instead.
+		if ( \WpDreamers\WPDDBP\Controllers\AppPages::in_app() ) {
+			return;
+		}
 		if ( ! self::is_enabled() ) {
 			return;
 		}

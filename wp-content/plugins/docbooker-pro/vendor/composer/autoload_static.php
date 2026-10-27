@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit2c176c71e74048524fbf0502d0e4f5cc
+class ComposerStaticInit054b7de87517d721c2559d5b859585ef
 {
     public static $files = array (
         '941748b3c8cae4466c827dfb5ca9602a' => __DIR__ . '/..' . '/rmccue/requests/library/Deprecated.php',
@@ -13,6 +13,11 @@ class ComposerStaticInit2c176c71e74048524fbf0502d0e4f5cc
     );
 
     public static $prefixLengthsPsr4 = array (
+        'c' => 
+        array (
+            'chillerlan\\Settings\\' => 20,
+            'chillerlan\\QRCode\\' => 18,
+        ),
         'W' => 
         array (
             'WpOrg\\Requests\\' => 15,
@@ -30,6 +35,14 @@ class ComposerStaticInit2c176c71e74048524fbf0502d0e4f5cc
     );
 
     public static $prefixDirsPsr4 = array (
+        'chillerlan\\Settings\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/chillerlan/php-settings-container/src',
+        ),
+        'chillerlan\\QRCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/chillerlan/php-qrcode/src',
+        ),
         'WpOrg\\Requests\\' => 
         array (
             0 => __DIR__ . '/..' . '/rmccue/requests/src',
@@ -571,23 +584,129 @@ class ComposerStaticInit2c176c71e74048524fbf0502d0e4f5cc
         'Stripe\\WebhookEndpoint' => __DIR__ . '/..' . '/stripe/stripe-php/lib/WebhookEndpoint.php',
         'Stripe\\WebhookSignature' => __DIR__ . '/..' . '/stripe/stripe-php/lib/WebhookSignature.php',
         'WpDreamers\\WPDDBP\\Controllers\\Admin\\Api\\RestApi' => __DIR__ . '/../..' . '/app/Controllers/Admin/Api/RestApi.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Admin\\Notice\\PaymentConfigNotice' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/PaymentConfigNotice.php',
         'WpDreamers\\WPDDBP\\Controllers\\AjaxPagination' => __DIR__ . '/../..' . '/app/Controllers/AjaxPagination.php',
+        'WpDreamers\\WPDDBP\\Controllers\\AppPages' => __DIR__ . '/../..' . '/app/Controllers/AppPages.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Cron\\ReportPurger' => __DIR__ . '/../..' . '/app/Controllers/Cron/ReportPurger.php',
+        'WpDreamers\\WPDDBP\\Controllers\\DepartmentTermMeta' => __DIR__ . '/../..' . '/app/Controllers/DepartmentTermMeta.php',
         'WpDreamers\\WPDDBP\\Controllers\\Dependencies' => __DIR__ . '/../..' . '/app/Controllers/Dependencies.php',
         'WpDreamers\\WPDDBP\\Controllers\\Helper\\Helper' => __DIR__ . '/../..' . '/app/Controllers/Helper/Helper.php',
         'WpDreamers\\WPDDBP\\Controllers\\Hooks\\ActionHooks' => __DIR__ . '/../..' . '/app/Controllers/Hooks/ActionHooks.php',
         'WpDreamers\\WPDDBP\\Controllers\\Hooks\\FilterHooks' => __DIR__ . '/../..' . '/app/Controllers/Hooks/FilterHooks.php',
         'WpDreamers\\WPDDBP\\Controllers\\Installation' => __DIR__ . '/../..' . '/app/Controllers/Installation.php',
+        'WpDreamers\\WPDDBP\\Controllers\\MultiClinic\\AdminMenu' => __DIR__ . '/../..' . '/app/Controllers/MultiClinic/AdminMenu.php',
+        'WpDreamers\\WPDDBP\\Controllers\\MultiClinic\\ClinicReportsApi' => __DIR__ . '/../..' . '/app/Controllers/MultiClinic/ClinicReportsApi.php',
+        'WpDreamers\\WPDDBP\\Controllers\\MultiClinic\\Dashboard' => __DIR__ . '/../..' . '/app/Controllers/MultiClinic/Dashboard.php',
+        'WpDreamers\\WPDDBP\\Controllers\\MultiClinic\\LoginRedirect' => __DIR__ . '/../..' . '/app/Controllers/MultiClinic/LoginRedirect.php',
+        'WpDreamers\\WPDDBP\\Controllers\\MultiClinic\\RestApi' => __DIR__ . '/../..' . '/app/Controllers/MultiClinic/RestApi.php',
+        'WpDreamers\\WPDDBP\\Controllers\\MultiClinic\\Scoping' => __DIR__ . '/../..' . '/app/Controllers/MultiClinic/Scoping.php',
+        'WpDreamers\\WPDDBP\\Controllers\\MultiClinic\\UserRole' => __DIR__ . '/../..' . '/app/Controllers/MultiClinic/UserRole.php',
+        'WpDreamers\\WPDDBP\\Controllers\\PatientPortal\\BookingSms' => __DIR__ . '/../..' . '/app/Controllers/PatientPortal/BookingSms.php',
+        'WpDreamers\\WPDDBP\\Controllers\\PatientPortal\\Download' => __DIR__ . '/../..' . '/app/Controllers/PatientPortal/Download.php',
+        'WpDreamers\\WPDDBP\\Controllers\\PatientPortal\\Otp' => __DIR__ . '/../..' . '/app/Controllers/PatientPortal/Otp.php',
+        'WpDreamers\\WPDDBP\\Controllers\\PatientPortal\\Page' => __DIR__ . '/../..' . '/app/Controllers/PatientPortal/Page.php',
+        'WpDreamers\\WPDDBP\\Controllers\\PatientPortal\\RestApi' => __DIR__ . '/../..' . '/app/Controllers/PatientPortal/RestApi.php',
+        'WpDreamers\\WPDDBP\\Controllers\\PatientPortal\\Session' => __DIR__ . '/../..' . '/app/Controllers/PatientPortal/Session.php',
+        'WpDreamers\\WPDDBP\\Controllers\\PatientPortal\\Sms' => __DIR__ . '/../..' . '/app/Controllers/PatientPortal/Sms.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Payments\\BookingPayment' => __DIR__ . '/../..' . '/app/Controllers/Payments/BookingPayment.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Receipt\\Page' => __DIR__ . '/../..' . '/app/Controllers/Receipt/Page.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Receptionist\\Dashboard' => __DIR__ . '/../..' . '/app/Controllers/Receptionist/Dashboard.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Receptionist\\LoginRedirect' => __DIR__ . '/../..' . '/app/Controllers/Receptionist/LoginRedirect.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Receptionist\\Model\\Patient' => __DIR__ . '/../..' . '/app/Controllers/Receptionist/Model/Patient.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Receptionist\\ReportStorage' => __DIR__ . '/../..' . '/app/Controllers/Receptionist/ReportStorage.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Receptionist\\ReportUploader' => __DIR__ . '/../..' . '/app/Controllers/Receptionist/ReportUploader.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Receptionist\\RestApi' => __DIR__ . '/../..' . '/app/Controllers/Receptionist/RestApi.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Receptionist\\Scoping' => __DIR__ . '/../..' . '/app/Controllers/Receptionist/Scoping.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Receptionist\\UserRole' => __DIR__ . '/../..' . '/app/Controllers/Receptionist/UserRole.php',
         'WpDreamers\\WPDDBP\\Controllers\\ScriptsController' => __DIR__ . '/../..' . '/app/Controllers/ScriptsController.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Staff\\AdminMenu' => __DIR__ . '/../..' . '/app/Controllers/Staff/AdminMenu.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Staff\\Api\\StaffRestApi' => __DIR__ . '/../..' . '/app/Controllers/Staff/Api/StaffRestApi.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Staff\\LastLoginTracker' => __DIR__ . '/../..' . '/app/Controllers/Staff/LastLoginTracker.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Staff\\StaffContext' => __DIR__ . '/../..' . '/app/Controllers/Staff/StaffContext.php',
+        'WpDreamers\\WPDDBP\\Controllers\\TestCatalog\\AdminMenu' => __DIR__ . '/../..' . '/app/Controllers/TestCatalog/AdminMenu.php',
+        'WpDreamers\\WPDDBP\\Controllers\\TestCatalog\\Model\\TestItem' => __DIR__ . '/../..' . '/app/Controllers/TestCatalog/Model/TestItem.php',
+        'WpDreamers\\WPDDBP\\Controllers\\TestCatalog\\RestApi' => __DIR__ . '/../..' . '/app/Controllers/TestCatalog/RestApi.php',
+        'WpDreamers\\WPDDBP\\Controllers\\TestOrder\\Model\\TestOrder' => __DIR__ . '/../..' . '/app/Controllers/TestOrder/Model/TestOrder.php',
+        'WpDreamers\\WPDDBP\\Controllers\\TestOrder\\Model\\TestOrderItem' => __DIR__ . '/../..' . '/app/Controllers/TestOrder/Model/TestOrderItem.php',
+        'WpDreamers\\WPDDBP\\Controllers\\TestOrder\\Model\\TestReport' => __DIR__ . '/../..' . '/app/Controllers/TestOrder/Model/TestReport.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Visits\\BillPage' => __DIR__ . '/../..' . '/app/Controllers/Visits/BillPage.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Visits\\Model\\Visit' => __DIR__ . '/../..' . '/app/Controllers/Visits/Model/Visit.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Visits\\Model\\VisitItem' => __DIR__ . '/../..' . '/app/Controllers/Visits/Model/VisitItem.php',
+        'WpDreamers\\WPDDBP\\Controllers\\Visits\\Model\\VisitPayment' => __DIR__ . '/../..' . '/app/Controllers/Visits/Model/VisitPayment.php',
         'WpDreamers\\WPDDBP\\DocBookerPro' => __DIR__ . '/../..' . '/app/DocBookerPro.php',
         'WpDreamers\\WPDDBP\\Traits\\SingletonTrait' => __DIR__ . '/../..' . '/app/Traits/SingletonTrait.php',
+        'chillerlan\\QRCode\\Common\\BitBuffer' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/BitBuffer.php',
+        'chillerlan\\QRCode\\Common\\ECICharset' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/ECICharset.php',
+        'chillerlan\\QRCode\\Common\\EccLevel' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/EccLevel.php',
+        'chillerlan\\QRCode\\Common\\GDLuminanceSource' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/GDLuminanceSource.php',
+        'chillerlan\\QRCode\\Common\\GF256' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/GF256.php',
+        'chillerlan\\QRCode\\Common\\GenericGFPoly' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/GenericGFPoly.php',
+        'chillerlan\\QRCode\\Common\\IMagickLuminanceSource' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/IMagickLuminanceSource.php',
+        'chillerlan\\QRCode\\Common\\LuminanceSourceAbstract' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/LuminanceSourceAbstract.php',
+        'chillerlan\\QRCode\\Common\\LuminanceSourceInterface' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/LuminanceSourceInterface.php',
+        'chillerlan\\QRCode\\Common\\MaskPattern' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/MaskPattern.php',
+        'chillerlan\\QRCode\\Common\\Mode' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/Mode.php',
+        'chillerlan\\QRCode\\Common\\Version' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Common/Version.php',
+        'chillerlan\\QRCode\\Data\\AlphaNum' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/AlphaNum.php',
+        'chillerlan\\QRCode\\Data\\Byte' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/Byte.php',
+        'chillerlan\\QRCode\\Data\\ECI' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/ECI.php',
+        'chillerlan\\QRCode\\Data\\Hanzi' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/Hanzi.php',
+        'chillerlan\\QRCode\\Data\\Kanji' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/Kanji.php',
+        'chillerlan\\QRCode\\Data\\Number' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/Number.php',
+        'chillerlan\\QRCode\\Data\\QRCodeDataException' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/QRCodeDataException.php',
+        'chillerlan\\QRCode\\Data\\QRData' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/QRData.php',
+        'chillerlan\\QRCode\\Data\\QRDataModeAbstract' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/QRDataModeAbstract.php',
+        'chillerlan\\QRCode\\Data\\QRDataModeInterface' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/QRDataModeInterface.php',
+        'chillerlan\\QRCode\\Data\\QRMatrix' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/QRMatrix.php',
+        'chillerlan\\QRCode\\Data\\ReedSolomonEncoder' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Data/ReedSolomonEncoder.php',
+        'chillerlan\\QRCode\\Decoder\\Binarizer' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Decoder/Binarizer.php',
+        'chillerlan\\QRCode\\Decoder\\BitMatrix' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Decoder/BitMatrix.php',
+        'chillerlan\\QRCode\\Decoder\\Decoder' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Decoder/Decoder.php',
+        'chillerlan\\QRCode\\Decoder\\DecoderResult' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Decoder/DecoderResult.php',
+        'chillerlan\\QRCode\\Decoder\\QRCodeDecoderException' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Decoder/QRCodeDecoderException.php',
+        'chillerlan\\QRCode\\Decoder\\ReedSolomonDecoder' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Decoder/ReedSolomonDecoder.php',
+        'chillerlan\\QRCode\\Detector\\AlignmentPattern' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Detector/AlignmentPattern.php',
+        'chillerlan\\QRCode\\Detector\\AlignmentPatternFinder' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Detector/AlignmentPatternFinder.php',
+        'chillerlan\\QRCode\\Detector\\Detector' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Detector/Detector.php',
+        'chillerlan\\QRCode\\Detector\\FinderPattern' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Detector/FinderPattern.php',
+        'chillerlan\\QRCode\\Detector\\FinderPatternFinder' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Detector/FinderPatternFinder.php',
+        'chillerlan\\QRCode\\Detector\\GridSampler' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Detector/GridSampler.php',
+        'chillerlan\\QRCode\\Detector\\PerspectiveTransform' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Detector/PerspectiveTransform.php',
+        'chillerlan\\QRCode\\Detector\\QRCodeDetectorException' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Detector/QRCodeDetectorException.php',
+        'chillerlan\\QRCode\\Detector\\ResultPoint' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Detector/ResultPoint.php',
+        'chillerlan\\QRCode\\Output\\QRCodeOutputException' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRCodeOutputException.php',
+        'chillerlan\\QRCode\\Output\\QREps' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QREps.php',
+        'chillerlan\\QRCode\\Output\\QRFpdf' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRFpdf.php',
+        'chillerlan\\QRCode\\Output\\QRGdImage' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRGdImage.php',
+        'chillerlan\\QRCode\\Output\\QRGdImageBMP' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRGdImageBMP.php',
+        'chillerlan\\QRCode\\Output\\QRGdImageGIF' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRGdImageGIF.php',
+        'chillerlan\\QRCode\\Output\\QRGdImageJPEG' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRGdImageJPEG.php',
+        'chillerlan\\QRCode\\Output\\QRGdImagePNG' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRGdImagePNG.php',
+        'chillerlan\\QRCode\\Output\\QRGdImageWEBP' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRGdImageWEBP.php',
+        'chillerlan\\QRCode\\Output\\QRImage' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRImage.php',
+        'chillerlan\\QRCode\\Output\\QRImagick' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRImagick.php',
+        'chillerlan\\QRCode\\Output\\QRMarkup' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRMarkup.php',
+        'chillerlan\\QRCode\\Output\\QRMarkupHTML' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRMarkupHTML.php',
+        'chillerlan\\QRCode\\Output\\QRMarkupSVG' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRMarkupSVG.php',
+        'chillerlan\\QRCode\\Output\\QROutputAbstract' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QROutputAbstract.php',
+        'chillerlan\\QRCode\\Output\\QROutputInterface' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QROutputInterface.php',
+        'chillerlan\\QRCode\\Output\\QRString' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRString.php',
+        'chillerlan\\QRCode\\Output\\QRStringJSON' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRStringJSON.php',
+        'chillerlan\\QRCode\\Output\\QRStringText' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/Output/QRStringText.php',
+        'chillerlan\\QRCode\\QRCode' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/QRCode.php',
+        'chillerlan\\QRCode\\QRCodeException' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/QRCodeException.php',
+        'chillerlan\\QRCode\\QROptions' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/QROptions.php',
+        'chillerlan\\QRCode\\QROptionsTrait' => __DIR__ . '/..' . '/chillerlan/php-qrcode/src/QROptionsTrait.php',
+        'chillerlan\\Settings\\SettingsContainerAbstract' => __DIR__ . '/..' . '/chillerlan/php-settings-container/src/SettingsContainerAbstract.php',
+        'chillerlan\\Settings\\SettingsContainerInterface' => __DIR__ . '/..' . '/chillerlan/php-settings-container/src/SettingsContainerInterface.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit2c176c71e74048524fbf0502d0e4f5cc::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit2c176c71e74048524fbf0502d0e4f5cc::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit2c176c71e74048524fbf0502d0e4f5cc::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit054b7de87517d721c2559d5b859585ef::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit054b7de87517d721c2559d5b859585ef::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit054b7de87517d721c2559d5b859585ef::$classMap;
 
         }, null, ClassLoader::class);
     }

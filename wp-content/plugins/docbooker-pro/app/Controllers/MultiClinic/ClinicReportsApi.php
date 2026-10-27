@@ -111,9 +111,7 @@ class ClinicReportsApi {
 		}
 		$order['items']   = TestOrderItem::list_for_order( $id );
 		$order['reports'] = TestReport::list_for_order( $id );
-		foreach ( $order['reports'] as &$r ) {
-			$r['filename'] = get_the_title( $r['attachment_id'] );
-		}
+		$order['reports'] = array_map( [ TestReport::class, 'for_display' ], $order['reports'] );
 		$order['patient'] = Patient::enrich( Patient::find( (int) $order['patient_id'] ) );
 		$order['totals']  = TestOrder::compute_totals( $order );
 		return new WP_REST_Response( $order, 200 );
@@ -125,9 +123,7 @@ class ClinicReportsApi {
 			return new WP_Error( 'wpddbp_not_found', __( 'Order not found.', 'doc-booker-pro' ), [ 'status' => 404 ] );
 		}
 		$rows = TestReport::list_for_order( (int) $order['id'] );
-		foreach ( $rows as &$r ) {
-			$r['filename'] = get_the_title( $r['attachment_id'] );
-		}
+		$rows = array_map( [ TestReport::class, 'for_display' ], $rows );
 		return new WP_REST_Response( $rows, 200 );
 	}
 

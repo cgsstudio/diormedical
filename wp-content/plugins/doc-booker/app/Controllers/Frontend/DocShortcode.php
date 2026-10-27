@@ -46,7 +46,7 @@ class DocShortcode {
 
 		// Initialize variables
 		$layoutID       =  esc_attr( $shortcode_tag ) . '-shortcode-container-' . absint( wp_rand() );
-        $content_limit_class = function_exists('wpddbp') && isset($metas['content_limit']) ?  'wpddb-limit lines-'.$metas['content_limit'] : '';
+        $content_limit_class = wpddb()->has_pro() && isset($metas['content_limit']) ?  'wpddb-limit lines-'.$metas['content_limit'] : '';
 		$containerClass =  esc_attr( $shortcode_tag ) . '-shortcode-container wpddb-grid ' . esc_attr( $shortcode_tag ) . '-items ' . esc_attr( $metas['layout'] );
         $containerClass = apply_filters(
             'wpddb_shortcode_container_class',

@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 Helper::get_header( $wp_version );
 
 $grid_columns         = WpddbOptions::get_option( 'doctor_grid_columns', 'wpddb_doctor_settings' ) ?: '3';
-$content_limit_class = function_exists('wpddbp')
+$content_limit_class = wpddb()->has_pro()
     ? ' wpddb-limit lines-' . ( WpddbOptions::get_option( 'content_limit', 'wpddb_doctor_settings' ) ?: 3 )
     : '';
 
@@ -40,7 +40,7 @@ do_action( 'wpddb_before_main_content' );
 
 	<header class="wpddb-header">
 		<?php if ( apply_filters( 'wpddb_show_page_title', true ) ) { ?>
-			<h2 class="wpddb-doctor-header-title page-title"><?php Helper::page_title( true, 'doctor' ); ?></h2>
+			<h1 class="wpddb-doctor-header-title page-title"><?php Helper::page_title( true, 'doctor' ); ?></h1>
 		<?php } ?>
 	</header>
 	<div class="wpddb-doctor-wrapper">

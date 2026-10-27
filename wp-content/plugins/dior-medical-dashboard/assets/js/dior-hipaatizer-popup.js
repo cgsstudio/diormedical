@@ -7,7 +7,12 @@
     let originalNextSibling = null;
 
     function isAppointmentButton(element) {
-        if (element.closest('#dior-docbooker-modal') || element.closest('.dior-booking-banner-card')) {
+        if (element.closest('#dior-docbooker-modal') ||
+            element.closest('.dior-booking-banner-card') ||
+            element.closest('#dior-patient-portal-app') ||
+            element.closest('.custom-patient-overview') ||
+            element.closest('#tab-overview') ||
+            (element.getAttribute('href') && element.getAttribute('href').includes('appointments'))) {
             return false;
         }
         const text = (element.innerText || element.textContent || element.value || '')

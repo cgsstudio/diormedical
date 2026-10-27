@@ -1,0 +1,23 @@
+$kind: http-example
+request:
+  url: https://app.hipaatizer.com/api/v1/api_key/appointments/:appointmentId/related_submission_pdf?useGroupedSubmissionIfExists=<boolean>
+  method: GET
+  headers:
+    - key: Accept
+      value: application/octet-stream
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  queryParams:
+    useGroupedSubmissionIfExists: <boolean>
+  pathVariables:
+    appointmentId: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: <binary>
+order: 1000

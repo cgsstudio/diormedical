@@ -26,6 +26,14 @@ class Sms {
 	const DEFAULT_TIMEOUT = 15;
 
 	/**
+	 * Whether texts can actually go out: switched on and a service address set.
+	 */
+	public static function is_configured() {
+		$settings = get_option( 'wpddb_sms_settings', [] );
+		return ! empty( $settings['enabled'] ) && ! empty( $settings['provider_url'] );
+	}
+
+	/**
 	 * Send a 6-digit OTP. Builds the body from otp_message_template, then
 	 * dispatches via send_message().
 	 */
@@ -36,10 +44,12 @@ class Sms {
 		$tmpl    = (string) ( $settings['otp_message_template'] ?? 'Your DocBooker OTP is {{code}}' );
 		$message = strtr( $tmpl, [ '{{code}}' => $code_safe ] );
 
-		// Legacy log line so dev/test mode still surfaces the code when no
-		// provider is configured.
+		// With no provider, a development site (WP_DEBUG on) still needs the
+		// code to sign in; a live site must never write it to a log.
 		if ( empty( $settings['enabled'] ) || empty( $settings['provider_url'] ) ) {
-			error_log( '[wpddbp] SMS not configured; OTP for ' . $phone . ' is ' . $code_safe );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( '[wpddbp] SMS not configured; OTP for ' . self::mask_phone( $phone ) . ' is ' . $code_safe );
+			}
 			return true;
 		}
 
@@ -56,10 +66,20 @@ class Sms {
 	 *                        OTP path so legacy payload_templates using {{code}}
 	 *                        keep working.
 	 */
+	/**
+	 * "*******1234" — enough to tell numbers apart in a log, not to use them.
+	 */
+	public static function mask_phone( $phone ) {
+		$digits = preg_replace( '/\D/', '', (string) $phone );
+		return str_repeat( '*', max( 0, strlen( $digits ) - 4 ) ) . substr( $digits, -4 );
+	}
+
 	public static function send_message( $phone, $message, $context = [] ) {
 		$settings = get_option( 'wpddb_sms_settings', [] );
 		if ( empty( $settings['enabled'] ) || empty( $settings['provider_url'] ) ) {
-			error_log( '[wpddbp] SMS not configured; would have sent to ' . $phone . ': ' . $message );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( '[wpddbp] SMS not configured; skipped a message to ' . self::mask_phone( $phone ) );
+			}
 			return true;
 		}
 
@@ -117,7 +137,10 @@ class Sms {
 		if ( $method === 'GET' ) {
 			$query_str = wp_parse_url( $payload, PHP_URL_QUERY );
 			if ( $query_str ) {
-				$url = add_query_arg( wp_parse_args( $query_str ), $url );
+				// The phone and message are already encoded above. Parsing the
+				// string again would decode them, and "+880…" would reach the
+				// provider as " 880…"; append it as it is.
+				$url = rtrim( $url, '?&' ) . ( false === strpos( $url, '?' ) ? '?' : '&' ) . ltrim( $query_str, '?&' );
 			}
 		} else {
 			$args['body'] = $payload;

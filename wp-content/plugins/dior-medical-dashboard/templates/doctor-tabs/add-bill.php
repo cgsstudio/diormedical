@@ -15,10 +15,32 @@
         </div>
     </div>
 
+    <!-- Subtab Navigation Bar -->
+    <div class="dior-subtab-nav-bar px-1 mb-4">
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-bill-list" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-bill-list');">
+            <i class="fas fa-receipt"></i> Bill List
+        </button>
+        <button type="button" class="dior-subtab-pill btn active" data-doc-tab="doc-accounts-add-bill" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-add-bill');">
+            <i class="fas fa-file-invoice-dollar"></i> Add Bill
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-income" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-income');">
+            <i class="fas fa-arrow-trend-up"></i> Income
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-expenses" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-expenses');">
+            <i class="fas fa-arrow-trend-down"></i> Expenses
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-income-report" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-income-report');">
+            <i class="fas fa-chart-pie"></i> Income Report
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-invoice" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-invoice');">
+            <i class="fas fa-file-invoice"></i> Invoice
+        </button>
+    </div>
+
     <div class="view-appointment-card">
         <div class="va-header-container" style="border-bottom: 0;">
             <div class="va-title-box">
-                <h2>Add Bill</h2>
+                <h2><i class="fas fa-file-invoice-dollar text-primary me-2"></i>Add Bill</h2>
             </div>
         </div>
 

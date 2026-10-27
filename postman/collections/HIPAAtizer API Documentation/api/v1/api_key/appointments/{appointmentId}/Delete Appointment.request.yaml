@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/api_key/appointments/:appointmentId"
+method: DELETE
+headers:
+  Accept: application/json
+pathVariables:
+  - key: appointmentId
+    value: <uuid>
+    description: (Required) Id of appointment
+auth:
+  type: apikey
+  credentials:
+    key: X-Api-Key
+    value: "{{apiKey}}"
+    in: header
+examples: ./.resources/Delete Appointment.resources/examples
+order: 5000

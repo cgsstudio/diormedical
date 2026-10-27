@@ -20,7 +20,7 @@ $clinic_gallery_view    = WpddbOptions::get_option('details_gallery_view','wpddb
 
 $single_page_sidebar    = Clinic::is_clinic() ? 'clinic-sidebar':'';
 $sidebar                = wpddb()->clinic_single_sidebar;
-$gallery                = function_exists('wpddbp')
+$gallery                = wpddb()->has_pro()
                             ? get_post_meta($post->ID, 'wpddb_clinic_gallery_images', true)
                             : [];
 $thumb_size      ='wpddb_size1';
@@ -70,11 +70,17 @@ do_action('wpddb_before_main_content');
 		<div class="post-wrapper">
 			<div id="post-<?php the_ID(); ?>" <?php post_class( 'clinic-single' ); ?>>
 				<div class="single-clinic-inner">
-					<div class="clinic-thumb">
-                     <?php
-                        do_action( 'wpddb_clinic_thumbnail', get_the_ID(), $thumb_size );
+					<?php
+					// No photo and no gallery: leave the space out rather than show
+					// a large grey "No Image Available" picture.
+					ob_start();
+					do_action( 'wpddb_clinic_thumbnail', get_the_ID(), $thumb_size );
+					$clinic_thumb = trim( ob_get_clean() );
+					$only_placeholder = false !== strpos( $clinic_thumb, 'no-image' ) && 1 === substr_count( $clinic_thumb, '<img' );
+					if ( $clinic_thumb && ! $only_placeholder ) {
+						echo '<div class="clinic-thumb">' . $clinic_thumb . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built by the wpddb_clinic_thumbnail handlers, which escape it.
+					}
 					?>
-					</div>
 					<div class="entry-content">
 						<h2 class="entry-title"><?php the_title(); ?></h2>
                         <?php

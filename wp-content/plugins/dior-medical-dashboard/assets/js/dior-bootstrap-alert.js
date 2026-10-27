@@ -13,6 +13,21 @@
 (function () {
     'use strict';
 
+    if (typeof window !== 'undefined' && window.addEventListener) {
+        window.addEventListener('unhandledrejection', function (e) {
+            var r = e ? (e.reason || e) : null;
+            var m = r ? (r.message || (typeof r === 'string' ? r : '')) : '';
+            if (typeof m === 'string' && (
+                m.indexOf('Could not establish connection') !== -1 ||
+                m.indexOf('Receiving end does not exist') !== -1 ||
+                m.indexOf('message port closed') !== -1
+            )) {
+                if (e.preventDefault) e.preventDefault();
+                if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+            }
+        });
+    }
+
     var currentModalInstance = null;
     var currentModalElement = null;
 

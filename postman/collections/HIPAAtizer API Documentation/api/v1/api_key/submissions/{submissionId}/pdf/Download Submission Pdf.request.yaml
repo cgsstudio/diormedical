@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/api_key/submissions/:submissionId/pdf?fileOrder=<integer>"
+method: GET
+headers:
+  Accept: application/octet-stream
+queryParams:
+  - key: fileOrder
+    value: <integer>
+    description: File order for download. Applicable only to forms created from multiple PDFs.
+pathVariables:
+  - key: submissionId
+    value: <uuid>
+    description: (Required) Id of submission
+auth:
+  type: apikey
+  credentials:
+    key: X-Api-Key
+    value: "{{apiKey}}"
+    in: header
+examples: ./.resources/Download Submission Pdf.resources/examples
+order: 1000

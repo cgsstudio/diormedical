@@ -46,7 +46,7 @@ class ActionHooks {
 		$display_doctor_schedule = WpddbOptions::get_option( 'display_doctor_schedule', 'wpddb_doctor_settings' ) ?: 'on';
 		$display_doctor_schedule = $display_doctor_schedule === 'on';
 		if ( empty( $doctor_schedule ) ) {
-			echo "<p>" . esc_html_e( 'No schedule available', 'doc-booker' ) . "</p>";
+			echo '<p>' . esc_html__( 'No schedule available', 'doc-booker' ) . '</p>';
 
 			return;
 		}
@@ -60,8 +60,16 @@ class ActionHooks {
 				}
 				foreach ( $day_data['clinics'] as $clinic ) {
 					$clinic_id    = $clinic['id'];
+					if ( ! Clinic::is_open( $clinic_id ) ) {
+						continue; // Unpublished or in the Trash: not shown, not bookable.
+					}
 					$clinic_name  = $clinic['name'] ?? "Unknown Clinic";
-					$clinic_phone = $clinics_info[ $clinic_id ]['phone_number'] ?? "N/A";
+					// The doctor's number at this clinic, else the clinic's own hotline;
+					// with neither, there is nothing to call (no "N/A" link).
+					$clinic_phone = trim( (string) ( $clinics_info[ $clinic_id ]['phone_number'] ?? '' ) );
+					if ( '' === $clinic_phone ) {
+						$clinic_phone = trim( (string) get_post_meta( (int) $clinic_id, 'wpddb_clinic_hotline', true ) );
+					}
 					foreach ( $clinic['timings'] as $timing ) {
 						$clinic_schedules[ $clinic_id ]['name']                           = $clinic_name;
 						$clinic_schedules[ $clinic_id ]['phone']                          = $clinic_phone;
@@ -88,7 +96,16 @@ class ActionHooks {
 				unset( $slots );
 			}
 			unset( $clinic );
-			echo "<h3 class='wpddb-doctor-inner-title'>" . esc_html__( "Doctor Schedule", "doc-booker" ) . "</h3>";
+			// Every clinic in the schedule closed: same message as no schedule.
+			if ( ! $clinic_schedules ) {
+				echo '<p>' . esc_html__( 'No schedule available', 'doc-booker' ) . '</p>';
+				return;
+			}
+			// A section that folds: open on wide screens, closed on phones, so the
+			// booking calendar below isn't pushed down by a long week of times.
+			echo '<details class="wpddb-schedule-toggle" open>';
+			echo "<summary><h3 class='wpddb-doctor-inner-title'>" . esc_html__( "Doctor Schedule", "doc-booker" ) . "</h3></summary>";
+			echo '<script>(function(d){if(d&&window.matchMedia&&window.matchMedia("(max-width: 767px)").matches){d.removeAttribute("open");}})(document.currentScript&&document.currentScript.closest("details"));</script>';
 			echo '<div class="wpddb-clinic-schedule-wrapper">';
 			foreach ( $clinic_schedules as $clinic_id => $clinic ) {
 				echo "<div class='wpddb-clinic-schedule'>";
@@ -102,13 +119,14 @@ class ActionHooks {
 						if ( $showing_bookable_text ) {
 							return sprintf(
 								'<span class="each-time"><span class="time">%s</span> <span class="status ' . esc_attr( $status_class ) . '">%s</span><span class="separator"></span></span>',
-								esc_html( $slot['time'] ),
-								esc_html( $slot['is_bookable'] ? "( Available )" : "( Booked )" )
+								esc_html( Helper::site_time_label( $slot['time'] ) ),
+								// is_bookable is whether the doctor offers this time, not whether it is booked.
+								esc_html( '(' . ( $slot['is_bookable'] ? __( 'Available', 'doc-booker' ) : __( 'Not available', 'doc-booker' ) ) . ')' )
 							);
 						} else {
 							return sprintf(
 								'<span class="each-time"><span class="time">%s</span><span class="separator"></span></span>',
-								esc_html( $slot['time'] ) );
+								esc_html( Helper::site_time_label( $slot['time'] ) ) );
 
 						}
 
@@ -117,7 +135,7 @@ class ActionHooks {
 
 					printf(
 						'<div class="wpddb-time-wrapper"><strong>%s:</strong> %s</div>',
-						esc_html( $day ),
+						esc_html( Helper::weekday_label( $day ) ),
 						implode( ' ', $day_times )
 					);
 
@@ -136,8 +154,12 @@ class ActionHooks {
 				echo "</div>";
 			}
 			echo '</div>';
+			echo '</details>';
 		}
 		if ( $clinics_info ) {
+			$clinics_info = array_filter( $clinics_info, function ( $clinic_id ) {
+				return Clinic::is_open( $clinic_id );
+			}, ARRAY_FILTER_USE_KEY );
 			$has_holiday = ! empty( array_filter( $clinics_info, function ( $clinic ) {
 				return ! empty( $clinic['is_holiday'] ) && ! empty( $clinic['holiday_dates'] );
 			} ) );
@@ -148,13 +170,18 @@ class ActionHooks {
 			foreach ( $clinics_info as $clinic_id => $clinic ) {
 				$clinic_name = get_the_title( $clinic_id );
 				if ( ! empty( $clinic['is_holiday'] ) && ! empty( $clinic['holiday_dates'] ) ) {
+					// One sentence, so translations can order the parts; dates in the
+					// site's date format and language.
+					$date_format = get_option( 'date_format' );
 					printf(
-						'<div class="holiday-clinic"><span class="clinic-name">%s</span> %s <strong>%s</strong> %s <strong>%s</strong></div>',
-						esc_html( $clinic_name ),
-						__( "is on Holiday from", 'doc-booker' ),
-						date( "F j, Y", strtotime( $clinic['holiday_dates']['start_date'] ) ),
-						__( "to", "doc-booker" ),
-						date( "F j, Y", strtotime( $clinic['holiday_dates']['end_date'] ) )
+						'<div class="holiday-clinic">%s</div>',
+						sprintf(
+							/* translators: 1: clinic name, 2: first holiday date, 3: last holiday date */
+							esc_html__( '%1$s is on holiday from %2$s to %3$s', 'doc-booker' ),
+							'<span class="clinic-name">' . esc_html( $clinic_name ) . '</span>',
+							'<strong>' . esc_html( date_i18n( $date_format, strtotime( $clinic['holiday_dates']['start_date'] ) ) ) . '</strong>',
+							'<strong>' . esc_html( date_i18n( $date_format, strtotime( $clinic['holiday_dates']['end_date'] ) ) ) . '</strong>'
+						)
 					);
 
 				}
@@ -230,6 +257,12 @@ class ActionHooks {
 		$address         = get_post_meta( $post_id, 'wpddb_clinic_address', true );
 		$latitude        = get_post_meta( $post_id, 'wpddb_clinic_latitude', true );
 		$longitude       = get_post_meta( $post_id, 'wpddb_clinic_longitude', true );
+		// The coordinates go straight into JavaScript, so only real numbers in
+		// range are used; anything else means there is no map to draw.
+		$has_coordinates = is_numeric( $latitude ) && is_numeric( $longitude )
+			&& abs( (float) $latitude ) <= 90 && abs( (float) $longitude ) <= 180;
+		$latitude        = (float) $latitude;
+		$longitude       = (float) $longitude;
 		$marker_icon_url = wpddb()->get_assets_uri( 'public/img/marker-icon.png' );
 		$shadow_icon_url = wpddb()->get_assets_uri( 'public/img/marker-shadow.png' );
 		if ( empty( $address ) ) {
@@ -240,10 +273,11 @@ class ActionHooks {
             <div class="label"><?php esc_html_e( 'Our Address:', 'doc-booker' ); ?></div>
             <div class="address"><?php Helper::print_html( $address ); ?></div>
         </div>
+        <?php if ( $has_coordinates ) : ?>
         <div id="wpddb-clinic-location-map" style="height: 500px;"></div>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const map = L.map('wpddb-clinic-location-map').setView([<?php echo esc_js( $latitude ); ?>, <?php echo esc_js( $longitude ); ?>], 13);
+                const map = L.map('wpddb-clinic-location-map').setView([<?php echo wp_json_encode( $latitude ); ?>, <?php echo wp_json_encode( $longitude ); ?>], 13);
 
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors',
@@ -260,9 +294,10 @@ class ActionHooks {
                 });
 
                 // Add Custom Marker
-                L.marker([<?php echo esc_js( $latitude ); ?>, <?php echo esc_js( $longitude ); ?>], {icon: customIcon}).addTo(map);
+                L.marker([<?php echo wp_json_encode( $latitude ); ?>, <?php echo wp_json_encode( $longitude ); ?>], {icon: customIcon}).addTo(map);
             });
         </script>
+        <?php endif; ?>
 
 	<?php }
 
@@ -272,7 +307,7 @@ class ActionHooks {
         $show_designation = true;
         $show_content = true;
 
-        if ( function_exists( 'wpddbp' ) ) {
+        if ( wpddb()->has_pro() ) {
             $show_designation = (
                 isset( $args['show_designation'] ) && $args['show_designation'] == 'on'
             );
@@ -291,14 +326,17 @@ class ActionHooks {
             return;
         }
 
-        if ( function_exists( 'wpddbp' ) && $show_content ) {
-            the_content();
+        if ( wpddb()->has_pro() && $show_content ) {
+            // Inside the page's own content filter the_content() comes out as bare
+            // text; paragraphs keep the description styles and Pro's content
+            // font settings (which target "p") working.
+            echo wp_kses_post( wpautop( do_shortcode( $content ) ) );
             return;
         }
-        if ( !function_exists( 'wpddbp' ) && $show_content){
+        if ( !wpddb()->has_pro() && $show_content){
             $content = Doctor::get_the_content( get_the_ID() );
 
-            $trimmed = wp_trim_words( $content, 20, '..' );
+            $trimmed = wp_trim_words( $content, 20, '…' );
             echo '<p>' . wp_kses_post( $trimmed ) . '</p>';
         }
 
@@ -307,7 +345,7 @@ class ActionHooks {
     public static function render_doctor_shortcode_before_title($args) {
         $show_department = true;
 
-        if ( function_exists( 'wpddbp' ) ) {
+        if ( wpddb()->has_pro() ) {
             $show_department = (
                 isset( $args['show_department'] ) && $args['show_department'] == 'on'
             );
@@ -323,25 +361,25 @@ class ActionHooks {
         if ( empty( $content ) ) {
             return;
         }
-        if ( function_exists( 'wpddbp' ) ) {
+        if ( wpddb()->has_pro() ) {
             $show_content = (
                 isset( $args['show_content'] ) && $args['show_content'] == 'on'
             );
         }
-        if ( function_exists( 'wpddbp' ) && $show_content ) {
+        if ( wpddb()->has_pro() && $show_content ) {
             the_content();
             return;
         }
-        if ( !function_exists( 'wpddbp' ) && $show_content){
+        if ( !wpddb()->has_pro() && $show_content){
             $content = Clinic::get_the_content( get_the_ID() );
-            $trimmed = wp_trim_words( $content, 20, '..' );
+            $trimmed = wp_trim_words( $content, 20, '…' );
             echo '<p>' . wp_kses_post( $trimmed ) . '</p>';
         }
 
     }
     public static function render_pro_clinic_shortcode_map_btn($args) {
         $show_map_btn = true;
-        if ( function_exists( 'wpddbp' ) ) {
+        if ( wpddb()->has_pro() ) {
             $show_map_btn = (
                 isset( $args['show_map_btn'] ) && $args['show_map_btn'] == 'on'
             );
@@ -350,7 +388,7 @@ class ActionHooks {
                 Clinic::clinic_details_button(get_the_ID(),$map_btn_text);
             }
         }
-        if (!function_exists( 'wpddbp' ) && $show_map_btn){
+        if (!wpddb()->has_pro() && $show_map_btn){
             Clinic::clinic_details_button(get_the_ID());
         }
 

@@ -23,7 +23,9 @@ class ReportPurger {
 	public function run() {
 		global $wpdb;
 		$t      = $wpdb->prefix . 'wpddb_test_reports';
-		$now    = current_time( 'mysql' );
+		// expires_at is stored in UTC, so compare against UTC "now"; site time
+		// purged reports early east of UTC and late west of it.
+		$now    = current_time( 'mysql', true );
 		$rows   = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, attachment_id FROM `{$t}` WHERE expires_at <= %s ORDER BY id ASC LIMIT 200",

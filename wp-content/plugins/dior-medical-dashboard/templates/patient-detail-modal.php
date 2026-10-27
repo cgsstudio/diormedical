@@ -16,8 +16,11 @@
 
 if (!defined('ABSPATH')) exit;
 
+$q_meta = get_user_meta($pid, 'dior_medical_questionnaire', true);
+$q_meta = is_array($q_meta) ? $q_meta : [];
+
 // Helper to safely extract intake, profile, and user meta values
-$get_val = function($keys, $default = '') use ($intake, $profile, $user, $pid) {
+$get_val = function($keys, $default = '') use ($intake, $profile, $user, $pid, $q_meta) {
     if (!is_array($keys)) $keys = [$keys];
     
     if (is_array($intake)) {
@@ -30,6 +33,21 @@ $get_val = function($keys, $default = '') use ($intake, $profile, $user, $pid) {
             foreach ($keys as $k) {
                 if (isset($intake['raw_data'][$k]) && $intake['raw_data'][$k] !== '' && $intake['raw_data'][$k] !== null) {
                     return is_array($intake['raw_data'][$k]) ? implode(', ', $intake['raw_data'][$k]) : (string)$intake['raw_data'][$k];
+                }
+            }
+        }
+    }
+
+    if (!empty($q_meta)) {
+        foreach ($keys as $k) {
+            if (isset($q_meta[$k]) && $q_meta[$k] !== '' && $q_meta[$k] !== null) {
+                return is_array($q_meta[$k]) ? implode(', ', $q_meta[$k]) : (string)$q_meta[$k];
+            }
+        }
+        if (!empty($q_meta['raw']) && is_array($q_meta['raw'])) {
+            foreach ($keys as $k) {
+                if (isset($q_meta['raw'][$k]) && $q_meta['raw'][$k] !== '' && $q_meta['raw'][$k] !== null) {
+                    return is_array($q_meta['raw'][$k]) ? implode(', ', $q_meta['raw'][$k]) : (string)$q_meta['raw'][$k];
                 }
             }
         }
@@ -215,32 +233,33 @@ $rxs = class_exists('Dior_Patient_Portal_Data') ? Dior_Patient_Portal_Data::get_
 }
 #modal-doc-patient button.dior-chart-btn-close,
 .dior-chart-btn-close {
-    background: #F1F5F9 !important;
-    border: 1px solid #CBD5E1 !important;
-    color: #475569 !important;
-    border-radius: 5px !important;
-    width: 26px !important;
-    min-width: 26px !important;
-    max-width: 26px !important;
-    height: 26px !important;
-    min-height: 26px !important;
-    max-height: 26px !important;
+    background: transparent !important;
+    border: none !important;
+    color: #000000 !important;
+    border-radius: 0 !important;
+    width: auto !important;
+    min-width: 1.35rem !important;
+    height: auto !important;
+    min-height: 1.35rem !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 17px !important;
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
     cursor: pointer !important;
     line-height: 1 !important;
     padding: 0 !important;
     margin: 0 !important;
     box-shadow: none !important;
     outline: none !important;
-    transition: all 0.15s ease !important;
+    transition: transform 0.15s ease, opacity 0.15s ease !important;
 }
 .dior-chart-btn-close:hover {
-    background: #E2E8F0 !important;
-    color: #0F172A !important;
-    border-color: #94A3B8 !important;
+    background: transparent !important;
+    color: #000000 !important;
+    border: none !important;
+    opacity: 0.75 !important;
+    transform: scale(1.15) !important;
 }
 
 /* Preset Chips (Strict Resets) */

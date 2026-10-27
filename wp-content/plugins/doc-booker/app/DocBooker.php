@@ -6,6 +6,8 @@ use WpDreamers\WPDDB\Controllers\Admin\AdminInit;
 use WpDreamers\WPDDB\Controllers\Admin\Api\RestApi;
 use WpDreamers\WPDDB\Controllers\AjaxControllers;
 use WpDreamers\WPDDB\Controllers\BookingManagement;
+use WpDreamers\WPDDB\Controllers\BookingReminders;
+use WpDreamers\WPDDB\Controllers\Frontend\ManageBooking;
 use WpDreamers\WPDDB\Controllers\Frontend\DocShortcode;
 use WpDreamers\WPDDB\Controllers\Hooks\ActionHooks;
 use WpDreamers\WPDDB\Controllers\Hooks\AfterSetupTheme;
@@ -53,7 +55,8 @@ final class DocBooker{
         register_deactivation_hook( WPDDB_FILE, [ Installation::class, 'deactivation' ] );
     }
     public function load_language() {
-        load_plugin_textdomain( 'doc-booker', false, WPDDB_ABSPATH . '/languages/' );
+        // The path is relative to the plugins folder; an absolute one was never found.
+        load_plugin_textdomain( 'doc-booker', false, dirname( WPDDB_BASENAME ) . '/languages' );
     }
     /**
      * Init
@@ -61,14 +64,22 @@ final class DocBooker{
      * @return void
      */
     public function init() {
+        $this->stop_outdated_pro();
         if ( is_admin() ) {
             AdminInit::instance();
             \WpDreamers\WPDDB\Controllers\Admin\TemplatesPage::instance();
+            // Dashboard, Bookings and Settings in one screen.
+            \WpDreamers\WPDDB\Controllers\Admin\AppPage::instance();
         }else{
 			TemplateHooks::init();
 			DocShortcode::instance();
+			ManageBooking::instance();
         }
+        TemplateHooks::card_hooks();
+        BookingReminders::instance();
         RestApi::instance();
+        \WpDreamers\WPDDB\Controllers\Admin\Api\AppApi::instance();
+        \WpDreamers\WPDDB\Controllers\Model\BookingInbox::instance();
 		new QueryBuilder();
 		Widgets::instance();
         ScriptsController::instance();
@@ -80,6 +91,8 @@ final class DocBooker{
         $this->load_language();
 	    ThemesSupport::instance();
 	    Installation::check_and_update_plugin_version();
+	    Installation::repair_cancelled_status();
+	    Installation::update_schema();
 		BookingManagement::instance();
         new AdminController();
     }
@@ -128,8 +141,47 @@ final class DocBooker{
     public function plugin_url() {
         return untrailingslashit( WPDDB_URL );
     }
+    /**
+     * Whether DocBooker Pro is running: loaded, at least WPDDB_MIN_PRO_VERSION,
+     * and past its own checks (DocBooker version, licence), which it announces
+     * with `wpddbp_loaded`. An older or switched-off Pro counts as not
+     * installed, so methods it doesn't have are never called.
+     *
+     * @return bool
+     */
     public function has_pro() {
-        return function_exists( 'wpddbp' );
+        return function_exists( 'wpddbp' )
+            && defined( 'WPDDBP_VERSION' )
+            && version_compare( WPDDBP_VERSION, WPDDB_MIN_PRO_VERSION, '>=' )
+            && did_action( 'wpddbp_loaded' );
+    }
+
+    /**
+     * The active DocBooker Pro's version when it is older than
+     * WPDDB_MIN_PRO_VERSION, else ''.
+     *
+     * @return string
+     */
+    public function outdated_pro_version() {
+        if ( ! function_exists( 'wpddbp' ) || ! defined( 'WPDDBP_VERSION' ) ) {
+            return '';
+        }
+        return version_compare( WPDDBP_VERSION, WPDDB_MIN_PRO_VERSION, '<' ) ? (string) WPDDBP_VERSION : '';
+    }
+
+    /**
+     * Keeps an outdated DocBooker Pro from starting: its code was written for
+     * an older DocBooker and could fail against this one. This runs on
+     * plugins_loaded@100, before Pro starts (@999) and registers its blocks
+     * (init). ProVersionNotice asks the owner to update it.
+     */
+    private function stop_outdated_pro() {
+        if ( '' === $this->outdated_pro_version() ) {
+            return;
+        }
+        remove_action( 'plugins_loaded', [ wpddbp(), 'init' ], 999 );
+        remove_action( 'init', 'wpddbp_blocks_register_blocks' );
+        remove_action( 'init', 'wpddbp_blocks_set_script_translations', 20 );
     }
 }
 

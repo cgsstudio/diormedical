@@ -33,8 +33,12 @@ $custom_thumb_size = [
 				?>
 			</a>
 		<?php } else {
-			// phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-			echo '<a href="'. esc_url(get_the_permalink()) .'"><img class="wpddb-media no-image" src="' . esc_url(wpddb()->get_assets_uri('public/img/no-image-570x400.jpg')) . '" alt="'. the_title_attribute( array( 'echo'=> false ) ) .'"/></a>';
-		} ?>
+			// No photo: a coloured tile with the clinic's initials, the same idea
+			// as the doctor cards, at the card image's shape.
+			?>
+			<a href="<?php echo esc_url( get_the_permalink( $clinic_id ) ); ?>" class="wpddb-media" tabindex="-1" aria-hidden="true">
+				<span class="default-media no-image clinic-initials" style="aspect-ratio:<?php echo (int) $clinic_thumbnail_width . ' / ' . (int) $clinic_thumbnail_height; ?>;background:<?php echo esc_attr( Helper::avatar_gradient( $clinic_id ) ); ?>"><?php echo esc_html( \WpDreamers\WPDDB\Controllers\Model\Doctor::initials( $clinic_id ) ); ?></span>
+			</a>
+		<?php } ?>
 	</div>
 </div>

@@ -13,11 +13,11 @@
 }
 
 if ( 1 != $pages ) : ?>
-    <nav aria-label="Page navigation" role="navigation">
+    <nav aria-label="<?php esc_attr_e( 'Page navigation', 'doc-booker' ); ?>" role="navigation">
         <ul class="wpddb-pagination">
 			<?php if ( $paged > 1 && $showItems < $pages ) : ?>
-                <li class="page-item"><a class="page-link" href="<?php esc_url(get_pagenum_link( $paged - 1 ));  ?>"
-                                         aria-label="Previous Page"><span>&laquo;</span></a></li>
+                <li class="page-item"><a class="page-link" href="<?php echo esc_url( get_pagenum_link( $paged - 1 ) ); ?>"
+                                         aria-label="<?php esc_attr_e( 'Previous page', 'doc-booker' ); ?>"><span>&laquo;</span></a></li>
 			<?php endif; ?>
 
 			<?php for ( $i = 1; $i <= $pages; $i ++ ): ?>
@@ -31,7 +31,7 @@ if ( 1 != $pages ) : ?>
 
 			<?php if ( $paged < $pages && $showItems < $pages ) : ?>
                 <li class="page-item"><a class="page-link" href="<?php echo esc_url(get_pagenum_link( $paged + 1 )); ?>"
-                                         aria-label="Next Page"><span>&raquo;</span></a></li>
+                                         aria-label="<?php esc_attr_e( 'Next page', 'doc-booker' ); ?>"><span>&raquo;</span></a></li>
 			<?php endif; ?>
 
         </ul>

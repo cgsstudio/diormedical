@@ -13,7 +13,7 @@ defined('ABSPATH') || exit;
 Helper::get_header($wp_version);
 
 $grid_columns           = WpddbOptions::get_option( 'clinic_grid_columns','wpddb_clinic_settings') ?:'3';
-$content_limit_class = function_exists('wpddbp')
+$content_limit_class = wpddb()->has_pro()
     ? ' wpddb-limit lines-' . ( WpddbOptions::get_option( 'content_limit', 'wpddb_clinic_settings' ) ?: 3 )
     : '';
 $page_layout            = WpddbOptions::get_option('clinic_page_layout','wpddb_clinic_settings') ?:'full-width';
@@ -39,7 +39,7 @@ do_action('wpddb_before_main_content');
 
 	<header class="wpddb-header">
 		<?php if (apply_filters('wpddb_show_page_title', true)) : ?>
-			<h2 class="wpddb-clinic-header-title page-title"><?php Helper::page_title(true,'clinic'); ?></h2>
+			<h1 class="wpddb-clinic-header-title page-title"><?php Helper::page_title(true,'clinic'); ?></h1>
 		<?php endif; ?>
 	</header>
 	<div class="wpddb-clinic-wrapper">
@@ -61,7 +61,11 @@ do_action('wpddb_before_main_content');
 							$args['id'] = get_the_id();
 							Helper::render_template('content-clinic',$args);
 						}
-					}
+					}else{
+                        echo '<p class="info">';
+                        esc_html_e('No clinics were found.', 'doc-booker');
+                        echo '</p>';
+                    }
 					?>
 				</div>
 				<?php

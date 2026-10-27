@@ -2,6 +2,10 @@
 
 namespace WpDreamers\WPDDB\Controllers\Admin\Api;
 
+use WpDreamers\WPDDB\Controllers\Model\Booking;
+use WpDreamers\WPDDB\Controllers\Model\Clinic;
+use WpDreamers\WPDDB\Controllers\Model\Doctor;
+
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -23,6 +27,12 @@ class RestApi {
 	}
 
 	public function wpddb_register_rest_api_endpoint() {
+		// Staff add a booking from Booking Management.
+		register_rest_route( 'wpddb_get_data/v1', '/admin_booking', [
+			'methods'             => 'POST',
+			'callback'            => [ $this, 'admin_create_booking' ],
+			'permission_callback' => [ $this, 'verify_get_booking_access' ],
+		] );
 		register_rest_route( $this->doctor_endpoint_namespace, '/posts', array(
 			'methods'             => 'GET',
 			'callback'            => [ $this, 'get_all_doctors' ],
@@ -180,17 +190,48 @@ class RestApi {
 		) );
 		$departments = array();
 		if ( ! is_wp_error( $terms ) && $terms ) {
+			// Doctor names per department, so the booking form can search by doctor
+			// too. One query for every doctor's terms instead of one per department.
+			$names       = array();
+			$doctor_ids  = get_posts( array(
+				'post_type'      => wpddb()->post_type_doctor,
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			) );
+			// Only doctors a patient can book (a schedule at an open clinic).
+			$doctor_ids   = array_values( array_filter( $doctor_ids, function ( $id ) {
+				return (bool) Doctor::working_days( $id );
+			} ) );
+			$doctor_terms = $doctor_ids ? wp_get_object_terms( $doctor_ids, wpddb()->doctor_category, array( 'fields' => 'all_with_object_id' ) ) : array();
+			if ( ! is_wp_error( $doctor_terms ) ) {
+				foreach ( $doctor_terms as $doctor_term ) {
+					$names[ $doctor_term->term_id ][] = self::plain( get_post_field( 'post_title', $doctor_term->object_id ) );
+				}
+			}
 			foreach ( $terms as $term ) {
+				if ( empty( $names[ $term->term_id ] ) ) {
+					continue; // Nobody to book in this department.
+				}
 				$departments[] = array(
-					'id'    => $term->term_id,
-					'name'  => $term->name,
-					'slug'  => $term->slug,
-					'count' => $term->count
+					'id'      => $term->term_id,
+					// Plain text: React escapes it, and WordPress stores "&" as "&amp;".
+					'name'    => self::plain( $term->name ),
+					'slug'    => $term->slug,
+					'count'   => count( $names[ $term->term_id ] ),
+					'doctors' => $names[ $term->term_id ],
 				);
 			}
 		}
 
 		return wp_json_encode( $departments );
+	}
+
+	/**
+	 * Text for JSON a React screen shows: entities decoded (React escapes it).
+	 */
+	private static function plain( $text ) {
+		return html_entity_decode( wp_strip_all_tags( (string) $text ), ENT_QUOTES, 'UTF-8' );
 	}
 
 	public function get_doctor_by_departments( WP_REST_Request $request ) {
@@ -213,14 +254,20 @@ class RestApi {
 		$doctor_data = [];
 		if ( $doctors ) {
 			foreach ( $doctors as $doctor ) {
+				$days = Doctor::working_days( $doctor->ID );
+				if ( ! $days ) {
+					continue; // No schedule at an open clinic: nothing to book.
+				}
 				$doctor_data[] = array(
 					'id'          => $doctor->ID,
-					'name'        => $doctor->post_title,
+					'name'        => self::plain( $doctor->post_title ),
 					'designation' => get_post_meta( $doctor->ID, 'wpddb_doctor_designation', true ),
 					'speciality' => get_post_meta( $doctor->ID, 'wpddb_doctor_speciality', true ),
 					'degree' => get_post_meta( $doctor->ID, 'wpddb_doctor_degree', true ),
 					'image'       => get_the_post_thumbnail_url( $doctor->ID, 'medium' ),
 					'work_place'  => get_post_meta( $doctor->ID, 'wpddb_doctor_workplace', true ),
+					'days'        => $days,
+					'fee'         => Booking::doctor_fee( $doctor->ID ),
 				);
 			}
 		}
@@ -391,22 +438,55 @@ class RestApi {
 		// Get doctor schedule from post meta
 		$schedules = get_post_meta( $doctor_id, 'wpddb_doctor_schedule', true );
 
-		if ( ! $schedules ) {
-			return new WP_REST_Response( array( 'error' => 'No schedule found for this doctor' ), 404 );
+		// No schedule is a normal state (a new doctor), not a missing resource:
+		// an empty list, so the page can say so without an error in the console.
+		if ( ! $schedules || ! is_array( $schedules ) ) {
+			return new WP_REST_Response( array(), 200 );
 		}
-		foreach ( $schedules as &$day_schedule ) {
-			foreach ( $day_schedule['clinics'] as &$clinic ) {
+		$open_days = array();
+		foreach ( $schedules as $day_schedule ) {
+			// Only clinics that still take bookings (published).
+			$clinics = array_values( array_filter( (array) ( $day_schedule['clinics'] ?? array() ), function ( $clinic ) {
+				return Clinic::is_open( $clinic['id'] ?? 0 );
+			} ) );
+			if ( ! $clinics ) {
+				continue;
+			}
+			foreach ( $clinics as &$clinic ) {
 				usort( $clinic['timings'], function ( $a, $b ) {
 					return strtotime( $a['time'] ) - strtotime( $b['time'] );
 				} );
 			}
+			unset( $clinic );
+			$day_schedule['clinics'] = $clinics;
+			$open_days[]             = $day_schedule;
 		}
 
-		return new WP_REST_Response( $schedules, 200 );
+		return new WP_REST_Response( $open_days, 200 );
 	}
 
 	public function create_doctor_details_booking( $request ) {
-		$params = $request->get_params();
+		return $this->create_booking( $request->get_params(), 'public' );
+	}
+
+	/**
+	 * Staff add a booking from Booking Management (phone calls, walk-ins).
+	 */
+	public function admin_create_booking( WP_REST_Request $request ) {
+		return $this->create_booking( (array) $request->get_json_params() ?: $request->get_params(), 'admin' );
+	}
+
+	/**
+	 * Create a booking. 'public' is the patient's booking form; 'admin' is staff
+	 * booking for a patient: email optional, no minimum notice or booking
+	 * window, no online payment, the patient emailed only when asked.
+	 *
+	 * @param array  $params
+	 * @param string $context 'public' or 'admin'.
+	 * @return WP_REST_Response
+	 */
+	private function create_booking( array $params, $context = 'public' ) {
+		$is_admin = 'admin' === $context;
 
 		// Validate required fields
 		if (
@@ -416,7 +496,7 @@ class RestApi {
 			! isset( $params['time'] ) ||
 			! isset( $params['patient'] ) ||
 			! isset( $params['patient']['name'] ) ||
-			! isset( $params['patient']['email'] ) ||
+			( ! $is_admin && ! isset( $params['patient']['email'] ) ) ||
 			! isset( $params['patient']['phone'] )
 		) {
 			return new WP_REST_Response( array( 'error' => 'Missing required fields' ), 400 );
@@ -426,27 +506,42 @@ class RestApi {
 		$day              = sanitize_text_field( $params['day'] );
 		$clinic_id        = intval( $params['clinicId'] );
 		$time             = sanitize_text_field( $params['time'] );
-		$booking_date     = isset( $params['bookingDate'] ) ? sanitize_text_field( $params['bookingDate'] ) : null;
-		$has_booking_date = ! empty( $booking_date ) && strtotime( $booking_date );
+		$booking_date     = isset( $params['bookingDate'] ) ? sanitize_text_field( $params['bookingDate'] ) : '';
 
-        $online_booking_payment = WpddbOptions::get_option('online_booking_payment','wpddb_global_settings') ?:'on';
-        $transaction_id = '';
-        $amount_paid = 0.00;
-        $payment_status = '';
-        $payment_by = '';
-        if ( wpddb()->has_pro() && $online_booking_payment === 'on' && ! empty( $params['transactionId'] ) ) {
-            $transaction_id = sanitize_text_field( $params['transactionId'] );
-            $payment_by = sanitize_text_field( $params['paymentGateway'] );
-            $amount_paid = floatval( $params['amountPaid'] ?? 0 );
-            $payment_status = 'completed';
-        }
+		// Every booking is for a real date. The old weekday-only bookings switched
+		// the slot off in the doctor's schedule for every week, so one anonymous
+		// request could take a slot away from everyone until the weekly reset.
+		$parsed_date = \DateTime::createFromFormat( '!Y-m-d', $booking_date );
+		if ( ! $parsed_date || $parsed_date->format( 'Y-m-d' ) !== $booking_date ) {
+			return new WP_REST_Response( array( 'error' => __( 'Please choose a date for the appointment.', 'doc-booker' ) ), 400 );
+		}
+		$has_booking_date = true;
+
+		// A clinic that was unpublished or moved to the Trash takes no bookings,
+		// even if a doctor's schedule still lists it.
+		if ( ! Clinic::is_open( $clinic_id ) ) {
+			return new WP_REST_Response( array( 'error' => __( 'This clinic is not taking bookings.', 'doc-booker' ) ), 400 );
+		}
 
 		$sanitize_patient = [
 			'name'  => sanitize_text_field( $params['patient']['name'] ),
 			'phone' => sanitize_text_field( $params['patient']['phone'] ),
-			'email' => sanitize_email( $params['patient']['email'] ),
-			'note'  => sanitize_text_field( $params['patient']['notes'] ) ?? ''
+			'email' => sanitize_email( $params['patient']['email'] ?? '' ),
+			'note'  => sanitize_text_field( $params['patient']['notes'] ?? '' ),
 		];
+		// The same checks as the booking form, so empty or made-up details can't
+		// reach the patient records (an empty email used to merge strangers).
+		if ( '' === $sanitize_patient['name'] ) {
+			return new WP_REST_Response( array( 'error' => __( 'Please enter your full name.', 'doc-booker' ) ), 400 );
+		}
+		if ( '' === $sanitize_patient['phone'] ) {
+			return new WP_REST_Response( array( 'error' => __( 'Please enter your phone number.', 'doc-booker' ) ), 400 );
+		}
+		// Staff may book a patient without an email (phone call, walk-in).
+		$email_given = '' !== trim( (string) ( $params['patient']['email'] ?? '' ) );
+		if ( ( ! $is_admin || $email_given ) && ! is_email( $sanitize_patient['email'] ) ) {
+			return new WP_REST_Response( array( 'error' => __( 'Please enter a valid email address.', 'doc-booker' ) ), 400 );
+		}
 
 		$booking_id       = Helper::generate_booking_id();
 
@@ -471,12 +566,21 @@ class RestApi {
 				}
 			}
 
+			// Minimum notice (Doctor Settings); staff may book any time not yet passed.
+			if ( ! $is_admin && Booking::too_soon( $booking_date, Helper::convert_time_format( $time ) ) ) {
+				return new WP_REST_Response( array( 'error' => __( 'This time is too soon to book online. Please choose a later time.', 'doc-booker' ) ), 400 );
+			}
+
 			// Validate against pre-booking window (0 = no limit)
 			$pre_booking_window = max( 0, intval( WpddbOptions::get_option( 'pre_booking_window', 'wpddb_doctor_settings', 0 ) ) );
-			if ( $pre_booking_window > 0 ) {
-				$max_date = wp_date( 'Y-m-d', strtotime( $today . ' +' . ( $pre_booking_window - 1 ) . ' days' ) );
+			if ( $pre_booking_window > 0 && ! $is_admin ) {
+				$max_date = Helper::booking_window_end( $pre_booking_window );
 				if ( $booking_date > $max_date ) {
-					return new WP_REST_Response( array( 'error' => sprintf( 'Bookings can only be made up to %d day(s) in advance', $pre_booking_window ) ), 400 );
+					return new WP_REST_Response( array( 'error' => sprintf(
+						/* translators: %d: how many days ahead patients may book */
+						_n( 'Bookings can only be made up to %d day in advance.', 'Bookings can only be made up to %d days in advance.', $pre_booking_window, 'doc-booker' ),
+						$pre_booking_window
+					) ), 400 );
 				}
 			}
 
@@ -551,34 +655,98 @@ class RestApi {
 		global $wpdb;
 		$booking_table_name = $wpdb->prefix . 'wpddb_bookings';
 
-		// For date-based bookings, check if the slot is already booked for this specific date
-		if ( $has_booking_date ) {
-			$time_24  = Helper::convert_time_format( $time );
-			$existing = $wpdb->get_var( $wpdb->prepare(
-				"SELECT COUNT(*) FROM $booking_table_name WHERE doctor_id = %d AND booking_date = %s AND clinic_id = %d AND time = %s AND status = 'approved' AND booking_present_status = 'upcoming'",
-				$doctor_id, $booking_date, $clinic_id, $time_24
-			) );
-			if ( $existing > 0 ) {
-				return new WP_REST_Response( array( 'error' => 'Time slot not available for this date' ), 400 );
-			}
+		// Two people can press Book on the same slot at the same moment. A
+		// database lock on this doctor/date/clinic/time makes "is it free?" and
+		// "take it" one step, so only the first of them gets the slot.
+		$time_24   = Helper::convert_time_format( $time );
+		$slot_lock = 'wpddb_slot_' . md5( $doctor_id . '|' . $booking_date . '|' . $clinic_id . '|' . $time_24 );
+		// GET_LOCK answers 1 (got it), 0 (someone else holds it) or NULL (the
+		// database cannot lock, as on some hosted proxies). Only a held lock
+		// refuses the booking; without lock support it books as it always did.
+		$locked = $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK( %s, 10 )', $slot_lock ) );
+		if ( '0' === (string) $locked ) {
+			return new WP_REST_Response( array( 'error' => __( 'This time slot is being booked right now. Please try again.', 'doc-booker' ) ), 409 );
 		}
+		$release_slot = function () use ( $wpdb, $slot_lock, $locked ) {
+			if ( '1' === (string) $locked ) {
+				$wpdb->query( $wpdb->prepare( 'SELECT RELEASE_LOCK( %s )', $slot_lock ) );
+			}
+		};
+
+		$existing = $wpdb->get_var( $wpdb->prepare(
+			"SELECT COUNT(*) FROM $booking_table_name WHERE doctor_id = %d AND booking_date = %s AND clinic_id = %d AND time = %s AND status = 'approved' AND booking_present_status = 'upcoming'",
+			$doctor_id, $booking_date, $clinic_id, $time_24
+		) );
+		if ( $existing > 0 ) {
+			$release_slot();
+			return new WP_REST_Response( array( 'error' => 'Time slot not available for this date' ), 400 );
+		}
+		// Payment fields sent by the browser are never trusted on their own. A
+		// payment add-on checks them with its gateway through this filter and
+		// returns what was really paid, an error to refuse the booking, or null
+		// when there is nothing to pay; without one, nothing is recorded as paid.
+		// It runs last, once the slot is known to be free, because confirming a
+		// payment uses it up.
+		$transaction_id = '';
+		$amount_paid    = 0.00;
+		$payment_status = '';
+		$payment_by     = '';
+		// Staff bookings are never paid online here; with a fee they are pay at the clinic.
+		$payment        = $is_admin ? null : apply_filters( 'wpddb_booking_payment', null, $params, $doctor_id );
+		if ( is_wp_error( $payment ) ) {
+			$release_slot();
+			$error_data = $payment->get_error_data();
+			return new WP_REST_Response( array( 'error' => $payment->get_error_message() ), (int) ( $error_data['status'] ?? 402 ) );
+		}
+		if ( is_array( $payment ) ) {
+			$transaction_id = sanitize_text_field( $payment['transaction_id'] ?? '' );
+			$amount_paid    = (float) ( $payment['amount_paid'] ?? 0 );
+			$payment_status = sanitize_key( $payment['payment_status'] ?? '' );
+			$payment_by     = sanitize_key( $payment['payment_by'] ?? '' );
+		}
+		// Nothing paid online and the doctor has a fee: the patient pays at the
+		// clinic, and the booking says so for the front desk.
+		$doctor_fee = Booking::doctor_fee( $doctor_id );
+		if ( '' === $payment_by && $doctor_fee > 0 ) {
+			$payment_by     = 'clinic';
+			$payment_status = 'pending';
+		}
+
 		$patients_table     = $wpdb->prefix . 'wpddb_patients';
 		$inserted_booking   = false;
+		$booking_row_id     = 0;
 
-		$patient_id         = $wpdb->get_var( $wpdb->prepare(
-			"SELECT id FROM $patients_table WHERE email = %s",
-			$sanitize_patient['email']
-		) );
+		// A returning patient is the same email and name. Matching on email alone
+		// put a child booked from a parent's address under the parent's name.
+		$existing = '' !== $sanitize_patient['email']
+			? $wpdb->get_row( $wpdb->prepare(
+				"SELECT id, phone FROM $patients_table WHERE email = %s AND LOWER(full_name) = LOWER(%s) ORDER BY id ASC LIMIT 1",
+				$sanitize_patient['email'],
+				$sanitize_patient['name']
+			) )
+			// No email (a staff booking): the same name and phone is the same patient.
+			: $wpdb->get_row( $wpdb->prepare(
+				"SELECT id, phone FROM $patients_table WHERE (email IS NULL OR email = '') AND phone = %s AND LOWER(full_name) = LOWER(%s) ORDER BY id ASC LIMIT 1",
+				$sanitize_patient['phone'],
+				$sanitize_patient['name']
+			) );
+		$patient_id = $existing ? (int) $existing->id : 0;
+
+		if ( $patient_id && $existing->phone !== $sanitize_patient['phone'] ) {
+			$wpdb->update( $patients_table, [ 'phone' => $sanitize_patient['phone'] ], [ 'id' => $patient_id ], [ '%s' ], [ '%d' ] );
+		}
 
 		if ( ! $patient_id ) {
 			$wpdb->insert(
 				$patients_table,
 				[
-					'full_name' => $sanitize_patient['name'],
-					'email'     => $sanitize_patient['email'],
-					'phone'     => $sanitize_patient['phone'],
+					'full_name'    => $sanitize_patient['name'],
+					'email'        => '' !== $sanitize_patient['email'] ? $sanitize_patient['email'] : null,
+					'phone'        => $sanitize_patient['phone'],
+					// The report portal looks patients up by this code.
+					'patient_code' => Helper::generate_patient_code(),
 				],
-				[ '%s', '%s', '%s' ]
+				[ '%s', '%s', '%s', '%s' ]
 			);
 			$patient_id = $wpdb->insert_id;
 		}
@@ -609,21 +777,27 @@ class RestApi {
 			}
 
 			$inserted_booking = $wpdb->insert( $booking_table_name, $insert_data, $insert_format );
+			$booking_row_id   = $inserted_booking ? (int) $wpdb->insert_id : 0;
 		}
+		$release_slot();
 
 		if ( ! $inserted_booking ) {
 			return new WP_REST_Response( array( 'error' => 'Failed to create booking' ), 500 );
 		}
 
-		// For legacy bookings (no date), toggle is_bookable in post meta
-		// For date-based bookings, availability is determined by querying the bookings table
-		if ( ! $has_booking_date ) {
-			$schedule[ $day_index ]['clinics'][ $clinic_index ]['timings'][ $time_index ]['is_bookable'] = '';
-			update_post_meta( $doctor_id, 'wpddb_doctor_schedule', $schedule );
-		}
-
-		// Send notification emails
-		Helper::send_booking_notifications( $booking_id, $doctor_id, $day, $time, $clinic_id, $sanitize_patient, 'success', $booking_date );
+		// Send notification emails, with the fee and the patient's cancel link.
+		$new_booking = Booking::get( $booking_row_id );
+		Helper::send_booking_notifications( $booking_id, $doctor_id, $day, $time, $clinic_id, $sanitize_patient, 'success', $booking_date, [
+			'payment_by'  => $payment_by,
+			'fee'         => $doctor_fee,
+			'amount_paid' => $amount_paid,
+			'manage_url'  => $new_booking ? Booking::manage_url( $new_booking ) : '',
+			'calendar_url' => $new_booking ? ( Booking::calendar_links( $new_booking )['ics'] ?? '' ) : '',
+			// Staff bookings: the patient is emailed only when asked, and the admin
+			// gets no copy of a booking made from the admin.
+			'to_patient'   => ! $is_admin || ! empty( $params['notifyPatient'] ),
+			'to_admin'     => ! $is_admin,
+		] );
 
 		// Notify extensions (Pro plugin uses this to send a confirmation SMS).
 		do_action( 'wpddb_booking_created', [
@@ -637,11 +811,16 @@ class RestApi {
 			'day'          => $day,
 			'time'         => $time,
 			'booking_date' => $has_booking_date ? $booking_date : null,
+			'payment_by'   => $payment_by,
+			'source'       => $context,
 		] );
 
 		return new WP_REST_Response( array(
 			'success'    => true,
 			'booking_id' => $booking_id,
+			'payment_by' => $payment_by,
+			// Add-to-calendar links for the confirmation screen.
+			'calendar'   => $new_booking ? Booking::calendar_links( $new_booking ) : [],
 			'message'    => 'Booking created successfully'
 		), 201 );
 	}
@@ -661,17 +840,30 @@ class RestApi {
 		$doctor_id = intval( $request->get_param( 'id' ) );
 		$date      = sanitize_text_field( $request->get_param( 'date' ) );
 
-		if ( ! $date || ! strtotime( $date ) ) {
+		// A real YYYY-MM-DD date only: the string comparisons below would
+		// misjudge anything else strtotime() happens to understand.
+		$parsed = \DateTime::createFromFormat( '!Y-m-d', $date );
+		if ( ! $parsed || $parsed->format( 'Y-m-d' ) !== $date ) {
 			return new WP_REST_Response( array( 'error' => 'Invalid date parameter' ), 400 );
 		}
+		if ( $date < current_time( 'Y-m-d' ) ) {
+			return new WP_REST_Response( array( 'error' => 'Cannot book a date in the past' ), 400 );
+		}
+
+		// Staff booking from Booking Management: the booking window and the
+		// minimum notice are patients' rules, not theirs.
+		$for_staff = ! empty( $request->get_param( 'staff' ) ) && current_user_can( 'wpddb_manage_booking_system' );
 
 		// Enforce pre-booking window (0 = no limit)
 		$pre_booking_window = max( 0, intval( WpddbOptions::get_option( 'pre_booking_window', 'wpddb_doctor_settings', 0 ) ) );
-		if ( $pre_booking_window > 0 ) {
-			$today    = current_time( 'Y-m-d' );
-			$max_date = wp_date( 'Y-m-d', strtotime( $today . ' +' . ( $pre_booking_window - 1 ) . ' days' ) );
+		if ( $pre_booking_window > 0 && ! $for_staff ) {
+			$max_date = Helper::booking_window_end( $pre_booking_window );
 			if ( $date > $max_date ) {
-				return new WP_REST_Response( array( 'error' => sprintf( 'Date is outside the booking window (%d day(s) max)', $pre_booking_window ) ), 400 );
+				return new WP_REST_Response( array( 'error' => sprintf(
+					/* translators: %d: how many days ahead patients may book */
+					_n( 'This date is too far ahead. Bookings open %d day in advance.', 'This date is too far ahead. Bookings open %d days in advance.', $pre_booking_window, 'doc-booker' ),
+					$pre_booking_window
+				) ), 400 );
 			}
 		}
 
@@ -724,6 +916,9 @@ class RestApi {
 		$clinics_result = [];
 		foreach ( $day_schedule['clinics'] as $clinic ) {
 			$clinic_id = $clinic['id'];
+			if ( ! Clinic::is_open( $clinic_id ) ) {
+				continue;
+			}
 
 			// Check if this clinic is on holiday for the requested date
 			$is_on_holiday = false;
@@ -744,11 +939,23 @@ class RestApi {
 				$time_24     = Helper::convert_time_format( $timing['time'] );
 				$is_booked   = isset( $booked_lookup[ $clinic_id . '_' . $time_24 ] );
 				$is_past     = $is_today && strtotime( $time_24 ) <= strtotime( $now_24 );
-				$is_available = ! empty( $timing['is_bookable'] ) && ! $is_booked && ! $is_on_holiday && ! $is_past;
+				// Minimum notice (Doctor Settings): too close to now to book online.
+				$too_soon    = ! $is_past && ! $for_staff && Booking::too_soon( $date, $time_24 );
+				$is_available = ! empty( $timing['is_bookable'] ) && ! $is_booked && ! $is_on_holiday && ! $is_past && ! $too_soon;
+
+				// Why a slot can't be booked, so the page can say so instead of
+				// calling every unavailable slot "booked".
+				$reason = '';
+				if ( ! $is_available ) {
+					$reason = $is_booked ? 'booked' : ( $is_on_holiday ? 'holiday' : ( $is_past ? 'passed' : ( $too_soon ? 'notice' : 'off' ) ) );
+				}
 
 				$timings[] = [
 					'time'         => $timing['time'],
+					// How the site shows this time (Time Format); 'time' stays the value to book with.
+					'label'        => Helper::site_time_label( $timing['time'] ),
 					'is_available' => $is_available,
+					'reason'       => $reason,
 				];
 			}
 
@@ -757,18 +964,25 @@ class RestApi {
 				return strtotime( $a['time'] ) - strtotime( $b['time'] );
 			} );
 
+			$phone = is_array( $clinics_info ) && ! empty( $clinics_info[ $clinic_id ]['phone_number'] )
+				? $clinics_info[ $clinic_id ]['phone_number']
+				: get_post_meta( (int) $clinic_id, 'wpddb_clinic_hotline', true );
+
 			$clinics_result[] = [
 				'id'            => $clinic_id,
 				'name'          => $clinic['name'],
+				'address'       => (string) get_post_meta( (int) $clinic_id, 'wpddb_clinic_address', true ),
+				'phone'         => (string) $phone,
 				'timings'       => $timings,
 				'is_on_holiday' => $is_on_holiday,
 			];
 		}
 
 		return new WP_REST_Response( [
-			'date'    => $date,
-			'day'     => $weekday,
-			'clinics' => $clinics_result,
+			'date'       => $date,
+			'day'        => $weekday,
+			'date_label' => Helper::site_date_label( $date ),
+			'clinics'    => $clinics_result,
 		], 200 );
 	}
 
@@ -995,6 +1209,9 @@ class RestApi {
 		}
 
 		foreach ( $rows as &$row ) {
+			// The site's date and time formats for the admin list.
+			$row['date_label']  = ! empty( $row['booking_date'] ) ? Helper::site_date_label( $row['booking_date'] ) : Helper::weekday_label( $row['day'] ?? '' );
+			$row['time_label']  = ! empty( $row['time'] ) ? Helper::site_time_label( $row['time'] ) : '';
 			$row['doctor_name'] = $row['doctor_id'] && isset( $titles[ (int) $row['doctor_id'] ] )
 				? $titles[ (int) $row['doctor_id'] ] : '';
 			$row['clinic_name'] = $row['clinic_id'] && isset( $titles[ (int) $row['clinic_id'] ] )

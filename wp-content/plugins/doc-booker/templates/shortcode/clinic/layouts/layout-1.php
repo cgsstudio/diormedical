@@ -25,8 +25,9 @@ defined( 'ABSPATH' ) || exit;
 				?>
 			</a>
 		<?php } else {
-            // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-			echo '<a href="'. esc_url(get_the_permalink()) .'"><img class="wpddb-media no-image" src="' . esc_url(wpddb()->get_assets_uri('public/img/no-image-570x400.jpg')) . '" alt="'. the_title_attribute( array( 'echo'=> false ) ) .'"/></a>';
+			// No photo: the clinic's initials on a coloured tile, the card image's shape.
+			$ratio = ( ! empty( $custom_image_size['width'] ) && ! empty( $custom_image_size['height'] ) ) ? (int) $custom_image_size['width'] . ' / ' . (int) $custom_image_size['height'] : '570 / 400';
+			echo '<a href="' . esc_url( get_the_permalink() ) . '" class="wpddb-media" tabindex="-1" aria-hidden="true"><span class="default-media no-image clinic-initials" style="aspect-ratio:' . esc_attr( $ratio ) . ';background:' . esc_attr( Helper::avatar_gradient( get_the_ID() ) ) . '">' . esc_html( \WpDreamers\WPDDB\Controllers\Model\Doctor::initials( get_the_ID() ) ) . '</span></a>';
 		} ?>
 	</div>
 	<div class="clinic-content">

@@ -1,0 +1,67 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/api_key/submissions/search?workflowId=01a12050-38e5-74ba-967b-60dacc2bd7f7"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+  x-api-key: "{{apiKey}}"
+queryParams:
+  - key: workflowId
+    value: 01a12050-38e5-74ba-967b-60dacc2bd7f7
+    disabled: false
+    description: ""
+body:
+  type: json
+  content: "\r
+
+    {\r
+
+    \  \"searchSubmissionRequest\": {\r
+
+    \    \"searchBy\": \"Email Address\",\r
+
+    \    \"searchFor\": \"\",\r
+
+    \    \"searchByTag\": \"\",\r
+
+    \    \"additionalColumns\": [],\r
+
+    \    \"dates\": {\r
+
+    \      \"from\": \"\",\r
+
+    \      \"to\": \"\"\r
+
+    \    },\r
+
+    \    \"includeNotCompleted\": true,\r
+
+    \    \"sorting\": {\r
+
+    \      \"direction\": \"Desc\",\r
+
+    \      \"column\": \"CreatedAt\",\r
+
+    \      \"additionalColumn\": \"\"\r
+
+    \    },\r
+
+    \    \"pagination\": {\r
+
+    \      \"page\": 1,\r
+
+    \      \"limit\": 10\r
+
+    \    }\r
+
+    \  }\r
+
+    }\r\n"
+auth:
+  type: apikey
+  credentials:
+    key: X-Api-Key
+    value: "{{apiKey}}"
+    in: header
+examples: ./.resources/Search Submission.resources/examples
+order: 1000

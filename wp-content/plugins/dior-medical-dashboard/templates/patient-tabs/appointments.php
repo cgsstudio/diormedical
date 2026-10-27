@@ -2,16 +2,31 @@
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
         <div>
-            <h4 class="mb-0 text-dark" id="dior-appt-main-title" style="font-size:20px;font-weight:700;">Appointment
-                Calendar</h4>
+            <h4 class="mb-0 text-dark" id="dior-appt-main-title" style="font-size:20px;font-weight:700;">Telehealth Appointments</h4>
         </div>
         <div>
             <ul class="va-breadcrumb-list">
                 <li><a href="#"><i class="fas fa-house" style="font-size:14px;color:#4F46E5;"></i></a></li>
                 <li><span style="color:#94A3B8;">/</span></li>
-                <li class="active"><span id="dior-appt-breadcrumb-title">Appointment Calendar</span></li>
+                <li class="active"><span id="dior-appt-breadcrumb-title">Telehealth Appointments</span></li>
             </ul>
         </div>
+    </div>
+
+    <!-- Subtab Navigation Bar -->
+    <div class="dior-subtab-nav-bar px-3 px-md-4 mb-4">
+        <button type="button" class="dior-subtab-pill btn" data-appt-subtab="book" onclick="diorSwitchApptSubTab('book')">
+            <i class="fas fa-calendar-plus"></i> Book Appointment
+        </button>
+        <button type="button" class="dior-subtab-pill btn active" data-appt-subtab="today" onclick="diorSwitchApptSubTab('today')">
+            <i class="fas fa-calendar-check"></i> Today Appointments
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-appt-subtab="upcoming" onclick="diorSwitchApptSubTab('upcoming')">
+            <i class="fas fa-clock"></i> Upcoming Appointments
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-appt-subtab="past" onclick="diorSwitchApptSubTab('past')">
+            <i class="fas fa-history"></i> Past Appointments
+        </button>
     </div>
 
     <?php
@@ -98,826 +113,1325 @@
     <!-- Appointment Content Area -->
     <div class="medidash-appt-wrap">
 
-        <!-- 0. Appointment Calendar (Primary Dynamic Bootstrap 5 Calendar) -->
-        <div class="dior-subtab-panel" id="dior-subtab-calendar" style="display: block;">
-
-            <!-- Quick Stat KPI Bar (Bootstrap 5 Cards) -->
-            <div class="row g-3 mb-4">
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white p-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Total Consultations</span>
-                                <h3 class="fw-bold mb-0 text-dark mt-1"><?php echo esc_html($apt_total); ?></h3>
-                                <span class="badge bg-primary-subtle text-primary rounded-pill mt-2 px-2 py-1 small">
-                                    <i class="fas fa-calendar-check me-1"></i> Patient Records
-                                </span>
-                            </div>
-                            <div class="rounded-4 d-flex align-items-center justify-content-center"
-                                style="width: 52px; height: 52px; background: rgba(79, 70, 229, 0.1); color: #4f46e5; font-size: 22px;">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white p-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Upcoming Visits</span>
-                                <h3 class="fw-bold mb-0 text-dark mt-1"><?php echo esc_html($apt_upcoming); ?></h3>
-                                <span class="badge bg-info-subtle text-info rounded-pill mt-2 px-2 py-1 small">
-                                    <i class="fas fa-clock me-1"></i> Scheduled
-                                </span>
-                            </div>
-                            <div class="rounded-4 d-flex align-items-center justify-content-center"
-                                style="width: 52px; height: 52px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 22px;">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white p-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Telehealth Video</span>
-                                <h3 class="fw-bold mb-0 text-dark mt-1"><?php echo esc_html($apt_video); ?></h3>
-                                <span class="badge bg-success-subtle text-success rounded-pill mt-2 px-2 py-1 small">
-                                    <i class="fas fa-video me-1"></i> HD Live Room
-                                </span>
-                            </div>
-                            <div class="rounded-4 d-flex align-items-center justify-content-center"
-                                style="width: 52px; height: 52px; background: rgba(16, 185, 129, 0.1); color: #10b981; font-size: 22px;">
-                                <i class="fas fa-video"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white p-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Completed Visits</span>
-                                <h3 class="fw-bold mb-0 text-dark mt-1"><?php echo esc_html($apt_completed); ?></h3>
-                                <span
-                                    class="badge bg-secondary-subtle text-secondary rounded-pill mt-2 px-2 py-1 small">
-                                    <i class="fas fa-circle-check me-1"></i> Finalized
-                                </span>
-                            </div>
-                            <div class="rounded-4 d-flex align-items-center justify-content-center"
-                                style="width: 52px; height: 52px; background: rgba(100, 116, 139, 0.1); color: #64748b; font-size: 22px;">
-                                <i class="fas fa-circle-check"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Calendar Container Card -->
-            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden">
-                <!-- Toolbar Header -->
-                <div class="card-header bg-white border-bottom py-3 px-4">
-                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-
-                        <!-- Navigation (Prev, Month Title, Next, Today) -->
-                        <div class="d-flex align-items-center gap-2">
-                            <button type="button"
-                                class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center"
-                                id="dior-bs-cal-prev" style="width:36px;height:36px;" title="Previous Month">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <h3 class="mb-0 fw-bold text-dark fs-5 px-2 text-center" id="dior-bs-cal-title"
-                                style="min-width: 170px;">
-                                October 2026
-                            </h3>
-                            <button type="button"
-                                class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center"
-                                id="dior-bs-cal-next" style="width:36px;height:36px;" title="Next Month">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                            <button type="button"
-                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold ms-1"
-                                id="dior-bs-cal-today">
-                                Today
-                            </button>
-                        </div>
-
-                        <!-- Filters & Controls -->
-                        <div class="d-flex flex-wrap align-items-center gap-2">
-                            <!-- Type Filter -->
-                            <div class="input-group input-group-sm" style="width: auto;">
-                                <span class="input-group-text bg-light border-end-0 text-muted"><i
-                                        class="fas fa-filter"></i></span>
-                                <select id="dior-bs-cal-type-filter"
-                                    class="form-select form-select-sm border-start-0 ps-1" style="min-width: 125px;">
-                                    <option value="all">All Visits</option>
-                                    <option value="video">Video (HD)</option>
-                                    <option value="phone">Phone Visit</option>
-                                    <option value="clinic">In-Clinic</option>
-                                </select>
-                            </div>
-
-                            <!-- Status Filter -->
-                            <div class="input-group input-group-sm" style="width: auto;">
-                                <span class="input-group-text bg-light border-end-0 text-muted"><i
-                                        class="fas fa-tag"></i></span>
-                                <select id="dior-bs-cal-status-filter"
-                                    class="form-select form-select-sm border-start-0 ps-1" style="min-width: 125px;">
-                                    <option value="all">All Status</option>
-                                    <option value="confirmed">Confirmed</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
-                            </div>
-
-                            <!-- View Mode Toggle (Month vs Agenda) -->
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-primary active fw-semibold"
-                                    id="dior-bs-cal-view-month">
-                                    <i class="fas fa-calendar-days me-1"></i> Month
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary fw-semibold"
-                                    id="dior-bs-cal-view-agenda">
-                                    <i class="fas fa-list-ul me-1"></i> Agenda
-                                </button>
-                            </div>
-
-                            <!-- Book Visit Button -->
-                            <button type="button" onclick="diorOpenDocBookerModal();"
-                                class="btn btn-primary btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">
-                                <i class="fas fa-calendar-plus"></i> Book Visit
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Main Content Area: 2 Columns Grid -->
-                <div class="card-body p-3 p-lg-4">
-                    <div class="row g-4">
-
-                        <!-- Left Column: Calendar Grid / Agenda List (8 Cols) -->
-                        <div class="col-lg-8 col-12">
-
-                            <!-- 1. Month View (Bootstrap 5 Table Grid) -->
-                            <div id="dior-bs-cal-month-wrap" class="dior-bs-calendar-container">
-                                <div class="table-responsive rounded-3 border">
-                                    <table class="table table-bordered mb-0 dior-bs-cal-table">
-                                        <thead>
-                                            <tr class="text-center text-uppercase text-secondary bg-light"
-                                                style="font-size: 11px; letter-spacing: 0.8px;">
-                                                <th style="width: 14.28%; padding: 10px 4px;">Sun</th>
-                                                <th style="width: 14.28%; padding: 10px 4px;">Mon</th>
-                                                <th style="width: 14.28%; padding: 10px 4px;">Tue</th>
-                                                <th style="width: 14.28%; padding: 10px 4px;">Wed</th>
-                                                <th style="width: 14.28%; padding: 10px 4px;">Thu</th>
-                                                <th style="width: 14.28%; padding: 10px 4px;">Fri</th>
-                                                <th style="width: 14.28%; padding: 10px 4px;">Sat</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="dior-bs-cal-grid-body">
-                                            <!-- Dynamically generated month days via JS -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <!-- 2. Agenda View (Initially Hidden) -->
-                            <div id="dior-bs-cal-agenda-wrap" style="display: none;">
-                                <div id="dior-bs-cal-agenda-list" class="d-flex flex-column gap-3">
-                                    <!-- Dynamically generated agenda cards via JS -->
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- Right Column: Day Schedule & Quick Actions (4 Cols) -->
-                        <div class="col-lg-4 col-12">
-                            <div
-                                class="card border border-light-subtle rounded-4 shadow-none bg-light h-100 d-flex flex-column">
-                                <!-- Day Schedule Header -->
-                                <div
-                                    class="card-header bg-white border-bottom py-3 px-3 rounded-top-4 d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <span class="text-muted small fw-bold text-uppercase"
-                                            style="font-size: 11px;">Selected Date</span>
-                                        <h5 class="mb-0 fw-bold text-dark fs-6 mt-1" id="dior-bs-cal-selected-header">
-                                            Wednesday, Oct 14, 2026
-                                        </h5>
-                                    </div>
-                                    <span class="badge bg-primary-subtle text-primary rounded-pill px-2.5 py-1 fw-bold"
-                                        id="dior-bs-cal-selected-count">
-                                        0 Visits
-                                    </span>
-                                </div>
-
-                                <!-- Day Schedule Body -->
-                                <div class="card-body p-3 flex-grow-1 overflow-auto" id="dior-bs-cal-selected-body"
-                                    style="max-height: 480px;">
-                                    <!-- Populated dynamically via JS -->
-                                </div>
-
-                                <!-- Day Schedule Footer: Attending Doctor Banner & Legend -->
-                                <div class="card-footer bg-white border-top py-3 px-3 rounded-bottom-4">
-                                    <!-- Lead Physician Box -->
-                                    <div class="p-2.5 rounded-3 mb-3"
-                                        style="background: rgba(79, 70, 229, 0.05); border: 1px solid rgba(79, 70, 229, 0.15);">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
-                                                style="width: 32px; height: 32px; background: #4f46e5; font-size: 12px;">
-                                                MS
-                                            </div>
-                                            <div class="lh-sm">
-                                                <div class="fw-bold text-dark" style="font-size: 13px;">Dr. Marcus
-                                                    Sterling, DO</div>
-                                                <small class="text-muted" style="font-size: 11px;">Lead Telehealth
-                                                    Physician</small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Legend Indicator -->
-                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 small text-muted"
-                                        style="font-size: 11px;">
-                                        <div class="d-flex align-items-center gap-1">
-                                            <span
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: #4f46e5; display: inline-block;"></span>
-                                            <span>Video</span>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-1">
-                                            <span
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: #0ea5e9; display: inline-block;"></span>
-                                            <span>Phone</span>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-1">
-                                            <span
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
-                                            <span>Confirmed</span>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-1">
-                                            <span
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444; display: inline-block;"></span>
-                                            <span>Cancelled</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
         <!-- 1. Book Appointment -->
-        <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-book">
-            <!-- DocBooker Consultation Trigger Card -->
-            <div class="dior-booking-banner-card"
-                style="background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.25);">
-                <div style="display: flex; align-items: center; gap: 16px;">
-                    <div
-                        style="width: 52px; height: 52px; border-radius: 12px; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.45); display: flex; align-items: center; justify-content: center; font-size: 24px; color: #d4af37;">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                            <span
-                                style="display: inline-block; padding: 2px 8px; background: rgba(212, 175, 55, 0.2); color: #d4af37; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">DocBooker
-                                Live</span>
-                            <span
-                                style="display: inline-block; padding: 2px 8px; background: rgba(16, 185, 129, 0.2); color: #10b981; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Single
-                                Doctor: Dr. Marcus Sterling, DO</span>
+        <div class="dior-subtab-panel" id="dior-subtab-book" style="display: none;">
+            <?php
+            $appt_user_id = !empty($user_id) ? (int)$user_id : get_current_user_id();
+            $appt_hipaa = (!empty($hipaa_intake) && is_array($hipaa_intake)) ? $hipaa_intake : Dior_Patient_Portal_Data::get_normalized_hipaa_intake($appt_user_id);
+            $appt_has_intake = !empty($appt_hipaa) && (!empty($appt_hipaa['is_submitted']) || !empty($appt_hipaa['submitted_at']));
+
+            // Attending doctor lookup for Step 2
+            $appt_doctor_user_id = class_exists('Dior_Doctor_Resolver') ? Dior_Doctor_Resolver::get_default_doctor_id() : 4;
+            $appt_doctor_id = 1957;
+            $appt_doctor_post = get_post($appt_doctor_id);
+            if (!$appt_doctor_post || $appt_doctor_post->post_type !== 'wpddb_doctor') {
+                $published_docs = get_posts([
+                    'post_type' => 'wpddb_doctor',
+                    'post_status' => 'publish',
+                    'posts_per_page' => 1,
+                ]);
+                if (!empty($published_docs)) {
+                    $appt_doctor_post = $published_docs[0];
+                    $appt_doctor_id = $appt_doctor_post->ID;
+                }
+            }
+            $appt_doctor_name = $appt_doctor_post ? $appt_doctor_post->post_title : 'Dr. Marcus Sterling, DO';
+            $appt_doctor_spec = $appt_doctor_post ? (get_post_meta($appt_doctor_id, 'wpddb_doctor_speciality', true) ?: 'General Practice & Internal Medicine') : 'General Practice & Internal Medicine';
+            $appt_doctor_avatar = get_avatar_url($appt_doctor_user_id, ['size' => 120]) ?: (DIOR_PORTAL_URL . 'assets/images/doctor-placeholder.jpg');
+
+            $appt_patient_profile = ($appt_user_id && class_exists('Dior_Patient_Portal_Data')) ? Dior_Patient_Portal_Data::get_patient_profile($appt_user_id) : [];
+            $appt_patient_name = !empty($appt_patient_profile['full_name']) ? $appt_patient_profile['full_name'] : '';
+            $appt_patient_email = !empty($appt_patient_profile['email']) ? $appt_patient_profile['email'] : '';
+            $appt_patient_phone = !empty($appt_patient_profile['phone']) ? $appt_patient_profile['phone'] : (!empty($appt_hipaa['phone']) ? $appt_hipaa['phone'] : '');
+            $appt_patient_reason = !empty($appt_hipaa['service_condition']) ? $appt_hipaa['service_condition'] : (!empty($appt_hipaa['symptoms']) ? $appt_hipaa['symptoms'] : 'General Consultation');
+            $appt_today_ymd = current_time('Y-m-d');
+            ?>
+
+            <!-- ── ELEGANT FULL-WIDTH 3-STEP TIMELINE ── -->
+            <div class="card border-0 shadow-sm rounded-4 px-3 px-md-4 py-3 py-md-4 mb-4 mb-md-5 bg-white" id="dior-booking-stepper-card">
+                <!-- Hidden DOM elements to maintain full JS backward compatibility -->
+                <span id="dior-stepper-step-heading" class="d-none">STEP 1 OF 3</span>
+                <span id="dior-stepper-est-time" class="d-none">Est. 4 mins remaining</span>
+                <span id="dior-stepper-circle-text" class="d-none">1/3</span>
+                <svg class="d-none"><circle id="dior-stepper-circle-svg"></circle></svg>
+
+                <div class="row g-0 align-items-center my-0" id="dior-stepper-steps-row">
+                    <!-- Step 1: Clinical Intake -->
+                    <div class="col-12 col-md-4 pe-md-3">
+                        <div id="dior-step-item-1" class="d-flex align-items-center gap-3 p-2 rounded-3" onclick="diorNavigateBookingStep(1)" style="cursor: pointer;">
+                            <div id="dior-step-icon-1" class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white fw-bold shadow-sm flex-shrink-0" style="width: 38px; height: 38px; font-size: 14px; transition: all 0.25s ease;">
+                                1
+                            </div>
+                            <div class="min-w-0 flex-grow-1">
+                                <div class="d-flex align-items-center gap-2 mb-0.5">
+                                    <span id="dior-step-tag-1" class="text-uppercase fw-bold text-primary" style="font-size: 10px; letter-spacing: 0.5px;">STEP 1</span>
+                                    <span id="dior-step-badge-1" class="badge bg-primary-subtle text-primary rounded-pill px-2 py-0.5" style="font-size: 9px; display: inline-block !important;">Current</span>
+                                </div>
+                                <div id="dior-step-title-1" class="fw-bold text-dark text-truncate" style="font-size: 14px; line-height: 1.3;">Clinical Intake</div>
+                                <div class="text-secondary text-truncate" style="font-size: 11px !important; line-height: 1.3; font-weight: 500;">Health Questionnaire &amp; History</div>
+                            </div>
                         </div>
-                        <h4 style="margin: 0 0 4px 0; color: #ffffff; font-size: 17px; font-weight: 700;">Telehealth
-                            Appointment Scheduler</h4>
-                        <p style="margin: 0; color: #94a3b8; font-size: 13px;">Complete your HIPAA intake form below or
-                            schedule your <strong>Video Visit (HD)</strong> or <strong>Phone Consultation</strong>
-                            directly.</p>
+                    </div>
+
+                    <!-- Step 2: Doctor & Time Slot -->
+                    <div class="col-12 col-md-4 px-md-3 border-start-md" style="border-left: 1px solid #E2E8F0;">
+                        <div id="dior-step-item-2" class="d-flex align-items-center gap-3 p-2 rounded-3" onclick="diorNavigateBookingStep(2)" style="cursor: pointer;">
+                            <div id="dior-step-icon-2" class="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 38px; height: 38px; font-size: 14px; background-color: #E2E8F0; color: #64748B; transition: all 0.25s ease;">
+                                2
+                            </div>
+                            <div class="min-w-0 flex-grow-1">
+                                <div class="d-flex align-items-center gap-2 mb-0.5">
+                                    <span id="dior-step-tag-2" class="text-uppercase fw-semibold text-secondary" style="font-size: 10px; letter-spacing: 0.5px;">STEP 2</span>
+                                    <span id="dior-step-badge-2" class="badge bg-primary-subtle text-primary rounded-pill px-2 py-0.5" style="font-size: 9px; display: none !important;">Current</span>
+                                </div>
+                                <div id="dior-step-title-2" class="fw-bold text-secondary text-truncate" style="font-size: 14px; line-height: 1.3;">Provider &amp; Time Slot</div>
+                                <div class="text-secondary text-truncate" style="font-size: 11px !important; line-height: 1.3; font-weight: 500;">Doctor &amp; Availability</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Confirmation -->
+                    <div class="col-12 col-md-4 ps-md-3 border-start-md" style="border-left: 1px solid #E2E8F0;">
+                        <div id="dior-step-item-3" class="d-flex align-items-center gap-3 p-2 rounded-3" onclick="diorNavigateBookingStep(3)" style="cursor: pointer;">
+                            <div id="dior-step-icon-3" class="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 38px; height: 38px; font-size: 14px; background-color: #E2E8F0; color: #64748B; transition: all 0.25s ease;">
+                                3
+                            </div>
+                            <div class="min-w-0 flex-grow-1">
+                                <div class="d-flex align-items-center gap-2 mb-0.5">
+                                    <span id="dior-step-tag-3" class="text-uppercase fw-semibold text-secondary" style="font-size: 10px; letter-spacing: 0.5px;">STEP 3</span>
+                                    <span id="dior-step-badge-3" class="badge bg-primary-subtle text-primary rounded-pill px-2 py-0.5" style="font-size: 9px; display: none !important;">Current</span>
+                                </div>
+                                <div id="dior-step-title-3" class="fw-bold text-secondary text-truncate" style="font-size: 14px; line-height: 1.3;">Confirmation</div>
+                                <div class="text-secondary text-truncate" style="font-size: 11px !important; line-height: 1.3; font-weight: 500;">Summary &amp; Video Link</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button type="button" onclick="diorOpenDocBookerModal();" class="dior-btn-gold-primary btn"
-                    style="background: linear-gradient(135deg, #d4af37 0%, #b89628 100%); color: #0f172a; border: none; font-weight: 700; padding: 12px 22px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35); transition: all 0.2s ease;">
-                    <i class="fa-solid fa-calendar-plus"></i> Schedule Appointment Now
-                </button>
+
+                <!-- Hidden line elements for JS backward compatibility -->
+                <div class="d-none">
+                    <div id="dior-step-line-1"></div>
+                    <div id="dior-step-line-2"></div>
+                </div>
             </div>
 
-            <div class="medidash-card">
-                <div class="medidash-card-body">
-                    <div class="dior-hipaa-embed-container">
+            <!-- ── STEP 1: CLINICAL INTAKE (100% Bootstrap 5 - Clean, Seamless, No Background Card) ── -->
+            <div id="dior-step-pane-1" class="dior-step-pane">
+                <!-- Mandatory Intake Reminder Alert (Appears only if user attempts to skip) -->
+                <div id="dior-intake-mandatory-alert" class="alert alert-warning border-0 rounded-3 py-2 px-3 small d-none mb-3">
+                    <i class="fas fa-circle-exclamation me-2"></i><strong>Clinical Intake Required:</strong> Please complete and submit the medical questionnaire below before selecting your provider and time slot.
+                </div>
+
+                <!-- Clinical Intake Form (BAA warning notice cropped out cleanly) -->
+                <div class="w-100 mb-4 overflow-hidden position-relative" style="border-radius: 16px;">
+                    <div style="margin-top: -105px;">
                         <?php if (shortcode_exists('hipaatizer')): ?>
                             <?php echo do_shortcode('[hipaatizer id="01a12050-38e5-74ba-967b-60dacc2bd7f7"]'); ?>
                         <?php else: ?>
                             <iframe id="dior-hipaatizer-tab-iframe"
                                 src="https://app.hipaatizer.com/workflow/01a12050-38e5-74ba-967b-60dacc2bd7f7"
-                                allow="microphone; camera; payment" title="HIPAAtizer Clinical Intake &amp; Booking Form"
-                                style="width: 100%; max-width: 100%; height: 850px; min-height: 750px; border: none; border-radius: 10px; display: block;"
+                                allow="microphone; camera; payment" title="Clinical Intake &amp; Booking Form"
+                                style="width: 100%; max-width: 100%; min-width: 100%; height: 850px; min-height: 750px; border: none; display: block; background: transparent;"
                                 loading="lazy"></iframe>
                         <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── STEP 2: DOCBOOKER APPOINTMENT SCHEDULING ── -->
+            <div id="dior-step-pane-2" class="dior-step-pane d-none">
+                <!-- Verified Status Strip -->
+                <div class="card border-0 shadow-sm rounded-4 p-3 px-4 mb-4 bg-white d-flex flex-row align-items-center justify-content-between flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold">
+                            <i class="fas fa-check-circle me-1"></i> Intake Form Verified
+                        </span>
+                        <span class="text-secondary small fw-medium">Clinical questionnaire on file. Now choose your provider, format, and preferred time slot.</span>
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1 small fw-semibold" onclick="diorGoToBookingStep(1);">
+                        <i class="fas fa-pen me-1"></i> Edit Intake
+                    </button>
+                </div>
+
+                <!-- Attending Physician Card -->
+                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 bg-white">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="position-relative">
+                                <img src="<?php echo esc_url($appt_doctor_avatar); ?>" alt="<?php echo esc_attr($appt_doctor_name); ?>" class="rounded-circle border shadow-sm" style="width: 58px; height: 58px; object-fit: cover; flex-shrink: 0;">
+                                <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white border-2 rounded-circle" title="Available for Telehealth"></span>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-0.5 small fw-semibold">Attending Physician</span>
+                                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5 small"><i class="fas fa-certificate text-primary me-1"></i> Board Certified</span>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-0 text-truncate"><?php echo esc_html($appt_doctor_name); ?></h5>
+                                <div class="text-secondary small text-truncate mt-0.5"><?php echo esc_html($appt_doctor_spec); ?> &bull; Dior Medical Urgent Care</div>
+                            </div>
+                        </div>
+                        <div class="text-end d-none d-md-block">
+                            <span class="badge bg-light text-dark border rounded-pill px-3 py-1.5 small fw-semibold">
+                                <i class="fas fa-video text-primary me-1"></i> Telehealth Verified
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DocBooker Inline Form -->
+                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 bg-white">
+                    <?php
+                    $step2_initial_slots = class_exists('Dior_Medical_Dashboard')
+                        ? Dior_Medical_Dashboard::get_doctor_slots_for_date($appt_doctor_id, $appt_today_ymd)
+                        : [];
+                    $step2_first_slot_time = '';
+                    foreach ($step2_initial_slots as $st) {
+                        if (!empty($st['is_available'])) {
+                            $step2_first_slot_time = $st['time'];
+                            break;
+                        }
+                    }
+                    $step2_default_time = $step2_first_slot_time ?: '09:00 AM - 10:00 AM';
+                    ?>
+                    <form id="dior-step2-docbooker-form" onsubmit="diorSubmitInlineBooking(event)">
+                        <!-- Hidden meta -->
+                        <input type="hidden" name="action" value="dior_patient_book_appointment">
+                        <input type="hidden" name="nonce" value="<?php echo esc_attr(wp_create_nonce('dior_portal_nonce')); ?>">
+                        <input type="hidden" name="doctor_id" id="dior-step2-doctor-id" value="<?php echo esc_attr($appt_doctor_id); ?>">
+                        <input type="hidden" name="doctorId" value="<?php echo esc_attr($appt_doctor_id); ?>">
+                        <input type="hidden" name="doctor_name" id="dior-step2-doctor-name" value="<?php echo esc_attr($appt_doctor_name); ?>">
+                        <input type="hidden" name="provider" value="<?php echo esc_attr($appt_doctor_name); ?>">
+                        <input type="hidden" name="selected_time" id="dior-step2-selected-time" value="<?php echo esc_attr($step2_default_time); ?>">
+                        <input type="hidden" name="time" id="dior-step2-final-time" value="<?php echo esc_attr($step2_default_time); ?>">
+                        <input type="hidden" name="service_type" id="dior-step2-service-type" value="Video Visit (HD)">
+                        <input type="hidden" name="type" id="dior-step2-final-type" value="Video Visit (HD)">
+                        <input type="hidden" name="condition" id="dior-step2-final-condition" value="<?php echo esc_attr($appt_patient_reason); ?>">
+
+                        <!-- 1. Consultation Format -->
+                        <div class="mb-4">
+                            <label class="small text-uppercase text-secondary fw-bold mb-2 d-block">1. Select Consultation Format</label>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <div class="p-3 rounded-4 border border-2 border-primary bg-white shadow-sm d-flex align-items-center justify-content-between cursor-pointer dior-service-card-item active" id="dior-fmt-video" onclick="diorSelectInlineFormat('Video Visit (HD)', this)" style="cursor: pointer; transition: all 0.2s ease;">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                                                <i class="fas fa-video"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark fs-6">Telehealth Video Visit (HD)</div>
+                                                <div class="small text-secondary">Secure encrypted video consultation</div>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-circle-check text-primary fs-5 dior-fmt-check"></i>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="p-3 rounded-4 border bg-white d-flex align-items-center justify-content-between cursor-pointer dior-service-card-item opacity-75" id="dior-fmt-phone" onclick="diorSelectInlineFormat('Phone Consultation', this)" style="cursor: pointer; transition: all 0.2s ease;">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="rounded-circle bg-light text-secondary border d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                                                <i class="fas fa-phone"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark fs-6">Phone Consultation</div>
+                                                <div class="small text-secondary">Direct call to your registered phone</div>
+                                            </div>
+                                        </div>
+                                        <i class="far fa-circle text-secondary fs-5 dior-fmt-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Date & Time Selection -->
+                        <div class="mb-4">
+                            <label class="small text-uppercase text-secondary fw-bold mb-2 d-block">2. Consultation Date &amp; Available Slot</label>
+                            <div class="row g-3 mb-3">
+                                <div class="col-12 col-md-4">
+                                    <label for="dior-step2-date-input" class="small fw-semibold text-dark mb-1">Consultation Date *</label>
+                                    <input type="date" id="dior-step2-date-input" name="date" class="form-control rounded-3 py-2 px-3"
+                                           min="<?php echo esc_attr($appt_today_ymd); ?>"
+                                           value="<?php echo esc_attr($appt_today_ymd); ?>"
+                                           onchange="diorOnStep2DateChanged(this.value)" required>
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <span class="small fw-semibold text-dark">Available Time Slots *</span>
+                                        <span id="dior-step2-slots-spinner" class="small text-muted d-none">
+                                            <i class="fas fa-circle-notch fa-spin text-primary me-1"></i> Checking live slots...
+                                        </span>
+                                    </div>
+                                    <div id="dior-step2-slots-grid" class="d-flex flex-wrap gap-2">
+                                        <?php
+                                        $step2_has_available = false;
+                                        $step2_first_selected = false;
+                                        foreach ($step2_initial_slots as $s_item):
+                                            if (!empty($s_item['is_available'])):
+                                                $step2_has_available = true;
+                                                $is_active = !$step2_first_selected;
+                                                if ($is_active) {
+                                                    $step2_first_selected = true;
+                                                }
+                                        ?>
+                                            <button type="button"
+                                                    class="btn <?php echo $is_active ? 'btn-primary active' : 'btn-outline-primary'; ?> rounded-3 btn-sm py-2 px-3 dior-step2-slot-btn"
+                                                    data-time="<?php echo esc_attr($s_item['time']); ?>"
+                                                    onclick="diorSelectStep2Slot('<?php echo esc_js($s_item['time']); ?>', this)">
+                                                <?php echo esc_html($s_item['time']); ?>
+                                            </button>
+                                        <?php
+                                            endif;
+                                        endforeach;
+                                        if (!$step2_has_available):
+                                        ?>
+                                            <div class="w-100 text-center py-3 px-2 text-muted small">
+                                                <i class="fas fa-clock me-1 text-warning"></i> No further consultation slots are available for today. Please select a future date to book an appointment.
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Patient Details -->
+                        <div class="mb-4">
+                            <label class="small text-uppercase text-secondary fw-bold mb-2 d-block">3. Patient Contact &amp; Reason</label>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-4">
+                                    <label for="dior-step2-patient-name" class="small fw-semibold text-dark mb-1">Full Name *</label>
+                                    <input type="text" name="name" id="dior-step2-patient-name" class="form-control rounded-3 py-2 px-3" value="<?php echo esc_attr($appt_patient_name); ?>" placeholder="Your Full Name" required>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label for="dior-step2-patient-email" class="small fw-semibold text-dark mb-1">Email Address *</label>
+                                    <input type="email" name="email" id="dior-step2-patient-email" class="form-control rounded-3 py-2 px-3" value="<?php echo esc_attr($appt_patient_email); ?>" placeholder="you@example.com" required>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label for="dior-step2-patient-phone" class="small fw-semibold text-dark mb-1">Phone Number *</label>
+                                    <input type="tel" name="phone" id="dior-step2-patient-phone" class="form-control rounded-3 py-2 px-3" value="<?php echo esc_attr($appt_patient_phone); ?>" placeholder="(555) 000-0000" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="dior-step2-patient-notes" class="small fw-semibold text-dark mb-1">Chief Complaint / Symptoms</label>
+                                    <input type="text" name="notes" id="dior-step2-patient-notes" class="form-control rounded-3 py-2 px-3" value="<?php echo esc_attr($appt_patient_reason); ?>" placeholder="e.g. Follow-up consultation or symptoms">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feedback Box -->
+                        <div id="dior-step2-status-box" class="alert alert-danger border-0 rounded-4 p-3 mb-3 d-none"></div>
+
+                        <!-- Actions -->
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pt-2 border-top">
+                            <button type="button" class="btn btn-outline-secondary rounded-3 fw-semibold py-2 px-4" onclick="diorGoToBookingStep(1);">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Step 1
+                            </button>
+                            <button type="submit" id="dior-step2-submit-btn" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm">
+                                <span class="dior-step2-btn-text"><i class="fas fa-calendar-check me-2"></i> Confirm &amp; Schedule Appointment</span>
+                                <span class="dior-step2-btn-spinner d-none"><i class="fas fa-circle-notch fa-spin me-2"></i> Scheduling Appointment...</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ── STEP 3: THANK YOU MESSAGE ── -->
+            <div id="dior-step-pane-3" class="dior-step-pane d-none">
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-4 bg-white text-center">
+                    <div class="mx-auto mb-3 rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center shadow-sm" style="width: 72px; height: 72px;">
+                        <i class="fas fa-circle-check fs-1"></i>
+                    </div>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 small fw-semibold mb-2 mx-auto">
+                        Step 3 Complete &bull; Appointment Confirmed
+                    </span>
+                    <h3 class="fw-bold text-dark mb-2">Thank You! Your Appointment is Confirmed</h3>
+                    <p class="text-secondary small mb-4 mx-auto" style="max-width: 600px;">
+                        Your clinical intake form has been recorded, and your appointment has been successfully scheduled with your attending physician. A confirmation email and calendar invitation have been sent.
+                    </p>
+
+                    <!-- Appointment Summary Box (Clean Bootstrap 5 Card) -->
+                    <div class="card border border-light-subtle rounded-4 p-3 p-md-4 mb-4 mx-auto bg-light text-start shadow-sm" style="max-width: 680px;">
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6">
+                                <div class="small text-uppercase text-secondary fw-semibold">Attending Physician</div>
+                                <div class="fw-bold text-dark fs-6" id="dior-ty-doctor"><?php echo esc_html($appt_doctor_name); ?></div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="small text-uppercase text-secondary fw-semibold">Consultation Format</div>
+                                <div class="fw-bold text-dark fs-6" id="dior-ty-type">Video Visit (HD)</div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="small text-uppercase text-secondary fw-semibold">Date &amp; Time</div>
+                                <div class="fw-bold text-dark fs-6" id="dior-ty-datetime"><?php echo esc_html(date('M j, Y')); ?> at 09:00 AM</div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="small text-uppercase text-secondary fw-semibold">Confirmation ID</div>
+                                <div class="fw-bold text-primary fs-6" id="dior-ty-uid">APT-0000</div>
+                            </div>
+                            <div class="col-12 border-top pt-2">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                    <div class="small text-uppercase text-secondary fw-semibold">Intake Status</div>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small fw-semibold">
+                                        <i class="fas fa-check-circle me-1"></i> HIPAAtizer Intake Verified &amp; Attached
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+                        <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm" onclick="diorSwitchApptSubTab('today');">
+                            <i class="fas fa-calendar-days me-1"></i> View My Appointments
+                        </button>
+                        <button type="button" class="btn btn-outline-primary rounded-3 fw-semibold py-2 px-4" onclick="diorResetBookingFlow();">
+                            <i class="fas fa-plus me-1"></i> Book Another Appointment
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- 2. Today Appointments -->
-        <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-today">
-            <div class="va-table-wrapper">
-                <div class="va-table-wrapper">
-                    <div class="docs-card">
-                        <div class="docs-header-container">
-                            <div class="docs-title-box">
-                                <h2 class="table-title">Today's Appointments</h2>
-                                <div class="docs-title-line"></div>
-                            </div>
-                            <div class="docs-actions-wrapper">
-                                <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-
-                                    <input type="text" id="dior-today-search-input"
-                                        class="form-control border-start-0 ps-0" placeholder="Search records..."
-                                        aria-label="Search box" onkeyup="diorFilterTodayAppointments()">
-                                </div>
-                                <div class="docs-actions-group">
-                                    <button type="button" aria-label="Delete selected items"
-                                        class="btn btn-sm btn-danger btn" title="Delete Selected"
-                                        onclick="diorBulkDeleteStaticRows(this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button type="button" aria-label="Export to CSV" class="btn btn-sm btn-success btn"
-                                        title="Export to CSV" onclick="diorDownloadTodayAppointmentsCSV()">
-                                        <i class="fas fa-file-arrow-down"></i>
-                                    </button>
-                                    <button type="button" aria-label="Refresh data" class="btn btn-sm btn-info btn"
-                                        title="Refresh Page" onclick="window.location.reload()">
-                                        <i class="fas fa-rotate-right"></i>
-                                    </button>
-                                </div>
-                            </div>
+        <div class="dior-subtab-panel" id="dior-subtab-today" style="display: block;">
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white mb-4">
+                <!-- Header & Actions (Exact Reference Design Matching) -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <h5 class="fw-bold text-dark mb-0 pb-1 border-bottom border-3 border-primary">Appointments</h5>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <div class="input-group input-group-sm rounded-3 overflow-hidden border" style="width: 240px;">
+                            <span class="input-group-text bg-white border-0 text-muted ps-2.5"><i class="fas fa-search"></i></span>
+                            <input type="text" id="dior-today-search-input"
+                                class="form-control bg-white border-0 ps-1 shadow-none" placeholder="Search records..."
+                                aria-label="Search box" onkeyup="diorFilterTodayAppointments()">
                         </div>
-                        <div class="docs-table-wrapper">
-                            <table class="docs-table table table-hover" id="dior-today-appointments-table">
-                                <thead>
-                                    <tr>
-                                        <th>DOCTOR <i class="fas fa-sort"></i></th>
-                                        <th>SPECIALIZATION <i class="fas fa-sort"></i></th>
-                                        <th>DATE <i class="fas fa-sort"></i></th>
-                                        <th>TIME <i class="fas fa-sort"></i></th>
-                                        <th>TREATMENT <i class="fas fa-sort"></i></th>
-                                        <th>CONTACT <i class="fas fa-sort"></i></th>
-                                        <th>STATUS <i class="fas fa-sort"></i></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dior-today-appointments-tbody">
+                        <button type="button" class="btn btn-sm btn-primary rounded-3 px-2.5 shadow-sm"
+                            title="Add / Book Appointment" onclick="diorSwitchApptSubTab('book')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-success rounded-3 px-2.5 shadow-sm"
+                            title="Export to CSV" onclick="diorDownloadTodayAppointmentsCSV()">
+                            <i class="fas fa-file-arrow-down"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-info text-white rounded-3 px-2.5 shadow-sm"
+                            title="Refresh Page" onclick="window.location.reload()">
+                            <i class="fas fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Responsive Table Wrapper (Exact Reference Design Columns) -->
+                <div class="table-responsive mb-0">
+                    <table class="table table-hover align-middle mb-0" id="dior-today-appointments-table">
+                        <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
+                            <tr>
+                                <th class="ps-3" style="width: 40px;">
+                                    <input type="checkbox" id="dior-select-all-today"
+                                        class="form-check-input"
+                                        onclick="diorToggleSelectAllToday(this)">
+                                </th>
+                                <th>PATIENT NAME <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>APPOINTMENT DATE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>TIME <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>EMAIL <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>MOBILE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>GENDER <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>STATUS <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>ADDRESS <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>DISEASE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>LAST VISIT <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th class="text-end pe-3" style="min-width: 90px;">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dior-today-appointments-tbody" class="border-top-0">
+                            <?php
+                            $today_mock = [];
+                            $today_ymd = current_time('Y-m-d');
+                            $today_fmt = wp_date('M j, Y', strtotime($today_ymd));
+                            foreach ((array) $appointments as $apt_row) {
+                                $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
+                                $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
+                                $status = sanitize_text_field($apt_row['status'] ?? 'Upcoming');
+                                if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true))
+                                    continue;
+                                $today_mock[] = [
+                                    $apt_row['patient_name'] ?? ($apt_row['provider'] ?? ($apt_row['doctor_name'] ?? 'John Doe')),
+                                    $today_fmt,
+                                    $apt_row['time'] ?? ($apt_row['appt_time'] ?? '10:00 AM'),
+                                    $apt_row['email'] ?? 'patient@example.com',
+                                    $apt_row['phone'] ?? '+1 234 567 8901',
+                                    $apt_row['gender'] ?? 'male',
+                                    $status,
+                                    $apt_row['address'] ?? '123 Main St, New York, NY',
+                                    $apt_row['condition'] ?? ($apt_row['disease'] ?? 'Consultation'),
+                                    wp_date('M j, Y', strtotime('-30 days')),
+                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                ];
+                            }
+                            if (empty($today_mock)) {
+                                $today_mock = [
+                                    [
+                                        'John Doe',
+                                        $today_fmt,
+                                        '10:00 AM',
+                                        'john.doe@example.com',
+                                        '+1 234 567 8901',
+                                        'male',
+                                        'Upcoming',
+                                        '123 Main St, New York, NY',
+                                        'Fever',
+                                        wp_date('M j, Y', strtotime('-30 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                    ],
+                                    [
+                                        'Sarah Smith',
+                                        $today_fmt,
+                                        '11:30 AM',
+                                        'sarah.smith@example.com',
+                                        '+1 234 567 8902',
+                                        'female',
+                                        'Completed',
+                                        '456 Oak Ave, Los Angeles, CA',
+                                        'Headache',
+                                        wp_date('M j, Y', strtotime('-45 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-2.webp')
+                                    ],
+                                    [
+                                        'Michael Johnson',
+                                        $today_fmt,
+                                        '02:00 PM',
+                                        'michael.j@example.com',
+                                        '+1 234 567 8903',
+                                        'male',
+                                        'Upcoming',
+                                        '789 Pine Rd, Chicago, IL',
+                                        'Back Pain',
+                                        wp_date('M j, Y', strtotime('-25 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-1.webp')
+                                    ],
+                                    [
+                                        'Emily Davis',
+                                        $today_fmt,
+                                        '09:30 AM',
+                                        'emily.davis@example.com',
+                                        '+1 234 567 8904',
+                                        'female',
+                                        'Cancelled',
+                                        '321 Elm St, Houston, TX',
+                                        'Flu',
+                                        wp_date('M j, Y', strtotime('-15 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-4.webp')
+                                    ],
+                                    [
+                                        'David Wilson',
+                                        $today_fmt,
+                                        '03:30 PM',
+                                        'david.wilson@example.com',
+                                        '+1 234 567 8905',
+                                        'male',
+                                        'Completed',
+                                        '654 Maple Dr, Phoenix, AZ',
+                                        'Diabetes Checkup',
+                                        wp_date('M j, Y', strtotime('-60 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-3.webp')
+                                    ],
+                                    [
+                                        'Jessica Brown',
+                                        $today_fmt,
+                                        '10:30 AM',
+                                        'jessica.brown@example.com',
+                                        '+1 234 567 8906',
+                                        'female',
+                                        'Upcoming',
+                                        '987 Cedar Ln, Philadelphia, PA',
+                                        'Skin Allergy',
+                                        wp_date('M j, Y', strtotime('-20 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-5.webp')
+                                    ],
+                                    [
+                                        'James Miller',
+                                        $today_fmt,
+                                        '01:00 PM',
+                                        'james.miller@example.com',
+                                        '+1 234 567 8907',
+                                        'male',
+                                        'Upcoming',
+                                        '147 Birch St, San Antonio, TX',
+                                        'Hypertension',
+                                        wp_date('M j, Y', strtotime('-35 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-1.webp')
+                                    ],
+                                    [
+                                        'Linda Martinez',
+                                        $today_fmt,
+                                        '11:00 AM',
+                                        'linda.martinez@example.com',
+                                        '+1 234 567 8908',
+                                        'female',
+                                        'Completed',
+                                        '258 Spruce Ave, San Diego, CA',
+                                        'Arthritis',
+                                        wp_date('M j, Y', strtotime('-40 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-2.webp')
+                                    ],
+                                    [
+                                        'Robert Garcia',
+                                        $today_fmt,
+                                        '04:00 PM',
+                                        'robert.garcia@example.com',
+                                        '+1 234 567 8909',
+                                        'male',
+                                        'Upcoming',
+                                        '369 Willow Ct, Dallas, TX',
+                                        'Asthma',
+                                        wp_date('M j, Y', strtotime('-18 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-3.webp')
+                                    ],
+                                    [
+                                        'Patricia Rodriguez',
+                                        $today_fmt,
+                                        '09:00 AM',
+                                        'patricia.rodriguez@example.com',
+                                        '+1 234 567 8910',
+                                        'female',
+                                        'Upcoming',
+                                        '741 Ash Blvd, San Jose, CA',
+                                        'Migraine',
+                                        wp_date('M j, Y', strtotime('-50 days')),
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-4.webp')
+                                    ]
+                                ];
+                            }
+                            ?>
+                            <?php foreach ($today_mock as $tm): ?>
+                            <tr>
+                                <td class="ps-3">
+                                    <input type="checkbox"
+                                        class="today-row-checkbox form-check-input"
+                                        onclick="diorUpdateTodaySelectedCount()">
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2.5">
+                                        <img src="<?php echo esc_url(!empty($tm[10]) ? $tm[10] : home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>"
+                                            alt="<?php echo esc_attr($tm[0]); ?>" class="rounded-circle border shadow-sm flex-shrink-0" style="width: 32px; height: 32px; object-fit: cover;" onerror="this.src='<?php echo esc_url(home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>'">
+                                        <span class="fw-semibold text-dark"><?php echo esc_html($tm[0]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-calendar text-primary me-1"></i>
+                                        <span class="text-dark fw-medium"><?php echo esc_html($tm[1]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-clock text-primary me-1"></i>
+                                        <span class="text-dark fw-medium"><?php echo esc_html($tm[2]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-envelope text-danger me-1"></i>
+                                        <span class="text-secondary small"><?php echo esc_html($tm[3]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="fas fa-phone text-success me-1"></i>
+                                        <span class="text-secondary small"><?php echo esc_html($tm[4]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <?php if (strtolower($tm[5]) === 'female'): ?>
+                                        <span class="text-secondary small"><i class="fas fa-venus text-danger me-1"></i> female</span>
+                                    <?php else: ?>
+                                        <span class="text-secondary small"><i class="fas fa-mars text-primary me-1"></i> male</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
                                     <?php
-                                    $today_mock = [];
-                                    $today_ymd = current_time('Y-m-d');
-                                    $default_doc_img = site_url('/wp-content/uploads/2026/10/images-5.jpg');
-                                    foreach ((array) $appointments as $apt_row) {
-                                        $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
-                                        $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
-                                        $status = sanitize_text_field($apt_row['status'] ?? '');
-                                        if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true))
-                                            continue;
+                                    $st_cls = 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    if (strtolower($tm[6]) === 'completed')
+                                        $st_cls = 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    if (in_array(strtolower($tm[6]), ['cancelled', 'canceled']))
+                                        $st_cls = 'badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    if (in_array(strtolower($tm[6]), ['pending', 'in-queue']))
+                                        $st_cls = 'badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    ?>
+                                    <span class="<?php echo $st_cls; ?>"><?php echo esc_html($tm[6]); ?></span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="fas fa-location-dot text-primary me-1"></i>
+                                        <span class="text-secondary small text-truncate d-inline-block" style="max-width: 180px;"><?php echo esc_html($tm[7]); ?></span>
+                                    </div>
+                                </td>
+                                <td><span class="text-secondary small"><?php echo esc_html($tm[8]); ?></span></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-calendar text-primary me-1"></i>
+                                        <span class="text-dark fw-medium"><?php echo esc_html($tm[9]); ?></span>
+                                    </div>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
+                                        <button type="button" class="action-icon-btn edit-btn btn"
+                                            title="Edit / Reschedule" onclick="if(typeof diorOpenRescheduleModal==='function') diorOpenRescheduleModal('APT-TODAY-<?php echo esc_js($tm[0]); ?>', '<?php echo esc_js($tm[0]); ?>');">
+                                            <i class="fas fa-pen fa-xs"></i>
+                                        </button>
+                                        <button type="button" class="action-icon-btn delete-btn btn"
+                                            title="Cancel Appointment" onclick="this.closest('tr').remove(); if(typeof diorUpdateTodaySelectedCount==='function') diorUpdateTodaySelectedCount();">
+                                            <i class="fas fa-trash fa-xs"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
 
-                                        // Resolve Doctor Avatar
-                                        $doc_avatar = !empty($apt_row['avatar']) ? $apt_row['avatar'] : (!empty($apt_row['doctor_avatar']) ? $apt_row['doctor_avatar'] : '');
-                                        $doc_id = (int) ($apt_row['doctor_id'] ?? 0);
-                                        $doc_user_id = (int) ($apt_row['doctor_user_id'] ?? 0);
-
-                                        if (empty($doc_avatar) && $doc_id) {
-                                            $doc_avatar = get_post_meta($doc_id, '_wpddb_doctor_avatar', true)
-                                                ?: get_post_meta($doc_id, 'wpddb_doctor_avatar', true)
-                                                ?: get_the_post_thumbnail_url($doc_id, 'thumbnail');
-                                        }
-                                        if (empty($doc_avatar) && $doc_user_id) {
-                                            $doc_avatar = get_user_meta($doc_user_id, 'dior_profile_image', true)
-                                                ?: get_user_meta($doc_user_id, 'doctor_avatar', true)
-                                                ?: get_user_meta($doc_user_id, 'profile_picture', true);
-                                        }
-                                        if (empty($doc_avatar)) {
-                                            $doc_avatar = $default_doc_img;
-                                        }
-
-                                        // Resolve Doctor Contact
-                                        $contact = !empty($apt_row['phone']) ? $apt_row['phone'] : (!empty($apt_row['contact']) ? $apt_row['contact'] : '');
-                                        if (empty($contact) && $doc_id) {
-                                            $contact = get_post_meta($doc_id, 'wpddb_doctor_phone', true) ?: get_post_meta($doc_id, 'wpddb_doctor_email', true);
-                                        }
-                                        if (empty($contact) && $doc_user_id) {
-                                            $contact = get_user_meta($doc_user_id, 'phone', true)
-                                                ?: get_user_meta($doc_user_id, 'doctor_phone', true)
-                                                ?: get_user_meta($doc_user_id, 'billing_phone', true);
-                                            if (empty($contact)) {
-                                                $du = get_userdata($doc_user_id);
-                                                if ($du && !empty($du->user_email))
-                                                    $contact = $du->user_email;
-                                            }
-                                        }
-                                        if (empty($contact) || $contact === '—') {
-                                            $contact = '+1 (310) 555-0100';
-                                        }
-
-                                        $today_mock[] = [
-                                            $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? 'Dr. Marcus Sterling, DO'),
-                                            $apt_row['provider_spec'] ?? 'General Practice & Internal Medicine',
-                                            $date_ymd ? wp_date('M j, Y', strtotime($date_ymd)) : '—',
-                                            $apt_row['time'] ?? ($apt_row['appt_time'] ?? '—'),
-                                            $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? 'Telehealth Consultation')),
-                                            $contact,
-                                            $status ?: 'Confirmed',
-                                            $doc_avatar
-                                        ];
-                                    }
-
-                                    foreach ($today_mock as $tm):
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <div class="cell-content cell-image-name">
-                                                    <img src="<?php echo esc_url($tm[7]); ?>"
-                                                        alt="<?php echo esc_attr($tm[0]); ?>" class="cell-avatar"
-                                                        onerror="this.onerror=null;this.src='<?php echo esc_url($default_doc_img); ?>';">
-                                                    <span
-                                                        class="cell-text doctor-name"><?php echo esc_html($tm[0]); ?></span>
-                                                </div>
-                                            </td>
-                                            <td><span class="cell-text"><?php echo esc_html($tm[1]); ?></span></td>
-                                            <td>
-                                                <div class="cell-content cell-icon-text">
-                                                    <i class="far fa-calendar cell-icon"></i>
-                                                    <span class="cell-text"><?php echo esc_html($tm[2]); ?></span>
-                                                </div>
-                                            </td>
-                                            <td><span class="cell-text"><?php echo esc_html($tm[3]); ?></span></td>
-                                            <td><span class="cell-text"><?php echo esc_html($tm[4]); ?></span></td>
-                                            <td><span class="cell-text"><?php echo esc_html($tm[5]); ?></span></td>
-                                            <td>
-                                                <?php
-                                                $st_cls = 'status-confirm';
-                                                if (strtolower($tm[6]) === 'cancelled')
-                                                    $st_cls = 'status-cancelled';
-                                                if (strtolower($tm[6]) === 'pending')
-                                                    $st_cls = 'status-pending';
-                                                ?>
-                                                <span
-                                                    class="status-cell-text <?php echo $st_cls; ?>"><?php echo esc_html($tm[6]); ?></span>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-
+                <!-- Footer Summary with Pagination -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 px-1 border-top mt-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-secondary small fw-medium" id="dior-today-page-count">0 selected / <?php echo count($today_mock); ?> total</span>
+                    </div>
+                    <div class="master-pagination d-flex align-items-center gap-1" id="dior-today-pagination">
+                        <button type="button" class="dior-page-btn btn" disabled aria-label="Previous page"><i class="fas fa-chevron-left fa-xs"></i></button>
+                        <button type="button" class="dior-page-btn active btn" onclick="diorGoTodayPage(1)">1</button>
+                        <button type="button" class="dior-page-btn btn" disabled aria-label="Next page"><i class="fas fa-chevron-right fa-xs"></i></button>
                     </div>
                 </div>
             </div>
-
-
         </div>
 
         <!-- 3. Upcoming Appointments -->
-        <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-upcoming">
-            <div class="va-table-wrapper">
-                <div class="va-table-wrapper">
-                    <div class="docs-card">
-                        <div class="docs-header-container">
-                            <div class="docs-title-box">
-                                <h2 class="table-title">Upcoming Appointments</h2>
-                                <div class="docs-title-line"></div>
-                            </div>
-                            <div class="docs-actions-wrapper">
-                                <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
+        <div class="dior-subtab-panel" id="dior-subtab-upcoming" style="display: none;">
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white mb-4">
+                <!-- Header & Actions (Exact Reference Design Matching) -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <h5 class="fw-bold text-dark mb-0 pb-1 border-bottom border-3 border-primary">Appointments</h5>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <div class="input-group input-group-sm rounded-3 overflow-hidden border" style="width: 240px;">
+                            <span class="input-group-text bg-white border-0 text-muted ps-2.5"><i class="fas fa-search"></i></span>
+                            <input type="text" id="dior-upcoming-search-input"
+                                class="form-control bg-white border-0 ps-1 shadow-none" placeholder="Search records..."
+                                aria-label="Search box" onkeyup="diorFilterUpcomingAppointments()">
+                        </div>
+                        <button type="button" class="btn btn-sm btn-primary rounded-3 px-2.5 shadow-sm"
+                            title="Add / Book Appointment" onclick="diorSwitchApptSubTab('book')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-success rounded-3 px-2.5 shadow-sm"
+                            title="Export to CSV" onclick="diorDownloadUpcomingAppointmentsCSV()">
+                            <i class="fas fa-file-arrow-down"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-info text-white rounded-3 px-2.5 shadow-sm"
+                            title="Refresh Page" onclick="window.location.reload()">
+                            <i class="fas fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
 
-                                    <input type="text" id="dior-upcoming-search-input"
-                                        class="form-control border-start-0 ps-0" placeholder="Search records..."
-                                        aria-label="Search box" onkeyup="diorFilterUpcomingAppointments()">
-                                </div>
-                                <div class="docs-actions-group">
-                                    <button type="button" aria-label="Delete selected items"
-                                        class="btn btn-sm btn-danger dior-ic-44a70a0420 btn"
-                                        id="dior-upcoming-bulk-delete-btn" title="Delete Selected"
-                                        onclick="diorBulkDeleteUpcomingRows()">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button type="button" aria-label="Add new record" class="btn btn-sm btn-primary btn"
-                                        title="Book Appointment" data-switch-tab="appointments">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16"
-                                            style="background:transparent;">
-                                            <path
-                                                d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0" />
-                                        </svg>
-                                    </button>
-                                    <button type="button" aria-label="Export to CSV" class="btn btn-sm btn-success btn"
-                                        title="Export to CSV" onclick="diorDownloadUpcomingAppointmentsCSV()">
-                                        <i class="fas fa-file-arrow-down"></i>
-                                    </button>
-                                    <button type="button" aria-label="Refresh data" class="btn btn-sm btn-info btn"
-                                        title="Refresh Page" onclick="window.location.reload()">
-                                        <i class="fas fa-rotate-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="docs-table-wrapper">
-                            <table class="docs-table table table-hover" id="dior-upcoming-appointments-table">
-                                <thead>
-                                    <tr>
-                                        <th class="dior-ic-5c9987d36c">
-                                            <input type="checkbox" id="dior-select-all-upcoming"
-                                                class="master-checkbox form-check-input"
-                                                onclick="diorToggleSelectAllUpcoming(this)">
-                                        </th>
-                                        <th>DOCTOR <i class="fas fa-sort"></i></th>
-                                        <th>DATE <i class="fas fa-sort"></i></th>
-                                        <th>TIME <i class="fas fa-sort"></i></th>
-                                        <th>INJURY <i class="fas fa-sort"></i></th>
-                                        <th>STATUS <i class="fas fa-sort"></i></th>
-                                        <th>NOTES <i class="fas fa-sort"></i></th>
-                                        <th class="dior-ic-d5c209e67c">ACTIONS <i class="fas fa-sort"></i></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dior-upcoming-appointments-tbody">
+                <!-- Responsive Table Wrapper (Exact Reference Design Columns) -->
+                <div class="table-responsive mb-0">
+                    <table class="table table-hover align-middle mb-0" id="dior-upcoming-appointments-table">
+                        <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
+                            <tr>
+                                <th class="ps-3" style="width: 40px;">
+                                    <input type="checkbox" id="dior-select-all-upcoming"
+                                        class="form-check-input"
+                                        onclick="diorToggleSelectAllUpcoming(this)">
+                                </th>
+                                <th>PATIENT NAME <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>APPOINTMENT DATE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>TIME <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>EMAIL <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>MOBILE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>GENDER <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>STATUS <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>ADDRESS <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>DISEASE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>LAST VISIT <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th class="text-end pe-3" style="min-width: 90px;">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dior-upcoming-appointments-tbody" class="border-top-0">
+                            <?php
+                            $upcoming_mock = [];
+                            $today_ymd = current_time('Y-m-d');
+                            foreach ((array) $appointments as $apt_row) {
+                                $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
+                                $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
+                                $status = sanitize_text_field($apt_row['status'] ?? 'Scheduled');
+                                if (!$date_ymd || $date_ymd < $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled', 'completed', 'done'], true))
+                                    continue;
+                                $upcoming_mock[] = [
+                                    $apt_row['patient_name'] ?? ($apt_row['provider'] ?? ($apt_row['doctor_name'] ?? 'John Doe')),
+                                    wp_date('M j, Y', strtotime($date_ymd)),
+                                    $apt_row['time'] ?? ($apt_row['appt_time'] ?? '10:00 AM'),
+                                    $apt_row['email'] ?? 'patient@example.com',
+                                    $apt_row['phone'] ?? '+1 234 567 8901',
+                                    $apt_row['gender'] ?? 'male',
+                                    $status,
+                                    $apt_row['address'] ?? '123 Main St, New York, NY',
+                                    $apt_row['condition'] ?? ($apt_row['disease'] ?? 'Consultation'),
+                                    wp_date('M j, Y', strtotime('-30 days')),
+                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                ];
+                            }
+                            if (empty($upcoming_mock)) {
+                                $upcoming_mock = [
+                                    [
+                                        'John Doe',
+                                        'Jan 15, 2026',
+                                        '10:00 AM',
+                                        'john.doe@example.com',
+                                        '+1 234 567 8901',
+                                        'male',
+                                        'Upcoming',
+                                        '123 Main St, New York, NY',
+                                        'Fever',
+                                        'Dec 10, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                    ],
+                                    [
+                                        'Sarah Smith',
+                                        'Jan 16, 2026',
+                                        '11:30 AM',
+                                        'sarah.smith@example.com',
+                                        '+1 234 567 8902',
+                                        'female',
+                                        'Completed',
+                                        '456 Oak Ave, Los Angeles, CA',
+                                        'Headache',
+                                        'Nov 20, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-2.webp')
+                                    ],
+                                    [
+                                        'Michael Johnson',
+                                        'Jan 17, 2026',
+                                        '02:00 PM',
+                                        'michael.j@example.com',
+                                        '+1 234 567 8903',
+                                        'male',
+                                        'Upcoming',
+                                        '789 Pine Rd, Chicago, IL',
+                                        'Back Pain',
+                                        'Oct 5, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-3.webp')
+                                    ],
+                                    [
+                                        'Emily Davis',
+                                        'Jan 18, 2026',
+                                        '09:30 AM',
+                                        'emily.davis@example.com',
+                                        '+1 234 567 8904',
+                                        'female',
+                                        'Cancelled',
+                                        '321 Elm St, Houston, TX',
+                                        'Flu',
+                                        'Dec 1, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-4.webp')
+                                    ],
+                                    [
+                                        'David Wilson',
+                                        'Jan 19, 2026',
+                                        '03:30 PM',
+                                        'david.wilson@example.com',
+                                        '+1 234 567 8905',
+                                        'male',
+                                        'Completed',
+                                        '654 Maple Dr, Phoenix, AZ',
+                                        'Diabetes Checkup',
+                                        'Nov 15, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-1.webp')
+                                    ],
+                                    [
+                                        'Jessica Brown',
+                                        'Jan 20, 2026',
+                                        '10:30 AM',
+                                        'jessica.brown@example.com',
+                                        '+1 234 567 8906',
+                                        'female',
+                                        'Upcoming',
+                                        '987 Cedar Ln, Philadelphia, PA',
+                                        'Skin Allergy',
+                                        'Sep 20, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-5.webp')
+                                    ],
+                                    [
+                                        'James Miller',
+                                        'Jan 21, 2026',
+                                        '01:00 PM',
+                                        'james.miller@example.com',
+                                        '+1 234 567 8907',
+                                        'male',
+                                        'Upcoming',
+                                        '147 Birch St, San Antonio, TX',
+                                        'Hypertension',
+                                        'Dec 5, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                    ],
+                                    [
+                                        'Linda Martinez',
+                                        'Jan 22, 2026',
+                                        '11:00 AM',
+                                        'linda.martinez@example.com',
+                                        '+1 234 567 8908',
+                                        'female',
+                                        'Completed',
+                                        '258 Spruce Ave, San Diego, CA',
+                                        'Arthritis',
+                                        'Oct 30, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-2.webp')
+                                    ],
+                                    [
+                                        'Robert Garcia',
+                                        'Jan 23, 2026',
+                                        '04:00 PM',
+                                        'robert.garcia@example.com',
+                                        '+1 234 567 8909',
+                                        'male',
+                                        'Upcoming',
+                                        '369 Willow Ct, Dallas, TX',
+                                        'Asthma',
+                                        'Nov 25, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-3.webp')
+                                    ],
+                                    [
+                                        'Patricia Rodriguez',
+                                        'Jan 24, 2026',
+                                        '09:00 AM',
+                                        'patricia.rodriguez@example.com',
+                                        '+1 234 567 8910',
+                                        'female',
+                                        'Upcoming',
+                                        '741 Ash Blvd, San Jose, CA',
+                                        'Migraine',
+                                        'Dec 15, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-4.webp')
+                                    ]
+                                ];
+                            }
+                            ?>
+                            <?php foreach ($upcoming_mock as $um): ?>
+                            <tr>
+                                <td class="ps-3">
+                                    <input type="checkbox"
+                                        class="upcoming-row-checkbox form-check-input"
+                                        onclick="diorUpdateUpcomingSelectedCount()">
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2.5">
+                                        <img src="<?php echo esc_url(!empty($um[10]) ? $um[10] : home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>"
+                                            alt="<?php echo esc_attr($um[0]); ?>" class="rounded-circle border shadow-sm flex-shrink-0" style="width: 32px; height: 32px; object-fit: cover;" onerror="this.src='<?php echo esc_url(home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>'">
+                                        <span class="fw-semibold text-dark"><?php echo esc_html($um[0]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-calendar text-primary me-1"></i>
+                                        <span class="text-dark fw-medium"><?php echo esc_html($um[1]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-clock text-primary me-1"></i>
+                                        <span class="text-dark fw-medium"><?php echo esc_html($um[2]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-envelope text-danger me-1"></i>
+                                        <span class="text-secondary small"><?php echo esc_html($um[3]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="fas fa-phone text-success me-1"></i>
+                                        <span class="text-secondary small"><?php echo esc_html($um[4]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <?php if (strtolower($um[5]) === 'female'): ?>
+                                        <span class="text-secondary small"><i class="fas fa-venus text-danger me-1"></i> female</span>
+                                    <?php else: ?>
+                                        <span class="text-secondary small"><i class="fas fa-mars text-primary me-1"></i> male</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
                                     <?php
-                                    $upcoming_mock = [];
-                                    $today_ymd = current_time('Y-m-d');
-                                    foreach ((array) $appointments as $apt_row) {
-                                        $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
-                                        $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
-                                        $status = sanitize_text_field($apt_row['status'] ?? 'Scheduled');
-                                        if (!$date_ymd || $date_ymd < $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled', 'completed', 'done'], true))
-                                            continue;
-                                        $upcoming_mock[] = [
-                                            $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
-                                            wp_date('M j, Y', strtotime($date_ymd)),
-                                            $apt_row['time'] ?? ($apt_row['appt_time'] ?? '—'),
-                                            $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
-                                            $status,
-                                            $apt_row['notes'] ?? '—'
-                                        ];
-                                    }
-                                    ;
-                                    foreach ($upcoming_mock as $um):
-                                        ?>
-                                        <tr>
-                                            <td class="dior-ic-d5c209e67c">
-                                                <input type="checkbox"
-                                                    class="master-checkbox upcoming-row-checkbox form-check-input"
-                                                    onclick="diorUpdateUpcomingSelectedCount()">
-                                            </td>
-                                            <td>
-                                                <span class="cell-text doctor-name"><?php echo esc_html($um[0]); ?></span>
-                                            </td>
-                                            <td>
-                                                <div class="cell-content cell-icon-text">
-                                                    <i class="far fa-calendar cell-icon"></i>
-                                                    <span class="cell-text"><?php echo esc_html($um[1]); ?></span>
-                                                </div>
-                                            </td>
-                                            <td><span class="cell-text"><?php echo esc_html($um[2]); ?></span></td>
-                                            <td><span class="cell-text"><?php echo esc_html($um[3]); ?></span></td>
-                                            <td>
-                                                <?php
-                                                $st_cls = 'status-upcoming';
-                                                if (strtolower($um[4]) === 'completed')
-                                                    $st_cls = 'status-completed';
-                                                if (strtolower($um[4]) === 'cancelled')
-                                                    $st_cls = 'status-cancelled';
-                                                ?>
-                                                <span
-                                                    class="status-cell-text <?php echo $st_cls; ?>"><?php echo esc_html($um[4]); ?></span>
-                                            </td>
-                                            <td><span class="cell-text notes-text"><?php echo esc_html($um[5]); ?></span>
-                                            </td>
-                                            <td class="dior-ic-d5c209e67c">
-                                                <div class="cell-actions">
-                                                    <button type="button" class="action-icon-btn edit-btn btn"
-                                                        title="Edit Record"><svg xmlns="http://www.w3.org/2000/svg"
-                                                            width="16" height="16" fill="currentColor"
-                                                            class="bi bi-vector-pen" viewBox="0 0 16 16"
-                                                            style="background:transparent;">
-                                                            <path fill-rule="evenodd"
-                                                                d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                                                            <path fill-rule="evenodd"
-                                                                d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                                                        </svg></button>
-                                                    <button type="button" class="action-icon-btn delete-btn btn"
-                                                        title="Delete Record"><i class="fas fa-trash"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                    $st_cls = 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    if (strtolower($um[6]) === 'completed')
+                                        $st_cls = 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    if (in_array(strtolower($um[6]), ['cancelled', 'canceled']))
+                                        $st_cls = 'badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    if (in_array(strtolower($um[6]), ['pending', 'in-queue']))
+                                        $st_cls = 'badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    ?>
+                                    <span class="<?php echo $st_cls; ?>"><?php echo esc_html($um[6]); ?></span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="fas fa-location-dot text-primary me-1"></i>
+                                        <span class="text-secondary small text-truncate d-inline-block" style="max-width: 180px;"><?php echo esc_html($um[7]); ?></span>
+                                    </div>
+                                </td>
+                                <td><span class="text-secondary small"><?php echo esc_html($um[8]); ?></span></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-calendar text-primary me-1"></i>
+                                        <span class="text-dark fw-medium"><?php echo esc_html($um[9]); ?></span>
+                                    </div>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
+                                        <button type="button" class="action-icon-btn edit-btn btn"
+                                            title="Edit / Reschedule" onclick="if(typeof diorOpenRescheduleModal==='function') diorOpenRescheduleModal('APT-101', '<?php echo esc_js($um[0]); ?>');">
+                                            <i class="fas fa-pen fa-xs"></i>
+                                        </button>
+                                        <button type="button" class="action-icon-btn delete-btn btn"
+                                            title="Cancel Appointment" onclick="this.closest('tr').remove(); if(typeof diorUpdateUpcomingSelectedCount==='function') diorUpdateUpcomingSelectedCount();">
+                                            <i class="fas fa-trash fa-xs"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Footer Summary with Pagination -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 px-1 border-top mt-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-secondary small fw-medium" id="dior-upcoming-page-count">0 selected / <?php echo count($upcoming_mock); ?> total</span>
+                        <span id="dior-upcoming-selected-counter" class="d-none">0 selected / <?php echo count($upcoming_mock); ?> total</span>
+                    </div>
+                    <div class="master-pagination d-flex align-items-center gap-1" id="dior-upcoming-pagination">
+                        <button type="button" class="dior-page-btn btn" disabled aria-label="Previous page"><i class="fas fa-chevron-left fa-xs"></i></button>
+                        <button type="button" class="dior-page-btn active btn" onclick="diorGoUpcomingPage(1)">1</button>
+                        <button type="button" class="dior-page-btn btn" onclick="diorGoUpcomingPage(2)">2</button>
+                        <button type="button" class="dior-page-btn btn" aria-label="Next page" onclick="diorGoUpcomingPage(2)"><i class="fas fa-chevron-right fa-xs"></i></button>
                     </div>
                 </div>
             </div>
-
-
         </div>
 
         <!-- 4. Past Appointments -->
-        <!-- 4. Past Appointments -->
-        <div class="dior-subtab-panel dior-ic-44a70a0420" id="dior-subtab-past">
-            <div class="va-table-wrapper">
-                <div class="va-table-wrapper">
-                    <div class="docs-card">
-                        <div class="docs-header-container">
-                            <div class="docs-title-box">
-                                <h2 class="table-title">Past Appointments</h2>
-                                <div class="docs-title-line"></div>
-                            </div>
-                            <div class="docs-actions-wrapper">
-                                <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-
-                                    <input type="text" id="dior-past-search-input"
-                                        class="form-control border-start-0 ps-0" placeholder="Search records..."
-                                        aria-label="Search box" onkeyup="diorFilterPastAppointments()">
-                                </div>
-                                <div class="docs-actions-group">
-                                    <button type="button" aria-label="Delete selected items"
-                                        class="btn btn-sm btn-danger btn" title="Delete Selected"
-                                        onclick="diorBulkDeleteStaticRows(this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button type="button" aria-label="Export to CSV" class="btn btn-sm btn-success btn"
-                                        title="Export to CSV" onclick="diorDownloadPastAppointmentsCSV()">
-                                        <i class="fas fa-file-arrow-down"></i>
-                                    </button>
-                                    <button type="button" aria-label="Refresh data" class="btn btn-sm btn-info btn"
-                                        title="Refresh Page" onclick="window.location.reload()">
-                                        <i class="fas fa-rotate-right"></i>
-                                    </button>
-                                </div>
-                            </div>
+        <div class="dior-subtab-panel" id="dior-subtab-past" style="display: none;">
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white mb-4">
+                <!-- Header & Actions (Exact Reference Design Matching) -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <h5 class="fw-bold text-dark mb-0 pb-1 border-bottom border-3 border-primary">Appointments</h5>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <div class="input-group input-group-sm rounded-3 overflow-hidden border" style="width: 240px;">
+                            <span class="input-group-text bg-white border-0 text-muted ps-2.5"><i class="fas fa-search"></i></span>
+                            <input type="text" id="dior-past-search-input"
+                                class="form-control bg-white border-0 ps-1 shadow-none" placeholder="Search records..."
+                                aria-label="Search box" onkeyup="diorFilterPastAppointments()">
                         </div>
-                        <div class="docs-table-wrapper">
-                            <table class="docs-table table table-hover" id="dior-past-appointments-table">
-                                <thead>
-                                    <tr>
-                                        <th>DOCTOR <i class="fas fa-sort"></i></th>
-                                        <th>DATE <i class="fas fa-sort"></i></th>
-                                        <th>TIME <i class="fas fa-sort"></i></th>
-                                        <th>EMAIL <i class="fas fa-sort"></i></th>
-                                        <th>MOBILE <i class="fas fa-sort"></i></th>
-                                        <th>INJURY <i class="fas fa-sort"></i></th>
-                                        <th>TYPE <i class="fas fa-sort"></i></th>
-                                        <th>NEXT APPOINTMENT <i class="fas fa-sort"></i></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dior-past-appointments-tbody">
+                        <button type="button" class="btn btn-sm btn-primary rounded-3 px-2.5 shadow-sm"
+                            title="Add / Book Appointment" onclick="diorSwitchApptSubTab('book')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-success rounded-3 px-2.5 shadow-sm"
+                            title="Export to CSV" onclick="diorDownloadPastAppointmentsCSV()">
+                            <i class="fas fa-file-arrow-down"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-info text-white rounded-3 px-2.5 shadow-sm"
+                            title="Refresh Page" onclick="window.location.reload()">
+                            <i class="fas fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Responsive Table Wrapper (Exact Reference Design Columns) -->
+                <div class="table-responsive mb-0">
+                    <table class="table table-hover align-middle mb-0" id="dior-past-appointments-table">
+                        <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
+                            <tr>
+                                <th class="ps-3" style="width: 40px;">
+                                    <input type="checkbox" id="dior-select-all-past"
+                                        class="form-check-input"
+                                        onclick="diorToggleSelectAllPast(this)">
+                                </th>
+                                <th>PATIENT NAME <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>APPOINTMENT DATE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>TIME <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>EMAIL <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>MOBILE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>GENDER <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>STATUS <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>ADDRESS <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>DISEASE <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th>LAST VISIT <i class="fas fa-sort text-muted ms-1"></i></th>
+                                <th class="text-end pe-3" style="min-width: 90px;">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dior-past-appointments-tbody" class="border-top-0">
+                            <?php
+                            $past_mock = [];
+                            $today_ymd = current_time('Y-m-d');
+                            foreach ((array) $appointments as $apt_row) {
+                                $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
+                                $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
+                                $status = sanitize_text_field($apt_row['status'] ?? 'Completed');
+                                if (!$date_ymd || ($date_ymd >= $today_ymd && !in_array(strtolower($status), ['completed', 'done', 'past'], true)))
+                                    continue;
+                                $past_mock[] = [
+                                    $apt_row['patient_name'] ?? ($apt_row['provider'] ?? ($apt_row['doctor_name'] ?? 'John Doe')),
+                                    wp_date('M j, Y', strtotime($date_ymd)),
+                                    $apt_row['time'] ?? ($apt_row['appt_time'] ?? '10:00 AM'),
+                                    $apt_row['email'] ?? 'patient@example.com',
+                                    $apt_row['phone'] ?? '+1 234 567 8901',
+                                    $apt_row['gender'] ?? 'male',
+                                    $status,
+                                    $apt_row['address'] ?? '123 Main St, New York, NY',
+                                    $apt_row['condition'] ?? ($apt_row['disease'] ?? 'Consultation'),
+                                    wp_date('M j, Y', strtotime('-60 days')),
+                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                ];
+                            }
+                            if (empty($past_mock)) {
+                                $past_mock = [
+                                    [
+                                        'John Doe',
+                                        'Dec 10, 2025',
+                                        '10:00 AM',
+                                        'john.doe@example.com',
+                                        '+1 234 567 8901',
+                                        'male',
+                                        'Completed',
+                                        '123 Main St, New York, NY',
+                                        'Fever',
+                                        'Nov 10, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                    ],
+                                    [
+                                        'Sarah Smith',
+                                        'Nov 20, 2025',
+                                        '11:30 AM',
+                                        'sarah.smith@example.com',
+                                        '+1 234 567 8902',
+                                        'female',
+                                        'Completed',
+                                        '456 Oak Ave, Los Angeles, CA',
+                                        'Headache',
+                                        'Oct 15, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-2.webp')
+                                    ],
+                                    [
+                                        'Michael Johnson',
+                                        'Oct 05, 2025',
+                                        '02:00 PM',
+                                        'michael.j@example.com',
+                                        '+1 234 567 8903',
+                                        'male',
+                                        'Completed',
+                                        '789 Pine Rd, Chicago, IL',
+                                        'Back Pain',
+                                        'Sep 01, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-1.webp')
+                                    ],
+                                    [
+                                        'Emily Davis',
+                                        'Dec 01, 2025',
+                                        '09:30 AM',
+                                        'emily.davis@example.com',
+                                        '+1 234 567 8904',
+                                        'female',
+                                        'Cancelled',
+                                        '321 Elm St, Houston, TX',
+                                        'Flu',
+                                        'Nov 01, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-4.webp')
+                                    ],
+                                    [
+                                        'David Wilson',
+                                        'Nov 15, 2025',
+                                        '03:30 PM',
+                                        'david.wilson@example.com',
+                                        '+1 234 567 8905',
+                                        'male',
+                                        'Completed',
+                                        '654 Maple Dr, Phoenix, AZ',
+                                        'Diabetes Checkup',
+                                        'Oct 12, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-3.webp')
+                                    ],
+                                    [
+                                        'Jessica Brown',
+                                        'Sep 20, 2025',
+                                        '10:30 AM',
+                                        'jessica.brown@example.com',
+                                        '+1 234 567 8906',
+                                        'female',
+                                        'Completed',
+                                        '987 Cedar Ln, Philadelphia, PA',
+                                        'Skin Allergy',
+                                        'Aug 15, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-5.webp')
+                                    ],
+                                    [
+                                        'James Miller',
+                                        'Dec 05, 2025',
+                                        '01:00 PM',
+                                        'james.miller@example.com',
+                                        '+1 234 567 8907',
+                                        'male',
+                                        'Completed',
+                                        '147 Birch St, San Antonio, TX',
+                                        'Hypertension',
+                                        'Nov 02, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-1.webp')
+                                    ],
+                                    [
+                                        'Linda Martinez',
+                                        'Oct 30, 2025',
+                                        '11:00 AM',
+                                        'linda.martinez@example.com',
+                                        '+1 234 567 8908',
+                                        'female',
+                                        'Completed',
+                                        '258 Spruce Ave, San Diego, CA',
+                                        'Arthritis',
+                                        'Sep 25, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-2.webp')
+                                    ],
+                                    [
+                                        'Robert Garcia',
+                                        'Nov 25, 2025',
+                                        '04:00 PM',
+                                        'robert.garcia@example.com',
+                                        '+1 234 567 8909',
+                                        'male',
+                                        'Completed',
+                                        '369 Willow Ct, Dallas, TX',
+                                        'Asthma',
+                                        'Oct 18, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-3.webp')
+                                    ],
+                                    [
+                                        'Patricia Rodriguez',
+                                        'Dec 15, 2025',
+                                        '09:00 AM',
+                                        'patricia.rodriguez@example.com',
+                                        '+1 234 567 8910',
+                                        'female',
+                                        'Completed',
+                                        '741 Ash Blvd, San Jose, CA',
+                                        'Migraine',
+                                        'Nov 20, 2025',
+                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-4.webp')
+                                    ]
+                                ];
+                            }
+                            ?>
+                            <?php foreach ($past_mock as $pm): ?>
+                            <tr>
+                                <td class="ps-3">
+                                    <input type="checkbox"
+                                        class="past-row-checkbox form-check-input"
+                                        onclick="diorUpdatePastSelectedCount()">
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2.5">
+                                        <img src="<?php echo esc_url(!empty($pm[10]) ? $pm[10] : home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>"
+                                            alt="<?php echo esc_attr($pm[0]); ?>" class="rounded-circle border shadow-sm flex-shrink-0" style="width: 32px; height: 32px; object-fit: cover;" onerror="this.src='<?php echo esc_url(home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>'">
+                                        <span class="fw-semibold text-dark"><?php echo esc_html($pm[0]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-calendar text-primary me-1"></i>
+                                        <span class="text-dark fw-medium"><?php echo esc_html($pm[1]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-clock text-primary me-1"></i>
+                                        <span class="text-dark fw-medium"><?php echo esc_html($pm[2]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-envelope text-danger me-1"></i>
+                                        <span class="text-secondary small"><?php echo esc_html($pm[3]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="fas fa-phone text-success me-1"></i>
+                                        <span class="text-secondary small"><?php echo esc_html($pm[4]); ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <?php if (strtolower($pm[5]) === 'female'): ?>
+                                        <span class="text-secondary small"><i class="fas fa-venus text-danger me-1"></i> female</span>
+                                    <?php else: ?>
+                                        <span class="text-secondary small"><i class="fas fa-mars text-primary me-1"></i> male</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
                                     <?php
-                                    $past_mock = [];
-                                    $today_ymd = current_time('Y-m-d');
-                                    $default_doc_img = site_url('/wp-content/uploads/2026/10/images-5.jpg');
+                                    $st_cls = 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    if (in_array(strtolower($pm[6]), ['cancelled', 'canceled']))
+                                        $st_cls = 'badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    if (in_array(strtolower($pm[6]), ['pending', 'in-queue']))
+                                        $st_cls = 'badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    if (in_array(strtolower($pm[6]), ['upcoming', 'scheduled']))
+                                        $st_cls = 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold';
+                                    ?>
+                                    <span class="<?php echo $st_cls; ?>"><?php echo esc_html($pm[6]); ?></span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="fas fa-location-dot text-primary me-1"></i>
+                                        <span class="text-secondary small text-truncate d-inline-block" style="max-width: 180px;"><?php echo esc_html($pm[7]); ?></span>
+                                    </div>
+                                </td>
+                                <td><span class="text-secondary small"><?php echo esc_html($pm[8]); ?></span></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1.5 text-secondary">
+                                        <i class="far fa-calendar text-primary me-1"></i>
+                                        <span class="text-dark fw-medium"><?php echo esc_html($pm[9]); ?></span>
+                                    </div>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
+                                        <button type="button" class="action-icon-btn edit-btn btn"
+                                            title="Edit / Reschedule" onclick="if(typeof diorOpenRescheduleModal==='function') diorOpenRescheduleModal('APT-PAST-<?php echo esc_js($pm[0]); ?>', '<?php echo esc_js($pm[0]); ?>');">
+                                            <i class="fas fa-pen fa-xs"></i>
+                                        </button>
+                                        <button type="button" class="action-icon-btn delete-btn btn"
+                                            title="Delete Record" onclick="this.closest('tr').remove(); if(typeof diorUpdatePastSelectedCount==='function') diorUpdatePastSelectedCount();">
+                                            <i class="fas fa-trash fa-xs"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
 
-                                    // Next appointment date helper
-                                    $next_appt_str = '—';
-                                    if (!empty($next_appointment['date'])) {
-                                        $next_appt_str = wp_date('M j, Y', strtotime($next_appointment['date']));
-                                    } elseif (!empty($upcoming_list[0]['date'])) {
-                                        $next_appt_str = wp_date('M j, Y', strtotime($upcoming_list[0]['date']));
-                                    }
-
-                                    foreach ((array) $appointments as $apt_row) {
-                                        $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
-                                        $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
-                                        $status = sanitize_text_field($apt_row['status'] ?? '');
-                                        if (!$date_ymd || ($date_ymd >= $today_ymd && !in_array(strtolower($status), ['completed', 'done', 'past'], true)))
-                                            continue;
-
-                                        $doc_name = $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? 'Dr. Marcus Sterling, DO');
-                                        $doc_id = (int) ($apt_row['doctor_id'] ?? 0);
-                                        $doc_user_id = (int) ($apt_row['doctor_user_id'] ?? 0);
-
-                                        // Lookup doctor post if doc_id not directly provided
-                                        $doc_post_id = $doc_id;
-                                        if (!$doc_post_id && !empty($doc_name) && $doc_name !== '—') {
-                                            global $wpdb;
-                                            $clean_title = trim(preg_replace('/^(?:dr\.?\s*)+/i', '', str_replace([', DO', ', MD', ' DO', ' MD'], '', $doc_name)));
-                                            $found_pid = $wpdb->get_var($wpdb->prepare(
-                                                "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'wpddb_doctor' AND (post_title LIKE %s OR post_title LIKE %s) LIMIT 1",
-                                                '%' . $wpdb->esc_like($clean_title) . '%',
-                                                '%' . $wpdb->esc_like($doc_name) . '%'
-                                            ));
-                                            if ($found_pid) {
-                                                $doc_post_id = (int) $found_pid;
-                                            }
-                                        }
-
-                                        // 1. Resolve Doctor Avatar
-                                        $doc_avatar = !empty($apt_row['avatar']) ? $apt_row['avatar'] : (!empty($apt_row['doctor_avatar']) ? $apt_row['doctor_avatar'] : '');
-                                        if (empty($doc_avatar) && $doc_post_id) {
-                                            $doc_avatar = get_post_meta($doc_post_id, '_wpddb_doctor_avatar', true)
-                                                ?: get_post_meta($doc_post_id, 'wpddb_doctor_avatar', true)
-                                                ?: get_the_post_thumbnail_url($doc_post_id, 'thumbnail');
-                                        }
-                                        if (empty($doc_avatar) && $doc_user_id) {
-                                            $doc_avatar = get_user_meta($doc_user_id, 'dior_profile_image', true)
-                                                ?: get_user_meta($doc_user_id, 'doctor_avatar', true)
-                                                ?: get_user_meta($doc_user_id, 'profile_picture', true);
-                                        }
-                                        if (empty($doc_avatar)) {
-                                            $doc_avatar = $default_doc_img;
-                                        }
-
-                                        // 2. Resolve Doctor Email
-                                        $doc_email = !empty($apt_row['email']) ? $apt_row['email'] : (!empty($apt_row['doctor_email']) ? $apt_row['doctor_email'] : '');
-                                        if (empty($doc_email) && $doc_post_id) {
-                                            $doc_email = get_post_meta($doc_post_id, 'wpddb_doctor_email', true)
-                                                ?: get_post_meta($doc_post_id, 'doctor_email', true);
-                                        }
-                                        if (empty($doc_email) && $doc_user_id) {
-                                            $du = get_userdata($doc_user_id);
-                                            if ($du && !empty($du->user_email)) {
-                                                $doc_email = $du->user_email;
-                                            }
-                                        }
-                                        if (empty($doc_email)) {
-                                            $name_slug = strtolower(preg_replace('/[^a-zA-Z]/', '', str_replace(['Dr.', 'Dr', 'MD', 'DO', ','], '', $doc_name)));
-                                            $doc_email = !empty($name_slug) ? $name_slug . '@diormedical.com' : 'care@diormedical.com';
-                                        }
-
-                                        // 3. Resolve Doctor Phone / Mobile
-                                        $doc_phone = !empty($apt_row['phone']) ? $apt_row['phone'] : (!empty($apt_row['mobile']) ? $apt_row['mobile'] : (!empty($apt_row['contact']) ? $apt_row['contact'] : ''));
-                                        if (empty($doc_phone) && $doc_post_id) {
-                                            $doc_phone = get_post_meta($doc_post_id, 'wpddb_doctor_phone', true)
-                                                ?: get_post_meta($doc_post_id, 'doctor_phone', true);
-                                        }
-                                        if (empty($doc_phone) && $doc_user_id) {
-                                            $doc_phone = get_user_meta($doc_user_id, 'phone', true)
-                                                ?: get_user_meta($doc_user_id, 'doctor_phone', true)
-                                                ?: get_user_meta($doc_user_id, 'billing_phone', true);
-                                        }
-                                        if (empty($doc_phone) || $doc_phone === '—') {
-                                            $doc_phone = '+1 (310) 555-0100';
-                                        }
-
-                                        $past_mock[] = [
-                                            $doc_name,
-                                            wp_date('M j, Y', strtotime($date_ymd)),
-                                            $apt_row['time'] ?? ($apt_row['appt_time'] ?? '—'),
-                                            $doc_email,
-                                            $doc_phone,
-                                            $apt_row['condition'] ?? ($apt_row['condition_name'] ?? 'Telehealth Consultation'),
-                                            $apt_row['type'] ?? ($apt_row['visit_type'] ?? 'Video Visit (HD)'),
-                                            $next_appt_str,
-                                            $doc_avatar
-                                        ];
-                                    }
-
-                                    // Fallback sample records if empty
-                                    if (empty($past_mock)) {
-                                        $past_mock = [
-                                            ['Dr. Marcus Sterling, DO', 'Oct 13, 2026', '09:00 AM - 10:00 AM', 'marcussterling@diormedical.com', '+1 (310) 555-0100', 'Telehealth Consultation', 'Video Visit (HD)', $next_appt_str, $default_doc_img],
-                                            ['Dr. Ethan Walker', 'Oct 10, 2026', '11:30 AM', 'ethanwalker@diormedical.com', '+1 (310) 555-0100', 'Blood Pressure Review', 'Clinic Visit', $next_appt_str, $default_doc_img],
-                                        ];
-                                    }
-
-                                    foreach ($past_mock as $pm):
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <div class="cell-content cell-image-name">
-                                                    <img src="<?php echo esc_url($pm[8]); ?>"
-                                                        alt="<?php echo esc_attr($pm[0]); ?>" class="cell-avatar"
-                                                        onerror="this.onerror=null;this.src='<?php echo esc_url($default_doc_img); ?>';">
-                                                    <span
-                                                        class="cell-text doctor-name"><?php echo esc_html($pm[0]); ?></span>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="cell-content cell-icon-text">
-                                                    <i class="far fa-calendar cell-icon"></i>
-                                                    <span class="cell-text"><?php echo esc_html($pm[1]); ?></span>
-                                                </div>
-                                            </td>
-                                            <td><span class="cell-text"><?php echo esc_html($pm[2]); ?></span></td>
-                                            <td><span class="cell-text text-primary"
-                                                    style="font-size:13px;"><?php echo esc_html($pm[3]); ?></span></td>
-                                            <td><span class="cell-text"
-                                                    style="font-size:13px; color:#475569;"><?php echo esc_html($pm[4]); ?></span>
-                                            </td>
-                                            <td><span class="cell-text"><?php echo esc_html($pm[5]); ?></span></td>
-                                            <td><span class="cell-text"><?php echo esc_html($pm[6]); ?></span></td>
-                                            <td>
-                                                <div class="cell-content cell-icon-text">
-                                                    <i class="far fa-calendar cell-icon"></i>
-                                                    <span class="cell-text"><?php echo esc_html($pm[7]); ?></span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                <!-- Footer Summary with Pagination -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 px-1 border-top mt-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-secondary small fw-medium" id="dior-past-page-count">0 selected / <?php echo count($past_mock); ?> total</span>
+                    </div>
+                    <div class="master-pagination d-flex align-items-center gap-1" id="dior-past-pagination">
+                        <button type="button" class="dior-page-btn btn" disabled aria-label="Previous page"><i class="fas fa-chevron-left fa-xs"></i></button>
+                        <button type="button" class="dior-page-btn active btn" onclick="diorGoPastPage(1)">1</button>
+                        <button type="button" class="dior-page-btn btn" disabled aria-label="Next page"><i class="fas fa-chevron-right fa-xs"></i></button>
                     </div>
                 </div>
             </div>
-
         </div>
 
     </div>

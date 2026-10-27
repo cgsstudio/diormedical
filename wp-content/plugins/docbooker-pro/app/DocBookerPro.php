@@ -3,6 +3,7 @@ namespace WpDreamers\WPDDBP;
 
 use WpDreamers\WPDDBP\Controllers\Admin\Api\RestApi;
 use WpDreamers\WPDDBP\Controllers\Admin\Notice\PaymentConfigNotice;
+use WpDreamers\WPDDBP\Controllers\Payments\BookingPayment;
 use WpDreamers\WPDDBP\Controllers\AjaxPagination;
 use WpDreamers\WPDDBP\Controllers\Cron\ReportPurger;
 use WpDreamers\WPDDBP\Controllers\DepartmentTermMeta;
@@ -60,9 +61,19 @@ final class DocBookerPro{
         register_activation_hook( WPDDBP_FILE, [ Installation::class, 'activate' ] );
         register_deactivation_hook( WPDDBP_FILE, [ Installation::class, 'deactivation' ] );
 
+        // Deleting the plugin removes its data. When Freemius runs it owns the
+        // plugin's WordPress uninstall hook, so listen to its after_uninstall
+        // instead; registering our own would replace Freemius's.
+        if ( isset( $GLOBALS['dp_fs'] ) && is_object( $GLOBALS['dp_fs'] ) ) {
+            $GLOBALS['dp_fs']->add_action( 'after_uninstall', [ Installation::class, 'uninstall' ] );
+        } else {
+            register_uninstall_hook( WPDDBP_FILE, [ Installation::class, 'uninstall' ] );
+        }
+
     }
     public function load_language() {
-        load_plugin_textdomain( 'doc-booker-pro', false, WPDDBP_ABSPATH . '/languages/' );
+        // The path is relative to the plugins folder; an absolute one was never found.
+        load_plugin_textdomain( 'doc-booker-pro', false, dirname( WPDDBP_BASENAME ) . '/languages' );
     }
     /**
      * Init
@@ -75,6 +86,7 @@ final class DocBookerPro{
         }
         ScriptsController::instance();
         RestApi::instance();
+        BookingPayment::instance();
         PaymentConfigNotice::instance();
         ActionHooks::instance();
         FilterHooks::instance();
@@ -101,6 +113,9 @@ final class DocBookerPro{
         TestCatalogAdminMenu::instance();
         TestCatalogRestApi::instance();
 
+        // Staff and Lab Test Catalog as pages of the DocBooker app.
+        \WpDreamers\WPDDBP\Controllers\AppPages::instance();
+
         // Receptionist role + dashboard + REST.
         ReceptionistDashboard::instance();
         ReceptionistLoginRedirect::instance();
@@ -118,6 +133,13 @@ final class DocBookerPro{
 
         // Daily retention cron.
         ReportPurger::instance();
+
+        /**
+         * Pro passed its checks (DocBooker version, licence) and is running.
+         * The free plugin's has_pro() and the blocks wait for this, so a Pro
+         * that switched itself off counts as not installed.
+         */
+        do_action( 'wpddbp_loaded' );
     }
     public function init_hooks() {
         $this->load_language();

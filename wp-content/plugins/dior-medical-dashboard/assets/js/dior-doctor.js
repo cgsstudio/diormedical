@@ -833,20 +833,38 @@ window.diorDocSwitchTab = function (tabId, updateUrl) {
     const btns = document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn');
     btns.forEach(b => b.classList.remove('active'));
 
+    // Sync subtab pills in in-page navigation bars
+    document.querySelectorAll('.dior-subtab-pill[data-doc-tab]').forEach(pill => {
+        if (pill.getAttribute('data-doc-tab') === tabId) {
+            pill.classList.add('active');
+        } else {
+            pill.classList.remove('active');
+        }
+    });
+
     const activeBtn = document.querySelector(`#dior-doc-sidebar .dior-nav-btn[data-tab="${tabId}"]`);
     if (activeBtn) {
         activeBtn.classList.add('active');
 
-        // Automatically expand parent submenu if active tab is inside one
+        // Strict Accordion: Expand parent submenu if active tab is inside one, close all others
         const parentSubmenu = activeBtn.closest('.dior-nav-item.has-submenu');
-        if (parentSubmenu) {
-            parentSubmenu.classList.add('active', 'open');
-            const subIcon = parentSubmenu.querySelector('.submenu-icon');
-            if (subIcon) {
-                subIcon.classList.remove('fa-plus');
-                subIcon.classList.add('fa-minus');
+        document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(sub) {
+            if (parentSubmenu && sub === parentSubmenu) {
+                sub.classList.add('active', 'open');
+                const subIcon = sub.querySelector('.submenu-icon');
+                if (subIcon) {
+                    subIcon.classList.remove('fa-plus');
+                    subIcon.classList.add('fa-minus');
+                }
+            } else {
+                sub.classList.remove('active', 'open');
+                const subIcon = sub.querySelector('.submenu-icon');
+                if (subIcon) {
+                    subIcon.classList.remove('fa-minus');
+                    subIcon.classList.add('fa-plus');
+                }
             }
-        }
+        });
 
         // Dynamic Badge Dismissal: Hide notification/count badge once opened
         const badge = activeBtn.querySelector('.nav-count-badge');
@@ -880,6 +898,11 @@ window.diorDocSwitchTab = function (tabId, updateUrl) {
                 diorDoctorInitTablePagination(table, 5);
             }
         });
+
+        // Trigger income report chart if opened
+        if (tabId === 'doc-accounts-income-report' && typeof window.diorRenderIncomeChart === 'function') {
+            setTimeout(window.diorRenderIncomeChart, 50);
+        }
     }
 
     // If notifications tab opened, clear topbar bell badge and mark read in database
@@ -2885,14 +2908,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 btn.classList.toggle('active', isActive);
                 if (isActive) {
                     var parentSubmenu = btn.closest('.dior-nav-item.has-submenu');
-                    if (parentSubmenu) {
-                        parentSubmenu.classList.add('active', 'open');
-                        var subIcon = parentSubmenu.querySelector('.submenu-icon');
-                        if (subIcon) {
-                            subIcon.classList.remove('fa-plus');
-                            subIcon.classList.add('fa-minus');
+                    app.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(sub) {
+                        if (parentSubmenu && sub === parentSubmenu) {
+                            sub.classList.add('active', 'open');
+                            var subIcon = sub.querySelector('.submenu-icon');
+                            if (subIcon) {
+                                subIcon.classList.remove('fa-plus');
+                                subIcon.classList.add('fa-minus');
+                            }
+                        } else {
+                            sub.classList.remove('active', 'open');
+                            var subIcon = sub.querySelector('.submenu-icon');
+                            if (subIcon) {
+                                subIcon.classList.remove('fa-minus');
+                                subIcon.classList.add('fa-plus');
+                            }
                         }
-                    }
+                    });
                 }
             });
 

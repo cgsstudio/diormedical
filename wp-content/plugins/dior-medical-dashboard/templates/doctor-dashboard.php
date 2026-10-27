@@ -40,16 +40,16 @@
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments">
-                                <i class="fas fa-chevron-right"></i> Appointment Calendar
+                                <i class="fas fa-calendar-days"></i><span class="nav-label">Appointment Calendar</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments-view">
-                                <i class="fas fa-chevron-right"></i> View Appointment
+                                <i class="fas fa-calendar-check"></i><span class="nav-label">View Appointment</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments-book">
-                                <i class="fas fa-chevron-right"></i> Book Appointment
+                                <i class="fas fa-calendar-plus"></i><span class="nav-label">Book Appointment</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments-edit">
-                                <i class="fas fa-chevron-right"></i> Edit Appointment
+                                <i class="fas fa-pen-to-square"></i><span class="nav-label">Edit Appointment</span>
                             </button>
                         </div>
                     </div>
@@ -61,19 +61,19 @@
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-all">
-                                <i class="fas fa-chevron-right"></i> All Patients
+                                <i class="fas fa-users"></i><span class="nav-label">All Patients</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-add">
-                                <i class="fas fa-chevron-right"></i> Add Patient
+                                <i class="fas fa-user-plus"></i><span class="nav-label">Add Patient</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-edit">
-                                <i class="fas fa-chevron-right"></i> Edit Patient
+                                <i class="fas fa-user-pen"></i><span class="nav-label">Edit Patient</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-records">
-                                <i class="fas fa-chevron-right"></i> Patient Records
+                                <i class="fas fa-clipboard-user"></i><span class="nav-label">Patient Records</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-profile">
-                                <i class="fas fa-chevron-right"></i> Patient Profile
+                                <i class="fas fa-id-card"></i><span class="nav-label">Patient Profile</span>
                             </button>
                         </div>
                     </div>
@@ -88,23 +88,23 @@
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-bill-list">
-                                <i class="fas fa-chevron-right"></i> Bill List
+                                <i class="fas fa-receipt"></i><span class="nav-label">Bill List</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-add-bill">
-                                <i class="fas fa-chevron-right"></i> Add Bill
+                                <i class="fas fa-file-invoice-dollar"></i><span class="nav-label">Add Bill</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-income">
-                                <i class="fas fa-chevron-right"></i> Income
+                                <i class="fas fa-arrow-trend-up"></i><span class="nav-label">Income</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-expenses">
-                                <i class="fas fa-chevron-right"></i> Expenses
+                                <i class="fas fa-arrow-trend-down"></i><span class="nav-label">Expenses</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn"
                                 data-tab="doc-accounts-income-report">
-                                <i class="fas fa-chevron-right"></i> Income Report
+                                <i class="fas fa-chart-pie"></i><span class="nav-label">Income Report</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-invoice">
-                                <i class="fas fa-chevron-right"></i> Invoice
+                                <i class="fas fa-file-invoice"></i><span class="nav-label">Invoice</span>
                             </button>
                         </div>
                     </div>
@@ -122,10 +122,10 @@
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-pharmacy-list">
-                                <i class="fas fa-chevron-right"></i> Medicine List
+                                <i class="fas fa-pills"></i><span class="nav-label">Medicine List</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-pharmacy-add">
-                                <i class="fas fa-chevron-right"></i> Add Medicine
+                                <i class="fas fa-circle-plus"></i><span class="nav-label">Add Medicine</span>
                             </button>
                         </div>
                     </div>
@@ -138,13 +138,13 @@
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn"
                                 data-tab="doc-documents-upload">
-                                <i class="fas fa-chevron-right"></i> Upload Documents
+                                <i class="fas fa-file-arrow-up"></i><span class="nav-label">Upload Documents</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-documents-templates">
-                                <i class="fas fa-chevron-right"></i> Consent Templates
+                                <i class="fas fa-file-lines"></i><span class="nav-label">Consent Templates</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-documents-signed">
-                                <i class="fas fa-chevron-right"></i> Signed Consent
+                                <i class="fas fa-file-signature"></i><span class="nav-label">Signed Consent</span>
                             </button>
                         </div>
                     </div>
@@ -156,17 +156,17 @@
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-telemed-video">
-                                <i class="fas fa-chevron-right"></i> Video Consultation
+                                <i class="fas fa-video"></i><span class="nav-label">Video Consultation</span>
                             </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-telemed-records">
-                                <i class="fas fa-chevron-right"></i> Virtual Visit Records
+                                <i class="fas fa-clock-rotate-left"></i><span class="nav-label">Virtual Visit Records</span>
                             </button>
                         </div>
                     </div>
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-patient-review"><i
                             class="fas fa-star"></i><span class="nav-label">Feedback &amp; Reviews</span></button>
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-notifications-system">
-                        <i class="bi bi-bell"></i><span class="nav-label">Notifications</span>
+                        <i class="fas fa-bell"></i><span class="nav-label">Notifications</span>
                     </button>
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-consultation"><i
                             class="fas fa-door-open"></i><span class="nav-label">Consultation Room</span></button>
@@ -176,13 +176,33 @@
             </nav>
             <script>
                 function diorToggleSubmenu(e, menuId) {
-                    if (e) e.preventDefault();
-                    document.querySelectorAll('.dior-nav-item.has-submenu').forEach(item => {
-                        if (item.id !== menuId) {
-                            item.classList.remove('active');
+                    if (e) {
+                        if (e.preventDefault) e.preventDefault();
+                        if (e.stopPropagation) e.stopPropagation();
+                    }
+                    var target = document.getElementById(menuId);
+                    if (!target) return;
+                    var isOpen = target.classList.contains('active') || target.classList.contains('open');
+
+                    // Strict Accordion: Close ALL other submenus
+                    document.querySelectorAll('.dior-nav-item.has-submenu').forEach(function(item) {
+                        item.classList.remove('active', 'open');
+                        var icon = item.querySelector('.submenu-icon');
+                        if (icon) {
+                            icon.classList.remove('fa-minus');
+                            icon.classList.add('fa-plus');
                         }
                     });
-                    document.getElementById(menuId).classList.toggle('active');
+
+                    // If it was closed, open ONLY this one
+                    if (!isOpen) {
+                        target.classList.add('active', 'open');
+                        var icon = target.querySelector('.submenu-icon');
+                        if (icon) {
+                            icon.classList.remove('fa-plus');
+                            icon.classList.add('fa-minus');
+                        }
+                    }
                 }
             </script>
         </aside>
@@ -239,7 +259,7 @@
                             </div>
                             <div class="dior-notif-footer">
                                 <button type="button"
-                                    onclick="diorDocSwitchTab('doc-notifications-alerts'); document.getElementById('notifications-menu-item').classList.add('active');">View
+                                    onclick="diorDocSwitchTab('doc-notifications-system');">View
                                     All
                                     &rarr;</button>
                             </div>
@@ -424,7 +444,7 @@
 <div class="dior-modal-overlay dior-ic-bfefd52f66" id="dior-call-alert-modal">
     <div class="dior-modal-dialog dior-ic-c1484e0c1a dior-ic-3627f2adcb">
         <div class="dior-ic-2b0eae5150">
-            <h3 id="dior-call-alert-title" class="dior-ic-76c82d37bf"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#22c55e" class="bi bi-camera-reels" viewBox="0 0 16 16" style="background:transparent;"><path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0"/><path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1"/><path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/></svg> Video
+            <h3 id="dior-call-alert-title" class="dior-ic-76c82d37bf"><i class="fas fa-video me-1" style="color:#22c55e;"></i> Video
                 Consultation</h3>
             <button type="button" onclick="diorDocCloseCallAlert()" class="dior-ic-5e552e6636 btn">&times;</button>
         </div>

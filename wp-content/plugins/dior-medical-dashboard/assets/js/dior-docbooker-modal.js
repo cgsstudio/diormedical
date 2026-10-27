@@ -17,14 +17,558 @@
         cachedAvailability: {}
     };
 
+    // Intake submission tracking flag for mandatory Step 1 enforcement
+    window.diorBookingIntakeCompleted = false;
+    window.diorLastBookedAppointment = null;
+
+    /**
+     * Stepper Navigation: Go to specified step in 3-Step Horizontal Timeline
+     * Step 1: HIPAAtizer
+     * Step 2: DocBooker
+     * Step 3: Thank You Message
+     */
+    window.diorGoToBookingStep = function(step, apptData) {
+        step = parseInt(step, 10) || 1;
+
+        // Stepper Header Widgets
+        var stepHeading = document.getElementById('dior-stepper-step-heading');
+        var estTime = document.getElementById('dior-stepper-est-time');
+        var circleSvg = document.getElementById('dior-stepper-circle-svg');
+        var circleText = document.getElementById('dior-stepper-circle-text');
+
+        // Step Connectors and Badges
+        var line1 = document.getElementById('dior-step-line-1');
+        var line2 = document.getElementById('dior-step-line-2');
+        var tag1 = document.getElementById('dior-step-tag-1');
+        var tag2 = document.getElementById('dior-step-tag-2');
+        var tag3 = document.getElementById('dior-step-tag-3');
+        var badge1 = document.getElementById('dior-step-badge-1');
+        var badge2 = document.getElementById('dior-step-badge-2');
+        var badge3 = document.getElementById('dior-step-badge-3');
+        var title1 = document.getElementById('dior-step-title-1');
+        var title2 = document.getElementById('dior-step-title-2');
+        var title3 = document.getElementById('dior-step-title-3');
+
+        var item1 = document.getElementById('dior-step-item-1');
+        var item2 = document.getElementById('dior-step-item-2');
+        var item3 = document.getElementById('dior-step-item-3');
+        var icon1 = document.getElementById('dior-step-icon-1');
+        var icon2 = document.getElementById('dior-step-icon-2');
+        var icon3 = document.getElementById('dior-step-icon-3');
+
+        var pane1 = document.getElementById('dior-step-pane-1');
+        var pane2 = document.getElementById('dior-step-pane-2');
+        var pane3 = document.getElementById('dior-step-pane-3');
+
+        var stepText = document.getElementById('dior-stepper-step-text');
+
+        if (step === 1) {
+            if (stepHeading) stepHeading.textContent = 'STEP 1 OF 3';
+            if (estTime) estTime.textContent = 'Est. 4 mins remaining';
+            if (circleText) circleText.textContent = '1/3';
+            if (circleSvg) {
+                circleSvg.style.stroke = '#0D6EFD';
+                circleSvg.setAttribute('stroke-dashoffset', '75');
+            }
+            if (stepText) stepText.textContent = 'Step 1 of 3';
+
+            // Step 1 Active
+            if (icon1) {
+                icon1.className = 'rounded-circle d-flex align-items-center justify-content-center bg-primary text-white fw-bold shadow-sm flex-shrink-0';
+                icon1.innerHTML = '1';
+                icon1.style.backgroundColor = '';
+                icon1.style.color = '';
+            }
+            if (line1) {
+                line1.style.width = '50%';
+                line1.className = 'h-100 position-absolute start-0 top-0 rounded-pill bg-primary';
+                line1.style.backgroundColor = '';
+            }
+            if (tag1) tag1.className = 'small text-uppercase fw-bold text-primary';
+            if (badge1) {
+                badge1.className = 'badge bg-primary-subtle text-primary rounded-pill px-2 py-0.5';
+                badge1.textContent = 'Current';
+                badge1.classList.remove('d-none');
+            }
+            if (title1) title1.className = 'fw-bold text-dark fs-6 mb-1';
+
+            // Step 2 Inactive
+            if (icon2) {
+                icon2.className = 'rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0';
+                icon2.style.backgroundColor = '#E2E8F0';
+                icon2.style.color = '#64748B';
+                icon2.innerHTML = '2';
+            }
+            if (line2) {
+                line2.style.width = '0%';
+                line2.className = 'h-100 position-absolute start-0 top-0 rounded-pill bg-primary';
+                line2.style.backgroundColor = '';
+            }
+            if (tag2) tag2.className = 'small text-uppercase fw-semibold text-secondary';
+            if (badge2) badge2.classList.add('d-none');
+            if (title2) title2.className = 'fw-bold text-secondary fs-6 mb-1';
+
+            // Step 3 Inactive
+            if (icon3) {
+                icon3.className = 'rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0';
+                icon3.style.backgroundColor = '#E2E8F0';
+                icon3.style.color = '#64748B';
+                icon3.innerHTML = '3';
+            }
+            if (tag3) tag3.className = 'small text-uppercase fw-semibold text-secondary';
+            if (badge3) badge3.classList.add('d-none');
+            if (title3) title3.className = 'fw-bold text-secondary fs-6 mb-1';
+
+            if (pane1) pane1.classList.remove('d-none');
+            if (pane2) pane2.classList.add('d-none');
+            if (pane3) pane3.classList.add('d-none');
+
+        } else if (step === 2) {
+            if (stepHeading) stepHeading.textContent = 'STEP 2 OF 3';
+            if (estTime) estTime.textContent = 'Est. 2 mins remaining';
+            if (circleText) circleText.textContent = '2/3';
+            if (circleSvg) {
+                circleSvg.style.stroke = '#0D6EFD';
+                circleSvg.setAttribute('stroke-dashoffset', '38');
+            }
+            if (stepText) stepText.textContent = 'Step 2 of 3';
+
+            // Step 1 Completed
+            if (icon1) {
+                icon1.className = 'rounded-circle d-flex align-items-center justify-content-center bg-success text-white fw-bold shadow-sm flex-shrink-0';
+                icon1.style.backgroundColor = '';
+                icon1.style.color = '';
+                icon1.innerHTML = '<i class="fas fa-check small"></i>';
+            }
+            if (line1) {
+                line1.style.width = '100%';
+                line1.className = 'h-100 position-absolute start-0 top-0 rounded-pill bg-success';
+                line1.style.backgroundColor = '';
+            }
+            if (tag1) tag1.className = 'small text-uppercase fw-semibold text-success';
+            if (badge1) {
+                badge1.className = 'badge bg-success-subtle text-success rounded-pill px-2 py-0.5';
+                badge1.textContent = 'Done';
+            }
+            if (title1) title1.className = 'fw-bold text-dark fs-6 mb-1';
+
+            // Step 2 Active
+            if (icon2) {
+                icon2.className = 'rounded-circle d-flex align-items-center justify-content-center bg-primary text-white fw-bold shadow-sm flex-shrink-0';
+                icon2.style.backgroundColor = '';
+                icon2.style.color = '';
+                icon2.innerHTML = '2';
+            }
+            if (line2) {
+                line2.style.width = '50%';
+                line2.className = 'h-100 position-absolute start-0 top-0 rounded-pill bg-primary';
+                line2.style.backgroundColor = '';
+            }
+            if (tag2) tag2.className = 'small text-uppercase fw-bold text-primary';
+            if (badge2) {
+                badge2.className = 'badge bg-primary-subtle text-primary rounded-pill px-2 py-0.5';
+                badge2.textContent = 'Current';
+            }
+            if (title2) title2.className = 'fw-bold text-dark fs-6 mb-1';
+
+            // Step 3 Inactive
+            if (icon3) {
+                icon3.className = 'rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0';
+                icon3.style.backgroundColor = '#E2E8F0';
+                icon3.style.color = '#64748B';
+                icon3.innerHTML = '3';
+            }
+            if (tag3) tag3.className = 'small text-uppercase fw-semibold text-secondary';
+            if (badge3) badge3.classList.add('d-none');
+            if (title3) title3.className = 'fw-bold text-secondary fs-6 mb-1';
+
+            if (pane1) pane1.classList.add('d-none');
+            if (pane2) pane2.classList.remove('d-none');
+            if (pane3) pane3.classList.add('d-none');
+
+            // Trigger slot check if date is set
+            var step2Date = document.getElementById('dior-step2-date-input');
+            if (step2Date && step2Date.value) {
+                window.diorFetchDocBookerAvailability(step2Date.value);
+            }
+
+        } else if (step === 3) {
+            if (stepHeading) stepHeading.textContent = 'STEP 3 OF 3';
+            if (estTime) estTime.textContent = 'Completed';
+            if (circleText) circleText.textContent = '3/3';
+            if (circleSvg) {
+                circleSvg.style.stroke = '#198754';
+                circleSvg.setAttribute('stroke-dashoffset', '0');
+            }
+            if (stepText) stepText.textContent = 'Step 3 of 3';
+
+            // Step 1 Completed
+            if (icon1) {
+                icon1.className = 'rounded-circle d-flex align-items-center justify-content-center bg-success text-white fw-bold shadow-sm flex-shrink-0';
+                icon1.style.backgroundColor = '';
+                icon1.style.color = '';
+                icon1.innerHTML = '<i class="fas fa-check small"></i>';
+            }
+            if (line1) {
+                line1.style.width = '100%';
+                line1.className = 'h-100 position-absolute start-0 top-0 rounded-pill bg-success';
+                line1.style.backgroundColor = '';
+            }
+            if (tag1) tag1.className = 'small text-uppercase fw-semibold text-success';
+            if (badge1) {
+                badge1.className = 'badge bg-success-subtle text-success rounded-pill px-2 py-0.5';
+                badge1.textContent = 'Done';
+            }
+            if (title1) title1.className = 'fw-bold text-dark fs-6 mb-1';
+
+            // Step 2 Completed
+            if (icon2) {
+                icon2.className = 'rounded-circle d-flex align-items-center justify-content-center bg-success text-white fw-bold shadow-sm flex-shrink-0';
+                icon2.style.backgroundColor = '';
+                icon2.style.color = '';
+                icon2.innerHTML = '<i class="fas fa-check small"></i>';
+            }
+            if (line2) {
+                line2.style.width = '100%';
+                line2.className = 'h-100 position-absolute start-0 top-0 rounded-pill bg-success';
+                line2.style.backgroundColor = '';
+            }
+            if (tag2) tag2.className = 'small text-uppercase fw-semibold text-success';
+            if (badge2) {
+                badge2.className = 'badge bg-success-subtle text-success rounded-pill px-2 py-0.5';
+                badge2.textContent = 'Done';
+            }
+            if (title2) title2.className = 'fw-bold text-dark fs-6 mb-1';
+
+            // Step 3 Confirmed
+            if (icon3) {
+                icon3.className = 'rounded-circle d-flex align-items-center justify-content-center bg-success text-white fw-bold shadow-sm flex-shrink-0';
+                icon3.style.backgroundColor = '';
+                icon3.style.color = '';
+                icon3.innerHTML = '<i class="fas fa-check small"></i>';
+            }
+            if (tag3) tag3.className = 'small text-uppercase fw-bold text-success';
+            if (badge3) {
+                badge3.className = 'badge bg-success-subtle text-success rounded-pill px-2 py-0.5';
+                badge3.textContent = 'Confirmed';
+            }
+            if (title3) title3.className = 'fw-bold text-dark fs-6 mb-1';
+
+            if (pane1) pane1.classList.add('d-none');
+            if (pane2) pane2.classList.add('d-none');
+            if (pane3) pane3.classList.remove('d-none');
+
+            // Populate Thank You details
+            if (apptData) {
+                window.diorLastBookedAppointment = apptData;
+                var tyDoc = document.getElementById('dior-ty-doctor');
+                var tyType = document.getElementById('dior-ty-type');
+                var tyDt = document.getElementById('dior-ty-datetime');
+                var tyUid = document.getElementById('dior-ty-uid');
+
+                if (tyDoc && apptData.doctor) tyDoc.textContent = apptData.doctor;
+                if (tyType && apptData.type) tyType.textContent = apptData.type;
+                if (tyDt) {
+                    var dtStr = (apptData.date || '') + (apptData.time ? ' at ' + apptData.time : '');
+                    if (dtStr.trim()) tyDt.textContent = dtStr;
+                }
+                if (tyUid && (apptData.uid || apptData.appt_uid || apptData.id)) {
+                    tyUid.textContent = apptData.uid || apptData.appt_uid || apptData.id;
+                }
+            }
+        }
+
+        // Scroll smoothly to stepper card
+        var stepperCard = document.getElementById('dior-booking-stepper-card');
+        if (stepperCard) {
+            stepperCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    };
+
+    /**
+     * Stepper Header Click Navigation with Mandatory Validation
+     */
+    window.diorNavigateBookingStep = function(targetStep) {
+        targetStep = parseInt(targetStep, 10) || 1;
+
+        if (targetStep === 1) {
+            window.diorGoToBookingStep(1);
+            return;
+        }
+
+        if (targetStep === 2) {
+            // Strictly mandatory: Must complete Step 1 clinical intake questionnaire
+            if (!window.diorBookingIntakeCompleted) {
+                var alertEl = document.getElementById('dior-intake-mandatory-alert');
+                if (alertEl) {
+                    alertEl.classList.remove('d-none');
+                    try { alertEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e) {}
+                    setTimeout(function() {
+                        if (alertEl) alertEl.classList.add('d-none');
+                    }, 5000);
+                }
+                window.diorGoToBookingStep(1);
+                return;
+            }
+            window.diorGoToBookingStep(2);
+            return;
+        }
+
+        if (targetStep === 3) {
+            if (!window.diorLastBookedAppointment) {
+                // Cannot jump to Step 3 until appointment is booked
+                if (!window.diorBookingIntakeCompleted) {
+                    window.diorNavigateBookingStep(2);
+                }
+                return;
+            }
+            window.diorGoToBookingStep(3, window.diorLastBookedAppointment);
+            return;
+        }
+    };
+
+    /**
+     * Reset Booking Flow for subsequent appointments
+     * Enforces that every new appointment requires a new HIPAAtizer intake
+     */
+    window.diorResetBookingFlow = function() {
+        window.diorBookingIntakeCompleted = false;
+        window.diorLastBookedAppointment = null;
+
+        // Reset Step 2 form
+        var form = document.getElementById('dior-step2-docbooker-form');
+        if (form) form.reset();
+
+        // Refresh HIPAAtizer iframe so user starts with a fresh form
+        var iframe = document.getElementById('dior-hipaatizer-tab-iframe');
+        if (iframe && iframe.src) {
+            iframe.src = iframe.src;
+        }
+
+        window.diorGoToBookingStep(1);
+    };
+
+    /**
+     * Inline Step 2 Service Format Selection (Video vs Phone)
+     */
+    window.diorSelectInlineFormat = function(serviceType, el) {
+        window.diorDocBookerState.serviceType = serviceType;
+
+        var input = document.getElementById('dior-step2-service-type');
+        var inputFinal = document.getElementById('dior-step2-final-type');
+        if (input) input.value = serviceType;
+        if (inputFinal) inputFinal.value = serviceType;
+
+        var videoCard = document.getElementById('dior-fmt-video');
+        var phoneCard = document.getElementById('dior-fmt-phone');
+
+        if (serviceType.indexOf('Video') !== -1) {
+            if (videoCard) {
+                videoCard.className = 'p-3 rounded-4 border border-2 border-primary bg-white shadow-sm d-flex align-items-center justify-content-between cursor-pointer dior-service-card-item active';
+                var vIcon = videoCard.querySelector('.dior-fmt-check');
+                if (vIcon) vIcon.className = 'fas fa-circle-check text-primary fs-5 dior-fmt-check';
+            }
+            if (phoneCard) {
+                phoneCard.className = 'p-3 rounded-4 border bg-white d-flex align-items-center justify-content-between cursor-pointer dior-service-card-item opacity-75';
+                var pIcon = phoneCard.querySelector('.dior-fmt-check');
+                if (pIcon) pIcon.className = 'far fa-circle text-secondary fs-5 dior-fmt-check';
+            }
+        } else {
+            if (phoneCard) {
+                phoneCard.className = 'p-3 rounded-4 border border-2 border-primary bg-white shadow-sm d-flex align-items-center justify-content-between cursor-pointer dior-service-card-item active';
+                var pIcon = phoneCard.querySelector('.dior-fmt-check');
+                if (pIcon) pIcon.className = 'fas fa-circle-check text-primary fs-5 dior-fmt-check';
+            }
+            if (videoCard) {
+                videoCard.className = 'p-3 rounded-4 border bg-white d-flex align-items-center justify-content-between cursor-pointer dior-service-card-item opacity-75';
+                var vIcon = videoCard.querySelector('.dior-fmt-check');
+                if (vIcon) vIcon.className = 'far fa-circle text-secondary fs-5 dior-fmt-check';
+            }
+        }
+    };
+
+    /**
+     * Inline Step 2 Slot Selection
+     */
+    window.diorSelectStep2Slot = function(time, el) {
+        if (el && el.disabled) return;
+        window.diorDocBookerState.time = time;
+
+        var timeInput = document.getElementById('dior-step2-selected-time');
+        var timeFinal = document.getElementById('dior-step2-final-time');
+        if (timeInput) timeInput.value = time;
+        if (timeFinal) timeFinal.value = time;
+
+        var buttons = document.querySelectorAll('.dior-step2-slot-btn');
+        buttons.forEach(function(b) {
+            b.classList.remove('btn-primary', 'active');
+            b.classList.add('btn-outline-primary');
+        });
+        if (el) {
+            el.classList.remove('btn-outline-primary');
+            el.classList.add('btn-primary', 'active');
+        }
+    };
+
+    /**
+     * Inline Step 2 Date Changed Callback
+     */
+    window.diorOnStep2DateChanged = function(newDate) {
+        window.diorDocBookerState.date = newDate;
+        window.diorFetchDocBookerAvailability(newDate);
+    };
+
+    /**
+     * Submit Step 2 Inline DocBooker Booking Form
+     */
+    window.diorSubmitInlineBooking = function(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        if (window.diorDocBookerState.isSubmitting) return false;
+
+        // Strict validation: Step 1 intake mandatory (no message display)
+        if (!window.diorBookingIntakeCompleted) {
+            window.diorGoToBookingStep(1);
+            return false;
+        }
+
+        var form = document.getElementById('dior-step2-docbooker-form');
+        var submitBtn = document.getElementById('dior-step2-submit-btn');
+        var statusBox = document.getElementById('dior-step2-status-box');
+
+        var nameInput = document.getElementById('dior-step2-patient-name');
+        var emailInput = document.getElementById('dior-step2-patient-email');
+        var phoneInput = document.getElementById('dior-step2-patient-phone');
+        var dateInput = document.getElementById('dior-step2-date-input');
+
+        if (!nameInput.value.trim() || !emailInput.value.trim() || !phoneInput.value.trim()) {
+            if (statusBox) {
+                statusBox.className = 'alert alert-danger border-0 rounded-4 p-3 mb-3 d-flex align-items-center gap-2';
+                statusBox.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Please provide your full name, email address, and contact phone number.';
+                statusBox.classList.remove('d-none');
+            }
+            return false;
+        }
+
+        var inlineSelectedTime = window.diorDocBookerState.time || (document.getElementById('dior-step2-final-time') ? document.getElementById('dior-step2-final-time').value : '');
+        if (!window.diorIsSlotBookable15Min(dateInput.value, inlineSelectedTime, 15)) {
+            if (statusBox) {
+                statusBox.className = 'alert alert-danger border-0 rounded-4 p-3 mb-3 d-flex align-items-center gap-2';
+                statusBox.innerHTML = '<i class="fas fa-triangle-exclamation"></i> This appointment time slot is no longer available (must be booked at least 15 minutes in advance). Please choose another time slot.';
+                statusBox.classList.remove('d-none');
+            }
+            if (typeof window.diorRefreshSlotsLive === 'function') {
+                window.diorRefreshSlotsLive();
+            }
+            return false;
+        }
+
+        window.diorDocBookerState.isSubmitting = true;
+        if (statusBox) statusBox.classList.add('d-none');
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            var btnText = submitBtn.querySelector('.dior-step2-btn-text');
+            var btnSpinner = submitBtn.querySelector('.dior-step2-btn-spinner');
+            if (btnText) btnText.classList.add('d-none');
+            if (btnSpinner) btnSpinner.classList.remove('d-none');
+        }
+
+        var formData = new FormData(form);
+        formData.set('type', window.diorDocBookerState.serviceType);
+        formData.set('visit_type', window.diorDocBookerState.serviceType);
+        formData.set('time', window.diorDocBookerState.time);
+        formData.set('appt_time', window.diorDocBookerState.time);
+        formData.set('date', dateInput.value);
+        formData.set('appt_date', dateInput.value);
+
+        var ajaxUrl = (typeof dior_vars !== 'undefined' && dior_vars.ajax_url) || '/wp-admin/admin-ajax.php';
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(res) {
+            window.diorDocBookerState.isSubmitting = false;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                var btnText = submitBtn.querySelector('.dior-step2-btn-text');
+                var btnSpinner = submitBtn.querySelector('.dior-step2-btn-spinner');
+                if (btnText) btnText.classList.remove('d-none');
+                if (btnSpinner) btnSpinner.classList.add('d-none');
+            }
+
+            if (res.success) {
+                var apptData = (res.data && res.data.appointment) || {};
+                var apptUid = apptData.appt_uid || apptData.id || ('APT-' + Math.floor(1000 + Math.random() * 9000));
+
+                var record = {
+                    uid: apptUid,
+                    doctor: window.diorDocBookerState.doctorName,
+                    spec: 'General Practice & Internal Medicine',
+                    date: dateInput.value,
+                    time: window.diorDocBookerState.time,
+                    type: window.diorDocBookerState.serviceType,
+                    patientName: nameInput.value,
+                    phone: phoneInput.value
+                };
+
+                // Advance Timeline to Step 3: Thank You Message!
+                window.diorGoToBookingStep(3, record);
+
+                // Inject into Today/Upcoming table
+                window.diorInjectAppointmentIntoDashboards(record);
+
+            } else {
+                if (statusBox) {
+                    statusBox.className = 'alert alert-danger border-0 rounded-4 p-3 mb-3 d-flex align-items-center gap-2';
+                    statusBox.innerHTML = '<i class="fas fa-triangle-exclamation"></i> ' + ((res.data && res.data.message) || 'Booking failed. Please try again.');
+                    statusBox.classList.remove('d-none');
+                }
+            }
+        })
+        .catch(function(err) {
+            window.diorDocBookerState.isSubmitting = false;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                var btnText = submitBtn.querySelector('.dior-step2-btn-text');
+                var btnSpinner = submitBtn.querySelector('.dior-step2-btn-spinner');
+                if (btnText) btnText.classList.remove('d-none');
+                if (btnSpinner) btnSpinner.classList.add('d-none');
+            }
+            if (statusBox) {
+                statusBox.className = 'alert alert-danger border-0 rounded-4 p-3 mb-3 d-flex align-items-center gap-2';
+                statusBox.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Connection issue while booking appointment. Please try again.';
+                statusBox.classList.remove('d-none');
+            }
+            console.error('[Dior Medical] Booking error:', err);
+        });
+
+        return false;
+    };
+
     /**
      * Open the DocBooker Booking Modal
+     * Strictly verifies mandatory Step 1 HIPAAtizer intake before opening
      */
     window.diorOpenDocBookerModal = function(options) {
         options = options || {};
+
+        // Mandatory Step 1 check (no message display)
+        if (!window.diorBookingIntakeCompleted) {
+            console.log('[Dior Medical] Step 1 Intake required before booking appointment.');
+            if (typeof diorSwitchTab === 'function') diorSwitchTab('appointments');
+            if (typeof window.diorSwitchApptSubTab === 'function') window.diorSwitchApptSubTab('book');
+            window.diorGoToBookingStep(1);
+            return false;
+        }
+
         var modal = document.getElementById('dior-docbooker-modal');
         if (!modal) {
-            console.warn('[Dior Medical] Booking modal DOM not found.');
+            // If modal DOM isn't present, switch to inline Step 2
+            if (typeof diorSwitchTab === 'function') diorSwitchTab('appointments');
+            if (typeof window.diorSwitchApptSubTab === 'function') window.diorSwitchApptSubTab('book');
+            window.diorGoToBookingStep(2);
             return;
         }
 
@@ -72,7 +616,6 @@
         }
 
         modal.style.display = 'flex';
-        // Trigger reflow for CSS transition
         void modal.offsetHeight;
         modal.classList.add('is-open');
         modal.setAttribute('aria-hidden', 'false');
@@ -136,13 +679,73 @@
     };
 
     /**
+     * Parse slot start time from string (e.g. "09:00 AM - 10:00 AM", "02:00 PM", "14:00")
+     */
+    window.diorParseSlotStartTime = function(timeStr) {
+        if (!timeStr) return null;
+        var parts = String(timeStr).split(/[-–to]/i);
+        var startStr = (parts[0] || '').trim();
+        var m = startStr.match(/(\d{1,2}):(\d{2})(?:\s*([AP]M))?/i);
+        if (!m) return null;
+        var hours = parseInt(m[1], 10);
+        var minutes = parseInt(m[2], 10);
+        var ampm = m[3] ? m[3].toUpperCase() : null;
+        if (ampm === 'PM' && hours < 12) hours += 12;
+        if (ampm === 'AM' && hours === 12) hours = 0;
+        return { hours: hours, minutes: minutes };
+    };
+
+    /**
+     * Determine if a slot is bookable with minimum advance notice (15 minutes default)
+     * - Past dates: blocked (false)
+     * - Future dates: available (true)
+     * - Today: slot start time must be >= minAdvanceMins ahead of current clock
+     */
+    window.diorIsSlotBookable15Min = function(dateStr, timeStr, minAdvanceMins) {
+        if (minAdvanceMins === undefined) minAdvanceMins = 15;
+        if (!dateStr || !timeStr) return false;
+
+        var dateParts = String(dateStr).trim().split('-');
+        if (dateParts.length !== 3) return true;
+        var sYear = parseInt(dateParts[0], 10);
+        var sMonth = parseInt(dateParts[1], 10) - 1;
+        var sDay = parseInt(dateParts[2], 10);
+
+        var now = new Date();
+        var tYear = now.getFullYear();
+        var tMonth = now.getMonth();
+        var tDay = now.getDate();
+
+        var slotDateOnly = new Date(sYear, sMonth, sDay);
+        var todayDateOnly = new Date(tYear, tMonth, tDay);
+
+        if (slotDateOnly < todayDateOnly) {
+            return false; // past date
+        }
+        if (slotDateOnly > todayDateOnly) {
+            return true; // future date is always bookable (> 15 mins)
+        }
+
+        // Today: parse start time of the slot
+        var parsed = window.diorParseSlotStartTime(timeStr);
+        if (!parsed) return false;
+
+        var slotDateTime = new Date(sYear, sMonth, sDay, parsed.hours, parsed.minutes, 0, 0);
+        var diffMs = slotDateTime.getTime() - now.getTime();
+        var minDiffMs = minAdvanceMins * 60 * 1000;
+
+        return diffMs >= minDiffMs;
+    };
+
+    /**
      * Query DocBooker live availability for given date
      */
     window.diorFetchDocBookerAvailability = function(dateStr) {
         if (!dateStr) return;
         var spinner = document.getElementById('dior-db-slots-loading');
-        var grid = document.getElementById('dior-db-slots-grid');
+        var spinnerStep2 = document.getElementById('dior-step2-slots-spinner');
         if (spinner) spinner.style.display = 'inline-block';
+        if (spinnerStep2) spinnerStep2.classList.remove('d-none');
 
         var restUrl = (typeof dior_vars !== 'undefined' && dior_vars.rest_url) || '/wp-json/';
         var restNonce = (typeof dior_vars !== 'undefined' && dior_vars.rest_nonce) || '';
@@ -160,13 +763,15 @@
         })
         .then(function(data) {
             if (spinner) spinner.style.display = 'none';
+            if (spinnerStep2) spinnerStep2.classList.add('d-none');
             if (data && data.clinics && data.clinics.length > 0 && data.clinics[0].timings) {
                 var timings = data.clinics[0].timings;
-                window.diorRenderAvailableSlots(timings);
+                window.diorRenderAvailableSlots(timings, dateStr);
             }
         })
         .catch(function(err) {
             if (spinner) spinner.style.display = 'none';
+            if (spinnerStep2) spinnerStep2.classList.add('d-none');
             console.log('[Dior Medical] Using default DocBooker slots for ' + dateStr, err);
             // Default slots
             var defaultSlots = [
@@ -178,50 +783,165 @@
                 { time: '03:00 PM - 04:00 PM', is_available: true },
                 { time: '04:00 PM - 05:00 PM', is_available: true }
             ];
-            window.diorRenderAvailableSlots(defaultSlots);
+            window.diorRenderAvailableSlots(defaultSlots, dateStr);
         });
     };
 
     /**
-     * Render slot buttons inside the grid
+     * Render slot buttons inside both modal grid (#dior-db-slots-grid)
+     * and inline step 2 grid (#dior-step2-slots-grid) with 15-minute advance filter
      */
-    window.diorRenderAvailableSlots = function(timings) {
-        var grid = document.getElementById('dior-db-slots-grid');
-        if (!grid) return;
-        grid.innerHTML = '';
+    window.diorRenderAvailableSlots = function(timings, targetDate) {
+        if (!targetDate) {
+            var dbDateInput = document.getElementById('dior-db-date-input');
+            var s2DateInput = document.getElementById('dior-step2-date-input');
+            targetDate = (dbDateInput && dbDateInput.value) || (s2DateInput && s2DateInput.value) || window.diorDocBookerState.date;
+        }
 
-        var firstAvailable = null;
-        timings.forEach(function(item, idx) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'dior-db-slot-btn';
-            btn.setAttribute('data-time', item.time);
-            btn.textContent = item.time;
-
-            if (item.is_available) {
-                if (!firstAvailable) {
-                    firstAvailable = item.time;
-                    btn.classList.add('active');
-                }
-                btn.onclick = function() {
-                    window.diorSelectTimeSlot(item.time, btn);
-                };
-            } else {
-                btn.disabled = true;
-                btn.classList.add('is-booked');
-                btn.title = 'Slot Booked';
-            }
-            grid.appendChild(btn);
+        // Filter out slots that have expired or have < 15 minutes remaining for today
+        var bookableSlots = (timings || []).filter(function(item) {
+            var isTimeBookable = window.diorIsSlotBookable15Min(targetDate, item.time, 15);
+            return isTimeBookable && item.is_available !== false;
         });
+
+        var firstAvailable = bookableSlots.length > 0 ? bookableSlots[0].time : null;
+
+        // 1. Render in Modal Grid (#dior-db-slots-grid)
+        var dbGrid = document.getElementById('dior-db-slots-grid');
+        if (dbGrid) {
+            dbGrid.innerHTML = '';
+            if (bookableSlots.length === 0) {
+                dbGrid.innerHTML = '<div class="w-100 text-center py-3 px-2 text-muted small"><i class="fa-solid fa-clock me-1 text-warning"></i> No further consultation slots are available for today. Please select a future date to book an appointment.</div>';
+            } else {
+                bookableSlots.forEach(function(item, idx) {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'dior-db-slot-btn btn' + (idx === 0 ? ' active' : '');
+                    btn.setAttribute('data-time', item.time);
+                    btn.textContent = item.time;
+                    btn.onclick = function() {
+                        window.diorSelectTimeSlot(item.time, btn);
+                    };
+                    dbGrid.appendChild(btn);
+                });
+            }
+
+            var timeInput = document.getElementById('dior-db-selected-time');
+            var timeFinal = document.getElementById('dior-db-final-time');
+            if (timeInput) timeInput.value = firstAvailable || '';
+            if (timeFinal) timeFinal.value = firstAvailable || '';
+        }
+
+        // 2. Render in Inline Step 2 Grid (#dior-step2-slots-grid)
+        var s2Grid = document.getElementById('dior-step2-slots-grid');
+        if (s2Grid) {
+            s2Grid.innerHTML = '';
+            if (bookableSlots.length === 0) {
+                s2Grid.innerHTML = '<div class="w-100 text-center py-3 px-2 text-muted small"><i class="fas fa-clock me-1 text-warning"></i> No further consultation slots are available for today. Please select a future date to book an appointment.</div>';
+            } else {
+                bookableSlots.forEach(function(item, idx) {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn ' + (idx === 0 ? 'btn-primary active' : 'btn-outline-primary') + ' rounded-3 btn-sm py-2 px-3 dior-step2-slot-btn';
+                    btn.setAttribute('data-time', item.time);
+                    btn.textContent = item.time;
+                    btn.onclick = function() {
+                        window.diorSelectStep2Slot(item.time, btn);
+                    };
+                    s2Grid.appendChild(btn);
+                });
+            }
+
+            var s2TimeInput = document.getElementById('dior-step2-selected-time');
+            var s2TimeFinal = document.getElementById('dior-step2-final-time');
+            if (s2TimeInput) s2TimeInput.value = firstAvailable || '';
+            if (s2TimeFinal) s2TimeFinal.value = firstAvailable || '';
+        }
 
         if (firstAvailable) {
             window.diorDocBookerState.time = firstAvailable;
-            var timeInput = document.getElementById('dior-db-selected-time');
-            var timeFinal = document.getElementById('dior-db-final-time');
-            if (timeInput) timeInput.value = firstAvailable;
-            if (timeFinal) timeFinal.value = firstAvailable;
         }
     };
+
+    /**
+     * Real-time slot updater: dynamically removes/hides slots as current time progresses
+     */
+    window.diorRefreshSlotsLive = function() {
+        var todayStr = (function() {
+            var n = new Date();
+            var y = n.getFullYear();
+            var m = String(n.getMonth() + 1).padStart(2, '0');
+            var d = String(n.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + d;
+        })();
+
+        // Refresh Modal Grid if selected date is today
+        var dbDateInput = document.getElementById('dior-db-date-input');
+        var dbDate = (dbDateInput && dbDateInput.value) || todayStr;
+        if (dbDate === todayStr) {
+            var dbGrid = document.getElementById('dior-db-slots-grid');
+            if (dbGrid) {
+                var dbButtons = dbGrid.querySelectorAll('.dior-db-slot-btn');
+                var dbRemovedActive = false;
+                dbButtons.forEach(function(b) {
+                    var t = b.getAttribute('data-time');
+                    if (!window.diorIsSlotBookable15Min(dbDate, t, 15)) {
+                        if (b.classList.contains('active')) dbRemovedActive = true;
+                        b.remove();
+                    }
+                });
+                var remainingDb = dbGrid.querySelectorAll('.dior-db-slot-btn');
+                if (remainingDb.length === 0) {
+                    if (!dbGrid.querySelector('.text-muted')) {
+                        dbGrid.innerHTML = '<div class="w-100 text-center py-3 px-2 text-muted small"><i class="fa-solid fa-clock me-1 text-warning"></i> No further consultation slots are available for today. Please select a future date to book an appointment.</div>';
+                    }
+                } else if (dbRemovedActive && remainingDb[0]) {
+                    window.diorSelectTimeSlot(remainingDb[0].getAttribute('data-time'), remainingDb[0]);
+                }
+            }
+        }
+
+        // Refresh Step 2 Grid if selected date is today
+        var s2DateInput = document.getElementById('dior-step2-date-input');
+        var s2Date = (s2DateInput && s2DateInput.value) || todayStr;
+        if (s2Date === todayStr) {
+            var s2Grid = document.getElementById('dior-step2-slots-grid');
+            if (s2Grid) {
+                var s2Buttons = s2Grid.querySelectorAll('.dior-step2-slot-btn');
+                var s2RemovedActive = false;
+                s2Buttons.forEach(function(b) {
+                    var t = b.getAttribute('data-time');
+                    if (!window.diorIsSlotBookable15Min(s2Date, t, 15)) {
+                        if (b.classList.contains('active')) s2RemovedActive = true;
+                        b.remove();
+                    }
+                });
+                var remainingS2 = s2Grid.querySelectorAll('.dior-step2-slot-btn');
+                if (remainingS2.length === 0) {
+                    if (!s2Grid.querySelector('.text-muted')) {
+                        s2Grid.innerHTML = '<div class="w-100 text-center py-3 px-2 text-muted small"><i class="fas fa-clock me-1 text-warning"></i> No further consultation slots are available for today. Please select a future date to book an appointment.</div>';
+                    }
+                } else if (s2RemovedActive && remainingS2[0]) {
+                    window.diorSelectStep2Slot(remainingS2[0].getAttribute('data-time'), remainingS2[0]);
+                }
+            }
+        }
+    };
+
+    // Live update polling (every 20 seconds) and tab focus
+    if (!window.diorSlotsTimerInitialized) {
+        window.diorSlotsTimerInitialized = true;
+        setInterval(function() {
+            if (typeof window.diorRefreshSlotsLive === 'function') {
+                window.diorRefreshSlotsLive();
+            }
+        }, 20000);
+        window.addEventListener('focus', function() {
+            if (typeof window.diorRefreshSlotsLive === 'function') {
+                window.diorRefreshSlotsLive();
+            }
+        });
+    }
 
     /**
      * Submit Booking Form
@@ -245,6 +965,19 @@
                 statusBox.className = 'dior-db-alert alert-error';
                 statusBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please provide your full name, email address, and contact phone number.';
                 statusBox.style.display = 'flex';
+            }
+            return false;
+        }
+
+        var modalSelectedTime = window.diorDocBookerState.time || (document.getElementById('dior-db-final-time') ? document.getElementById('dior-db-final-time').value : '');
+        if (!window.diorIsSlotBookable15Min(dateInput.value, modalSelectedTime, 15)) {
+            if (statusBox) {
+                statusBox.className = 'dior-db-alert alert-error';
+                statusBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> This appointment time slot is no longer available (must be booked at least 15 minutes in advance). Please choose another time slot.';
+                statusBox.style.display = 'flex';
+            }
+            if (typeof window.diorRefreshSlotsLive === 'function') {
+                window.diorRefreshSlotsLive();
             }
             return false;
         }
@@ -310,17 +1043,22 @@
                 if (successDt) successDt.textContent = dateInput.value + ' at ' + window.diorDocBookerState.time;
                 if (successDoc) successDoc.textContent = window.diorDocBookerState.doctorName;
 
-                // Dynamically update dashboard elements if present on page
-                window.diorInjectAppointmentIntoDashboards({
+                var record = {
                     uid: apptUid,
                     doctor: window.diorDocBookerState.doctorName,
-                    spec: 'Emergency Medicine & Telehealth Urgent Care',
+                    spec: 'General Practice & Internal Medicine',
                     date: dateInput.value,
                     time: window.diorDocBookerState.time,
                     type: window.diorDocBookerState.serviceType,
                     patientName: nameInput.value,
                     phone: phoneInput.value
-                });
+                };
+
+                // Advance Timeline to Step 3: Thank You Message!
+                window.diorGoToBookingStep(3, record);
+
+                // Dynamically update dashboard elements if present on page
+                window.diorInjectAppointmentIntoDashboards(record);
 
             } else {
                 if (statusBox) {
@@ -402,94 +1140,26 @@
                 }
             }
 
-            // 2. Increment Overview Counters by label
-            document.querySelectorAll('.stat-card').forEach(function(sc) {
-                var lbl = sc.querySelector('.stat-label');
-                var num = sc.querySelector('.stat-num');
-                if (lbl && num) {
-                    var txt = lbl.textContent.trim().toLowerCase();
-                    if (txt.indexOf('total') !== -1) {
-                        var curT = parseInt(num.textContent, 10) || 0;
-                        num.textContent = String(curT + 1).padStart(2, '0');
-                    } else if (txt.indexOf('upcoming') !== -1) {
-                        var curU = parseInt(num.textContent, 10) || 0;
-                        num.textContent = String(curU + 1).padStart(2, '0');
-                    }
+            // 2. Increment Overview Counters
+            var statCards = document.querySelectorAll('.stat-card .stat-num');
+            if (statCards.length >= 2) {
+                var totalEl = statCards[0];
+                var upEl = statCards[1];
+                if (totalEl) {
+                    var curT = parseInt(totalEl.textContent, 10) || 0;
+                    totalEl.textContent = String(curT + 1).padStart(2, '0');
                 }
-            });
-
-            // 3. Update Doctor Card (Next Scheduled Visit) in Overview
-            var docCard = document.getElementById('dior-overview-doctor-card');
-            if (docCard) {
-                var dType = docCard.querySelector('.doctor-type');
-                if (dType) dType.textContent = 'Next Scheduled Consultation';
-                var dName = docCard.querySelector('.doctor-name');
-                if (dName) dName.textContent = appt.doctor || 'Attending Physician';
-                var dRole = docCard.querySelector('.doctor-role');
-                if (dRole && appt.spec) dRole.textContent = appt.spec;
-                var dMeta = docCard.querySelector('.meta');
-                if (dMeta) {
-                    dMeta.innerHTML = `
-                        <span><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#333;fill:none;stroke-width:1.5;"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>${appt.date}</span>
-                        <span><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#333;fill:none;stroke-width:1.5;"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>${appt.time}</span>
-                    `;
-                }
-                var dActions = docCard.querySelector('.doctor-actions');
-                if (dActions) {
-                    var joinUrl = appt.join_url || 'https://zoom.us/join';
-                    var apptUid = appt.id || ('APT-' + Math.floor(Math.random() * 9000 + 1000));
-                    dActions.innerHTML = `
-                        <a href="${joinUrl}" target="_blank" class="primary-btn btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
-                            <i class="fas fa-video"></i> Join Video Consultation Room
-                        </a>
-                        <button class="outline-btn btn" data-switch-tab="appointments" onclick="if(typeof diorOpenRescheduleModal==='function'){diorOpenRescheduleModal('${apptUid}');}else if(typeof diorSwitchTab==='function'){diorSwitchTab('appointments');}">
-                            <i class="bi bi-arrow-repeat me-1"></i> Reschedule
-                        </button>
-                    `;
+                if (upEl) {
+                    var curU = parseInt(upEl.textContent, 10) || 0;
+                    upEl.textContent = String(curU + 1).padStart(2, '0');
                 }
             }
 
-            // 4. Update Overview Upcoming Consultation Card List
-            var upList = document.getElementById('dior-overview-upcoming-list');
-            if (upList) {
-                var emptyPlaceholder = upList.querySelector('.dior-upcoming-empty');
-                if (emptyPlaceholder) emptyPlaceholder.remove();
-
-                var defaultImg = '/wp-content/uploads/2026/10/diormedical-experts-1.webp';
-                var consultAvatar = appt.avatar || defaultImg;
-                var consultId = appt.id || ('APT-' + Math.floor(Math.random() * 9000 + 1000));
-                var joinBtnHtml = (appt.type && appt.type.toLowerCase().indexOf('phone') === -1)
-                    ? `<a href="${appt.join_url || 'https://zoom.us/join'}" target="_blank" class="btn btn-sm" style="font-size:11px; font-weight:600; padding:3px 12px; border-radius:14px; background:#2c71b7; border:1px solid #2c71b7; color:#fff; text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="fas fa-video"></i> Join Room</a>`
-                    : '';
-
-                var consultItemHtml = `
-                    <div class="consult" data-appt-id="${consultId}">
-                      <div class="consult-photo">
-                        <img src="${consultAvatar}" alt="${appt.doctor || 'Doctor'}" onerror="this.onerror=null;this.src='${defaultImg}';">
-                      </div>
-                      <div class="consult-body flex-grow-1">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                          <div class="consult-role" style="margin:0; font-size:14px;">${appt.spec || 'Telehealth Urgent Care'}</div>
-                          <span class="badge" style="background:#ECFDF5; color:#059669; font-size:10px; font-weight:600; padding:2px 8px; border-radius:12px; border:1px solid #A7F3D0;">
-                            Confirmed
-                          </span>
-                        </div>
-                        <div class="consult-name" style="font-weight:600; color:#1E293B; margin-bottom:5px; font-size:13px;">${appt.doctor || 'Attending Physician'}</div>
-                        <div class="consult-meta" style="font-size:11.5px; margin-bottom:8px;">
-                          <span><i class="bi bi-calendar-event me-1 text-primary"></i> ${appt.date}</span>
-                          <span><i class="bi bi-clock me-1 text-primary"></i> ${appt.time}</span>
-                        </div>
-                        <div class="consult-actions" style="display:flex; align-items:center; gap:8px; margin-top:6px;">
-                          ${joinBtnHtml}
-                          <button type="button" class="btn btn-sm btn-outline-primary" onclick="if(typeof diorOpenRescheduleModal==='function'){diorOpenRescheduleModal('${consultId}');}else if(typeof diorSwitchTab==='function'){diorSwitchTab('appointments');}" style="font-size:11px; font-weight:600; padding:3px 12px; border-radius:14px;">
-                            <i class="bi bi-arrow-repeat me-1"></i> Reschedule
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                `;
-                upList.insertAdjacentHTML('afterbegin', consultItemHtml);
-            }
+            // 3. Update Next Appointment Card in Overview
+            var nextDocName = document.querySelector('.hero-appointment-card .doctor-name');
+            var nextDocDate = document.querySelector('.hero-appointment-card .appointment-date');
+            if (nextDocName) nextDocName.textContent = appt.doctor;
+            if (nextDocDate) nextDocDate.textContent = appt.date + ' at ' + appt.time;
 
         } catch (err) {
             console.error('[Dior Medical] Live DOM update warning:', err);
@@ -504,7 +1174,7 @@
         if (typeof diorSwitchTab === 'function') {
             diorSwitchTab('appointments');
             if (typeof diorSwitchApptSubTab === 'function') {
-                diorSwitchApptSubTab('calendar');
+                diorSwitchApptSubTab('today');
             }
         } else {
             window.location.hash = '#tab=appointments';
@@ -539,6 +1209,9 @@
 
         if (isHipaatizerSubmit) {
             console.log('[Dior Medical] ✨ HIPAAtizer Intake Completion detected:', d);
+            // Mark intake as completed for this booking session
+            window.diorBookingIntakeCompleted = true;
+
             // 1. Close any open intake popup / modal first
             if (typeof window.diorCloseHipaaModal === 'function') {
                 window.diorCloseHipaaModal();
@@ -550,23 +1223,33 @@
                 Swal.close();
             }
 
-            // 2. Open DocBooker Appointment Booking Modal
+            // 2. Ensure we are on appointments -> book tab
+            if (typeof diorSwitchTab === 'function') {
+                try { diorSwitchTab('appointments'); } catch (e) {}
+            }
+            if (typeof window.diorSwitchApptSubTab === 'function') {
+                try { window.diorSwitchApptSubTab('book'); } catch (e) {}
+            }
+
+            // 3. Advance Horizontal Stepper to Step 2: DocBooker
             setTimeout(function() {
-                window.diorOpenDocBookerModal({
-                    reason: 'Telehealth Intake Completed'
-                });
-            }, 450);
+                window.diorGoToBookingStep(2);
+            }, 350);
         }
     });
 
     /**
-     * Check if current URL/hash indicates the modal should auto-open (e.g. from HIPAAtizer redirection)
+     * Check if current URL/hash indicates the stepper should advance to Step 2 (e.g. from HIPAAtizer redirection)
      */
     function shouldAutoOpenBookingModal() {
         var s = (window.location.search || '').toLowerCase();
         var h = (window.location.hash || '').toLowerCase();
         var combined = s + '&' + h;
         return (
+            combined.indexOf('intake_submitted=1') !== -1 ||
+            combined.indexOf('intake_completed=1') !== -1 ||
+            combined.indexOf('step=2') !== -1 ||
+            combined.indexOf('intake_done=1') !== -1 ||
             combined.indexOf('open_booking=1') !== -1 ||
             combined.indexOf('book=1') !== -1 ||
             combined.indexOf('booking=1') !== -1 ||
@@ -580,16 +1263,52 @@
 
     function checkAndAutoOpenModal() {
         if (shouldAutoOpenBookingModal()) {
+            // Mark intake completed since landed from HIPAAtizer redirection
+            window.diorBookingIntakeCompleted = true;
+
             if (typeof diorSwitchTab === 'function') {
                 try { diorSwitchTab('appointments'); } catch (e) {}
             }
+            if (typeof window.diorSwitchApptSubTab === 'function') {
+                try { window.diorSwitchApptSubTab('book'); } catch (e) {}
+            }
+
+            // Advance Horizontal Stepper to Step 2: DocBooker
             setTimeout(function() {
-                window.diorOpenDocBookerModal({
-                    reason: 'HIPAAtizer Intake Completed'
-                });
-            }, 400);
+                window.diorGoToBookingStep(2);
+            }, 350);
         }
     }
+
+    // Helper functions for Step 1 Intake Form toggle
+    window.diorOpenIntakeForm = function() {
+        var sec = document.getElementById('dior-hipaa-embed-section');
+        var btn = document.getElementById('dior-start-intake-btn');
+        if (sec) {
+            sec.classList.remove('d-none');
+            sec.style.setProperty('display', 'block', 'important');
+            sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-arrow-down me-2"></i> Clinical Intake Form Opened Below';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline-primary');
+        }
+    };
+
+    window.diorToggleHipaaIframe = function() {
+        var sec = document.getElementById('dior-hipaa-embed-section');
+        if (sec) {
+            if (sec.classList.contains('d-none') || sec.style.display === 'none') {
+                sec.classList.remove('d-none');
+                sec.style.setProperty('display', 'block', 'important');
+                sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                sec.classList.add('d-none');
+                sec.style.setProperty('display', 'none', 'important');
+            }
+        }
+    };
 
     // Initialize auto-listeners on DOM ready and on hashchange
     document.addEventListener('DOMContentLoaded', function() {

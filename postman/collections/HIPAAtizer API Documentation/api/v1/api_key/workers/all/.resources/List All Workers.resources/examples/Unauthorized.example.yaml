@@ -1,0 +1,26 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/v1/api_key/workers/all"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  body:
+    type: json
+    content: |-
+      {
+        "locationIds": [
+          "<uuid>",
+          "<uuid>"
+        ]
+      }
+response:
+  statusCode: 401
+  statusText: Unauthorized
+  body:
+    type: text
+    content: ""
+order: 3000

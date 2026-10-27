@@ -17,6 +17,12 @@
     "require": {
         "stripe/stripe-php": "^19.0",
         "freemius/wordpress-sdk": "^2.13",
-        "razorpay/razorpay": "2.*"
+        "razorpay/razorpay": "2.*",
+        "chillerlan/php-qrcode": "^5.0"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.33"
+        }
     }
 }

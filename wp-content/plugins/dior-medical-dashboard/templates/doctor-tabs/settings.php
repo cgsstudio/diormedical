@@ -1,1264 +1,862 @@
-<section class="dior-tab-panel dior-source-panel" id="tab-doc-settings"
-    style="display: none; background-color: #f8fafc; padding: 20px; position: relative; overflow: hidden;">
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-    <!-- Watermark & Breadcrumb Font Size Fix -->
-    <style>
-        #tab-doc-settings .dior-page-watermark,
-        #tab-doc-settings .page-watermark,
-        #tab-doc-settings .dior-big-title,
-        .dior-doctor-wrap #tab-doc-settings .dior-page-watermark,
-        .dior-doctor-wrap #tab-doc-settings .page-watermark,
-        .dior-doctor-wrap #tab-doc-settings .dior-big-title {
-            display: none !important;
-            opacity: 0 !important;
-            visibility: hidden !important;
-        }
+$doctor_id = get_current_user_id();
+$doctor = class_exists('Dior_Doctor_Dashboard') ? Dior_Doctor_Dashboard::get_doctor_profile($doctor_id) : [];
+$nonce = wp_create_nonce('dior_doctor_nonce');
+$ajax_url = admin_url('admin-ajax.php');
 
-        /* Prevent external theme .breadcrumb-item styles from inflating text size */
-        #tab-doc-settings .breadcrumb-list,
-        #tab-doc-settings .breadcrumb-list li,
-        #tab-doc-settings .breadcrumb-list a,
-        #tab-doc-settings .breadcrumb-list span,
-        #tab-doc-settings .breadcrumb-list i {
-            font-size: 12px !important;
-            line-height: 1.2 !important;
-        }
+$doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : ('https://ui-avatars.com/api/?name=' . urlencode($doctor['full_name'] ?? 'Doctor') . '&background=00346c&color=ffffff&bold=true');
+?>
 
-        #tab-doc-settings .breadcrumb-list li::before,
-        #tab-doc-settings .breadcrumb-list li::after {
-            display: none !important;
-            content: none !important;
-        }
+<section class="dior-tab-panel" id="tab-doc-settings" style="display: none;">
 
-        #tab-doc-settings img.profile-avatar-img {
-            width: 90px !important;
-            height: 90px !important;
-            max-width: 90px !important;
-            max-height: 90px !important;
-            min-width: 90px !important;
-            min-height: 90px !important;
-            border-radius: 50% !important;
-            border: 4px solid #ffffff !important;
-            object-fit: cover !important;
-            display: block !important;
-        }
+    <!-- Breadcrumb & Page Header (100% Native Bootstrap 5) -->
+    <div class="row g-3 align-items-center justify-content-between mb-4">
+        <div class="col-12 col-lg-auto">
+            <div class="h6 mb-1 fw-bold text-dark">
+                <i class="fas fa-user-gear text-primary me-2"></i>Doctor Settings &amp; Profile
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small text-muted">
+                    <li class="breadcrumb-item"><i class="fas fa-house me-1"></i> Dashboard</li>
+                    <li class="breadcrumb-item">Settings</li>
+                    <li class="breadcrumb-item active fw-semibold text-primary" aria-current="page">General Settings
+                    </li>
+                </ol>
+            </nav>
+        </div>
 
-        #tab-doc-settings .profile-cover-gradient {
-            height: 100px !important;
-            background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 60%, #3b82f6 100%) !important;
-            width: 100% !important;
-            border-radius: 12px 12px 0 0 !important;
-        }
+    </div>
 
-        /* Sidebar nav pills text vertical stacking */
-        #tab-doc-settings .custom-settings-pills .dior-doc-nav-item {
-            background: transparent;
-            color: #475569 !important;
-            border-radius: 10px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            border: none;
-            width: 100%;
-            text-align: left;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            text-decoration: none;
-        }
+    <!-- Hidden file input for photo upload -->
+    <input type="file" id="dior-doctor-avatar-file-input" accept="image/png, image/jpeg, image/jpg, image/webp"
+        class="d-none" onchange="diorDoctorHandleFileChosen(this)">
 
-        #tab-doc-settings .custom-settings-pills .dior-doc-nav-item:hover {
-            background: #f8fafc !important;
-            color: #1e293b !important;
-        }
-
-        #tab-doc-settings .custom-settings-pills .dior-doc-nav-item.active {
-            background: #2563eb !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        #tab-doc-settings .custom-settings-pills .dior-doc-nav-item.active .tab-title,
-        #tab-doc-settings .custom-settings-pills .dior-doc-nav-item.active .icon-tab {
-            color: #ffffff !important;
-        }
-
-        #tab-doc-settings .custom-settings-pills .dior-doc-nav-item.active .tab-subtext {
-            color: rgba(255, 255, 255, 0.85) !important;
-        }
-
-        /* Form Grid Layout */
-        #tab-doc-settings .dior-settings-grid-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            width: 100%;
-        }
-
-        #tab-doc-settings .dior-settings-col-sidebar {
-            flex: 0 0 calc(25% - 15px);
-            max-width: calc(25% - 15px);
-            width: calc(25% - 15px);
-        }
-
-        #tab-doc-settings .dior-settings-col-main {
-            flex: 0 0 calc(75% - 5px);
-            max-width: calc(75% - 5px);
-            width: calc(75% - 5px);
-        }
-
-        @media (max-width: 992px) {
-
-            #tab-doc-settings .dior-settings-col-sidebar,
-            #tab-doc-settings .dior-settings-col-main {
-                flex: 0 0 100% !important;
-                max-width: 100% !important;
-                width: 100% !important;
-            }
-        }
-
-        #tab-doc-settings .dior-form-row-2 {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        #tab-doc-settings .dior-form-row-2>.dior-form-group {
-            flex: 1 1 50%;
-            min-width: 0;
-        }
-
-        #tab-doc-settings .dior-form-row-3 {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        #tab-doc-settings .dior-form-row-3>.dior-form-group {
-            flex: 1 1 33.333%;
-            min-width: 0;
-        }
-
-        @media (max-width: 768px) {
-
-            #tab-doc-settings .dior-form-row-2,
-            #tab-doc-settings .dior-form-row-3 {
-                flex-direction: column;
-                gap: 12px;
-            }
-        }
-
-        #tab-doc-settings .search-input-group {
-            display: flex;
-            width: 100%;
-        }
-
-        #tab-doc-settings .search-input-group .input-group-text {
-            background: #ffffff;
-            border: 1px solid #dce4ec;
-            border-right: none;
-            color: #64748b;
-            border-top-left-radius: 6px;
-            border-bottom-left-radius: 6px;
-            padding: 8px 12px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #tab-doc-settings .search-input-group .form-control {
-            border-top-left-radius: 0 !important;
-            border-bottom-left-radius: 0 !important;
-            border-top-right-radius: 6px !important;
-            border-bottom-right-radius: 6px !important;
-        }
-
-        #tab-doc-settings .settings-form-card .form-control {
-            width: 100%;
-            min-height: 40px;
-            border: 1px solid #dce4ec;
-            border-radius: 6px;
-            padding: 8px 12px;
-            font-size: 13px;
-            color: #1e293b;
-            background-color: #ffffff;
-        }
-
-        /* Custom Switch Slider */
-        #tab-doc-settings .dior-toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-            flex-shrink: 0;
-        }
-
-        #tab-doc-settings .dior-toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        #tab-doc-settings .dior-toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e1;
-            transition: .3s ease;
-            border-radius: 24px;
-        }
-
-        #tab-doc-settings .dior-toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: #ffffff;
-            transition: .3s ease;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        #tab-doc-settings .dior-toggle-switch input:checked+.dior-toggle-slider {
-            background-color: #2563eb;
-        }
-
-        #tab-doc-settings .dior-toggle-switch input:checked+.dior-toggle-slider:before {
-            transform: translateX(20px);
-        }
-    </style>
-
-    <div class="dior-source-inner main-content" style="position: relative; z-index: 2;">
-
-        <!-- Breadcrumb Header -->
-        <div class="breadcrumb-main mb-3" style="position: relative; z-index: 5;">
-            <div class="row align-items-center"
-                style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin: 0;">
-                <div style="flex: 0 0 auto;">
-                    <div class="breadcrumb-title">
-                        <h4 class="page-title d-flex align-items-center flex-wrap gap-2 m-0"
-                            style="font-size: 20px; font-weight: 700; color: #1e293b;">
-                            <span>General Settings</span>
-                        </h4>
+    <!-- Top Profile Banner Card (100% Native Bootstrap 5) -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden bg-white">
+        <div
+            class="p-3 p-md-4 bg-light border-bottom d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="position-relative flex-shrink-0">
+                    <img id="dior-doctor-avatar-display-img" src="<?php echo esc_url($doc_avatar); ?>" width="76"
+                        height="76"
+                        class="rounded-circle border border-3 border-white shadow-sm object-fit-cover bg-white"
+                        alt="<?php echo esc_attr($doctor['full_name'] ?? 'Doctor'); ?>"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Doctor&background=00346c&color=ffffff&bold=true'">
+                    <button type="button"
+                        class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 p-0 shadow-sm d-inline-flex align-items-center justify-content-center"
+                        style="width: 28px; height: 28px;" title="Change Photo"
+                        onclick="diorTriggerDoctorAvatarUpload()">
+                        <i class="fas fa-camera text-white small"></i>
+                    </button>
+                </div>
+                <div>
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                        <div class="fs-6 fw-bold text-dark mb-0 dior-doc-profile-display-name">
+                            <?php echo esc_html($doctor['full_name'] ?? 'Dr. Provider'); ?>
+                        </div>
+                        <span
+                            class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 small dior-doc-profile-display-specialty">
+                            <?php echo esc_html($doctor['specialty'] ?? 'General Medicine'); ?>
+                        </span>
+                        <span
+                            class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 small">
+                            <i class="fas fa-certificate me-1"></i> Verified Practitioner
+                        </span>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center gap-3 text-secondary small">
+                        <span><i class="fas fa-id-card text-primary me-1"></i> NPI:
+                            <?php echo esc_html($doctor['npi'] ?: 'Not Assigned'); ?></span>
+                        <span>&bull;</span>
+                        <span><i class="fas fa-stamp text-primary me-1"></i> License:
+                            <?php echo esc_html($doctor['license_no'] ?: '—'); ?></span>
+                        <span>&bull;</span>
+                        <span><i class="fas fa-envelope text-primary me-1"></i>
+                            <?php echo esc_html($doctor['user_email'] ?? ''); ?></span>
                     </div>
                 </div>
-                <div style="flex: 0 0 auto;">
-                    <ul class="breadcrumb-list"
-                        style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; list-style: none; padding: 0; margin: 0; font-size: 12px !important; color: #94a3b8;">
-                        <li class="dior-bc-item" style="font-size: 12px !important;">
-                            <a href="javascript:void(0)"
-                                style="color: #2563eb !important; text-decoration: none !important; font-size: 12px !important;">
-                                <i class="fas fa-house" style="font-size: 12px !important;"></i>
-                            </a>
-                        </li>
-                        <li style="color: #cbd5e1; font-size: 12px !important;">/</li>
-                        <li class="dior-bc-item" style="font-size: 12px !important;">
-                            <a href="javascript:void(0)"
-                                style="color: #64748b !important; text-decoration: none !important; font-size: 12px !important;">Settings</a>
-                        </li>
-                        <li style="color: #cbd5e1; font-size: 12px !important;">/</li>
-                        <li class="dior-bc-item active"
-                            style="color: #475569 !important; font-weight: 600 !important; font-size: 12px !important;">
-                            <span
-                                style="color: #475569 !important; font-weight: 600 !important; font-size: 12px !important;">General
-                                Settings</span>
-                        </li>
-                    </ul>
+            </div>
+
+            <!-- Avatar Actions -->
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-3 shadow-sm"
+                    onclick="diorTriggerDoctorAvatarUpload()">
+                    <i class="fas fa-cloud-arrow-up me-1"></i> Upload Photo
+                </button>
+                <button type="button" class="btn btn-outline-secondary rounded-3 fw-semibold py-2 px-3"
+                    onclick="diorDocOpenMediaLibrary()">
+                    <i class="fas fa-images me-1"></i> Media Library
+                </button>
+                <?php if (!empty($doctor['avatar_url'])): ?>
+                    <button type="button" id="dior-btn-doctor-avatar-remove"
+                        class="btn btn-outline-danger rounded-3 fw-semibold py-2 px-3" onclick="diorDoctorRemoveAvatar()">
+                        <i class="fas fa-trash me-1"></i> Remove
+                    </button>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Two-Column Layout (Responsive Bootstrap 5 Grid) -->
+    <div class="row g-3 g-xl-4 align-items-start">
+
+        <!-- Sidebar Navigation Buttons (100% Bootstrap 5) -->
+        <div class="col-xl-3 col-lg-4 col-12">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex flex-column gap-2" role="tablist">
+                    <button type="button"
+                        class="btn text-start rounded-3 py-2 px-3 d-flex align-items-center gap-3 fw-semibold shadow-none border btn-primary text-white dior-settings-nav-btn active"
+                        data-pane="doc-tab-clinical" onclick="diorSelectSettingsTab(this, 'doc-tab-clinical')">
+                        <i class="fas fa-stethoscope fs-5"></i>
+                        <div class="flex-grow-1">
+                            <div>Clinical Profile</div>
+                            <small class="opacity-75 fw-normal d-block">Credentials, fee &amp; location</small>
+                        </div>
+                    </button>
+
+                    <button type="button"
+                        class="btn text-start rounded-3 py-2 px-3 d-flex align-items-center gap-3 fw-semibold shadow-none border bg-light text-dark dior-settings-nav-btn"
+                        data-pane="doc-tab-security" onclick="diorSelectSettingsTab(this, 'doc-tab-security')">
+                        <i class="fas fa-shield-halved text-primary fs-5"></i>
+                        <div class="flex-grow-1">
+                            <div>Security &amp; Password</div>
+                            <small class="text-secondary fw-normal d-block">Update account credentials</small>
+                        </div>
+                    </button>
+
+                    <button type="button"
+                        class="btn text-start rounded-3 py-2 px-3 d-flex align-items-center gap-3 fw-semibold shadow-none border bg-light text-dark dior-settings-nav-btn"
+                        data-pane="doc-tab-practice" onclick="diorSelectSettingsTab(this, 'doc-tab-practice')">
+                        <i class="fas fa-calendar-check text-primary fs-5"></i>
+                        <div class="flex-grow-1">
+                            <div>Practice &amp; Schedule</div>
+                            <small class="text-secondary fw-normal d-block">Duty hours &amp; meeting links</small>
+                        </div>
+                    </button>
+
+                    <button type="button"
+                        class="btn text-start rounded-3 py-2 px-3 d-flex align-items-center gap-3 fw-semibold shadow-none border bg-light text-dark dior-settings-nav-btn"
+                        data-pane="doc-tab-google-meet" onclick="diorSelectSettingsTab(this, 'doc-tab-google-meet')">
+                        <i class="fab fa-google text-primary fs-5"></i>
+                        <div class="flex-grow-1">
+                            <div>OAuth / Google Meet</div>
+                            <small class="text-secondary fw-normal d-block">API credentials &amp; connection</small>
+                        </div>
+                    </button>
+
+                    <button type="button"
+                        class="btn text-start rounded-3 py-2 px-3 d-flex align-items-center gap-3 fw-semibold shadow-none border bg-light text-dark dior-settings-nav-btn"
+                        data-pane="doc-tab-alerts" onclick="diorSelectSettingsTab(this, 'doc-tab-alerts')">
+                        <i class="fas fa-bell text-warning fs-5"></i>
+                        <div class="flex-grow-1">
+                            <div>Doctor Alerts</div>
+                            <small class="text-secondary fw-normal d-block">Booking &amp; email notifications</small>
+                        </div>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="section-body">
+        <!-- Main Form Panes -->
+        <div class="col-xl-9 col-lg-8 col-12">
 
-            <!-- Hidden file input for direct local device photo upload -->
-            <input type="file" id="dior-doctor-avatar-file-input"
-                accept="image/png, image/jpeg, image/jpg, image/webp, image/gif" style="display: none !important;"
-                onchange="diorDoctorHandleFileChosen(this)">
-
-            <!-- Top Profile Banner Card -->
-            <div class="card profile-header-card mb-4 border-0 shadow-sm"
-                style="border-radius: 12px; background: #ffffff; border: 1px solid #e7edf4; box-shadow: 0 4px 18px rgba(15,23,42,.05); overflow: hidden; margin-bottom: 24px;">
-
-                <!-- Blue Cover Banner -->
-                <div class="profile-cover-gradient"
-                    style="height: 100px; background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 60%, #3b82f6 100%); width: 100%;">
+            <!-- 1. Clinical Profile Pane -->
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white dior-settings-pane" id="doc-tab-clinical">
+                <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+                    <div>
+                        <div class="fs-6 fw-bold text-dark mb-0">
+                            <i class="fas fa-user-md text-primary me-2"></i> Clinical Profile &amp; Practitioner Details
+                        </div>
+                        <div class="text-secondary small mt-1">Keep your professional credentials and practice details
+                            accurate for patient records.</div>
+                    </div>
                 </div>
 
-                <!-- Profile Details Body -->
-                <div class="card-body" style="padding: 0 24px 20px 24px; position: relative; background: #ffffff;">
-                    <div
-                        style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-top: -45px; flex-wrap: wrap;">
-                        <div
-                            style="display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap; flex: 1 1 auto; min-width: 260px;">
+                <form id="dior-doc-profile-form" onsubmit="diorSaveDoctorProfile(event, this)">
+                    <div class="row g-3">
+                        <div class="col-md-6 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-first-name">
+                                First Name <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-first-name" name="first_name"
+                                value="<?php echo esc_attr($doctor['first_name'] ?? ''); ?>" required>
+                        </div>
 
-                            <!-- Avatar Wrapper -->
-                            <div class="avatar-edit-wrapper"
-                                style="position: relative; width: 96px; height: 96px; flex-shrink: 0;">
-                                <?php $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : DIOR_PORTAL_URL . 'assets/images/users/user-1.png'; ?>
-                                <img id="dior-doctor-avatar-display-img" alt="Doctor Avatar" class="profile-avatar-img"
-                                    src="<?php echo esc_url($doc_avatar); ?>"
-                                    style="width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 4px solid #ffffff; box-shadow: 0 4px 16px rgba(15,43,72,0.16); background-color: #f1f5f9; display: block;">
+                        <div class="col-md-6 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-last-name">
+                                Last Name <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-last-name" name="last_name"
+                                value="<?php echo esc_attr($doctor['last_name'] ?? ''); ?>" required>
+                        </div>
 
-                                <div id="dior-doctor-avatar-spinner"
-                                    style="display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.65); border-radius: 50%; align-items: center; justify-content: center; z-index: 10;">
-                                    <i class="fas fa-circle-notch fa-spin" style="color: #ffffff; font-size: 24px;"></i>
+                        <div class="col-md-6 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-email">
+                                Email Address <span class="text-muted">(Primary Account)</span>
+                            </label>
+                            <input type="email" class="form-control rounded-3 py-2 bg-light" id="doc-email"
+                                value="<?php echo esc_attr($doctor['user_email'] ?? ''); ?>" readonly>
+                        </div>
+
+                        <div class="col-md-6 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-phone">
+                                Phone Number <span class="text-danger">*</span>
+                            </label>
+                            <input type="tel" class="form-control rounded-3 py-2" id="doc-phone" name="phone"
+                                value="<?php echo esc_attr($doctor['phone'] ?? ''); ?>" required>
+                        </div>
+
+                        <div class="col-md-4 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-specialty">
+                                Specialty <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-specialty"
+                                name="doctor_specialty" value="<?php echo esc_attr($doctor['specialty'] ?? ''); ?>"
+                                required>
+                        </div>
+
+                        <div class="col-md-4 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-license">
+                                Medical License #
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-license"
+                                name="doctor_license" value="<?php echo esc_attr($doctor['license_no'] ?? ''); ?>"
+                                placeholder="e.g. MD-884920">
+                        </div>
+
+                        <div class="col-md-4 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-npi">
+                                NPI (National Provider Identifier)
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-npi" name="doctor_npi"
+                                value="<?php echo esc_attr($doctor['npi'] ?? ''); ?>" placeholder="10-digit NPI">
+                        </div>
+
+                        <div class="col-md-4 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-qualifications">
+                                Qualifications / Degrees
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-qualifications"
+                                name="doctor_qualifications"
+                                value="<?php echo esc_attr($doctor['qualifications'] ?? ''); ?>"
+                                placeholder="e.g. MBBS, MD, DO">
+                        </div>
+
+                        <div class="col-md-4 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-fee">
+                                Consultation Fee
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-fee" name="doctor_fee"
+                                value="<?php echo esc_attr($doctor['fee'] ?? ''); ?>"
+                                placeholder="e.g. $150 or INR 1500">
+                        </div>
+
+                        <div class="col-md-4 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-duty-hours">
+                                Regular Duty Hours
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-duty-hours"
+                                name="doctor_duty_hours" value="<?php echo esc_attr($doctor['duty_hours'] ?? ''); ?>"
+                                placeholder="e.g. Mon-Sat 10:00 AM - 8:00 PM">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-zoom-link">
+                                Telehealth Video Meeting URL (Zoom / Jitsi)
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-video text-primary"></i></span>
+                                <input type="url" class="form-control rounded-end-3 py-2" id="doc-zoom-link"
+                                    name="doctor_zoom_link" value="<?php echo esc_attr($doctor['zoom_link'] ?? ''); ?>"
+                                    placeholder="https://zoom.us/j/...">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-address">
+                                Clinic / Practice Address
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-address" name="address"
+                                value="<?php echo esc_attr($doctor['address'] ?? ''); ?>" placeholder="Street address">
+                        </div>
+
+                        <div class="col-md-3 col-6">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-city">
+                                City
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-city" name="city"
+                                value="<?php echo esc_attr($doctor['city'] ?? ''); ?>" placeholder="City">
+                        </div>
+
+                        <div class="col-md-3 col-6">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-country">
+                                Country
+                            </label>
+                            <input type="text" class="form-control rounded-3 py-2" id="doc-country" name="country"
+                                value="<?php echo esc_attr($doctor['country'] ?? ''); ?>" placeholder="Country">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                for="doc-bio">
+                                Practitioner Biography &amp; Philosophy of Care
+                            </label>
+                            <textarea class="form-control rounded-3 py-2" id="doc-bio" name="doctor_bio" rows="4"
+                                placeholder="Share your medical background, treatment philosophy, and clinical areas of focus..."><?php echo esc_textarea($doctor['bio'] ?? ''); ?></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm"
+                            id="dior-doc-profile-save-btn">
+                            <i class="fas fa-check me-1"></i> Save Clinical Profile
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 2. Security & Password Pane -->
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white dior-settings-pane" id="doc-tab-security"
+                hidden>
+                <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+                    <div>
+                        <div class="fs-6 fw-bold text-dark mb-0">
+                            <i class="fas fa-shield-halved text-primary me-2"></i> Security &amp; Password Management
+                        </div>
+                        <div class="text-secondary small mt-1">Update your practitioner password to protect clinical
+                            records and patient data confidentiality.</div>
+                    </div>
+                </div>
+
+                <form id="dior-doc-password-form" onsubmit="diorSaveDoctorPassword(event, this)">
+                    <div class="row g-4 align-items-start">
+                        <!-- Left Column: Password Inputs Form -->
+                        <div class="col-lg-7 col-12">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                        for="doc-current-password">
+                                        Current Password <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="position-relative">
+                                        <input type="password" class="form-control rounded-3 py-2 pe-5"
+                                            id="doc-current-password" name="current_password" required
+                                            placeholder="Enter current password" autocomplete="current-password">
+                                        <span role="button" tabindex="0"
+                                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-secondary p-0 border-0 bg-transparent"
+                                            onclick="diorTogglePasswordVisibility('doc-current-password', this)"
+                                            aria-label="Toggle password visibility" style="cursor: pointer; z-index: 5;">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <button type="button" title="Upload new photo from your device"
-                                    class="avatar-change-btn btn" onclick="diorTriggerDoctorAvatarUpload()"
-                                    style="position: absolute; bottom: 2px; right: 2px; background: #2563eb; color: #ffffff; border: 2.5px solid #ffffff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); z-index: 8; transition: all 0.2s ease;">
-                                    <i class="fas fa-camera" style="font-size: 12px;"></i>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                        for="doc-new-password">
+                                        New Password <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="position-relative">
+                                        <input type="password" class="form-control rounded-3 py-2 pe-5"
+                                            id="doc-new-password" name="new_password" required minlength="6"
+                                            placeholder="Enter new password (min. 6 characters)"
+                                            autocomplete="new-password">
+                                        <span role="button" tabindex="0"
+                                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-secondary p-0 border-0 bg-transparent"
+                                            onclick="diorTogglePasswordVisibility('doc-new-password', this)"
+                                            aria-label="Toggle password visibility" style="cursor: pointer; z-index: 5;">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <label class="form-label small text-uppercase text-secondary fw-semibold mb-1"
+                                        for="doc-confirm-password">
+                                        Confirm New Password <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="position-relative">
+                                        <input type="password" class="form-control rounded-3 py-2 pe-5"
+                                            id="doc-confirm-password" name="confirm_password" required minlength="6"
+                                            placeholder="Re-type new password" autocomplete="new-password">
+                                        <span role="button" tabindex="0"
+                                            class="position-absolute top-50 end-0 translate-middle-y me-3 text-secondary p-0 border-0 bg-transparent"
+                                            onclick="diorTogglePasswordVisibility('doc-confirm-password', this)"
+                                            aria-label="Toggle password visibility" style="cursor: pointer; z-index: 5;">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-start mt-4 pt-3 border-top">
+                                <button type="submit" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm"
+                                    id="dior-doc-password-save-btn">
+                                    <i class="fas fa-key me-1"></i> Update Password
                                 </button>
                             </div>
+                        </div>
 
-                            <!-- User Information Text -->
-                            <div style="flex: 1 1 0%; min-width: 250px; padding-bottom: 4px;">
-                                <div
-                                    style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px;">
-                                    <h4 class="profile-user-name dior-doc-profile-display-name"
-                                        style="font-weight: 700; color: #1e293b; font-size: 22px; margin: 0;">Dr.
-                                        <?php echo esc_html($doctor['full_name'] ?? 'Sarah Smith'); ?></h4>
-                                    <span class="specialty-badge dior-doc-profile-display-specialty"
-                                        style="background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; display: inline-block;"><?php echo esc_html($doctor['specialty'] ?? 'Dermatology'); ?></span>
-                                    <span class="license-chip"
-                                        style="background: #f1f5f9; color: #64748b; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; display: inline-block;">#LIC-<?php echo esc_html($doctor['license_no'] ?? '884920'); ?></span>
-                                    <span class="badge badge-emerald-pill"
-                                        style="background: #dcfce7; color: #16a34a; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; display: inline-flex; align-items: center;"><i
-                                            class="fas fa-user-md" style="margin-right: 5px;"></i> Verified
-                                        Specialist</span>
+                        <!-- Right Column: Security Guidance & Standards Card -->
+                        <div class="col-lg-5 col-12">
+                            <div
+                                class="card border border-light-subtle bg-light rounded-4 p-3 p-md-4 h-100 shadow-none">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <span
+                                        class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-3 p-2">
+                                        <i class="fas fa-shield-halved fs-5"></i>
+                                    </span>
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-0 fs-6">Security &amp; Compliance</h6>
+                                        <small class="text-secondary">Practitioner account protection</small>
+                                    </div>
                                 </div>
-                                <div
-                                    style="font-size: 13px; color: #64748b; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                    <span><i class="fas fa-graduation-cap"
-                                            style="color: #2563eb !important; margin-right: 5px;"></i>
-                                        <?php echo esc_html($doctor['qualifications'] ?? 'MBBS, MD'); ?></span>
-                                    <span style="color: #cbd5e1;">&bull;</span>
-                                    <span><i class="far fa-envelope"
-                                            style="color: #2563eb !important; margin-right: 5px;"></i>
-                                        <?php echo esc_html($doctor['user_email'] ?? 'dr.sarah@medidash.com'); ?></span>
-                                    <span style="color: #cbd5e1;">&bull;</span>
 
+                                <!-- <div
+                                    class="d-flex align-items-center justify-content-between p-2 px-3 bg-white rounded-3 border border-light-subtle mb-3">
+                                    <span class="small fw-semibold text-secondary">Account Status</span>
+                                    <span
+                                        class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small">
+                                        <i class="fas fa-circle-check me-1"></i> Active &amp; Verified
+                                    </span>
+                                </div> -->
+
+                                <div class="small text-secondary mb-3">
+                                    <div class="fw-semibold text-dark mb-2">Password Best Practices:</div>
+                                    <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                                        <li class="d-flex align-items-start gap-2">
+                                            <i class="fas fa-check text-success mt-1 small"></i>
+                                            <span>Minimum 6 characters in length</span>
+                                        </li>
+                                        <li class="d-flex align-items-start gap-2">
+                                            <i class="fas fa-check text-success mt-1 small"></i>
+                                            <span>Use a mix of letters, numbers &amp; symbols</span>
+                                        </li>
+                                        <li class="d-flex align-items-start gap-2">
+                                            <i class="fas fa-check text-success mt-1 small"></i>
+                                            <span>Avoid reusing passwords from other medical sites</span>
+                                        </li>
+                                    </ul>
                                 </div>
+
+
                             </div>
                         </div>
-
-                        <!-- Action Buttons on the right of banner -->
-                        <div
-                            style="padding-bottom: 4px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                            <button type="button" id="dior-btn-doctor-direct-upload" class="dior-change-photo-btn btn"
-                                onclick="diorTriggerDoctorAvatarUpload()"
-                                style="background: #2563eb; color: #ffffff; border: none; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(37,99,235,0.25);">
-                                <i class="fas fa-cloud-arrow-up" style="font-size: 13px;"></i>
-                                <span id="dior-btn-doctor-direct-upload-text">Upload Photo</span>
-                            </button>
-                            <button type="button" onclick="diorDocOpenMediaLibrary()"
-                                style="background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; transition: all 0.2s ease;">
-                                <i class="fas fa-images" style="color: #2563eb; font-size: 13px;"></i>
-                                <span>Media Library</span>
-                            </button>
-                            <?php $has_custom_avatar = !empty($doctor['avatar_url']); ?>
-                            <button type="button" id="dior-btn-doctor-avatar-remove" onclick="diorDoctorRemoveAvatar()"
-                                style="<?php echo $has_custom_avatar ? 'display: inline-flex;' : 'display: none;'; ?> background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; padding: 8px 14px; border-radius: 20px; font-weight: 600; font-size: 12px; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s ease;">
-                                <i class="far fa-trash-can" style="font-size: 12px;"></i>
-                                <span>Remove</span>
-                            </button>
-                        </div>
-
                     </div>
+                </form>
+            </div>
+
+            <!-- 3. Practice & Schedule Settings Pane -->
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white dior-settings-pane" id="doc-tab-practice"
+                hidden>
+                <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+                    <div>
+                        <div class="fs-6 fw-bold text-dark mb-0">
+                            <i class="fas fa-calendar-check text-primary me-2"></i> Practice &amp; Scheduling
+                            Preferences
+                        </div>
+                        <div class="text-secondary small mt-1">Configure appointment modalities and clinical visit
+                            defaults.</div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6 col-12">
+                        <label class="form-label small text-uppercase text-secondary fw-semibold mb-1">Default
+                            Consultation Duration</label>
+                        <select class="form-select rounded-3 py-2">
+                            <option value="30">30 Minutes</option>
+                            <option value="45">45 Minutes</option>
+                            <option value="60" selected>60 Minutes (Standard)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label class="form-label small text-uppercase text-secondary fw-semibold mb-1">Appointment
+                            Buffer Time</label>
+                        <select class="form-select rounded-3 py-2">
+                            <option value="0">No buffer</option>
+                            <option value="10" selected>10 Minutes between visits</option>
+                            <option value="15">15 Minutes</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <div
+                            class="form-check form-switch p-3 border rounded-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <label class="form-check-label fw-bold text-dark d-block" for="practice-auto-confirm">
+                                    Instant Appointment Confirmation
+                                </label>
+                                <span class="small text-secondary">Automatically confirm incoming patient booking
+                                    requests.</span>
+                            </div>
+                            <input class="form-check-input ms-3" type="checkbox" role="switch"
+                                id="practice-auto-confirm" checked>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                    <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm"
+                        onclick="Swal.fire({icon: 'success', title: 'Preferences Updated', toast: true, timer: 1800, position: 'top-end', showConfirmButton: false})">
+                        <i class="fas fa-check me-1"></i> Save Practice Settings
+                    </button>
                 </div>
             </div>
 
-            <!-- Two-Column Layout (Sidebar 25% + Main Form 75%) -->
-            <div class="dior-settings-grid-row">
-
-                <!-- Left Sidebar Nav -->
-                <div class="dior-settings-col-sidebar">
-                    <div class="card settings-nav-card border-0 shadow-sm"
-                        style="border-radius: 12px; background: #ffffff; border: 1px solid #e7edf4; box-shadow: 0 4px 18px rgba(15,23,42,.05); padding: 14px;">
-                        <div role="tablist" class="nav flex-column nav-pills custom-settings-pills"
-                            style="display: flex; flex-direction: column; gap: 8px;">
-
-                            <!-- Tab 1: Clinical Profile -->
-                            <button type="button" class="nav-link text-start active dior-doc-nav-item btn"
-                                data-tab-pane="doc-tab-clinical"
-                                onclick="diorDocSelectSettingsTab(this, 'doc-tab-clinical')">
-                                <i class="fas fa-user-md icon-tab text-primary"
-                                    style="font-size: 18px; width: 24px; min-width: 24px; text-align: center; flex-shrink: 0; margin-right: 12px;"></i>
-                                <div style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0;">
-                                    <span class="tab-title"
-                                        style="font-weight: 700; font-size: 13px; display: block; line-height: 1.3;">Clinical
-                                        Profile</span>
-                                    <small class="tab-subtext"
-                                        style="font-size: 11px; display: block; margin-top: 2px; line-height: 1.2;">Qualifications,
-                                        fee &amp; location</small>
-                                </div>
-                            </button>
-
-                            <!-- Tab 2: Security & Password -->
-                            <button type="button" class="nav-link text-start dior-doc-nav-item btn"
-                                data-tab-pane="doc-tab-security"
-                                onclick="diorDocSelectSettingsTab(this, 'doc-tab-security')">
-                                <i class="fas fa-shield-alt icon-tab text-danger"
-                                    style="font-size: 18px; width: 24px; min-width: 24px; text-align: center; flex-shrink: 0; margin-right: 12px; color: #ef4444 !important;"></i>
-                                <div style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0;">
-                                    <span class="tab-title"
-                                        style="font-weight: 700; font-size: 13px; display: block; line-height: 1.3;">Security
-                                        &amp; Password</span>
-                                    <small class="tab-subtext"
-                                        style="font-size: 11px; display: block; margin-top: 2px; line-height: 1.2;">Credentials,
-                                        2FA &amp; access</small>
-                                </div>
-                            </button>
-
-                            <!-- Tab 3: Practice & Schedule -->
-                            <button type="button" class="nav-link text-start dior-doc-nav-item btn"
-                                data-tab-pane="doc-tab-practice"
-                                onclick="diorDocSelectSettingsTab(this, 'doc-tab-practice')">
-                                <i class="fas fa-calendar-check icon-tab text-purple"
-                                    style="font-size: 18px; width: 24px; min-width: 24px; text-align: center; flex-shrink: 0; margin-right: 12px; color: #8b5cf6 !important;"></i>
-                                <div style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0;">
-                                    <span class="tab-title"
-                                        style="font-weight: 700; font-size: 13px; display: block; line-height: 1.3;">Practice
-                                        &amp; Schedule</span>
-                                    <small class="tab-subtext"
-                                        style="font-size: 11px; display: block; margin-top: 2px; line-height: 1.2;">Slots,
-                                        auto-confirm &amp; tele-visit</small>
-                                </div>
-                            </button>
-
-                            <!-- Tab 4: Doctor Alerts -->
-                            <button type="button" class="nav-link text-start dior-doc-nav-item btn"
-                                data-tab-pane="doc-tab-alerts"
-                                onclick="diorDocSelectSettingsTab(this, 'doc-tab-alerts')">
-                                <i class="fas fa-bell icon-tab text-amber"
-                                    style="font-size: 18px; width: 24px; min-width: 24px; text-align: center; flex-shrink: 0; margin-right: 12px; color: #f59e0b !important;"></i>
-                                <div style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0;">
-                                    <span class="tab-title"
-                                        style="font-weight: 700; font-size: 13px; display: block; line-height: 1.3;">Doctor
-                                        Alerts</span>
-                                    <small class="tab-subtext"
-                                        style="font-size: 11px; display: block; margin-top: 2px; line-height: 1.2;">Patient
-                                        booking &amp; EMR notifications</small>
-                                </div>
-                            </button>
-
+            <!-- 4. Alerts & Notifications Settings Pane -->
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white dior-settings-pane" id="doc-tab-alerts"
+                hidden>
+                <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+                    <div>
+                        <div class="fs-6 fw-bold text-dark mb-0">
+                            <i class="fas fa-bell text-warning me-2"></i> Doctor Alert &amp; Notification Preferences
                         </div>
+                        <div class="text-secondary small mt-1">Control which clinical events trigger notifications and
+                            delivery channels.</div>
                     </div>
                 </div>
 
-                <!-- Right Form Content Panes -->
-                <div class="dior-settings-col-main">
-
-                    <!-- 1. Clinical Profile Tab Pane -->
-                    <div class="card settings-form-card border-0 shadow-sm dior-doc-tab-pane" id="doc-tab-clinical"
-                        style="border-radius: 12px; background: #ffffff; border: 1px solid #e7edf4; box-shadow: 0 4px 18px rgba(15,23,42,.05);">
-                        <div class="card-header bg-transparent border-bottom py-3 px-4"
-                            style="border-bottom: 1px solid #edf1f5 !important; padding: 16px 20px;">
-                            <h5 class="card-title-text mb-0"
-                                style="font-size: 15px; font-weight: 700; color: #172033; display: inline-flex; align-items: center; margin-right: 8px;">
-                                <i class="fas fa-stethoscope text-primary"
-                                    style="color: #2563eb !important; margin-right: 8px;"></i>Clinical Profile &amp;
-                                Practitioner Details
-                            </h5>
-                            <p class="card-subtitle-text mb-0"
-                                style="font-size: 12px; color: #64748b; display: inline-block;">Update medical
-                                credentials, consultation pricing, and clinic schedule</p>
-                        </div>
-                        <div class="card-body p-4" style="padding: 24px;">
-
-                            <!-- Dedicated Profile Photo Box inside Clinical Profile -->
-                            <div
-                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
-                                <div style="display: flex; align-items: center; gap: 14px;">
-                                    <img id="dior-form-doctor-avatar-img" src="<?php echo esc_url($doc_avatar); ?>"
-                                        alt="Doctor Photo"
-                                        style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2.5px solid #2563eb; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
-                                    <div>
-                                        <h6
-                                            style="margin: 0 0 2px; font-weight: 700; color: #1e293b; font-size: 13.5px;">
-                                            Doctor Profile Photo</h6>
-                                        <p style="margin: 0; font-size: 11.5px; color: #64748b;">Square JPG, PNG, or
-                                            WEBP (Max 5MB). Syncs across your profile &amp; patient bookings.</p>
-                                    </div>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <button type="button" class="btn btn-sm" onclick="diorTriggerDoctorAvatarUpload()"
-                                        style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 7px 15px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                                        <i class="fas fa-camera"></i> Change Photo
-                                    </button>
-                                    <button type="button" class="btn btn-sm" onclick="diorDocOpenMediaLibrary()"
-                                        style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                                        <i class="fas fa-folder-open"></i> Media Library
-                                    </button>
-                                </div>
+                <form id="dior-doc-alerts-form" onsubmit="diorSaveDoctorAlerts(event, this)">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="border rounded-3 p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold text-dark small mb-1">Appointment Reminders (Email)</div>
+                                <p class="small text-secondary mb-0">Receive email alerts when patients book,
+                                    reschedule, or cancel consultations.</p>
                             </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    name="optin_appointment_reminders" value="1" <?php checked($doctor['optin_appointment_reminders'] ?? '1', '1'); ?>>
+                            </div>
+                        </div>
 
-                            <form id="dior-doc-profile-form" novalidate onsubmit="diorDocSaveProfile(event, this)">
+                        <div class="border rounded-3 p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold text-dark small mb-1">SMS &amp; Urgent Clinical Alerts</div>
+                                <p class="small text-secondary mb-0">Receive immediate SMS notifications for upcoming
+                                    visits starting in under 30 minutes.</p>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    name="optin_reminder_email" value="1" <?php checked($doctor['optin_reminder_email'] ?? '1', '1'); ?>>
+                            </div>
+                        </div>
 
-                                <?php
-                                $name_parts = explode(' ', $doctor['full_name'] ?? '');
-                                $first_name = $name_parts[0] ?? '';
-                                $last_name = isset($name_parts[1]) ? implode(' ', array_slice($name_parts, 1)) : '';
-                                ?>
-                                <div class="dior-form-row-2">
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">First
-                                            Name <span class="text-danger" style="color: #ef4444;">*</span></label>
-                                        <div class="input-group search-input-group">
-                                            <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
-                                            <input type="text" name="first_name"
-                                                value="<?php echo esc_attr($first_name); ?>" placeholder="First Name"
-                                                class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Last
-                                            Name <span class="text-danger" style="color: #ef4444;">*</span></label>
-                                        <div class="input-group search-input-group">
-                                            <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
-                                            <input type="text" name="last_name"
-                                                value="<?php echo esc_attr($last_name); ?>" placeholder="Last Name"
-                                                class="form-control" required>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="dior-form-row-2">
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Medical
-                                            Qualifications <span class="text-danger"
-                                                style="color: #ef4444;">*</span></label>
-                                        <div class="input-group search-input-group">
-                                            <span class="input-group-text"><i
-                                                    class="fas fa-graduation-cap text-muted"></i></span>
-                                            <input type="text" name="qualifications"
-                                                value="<?php echo esc_attr($doctor['qualifications'] ?? 'MBBS, MD'); ?>"
-                                                placeholder="e.g. MBBS, MD" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Primary
-                                            Specialty <span class="text-danger" style="color: #ef4444;">*</span></label>
-                                        <select name="doctor_specialty" class="form-select"
-                                            style="width: 100%; min-height: 40px; border: 1px solid #dce4ec; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1e293b; background: #ffffff;">
-                                            <?php
-                                            $specialties = ['Dermatology', 'Dentistry', 'Orthopedics', 'General Surgery', 'Cardiology', 'Pediatrics', 'Neurology', 'Family Medicine'];
-                                            $doc_spec = $doctor['specialty'] ?? 'Dermatology';
-                                            foreach ($specialties as $spec) {
-                                                $selected = ($doc_spec === $spec) ? 'selected' : '';
-                                                echo '<option value="' . esc_attr($spec) . '" ' . $selected . '>' . esc_html($spec) . '</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="dior-form-row-3">
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Medical
-                                            License No. <span class="text-danger"
-                                                style="color: #ef4444;">*</span></label>
-                                        <input type="text" name="doctor_license"
-                                            value="<?php echo esc_attr($doctor['license_no'] ?? ''); ?>"
-                                            placeholder="LIC-XXXXXX" class="form-control" style="border-radius: 6px;">
-                                    </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Professional
-                                            Email <span class="text-danger" style="color: #ef4444;">*</span></label>
-                                        <div class="input-group search-input-group">
-                                            <span class="input-group-text"><i
-                                                    class="fas fa-envelope text-muted"></i></span>
-                                            <input type="email" name="user_email"
-                                                value="<?php echo esc_attr($doctor['user_email'] ?? ''); ?>"
-                                                placeholder="doctor@domain.com" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Mobile
-                                            Contact <span class="text-danger" style="color: #ef4444;">*</span></label>
-                                        <div class="input-group search-input-group">
-                                            <span class="input-group-text"><i
-                                                    class="fas fa-phone text-muted"></i></span>
-                                            <input type="text" name="phone"
-                                                value="<?php echo esc_attr($doctor['phone'] ?? ''); ?>"
-                                                placeholder="+1 (234) 000-0000" class="form-control" required>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="dior-form-row-2">
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Consultation
-                                            Fee <span class="text-danger" style="color: #ef4444;">*</span></label>
-                                        <div class="input-group search-input-group">
-                                            <span class="input-group-text"><i
-                                                    class="fas fa-money-bill-wave text-success"
-                                                    style="color: #10b981 !important;"></i></span>
-                                            <input type="text" name="fee"
-                                                value="<?php echo esc_attr($doctor['fee'] ?? ''); ?>"
-                                                placeholder="INR 500" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Available
-                                            Duty Hours <span class="text-danger"
-                                                style="color: #ef4444;">*</span></label>
-                                        <div class="input-group search-input-group">
-                                            <span class="input-group-text"><i class="far fa-clock text-primary"
-                                                    style="color: #2563eb !important;"></i></span>
-                                            <input type="text" name="duty_hours"
-                                                value="<?php echo esc_attr($doctor['duty_hours'] ?? 'MON - SAT 10:00 AM - 8:00 PM'); ?>"
-                                                placeholder="MON - SAT 10:00 AM - 8:00 PM" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="dior-form-row-3">
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">City</label>
-                                        <input type="text" name="city"
-                                            value="<?php echo esc_attr($doctor['city'] ?? ''); ?>" placeholder="City"
-                                            class="form-control" style="border-radius: 6px;">
-                                    </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Country</label>
-                                        <input type="text" name="country"
-                                            value="<?php echo esc_attr($doctor['country'] ?? ''); ?>"
-                                            placeholder="Country" class="form-control" style="border-radius: 6px;">
-                                    </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Clinic
-                                            Address</label>
-                                        <input type="text" name="address"
-                                            value="<?php echo esc_attr($doctor['address'] ?? ''); ?>"
-                                            placeholder="Clinic / Hospital location" class="form-control"
-                                            style="border-radius: 6px;">
-                                    </div>
-                                </div>
-
-                                <div class="dior-form-group" style="margin-bottom: 20px;">
-                                    <label class="form-label"
-                                        style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Clinical
-                                        Experience &amp; Bio Summary</label>
-                                    <textarea name="doctor_bio" rows="3"
-                                        placeholder="Brief summary of clinical expertise, specializations, and patient care philosophy"
-                                        class="form-control"
-                                        style="border-radius: 6px; resize: vertical; min-height: 80px;"><?php echo esc_textarea($doctor['bio'] ?? ''); ?></textarea>
-                                </div>
-
-                                <div
-                                    style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 14px; border-top: 1px solid #edf1f5 !important;">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary px-3"
-                                        style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 18px; font-weight: 600; font-size: 13px; cursor: pointer;">Cancel</button>
-                                    <button type="submit" id="dior-doc-profile-save-btn"
-                                        class="btn btn-sm btn-primary-gradient px-4"
-                                        style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 8px 22px; font-weight: 600; font-size: 13px; box-shadow: 0 4px 10px rgba(37,99,235,0.25); cursor: pointer;">
-                                        <i class="fas fa-save" style="margin-right: 5px;"></i> Save Clinical Profile
-                                    </button>
-                                </div>
-                            </form>
+                        <div class="border rounded-3 p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold text-dark small mb-1">Portal Activity Notifications</div>
+                                <p class="small text-secondary mb-0">Display notifications in your Activity Feed for lab
+                                    reports and patient messages.</p>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    name="optin_reminder_dashboard" value="1" <?php checked($doctor['optin_reminder_dashboard'] ?? '1', '1'); ?>>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 2. Security & Password Tab Pane -->
-                    <div class="card settings-form-card border-0 shadow-sm dior-doc-tab-pane" id="doc-tab-security"
-                        style="display: none; border-radius: 12px; background: #ffffff; border: 1px solid #e7edf4; box-shadow: 0 4px 18px rgba(15,23,42,.05);">
-                        <div class="card-header bg-transparent border-bottom py-3 px-4"
-                            style="border-bottom: 1px solid #edf1f5 !important; padding: 16px 20px;">
-                            <h5 class="card-title-text mb-0"
-                                style="font-size: 15px; font-weight: 700; color: #172033; display: inline-flex; align-items: center; margin-right: 8px;">
-                                <i class="fas fa-shield-alt text-danger"
-                                    style="color: #ef4444 !important; margin-right: 8px;"></i>Security &amp; Password
-                                Settings
-                            </h5>
-                            <p class="card-subtitle-text mb-0"
-                                style="font-size: 12px; color: #64748b; display: inline-block;">Manage account login
-                                credentials, password updates &amp; authentication</p>
-                        </div>
-                        <div class="card-body p-4" style="padding: 24px;">
-                            <form onsubmit="event.preventDefault();">
-                                <div class="dior-form-group" style="margin-bottom: 16px;">
-                                    <label class="form-label"
-                                        style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Username</label>
-                                    <div class="input-group search-input-group">
-                                        <span class="input-group-text"><i class="fas fa-user-tag text-muted"></i></span>
-                                        <input type="text" value="dr_sarah_smith" placeholder="Username"
-                                            class="form-control">
-                                    </div>
-                                </div>
-                                <div class="dior-form-row-2">
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Current
-                                            Password</label>
-                                        <div class="input-group search-input-group">
-                                            <span class="input-group-text"><i class="fas fa-lock text-muted"></i></span>
-                                            <input type="password" placeholder="••••••••" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">New
-                                            Password</label>
-                                        <div class="input-group search-input-group">
-                                            <span class="input-group-text"><i class="fas fa-key text-muted"></i></span>
-                                            <input type="password" placeholder="••••••••" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div
-                                    style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 14px; border-top: 1px solid #edf1f5 !important;">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary px-3"
-                                        style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 18px; font-weight: 600; font-size: 13px;">Cancel</button>
-                                    <button type="submit" class="btn btn-sm btn-primary-gradient px-4"
-                                        style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 8px 22px; font-weight: 600; font-size: 13px;">Save
-                                        Security Settings</button>
-                                </div>
-                            </form>
-                        </div>
+                    <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm"
+                            id="dior-doc-alerts-save-btn">
+                            <i class="fas fa-check me-1"></i> Save Notification Preferences
+                        </button>
                     </div>
-
-                    <!-- 3. Practice & Schedule Tab Pane -->
-                    <div class="card settings-form-card border-0 shadow-sm dior-doc-tab-pane" id="doc-tab-practice"
-                        style="display: none; border-radius: 12px; background: #ffffff; border: 1px solid #e7edf4; box-shadow: 0 4px 18px rgba(15,23,42,.05);">
-                        <div class="card-header bg-transparent border-bottom py-3 px-4"
-                            style="border-bottom: 1px solid #edf1f5 !important; padding: 16px 20px;">
-                            <h5 class="card-title-text mb-0"
-                                style="font-size: 15px; font-weight: 700; color: #172033; display: inline-flex; align-items: center; margin-right: 8px;">
-                                <i class="fas fa-calendar-check text-purple"
-                                    style="color: #8b5cf6 !important; margin-right: 8px;"></i>Practice &amp; Schedule
-                                Settings
-                            </h5>
-                            <p class="card-subtitle-text mb-0"
-                                style="font-size: 12px; color: #64748b; display: inline-block;">Configure appointment
-                                slots, auto-confirmation &amp; video visit preferences</p>
-                        </div>
-                        <div class="card-body p-4" style="padding: 24px;">
-                            <form onsubmit="event.preventDefault();">
-                                <div class="dior-form-row-2">
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Slot
-                                            Duration</label>
-                                        <select class="form-select"
-                                            style="width: 100%; min-height: 40px; border: 1px solid #dce4ec; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1e293b; background: #ffffff;">
-                                            <option value="15">15 Minutes</option>
-                                            <option value="30" selected>30 Minutes</option>
-                                            <option value="45">45 Minutes</option>
-                                            <option value="60">60 Minutes</option>
-                                        </select>
-                                    </div>
-                                    <div class="dior-form-group">
-                                        <label class="form-label"
-                                            style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #475569;">Auto-Confirm
-                                            Bookings</label>
-                                        <select class="form-select"
-                                            style="width: 100%; min-height: 40px; border: 1px solid #dce4ec; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1e293b; background: #ffffff;">
-                                            <option value="enabled" selected>Enabled (Auto Accept)</option>
-                                            <option value="disabled">Disabled (Manual Review Required)</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div
-                                    style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 14px; border-top: 1px solid #edf1f5 !important;">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary px-3"
-                                        style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 18px; font-weight: 600; font-size: 13px;">Cancel</button>
-                                    <button type="submit" class="btn btn-sm btn-primary-gradient px-4"
-                                        style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 8px 22px; font-weight: 600; font-size: 13px;">Save
-                                        Schedule Settings</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- 4. Doctor Alerts Tab Pane -->
-                    <div class="card settings-form-card border-0 shadow-sm dior-doc-tab-pane" id="doc-tab-alerts"
-                        style="display: none; border-radius: 12px; background: #ffffff; border: 1px solid #e7edf4; box-shadow: 0 4px 18px rgba(15,23,42,.05);">
-                        <div class="card-header bg-transparent border-bottom py-3 px-4"
-                            style="border-bottom: 1px solid #edf1f5 !important; padding: 16px 20px;">
-                            <h5 class="card-title-text mb-0"
-                                style="font-size: 15px; font-weight: 700; color: #172033; display: inline-flex; align-items: center; margin-right: 8px;">
-                                <i class="fas fa-bell text-amber"
-                                    style="color: #f59e0b !important; margin-right: 8px;"></i>Doctor Notification Alerts
-                            </h5>
-                            <p class="card-subtitle-text mb-0"
-                                style="font-size: 12px; color: #64748b; display: inline-block;">Set alerts for new
-                                patient bookings, cancellations, and EMR records</p>
-                        </div>
-                        <div class="card-body p-4" style="padding: 24px;">
-                            <form onsubmit="event.preventDefault();">
-                                <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
-
-                                    <div
-                                        style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
-                                        <div>
-                                            <h6
-                                                style="margin: 0 0 3px; font-weight: 700; color: #1e293b; font-size: 13px;">
-                                                Email Notification for New Bookings</h6>
-                                            <small style="color: #64748b; font-size: 11px;">Send email alerts when a
-                                                patient schedules an appointment.</small>
-                                        </div>
-                                        <label class="dior-toggle-switch">
-                                            <input type="checkbox" checked>
-                                            <span class="dior-toggle-slider"></span>
-                                        </label>
-                                    </div>
-
-                                    <div
-                                        style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
-                                        <div>
-                                            <h6
-                                                style="margin: 0 0 3px; font-weight: 700; color: #1e293b; font-size: 13px;">
-                                                SMS Reminders for Emergency Consultations</h6>
-                                            <small style="color: #64748b; font-size: 11px;">Send high-priority SMS
-                                                notifications for instant telemedicine requests.</small>
-                                        </div>
-                                        <label class="dior-toggle-switch">
-                                            <input type="checkbox" checked>
-                                            <span class="dior-toggle-slider"></span>
-                                        </label>
-                                    </div>
-
-                                </div>
-                                <div
-                                    style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 14px; border-top: 1px solid #edf1f5 !important;">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary px-3"
-                                        style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 18px; font-weight: 600; font-size: 13px;">Cancel</button>
-                                    <button type="submit" class="btn btn-sm btn-primary-gradient px-4"
-                                        style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 8px 22px; font-weight: 600; font-size: 13px;">Save
-                                        Alert Preferences</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
+                </form>
             </div>
 
         </div>
     </div>
-</section>
 
-<!-- Tab Switching & Profile Management Script -->
-<script>
-    function diorDocSelectSettingsTab(btnElement, paneId) {
-        const navItems = document.querySelectorAll('#tab-doc-settings .dior-doc-nav-item');
-        navItems.forEach(item => item.classList.remove('active'));
-        btnElement.classList.add('active');
+    <!-- Google Meet configuration status. OAuth secrets are managed securely by a site administrator. -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white dior-settings-pane" id="doc-tab-google-meet" hidden>
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-3 gap-3">
+            <div>
+                <div class="fs-6 fw-bold text-dark mb-1"><i class="fab fa-google text-primary me-2"></i>Google Meet API &amp; OAuth</div>
+                <div class="small text-secondary">Connect a Google account to generate consultation meeting links.</div>
+            </div>
+            <span class="badge rounded-pill <?php echo (class_exists('Dior_Google_Meet') && Dior_Google_Meet::is_connected()) ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'; ?>">
+                <?php echo (class_exists('Dior_Google_Meet') && Dior_Google_Meet::is_connected()) ? 'Connected' : 'Not Connected'; ?>
+            </span>
+        </div>
+        <div class="alert alert-info mb-0" role="status">
+            Google Meet OAuth credentials are managed by a site administrator. Open <strong>WordPress Admin &rarr; Settings &rarr; Google Meet OAuth</strong> to enter the Client ID and Client Secret and connect the Google account.
+        </div>
+    </div>
 
-        const panes = document.querySelectorAll('#tab-doc-settings .dior-doc-tab-pane');
-        panes.forEach(pane => pane.style.display = 'none');
+    <!-- JavaScript Controller -->
+    <script>
+        (function () {
+            var ajaxUrl = '<?php echo esc_js($ajax_url); ?>';
+            var nonce = '<?php echo esc_js($nonce); ?>';
 
-        const target = document.getElementById(paneId);
-        if (target) {
-            target.style.display = 'block';
-        }
-    }
-
-    // 1. Trigger Direct Local Device Photo Picker
-    window.diorTriggerDoctorAvatarUpload = function () {
-        let fileInput = document.getElementById('dior-doctor-avatar-file-input');
-        if (!fileInput) {
-            fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.id = 'dior-doctor-avatar-file-input';
-            fileInput.accept = 'image/png, image/jpeg, image/jpg, image/webp, image/gif';
-            fileInput.style.display = 'none';
-            fileInput.onchange = function () { window.diorDoctorHandleFileChosen(this); };
-            document.body.appendChild(fileInput);
-        }
-        fileInput.value = '';
-        fileInput.click();
-    };
-
-    // 2. Update Doctor Avatar Everywhere Across Dashboard
-    window.diorUpdateAllDoctorAvatars = function (avatarUrl) {
-        if (!avatarUrl) return;
-
-        // A. Settings page banner avatar
-        const displayImg = document.getElementById('dior-doctor-avatar-display-img') || document.querySelector('#tab-doc-settings .profile-avatar-img');
-        if (displayImg) {
-            displayImg.src = avatarUrl;
-            displayImg.style.display = 'block';
-        }
-
-        // B. Settings form avatar
-        const formImg = document.getElementById('dior-form-doctor-avatar-img');
-        if (formImg) {
-            formImg.src = avatarUrl;
-            formImg.style.display = 'block';
-        }
-
-        // C. Topbar user pill avatar
-        const topPillAvatar = document.getElementById('dior-doctor-top-avatar');
-        if (topPillAvatar) {
-            topPillAvatar.innerHTML = '<img src="' + avatarUrl + '" alt="Provider Photo" class="dior-ic-9698adf4ac" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-        }
-
-        // D. Sidebar avatar (if present)
-        const sidebarAvatar = document.getElementById('dior-doctor-sidebar-avatar');
-        if (sidebarAvatar) {
-            sidebarAvatar.innerHTML = '<img src="' + avatarUrl + '" alt="Provider Photo" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">';
-        }
-
-        // E. Remove button display
-        const removeBtn = document.getElementById('dior-btn-doctor-avatar-remove');
-        if (removeBtn) {
-            removeBtn.style.display = 'inline-flex';
-        }
-
-        // F. Sync all doctor avatar images across the page
-        document.querySelectorAll('.profile-avatar-img, .dior-doc-avatar-sync, #dior-doctor-top-avatar img').forEach(function (img) {
-            img.src = avatarUrl;
-        });
-
-        // G. Global object update
-        if (window.dior_doctor_vars && window.dior_doctor_vars.doctor_profile) {
-            window.dior_doctor_vars.doctor_profile.avatar_url = avatarUrl;
-        }
-    };
-
-    // 3. Handle File Chosen from Local Device File Dialog
-    window.diorDoctorHandleFileChosen = function (input) {
-        if (!input || !input.files || !input.files[0]) return;
-        const file = input.files[0];
-
-        // Validate size (5MB max)
-        if (file.size > 5 * 1024 * 1024) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'File Too Large',
-                text: 'The selected photo exceeds the 5MB file size limit. Please choose a smaller image.',
-                confirmButtonColor: '#2563eb'
-            });
-            input.value = '';
-            return;
-        }
-
-        // Instant local preview
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const previewUrl = e.target.result;
-            const displayImg = document.getElementById('dior-doctor-avatar-display-img') || document.querySelector('#tab-doc-settings .profile-avatar-img');
-            if (displayImg) displayImg.src = previewUrl;
-            const formImg = document.getElementById('dior-form-doctor-avatar-img');
-            if (formImg) formImg.src = previewUrl;
-        };
-        reader.readAsDataURL(file);
-
-        // Show spinner & loading state
-        const spinner = document.getElementById('dior-doctor-avatar-spinner');
-        if (spinner) spinner.style.display = 'flex';
-
-        const directBtn = document.getElementById('dior-btn-doctor-direct-upload');
-        const directBtnText = document.getElementById('dior-btn-doctor-direct-upload-text');
-        const origHtml = directBtn ? directBtn.innerHTML : '';
-        if (directBtn) {
-            directBtn.disabled = true;
-            if (directBtnText) directBtnText.textContent = 'Uploading...';
-        }
-
-        const nonce = (window.dior_doctor_vars && window.dior_doctor_vars.nonce)
-            || (typeof getDiorDocNonce === 'function' ? getDiorDocNonce() : '')
-            || '<?php echo esc_js($nonce ?? wp_create_nonce("dior_doctor_nonce")); ?>';
-        const ajaxUrl = (window.dior_doctor_vars && window.dior_doctor_vars.ajax_url)
-            || (typeof getDiorDocAjax === 'function' ? getDiorDocAjax() : '')
-            || '<?php echo esc_js(admin_url("admin-ajax.php")); ?>';
-
-        const formData = new FormData();
-        formData.append('action', 'dior_doctor_upload_avatar');
-        formData.append('nonce', nonce);
-        formData.append('avatar', file);
-
-        fetch(ajaxUrl, {
-            method: 'POST',
-            body: formData,
-            credentials: 'same-origin'
-        })
-            .then(async function (r) {
-                const raw = await r.text();
-                try {
-                    return JSON.parse(raw);
-                } catch (e) {
-                    const excerpt = raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 240);
-                    return { success: false, data: { message: excerpt ? 'Server returned: ' + excerpt : 'Server returned empty response.' } };
-                }
-            })
-            .then(function (res) {
-                if (spinner) spinner.style.display = 'none';
-                if (directBtn) {
-                    directBtn.disabled = false;
-                    directBtn.innerHTML = origHtml || '<i class="fas fa-cloud-arrow-up"></i> <span>Upload Photo</span>';
-                }
-
-                if (res && res.success && res.data && res.data.avatar_url) {
-                    const newUrl = res.data.avatar_url;
-                    window.diorUpdateAllDoctorAvatars(newUrl);
-
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Profile Photo Updated!',
-                        text: 'Saved directly to Media Library & updated across dashboard.',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                } else {
-                    const errMsg = (res && res.data && res.data.message) ? res.data.message : 'Could not upload photo.';
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Upload Failed',
-                        text: errMsg,
-                        confirmButtonColor: '#2563eb'
-                    });
-                }
-                if (input) input.value = '';
-            })
-            .catch(function (err) {
-                if (input) input.value = '';
-                if (spinner) spinner.style.display = 'none';
-                if (directBtn) {
-                    directBtn.disabled = false;
-                    directBtn.innerHTML = origHtml || '<i class="fas fa-cloud-arrow-up"></i> <span>Upload Photo</span>';
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Upload Error',
-                    text: err && err.message ? err.message : 'Network error occurred.',
-                    confirmButtonColor: '#2563eb'
+            window.diorSelectSettingsTab = function (btn, paneId) {
+                document.querySelectorAll('.dior-settings-nav-btn').forEach(function (b) {
+                    b.classList.remove('active', 'btn-primary', 'text-white');
+                    b.classList.add('bg-light', 'text-dark');
+                    var icon = b.querySelector('i');
+                    if (icon) icon.classList.remove('text-white');
                 });
-            });
-    };
+                if (btn) {
+                    btn.classList.add('active', 'btn-primary', 'text-white');
+                    btn.classList.remove('bg-light', 'text-dark');
+                    var activeIcon = btn.querySelector('i');
+                    if (activeIcon) activeIcon.classList.add('text-white');
+                }
 
-    // 4. Remove Doctor Avatar
-    window.diorDoctorRemoveAvatar = function () {
-        const doRemove = function () {
-            const spinner = document.getElementById('dior-doctor-avatar-spinner');
-            if (spinner) spinner.style.display = 'flex';
-
-            const nonce = (window.dior_doctor_vars && window.dior_doctor_vars.nonce)
-                || (typeof getDiorDocNonce === 'function' ? getDiorDocNonce() : '')
-                || '<?php echo esc_js($nonce ?? wp_create_nonce("dior_doctor_nonce")); ?>';
-            const ajaxUrl = (window.dior_doctor_vars && window.dior_doctor_vars.ajax_url)
-                || (typeof getDiorDocAjax === 'function' ? getDiorDocAjax() : '')
-                || '<?php echo esc_js(admin_url("admin-ajax.php")); ?>';
-
-            const formData = new FormData();
-            formData.append('action', 'dior_doctor_remove_avatar');
-            formData.append('nonce', nonce);
-
-            fetch(ajaxUrl, {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin'
-            })
-                .then(function (r) { return r.json(); })
-                .then(function (res) {
-                    if (spinner) spinner.style.display = 'none';
-                    if (res && res.success) {
-                        const defaultAvatar = (res.data && res.data.avatar_url) ? res.data.avatar_url : '<?php echo esc_js(DIOR_PORTAL_URL . "assets/images/users/user-1.png"); ?>';
-                        const displayImg = document.getElementById('dior-doctor-avatar-display-img') || document.querySelector('#tab-doc-settings .profile-avatar-img');
-                        if (displayImg) displayImg.src = defaultAvatar;
-                        const formImg = document.getElementById('dior-form-doctor-avatar-img');
-                        if (formImg) formImg.src = defaultAvatar;
-                        const topPillAvatar = document.getElementById('dior-doctor-top-avatar');
-                        if (topPillAvatar) {
-                            topPillAvatar.innerHTML = '<i class="fas fa-user-doctor dior-ic-8dfc28cda3"></i>';
-                        }
-                        const removeBtn = document.getElementById('dior-btn-doctor-avatar-remove');
-                        if (removeBtn) removeBtn.style.display = 'none';
-
-                        if (typeof Swal !== 'undefined') {
-                            Swal.fire({
-                                position: 'top-end',
-                                icon: 'success',
-                                title: 'Profile photo removed',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
-                    } else {
-                        const msg = (res && res.data && res.data.message) ? res.data.message : 'Could not remove photo.';
-                        Swal.fire({ icon: 'error', title: 'Error', text: msg, confirmButtonColor: '#2563eb' });
-                    }
-                })
-                .catch(function (err) {
-                    if (spinner) spinner.style.display = 'none';
-                    Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to remove avatar.', confirmButtonColor: '#2563eb' });
+                document.querySelectorAll('.dior-settings-pane').forEach(function (pane) {
+                    pane.hidden = true;
                 });
-        };
+                var activePane = document.getElementById(paneId);
+                if (activePane) activePane.hidden = false;
+            };
 
-        Swal.fire({
-            title: 'Remove Profile Photo?',
-            text: 'Your photo will be removed and reset to the default icon.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#94a3b8',
-            confirmButtonText: 'Yes, Remove Photo',
-            cancelButtonText: 'Cancel'
-        }).then(function (result) {
-            if (result.isConfirmed) doRemove();
-        });
-    };
+            window.diorTriggerDoctorAvatarUpload = function () {
+                var fileInput = document.getElementById('dior-doctor-avatar-file-input');
+                if (fileInput) fileInput.click();
+            };
 
-    // 5. Open WordPress Media Library with Fallback
-    let diorDocMediaModalFrame = null;
-    window.diorDocOpenMediaLibrary = function () {
-        if (typeof wp !== 'undefined' && wp.media) {
-            if (diorDocMediaModalFrame) {
-                diorDocMediaModalFrame.open();
-                return;
-            }
-
-            diorDocMediaModalFrame = wp.media({
-                title: 'Select or Upload Provider Profile Photo',
-                button: { text: 'Use as Profile Photo' },
-                library: { type: 'image' },
-                multiple: false
-            });
-
-            diorDocMediaModalFrame.on('select', function () {
-                const attachment = diorDocMediaModalFrame.state().get('selection').first().toJSON();
-                if (!attachment || !attachment.url) return;
-
-                const avatarUrl = attachment.url;
-                const attachId = attachment.id || 0;
-
-                // Instant preview
-                window.diorUpdateAllDoctorAvatars(avatarUrl);
-
-                const spinner = document.getElementById('dior-doctor-avatar-spinner');
-                if (spinner) spinner.style.display = 'flex';
-
-                const nonce = (window.dior_doctor_vars && window.dior_doctor_vars.nonce)
-                    || (typeof getDiorDocNonce === 'function' ? getDiorDocNonce() : '')
-                    || '<?php echo esc_js($nonce ?? wp_create_nonce("dior_doctor_nonce")); ?>';
-                const ajaxUrl = (window.dior_doctor_vars && window.dior_doctor_vars.ajax_url)
-                    || (typeof getDiorDocAjax === 'function' ? getDiorDocAjax() : '')
-                    || '<?php echo esc_js(admin_url("admin-ajax.php")); ?>';
-
-                const formData = new FormData();
-                formData.append('action', 'dior_doctor_upload_avatar');
-                formData.append('nonce', nonce);
-                formData.append('avatar_url', avatarUrl);
-                formData.append('attachment_id', attachId);
+            window.diorDoctorHandleFileChosen = function (input) {
+                if (!input || !input.files || !input.files[0]) return;
+                var file = input.files[0];
+                var fd = new FormData();
+                fd.append('action', 'dior_doctor_upload_avatar');
+                fd.append('nonce', nonce);
+                fd.append('avatar', file);
 
                 fetch(ajaxUrl, {
                     method: 'POST',
-                    body: formData,
-                    credentials: 'same-origin'
+                    credentials: 'same-origin',
+                    body: fd
                 })
                     .then(function (r) { return r.json(); })
-                    .then(function (response) {
-                        if (spinner) spinner.style.display = 'none';
-                        if (response && response.success) {
-                            if (typeof Swal !== 'undefined') {
+                    .then(function (res) {
+                        if (res.success && res.data && res.data.avatar_url) {
+                            var img = document.getElementById('dior-doctor-avatar-display-img');
+                            if (img) img.src = res.data.avatar_url;
+                            if (window.Swal) Swal.fire({ position: 'top-end', icon: 'success', title: 'Avatar Updated', toast: true, timer: 1800, showConfirmButton: false });
+                        } else {
+                            if (window.Swal) Swal.fire({ icon: 'error', title: 'Upload Failed', text: res.data && res.data.message ? res.data.message : 'Failed to upload photo.' });
+                        }
+                    })
+                    .catch(function () {
+                        if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Network error.' });
+                    });
+            };
+
+            window.diorDoctorRemoveAvatar = function () {
+                if (!confirm('Are you sure you want to remove your profile photo?')) return;
+                var fd = new FormData();
+                fd.append('action', 'dior_doctor_upload_avatar');
+                fd.append('nonce', nonce);
+                fd.append('remove_avatar', '1');
+
+                fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (res.success) {
+                            var img = document.getElementById('dior-doctor-avatar-display-img');
+                            if (img) img.src = 'https://ui-avatars.com/api/?name=Doctor&background=00346c&color=ffffff&bold=true';
+                            var rmBtn = document.getElementById('dior-btn-doctor-avatar-remove');
+                            if (rmBtn) rmBtn.classList.add('d-none');
+                            if (window.Swal) Swal.fire({ position: 'top-end', icon: 'success', title: 'Avatar Removed', toast: true, timer: 1800, showConfirmButton: false });
+                        }
+                    });
+            };
+
+            window.diorDocOpenMediaLibrary = function () {
+                if (typeof wp !== 'undefined' && wp.media) {
+                    var frame = wp.media({
+                        title: 'Select Profile Photo',
+                        button: { text: 'Use as Profile Photo' },
+                        multiple: false
+                    });
+                    frame.on('select', function () {
+                        var attachment = frame.state().get('selection').first().toJSON();
+                        if (attachment && attachment.url) {
+                            var fd = new FormData();
+                            fd.append('action', 'dior_doctor_upload_avatar');
+                            fd.append('nonce', nonce);
+                            fd.append('avatar_url', attachment.url);
+                            fd.append('attachment_id', attachment.id || 0);
+                            fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
+                                .then(function (r) { return r.json(); })
+                                .then(function (res) {
+                                    if (res.success) {
+                                        var img = document.getElementById('dior-doctor-avatar-display-img');
+                                        if (img) img.src = attachment.url;
+                                    }
+                                });
+                        }
+                    });
+                    frame.open();
+                } else {
+                    diorTriggerDoctorAvatarUpload();
+                }
+            };
+
+            window.diorSaveDoctorProfile = function (e, form) {
+                e.preventDefault();
+                var btn = document.getElementById('dior-doc-profile-save-btn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Saving...';
+
+                var fd = new FormData(form);
+                fd.append('action', 'dior_doctor_save_profile');
+                fd.append('nonce', nonce);
+
+                fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (res.success) {
+                            var fname = fd.get('first_name');
+                            var lname = fd.get('last_name');
+                            var spec = fd.get('doctor_specialty');
+                            var nameEl = document.querySelector('.dior-doc-profile-display-name');
+                            if (nameEl) nameEl.textContent = 'Dr. ' + fname + ' ' + lname;
+                            var specEl = document.querySelector('.dior-doc-profile-display-specialty');
+                            if (specEl) specEl.textContent = spec;
+
+                            if (window.Swal) {
                                 Swal.fire({
                                     position: 'top-end',
                                     icon: 'success',
-                                    title: 'Profile Photo Updated!',
+                                    title: 'Profile Saved',
+                                    text: res.data && res.data.message ? res.data.message : 'Clinical profile details saved successfully.',
                                     showConfirmButton: false,
-                                    timer: 1500
+                                    timer: 2000
                                 });
                             }
                         } else {
-                            const errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to update photo.';
-                            if (typeof Swal !== 'undefined') {
-                                Swal.fire({ icon: 'error', title: 'Update Failed', text: errMsg });
-                            }
+                            if (window.Swal) Swal.fire({ icon: 'error', title: 'Save Failed', text: res.data && res.data.message ? res.data.message : 'Failed to save.' });
                         }
                     })
-                    .catch(function (err) {
-                        if (spinner) spinner.style.display = 'none';
+                    .catch(function () {
+                        if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Network error.' });
+                    })
+                    .finally(function () {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-check me-1"></i> Save Clinical Profile';
                     });
-            });
+            };
 
-            diorDocMediaModalFrame.open();
-        } else {
-            // Fallback to direct file picker if wp.media is unavailable
-            window.diorTriggerDoctorAvatarUpload();
-        }
-    };
-
-    // 6. Save Clinical Profile Form via AJAX
-    window.diorDocSaveProfile = function (e, form) {
-        if (e) e.preventDefault();
-        if (!form) return;
-
-        const btn = document.getElementById('dior-doc-profile-save-btn') || form.querySelector('button[type="submit"]');
-        const origHtml = btn ? btn.innerHTML : '';
-        if (btn) {
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Saving...';
-        }
-
-        const nonce = (window.dior_doctor_vars && window.dior_doctor_vars.nonce)
-            || (typeof getDiorDocNonce === 'function' ? getDiorDocNonce() : '')
-            || '<?php echo esc_js($nonce ?? wp_create_nonce("dior_doctor_nonce")); ?>';
-        const ajaxUrl = (window.dior_doctor_vars && window.dior_doctor_vars.ajax_url)
-            || (typeof getDiorDocAjax === 'function' ? getDiorDocAjax() : '')
-            || '<?php echo esc_js(admin_url("admin-ajax.php")); ?>';
-
-        const formData = new FormData(form);
-        formData.append('action', 'dior_doctor_save_profile');
-        formData.append('nonce', nonce);
-
-        fetch(ajaxUrl, {
-            method: 'POST',
-            body: formData,
-            credentials: 'same-origin'
-        })
-            .then(function (r) { return r.json(); })
-            .then(function (res) {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = origHtml || '<i class="fas fa-save" style="margin-right: 5px;"></i> Save Clinical Profile';
-                }
-                if (res && res.success) {
-                    const profile = res.data && res.data.profile ? res.data.profile : null;
-                    if (profile) {
-                        const nameEl = document.querySelector('.dior-doc-profile-display-name');
-                        if (nameEl && profile.full_name) nameEl.textContent = 'Dr. ' + profile.full_name.replace(/^Dr\.\s*/i, '');
-                        const specEl = document.querySelector('.dior-doc-profile-display-specialty');
-                        if (specEl && profile.specialty) specEl.textContent = profile.specialty;
+            window.diorTogglePasswordVisibility = function (inputId, btn) {
+                var input = document.getElementById(inputId);
+                if (!input) return;
+                var icon = btn ? btn.querySelector('i') : null;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    if (icon) {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
                     }
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Profile Saved!',
-                        text: res.data && res.data.message ? res.data.message : 'Clinical profile details saved successfully.',
-                        showConfirmButton: false,
-                        timer: 1800
-                    });
                 } else {
-                    const msg = (res && res.data && res.data.message) ? res.data.message : 'Failed to save profile.';
-                    Swal.fire({ icon: 'warning', title: 'Could Not Save', text: msg, confirmButtonColor: '#2563eb' });
+                    input.type = 'password';
+                    if (icon) {
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
                 }
-            })
-            .catch(function (err) {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = origHtml || '<i class="fas fa-save" style="margin-right: 5px;"></i> Save Clinical Profile';
+            };
+
+            window.diorSaveDoctorPassword = function (e, form) {
+                e.preventDefault();
+                var newPass = document.getElementById('doc-new-password') ? document.getElementById('doc-new-password').value : '';
+                var confirmPass = document.getElementById('doc-confirm-password') ? document.getElementById('doc-confirm-password').value : '';
+                if (newPass !== confirmPass) {
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Passwords Do Not Match',
+                            text: 'New password and confirmation password do not match. Please re-enter them carefully.',
+                            confirmButtonColor: '#2563eb'
+                        });
+                    } else {
+                        alert('New password and confirmation password do not match.');
+                    }
+                    return;
                 }
-                Swal.fire({ icon: 'error', title: 'Network Error', text: 'Network error while saving profile.', confirmButtonColor: '#2563eb' });
-            });
-    };
-</script>
+
+                var btn = document.getElementById('dior-doc-password-save-btn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Updating...';
+
+                var fd = new FormData(form);
+                fd.append('action', 'dior_doctor_change_password');
+                fd.append('nonce', nonce);
+
+                fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (res.success) {
+                            form.reset();
+                            if (window.Swal) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Password Changed',
+                                    text: res.data && res.data.message ? res.data.message : 'Your password has been changed successfully.',
+                                    confirmButtonColor: '#2563eb'
+                                });
+                            }
+                        } else {
+                            if (window.Swal) Swal.fire({ icon: 'error', title: 'Password Change Failed', text: res.data && res.data.message ? res.data.message : 'Current password incorrect or validation error.' });
+                        }
+                    })
+                    .catch(function () {
+                        if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: 'Network error.' });
+                    })
+                    .finally(function () {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-key me-1"></i> Update Password';
+                    });
+            };
+
+            window.diorSaveDoctorAlerts = function (e, form) {
+                e.preventDefault();
+                var btn = document.getElementById('dior-doc-alerts-save-btn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Saving...';
+
+                var fd = new FormData(form);
+                fd.append('action', 'dior_doctor_save_profile');
+                fd.append('nonce', nonce);
+                // Default unchecked switches to 0
+                if (!form.querySelector('input[name="optin_appointment_reminders"]:checked')) fd.append('optin_appointment_reminders', '0');
+                if (!form.querySelector('input[name="optin_reminder_email"]:checked')) fd.append('optin_reminder_email', '0');
+                if (!form.querySelector('input[name="optin_reminder_dashboard"]:checked')) fd.append('optin_reminder_dashboard', '0');
+
+                fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (res.success) {
+                            if (window.Swal) Swal.fire({ position: 'top-end', icon: 'success', title: 'Preferences Saved', toast: true, timer: 1800, showConfirmButton: false });
+                        } else {
+                            if (window.Swal) Swal.fire({ icon: 'error', title: 'Error', text: res.data && res.data.message ? res.data.message : 'Failed to save.' });
+                        }
+                    })
+                    .finally(function () {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-check me-1"></i> Save Notification Preferences';
+                    });
+            };
+        })();
+    </script>
+</section>

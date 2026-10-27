@@ -3,6 +3,7 @@
 namespace WpDreamers\WPDDB\Controllers;
 // Do not allow directly accessing this file.
 use WpDreamers\WPDDB\Controllers\Helper\Helper;
+use WpDreamers\WPDDB\Controllers\Model\Booking;
 use WpDreamers\WPDDB\Controllers\Model\Clinic;
 use WpDreamers\WPDDB\Controllers\Model\Doctor;
 use WpDreamers\WPDDB\Traits\SingletonTrait;
@@ -36,6 +37,11 @@ class ScriptsController {
 		 * Admin scripts.
 		 */
 		add_action( 'admin_enqueue_scripts', [ $this, 'backend_assets' ], 99 );
+
+		// Mirrored stylesheets for right-to-left languages.
+		add_action( 'wp_print_styles', [ $this, 'rtl_styles' ], 0 );
+		add_action( 'admin_print_styles', [ $this, 'rtl_styles' ], 0 );
+		add_action( 'wp_print_footer_scripts', [ $this, 'rtl_styles' ], 0 );
 
 		/**
 		 * Public scripts.
@@ -97,6 +103,12 @@ class ScriptsController {
 					wp_enqueue_media();
 					wp_enqueue_script('wpd-doc-booker-admin-js');
 					wp_set_script_translations( 'wpd-doc-booker-admin-js', 'doc-booker', WPDDB_PATH . 'languages' );
+					// The edit screens' own look (the DocBooker app's), with the Main colour.
+					$meta_css = 'assets/admin/css/wpddb-meta.css';
+					if ( 'edit.php' !== $screen && file_exists( WPDDB_PATH . $meta_css ) ) {
+						wp_enqueue_style( 'wpddb-meta', wpddb()->get_assets_uri( 'admin/css/wpddb-meta.css' ), [], (string) filemtime( WPDDB_PATH . $meta_css ) );
+						wp_add_inline_style( 'wpddb-meta', \WpDreamers\WPDDB\Controllers\Admin\AppPage::accent_css( Helper::get_primary_color() ) );
+					}
 
 					$post_id = get_the_ID();
 					wp_localize_script(
@@ -104,6 +116,10 @@ class ScriptsController {
 						'wpddbParams',
 						array_merge($common_params, [
 							'metaFields'    => $this->meta_fields($post_id),
+							// Schedules store English day names and "9:00 AM"; the editor shows
+							// them in the site's language and Time Format.
+							'weekdayLabels' => array_combine( array_keys( Helper::week_days_order() ), array_map( [ Helper::class, 'weekday_label' ], array_keys( Helper::week_days_order() ) ) ),
+							'timeFormat'    => get_option( 'time_format' ) ?: 'g:i a',
 							'shortcodeMetaFields'    => $this->shortcode_meta_fields($post_id),
                             'doctor_shortcode_layouts' => Helper::doctor_shortcode_layout(),
                             'clinic_shortcode_layouts' => Helper::clinic_shortcode_layout(),
@@ -113,7 +129,9 @@ class ScriptsController {
 							'clinic_service_suggestions' => wpddb()->has_pro() ? HelperPro::get_clinic_services() : [],
 							'marker_icon'   => wpddb()->get_assets_uri('public/img/marker-icon.png'),
 							'marker_shadow' => wpddb()->get_assets_uri('public/img/marker-shadow.png'),
-						])
+							'currency'      => (string) ( get_option( 'wpddb_global_settings', [] )['currency'] ?? '' ),
+							'pro_url'       => 'https://docbooker.wpdreamers.com/',
+						], $this->shortcode_preview_data( $_screen ))
 					);
 				}
 				break;
@@ -137,7 +155,7 @@ class ScriptsController {
 				wp_localize_script(
 					'wpd-booking-management-js',
 					'wpddbBookingParams',
-					$common_params
+					array_merge( $common_params, [ 'site' => Helper::site_clock() ] )
 				);
 				break;
 		}
@@ -188,9 +206,15 @@ class ScriptsController {
 				'nonce' => wp_create_nonce('wp_rest'),
 				'has_pro' => wpddb()->has_pro(),
 				'preBookingWindow' => max( 0, intval( WpddbOptions::get_option( 'pre_booking_window', 'wpddb_doctor_settings', 0 ) ) ),
+				'minNoticeHours' => Booking::min_notice_hours(),
+				'site' => Helper::site_clock(),
+				'fee' => Booking::doctor_fee( $doctor_id ),
+				'pricing' => Booking::pricing(),
+				'patientCancel' => Booking::patient_cancel_enabled(),
 			));
 		}
 		wp_enqueue_script( 'wpd-doc-booker' );
+		wp_set_script_translations( 'wpd-doc-booker', 'doc-booker', WPDDB_PATH . 'languages' );
         wp_localize_script(
             'wpd-doc-booker',
             'wpddbPublicParams',
@@ -262,7 +286,7 @@ class ScriptsController {
 		$this->scripts[] = [
 			'handle' => 'wpd-doc-booker',
 			'src'    => wpddb()->get_assets_uri( 'public/js/wpd-doc-booker.js' ),
-			'deps'   => [ 'jquery' ],
+			'deps'   => [ 'jquery', 'wp-i18n' ],
 			'footer' => true,
 		];
 		$this->scripts[] = [
@@ -315,6 +339,10 @@ class ScriptsController {
                 'nonce' => wp_create_nonce('wp_rest'),
                 'has_pro' => wpddb()->has_pro(),
                 'preBookingWindow' => max( 0, intval( WpddbOptions::get_option( 'pre_booking_window', 'wpddb_doctor_settings', 0 ) ) ),
+				'minNoticeHours' => Booking::min_notice_hours(),
+				'site' => Helper::site_clock(),
+                'pricing' => Booking::pricing(),
+                'patientCancel' => Booking::patient_cancel_enabled(),
             ]);
         }
     }
@@ -363,6 +391,8 @@ class ScriptsController {
             'doctor_speciality'  => get_post_meta( $post_id, 'wpddb_doctor_speciality', true ) ?: '',
             'doctor_workplace'   => get_post_meta( $post_id, 'wpddb_doctor_workplace', true ) ?: '',
             'doctor_degree'      => get_post_meta( $post_id, 'wpddb_doctor_degree', true ) ?: '',
+            'doctor_booking_fee' => get_post_meta( $post_id, 'wpddb_doctor_booking_fee', true ) ?: '',
+            'doctor_email'       => get_post_meta( $post_id, 'wpddb_doctor_email', true ) ?: '',
             'clinic_address'     => get_post_meta( $post_id, 'wpddb_clinic_address', true ) ?: '',
             'clinic_latitude'    => get_post_meta( $post_id, 'wpddb_clinic_latitude', true ) ?: '',
             'clinic_longitude'   => get_post_meta( $post_id, 'wpddb_clinic_longitude', true ) ?: '',
@@ -424,6 +454,61 @@ class ScriptsController {
         return apply_filters( 'wpddb_shortcode_'.$post_type.'_meta_value', $meta );
     }
 
+    /**
+     * For the shortcode builders: the published doctors or clinics with what a
+     * card shows, so the side preview and the "Which…" lists are real.
+     *
+     * @param \WP_Screen|null $screen
+     * @return array
+     */
+    private function shortcode_preview_data( $screen ) {
+        if ( ! $screen || ! in_array( $screen->post_type, [ wpddb()->post_type_doctor_shortcode, wpddb()->post_type_clinic_shortcode ], true ) ) {
+            return [];
+        }
+        $is_doctor = wpddb()->post_type_doctor_shortcode === $screen->post_type;
+        $posts     = get_posts( [
+            'post_type'      => $is_doctor ? wpddb()->post_type_doctor : wpddb()->post_type_clinic,
+            'post_status'    => 'publish',
+            'posts_per_page' => 200,
+            'orderby'        => 'date',
+            'order'          => 'ASC',
+        ] );
+        $items = [];
+        foreach ( $posts as $p ) {
+            $item = [
+                'id'         => $p->ID,
+                'title'      => get_the_title( $p ),
+                'slug'       => $p->post_name,
+                'date'       => $p->post_date,
+                'menu_order' => (int) $p->menu_order,
+                'photo'      => (string) get_the_post_thumbnail_url( $p, 'medium' ),
+                'excerpt'    => wp_trim_words( wp_strip_all_tags( $p->post_excerpt ?: $p->post_content ), 22, '…' ),
+            ];
+            if ( $is_doctor ) {
+                $terms               = get_the_terms( $p, wpddb()->doctor_category );
+                $terms               = is_array( $terms ) ? $terms : [];
+                $item['dept']        = $terms ? $terms[0]->name : '';
+                $item['dept_ids']    = wp_list_pluck( $terms, 'term_id' );
+                $item['designation'] = (string) get_post_meta( $p->ID, 'wpddb_doctor_designation', true );
+                $item['speciality']  = (string) get_post_meta( $p->ID, 'wpddb_doctor_speciality', true );
+                $item['workplace']   = (string) get_post_meta( $p->ID, 'wpddb_doctor_workplace', true );
+                $item['degree']      = (string) get_post_meta( $p->ID, 'wpddb_doctor_degree', true );
+            } else {
+                $item['address'] = (string) get_post_meta( $p->ID, 'wpddb_clinic_address', true );
+                $item['phone']   = (string) get_post_meta( $p->ID, 'wpddb_clinic_hotline', true );
+            }
+            $items[] = $item;
+        }
+        $data = [ 'previewItems' => $items ];
+        if ( $is_doctor ) {
+            $terms = get_terms( [ 'taxonomy' => wpddb()->doctor_category, 'hide_empty' => false ] );
+            $data['previewDepartments'] = is_array( $terms ) ? array_map( static function ( $t ) {
+                return [ 'value' => $t->term_id, 'label' => $t->name ];
+            }, $terms ) : [];
+        }
+        return $data;
+    }
+
     private function get_common_localize_params() {
 		return [
 			'ajaxUrl'         => esc_url(admin_url('admin-ajax.php')),
@@ -433,6 +518,8 @@ class ScriptsController {
 			 wpddb()->nonceId  => wp_create_nonce(wpddb()->nonceText),
 			'plugin_file_url' => wpddb()->plugin_url(),
             'has_pro' => wpddb()->has_pro(),
+            // Pro is on the site, even if switched off (outdated, licence): no sales prompts then.
+            'pro_installed' => function_exists( 'wpddbp' ),
             'social_links' => wpddb()->has_pro() ? HelperPro::get_social_links() : [],
             'online_payment' => wpddb()->has_pro() && HelperPro::has_online_payment()
 		];
@@ -453,4 +540,29 @@ class ScriptsController {
 
         return $css;
     }
+
+	/**
+	 * On right-to-left sites, swap each of this plugin's stylesheets for the
+	 * mirrored <name>-rtl.css the build writes next to it. Styles are enqueued
+	 * in many places (shortcodes, dashboards, admin screens), so this looks at
+	 * whatever is registered just before printing; a stylesheet without an RTL
+	 * file is left alone.
+	 */
+	public function rtl_styles() {
+		if ( ! is_rtl() ) {
+			return;
+		}
+		$url_prefix  = wpddb()->get_assets_uri( '' );
+		$path_prefix = WPDDB_PATH . 'assets/';
+		foreach ( wp_styles()->registered as $handle => $style ) {
+			$src = is_string( $style->src ) ? $style->src : '';
+			if ( 0 !== strpos( $src, $url_prefix ) || ! preg_match( '/(?<!-rtl)\.css$/', $src ) || ! empty( $style->extra['rtl'] ) ) {
+				continue;
+			}
+			$rtl_file = $path_prefix . preg_replace( '/\.css$/', '-rtl.css', substr( $src, strlen( $url_prefix ) ) );
+			if ( file_exists( $rtl_file ) ) {
+				wp_style_add_data( $handle, 'rtl', 'replace' );
+			}
+		}
+	}
 }

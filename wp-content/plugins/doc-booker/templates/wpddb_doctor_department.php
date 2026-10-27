@@ -36,7 +36,7 @@ do_action( 'wpddb_before_main_content' );
 
     <header class="wpddb-header">
 		<?php if ( apply_filters( 'wpddb_show_page_title', true ) ) { ?>
-            <h2 class="wpddb-doctor-header-title page-title"><?php Helper::page_title( true, 'doctor' ); ?></h2>
+            <h1 class="wpddb-doctor-header-title page-title"><?php Helper::page_title( true, 'doctor' ); ?></h1>
 		<?php } ?>
     </header>
     <div class="wpddb-doctor-wrapper">
@@ -58,7 +58,11 @@ do_action( 'wpddb_before_main_content' );
 							$args['id'] = get_the_id();
 							Helper::render_template( 'content-doctor', $args );
 						}
-					}
+					}else{
+                        echo '<p class="info">';
+                        esc_html_e('No doctors were found.', 'doc-booker');
+                        echo '</p>';
+                    }
 					?>
                 </div>
 				<?php

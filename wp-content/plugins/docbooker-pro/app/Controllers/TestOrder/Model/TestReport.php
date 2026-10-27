@@ -51,6 +51,19 @@ class TestReport {
 		return $ok ? (int) $wpdb->insert_id : false;
 	}
 
+	/**
+	 * A report row as staff and patients should see it: the file's own title
+	 * (get_the_title() would add "Private:" to these private attachments) and
+	 * the expiry in site time, like uploaded_at (expires_at is stored in UTC).
+	 */
+	public static function for_display( $row ) {
+		$row['filename'] = get_post_field( 'post_title', (int) $row['attachment_id'] ) ?: __( 'Report', 'doc-booker-pro' );
+		if ( ! empty( $row['expires_at'] ) ) {
+			$row['expires_at'] = get_date_from_gmt( $row['expires_at'] );
+		}
+		return $row;
+	}
+
 	public static function delete( $id ) {
 		global $wpdb;
 		return $wpdb->delete( self::table(), [ 'id' => (int) $id ] );

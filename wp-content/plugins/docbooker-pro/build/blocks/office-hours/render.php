@@ -28,8 +28,8 @@ $align_class = $align ? ' align' . preg_replace( '/[^a-z]/', '', $align ) : '';
 $time_format   = ( '24' === ( $attributes['timeFormat'] ?? '12' ) ) ? '24' : '12';
 $status_mode   = $attributes['statusMode'] ?? 'auto';
 $countdown     = ( 'in' === ( $attributes['countdownStyle'] ?? 'at' ) ) ? 'in' : 'at';
-$open_label    = $attributes['openLabel'] ?? 'Open now';
-$closed_label  = $attributes['closedLabel'] ?? 'Closed';
+$open_label    = $attributes['openLabel'] ?? __( 'Open now', 'doc-booker-pro' );
+$closed_label  = $attributes['closedLabel'] ?? __( 'Closed', 'doc-booker-pro' );
 $show_status   = ! isset( $attributes['displayStatus'] ) || $attributes['displayStatus'];
 $show_next     = ! isset( $attributes['showNextHint'] ) || $attributes['showNextHint'];
 $highlight     = ! isset( $attributes['highlightToday'] ) || $attributes['highlightToday'];
@@ -53,13 +53,13 @@ $offset_min = (int) round( $now_dt->getOffset() / 60 );
 
 /* ---- weekly hours -> dow map + JSON for the frontend ---- */
 $DAYS = array(
-	array( 'dow' => 1, 'full' => 'Monday', 'short' => 'Mon' ),
-	array( 'dow' => 2, 'full' => 'Tuesday', 'short' => 'Tue' ),
-	array( 'dow' => 3, 'full' => 'Wednesday', 'short' => 'Wed' ),
-	array( 'dow' => 4, 'full' => 'Thursday', 'short' => 'Thu' ),
-	array( 'dow' => 5, 'full' => 'Friday', 'short' => 'Fri' ),
-	array( 'dow' => 6, 'full' => 'Saturday', 'short' => 'Sat' ),
-	array( 'dow' => 0, 'full' => 'Sunday', 'short' => 'Sun' ),
+	array( 'dow' => 1, 'full' => __( 'Monday', 'doc-booker-pro' ), 'short' => __( 'Mon', 'doc-booker-pro' ) ),
+	array( 'dow' => 2, 'full' => __( 'Tuesday', 'doc-booker-pro' ), 'short' => __( 'Tue', 'doc-booker-pro' ) ),
+	array( 'dow' => 3, 'full' => __( 'Wednesday', 'doc-booker-pro' ), 'short' => __( 'Wed', 'doc-booker-pro' ) ),
+	array( 'dow' => 4, 'full' => __( 'Thursday', 'doc-booker-pro' ), 'short' => __( 'Thu', 'doc-booker-pro' ) ),
+	array( 'dow' => 5, 'full' => __( 'Friday', 'doc-booker-pro' ), 'short' => __( 'Fri', 'doc-booker-pro' ) ),
+	array( 'dow' => 6, 'full' => __( 'Saturday', 'doc-booker-pro' ), 'short' => __( 'Sat', 'doc-booker-pro' ) ),
+	array( 'dow' => 0, 'full' => __( 'Sunday', 'doc-booker-pro' ), 'short' => __( 'Sun', 'doc-booker-pro' ) ),
 );
 $week       = isset( $attributes['weeklyHours'] ) && is_array( $attributes['weeklyHours'] ) ? $attributes['weeklyHours'] : array();
 $by_dow     = array();
@@ -117,7 +117,7 @@ $fmt_time = function ( $min, $fmt ) {
 	if ( '24' === $fmt ) {
 		return $h . ':' . $mm;
 	}
-	$ap  = $h >= 12 ? 'PM' : 'AM';
+	$ap  = $h >= 12 ? __( 'PM', 'doc-booker-pro' ) : __( 'AM', 'doc-booker-pro' );
 	$h12 = $h % 12;
 	if ( 0 === $h12 ) {
 		$h12 = 12;
@@ -135,14 +135,16 @@ $hours_text = function ( $item, $fmt, $closed_text ) use ( $shifts_of, $fmt_time
 	}
 	return implode( ' · ', $parts );
 };
-$day_full = array( 0 => 'Sunday', 1 => 'Monday', 2 => 'Tuesday', 3 => 'Wednesday', 4 => 'Thursday', 5 => 'Friday', 6 => 'Saturday' );
+$day_full = array_column( $DAYS, 'full', 'dow' );
 $fmt_dur  = function ( $t ) {
 	$h = intdiv( $t, 60 );
 	$m = $t % 60;
 	if ( $h <= 0 ) {
-		return $m . 'm';
+		/* translators: %d: minutes */
+		return sprintf( __( '%dm', 'doc-booker-pro' ), $m );
 	}
-	return $h . 'h ' . str_pad( (string) $m, 2, '0', STR_PAD_LEFT ) . 'm';
+	/* translators: 1: hours, 2: minutes (two digits) */
+	return sprintf( __( '%1$dh %2$sm', 'doc-booker-pro' ), $h, str_pad( (string) $m, 2, '0', STR_PAD_LEFT ) );
 };
 $st = ( function () use ( $by_dow, $today_dow, $now_min, $status_mode, $shifts_of ) {
 	$today   = $by_dow[ $today_dow ] ?? null;
@@ -194,22 +196,43 @@ $detail_text = '';
 if ( $st['isOpen'] ) {
 	if ( null !== $st['closesAt'] ) {
 		$detail_text = ( 'in' === $countdown )
-			? 'Closes in ' . $fmt_dur( max( 0, $st['closesAt'] - $now_min ) ) . ' · ' . $fmt_time( $st['closesAt'], $time_format )
-			: 'Closes at ' . $fmt_time( $st['closesAt'], $time_format );
+			/* translators: 1: time left, e.g. "2h 14m"; 2: closing time */
+			? sprintf( __( 'Closes in %1$s · %2$s', 'doc-booker-pro' ), $fmt_dur( max( 0, $st['closesAt'] - $now_min ) ), $fmt_time( $st['closesAt'], $time_format ) )
+			/* translators: %s: closing time */
+			: sprintf( __( 'Closes at %s', 'doc-booker-pro' ), $fmt_time( $st['closesAt'], $time_format ) );
 	}
 } elseif ( ! empty( $st['next'] ) ) {
-	$o    = $st['next']['offset'];
-	$when = ( 0 === $o ) ? 'today' : ( ( 1 === $o ) ? 'tomorrow' : $day_full[ $st['next']['dow'] ] );
-	$detail_text = 'Opens ' . $when . ' at ' . $fmt_time( $st['next']['min'], $time_format );
+	$o  = $st['next']['offset'];
+	$at = $fmt_time( $st['next']['min'], $time_format );
+	if ( 0 === $o ) {
+		/* translators: %s: opening time */
+		$detail_text = sprintf( __( 'Opens today at %s', 'doc-booker-pro' ), $at );
+	} elseif ( 1 === $o ) {
+		/* translators: %s: opening time */
+		$detail_text = sprintf( __( 'Opens tomorrow at %s', 'doc-booker-pro' ), $at );
+	} else {
+		/* translators: 1: weekday, 2: opening time */
+		$detail_text = sprintf( __( 'Opens %1$s at %2$s', 'doc-booker-pro' ), $day_full[ $st['next']['dow'] ], $at );
+	}
 }
 $next_hint = '';
 if ( $show_next ) {
 	if ( $st['isOpen'] ) {
-		$next_hint = ( null !== $st['closesAt'] ) ? 'until ' . $fmt_time( $st['closesAt'], $time_format ) : '';
+		/* translators: %s: closing time */
+		$next_hint = ( null !== $st['closesAt'] ) ? sprintf( __( 'until %s', 'doc-booker-pro' ), $fmt_time( $st['closesAt'], $time_format ) ) : '';
 	} elseif ( ! empty( $st['next'] ) ) {
-		$o         = $st['next']['offset'];
-		$when      = ( 0 === $o ) ? 'today' : ( ( 1 === $o ) ? 'tomorrow' : $day_full[ $st['next']['dow'] ] );
-		$next_hint = 'opens ' . $when . ' ' . $fmt_time( $st['next']['min'], $time_format );
+		$o  = $st['next']['offset'];
+		$at = $fmt_time( $st['next']['min'], $time_format );
+		if ( 0 === $o ) {
+			/* translators: %s: opening time */
+			$next_hint = sprintf( __( 'opens today %s', 'doc-booker-pro' ), $at );
+		} elseif ( 1 === $o ) {
+			/* translators: %s: opening time */
+			$next_hint = sprintf( __( 'opens tomorrow %s', 'doc-booker-pro' ), $at );
+		} else {
+			/* translators: 1: weekday, 2: opening time */
+			$next_hint = sprintf( __( 'opens %1$s %2$s', 'doc-booker-pro' ), $day_full[ $st['next']['dow'] ], $at );
+		}
 	}
 }
 
@@ -250,7 +273,12 @@ if ( $show_status ) {
 	$pill    = '<span class="wpddbp-oh-status ' . $cls . '" data-oh-status aria-live="polite"><span class="wpddbp-oh-dot" aria-hidden="true"></span><span class="wpddbp-oh-status-label" data-oh-label>' . esc_html( $lbl ) . '</span>' . $next_el . '</span>';
 }
 
-$headline_el = '<h2 class="wpddbp-oh-headline" data-oh-headline>We&rsquo;re <em class="wpddbp-oh-accent">' . ( $st['isOpen'] ? 'open' : 'closed' ) . '</em> right now.</h2>';
+$state_word  = $st['isOpen'] ? _x( 'open', 'office hours state', 'doc-booker-pro' ) : _x( 'closed', 'office hours state', 'doc-booker-pro' );
+$headline_el = '<h2 class="wpddbp-oh-headline" data-oh-headline>' . sprintf(
+	/* translators: %s: "open" or "closed", shown emphasised */
+	esc_html__( 'We’re %s right now.', 'doc-booker-pro' ),
+	'<em class="wpddbp-oh-accent">' . esc_html( $state_word ) . '</em>'
+) . '</h2>';
 $detail_el   = '<p class="wpddbp-oh-detail" data-oh-detail>' . esc_html( $detail_text ) . '</p>';
 
 /* day-label per item (custom override else day name) */
@@ -279,8 +307,8 @@ $build_table = function () use ( $DAYS, $week, $by_dow, $label_of, $row_state, $
 	foreach ( $DAYS as $i => $d ) {
 		$closed = ! empty( $by_dow[ $d['dow'] ]['closed'] );
 		$hours  = $closed
-			? '<span class="wpddbp-oh-hours is-closed">Closed</span>'
-			: '<span class="wpddbp-oh-hours">' . esc_html( $hours_text( $by_dow[ $d['dow'] ], $time_format, 'Closed' ) ) . '</span>';
+			? '<span class="wpddbp-oh-hours is-closed">' . esc_html__( 'Closed', 'doc-booker-pro' ) . '</span>'
+			: '<span class="wpddbp-oh-hours">' . esc_html( $hours_text( $by_dow[ $d['dow'] ], $time_format, __( 'Closed', 'doc-booker-pro' ) ) ) . '</span>';
 		$rows  .= '<tr class="wpddbp-oh-row' . $row_state( $i ) . '" data-dow="' . esc_attr( $d['dow'] ) . '">'
 			. '<td class="wpddbp-oh-daycell"><span class="wpddbp-oh-day" data-oh-dayhost>' . esc_html( $label_of( $i, 'full' ) ) . '</span></td>'
 			. '<td class="wpddbp-oh-hourscell">' . $hours . '</td></tr>';
@@ -294,8 +322,8 @@ $build_list = function () use ( $DAYS, $week, $by_dow, $label_of, $row_state, $h
 	foreach ( $DAYS as $i => $d ) {
 		$closed = ! empty( $by_dow[ $d['dow'] ]['closed'] );
 		$hours  = $closed
-			? '<span class="wpddbp-oh-hours is-closed">Closed</span>'
-			: '<span class="wpddbp-oh-hours">' . esc_html( $hours_text( $by_dow[ $d['dow'] ], $time_format, 'Closed' ) ) . '</span>';
+			? '<span class="wpddbp-oh-hours is-closed">' . esc_html__( 'Closed', 'doc-booker-pro' ) . '</span>'
+			: '<span class="wpddbp-oh-hours">' . esc_html( $hours_text( $by_dow[ $d['dow'] ], $time_format, __( 'Closed', 'doc-booker-pro' ) ) ) . '</span>';
 		$rows  .= '<div class="wpddbp-oh-row' . $row_state( $i ) . '" data-dow="' . esc_attr( $d['dow'] ) . '">'
 			. '<span class="wpddbp-oh-day" data-oh-dayhost><span class="wpddbp-oh-bullet" aria-hidden="true"></span>' . esc_html( $label_of( $i, 'short' ) ) . '</span>'
 			. $hours . '</div>';
@@ -309,8 +337,8 @@ $build_weeklist = function ( $form ) use ( $DAYS, $week, $by_dow, $label_of, $ro
 	foreach ( $DAYS as $i => $d ) {
 		$closed = ! empty( $by_dow[ $d['dow'] ]['closed'] );
 		$hours  = $closed
-			? '<span class="wpddbp-oh-hours is-closed">Closed</span>'
-			: '<span class="wpddbp-oh-hours">' . esc_html( $hours_text( $by_dow[ $d['dow'] ], $time_format, 'Closed' ) ) . '</span>';
+			? '<span class="wpddbp-oh-hours is-closed">' . esc_html__( 'Closed', 'doc-booker-pro' ) . '</span>'
+			: '<span class="wpddbp-oh-hours">' . esc_html( $hours_text( $by_dow[ $d['dow'] ], $time_format, __( 'Closed', 'doc-booker-pro' ) ) ) . '</span>';
 		$rows  .= '<li class="wpddbp-oh-row' . $row_state( $i ) . '" data-dow="' . esc_attr( $d['dow'] ) . '">'
 			. '<span class="wpddbp-oh-day" data-oh-dayhost>' . esc_html( $label_of( $i, $form ) ) . '</span>'
 			. $hours . '</li>';
@@ -324,7 +352,7 @@ $build_chips = function () use ( $DAYS, $week, $by_dow, $label_of, $row_state, $
 	foreach ( $DAYS as $i => $d ) {
 		$sh = $shifts_of( $by_dow[ $d['dow'] ] );
 		if ( empty( $sh ) ) {
-			$hrs = '<span class="wpddbp-oh-chip-hours is-closed">Closed</span>';
+			$hrs = '<span class="wpddbp-oh-chip-hours is-closed">' . esc_html__( 'Closed', 'doc-booker-pro' ) . '</span>';
 		} else {
 			$lines = '';
 			foreach ( $sh as $s ) {
@@ -391,7 +419,7 @@ $foot_el  = ( $d_foot && '' !== $footnote ) ? '<div class="wpddbp-oh-foot">' . $
 
 /* today row (split-card) */
 $today_item   = $by_dow[ $today_dow ] ?? null;
-$today_hours  = $hours_text( $today_item, $time_format, 'Closed today' );
+$today_hours  = $hours_text( $today_item, $time_format, __( 'Closed today', 'doc-booker-pro' ) );
 $today_row_el = '<div class="wpddbp-oh-today-row">' . $ic_clock
 	. '<span class="wpddbp-oh-today-label" data-oh-today-label>' . esc_html( $day_full[ $today_dow ] ) . '</span>'
 	. '<span class="wpddbp-oh-today-hours" data-oh-today-hours>' . esc_html( $today_hours ) . '</span></div>';
@@ -402,7 +430,7 @@ $week_note  = esc_html( $attributes['weekListNote'] ?? '' );
 /* ---- assemble per layout ---- */
 switch ( $layout ) {
 	case 'compact-list':
-		$title = ( '' !== $heading_text ) ? esc_html( $heading_text ) : 'Opening Hours';
+		$title = ( '' !== $heading_text ) ? esc_html( $heading_text ) : esc_html__( 'Opening Hours', 'doc-booker-pro' );
 		$body  = '<div class="wpddbp-oh-head"><h4 class="wpddbp-oh-heading">' . $ic_clock . $title . '</h4>' . $pill . '</div>' . $build_list();
 		$body  = '<section class="wpddbp-oh-surface wpddbp-oh-panel">' . $body . '</section>';
 		break;

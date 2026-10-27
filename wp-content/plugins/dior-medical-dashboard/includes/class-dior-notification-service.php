@@ -75,7 +75,7 @@ class Dior_Notification_Service
         global $wpdb;
         $table = $wpdb->prefix . 'dior_notifications';
         if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
-            $uid = 'NDB-' . md5($notif_id . '|' . $user_id);
+            $uid = $notif_id;
             $wpdb->insert($table, [
                 'notification_uid' => $uid,
                 'user_id' => $user_id,
@@ -307,21 +307,26 @@ class Dior_Notification_Service
         $did = (int)$appt['doctor_id'];
 
         $patient = get_userdata($pid);
-        $doctor  = $did ? get_userdata($did) : null;
+        $doctor_uid = !empty($appt['doctor_user_id']) ? (int)$appt['doctor_user_id'] : 0;
+        if (!$doctor_uid && $did) {
+            $doctor_uid = class_exists('Dior_Doctor_Resolver') ? Dior_Doctor_Resolver::resolve_doctor_user_id($did) : $did;
+        }
+        $doctor  = $doctor_uid ? get_userdata($doctor_uid) : null;
 
         $pname = $patient ? trim($patient->first_name . ' ' . $patient->last_name) ?: $patient->display_name : 'Patient';
-        $dname = $doctor ? 'Dr. ' . (trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician';
+        $dname = !empty($appt['provider']) ? $appt['provider'] : (!empty($appt['doctor_name']) ? $appt['doctor_name'] : ($doctor ? 'Dr. ' . (trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician'));
 
-        $date = $appt['appt_date'];
-        $time = $appt['appt_time'];
-        $condition = $appt['condition_name'] ?: 'Urgent Care Telehealth';
-        $join_url = $appt['join_url'] ?: home_url('/patient-dashboard/#tab=appointments');
+        $date = !empty($appt['appt_date']) ? $appt['appt_date'] : (!empty($appt['date']) ? $appt['date'] : current_time('Y-m-d'));
+        $time = !empty($appt['appt_time']) ? $appt['appt_time'] : (!empty($appt['time']) ? $appt['time'] : '');
+        $condition = !empty($appt['condition_name']) ? $appt['condition_name'] : (!empty($appt['condition']) ? $appt['condition'] : 'Telehealth Consultation');
+        $visit_type = !empty($appt['visit_type']) ? $appt['visit_type'] : (!empty($appt['type']) ? $appt['type'] : 'Video Visit (HD)');
+        $join_url = !empty($appt['join_url']) ? $appt['join_url'] : home_url('/patient-dashboard/#tab=appointments');
 
         // 1. Patient Notification
         self::add_dashboard_notification(
             $pid,
-            'Consultation Confirmed: ' . $date,
-            'Your consultation with ' . $dname . ' for ' . $condition . ' on ' . $date . ' at ' . $time . ' is confirmed.',
+            'Appointment Confirmed: ' . $dname,
+            'Your ' . $visit_type . ' with ' . $dname . ' is confirmed for ' . $date . ($time ? ' at ' . $time : '') . '.',
             '#tab=appointments',
             'fa-calendar-check'
         );
@@ -353,9 +358,9 @@ class Dior_Notification_Service
         }
 
         // 2. Doctor Notification
-        if ($did && $doctor) {
+        if ($doctor) {
             self::add_dashboard_notification(
-                $did,
+                $doctor->ID,
                 'New Appointment Scheduled (' . $pname . ')',
                 $pname . ' scheduled a visit for ' . $date . ' at ' . $time . ' (' . $condition . ').',
                 '#tab=doc-appointments',
@@ -817,5 +822,177 @@ class Dior_Notification_Service
         }
 
         return $count;
+    }
+
+    /**
+     * 8. Status Change Notifications (Multi-Channel: In-App Dashboard + Luxury Email)
+     * Dispatches relevant notification to patient and doctor based on the new status.
+     * 
+     * @param string $appt_uid
+     * @param string $old_status
+     * @param string $new_status
+     * @param string $reason
+     * @param string $updated_by
+     * @return bool
+     */
+    public static function send_status_change_notification($appt_uid, $old_status, $new_status, $reason = '', $updated_by = 'doctor')
+    {
+        if (empty($appt_uid)) return false;
+
+        $appt = class_exists('Dior_Appointment_Service') ? Dior_Appointment_Service::get_appointment($appt_uid) : null;
+        if (!$appt) return false;
+
+        $pid = (int)($appt['patient_id'] ?? 0);
+        $did = (int)($appt['doctor_id'] ?? 0);
+
+        $patient = $pid ? get_userdata($pid) : null;
+        $doctor_uid = !empty($appt['doctor_user_id']) ? (int)$appt['doctor_user_id'] : 0;
+        if (!$doctor_uid && $did) {
+            $doctor_uid = class_exists('Dior_Doctor_Resolver') ? Dior_Doctor_Resolver::resolve_doctor_user_id($did) : $did;
+        }
+        $doctor = $doctor_uid ? get_userdata($doctor_uid) : null;
+
+        $pname = $patient ? trim($patient->first_name . ' ' . $patient->last_name) ?: $patient->display_name : 'Patient';
+        $dname = !empty($appt['provider']) ? $appt['provider'] : (!empty($appt['doctor_name']) ? $appt['doctor_name'] : ($doctor ? 'Dr. ' . (trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician'));
+
+        $date = !empty($appt['appt_date']) ? $appt['appt_date'] : (!empty($appt['date']) ? $appt['date'] : current_time('Y-m-d'));
+        $time = !empty($appt['appt_time']) ? $appt['appt_time'] : (!empty($appt['time']) ? $appt['time'] : '');
+        $status_lc = strtolower(trim($new_status));
+        $reason_text = $reason ?: 'Updated by ' . ucfirst($updated_by);
+
+        switch ($status_lc) {
+            case 'confirmed':
+                // 1. Patient In-App & Email
+                self::add_dashboard_notification(
+                    $pid,
+                    'Appointment Confirmed: #' . $appt['appt_uid'],
+                    'Your consultation with ' . $dname . ' on ' . $date . ($time ? ' at ' . $time : '') . ' is confirmed.',
+                    '#tab=appointments',
+                    'fa-calendar-check'
+                );
+
+                if ($patient && $patient->user_email) {
+                    $p_content = '
+                    <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
+                    <p>Your appointment has been <strong>Confirmed</strong> with <strong>' . esc_html($dname) . '</strong>.</p>
+                    <div style="background-color: #ECFDF5; border-left: 4px solid #10B981; border-radius: 4px; padding: 16px 20px; margin: 20px 0; color: #065F46;">
+                        <p style="margin: 0 0 6px 0; font-weight: 700;">Confirmed Appointment:</p>
+                        <p style="margin: 0; font-size: 16px; font-weight: 700;">' . esc_html($date . ($time ? ' at ' . $time : '')) . '</p>
+                        <p style="margin: 6px 0 0 0; font-size: 13px;">Provider: ' . esc_html($dname) . ' &bull; Type: ' . esc_html($appt['visit_type'] ?? 'Video Visit (HD)') . '</p>
+                    </div>
+                    <p>Please be ready 5 minutes before your scheduled start time.</p>';
+
+                    $p_html = self::render_email_template(
+                        'Appointment Confirmed',
+                        'Your consultation on ' . $date . ' is confirmed.',
+                        $p_content,
+                        ['label' => 'View Appointment in Portal', 'url' => home_url('/patient-dashboard/#tab=appointments')]
+                    );
+                    self::send_email_safe($patient->user_email, 'Appointment Confirmed: ' . $date . ' with ' . $dname, $p_html);
+                }
+
+                // Doctor In-App
+                if ($doctor) {
+                    self::add_dashboard_notification(
+                        $doctor->ID,
+                        'Appointment Confirmed (' . $pname . ')',
+                        'Appointment #' . $appt['appt_uid'] . ' with ' . $pname . ' for ' . $date . ' is confirmed.',
+                        '#tab=doc-appointments',
+                        'fa-calendar-check',
+                        true
+                    );
+                }
+                break;
+
+            case 'cancelled':
+                self::send_appointment_cancelled($appt_uid, $reason, $updated_by);
+                break;
+
+            case 'completed':
+                // Patient In-App
+                self::add_dashboard_notification(
+                    $pid,
+                    'Consultation Completed: #' . $appt['appt_uid'],
+                    'Your consultation with ' . $dname . ' on ' . $date . ' has concluded. Clinical notes and prescriptions are available in your portal.',
+                    '#tab=appointments',
+                    'fa-circle-check'
+                );
+
+                // Patient Email
+                if ($patient && $patient->user_email) {
+                    $p_content = '
+                    <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
+                    <p>Your consultation with <strong>' . esc_html($dname) . '</strong> on <strong>' . esc_html($date . ($time ? ' at ' . $time : '')) . '</strong> has been marked as <strong>Completed</strong>.</p>
+                    <div style="background-color: #ECFDF5; border-left: 4px solid #10B981; border-radius: 4px; padding: 14px 18px; margin: 18px 0; color: #065F46;">
+                        <strong>Status:</strong> Consultation Concluded Successfully
+                    </div>
+                    <p>You can review your visit notes, clinical summary, and digital prescriptions anytime from your secure patient dashboard.</p>';
+
+                    $p_html = self::render_email_template(
+                        'Consultation Completed',
+                        'Your visit summary is ready in your portal.',
+                        $p_content,
+                        ['label' => 'View Medical Record', 'url' => home_url('/patient-dashboard/#tab=medical_record')]
+                    );
+                    self::send_email_safe($patient->user_email, 'Consultation Concluded: ' . $date . ' with ' . $dname, $p_html);
+                }
+
+                // Doctor In-App
+                if ($doctor) {
+                    self::add_dashboard_notification(
+                        $doctor->ID,
+                        'Consultation Concluded (' . $pname . ')',
+                        'Appointment #' . $appt['appt_uid'] . ' with ' . $pname . ' has been marked as Completed.',
+                        '#tab=doc-appointments',
+                        'fa-circle-check',
+                        true
+                    );
+                }
+                break;
+
+            case 'in progress':
+                self::send_consultation_reminder($appt_uid);
+                break;
+
+            case 'no show':
+                // Patient In-App
+                self::add_dashboard_notification(
+                    $pid,
+                    'Missed Appointment: #' . $appt['appt_uid'],
+                    'Your appointment on ' . $date . ' was marked as Missed / No-Show. Please visit your portal if you wish to reschedule.',
+                    '#tab=appointments',
+                    'fa-calendar-times'
+                );
+
+                // Patient Email
+                if ($patient && $patient->user_email) {
+                    $p_content = '
+                    <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
+                    <p>Your scheduled appointment with <strong>' . esc_html($dname) . '</strong> on <strong>' . esc_html($date . ($time ? ' at ' . $time : '')) . '</strong> was recorded as Missed / No-Show.</p>
+                    <p>If you still require medical consultation, you may easily reschedule a new appointment through your portal.</p>';
+
+                    $p_html = self::render_email_template(
+                        'Appointment Status: Missed Visit',
+                        'Your appointment was marked as Missed / No-Show.',
+                        $p_content,
+                        ['label' => 'Reschedule Appointment', 'url' => home_url('/patient-dashboard/#tab=appointments&subtab=book')]
+                    );
+                    self::send_email_safe($patient->user_email, 'Appointment Status: Missed Consultation on ' . $date, $p_html);
+                }
+                break;
+
+            default:
+                // Generic status change notification
+                self::add_dashboard_notification(
+                    $pid,
+                    'Appointment Status Updated: ' . $new_status,
+                    'Your appointment #' . $appt['appt_uid'] . ' status has been updated to ' . $new_status . '.',
+                    '#tab=appointments',
+                    'fa-bell'
+                );
+                break;
+        }
+
+        return true;
     }
 }

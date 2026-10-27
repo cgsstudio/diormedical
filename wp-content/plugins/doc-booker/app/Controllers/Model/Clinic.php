@@ -5,6 +5,15 @@ use WpDreamers\WPDDB\Controllers\Helper\Helper;
 
 defined( 'ABSPATH' ) || exit;
 class Clinic {
+	/**
+	 * Whether a clinic takes bookings: it exists and is published (not a
+	 * draft or in the Trash).
+	 */
+	public static function is_open( $clinic_id ) {
+		$clinic_id = (int) $clinic_id;
+		return $clinic_id > 0 && get_post_type( $clinic_id ) === wpddb()->post_type_clinic && get_post_status( $clinic_id ) === 'publish';
+	}
+
 	public static function the_title( $post_id ) {
 		echo esc_html( get_the_title( $post_id ) );
 	}

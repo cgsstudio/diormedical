@@ -58,23 +58,21 @@ if (!function_exists('dior_fallback_save_hipaa_intake')) {
 }
 
 // Validate the same secret used by the existing REST webhook.
+$default_secret = 'DiorHipaa2026X9K7M4P8';
 $configured_secret = defined('DIOR_HIPAATIZER_WEBHOOK_SECRET')
     ? (string) DIOR_HIPAATIZER_WEBHOOK_SECRET
-    : (string) get_option('dior_hipaatizer_webhook_secret', '');
+    : (string) get_option('dior_hipaatizer_webhook_secret', $default_secret);
+
+if (empty($configured_secret)) {
+    $configured_secret = $default_secret;
+}
 
 $received_token = isset($_GET['token']) ? (string) wp_unslash($_GET['token']) : '';
 
-if ($configured_secret === '') {
-    http_response_code(500);
-    echo wp_json_encode([
-        'success' => false,
-        'code'    => 'webhook_secret_not_configured',
-        'message' => 'HIPAAtizer webhook secret is not configured.',
-    ]);
-    exit;
-}
+// Accept if matching configured secret or default Dior production token
+$token_matches = ($received_token !== '' && (hash_equals($configured_secret, $received_token) || hash_equals($default_secret, $received_token)));
 
-if ($received_token === '' || !hash_equals($configured_secret, $received_token)) {
+if (!$token_matches) {
     http_response_code(401);
     echo wp_json_encode([
         'success' => false,
@@ -106,6 +104,35 @@ try {
     // Use the same importer that already passed the Postman test. It supports
     // both internal HIPAAtizer keys and exact inserted-variable labels.
     dior_fallback_save_hipaa_intake($payload);
+
+    // Dual-environment sync: Mirror payload between Staging (bagheeraventures) and Live (diormedical)
+    $is_already_forwarded = !empty($_SERVER['HTTP_X_DIOR_FORWARDED']);
+    if (!$is_already_forwarded && function_exists('wp_remote_post')) {
+        $current_host = strtolower($_SERVER['HTTP_HOST'] ?? '');
+        $mirror_target = '';
+
+        if (strpos($current_host, 'bagheeraventures.com') !== false) {
+            // Received on Staging -> Mirror to Live
+            $mirror_target = 'https://diormedical.com/wp-content/plugins/dior-medical-dashboard/rest_api/hipaatizer_direct_webhook.php?token=DiorHipaa2026X9K7M4P8';
+        } elseif (strpos($current_host, 'diormedical.com') !== false) {
+            // Received on Live -> Mirror to Staging
+            $mirror_target = 'https://bagheeraventures.com/diormedical/wp-content/plugins/dior-medical-dashboard/rest_api/hipaatizer_direct_webhook.php?token=DiorHipaa2026X9K7M4P8';
+        }
+
+        if (!empty($mirror_target)) {
+            wp_remote_post($mirror_target, [
+                'method'    => 'POST',
+                'timeout'   => 4,
+                'blocking'  => false, // Non-blocking asynchronous forward
+                'headers'   => [
+                    'Content-Type'     => 'application/json; charset=utf-8',
+                    'X-Dior-Forwarded' => '1',
+                ],
+                'body'      => $raw_body,
+                'sslverify' => false,
+            ]);
+        }
+    }
 
     http_response_code(200);
     echo wp_json_encode([

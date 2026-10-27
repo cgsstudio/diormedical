@@ -31,7 +31,7 @@ class Dependencies {
      *
      * @var string
      */
-    const MINIMUM_WPDDB_VERSION = '2.0.0';
+    const MINIMUM_WPDDB_VERSION = '2.2.0';
 
     /**
      * Plugin name.
@@ -77,34 +77,28 @@ class Dependencies {
         // if the plugin's main file is missing/empty and never actually defined wpddb().
         // The function_exists() probe verifies the runtime entry point actually loaded.
         $docbooker = 'doc-booker/doc-booker.php';
+        // Only the kind of problem and its link are stored here: this runs on
+        // plugins_loaded, too early to translate. The text is built when the
+        // notice prints (see notice_text()).
         if ( ! is_plugin_active( $docbooker ) || ! function_exists( 'wpddb' ) ) {
             if ( $this->is_plugins_installed( $docbooker ) ) {
-                $activation_url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $docbooker . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $docbooker );
-                $message        = sprintf(
-                    '<strong>%s</strong> requires <strong>DocBooker</strong> plugin to be active. Please activate DocBooker to continue.',
-                    esc_html( self::PLUGIN_NAME ),
-                );
-                $button_text    = 'Activate DocBooker';
-
+                $this->missing['doc-booker'] = [
+                    'name' => 'DocBooker',
+                    'kind' => 'activate',
+                    'url'  => wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $docbooker . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $docbooker ),
+                ];
             } else {
-                $activation_url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=doc-booker' ), 'install-plugin_doc-booker' );
-                $message        = sprintf(
-                    '<strong>%s</strong> requires <strong>DocBooker</strong> plugin to be installed and activated. Please install DocBooker to continue.',
-                    esc_html( self::PLUGIN_NAME ),
-                );
-                $button_text    = 'Install DocBooker';
+                $this->missing['doc-booker'] = [
+                    'name' => 'DocBooker',
+                    'kind' => 'install',
+                    'url'  => wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=doc-booker' ), 'install-plugin_doc-booker' ),
+                ];
             }
-            $this->missing['doc-booker'] = [
-                'name'       => 'DocBooker',
-                'slug'       => 'doc-booker',
-                'file_name'  => $docbooker,
-                'url'        => $activation_url,
-                'message'    => $message,
-                'button_txt' => $button_text,
-            ];
         } elseif ( defined( 'WPDDB_VERSION' ) && version_compare( WPDDB_VERSION, self::MINIMUM_WPDDB_VERSION, '<' ) ) {
-            $activation_url = esc_url(
-                add_query_arg(
+            $this->missing['doc-booker'] = [
+                'name' => 'DocBooker',
+                'kind' => 'update',
+                'url'  => add_query_arg(
                     [
                         'tab'       => 'plugin-information',
                         'plugin'    => 'doc-booker',
@@ -113,61 +107,17 @@ class Dependencies {
                         'height'    => '500',
                     ],
                     admin_url( 'plugin-install.php' )
-                )
-            );
-            $message        = wp_kses(
-                sprintf(
-                    '<strong>DocBooker Pro</strong> is enabled but not effective. It is not compatible with <span class="is-uninstallable second plugin-version-author-uri"> <a class="thickbox open-plugin-details-modal" aria-label="More information about DocBooker" data-title="DocBooker" href="%1$s" >DocBooker</a> </span> versions prior %2$s.',
-                    $activation_url,
-                    self::MINIMUM_WPDDB_VERSION
                 ),
-                [
-                    'strong' => [],
-                    'a'      => [
-                        'href'  => true,
-                        'class' => true,
-                    ],
-                    'span'   => [ 'class' => true ],
-                ]
-            );
-
-            $button_text                  = 'Update DocBooker';
-            $this->missing['doc-booker'] = [
-                'name'       => 'DocBooker',
-                'slug'       => 'doc-booker',
-                'file_name'  => $docbooker,
-                'url'        => $activation_url,
-                'message'    => $message,
-                'button_txt' => $button_text,
             ];
-            $this->allOk                  = false;
+            $this->allOk = false;
         }
 		elseif ( (! defined( 'WPD_FL__DEV_MODE' ) || ! WPD_FL__DEV_MODE ) && !dp_fs()->can_use_premium_code()){
-            $activation_url = admin_url('admin.php?page=docbooker-pro');
-            $message        = wp_kses(
-                sprintf(
-                    '<strong>DocBooker Pro</strong> is enabled but not effective. Please activate your license to use the pro features. Go to <a href="%1$s">License Activation</a> page to activate your license.',
-                    $activation_url
-                ),
-                [
-                    'strong' => [],
-                    'a'      => [
-                        'href'  => true,
-                        'class' => true,
-                    ],
-                ]
-            );
-
-            $button_text                  = 'Activate License';
             $this->missing['doc-booker-pro'] = [
-                'name'       => 'DocBooker Pro',
-                'slug'       => 'doc-booker-pro',
-                'file_name'  => WPDDBP_BASENAME,
-                'url'        => $activation_url,
-                'message'    => $message,
-                'button_txt' => $button_text,
+                'name' => 'DocBooker Pro',
+                'kind' => 'license',
+                'url'  => admin_url( 'admin.php?page=docbooker-pro' ),
             ];
-            $this->allOk                  = false;
+            $this->allOk = false;
         }
 
         if ( ! empty( $this->missing ) ) {
@@ -189,8 +139,8 @@ class Dependencies {
 
         $message = sprintf(
         /* translators: 1: Plugin name 2: PHP 3: Required PHP version */
-            esc_html( '"%1$s" requires "%2$s" version %3$s or greater.' ),
-            '<strong>DocBooker</strong>',
+            esc_html__( '"%1$s" requires "%2$s" version %3$s or greater.', 'doc-booker-pro' ),
+            '<strong>DocBooker Pro</strong>',
             '<strong>PHP</strong>',
             self::MINIMUM_PHP_VERSION
         );
@@ -215,12 +165,54 @@ class Dependencies {
                 $sep = ', ';
             }
             if ( current_user_can( 'activate_plugins' ) ) {
-                $button = '<p><a href="' . esc_url( $plugin['url'] ) . '" class="button-primary">' . esc_html( $plugin['button_txt'] ) . '</a></p>';
-                // $plugin['message'] Already used escaping function.
-                printf( '<div class="error"><p>%1$s</p>%2$s</div>', $plugin['message'], $button ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                list( $message, $button_text ) = $this->notice_text( $plugin['kind'], $plugin['url'] );
+                $button = '<p><a href="' . esc_url( $plugin['url'] ) . '" class="button-primary">' . esc_html( $button_text ) . '</a></p>';
+                // $message is built from escaped parts in notice_text().
+                printf( '<div class="error"><p>%1$s</p>%2$s</div>', $message, $button ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             } else {
                 $missingPlugins .= '<strong>' . esc_html( $plugin['name'] ) . '</strong>' . $sep;
             }
+        }
+    }
+
+    /**
+     * The message (HTML) and button text for one dependency notice.
+     *
+     * @param string $kind activate | install | update | license.
+     * @param string $url  The notice's action URL.
+     *
+     * @return array [ message HTML, button text ]
+     */
+    private function notice_text( $kind, $url ) {
+        $pro  = '<strong>' . esc_html( self::PLUGIN_NAME ) . '</strong>';
+        $free = '<strong>DocBooker</strong>';
+        switch ( $kind ) {
+            case 'activate':
+                return [
+                    /* translators: 1: this plugin's name, 2: "DocBooker" */
+                    sprintf( esc_html__( '%1$s requires the %2$s plugin to be active. Please activate DocBooker to continue.', 'doc-booker-pro' ), $pro, $free ),
+                    __( 'Activate DocBooker', 'doc-booker-pro' ),
+                ];
+            case 'install':
+                return [
+                    /* translators: 1: this plugin's name, 2: "DocBooker" */
+                    sprintf( esc_html__( '%1$s requires the %2$s plugin to be installed and active. Please install DocBooker to continue.', 'doc-booker-pro' ), $pro, $free ),
+                    __( 'Install DocBooker', 'doc-booker-pro' ),
+                ];
+            case 'update':
+                $link = '<a class="thickbox open-plugin-details-modal" aria-label="' . esc_attr__( 'More information about DocBooker', 'doc-booker-pro' ) . '" data-title="DocBooker" href="' . esc_url( $url ) . '">DocBooker</a>';
+                return [
+                    /* translators: 1: "DocBooker Pro", 2: link to DocBooker, 3: minimum DocBooker version */
+                    sprintf( esc_html__( '%1$s is enabled but not working: it needs %2$s version %3$s or later.', 'doc-booker-pro' ), '<strong>DocBooker Pro</strong>', $link, esc_html( self::MINIMUM_WPDDB_VERSION ) ),
+                    __( 'Update DocBooker', 'doc-booker-pro' ),
+                ];
+            default: // license
+                $link = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'License Activation', 'doc-booker-pro' ) . '</a>';
+                return [
+                    /* translators: 1: "DocBooker Pro", 2: link to the License Activation page */
+                    sprintf( esc_html__( '%1$s is enabled but not working until your license is active. Activate it on the %2$s page.', 'doc-booker-pro' ), '<strong>DocBooker Pro</strong>', $link ),
+                    __( 'Activate License', 'doc-booker-pro' ),
+                ];
         }
     }
 

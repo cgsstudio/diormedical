@@ -42,6 +42,15 @@
         var title = document.getElementById('dior-current-page-title');
         if (title && titles[tabId]) title.textContent = titles[tabId];
 
+        if (tabId !== 'appointments') {
+            var w = document.getElementById('dior-appt-dropdown-wrap');
+            if (w) {
+                w.classList.remove('open');
+                var ch = w.querySelector('.fa-chevron-down');
+                if (ch) ch.style.transform = 'rotate(0deg)';
+            }
+        }
+
         if (updateHash !== false) {
             var hash = '#tab=' + encodeURIComponent(tabId);
             if (window.history && window.history.replaceState) window.history.replaceState(null, '', hash);
@@ -49,6 +58,40 @@
         }
         return true;
     }
+
+    window._diorLastApptToggleTime = window._diorLastApptToggleTime || 0;
+
+    function toggleApptDropdown(e) {
+        if (e) {
+            if (typeof e.preventDefault === 'function') e.preventDefault();
+            if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+        }
+        var now = Date.now();
+        if (now - (window._diorLastApptToggleTime || 0) < 300) {
+            return;
+        }
+        window._diorLastApptToggleTime = now;
+
+        var w = document.getElementById('dior-appt-dropdown-wrap');
+        if (!w) return;
+        var isOpen = w.classList.contains('open');
+        if (isOpen) {
+            w.classList.remove('open');
+            var ch = w.querySelector('.fa-chevron-down');
+            if (ch) ch.style.transform = 'rotate(0deg)';
+        } else {
+            w.classList.add('open');
+            var ch = w.querySelector('.fa-chevron-down');
+            if (ch) ch.style.transform = 'rotate(180deg)';
+            switchTab('appointments', true);
+            if (typeof window.diorSwitchApptSubTab === 'function') {
+                var activeSub = w.querySelector('.dior-nav-dropdown-item.active');
+                var sub = activeSub ? activeSub.getAttribute('data-appt-subtab') : 'today';
+                window.diorSwitchApptSubTab(sub);
+            }
+        }
+    }
+    window.diorToggleApptDropdown = toggleApptDropdown;
 
     window.diorSwitchTab = switchTab;
     window.diorSafeSwitchPatientTab = switchTab;
@@ -65,22 +108,23 @@
             if (!tab) return;
             event.preventDefault();
             event.stopImmediatePropagation();
-            switchTab(tab, true);
-            if (tab === 'appointments' && typeof window.diorSwitchApptSubTab === 'function') {
-                window.diorSwitchApptSubTab('calendar');
+            if (tab === 'appointments') {
+                toggleApptDropdown(event);
+            } else {
+                switchTab(tab, true);
             }
         }, true);
 
-        app.querySelectorAll('[data-appt-subtab]').forEach(function (link) {
-            link.addEventListener('click', function (event) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-                switchTab('appointments', true);
-                if (typeof window.diorSwitchApptSubTab === 'function') {
-                    window.diorSwitchApptSubTab(link.getAttribute('data-appt-subtab'));
-                }
-            }, true);
-        });
+        app.addEventListener('click', function (event) {
+            var link = event.target.closest('[data-appt-subtab]');
+            if (!link || !app.contains(link)) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            switchTab('appointments', true);
+            if (typeof window.diorSwitchApptSubTab === 'function') {
+                window.diorSwitchApptSubTab(link.getAttribute('data-appt-subtab'));
+            }
+        }, true);
 
         var hash = window.location.hash || '';
         var requestedTab = 'overview';
@@ -158,6 +202,24 @@
                     if (settingsName && profile.full_name) settingsName.textContent = profile.full_name;
                     var settingsEmail = document.querySelector('#tab-settings .dior-settings-profile-email');
                     if (settingsEmail && profile.email) settingsEmail.textContent = profile.email;
+
+                    // Update Overview Card dynamically
+                    var overviewName = document.querySelector('#tab-overview .patient-info h2');
+                    if (overviewName && profile.full_name) overviewName.textContent = profile.full_name;
+
+                    if (typeof profile.height !== 'undefined') {
+                        var hElem = document.getElementById('dior-patient-metric-height');
+                        if (hElem) hElem.textContent = profile.height ? (!isNaN(profile.height) ? profile.height + ' cm' : profile.height) : '—';
+                        var goalH = document.getElementById('goal_height');
+                        if (goalH) goalH.value = profile.height || '';
+                    }
+                    if (typeof profile.weight !== 'undefined') {
+                        var wElem = document.getElementById('dior-patient-metric-weight');
+                        if (wElem) wElem.textContent = profile.weight ? (!isNaN(profile.weight) ? profile.weight + ' kg' : profile.weight) : '—';
+                        var goalW = document.getElementById('goal_weight');
+                        if (goalW) goalW.value = profile.weight || '';
+                    }
+
                     Swal.fire({ icon: 'success', title: 'Profile Updated', text: 'Your profile details have been saved.', timer: 1800, showConfirmButton: false });
                 })
                 .catch(function (error) {

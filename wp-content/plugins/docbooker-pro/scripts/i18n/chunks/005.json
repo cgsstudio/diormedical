@@ -1,0 +1,458 @@
+[
+ {
+  "id": "Trust strip"
+ },
+ {
+  "id": "Upload PDFs"
+ },
+ {
+  "id": "Urgent Care"
+ },
+ {
+  "id": "Vaccination"
+ },
+ {
+  "id": "Value color"
+ },
+ {
+  "id": "View clinic"
+ },
+ {
+  "id": "Wall mosaic"
+ },
+ {
+  "id": "What’s next"
+ },
+ {
+  "id": "Wp Dreamers"
+ },
+ {
+  "id": "Zoom in/out"
+ },
+ {
+  "id": "specialists"
+ },
+ {
+  "id": "“Off” label"
+ },
+ {
+  "id": "\"Open\" label"
+ },
+ {
+  "id": "Accent Color"
+ },
+ {
+  "id": "Accent color"
+ },
+ {
+  "id": "Accent label"
+ },
+ {
+  "id": "Add nofollow"
+ },
+ {
+  "id": "Add question"
+ },
+ {
+  "id": "Amount Paid:"
+ },
+ {
+  "id": "Aspect ratio"
+ },
+ {
+  "id": "Bone & joint"
+ },
+ {
+  "id": "Booking Form",
+  "ctx": "block title"
+ },
+ {
+  "id": "Booking data"
+ },
+ {
+  "id": "Border Color"
+ },
+ {
+  "id": "Border Style"
+ },
+ {
+  "id": "Border Width"
+ },
+ {
+  "id": "Border color"
+ },
+ {
+  "id": "Bottom right"
+ },
+ {
+  "id": "Bulk actions"
+ },
+ {
+  "id": "Button label"
+ },
+ {
+  "id": "Card / frame"
+ },
+ {
+  "id": "Cardiologist"
+ },
+ {
+  "id": "Category nav"
+ },
+ {
+  "id": "Closed today"
+ },
+ {
+  "id": "Closes at %s"
+ },
+ {
+  "id": "Compact list"
+ },
+ {
+  "id": "Contact rows"
+ },
+ {
+  "id": "Count suffix"
+ },
+ {
+  "id": "Display icon"
+ },
+ {
+  "id": "Display lede"
+ },
+ {
+  "id": "Display link"
+ },
+ {
+  "id": "Doctor Stats",
+  "ctx": "block title"
+ },
+ {
+  "id": "Dr. Jane Doe"
+ },
+ {
+  "id": "Edit Patient"
+ },
+ {
+  "id": "Edit patient"
+ },
+ {
+  "id": "Explore link"
+ },
+ {
+  "id": "Explore text"
+ },
+ {
+  "id": "Eyebrow text"
+ },
+ {
+  "id": "Force closed"
+ },
+ {
+  "id": "Frame radius"
+ },
+ {
+  "id": "Frame shadow"
+ },
+ {
+  "id": "Ghost — text"
+ },
+ {
+  "id": "Gradient end"
+ },
+ {
+  "id": "Hover Border"
+ },
+ {
+  "id": "Hover reveal"
+ },
+ {
+  "id": "Index number"
+ },
+ {
+  "id": "Inline panel"
+ },
+ {
+  "id": "Input border"
+ },
+ {
+  "id": "Loading text"
+ },
+ {
+  "id": "No items yet"
+ },
+ {
+  "id": "No staff yet"
+ },
+ {
+  "id": "No tests yet"
+ },
+ {
+  "id": "Number color"
+ },
+ {
+  "id": "Office Hours",
+  "ctx": "block title"
+ },
+ {
+  "id": "Patient code"
+ },
+ {
+  "id": "Plus / Minus"
+ },
+ {
+  "id": "Price suffix"
+ },
+ {
+  "id": "Primary text"
+ },
+ {
+  "id": "Print button"
+ },
+ {
+  "id": "Profile link"
+ },
+ {
+  "id": "Progress bar"
+ },
+ {
+  "id": "Receptionist"
+ },
+ {
+  "id": "Release Time"
+ },
+ {
+  "id": "Remove image"
+ },
+ {
+  "id": "Remove item?"
+ },
+ {
+  "id": "Review & Pay"
+ },
+ {
+  "id": "Review count"
+ },
+ {
+  "id": "Right Bottom"
+ },
+ {
+  "id": "Right Center"
+ },
+ {
+  "id": "Save Changes"
+ },
+ {
+  "id": "Save changes"
+ },
+ {
+  "id": "Search field"
+ },
+ {
+  "id": "Search staff"
+ },
+ {
+  "id": "Search tests"
+ },
+ {
+  "id": "Select image"
+ },
+ {
+  "id": "Shadow Color"
+ },
+ {
+  "id": "Show bullets"
+ },
+ {
+  "id": "Show divider"
+ },
+ {
+  "id": "Show eyebrow"
+ },
+ {
+  "id": "Show minutes"
+ },
+ {
+  "id": "Show numbers"
+ },
+ {
+  "id": "Show seconds"
+ },
+ {
+  "id": "Social icons"
+ },
+ {
+  "id": "Staff member"
+ },
+ {
+  "id": "Team members"
+ },
+ {
+  "id": "Test/Service"
+ },
+ {
+  "id": "Testimonials"
+ },
+ {
+  "id": "Testimonials",
+  "ctx": "block title"
+ },
+ {
+  "id": "Title Styles"
+ },
+ {
+  "id": "Total Charge"
+ },
+ {
+  "id": "Total amount"
+ },
+ {
+  "id": "Upload Image"
+ },
+ {
+  "id": "Upload image"
+ },
+ {
+  "id": "Uploading..."
+ },
+ {
+  "id": "Value / text"
+ },
+ {
+  "id": "View profile"
+ },
+ {
+  "id": "Weekly hours"
+ },
+ {
+  "id": "You are here"
+ },
+ {
+  "id": "%s not found."
+ },
+ {
+  "id": "%s specialist",
+  "plural": "%s specialists"
+ },
+ {
+  "id": "Accent & text"
+ },
+ {
+  "id": "Accent phrase"
+ },
+ {
+  "id": "Ask for notes"
+ },
+ {
+  "id": "Billing Items"
+ },
+ {
+  "id": "Border Radius"
+ },
+ {
+  "id": "Border radius"
+ },
+ {
+  "id": "Button Styles"
+ },
+ {
+  "id": "Center Bottom"
+ },
+ {
+  "id": "Center Center"
+ },
+ {
+  "id": "Closed — text"
+ },
+ {
+  "id": "Compact strip"
+ },
+ {
+  "id": "Content Color"
+ },
+ {
+  "id": "Content Width"
+ },
+ {
+  "id": "Create Doctor"
+ },
+ {
+  "id": "Date of Birth"
+ },
+ {
+  "id": "Date of birth"
+ },
+ {
+  "id": "Detail & link"
+ },
+ {
+  "id": "Display title"
+ },
+ {
+  "id": "Divider color"
+ },
+ {
+  "id": "Doctor Awards",
+  "ctx": "block title"
+ },
+ {
+  "id": "Doctor added."
+ },
+ {
+  "id": "Email address"
+ },
+ {
+  "id": "Empty message"
+ },
+ {
+  "id": "Existing user"
+ },
+ {
+  "id": "Eyebrow color"
+ },
+ {
+  "id": "Field 1 label"
+ },
+ {
+  "id": "Field 1 value"
+ },
+ {
+  "id": "Field 2 label"
+ },
+ {
+  "id": "Field 2 value"
+ },
+ {
+  "id": "Field 3 label"
+ },
+ {
+  "id": "Field 3 value"
+ },
+ {
+  "id": "Field 4 label"
+ },
+ {
+  "id": "Field 4 value"
+ },
+ {
+  "id": "Footer button"
+ },
+ {
+  "id": "Heading color"
+ },
+ {
+  "id": "Holiday range"
+ },
+ {
+  "id": "Image overlay"
+ },
+ {
+  "id": "Imported Page"
+ },
+ {
+  "id": "Invalid role."
+ },
+ {
+  "id": "Manual amount"
+ }
+]

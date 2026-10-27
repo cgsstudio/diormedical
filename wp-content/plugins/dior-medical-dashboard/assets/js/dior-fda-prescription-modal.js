@@ -813,7 +813,6 @@
             </td>
             <td>
                 <div class="va-user-profile">
-                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(p.patient_name)}&background=0b1120&color=d4af37" class="va-user-avatar" alt="${p.patient_name}">
                     <span class="va-user-name">${p.patient_name}</span>
                 </div>
             </td>

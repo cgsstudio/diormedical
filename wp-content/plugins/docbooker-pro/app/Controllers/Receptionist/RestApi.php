@@ -231,6 +231,12 @@ class RestApi {
 			],
 		] );
 
+		register_rest_route( $ns, '/reception/visits/(?P<id>\d+)/payments/(?P<payment_id>\d+)', [
+			'methods'             => WP_REST_Server::DELETABLE,
+			'callback'            => [ $this, 'delete_visit_payment' ],
+			'permission_callback' => [ $this, 'verify_reception' ],
+		] );
+
 		register_rest_route( $ns, '/reception/clinic/doctors', [
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => [ $this, 'list_clinic_doctors' ],
@@ -284,6 +290,15 @@ class RestApi {
 			'clinic'             => $clinic,
 			'multi_clinic'       => StaffContext::is_multi_clinic_enabled(),
 			'can_upload_reports' => ! StaffContext::is_multi_clinic_enabled() || current_user_can( 'manage_options' ),
+			// In multi-clinic mode the clinic's manager uploads reports; say so
+			// when the clinic has none, as then only a site admin can.
+			'clinic_has_manager' => $clinic_id ? (bool) get_users( [
+				'role'       => 'wpddb_clinic_manager',
+				'meta_key'   => 'wpddb_managed_clinic_id',
+				'meta_value' => (int) $clinic_id,
+				'number'     => 1,
+				'fields'     => 'ID',
+			] ) : false,
 		], 200 );
 	}
 
@@ -305,15 +320,63 @@ class RestApi {
 	}
 
 	// =========================================================
+	// Clinic scope — every record a receptionist reaches by id is checked
+	// against their own clinic. Site admins see everything.
+	// =========================================================
+
+	private function is_site_admin() {
+		return current_user_can( 'manage_options' );
+	}
+
+	private function not_found( $what ) {
+		/* translators: %s: what was looked up, e.g. "Order". */
+		return new WP_Error( 'wpddbp_not_found', sprintf( __( '%s not found.', 'doc-booker-pro' ), $what ), [ 'status' => 404 ] );
+	}
+
+	/**
+	 * The order, or a 404 when it does not exist or belongs to another clinic
+	 * (the two look the same, so ids cannot be probed).
+	 */
+	private function scoped_order( $id ) {
+		$order = TestOrder::find( (int) $id );
+		if ( ! $order || ( ! $this->is_site_admin() && (int) $order['clinic_id'] !== $this->caller_clinic_id() ) ) {
+			return $this->not_found( __( 'Order', 'doc-booker-pro' ) );
+		}
+		return $order;
+	}
+
+	private function scoped_visit( $id ) {
+		$visit = Visit::find( (int) $id );
+		if ( ! $visit || ( ! $this->is_site_admin() && (int) $visit['clinic_id'] !== $this->caller_clinic_id() ) ) {
+			return $this->not_found( __( 'Visit', 'doc-booker-pro' ) );
+		}
+		return $visit;
+	}
+
+	private function scoped_patient( $id ) {
+		$patient = Patient::find( (int) $id );
+		if ( ! $patient || ( ! $this->is_site_admin() && ! Patient::visible_to_clinic( (int) $patient['id'], $this->caller_clinic_id() ) ) ) {
+			return $this->not_found( __( 'Patient', 'doc-booker-pro' ) );
+		}
+		return $patient;
+	}
+
+	// =========================================================
 	// Patients
 	// =========================================================
 
 	public function list_patients( WP_REST_Request $request ) {
-		$result = Patient::search( [
+		$args = [
 			'search'   => $request->get_param( 'search' ),
 			'page'     => (int) $request->get_param( 'page' ) ?: 1,
 			'per_page' => (int) $request->get_param( 'per_page' ) ?: 20,
-		] );
+		];
+		if ( ! $this->is_site_admin() ) {
+			$clinic = $this->ensure_clinic_assigned();
+			if ( is_wp_error( $clinic ) ) return $clinic;
+			$args['clinic_id'] = $clinic;
+		}
+		$result = Patient::search( $args );
 		return new WP_REST_Response( $result, 200 );
 	}
 
@@ -323,7 +386,21 @@ class RestApi {
 			return new WP_REST_Response( null, 200 );
 		}
 		$p = Patient::find_by_phone( $phone );
-		return new WP_REST_Response( $p ? Patient::enrich( $p ) : null, 200 );
+		if ( ! $p ) {
+			return new WP_REST_Response( null, 200 );
+		}
+		// The front desk looks a returning patient up by the exact phone number
+		// they were given. Someone known only to another clinic comes back with
+		// just enough to link them — not their email, address or date of birth.
+		if ( ! $this->is_site_admin() && ! Patient::visible_to_clinic( (int) $p['id'], $this->caller_clinic_id() ) ) {
+			return new WP_REST_Response( [
+				'id'           => (int) $p['id'],
+				'full_name'    => $p['full_name'],
+				'phone'        => $p['phone'],
+				'patient_code' => $p['patient_code'],
+			], 200 );
+		}
+		return new WP_REST_Response( Patient::enrich( $p ), 200 );
 	}
 
 	public function create_patient( WP_REST_Request $request ) {
@@ -331,6 +408,8 @@ class RestApi {
 		if ( empty( $body['full_name'] ) || empty( $body['phone'] ) ) {
 			return new WP_Error( 'wpddbp_required', __( 'Name and phone are required.', 'doc-booker-pro' ), [ 'status' => 400 ] );
 		}
+		// Registered at the caller's clinic, so only that clinic sees the walk-in.
+		$body['registered_clinic_id'] = $this->caller_clinic_id();
 		$id = Patient::create( $body );
 		if ( ! $id ) {
 			return new WP_Error( 'wpddbp_insert_failed', __( 'Could not create patient.', 'doc-booker-pro' ), [ 'status' => 500 ] );
@@ -339,14 +418,14 @@ class RestApi {
 	}
 
 	public function get_patient( WP_REST_Request $request ) {
-		$p = Patient::find( (int) $request['id'] );
-		if ( ! $p ) return new WP_Error( 'wpddbp_not_found', __( 'Patient not found.', 'doc-booker-pro' ), [ 'status' => 404 ] );
+		$p = $this->scoped_patient( $request['id'] );
+		if ( is_wp_error( $p ) ) return $p;
 		return new WP_REST_Response( Patient::enrich( $p ), 200 );
 	}
 
 	public function update_patient( WP_REST_Request $request ) {
-		$p = Patient::find( (int) $request['id'] );
-		if ( ! $p ) return new WP_Error( 'wpddbp_not_found', __( 'Patient not found.', 'doc-booker-pro' ), [ 'status' => 404 ] );
+		$p = $this->scoped_patient( $request['id'] );
+		if ( is_wp_error( $p ) ) return $p;
 		Patient::update( $p['id'], $this->body( $request ) );
 		return new WP_REST_Response( Patient::enrich( Patient::find( $p['id'] ) ), 200 );
 	}
@@ -354,6 +433,8 @@ class RestApi {
 	public function list_patient_visits( WP_REST_Request $request ) {
 		$clinic = $this->ensure_clinic_assigned();
 		if ( is_wp_error( $clinic ) ) return $clinic;
+		$patient = $this->scoped_patient( $request['id'] );
+		if ( is_wp_error( $patient ) ) return $patient;
 		$res = Visit::list( [
 			'patient_id' => (int) $request['id'],
 			'clinic_id'  => $clinic,
@@ -376,6 +457,8 @@ class RestApi {
 	public function list_patient_orders( WP_REST_Request $request ) {
 		$clinic = $this->ensure_clinic_assigned();
 		if ( is_wp_error( $clinic ) ) return $clinic;
+		$patient = $this->scoped_patient( $request['id'] );
+		if ( is_wp_error( $patient ) ) return $patient;
 		$res = TestOrder::list( [
 			'patient_id' => (int) $request['id'],
 			'clinic_id'  => $clinic,
@@ -524,13 +607,32 @@ class RestApi {
 	}
 
 	public function get_order( WP_REST_Request $request ) {
-		$id = (int) $request['id'];
-		return new WP_REST_Response( $this->order_response( $id ), 200 );
+		$order = $this->scoped_order( $request['id'] );
+		if ( is_wp_error( $order ) ) return $order;
+		return new WP_REST_Response( $this->order_response( (int) $order['id'] ), 200 );
 	}
 
 	public function update_order( WP_REST_Request $request ) {
-		$id   = (int) $request['id'];
+		$order = $this->scoped_order( $request['id'] );
+		if ( is_wp_error( $order ) ) return $order;
+		$id   = (int) $order['id'];
 		$body = $this->body( $request );
+		if ( isset( $body['received'] ) ) {
+			// The total received can't be negative or more than the order's payable.
+			$payable  = (float) TestOrder::compute_totals( array_merge( $order, array_intersect_key( $body, array_flip( [ 'subtotal', 'discount_amount', 'extra_discount' ] ) ) ) )['payable'];
+			$received = (float) $body['received'];
+			if ( $received < 0 ) {
+				return new WP_Error( 'wpddbp_payment_amount', __( 'Enter an amount above zero.', 'doc-booker-pro' ), [ 'status' => 400 ] );
+			}
+			if ( round( $received, 2 ) > round( $payable, 2 ) ) {
+				return new WP_Error(
+					'wpddbp_payment_over',
+					/* translators: %s: the balance still owed, e.g. 15.00 */
+					sprintf( __( 'That is more than the balance due (%s). Enter that amount or less.', 'doc-booker-pro' ), number_format_i18n( max( 0, $payable - (float) $order['received'] ), 2 ) ),
+					[ 'status' => 400 ]
+				);
+			}
+		}
 		TestOrder::update( $id, $body );
 		if ( isset( $body['received'] ) ) {
 			TestOrder::update( $id, [ 'payment_status' => $this->derive_payment_status( $id ) ] );
@@ -539,28 +641,36 @@ class RestApi {
 	}
 
 	public function cancel_order( WP_REST_Request $request ) {
-		$id = (int) $request['id'];
+		$order = $this->scoped_order( $request['id'] );
+		if ( is_wp_error( $order ) ) return $order;
+		$id = (int) $order['id'];
 		TestOrder::update( $id, [ 'status' => 'cancelled' ] );
 		return new WP_REST_Response( $this->order_response( $id ), 200 );
 	}
 
 	public function list_order_reports( WP_REST_Request $request ) {
-		$rows = TestReport::list_for_order( (int) $request['id'] );
-		foreach ( $rows as &$r ) {
-			$r['filename'] = get_the_title( $r['attachment_id'] );
-		}
+		$order = $this->scoped_order( $request['id'] );
+		if ( is_wp_error( $order ) ) return $order;
+		$rows = TestReport::list_for_order( (int) $order['id'] );
+		$rows = array_map( [ TestReport::class, 'for_display' ], $rows );
 		return new WP_REST_Response( $rows, 200 );
 	}
 
 	public function upload_order_reports( WP_REST_Request $request ) {
-		$result = ReportUploader::handle_files( (int) $request['id'] );
+		$order = $this->scoped_order( $request['id'] );
+		if ( is_wp_error( $order ) ) return $order;
+		$result = ReportUploader::handle_files( (int) $order['id'] );
 		if ( is_wp_error( $result ) ) return $result;
 		return new WP_REST_Response( $result, 200 );
 	}
 
 	public function delete_order_report( WP_REST_Request $request ) {
+		$order = $this->scoped_order( $request['id'] );
+		if ( is_wp_error( $order ) ) return $order;
 		$report = TestReport::find( (int) $request['report_id'] );
-		if ( ! $report ) return new WP_Error( 'wpddbp_not_found', __( 'Report not found.', 'doc-booker-pro' ), [ 'status' => 404 ] );
+		if ( ! $report || (int) $report['order_id'] !== (int) $order['id'] ) {
+			return $this->not_found( __( 'Report', 'doc-booker-pro' ) );
+		}
 		wp_delete_attachment( (int) $report['attachment_id'], true );
 		TestReport::delete( $report['id'] );
 		return new WP_REST_Response( [ 'ok' => true ], 200 );
@@ -582,9 +692,7 @@ class RestApi {
 		if ( ! $order ) return null;
 		$order['items']   = TestOrderItem::list_for_order( $order_id );
 		$order['reports'] = TestReport::list_for_order( $order_id );
-		foreach ( $order['reports'] as &$r ) {
-			$r['filename'] = get_the_title( $r['attachment_id'] );
-		}
+		$order['reports'] = array_map( [ TestReport::class, 'for_display' ], $order['reports'] );
 		$order['patient'] = Patient::enrich( Patient::find( (int) $order['patient_id'] ) );
 		$order['totals']  = TestOrder::compute_totals( $order );
 		// Receipt URL with HMAC token for the print page.
@@ -623,6 +731,7 @@ class RestApi {
 		foreach ( $res['rows'] as &$row ) {
 			$row['patient'] = Patient::enrich( Patient::find( (int) $row['patient_id'] ) );
 			$row['due']     = max( 0, (float) $row['total_charge'] - (float) $row['received'] );
+			$row['credit']  = max( 0, round( (float) $row['received'] - (float) $row['total_charge'], 2 ) );
 			// Relevant doctor for the list: admitting doctor for IPD, consulting for OPD.
 			$doctor_id = ( ( $row['visit_type'] ?? 'opd' ) === 'ipd' )
 				? (int) ( $row['admit_doctor_id'] ?: $row['consult_doctor_id'] )
@@ -640,6 +749,14 @@ class RestApi {
 		$patient_id = (int) ( $body['patient_id'] ?? 0 );
 		if ( ! $patient_id ) {
 			return new WP_Error( 'wpddbp_patient_required', __( 'Patient is required.', 'doc-booker-pro' ), [ 'status' => 400 ] );
+		}
+		// OPD pays for the consultation only, so more than its fee is a typo.
+		// IPD may take an advance before any charge exists.
+		$is_opd = ( $body['visit_type'] ?? 'opd' ) === 'opd';
+		if ( $is_opd && ! empty( $body['received_amount'] ) ) {
+			$fee     = ! empty( $body['consult_doctor_id'] ) ? (float) get_post_meta( (int) $body['consult_doctor_id'], 'wpddb_doctor_booking_fee', true ) : 0.0;
+			$problem = $this->payment_problem( (float) $body['received_amount'], $fee );
+			if ( $problem ) return $problem;
 		}
 		$visit_id = Visit::create( [
 			'patient_id'        => $patient_id,
@@ -685,33 +802,27 @@ class RestApi {
 	}
 
 	public function get_visit( WP_REST_Request $request ) {
-		return new WP_REST_Response( $this->visit_response( (int) $request['id'] ), 200 );
+		$visit = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		return new WP_REST_Response( $this->visit_response( (int) $visit['id'] ), 200 );
 	}
 
 	public function update_visit( WP_REST_Request $request ) {
-		$id = (int) $request['id'];
+		$visit = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		$id = (int) $visit['id'];
 		Visit::update( $id, $this->body( $request ) );
 		return new WP_REST_Response( $this->visit_response( $id ), 200 );
 	}
 
 	public function release_visit( WP_REST_Request $request ) {
-		$id      = (int) $request['id'];
-		$visit   = Visit::find( $id );
-		if ( ! $visit ) return new WP_Error( 'wpddbp_not_found', __( 'Visit not found.', 'doc-booker-pro' ), [ 'status' => 404 ] );
+		$visit   = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		$id      = (int) $visit['id'];
 
 		$body         = $this->body( $request );
 		$released_at  = $body['released_at'] ?? current_time( 'mysql' );
 		$bed_qty_override = isset( $body['bed_qty'] ) ? max( 1, (int) $body['bed_qty'] ) : null;
-
-		// Optional final payment.
-		if ( ! empty( $body['final_payment'] ) ) {
-			VisitPayment::create( [
-				'visit_id'    => $id,
-				'amount'      => (float) $body['final_payment'],
-				'method'      => $body['payment_method'] ?? 'cash',
-				'received_by' => get_current_user_id(),
-			] );
-		}
 
 		// Auto-bump bed item qty by days stayed if present.
 		if ( $bed_qty_override ) {
@@ -722,6 +833,20 @@ class RestApi {
 					break;
 				}
 			}
+			Visit::recompute_totals( $id );
+		}
+
+		// Optional final payment: at discharge it can only settle what is owed.
+		if ( ! empty( $body['final_payment'] ) ) {
+			$current = Visit::find( $id );
+			$problem = $this->payment_problem( (float) $body['final_payment'], (float) $current['total_charge'] - (float) $current['received'] );
+			if ( $problem ) return $problem;
+			VisitPayment::create( [
+				'visit_id'    => $id,
+				'amount'      => (float) $body['final_payment'],
+				'method'      => $body['payment_method'] ?? 'cash',
+				'received_by' => get_current_user_id(),
+			] );
 		}
 
 		Visit::update( $id, [
@@ -733,11 +858,15 @@ class RestApi {
 	}
 
 	public function list_visit_items( WP_REST_Request $request ) {
-		return new WP_REST_Response( VisitItem::list_for_visit( (int) $request['id'] ), 200 );
+		$visit = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		return new WP_REST_Response( VisitItem::list_for_visit( (int) $visit['id'] ), 200 );
 	}
 
 	public function create_visit_item( WP_REST_Request $request ) {
-		$visit_id = (int) $request['id'];
+		$visit = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		$visit_id = (int) $visit['id'];
 		$body     = $this->body( $request );
 		$body['visit_id'] = $visit_id;
 		$id = VisitItem::create( $body );
@@ -746,30 +875,91 @@ class RestApi {
 	}
 
 	public function update_visit_item( WP_REST_Request $request ) {
-		$visit_id = (int) $request['id'];
-		VisitItem::update( (int) $request['item_id'], $this->body( $request ) );
+		$visit = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		$visit_id = (int) $visit['id'];
+		$item     = VisitItem::find( (int) $request['item_id'] );
+		if ( ! $item || (int) $item['visit_id'] !== $visit_id ) return $this->not_found( __( 'Item', 'doc-booker-pro' ) );
+		VisitItem::update( (int) $item['id'], $this->body( $request ) );
 		Visit::recompute_totals( $visit_id );
 		return new WP_REST_Response( $this->visit_response( $visit_id ), 200 );
 	}
 
 	public function delete_visit_item( WP_REST_Request $request ) {
-		$visit_id = (int) $request['id'];
-		VisitItem::delete( (int) $request['item_id'] );
+		$visit = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		$visit_id = (int) $visit['id'];
+		$item     = VisitItem::find( (int) $request['item_id'] );
+		if ( ! $item || (int) $item['visit_id'] !== $visit_id ) return $this->not_found( __( 'Item', 'doc-booker-pro' ) );
+		VisitItem::delete( (int) $item['id'] );
 		Visit::recompute_totals( $visit_id );
 		return new WP_REST_Response( $this->visit_response( $visit_id ), 200 );
 	}
 
 	public function list_visit_payments( WP_REST_Request $request ) {
-		return new WP_REST_Response( VisitPayment::list_for_visit( (int) $request['id'] ), 200 );
+		$visit = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		return new WP_REST_Response( VisitPayment::list_for_visit( (int) $visit['id'] ), 200 );
 	}
 
 	public function create_visit_payment( WP_REST_Request $request ) {
-		$visit_id = (int) $request['id'];
+		$visit = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		$visit_id = (int) $visit['id'];
 		$body     = $this->body( $request );
+		$amount   = (float) ( $body['amount'] ?? 0 );
+		// An admitted patient may pay ahead (an advance); otherwise a payment
+		// can't be more than what is still owed.
+		$advance  = ( $visit['visit_type'] ?? 'opd' ) === 'ipd' && ( $visit['status'] ?? '' ) !== 'released';
+		$problem  = $this->payment_problem( $amount, $advance ? null : (float) $visit['total_charge'] - (float) $visit['received'] );
+		if ( $problem ) return $problem;
 		$body['visit_id'] = $visit_id;
+		$body['amount']   = $amount;
 		VisitPayment::create( $body );
 		Visit::recompute_totals( $visit_id );
 		return new WP_REST_Response( $this->visit_response( $visit_id ), 201 );
+	}
+
+	/**
+	 * Remove a payment entered by mistake. Only a payment of this visit, and
+	 * the visit must be in the caller's clinic (scoped_visit).
+	 */
+	public function delete_visit_payment( WP_REST_Request $request ) {
+		$visit = $this->scoped_visit( $request['id'] );
+		if ( is_wp_error( $visit ) ) return $visit;
+		$visit_id = (int) $visit['id'];
+		$payment  = null;
+		foreach ( VisitPayment::list_for_visit( $visit_id ) as $row ) {
+			if ( (int) $row['id'] === (int) $request['payment_id'] ) {
+				$payment = $row;
+				break;
+			}
+		}
+		if ( ! $payment ) return $this->not_found( __( 'Payment', 'doc-booker-pro' ) );
+		VisitPayment::delete( (int) $payment['id'] );
+		Visit::recompute_totals( $visit_id );
+		return new WP_REST_Response( $this->visit_response( $visit_id ), 200 );
+	}
+
+	/**
+	 * Why a payment can't be taken, or null when it can.
+	 *
+	 * @param float      $amount The amount entered.
+	 * @param float|null $due    What is still owed; null when paying ahead is allowed.
+	 */
+	private function payment_problem( $amount, $due ) {
+		if ( $amount <= 0 ) {
+			return new WP_Error( 'wpddbp_payment_amount', __( 'Enter an amount above zero.', 'doc-booker-pro' ), [ 'status' => 400 ] );
+		}
+		if ( null !== $due && round( $amount, 2 ) > round( max( 0, $due ), 2 ) ) {
+			return new WP_Error(
+				'wpddbp_payment_over',
+				/* translators: %s: the balance still owed, e.g. 15.00 */
+				sprintf( __( 'That is more than the balance due (%s). Enter that amount or less.', 'doc-booker-pro' ), number_format_i18n( max( 0, $due ), 2 ) ),
+				[ 'status' => 400 ]
+			);
+		}
+		return null;
 	}
 
 	private function visit_response( $id ) {
@@ -779,6 +969,8 @@ class RestApi {
 		$visit['payments'] = VisitPayment::list_for_visit( $id );
 		$visit['patient']  = Patient::enrich( Patient::find( (int) $visit['patient_id'] ) );
 		$visit['due']      = max( 0, (float) $visit['total_charge'] - (float) $visit['received'] );
+		// Paid more than charged (an advance, or a charge removed later): owed back.
+		$visit['credit']   = max( 0, round( (float) $visit['received'] - (float) $visit['total_charge'], 2 ) );
 		if ( ! empty( $visit['consult_doctor_id'] ) ) {
 			$visit['consult_doctor'] = [ 'id' => (int) $visit['consult_doctor_id'], 'name' => get_the_title( (int) $visit['consult_doctor_id'] ) ];
 		}

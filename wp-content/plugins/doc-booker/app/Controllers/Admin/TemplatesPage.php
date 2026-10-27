@@ -9,7 +9,7 @@
  *   • Pro ACTIVE   → the real import runs (Pro REST endpoint — built Pro-side).
  *
  * Pure FREE-plugin UI + catalog + gate. The actual import + template block-markup
- * live in doc-booker-pro. Detection via wpddb()->has_pro() (function_exists('wpddbp')).
+ * live in doc-booker-pro. Detection via wpddb()->has_pro().
  */
 
 namespace WpDreamers\WPDDB\Controllers\Admin;

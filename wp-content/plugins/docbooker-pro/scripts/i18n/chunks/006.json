@@ -1,0 +1,454 @@
+[
+ {
+  "id": "Minutes label"
+ },
+ {
+  "id": "Mobile Number"
+ },
+ {
+  "id": "New Test Item"
+ },
+ {
+  "id": "No department"
+ },
+ {
+  "id": "No visits yet"
+ },
+ {
+  "id": "Node / number"
+ },
+ {
+  "id": "Numbered list"
+ },
+ {
+  "id": "Open behavior"
+ },
+ {
+  "id": "Opening Hours"
+ },
+ {
+  "id": "Ophthalmology"
+ },
+ {
+  "id": "Order created"
+ },
+ {
+  "id": "Patients seen"
+ },
+ {
+  "id": "Physiotherapy"
+ },
+ {
+  "id": "Pick a clinic"
+ },
+ {
+  "id": "Previous page"
+ },
+ {
+  "id": "Process Steps",
+  "ctx": "block title"
+ },
+ {
+  "id": "Profile image"
+ },
+ {
+  "id": "Receptionists"
+ },
+ {
+  "id": "Remove timing"
+ },
+ {
+  "id": "Replace image"
+ },
+ {
+  "id": "Roman (I, II)"
+ },
+ {
+  "id": "Save & Assign"
+ },
+ {
+  "id": "Search users…"
+ },
+ {
+  "id": "Secondary URL"
+ },
+ {
+  "id": "Seconds label"
+ },
+ {
+  "id": "Secured by %s"
+ },
+ {
+  "id": "Select Clinic"
+ },
+ {
+  "id": "Select clinic"
+ },
+ {
+  "id": "Select doctor"
+ },
+ {
+  "id": "Shadow Preset"
+ },
+ {
+  "id": "Show CTA card"
+ },
+ {
+  "id": "Show subtitle"
+ },
+ {
+  "id": "Site timezone"
+ },
+ {
+  "id": "Spinner color"
+ },
+ {
+  "id": "Status & time"
+ },
+ {
+  "id": "Style variant"
+ },
+ {
+  "id": "Tag / eyebrow"
+ },
+ {
+  "id": "Tail CTA card"
+ },
+ {
+  "id": "Untitled step"
+ },
+ {
+  "id": "Visit created"
+ },
+ {
+  "id": "active in 24h"
+ },
+ {
+  "id": "\"Closed\" color"
+ },
+ {
+  "id": "\"Closed\" label"
+ },
+ {
+  "id": "%d specialists"
+ },
+ {
+  "id": "24/7 Emergency"
+ },
+ {
+  "id": "Accent & stars"
+ },
+ {
+  "id": "Accreditations"
+ },
+ {
+  "id": "Active clinics"
+ },
+ {
+  "id": "Admission Time"
+ },
+ {
+  "id": "Bed / Cabin No"
+ },
+ {
+  "id": "Bio word limit"
+ },
+ {
+  "id": "Booking button"
+ },
+ {
+  "id": "Booking for %s"
+ },
+ {
+  "id": "Call to Action",
+  "ctx": "block title"
+ },
+ {
+  "id": "Cancel booking"
+ },
+ {
+  "id": "Card (masonry)"
+ },
+ {
+  "id": "Card / wrapper"
+ },
+ {
+  "id": "Clinic 1 color"
+ },
+ {
+  "id": "Clinic 2 color"
+ },
+ {
+  "id": "Clinic Manager"
+ },
+ {
+  "id": "Clinic manager"
+ },
+ {
+  "id": "Closed all day"
+ },
+ {
+  "id": "Content Styles"
+ },
+ {
+  "id": "Day typography"
+ },
+ {
+  "id": "Default clinic"
+ },
+ {
+  "id": "Default doctor"
+ },
+ {
+  "id": "Display accent"
+ },
+ {
+  "id": "Display button"
+ },
+ {
+  "id": "Display footer"
+ },
+ {
+  "id": "Display header"
+ },
+ {
+  "id": "Edit Test Item"
+ },
+ {
+  "id": "Expiry message"
+ },
+ {
+  "id": "Extra discount"
+ },
+ {
+  "id": "Feature (rows)"
+ },
+ {
+  "id": "Filter Doctors"
+ },
+ {
+  "id": "Floating cards"
+ },
+ {
+  "id": "Get directions"
+ },
+ {
+  "id": "Gradient start"
+ },
+ {
+  "id": "Heading accent"
+ },
+ {
+  "id": "Headline color"
+ },
+ {
+  "id": "Headline honor"
+ },
+ {
+  "id": "Image alt text"
+ },
+ {
+  "id": "Image removed."
+ },
+ {
+  "id": "Intensive Care"
+ },
+ {
+  "id": "Layout variant"
+ },
+ {
+  "id": "Lede / Content"
+ },
+ {
+  "id": "Letter Spacing"
+ },
+ {
+  "id": "Loading times…"
+ },
+ {
+  "id": "Medical School"
+ },
+ {
+  "id": "New Test Order"
+ },
+ {
+  "id": "No reports yet"
+ },
+ {
+  "id": "Patient rating"
+ },
+ {
+  "id": "Pause on hover"
+ },
+ {
+  "id": "Payment method"
+ },
+ {
+  "id": "Post parent ID"
+ },
+ {
+  "id": "Previous month"
+ },
+ {
+  "id": "Previous photo"
+ },
+ {
+  "id": "Primary button"
+ },
+ {
+  "id": "Rehabilitation"
+ },
+ {
+  "id": "Row background"
+ },
+ {
+  "id": "Secondary link"
+ },
+ {
+  "id": "Secondary note"
+ },
+ {
+  "id": "Secondary text"
+ },
+ {
+  "id": "Section header"
+ },
+ {
+  "id": "See full stats"
+ },
+ {
+  "id": "Segment / tile"
+ },
+ {
+  "id": "Select an icon"
+ },
+ {
+  "id": "Show connector"
+ },
+ {
+  "id": "Show step link"
+ },
+ {
+  "id": "Sidebar widget"
+ },
+ {
+  "id": "Slider options"
+ },
+ {
+  "id": "Street address"
+ },
+ {
+  "id": "Subtitle Color"
+ },
+ {
+  "id": "Text Transform"
+ },
+ {
+  "id": "Title HTML tag"
+ },
+ {
+  "id": "Total billable"
+ },
+ {
+  "id": "Untitled slide"
+ },
+ {
+  "id": "Upload failed."
+ },
+ {
+  "id": "Variant extras"
+ },
+ {
+  "id": "View link text"
+ },
+ {
+  "id": "Week starts on"
+ },
+ {
+  "id": "Week-list note"
+ },
+ {
+  "id": "Wrapper Styles"
+ },
+ {
+  "id": "opens today %s"
+ },
+ {
+  "id": "steps complete"
+ },
+ {
+  "id": "— Any clinic —"
+ },
+ {
+  "id": "— Any doctor —"
+ },
+ {
+  "id": "“Closed” label"
+ },
+ {
+  "id": "Accent override"
+ },
+ {
+  "id": "Active managers"
+ },
+ {
+  "id": "Add testimonial"
+ },
+ {
+  "id": "All Departments"
+ },
+ {
+  "id": "All departments"
+ },
+ {
+  "id": "Assign existing"
+ },
+ {
+  "id": "Available until"
+ },
+ {
+  "id": "Background Size"
+ },
+ {
+  "id": "Booking Manager"
+ },
+ {
+  "id": "Card background"
+ },
+ {
+  "id": "Clear selection"
+ },
+ {
+  "id": "Clinic Managers"
+ },
+ {
+  "id": "Clinic managers"
+ },
+ {
+  "id": "Connector color"
+ },
+ {
+  "id": "Countdown timer"
+ },
+ {
+  "id": "Create new user"
+ },
+ {
+  "id": "Credential list"
+ },
+ {
+  "id": "Day label color"
+ },
+ {
+  "id": "Department chip"
+ },
+ {
+  "id": "Department icon"
+ },
+ {
+  "id": "Department step"
+ },
+ {
+  "id": "Dim closed days"
+ }
+]

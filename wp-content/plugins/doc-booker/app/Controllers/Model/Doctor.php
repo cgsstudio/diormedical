@@ -74,4 +74,62 @@ class Doctor {
         <?php }
     }
 
+
+	/**
+	 * English names of the weekdays the doctor works, Monday first.
+	 *
+	 * @param int $doctor_id Doctor.
+	 *
+	 * @return string[]
+	 */
+	public static function working_days( $doctor_id ) {
+		$schedule = get_post_meta( $doctor_id, 'wpddb_doctor_schedule', true );
+		$days     = [];
+		foreach ( is_array( $schedule ) ? $schedule : [] as $day ) {
+			$open = array_filter( is_array( $day['clinics'] ?? null ) ? $day['clinics'] : [], fn( $c ) => Clinic::is_open( $c['id'] ?? 0 ) );
+			if ( ! empty( $day['available'] ) && $open && is_string( $day['day'] ?? null ) ) {
+				$days[] = ucfirst( strtolower( $day['day'] ) );
+			}
+		}
+		$order = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+		return array_values( array_intersect( $order, $days ) );
+	}
+
+	/**
+	 * Short, translated day name for an English weekday ("Monday" -> "Mon").
+	 *
+	 * @param string $day English weekday.
+	 *
+	 * @return string
+	 */
+	public static function short_day( $day ) {
+		$names = [
+			'Monday'    => __( 'Mon', 'doc-booker' ),
+			'Tuesday'   => __( 'Tue', 'doc-booker' ),
+			'Wednesday' => __( 'Wed', 'doc-booker' ),
+			'Thursday'  => __( 'Thu', 'doc-booker' ),
+			'Friday'    => __( 'Fri', 'doc-booker' ),
+			'Saturday'  => __( 'Sat', 'doc-booker' ),
+			'Sunday'    => __( 'Sun', 'doc-booker' ),
+		];
+		return $names[ $day ] ?? $day;
+	}
+
+	/**
+	 * Initials for a doctor without a photo ("Dr. Sarah Khan" -> "SK").
+	 *
+	 * @param int $doctor_id Doctor.
+	 *
+	 * @return string
+	 */
+	public static function initials( $doctor_id ) {
+		$name  = preg_replace( '/^dr\.?\s*/i', '', get_the_title( $doctor_id ) );
+		$parts = preg_split( '/\s+/', trim( $name ) );
+		$out   = '';
+		foreach ( array_slice( array_filter( $parts ), 0, 2 ) as $part ) {
+			$out .= mb_substr( $part, 0, 1 );
+		}
+		return mb_strtoupper( $out ) ?: '?';
+	}
+
 }

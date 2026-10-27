@@ -13,16 +13,24 @@ class BookingManagement {
 	}
 
 	public function maybe_delete_past_bookings() {
-		$last_run = get_option('wpdbb_last_cleanup_run');
-		$last_run_timestamp = $last_run ? strtotime($last_run) : 0;
-
-		$morning   = strtotime('today 06:00');
-		$evening   = strtotime('today 14:00');
-		$night     = strtotime('today 22:00');
-		$now       = current_time('timestamp');
-		if (($last_run_timestamp < $morning && $now >= $morning) ||
-		    ($last_run_timestamp < $evening && $now >= $evening) ||
-		    ($last_run_timestamp < $night && $now >= $night)) {
+		// Everything in the site's timezone: the run times used to be UTC
+		// (strtotime) compared with site-time timestamps.
+		$tz       = wp_timezone();
+		$now      = new \DateTimeImmutable( 'now', $tz );
+		$last_run = get_option( 'wpdbb_last_cleanup_run' );
+		try {
+			$last_run_ts = $last_run ? ( new \DateTimeImmutable( $last_run, $tz ) )->getTimestamp() : 0;
+		} catch ( \Exception $e ) {
+			$last_run_ts = 0;
+		}
+		$due = false;
+		foreach ( [ 6, 14, 22 ] as $hour ) {
+			$slot = $now->setTime( $hour, 0 )->getTimestamp();
+			if ( $last_run_ts < $slot && $now->getTimestamp() >= $slot ) {
+				$due = true;
+			}
+		}
+		if ( $due ) {
 			$this->delete_past_bookings();
 			update_option('wpdbb_last_cleanup_run', current_time('mysql'));
 		}
@@ -61,7 +69,7 @@ class BookingManagement {
 		}
 
 		// --- Legacy bookings (weekday-based, no booking_date) ---
-		$current_day = strtolower( date( 'l' ) );
+		$current_day = strtolower( current_time( 'l' ) ); // site's weekday, not UTC's
 
 		$legacy_expired = $wpdb->get_results(
 			$wpdb->prepare(

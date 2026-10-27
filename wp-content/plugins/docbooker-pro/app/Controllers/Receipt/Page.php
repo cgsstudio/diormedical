@@ -16,6 +16,9 @@ use WpDreamers\WPDDBP\Controllers\TestOrder\Model\TestOrder;
 use WpDreamers\WPDDBP\Controllers\TestOrder\Model\TestOrderItem;
 use WpDreamers\WPDDBP\Controllers\PatientPortal\Page as PortalPage;
 use WpDreamers\WPDDBP\Traits\SingletonTrait;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+use chillerlan\QRCode\Output\QROutputInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -76,23 +79,23 @@ class Page {
 		<div class="r-brand">
 			<h1><?php echo esc_html( $clinic ? $clinic->post_title : get_bloginfo( 'name' ) ); ?></h1>
 			<?php if ( $clinic_address ) : ?><p class="r-addr"><?php echo esc_html( $clinic_address ); ?></p><?php endif; ?>
-			<?php if ( $clinic_hotline ) : ?><p class="r-addr">Hotline: <?php echo esc_html( $clinic_hotline ); ?></p><?php endif; ?>
+			<?php if ( $clinic_hotline ) : ?><p class="r-addr"><?php esc_html_e( 'Hotline:', 'doc-booker-pro' ); ?> <?php echo esc_html( $clinic_hotline ); ?></p><?php endif; ?>
 		</div>
 	</header>
 
 	<section class="r-meta">
-		<div><strong>ID No.</strong> <?php echo esc_html( $patient['patient_code'] ?? '' ); ?></div>
-		<div><strong>Name</strong> <?php echo esc_html( $patient['full_name'] ?? '' ); ?></div>
-		<div><strong>Age</strong> <?php echo isset( $patient['age'] ) ? esc_html( (string) $patient['age'] . ' year' ) : '—'; ?></div>
-		<div><strong>Sex</strong> <?php echo esc_html( ucfirst( $patient['gender'] ?? '—' ) ); ?>, M: <?php echo esc_html( $patient['phone'] ?? '' ); ?></div>
-		<?php if ( ! empty( $order['refd_by'] ) ) : ?><div><strong>Refd by</strong> <?php echo esc_html( $order['refd_by'] ); ?></div><?php endif; ?>
-		<div><strong>Order</strong> <?php echo esc_html( $order['order_code'] ); ?></div>
-		<div><strong>Date</strong> <?php echo esc_html( mysql2date( 'j M y g:iA', $order['created_at'] ) ); ?></div>
+		<div><strong><?php esc_html_e( 'ID No.', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( $patient['patient_code'] ?? '' ); ?></div>
+		<div><strong><?php esc_html_e( 'Name', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( $patient['full_name'] ?? '' ); ?></div>
+		<div><strong><?php esc_html_e( 'Age', 'doc-booker-pro' ); ?></strong> <?php echo isset( $patient['age'] ) ? esc_html( sprintf( /* translators: %d: patient age in years */ _n( '%d year', '%d years', (int) $patient['age'], 'doc-booker-pro' ), (int) $patient['age'] ) ) : '—'; ?></div>
+		<div><strong><?php esc_html_e( 'Sex', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( ucfirst( $patient['gender'] ?? '—' ) ); ?>, <?php /* translators: short label for the patient's mobile number */ esc_html_e( 'M:', 'doc-booker-pro' ); ?> <?php echo esc_html( $patient['phone'] ?? '' ); ?></div>
+		<?php if ( ! empty( $order['refd_by'] ) ) : ?><div><strong><?php esc_html_e( 'Refd by', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( $order['refd_by'] ); ?></div><?php endif; ?>
+		<div><strong><?php esc_html_e( 'Order', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( $order['order_code'] ); ?></div>
+		<div><strong><?php esc_html_e( 'Date', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( mysql2date( 'j M y g:iA', $order['created_at'] ) ); ?></div>
 	</section>
 
 	<table class="r-items">
 		<thead>
-			<tr><th>SL</th><th>Test/Service</th><th>Qty</th><th>Amount</th><th>Disc %</th><th>Delivery</th></tr>
+			<tr><th><?php esc_html_e( 'SL', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Test/Service', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Qty', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Amount', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Disc %', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Delivery', 'doc-booker-pro' ); ?></th></tr>
 		</thead>
 		<tbody>
 			<?php $i=1; foreach ( $items as $it ): $line_total = TestOrderItem::line_total( $it ); ?>
@@ -110,31 +113,53 @@ class Page {
 
 	<section class="r-totals">
 		<div class="r-totals-inner">
-			<div><span>Total amount</span><strong><?php echo number_format( (float) $order['subtotal'], 2 ); ?></strong></div>
-			<div><span>Discount</span><strong><?php echo number_format( (float) $order['discount_amount'], 2 ); ?></strong></div>
-			<div><span>Extra discount</span><strong><?php echo number_format( (float) $order['extra_discount'], 2 ); ?></strong></div>
-			<div class="r-total-row"><span>Payable</span><strong><?php echo number_format( (float) $totals['payable'], 2 ); ?></strong></div>
-			<div><span>Received</span><strong><?php echo number_format( (float) $order['received'], 2 ); ?></strong></div>
-			<div class="r-total-row"><span>Due</span><strong><?php echo number_format( (float) $totals['due'], 2 ); ?></strong></div>
+			<div><span><?php esc_html_e( 'Total amount', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( (float) $order['subtotal'], 2 ); ?></strong></div>
+			<div><span><?php esc_html_e( 'Discount', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( (float) $order['discount_amount'], 2 ); ?></strong></div>
+			<div><span><?php esc_html_e( 'Extra discount', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( (float) $order['extra_discount'], 2 ); ?></strong></div>
+			<div class="r-total-row"><span><?php esc_html_e( 'Payable', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( (float) $totals['payable'], 2 ); ?></strong></div>
+			<div><span><?php esc_html_e( 'Received', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( (float) $order['received'], 2 ); ?></strong></div>
+			<div class="r-total-row"><span><?php esc_html_e( 'Due', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( (float) $totals['due'], 2 ); ?></strong></div>
 		</div>
 		<?php if ( $order['payment_status'] === 'paid' ): ?>
-			<div class="r-paid-stamp">PAID</div>
+			<div class="r-paid-stamp"><?php esc_html_e( 'PAID', 'doc-booker-pro' ); ?></div>
 		<?php endif; ?>
-		<?php if ( $portal_url ): ?>
+		<?php $qr_src = $portal_url ? self::qr_data_uri( $portal_url ) : ''; ?>
+		<?php if ( $qr_src ): ?>
 			<div class="r-qr">
-				<img alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=<?php echo rawurlencode( $portal_url ); ?>">
-				<p>Scan for online report</p>
+				<img width="120" height="120" alt="<?php esc_attr_e( 'QR code for the online report', 'doc-booker-pro' ); ?>" src="<?php echo esc_attr( $qr_src ); ?>">
+				<p><?php esc_html_e( 'Scan for online report', 'doc-booker-pro' ); ?></p>
 			</div>
 		<?php endif; ?>
 	</section>
 
 	<?php if ( $portal_url ): ?>
-		<p class="r-footer-line">For online report visit here: <?php echo esc_html( $portal_url ); ?></p>
+		<p class="r-footer-line"><?php esc_html_e( 'For online report visit here:', 'doc-booker-pro' ); ?> <?php echo esc_html( $portal_url ); ?></p>
 	<?php endif; ?>
 </div>
 <script>window.addEventListener('load', function(){ setTimeout(function(){ window.print(); }, 250); });</script>
 </body>
 </html>
 		<?php
+	}
+
+	/**
+	 * The QR code for $text as an SVG data URI, drawn here on the server. It
+	 * used to be fetched from api.qrserver.com, which sent each patient's
+	 * portal link and order code to a third party. Empty string on failure;
+	 * the portal address is also printed as text under the receipt.
+	 */
+	private static function qr_data_uri( $text ) {
+		try {
+			$options = new QROptions( [
+				'outputType'      => QROutputInterface::MARKUP_SVG,
+				'outputBase64'    => true,
+				'svgAddXmlHeader' => false,
+				'addQuietzone'    => true,
+				'quietzoneSize'   => 2,
+			] );
+			return (string) ( new QRCode( $options ) )->render( (string) $text );
+		} catch ( \Throwable $e ) {
+			return '';
+		}
 	}
 }

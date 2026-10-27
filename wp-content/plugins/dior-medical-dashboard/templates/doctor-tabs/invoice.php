@@ -294,6 +294,28 @@
         </div>
     </div>
 
+    <!-- Subtab Navigation Bar -->
+    <div class="dior-subtab-nav-bar px-1 mb-4">
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-bill-list" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-bill-list');">
+            <i class="fas fa-receipt"></i> Bill List
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-add-bill" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-add-bill');">
+            <i class="fas fa-file-invoice-dollar"></i> Add Bill
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-income" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-income');">
+            <i class="fas fa-arrow-trend-up"></i> Income
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-expenses" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-expenses');">
+            <i class="fas fa-arrow-trend-down"></i> Expenses
+        </button>
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-accounts-income-report" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-income-report');">
+            <i class="fas fa-chart-pie"></i> Income Report
+        </button>
+        <button type="button" class="dior-subtab-pill btn active" data-doc-tab="doc-accounts-invoice" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-accounts-invoice');">
+            <i class="fas fa-file-invoice"></i> Invoice
+        </button>
+    </div>
+
     <!-- Main Card -->
     <div class="dior-invoice-card">
         
@@ -447,9 +469,9 @@
         
         <!-- Actions -->
         <div class="dior-invoice-actions">
-            <button class="dior-btn dior-btn-primary btn" onclick="window.print()">Print</button>
-            <button class="dior-btn dior-btn-info btn" id="download-invoice-pdf">Download PDF</button>
-            <button class="dior-btn dior-btn-secondary btn">Email Invoice</button>
+            <button class="dior-btn dior-btn-primary btn" onclick="window.print()"><i class="fas fa-print me-1"></i> Print</button>
+            <button class="dior-btn dior-btn-info btn" id="download-invoice-pdf"><i class="fas fa-file-pdf me-1"></i> Download PDF</button>
+            <button class="dior-btn dior-btn-secondary btn"><i class="fas fa-envelope me-1"></i> Email Invoice</button>
         </div>
         
     </div>

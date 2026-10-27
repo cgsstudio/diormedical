@@ -15,6 +15,7 @@ class RegisterPostType {
 		add_action( 'init', [ __CLASS__, 'register_post_types' ], 5 );
 		add_filter( 'rest_api_allowed_post_types', [ __CLASS__, 'rest_api_allowed_post_types' ] );
 		add_action( 'wpddb_flush_rewrite_rules', [ __CLASS__, 'flush_rewrite_rules' ] );
+		add_action( 'init', [ __CLASS__, 'maybe_flush_rewrite_rules' ], 99 );
 		add_filter( 'gutenberg_can_edit_post_type', [ __CLASS__, 'gutenberg_can_edit_post_type' ], 10, 2 );
 		add_filter( 'use_block_editor_for_post_type', [ __CLASS__, 'gutenberg_can_edit_post_type' ], 10, 2 );
 	}
@@ -27,10 +28,27 @@ class RegisterPostType {
 	}
 
 	/**
-	 * Flush rewrite rules.
+	 * Ask for the rewrite rules to be rebuilt on the next request.
+	 *
+	 * Flushing on the spot is too early wherever this is called from: on
+	 * activation the post types are not registered yet, so the rules would be
+	 * saved without them and every doctor and clinic URL would 404.
 	 */
 	public static function flush_rewrite_rules() {
-		flush_rewrite_rules();
+		update_option( 'wpddb_flush_rewrite_rules', 'yes' );
+	}
+
+	/**
+	 * Rebuild the rules once, after the post types and taxonomy have registered.
+	 */
+	public static function maybe_flush_rewrite_rules() {
+		if ( 'yes' !== get_option( 'wpddb_flush_rewrite_rules' ) ) {
+			return;
+		}
+
+		delete_option( 'wpddb_flush_rewrite_rules' );
+		// Soft: the doctor and clinic rules live in the database, so .htaccess is left alone.
+		flush_rewrite_rules( false );
 	}
 
 
@@ -48,7 +66,7 @@ class RegisterPostType {
         $doctor_category_base = $doctor_category_base ?:'wpddb_doctor_category';
 
 		$cat_labels = [
-			'name'                       => esc_html_x( 'Doctor Department', 'Taxonomy General Name', 'doc-booker' ),
+			'name'                       => esc_html__( 'Departments', 'doc-booker' ),
 			'singular_name'              => esc_html_x( 'Department', 'Taxonomy Singular Name', 'doc-booker' ),
 			'menu_name'                  => esc_html__( 'Departments', 'doc-booker' ),
 			'all_items'                  => esc_html__( 'All Departments', 'doc-booker' ),
@@ -142,7 +160,9 @@ class RegisterPostType {
 		$doctor_args = [
 			'labels'              => $labels,
 			'public'              => true,
-			'menu_icon'           => WPDDB_URL . '/assets/admin/img/doctime-logo-22x22.png',
+			// The logo (calendar, medical cross, stethoscope) as SVG, so WordPress
+			// paints it in the admin colour scheme, on hover and when open.
+			'menu_icon'           => 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill="#a7aaad" fill-rule="evenodd" d="M3.6 4h10a2 2 0 0 1 2 2v3.2h-1.6V8.4H3.2v7.2c0 .5.4.9.9.9h5.4V18H3.6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><rect fill="#a7aaad" x="4.8" y="2" width="1.6" height="4" rx=".8"/><rect fill="#a7aaad" x="10.8" y="2" width="1.6" height="4" rx=".8"/><path fill="#a7aaad" d="M7.6 9.4h1.6c.2 0 .4.2.4.4v1.4H11c.2 0 .4.2.4.4v1.6c0 .2-.2.4-.4.4H9.6V15c0 .2-.2.4-.4.4H7.6c-.2 0-.4-.2-.4-.4v-1.4H5.8c-.2 0-.4-.2-.4-.4v-1.6c0-.2.2-.4.4-.4h1.4V9.8c0-.2.2-.4.4-.4z"/><path fill="#a7aaad" d="M15.2 13.2h1.4v1.5a4 4 0 0 1-4 4h-.4a4 4 0 0 1-4-4v-.3h1.4v.3a2.6 2.6 0 0 0 2.6 2.6h.4a2.6 2.6 0 0 0 2.6-2.6z"/><circle fill="#a7aaad" cx="15.9" cy="11.6" r="2.1"/></svg>' ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- an inline SVG icon.
 			'show_ui'             => true,
 			'show_in_menu'        => true,
 			'menu_position'       => 5,
@@ -176,17 +196,41 @@ class RegisterPostType {
             'singular_name' => sprintf( esc_html_x( '%s', 'post type singular name', 'doc-booker' ), $clinic_post_type_label ), // phpcs:ignore WordPress.WP.I18n.NoEmptyStrings
 			'menu_name'          => esc_html($clinic_post_type_label),
 			'name_admin_bar'     => esc_html($clinic_post_type_label),
-			'all_items'          => esc_html($clinic_post_type_label.''.__( 's', 'doc-booker' )),
-			'add_new_item'       => esc_html( __('Add New ','doc-booker') . $clinic_post_type_label ),
 			'add_new'            => esc_html__( 'Add New', 'doc-booker' ),
-			'new_item'           => esc_html( __('New ','doc-booker') . $clinic_post_type_label),
-			'edit_item'          => esc_html( __('Edit ','doc-booker') . $clinic_post_type_label ),
-			'update_item'        => esc_html( __('Update ','doc-booker') . $clinic_post_type_label ),
-			'view_item'          => esc_html( __('View ','doc-booker') . $clinic_post_type_label ),
-			'search_items'       => esc_html( __('Search ','doc-booker')  . $clinic_post_type_label ),
-			'not_found'          => esc_html( __('No ','doc-booker')  . strtolower( $clinic_post_type_label ) . __('s found','doc-booker') ),
-			'not_found_in_trash' => esc_html(__( 'No ','doc-booker') . strtolower( $clinic_post_type_label ) . __('s found in Trash','doc-booker') ),
 		);
+		// Whole sentences, like the doctor labels: pieces glued around the
+		// label ("No " + "clinic" + "s found") can't be translated. The
+		// clinic label has no setting of its own, so it is "Clinic" unless a
+		// site stored another word, which then keeps the old wording.
+		if ( in_array( $clinic_post_type_label, [ 'Clinic', __( 'Clinic', 'doc-booker' ) ], true ) ) {
+			$clinic_labels = array_merge( $clinic_labels, [
+				'name'               => esc_html__( 'Clinics', 'doc-booker' ),
+				'singular_name'      => esc_html__( 'Clinic', 'doc-booker' ),
+				'menu_name'          => esc_html__( 'Clinics', 'doc-booker' ),
+				'name_admin_bar'     => esc_html__( 'Clinic', 'doc-booker' ),
+				'all_items'          => esc_html__( 'Clinics', 'doc-booker' ),
+				'add_new_item'       => esc_html__( 'Add New Clinic', 'doc-booker' ),
+				'new_item'           => esc_html__( 'New Clinic', 'doc-booker' ),
+				'edit_item'          => esc_html__( 'Edit Clinic', 'doc-booker' ),
+				'update_item'        => esc_html__( 'Update Clinic', 'doc-booker' ),
+				'view_item'          => esc_html__( 'View Clinic', 'doc-booker' ),
+				'search_items'       => esc_html__( 'Search Clinics', 'doc-booker' ),
+				'not_found'          => esc_html__( 'No clinics found', 'doc-booker' ),
+				'not_found_in_trash' => esc_html__( 'No clinics found in Trash', 'doc-booker' ),
+			] );
+		} else {
+			$clinic_labels = array_merge( $clinic_labels, [
+				'all_items'          => esc_html( $clinic_post_type_label ),
+				'add_new_item'       => esc_html( $clinic_post_type_label ),
+				'new_item'           => esc_html( $clinic_post_type_label ),
+				'edit_item'          => esc_html( $clinic_post_type_label ),
+				'update_item'        => esc_html( $clinic_post_type_label ),
+				'view_item'          => esc_html( $clinic_post_type_label ),
+				'search_items'       => esc_html( $clinic_post_type_label ),
+				'not_found'          => esc_html__( 'Nothing found.', 'doc-booker' ),
+				'not_found_in_trash' => esc_html__( 'Nothing found in Trash.', 'doc-booker' ),
+			] );
+		}
 
 		$clinic_args = array(
 			'label'               => sprintf( "%s", esc_html( $clinic_post_type_label ) ),

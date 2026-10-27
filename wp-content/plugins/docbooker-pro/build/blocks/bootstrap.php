@@ -35,10 +35,12 @@ defined( 'ABSPATH' ) || exit;
    blocks simply don't register — DocBooker Pro's own Dependencies controller
    (app/Controllers/Dependencies.php) already surfaces the actionable
    "DocBooker (free) is required" admin notice, so we do NOT add a second one.
+   The same goes for a DocBooker too old for Pro, or an inactive licence: Pro
+   then never fires `wpddbp_loaded`, and the blocks stay off with it.
    ───────────────────────────────────────────────────────────────────────── */
 if ( ! function_exists( 'wpddbp_blocks_parent_active' ) ) {
 	function wpddbp_blocks_parent_active() {
-		return function_exists( 'wpddb' );
+		return function_exists( 'wpddb' ) && did_action( 'wpddbp_loaded' );
 	}
 }
 
@@ -102,7 +104,7 @@ add_action( 'init', 'wpddbp_blocks_register_blocks' );
 /* ─────────────────────────────────────────────────────────────────────────
    Editor-script translations.
 
-   Make every block's editor JS strings (inspector labels, placeholders, …)
+   Make every block's JS strings (editor labels and front-end text)
    translatable: after the blocks register (init:10), loop the registered
    doc-booker-pro/* block types and point each editor script handle at the
    plugin's /languages .json files (built by `npm run makejson`). Mirrors the
@@ -118,8 +120,14 @@ if ( ! function_exists( 'wpddbp_blocks_set_script_translations' ) ) {
 			if ( 0 !== strpos( $name, 'doc-booker-pro/' ) ) {
 				continue;
 			}
-			$handles = ! empty( $block_type->editor_script_handles ) ? $block_type->editor_script_handles : array();
-			foreach ( (array) $handles as $handle ) {
+			// Front-end view scripts print text to visitors too (booking steps,
+			// trust lines), so they need the same translations as the editor.
+			$handles = array_merge(
+				(array) ( $block_type->editor_script_handles ?? array() ),
+				(array) ( $block_type->view_script_handles ?? array() ),
+				(array) ( $block_type->script_handles ?? array() )
+			);
+			foreach ( array_unique( $handles ) as $handle ) {
 				wp_set_script_translations( $handle, 'doc-booker-pro', $languages );
 			}
 		}
@@ -168,13 +176,16 @@ if ( ! function_exists( 'wpddbp_blocks_inline_css_on_singular' ) ) {
 		}
 
 		$blocks      = parse_blocks( $post->post_content );
+		// Raw customCSS is an escape hatch for people who may already post any
+		// markup; for everyone else it is dropped.
+		$author_may_style = user_can( (int) $post->post_author, 'unfiltered_html' );
 		$css         = '';
 		$fonts       = array();
 		$brand_fonts = false;
 		// Blocks that render in the editorial Fraunces + Manrope type system.
 		$editorial_blocks = array( 'doc-booker-pro/advanced-heading', 'doc-booker-pro/call-to-action', 'doc-booker-pro/info-box', 'doc-booker-pro/countdown', 'doc-booker-pro/slider', 'doc-booker-pro/faq', 'doc-booker-pro/services', 'doc-booker-pro/process-steps', 'doc-booker-pro/office-hours', 'doc-booker-pro/hero', 'doc-booker-pro/doctors', 'doc-booker-pro/departments', 'doc-booker-pro/doctor-awards', 'doc-booker-pro/doctor-fee-badge', 'doc-booker-pro/clinics', 'doc-booker-pro/quick-book', 'doc-booker-pro/doctor-schedule', 'doc-booker-pro/booking-form', 'doc-booker-pro/doctor-stats', 'doc-booker-pro/testimonials' );
 
-		$walk = function ( $blocks ) use ( &$walk, &$css, &$fonts, &$brand_fonts, $editorial_blocks ) {
+		$walk = function ( $blocks ) use ( &$walk, &$css, &$fonts, &$brand_fonts, $editorial_blocks, $author_may_style ) {
 			foreach ( $blocks as $block ) {
 				if ( ! empty( $block['blockName'] ) && 0 === strpos( $block['blockName'], 'doc-booker-pro/' ) ) {
 					if ( in_array( $block['blockName'], $editorial_blocks, true ) ) {
@@ -192,13 +203,22 @@ if ( ! function_exists( 'wpddbp_blocks_inline_css_on_singular' ) ) {
 						}
 					}
 
+					// The id becomes a CSS selector: keep it to plain id characters.
+					$attrs_full['blockId'] = preg_replace( '/[^A-Za-z0-9_-]/', '', (string) ( $attrs_full['blockId'] ?? '' ) );
+					if ( ! $author_may_style ) {
+						unset( $attrs_full['customCSS'] );
+					}
+
 					if ( function_exists( 'wpddbp_generate_block_css' ) && ! empty( $attrs_full['blockId'] ) ) {
 						$css .= wpddbp_generate_block_css( $attrs_full, $attrs_full['blockId'], $block['blockName'] );
 					}
 
 					foreach ( $attrs_full as $attr_value ) {
 						if ( is_array( $attr_value ) && ! empty( $attr_value['family'] ) ) {
-							$fonts[] = $attr_value['family'];
+							$family = trim( preg_replace( '/[^A-Za-z0-9 ]/', '', (string) $attr_value['family'] ) );
+							if ( '' !== $family ) {
+								$fonts[] = $family;
+							}
 						}
 					}
 				}
@@ -214,7 +234,9 @@ if ( ! function_exists( 'wpddbp_blocks_inline_css_on_singular' ) ) {
 		if ( '' !== $css ) {
 			wp_register_style( 'wpddbp-block-style', false );
 			wp_enqueue_style( 'wpddbp-block-style' );
-			wp_add_inline_style( 'wpddbp-block-style', wpddbp_optimized_css( $css ) );
+			// Block attributes end up in this CSS. Valid CSS never needs "<", and
+			// without it nothing can close the <style> element and start markup.
+			wp_add_inline_style( 'wpddbp-block-style', str_replace( '<', '', wpddbp_optimized_css( $css ) ) );
 		}
 
 		if ( ! empty( $fonts ) ) {

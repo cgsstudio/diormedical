@@ -29,6 +29,12 @@ class ActionHooks{
         add_action( 'wpddb_doctor_loop_item', [__CLASS__, 'doctor_loop_item_degree'], 27 );
         add_action( 'wpddb_doctor_loop_item', [__CLASS__, 'doctor_loop_item_workplace'], 28 );
         add_action( 'wpddb_doctor_loop_item', [__CLASS__, 'doctor_loop_item_social_icons'], 40 );
+
+        // Portrait card (free Layout 1): featured label and rating on the photo,
+        // experience/patients/rating above the buttons, the fee on Book.
+        add_action( 'wpddb_doctor_card_media', [ __CLASS__, 'doctor_card_badges' ], 20 );
+        add_action( 'wpddb_doctor_card_before_actions', [ __CLASS__, 'doctor_card_stats' ], 10 );
+        add_filter( 'wpddb_doctor_card_book_label', [ __CLASS__, 'doctor_card_book_label' ], 10, 2 );
         
         add_action('wpddb_shortcode_pagination',[__CLASS__,'shortcode_pagination'],10,3);
         add_action('wpddb_shortcode_results_info',[__CLASS__,'shortcode_results_info'],10,3);
@@ -74,6 +80,77 @@ class ActionHooks{
      * with no extended data shows zero visual change. Theme-inherited typography
      * plus a tiny one-time scoped style for the ribbon / chips / strip.
      */
+    /**
+     * Rating as "4.9", or '' when the doctor has none.
+     */
+    private static function card_rating( $post_id ) {
+        $rating = (float) get_post_meta( $post_id, 'wpddb_doctor_rating', true );
+        return $rating > 0 ? rtrim( rtrim( number_format( $rating, 1, '.', '' ), '0' ), '.' ) : '';
+    }
+
+    public static function doctor_card_badges( $post_id ) {
+        $featured = (string) get_post_meta( $post_id, 'wpddb_doctor_featured_label', true );
+        $rating   = self::card_rating( $post_id );
+        if ( '' !== $featured ) {
+            echo '<span class="doctor-card-badge">' . esc_html( $featured ) . '</span>';
+        }
+        if ( '' !== $rating ) {
+            /* translators: %s: rating such as 4.9 */
+            echo '<span class="doctor-card-rating" aria-label="' . esc_attr( sprintf( __( 'Rated %s out of 5', 'doc-booker-pro' ), $rating ) ) . '">' . esc_html( $rating ) . '</span>';
+        }
+    }
+
+    public static function doctor_card_stats( $post_id ) {
+        // The editor stores 0 when a number is left empty; that means "not set".
+        $experience = (int) get_post_meta( $post_id, 'wpddb_doctor_experience_years', true );
+        $patients   = (string) get_post_meta( $post_id, 'wpddb_doctor_patient_count', true );
+        $rating     = self::card_rating( $post_id );
+        $reviews    = (int) get_post_meta( $post_id, 'wpddb_doctor_review_count', true );
+        $items      = [];
+        if ( $experience > 0 ) {
+            /* translators: %d: years of experience */
+            $items[] = [ sprintf( _n( '%d yr', '%d yrs', $experience, 'doc-booker-pro' ), $experience ), __( 'Experience', 'doc-booker-pro' ) ];
+        }
+        if ( '' !== $patients && '0' !== $patients ) {
+            $items[] = [ $patients, __( 'Patients', 'doc-booker-pro' ) ];
+        }
+        if ( '' !== $rating ) {
+            $items[] = [
+                '★ ' . $rating,
+                $reviews > 0
+                    /* translators: %s: number of reviews */
+                    ? sprintf( _n( '%s review', '%s reviews', $reviews, 'doc-booker-pro' ), number_format_i18n( $reviews ) )
+                    : __( 'Rating', 'doc-booker-pro' ),
+            ];
+        }
+        if ( ! $items ) {
+            return;
+        }
+        echo '<ul class="doctor-card-stats">';
+        foreach ( $items as $item ) {
+            echo '<li><b>' . esc_html( $item[0] ) . '</b><span>' . esc_html( $item[1] ) . '</span></li>';
+        }
+        echo '</ul>';
+    }
+
+    /**
+     * "Book · USD 45" when online payment is on and the doctor has a fee.
+     */
+    public static function doctor_card_book_label( $label, $post_id ) {
+        if ( 'on' !== ( WpddbOptions::get_option( 'online_booking_payment', 'wpddb_global_settings' ) ?: 'on' ) ) {
+            return $label;
+        }
+        $fee = \WpDreamers\WPDDBP\Controllers\Payments\BookingPayment::doctor_fee( $post_id );
+        if ( $fee <= 0 ) {
+            return $label;
+        }
+        $currency = strtoupper( WpddbOptions::get_option( 'currency', 'wpddb_global_settings' ) ?: 'USD' );
+        $amount   = rtrim( rtrim( number_format_i18n( $fee, 2 ), '0' ), '.,' );
+        $money    = in_array( WpddbOptions::get_option( 'currency_position', 'wpddb_global_settings' ), [ 'right', 'right_space' ], true ) ? $amount . ' ' . $currency : $currency . ' ' . $amount;
+        /* translators: %s: booking fee with currency, e.g. USD 45 */
+        return sprintf( __( 'Book · %s', 'doc-booker-pro' ), $money );
+    }
+
     public static function render_doctor_extended_info_meta( $post_id = 0 ) {
         $post_id = $post_id ?: get_the_ID();
         if ( ! $post_id ) {
@@ -81,7 +158,9 @@ class ActionHooks{
         }
         $featured     = get_post_meta( $post_id, 'wpddb_doctor_featured_label', true );
         $credentials  = get_post_meta( $post_id, 'wpddb_doctor_credentials', true );
-        $experience   = get_post_meta( $post_id, 'wpddb_doctor_experience_years', true );
+        // The editor stores 0 when the field is left empty; that means "not set".
+        $experience   = (int) get_post_meta( $post_id, 'wpddb_doctor_experience_years', true );
+        $experience   = $experience > 0 ? (string) $experience : '';
         $rating       = (float) get_post_meta( $post_id, 'wpddb_doctor_rating', true );
         $review_count = (int) get_post_meta( $post_id, 'wpddb_doctor_review_count', true );
         $patient      = get_post_meta( $post_id, 'wpddb_doctor_patient_count', true );
@@ -529,7 +608,7 @@ class ActionHooks{
             return;
         }
         if (isset($post_data['wpddb_doctor_booking_fee'])){
-            $booking_fee = floatval($post_data['wpddb_doctor_booking_fee']);
+            $booking_fee = max(0, floatval($post_data['wpddb_doctor_booking_fee']));
             update_post_meta($post_id, 'wpddb_doctor_booking_fee', $booking_fee);
         }
         if (  isset( $post_data['wpddb_doctor_services'] ) ) {
@@ -544,8 +623,11 @@ class ActionHooks{
             update_post_meta( $post_id, 'wpddb_doctor_services', $sanitized_services );
         }
 
-        $doctor_awards = json_decode(stripslashes($post_data['wpddb_doctor_awards']), true);
-        if (!empty($doctor_awards) && is_array($doctor_awards)) {
+        // Only when the field was sent, so a save without it can't wipe it.
+        $doctor_awards = isset( $post_data['wpddb_doctor_awards'] ) ? json_decode( stripslashes( $post_data['wpddb_doctor_awards'] ), true ) : null;
+        if ( ! isset( $post_data['wpddb_doctor_awards'] ) ) {
+            // not sent: leave the stored value alone
+        } elseif (!empty($doctor_awards) && is_array($doctor_awards)) {
             $awards_sanitized_data = array_map(function ($item) {
                 return [
                     'award_text' => sanitize_text_field($item['award_text']),
@@ -556,8 +638,11 @@ class ActionHooks{
         }else{
             delete_post_meta($post_id, 'wpddb_doctor_awards');
         }
-        $doctor_social_icons = json_decode(stripslashes($post_data['wpddb_doctor_social_icons']), true);
-        if (!empty($doctor_social_icons) && is_array($doctor_social_icons)) {
+        // Only when the field was sent, so a save without it can't wipe it.
+        $doctor_social_icons = isset( $post_data['wpddb_doctor_social_icons'] ) ? json_decode( stripslashes( $post_data['wpddb_doctor_social_icons'] ), true ) : null;
+        if ( ! isset( $post_data['wpddb_doctor_social_icons'] ) ) {
+            // not sent: leave the stored value alone
+        } elseif (!empty($doctor_social_icons) && is_array($doctor_social_icons)) {
             $social_icons_sanitized_data = array_map(function ($item) {
                 return [
                     'social_name' => sanitize_text_field($item['social_name']),
@@ -846,7 +931,7 @@ class ActionHooks{
             $pagination_html .= '<div class="loading-overlay">';
             $pagination_html .= '<div class="loading-spinner">';
             $pagination_html .= '<div class="spinner"></div>';
-            $pagination_html .= '<span class="loading-text">Loading...</span>';
+            $pagination_html .= '<span class="loading-text">' . esc_html__( 'Loading...', 'doc-booker-pro' ) . '</span>';
             $pagination_html .= '</div>';
             $pagination_html .= '</div>';
 
@@ -919,19 +1004,19 @@ class ActionHooks{
             $html .= '<div class="loading-overlay">';
             $html .= '<div class="loading-spinner">';
             $html .= '<div class="spinner"></div>';
-            $html .= '<span class="loading-text">Loading...</span>';
+            $html .= '<span class="loading-text">' . esc_html__( 'Loading...', 'doc-booker-pro' ) . '</span>';
             $html .= '</div>';
             $html .= '</div>';
         }
 
         $html .= '<div class="wpddb-doctor-filter-container">';
 
-        $html .= '<h3 class="filter-title">Filter Doctors</h3>
+        $html .= '<h3 class="filter-title">' . esc_html__( 'Filter Doctors', 'doc-booker-pro' ) . '</h3>
                 <div class="filter-row">
                     <div class="filter-group">
-                        <label for="wpddb-clinic-filter" class="filter-label">Select Clinic</label>
+                        <label for="wpddb-clinic-filter" class="filter-label">' . esc_html__( 'Select Clinic', 'doc-booker-pro' ) . '</label>
                         <select id="wpddb-clinic-filter" class="filter-select">
-                            <option value="">All Clinics</option>';
+                            <option value="">' . esc_html__( 'All Clinics', 'doc-booker-pro' ) . '</option>';
 
        if ( ! empty( $clinics ) ) {
            foreach ( $clinics as $clinic ) {
@@ -943,9 +1028,9 @@ class ActionHooks{
 
         $html .= '</select></div>
                 <div class="filter-group">
-                    <label for="wpddb-department-filter" class="filter-label">Select Department</label>
+                    <label for="wpddb-department-filter" class="filter-label">' . esc_html__( 'Select Department', 'doc-booker-pro' ) . '</label>
                     <select id="wpddb-department-filter" class="filter-select">
-                        <option value="">All Departments</option>';
+                        <option value="">' . esc_html__( 'All Departments', 'doc-booker-pro' ) . '</option>';
 
        if ( ! empty( $departments ) && ! is_wp_error( $departments )  ) {
            foreach ( $departments as $department ) {
@@ -957,12 +1042,12 @@ class ActionHooks{
 
         $html .= '</select></div>
                 <div class="filter-actions">
-                    <button type="button" class="wpddb-clear-filters-btn">Clear All</button>
+                    <button type="button" class="wpddb-clear-filters-btn">' . esc_html__( 'Clear All', 'doc-booker-pro' ) . '</button>
                 </div>
         </div>
         <div class="filter-status no-filters">
             <span class="status-dot"></span>
-            <span class="status-text">No filters applied</span>
+            <span class="status-text">' . esc_html__( 'No filters applied', 'doc-booker-pro' ) . '</span>
         </div>';
 
         $html .= '</div>';
@@ -1001,10 +1086,10 @@ class ActionHooks{
                 <div class="pswp__ui pswp__ui--hidden">
                     <div class="pswp__top-bar">
                         <div class="pswp__counter"></div>
-                        <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-                        <button class="pswp__button pswp__button--share" title="Share"></button>
-                        <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-                        <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                        <button class="pswp__button pswp__button--close" title="<?php esc_attr_e( 'Close (Esc)', 'doc-booker-pro' ); ?>"></button>
+                        <button class="pswp__button pswp__button--share" title="<?php esc_attr_e( 'Share', 'doc-booker-pro' ); ?>"></button>
+                        <button class="pswp__button pswp__button--fs" title="<?php esc_attr_e( 'Toggle fullscreen', 'doc-booker-pro' ); ?>"></button>
+                        <button class="pswp__button pswp__button--zoom" title="<?php esc_attr_e( 'Zoom in/out', 'doc-booker-pro' ); ?>"></button>
                         <div class="pswp__preloader">
                             <div class="pswp__preloader__icn">
                                 <div class="pswp__preloader__cut">
@@ -1016,8 +1101,8 @@ class ActionHooks{
                     <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
                         <div class="pswp__share-tooltip"></div>
                     </div>
-                    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
-                    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+                    <button class="pswp__button pswp__button--arrow--left" title="<?php esc_attr_e( 'Previous (arrow left)', 'doc-booker-pro' ); ?>"></button>
+                    <button class="pswp__button pswp__button--arrow--right" title="<?php esc_attr_e( 'Next (arrow right)', 'doc-booker-pro' ); ?>"></button>
                     <div class="pswp__caption">
                         <div class="pswp__caption__center"></div>
                     </div>
@@ -1380,6 +1465,9 @@ class ActionHooks{
 
             'currency'                     => sanitize_text_field($incoming['currency'] ?? 'USD'),
             'currency_position'            => sanitize_text_field($incoming['currency_position'] ?? 'left'),
+
+            // Patients may choose to pay at the clinic instead of online.
+            'pay_at_clinic'                => 'on' === ($incoming['pay_at_clinic'] ?? 'off') ? 'on' : 'off',
 
             // Multi-Clinic toggle (Pro-only feature)
             'multi_clinic_manage_enable'   => $multi_clinic_new === 'on' ? 'on' : 'off',

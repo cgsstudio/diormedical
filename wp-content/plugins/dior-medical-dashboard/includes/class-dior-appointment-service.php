@@ -65,8 +65,7 @@ class Dior_Appointment_Service
      * Valid state transitions map
      */
     private static $valid_transitions = [
-        'Pending'     => ['Confirmed', 'Cancelled'],
-        'Confirmed'   => ['In Progress', 'Completed', 'Cancelled', 'No Show'],
+        'Success'     => ['In Progress', 'Completed', 'Cancelled', 'No Show'],
         'In Progress' => ['Completed', 'Cancelled'],
         'Completed'   => [],
         'Cancelled'   => [],
@@ -110,6 +109,11 @@ class Dior_Appointment_Service
         $payment_status = Dior_Auth_Service::validate_enum($data['payment_status'] ?? 'Paid', ['Pending', 'Paid', 'Refunded', 'Failed'], 'Paid');
         $notes = sanitize_textarea_field($data['notes'] ?? '');
 
+        // Enforce 15-minute advance slot booking rule
+        if (class_exists('Dior_Medical_Dashboard') && !Dior_Medical_Dashboard::is_slot_bookable_15min($appt_date, $appt_time, 15)) {
+            return new WP_Error('slot_expired', 'This appointment time slot is no longer available. Appointments must be scheduled at least 15 minutes prior to the start time.');
+        }
+
         // Check for double booking race-condition
         $duplicate = $wpdb->get_var($wpdb->prepare(
             "SELECT id FROM $table WHERE patient_id = %d AND appt_date = %s AND appt_time = %s AND status NOT IN ('Cancelled', 'No Show') AND is_deleted = 0",
@@ -123,13 +127,15 @@ class Dior_Appointment_Service
         $appt_uid = 'APT-' . rand(1000, 9999);
         $now = current_time('mysql');
 
+        $booking_status = sanitize_text_field($data['status'] ?? 'Success');
+
         $inserted = $wpdb->insert($table, [
             'appt_uid'       => $appt_uid,
             'patient_id'     => $patient_id,
             'doctor_id'      => $doctor_id,
             'condition_name' => $condition,
             'visit_type'     => $visit_type,
-            'status'         => 'Confirmed',
+            'status'         => $booking_status,
             'appt_date'      => $appt_date,
             'appt_time'      => $appt_time,
             'join_url'       => $join_url,
@@ -145,7 +151,7 @@ class Dior_Appointment_Service
         }
 
         $created_appt = self::get_appointment_by_uid($appt_uid);
-        self::log_history($created_appt, 'created', ['new_status' => 'Confirmed']);
+        self::log_history($created_appt, 'created', ['new_status' => $booking_status]);
 
         Dior_Audit_Service::log('appointment_book', 'appointment', $appt_uid, $patient_id, 'success', [
             'doctor_id' => $doctor_id,
@@ -215,7 +221,7 @@ class Dior_Appointment_Service
         }
 
         // Validate status: Only active appointments can be rescheduled
-        $allowed_status = ['Confirmed', 'Pending', 'Scheduled', 'In-Queue'];
+        $allowed_status = ['Success', 'In-Queue'];
         if (!in_array($appt['status'], $allowed_status, true)) {
             return new WP_Error('invalid_status', "This appointment is {$appt['status']} and cannot be rescheduled.");
         }
@@ -257,7 +263,7 @@ class Dior_Appointment_Service
             [
                 'appt_date'  => $valid_date,
                 'appt_time'  => $clean_time,
-                'status'     => 'Confirmed',
+                'status'     => 'Success',
                 'notes'      => $updated_notes,
                 'updated_at' => $now
             ],
@@ -271,7 +277,7 @@ class Dior_Appointment_Service
         // Persist appointment lifecycle history.
         self::log_history(self::get_appointment($appt['appt_uid']), 'rescheduled', [
             'old_status' => $appt['status'],
-            'new_status' => 'Confirmed',
+            'new_status' => 'Success',
             'old_date' => $old_date,
             'new_date' => $valid_date,
             'old_time' => $old_time,
@@ -455,6 +461,18 @@ class Dior_Appointment_Service
             ]);
 
             self::sync_legacy_usermeta($appt['patient_id']);
+
+            // Multi-channel notification for relevant status change
+            if (class_exists('Dior_Notification_Service')) {
+                Dior_Notification_Service::send_status_change_notification(
+                    $appt['appt_uid'],
+                    $curr_status,
+                    $new_status,
+                    $reason,
+                    $is_doc ? 'doctor' : ($is_pat ? 'patient' : 'system')
+                );
+            }
+
             return true;
         }
 
@@ -476,32 +494,20 @@ class Dior_Appointment_Service
         ), ARRAY_A);
 
         if (!$results) {
-            $legacy = get_user_meta($patient_id, 'dior_appointments', true);
-            if (is_array($legacy) && !empty($legacy)) {
-                $results = $legacy;
-            } else {
-                return [];
-            }
+            return [];
         }
 
         foreach ($results as &$r) {
-            $r['id'] = !empty($r['appt_uid']) ? $r['appt_uid'] : (!empty($r['id']) ? $r['id'] : 'APT-' . rand(1000, 9999));
-            $r['appt_uid'] = $r['id'];
-            $r['date'] = !empty($r['appt_date']) ? $r['appt_date'] : (!empty($r['date']) ? $r['date'] : '');
-            $r['appt_date'] = $r['date'];
-            $r['time'] = !empty($r['appt_time']) ? $r['appt_time'] : (!empty($r['time']) ? $r['time'] : '');
-            $r['appt_time'] = $r['time'];
-            $r['condition'] = !empty($r['condition_name']) ? $r['condition_name'] : (!empty($r['condition']) ? $r['condition'] : 'Telehealth Consultation');
-            $r['condition_name'] = $r['condition'];
-            $r['type'] = !empty($r['visit_type']) ? $r['visit_type'] : (!empty($r['type']) ? $r['type'] : 'Video Visit (HD)');
-            $r['visit_type'] = $r['type'];
+            $r['id'] = $r['appt_uid'];
+            $r['date'] = $r['appt_date'];
+            $r['time'] = $r['appt_time'];
+            $r['condition'] = $r['condition_name'];
+            $r['type'] = $r['visit_type'];
 
-            $doc_id = (int)($r['doctor_id'] ?? 0);
-            $doc_user_id = (int)($r['doctor_user_id'] ?? 0);
+            $doc_id = (int)$r['doctor_id'];
+            $doc_user_id = 0;
             $doc_name = '';
             $doc_spec = '';
-            $doc_avatar = '';
-
             if ($doc_id) {
                 $candidate = get_userdata($doc_id);
                 $merged_doctor_id = $candidate ? (int) get_user_meta($candidate->ID, '_dior_merged_into_doctor_id', true) : 0;
@@ -521,47 +527,59 @@ class Dior_Appointment_Service
                         $doc_user_id = (int)Dior_Doctor_Resolver::resolve_doctor_user_id($doc_id);
                         $doc_name = $doctor_post->post_title;
                         $doc_spec = get_post_meta($doc_id, 'wpddb_doctor_speciality', true);
-                        $doc_avatar = get_post_meta($doc_id, '_wpddb_doctor_avatar', true)
-                            ?: get_post_meta($doc_id, 'wpddb_doctor_avatar', true)
-                            ?: get_the_post_thumbnail_url($doc_id, 'medium');
                     }
                 }
             }
             $doc_user = $doc_user_id ? get_userdata($doc_user_id) : null;
             if ($doc_name === '') {
-                $doc_name = !empty($r['provider']) ? $r['provider'] : (!empty($r['doctor_name']) ? $r['doctor_name'] : ($doc_user ? (trim($doc_user->first_name . ' ' . $doc_user->last_name) ?: $doc_user->display_name) : 'Attending Physician'));
+                $doc_name = $doc_user ? (trim($doc_user->first_name . ' ' . $doc_user->last_name) ?: $doc_user->display_name) : 'Attending Physician';
             }
             $doc_name = preg_replace('/^(?:dr\.?\s*)+/i', '', trim($doc_name));
             if ($doc_name !== '' && $doc_name !== 'Attending Physician') $doc_name = 'Dr. ' . $doc_name;
+            $r['doctor_user_id'] = $doc_user_id;
+            $r['provider'] = $doc_name;
+            $r['doctor_name'] = $doc_name;
+            $r['provider_spec'] = $doc_spec ?: ($doc_user ? (get_user_meta($doc_user->ID, 'doctor_specialty', true) ?: 'Telehealth Physician') : 'Telehealth Physician');
 
-            if (empty($doc_avatar) && $doc_user_id) {
+            // Resolve doctor avatar (prioritizing doctor dashboard profile)
+            $doc_avatar = '';
+            if ($doc_user_id) {
                 $doc_avatar = get_user_meta($doc_user_id, 'dior_profile_image', true)
                     ?: get_user_meta($doc_user_id, 'doctor_avatar', true)
                     ?: get_user_meta($doc_user_id, 'profile_picture', true)
                     ?: get_user_meta($doc_user_id, 'profile_image', true)
-                    ?: get_user_meta($doc_user_id, 'avatar_url', true)
-                    ?: get_avatar_url($doc_user_id, ['size' => 120]);
+                    ?: get_user_meta($doc_user_id, 'avatar_url', true);
             }
-            if (empty($doc_avatar) && !empty($r['avatar'])) {
-                $doc_avatar = $r['avatar'];
+            if (empty($doc_avatar) && $doc_id) {
+                $doc_avatar = get_post_meta($doc_id, '_wpddb_doctor_avatar', true)
+                    ?: get_post_meta($doc_id, 'wpddb_doctor_avatar', true)
+                    ?: get_the_post_thumbnail_url($doc_id, 'full');
+                if (empty($doc_avatar)) {
+                    $linked_uid = get_post_meta($doc_id, '_wpddb_doctor_user_id', true);
+                    if ($linked_uid) {
+                        $doc_avatar = get_user_meta((int)$linked_uid, 'dior_profile_image', true)
+                            ?: get_user_meta((int)$linked_uid, 'doctor_avatar', true)
+                            ?: get_user_meta((int)$linked_uid, 'profile_picture', true);
+                    }
+                }
             }
             if (empty($doc_avatar)) {
-                $default_doc_img = site_url('/wp-content/uploads/2026/10/diormedical-experts-1.webp');
-                $doc_avatar = $default_doc_img;
+                $doc_users = get_users(['role' => 'doctor', 'number' => 1]);
+                if (!empty($doc_users)) {
+                    $doc_avatar = get_user_meta($doc_users[0]->ID, 'dior_profile_image', true)
+                        ?: get_user_meta($doc_users[0]->ID, 'doctor_avatar', true)
+                        ?: get_user_meta($doc_users[0]->ID, 'profile_picture', true);
+                }
             }
-
-            $r['doctor_user_id'] = $doc_user_id;
-            $r['provider'] = $doc_name;
-            $r['doctor_name'] = $doc_name;
-            $r['provider_spec'] = $doc_spec ?: (!empty($r['provider_spec']) ? $r['provider_spec'] : ($doc_user ? (get_user_meta($doc_user->ID, 'doctor_specialty', true) ?: 'Telehealth Physician') : 'Telehealth Physician'));
+            if (empty($doc_avatar)) {
+                $doc_avatar = home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp');
+            }
             $r['avatar'] = $doc_avatar;
-            $r['doctor_avatar'] = $doc_avatar;
 
-            $status = $r['status'] ?? 'Confirmed';
-            $r['status'] = $status;
-            $r['can_reschedule'] = in_array($status, ['Confirmed', 'Pending', 'Scheduled', 'In-Queue'], true);
-            $r['can_cancel'] = in_array($status, ['Confirmed', 'Pending', 'Scheduled', 'In-Queue'], true);
-            $r['can_join'] = in_array($status, ['Confirmed', 'In Progress', 'Scheduled', 'In-Queue'], true);
+            $status = $r['status'] ?? 'Success';
+            $r['can_reschedule'] = in_array($status, ['Success', 'In-Queue'], true);
+            $r['can_cancel'] = in_array($status, ['Success', 'In-Queue'], true);
+            $r['can_join'] = in_array($status, ['Success', 'In Progress', 'In-Queue'], true);
         }
 
         return $results;
@@ -654,7 +672,7 @@ class Dior_Appointment_Service
     /**
      * Dual-write / sync to legacy user meta for backwards compatibility
      */
-    private static function sync_legacy_usermeta($patient_id)
+    public static function sync_legacy_usermeta($patient_id)
     {
         $apts = self::get_patient_appointments($patient_id);
         $legacy = [];
@@ -671,7 +689,7 @@ class Dior_Appointment_Service
                 'join_url'       => $a['join_url'],
                 'payment_status' => $a['payment_status'],
                 'notes'          => $a['notes'],
-                'can_join'       => in_array($a['status'], ['Confirmed', 'In Progress'])
+                'can_join'       => in_array($a['status'], ['Success', 'In Progress'])
             ];
         }
         update_user_meta($patient_id, 'dior_appointments', $legacy);

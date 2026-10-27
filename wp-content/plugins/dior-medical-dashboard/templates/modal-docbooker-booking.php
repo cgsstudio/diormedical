@@ -73,6 +73,19 @@ $today_ymd = current_time('Y-m-d');
 
         <!-- Modal Body / Form -->
         <div class="dior-db-modal-body" id="dior-db-modal-body">
+            <?php
+            $modal_initial_slots = class_exists('Dior_Medical_Dashboard')
+                ? Dior_Medical_Dashboard::get_doctor_slots_for_date($doctor_id, $today_ymd)
+                : [];
+            $modal_first_slot_time = '';
+            foreach ($modal_initial_slots as $st) {
+                if (!empty($st['is_available'])) {
+                    $modal_first_slot_time = $st['time'];
+                    break;
+                }
+            }
+            $modal_default_time = $modal_first_slot_time ?: '09:00 AM - 10:00 AM';
+            ?>
             <form id="dior-docbooker-form" class="dior-clean-db-form" onsubmit="diorSubmitDocBookerBooking(event)">
                 <input type="hidden" name="action" value="dior_patient_book_appointment">
                 <input type="hidden" name="nonce" value="<?php echo esc_attr(wp_create_nonce('dior_portal_nonce')); ?>">
@@ -80,8 +93,8 @@ $today_ymd = current_time('Y-m-d');
                 <input type="hidden" name="doctorId" value="<?php echo esc_attr($doctor_id); ?>">
                 <input type="hidden" name="doctor_name" id="dior-db-doctor-name" value="<?php echo esc_attr($doctor_name); ?>">
                 <input type="hidden" name="provider" value="<?php echo esc_attr($doctor_name); ?>">
-                <input type="hidden" name="selected_time" id="dior-db-selected-time" value="09:00 AM - 10:00 AM">
-                <input type="hidden" name="time" id="dior-db-final-time" value="09:00 AM - 10:00 AM">
+                <input type="hidden" name="selected_time" id="dior-db-selected-time" value="<?php echo esc_attr($modal_default_time); ?>">
+                <input type="hidden" name="time" id="dior-db-final-time" value="<?php echo esc_attr($modal_default_time); ?>">
                 <input type="hidden" name="service_type" id="dior-db-service-type" value="Video Visit (HD)">
                 <input type="hidden" name="type" id="dior-db-final-type" value="Video Visit (HD)">
                 <input type="hidden" name="condition" id="dior-db-final-condition" value="<?php echo esc_attr($patient_reason); ?>">
@@ -145,14 +158,29 @@ $today_ymd = current_time('Y-m-d');
                             </span>
                         </div>
                         <div id="dior-db-slots-grid" class="dior-db-slots-grid">
-                            <!-- Slots populated via JS / server defaults -->
-                            <button type="button" class="dior-db-slot-btn active btn" data-time="09:00 AM - 10:00 AM" onclick="diorSelectTimeSlot('09:00 AM - 10:00 AM', this)">09:00 AM - 10:00 AM</button>
-                            <button type="button" class="dior-db-slot-btn btn" data-time="10:00 AM - 11:00 AM" onclick="diorSelectTimeSlot('10:00 AM - 11:00 AM', this)">10:00 AM - 11:00 AM</button>
-                            <button type="button" class="dior-db-slot-btn btn" data-time="11:00 AM - 12:00 PM" onclick="diorSelectTimeSlot('11:00 AM - 12:00 PM', this)">11:00 AM - 12:00 PM</button>
-                            <button type="button" class="dior-db-slot-btn btn" data-time="01:00 PM - 02:00 PM" onclick="diorSelectTimeSlot('01:00 PM - 02:00 PM', this)">01:00 PM - 02:00 PM</button>
-                            <button type="button" class="dior-db-slot-btn btn" data-time="02:00 PM - 03:00 PM" onclick="diorSelectTimeSlot('02:00 PM - 03:00 PM', this)">02:00 PM - 03:00 PM</button>
-                            <button type="button" class="dior-db-slot-btn btn" data-time="03:00 PM - 04:00 PM" onclick="diorSelectTimeSlot('03:00 PM - 04:00 PM', this)">03:00 PM - 04:00 PM</button>
-                            <button type="button" class="dior-db-slot-btn btn" data-time="04:00 PM - 05:00 PM" onclick="diorSelectTimeSlot('04:00 PM - 05:00 PM', this)">04:00 PM - 05:00 PM</button>
+                            <?php
+                            $modal_has_available = false;
+                            $modal_first_selected = false;
+                            foreach ($modal_initial_slots as $s_item):
+                                if (!empty($s_item['is_available'])):
+                                    $modal_has_available = true;
+                                    $is_active = !$modal_first_selected;
+                                    if ($is_active) {
+                                        $modal_first_selected = true;
+                                    }
+                            ?>
+                                <button type="button" class="dior-db-slot-btn <?php echo $is_active ? 'active' : ''; ?> btn" data-time="<?php echo esc_attr($s_item['time']); ?>" onclick="diorSelectTimeSlot('<?php echo esc_js($s_item['time']); ?>', this)">
+                                    <?php echo esc_html($s_item['time']); ?>
+                                </button>
+                            <?php
+                                endif;
+                            endforeach;
+                            if (!$modal_has_available):
+                            ?>
+                                <div class="w-100 text-center py-3 px-2 text-muted small">
+                                    <i class="fa-solid fa-clock me-1 text-warning"></i> No further consultation slots are available for today. Please select a future date to book an appointment.
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

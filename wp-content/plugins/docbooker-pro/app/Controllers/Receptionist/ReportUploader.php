@@ -103,10 +103,15 @@ class ReportUploader {
 		if ( ! function_exists( 'wp_handle_upload' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
-		if ( ! function_exists( 'wp_insert_attachment' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/image.php';
-		}
 
+		// Reports go to the protected reports folder under a random name; the
+		// original name is kept as the attachment title for display.
+		if ( ! ReportStorage::location() ) {
+			remove_filter( 'upload_mimes', $mimes_filter, 999 );
+			return new WP_Error( 'wpddbp_storage', __( 'The reports folder could not be created.', 'doc-booker-pro' ) );
+		}
+		$file['name'] = ReportStorage::random_name();
+		add_filter( 'upload_dir', [ ReportStorage::class, 'upload_dir_filter' ] );
 		$movefile = wp_handle_upload(
 			$file,
 			[
@@ -114,6 +119,7 @@ class ReportUploader {
 				'mimes'     => [ 'pdf' => 'application/pdf' ],
 			]
 		);
+		remove_filter( 'upload_dir', [ ReportStorage::class, 'upload_dir_filter' ] );
 		remove_filter( 'upload_mimes', $mimes_filter, 999 );
 
 		if ( ! $movefile || ! empty( $movefile['error'] ) ) {
@@ -133,7 +139,10 @@ class ReportUploader {
 			@unlink( $movefile['file'] );
 			return new WP_Error( 'wpddbp_attachment_failed', __( 'Could not create attachment record.', 'doc-booker-pro' ) );
 		}
-		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $movefile['file'] ) );
+		// No generated metadata: for a PDF that would render preview images of a
+		// patient's report next to it. (It also needed wp-admin/includes/image.php,
+		// which REST requests do not load, so every upload used to fail here.)
+		wp_update_attachment_metadata( $attachment_id, [ 'filesize' => (int) filesize( $movefile['file'] ) ] );
 
 		$report_id = TestReport::create( [
 			'order_id'      => $order_id,

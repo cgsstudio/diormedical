@@ -27,6 +27,11 @@ class ScriptsController{
 
     private $scripts = [];
     public function __construct() {
+        // Mirrored stylesheets for right-to-left languages.
+        add_action( 'wp_print_styles', [ $this, 'rtl_styles' ], 0 );
+        add_action( 'admin_print_styles', [ $this, 'rtl_styles' ], 0 );
+        add_action( 'wp_print_footer_scripts', [ $this, 'rtl_styles' ], 0 );
+
         $this->version = ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? time() : WPDDBP_VERSION;
 
 
@@ -95,6 +100,7 @@ class ScriptsController{
             wp_enqueue_style( 'wpddb-pro-clinic-managers', wpddbp()->get_assets_uri( 'admin/css/wpd-clinic-managers.css' ), [], $this->version );
             wp_enqueue_script( 'wpddb-pro-clinic-managers', wpddbp()->get_assets_uri( 'admin/js/wpd-clinic-managers.js' ), [ 'wp-i18n' ], $this->version, true );
             wp_set_script_translations( 'wpddb-pro-clinic-managers', 'doc-booker-pro', WPDDBP_PATH . 'languages' );
+            $this->add_week_start( 'wpddb-pro-clinic-managers' );
             wp_localize_script( 'wpddb-pro-clinic-managers', 'wpddbProClinicManagersParams', [
                 'restApiUrl' => esc_url_raw( rest_url() ),
                 'rest_nonce' => wp_create_nonce( 'wp_rest' ),
@@ -106,6 +112,7 @@ class ScriptsController{
             wp_enqueue_style( 'wpddb-pro-staff', wpddbp()->get_assets_uri( 'admin/css/wpd-staff.css' ), [], $this->version );
             wp_enqueue_script( 'wpddb-pro-staff', wpddbp()->get_assets_uri( 'admin/js/wpd-staff.js' ), [ 'wp-i18n' ], $this->version, true );
             wp_set_script_translations( 'wpddb-pro-staff', 'doc-booker-pro', WPDDBP_PATH . 'languages' );
+            $this->add_week_start( 'wpddb-pro-staff' );
             wp_localize_script( 'wpddb-pro-staff', 'wpddbProStaffParams', [
                 'restApiUrl'           => esc_url_raw( rest_url() ),
                 'rest_nonce'           => wp_create_nonce( 'wp_rest' ),
@@ -119,6 +126,7 @@ class ScriptsController{
             wp_enqueue_style( 'wpddb-pro-test-items', wpddbp()->get_assets_uri( 'admin/css/wpd-test-items.css' ), [], $this->version );
             wp_enqueue_script( 'wpddb-pro-test-items', wpddbp()->get_assets_uri( 'admin/js/wpd-test-items.js' ), [ 'wp-i18n' ], $this->version, true );
             wp_set_script_translations( 'wpddb-pro-test-items', 'doc-booker-pro', WPDDBP_PATH . 'languages' );
+            $this->add_week_start( 'wpddb-pro-test-items' );
             wp_localize_script( 'wpddb-pro-test-items', 'wpddbProTestItemsParams', [
                 'restApiUrl'  => esc_url_raw( rest_url() ),
                 'rest_nonce'  => wp_create_nonce( 'wp_rest' ),
@@ -127,6 +135,16 @@ class ScriptsController{
                 'clinics'     => current_user_can( 'manage_options' ) ? $this->get_clinics_for_picker() : [],
             ] );
         }
+    }
+
+    /**
+     * Calendars start their week on the day set in Settings → General →
+     * Week Starts On (read by src/js/common/antd-locale.js).
+     *
+     * @param string $handle Script handle.
+     */
+    private function add_week_start( $handle ) {
+        wp_add_inline_script( $handle, 'window.wpddbpWeekStart = ' . (int) get_option( 'start_of_week', 1 ) . ';', 'before' );
     }
 
     /**
@@ -160,10 +178,11 @@ class ScriptsController{
         wp_enqueue_style( 'wpddb-pro-clinic-dashboard', wpddbp()->get_assets_uri( 'public/css/wpd-clinic-dashboard.css' ), [], $this->version );
         wp_enqueue_script( 'wpddb-pro-clinic-dashboard', wpddbp()->get_assets_uri( 'public/js/wpd-clinic-dashboard.js' ), [ 'wp-i18n' ], $this->version, true );
         wp_set_script_translations( 'wpddb-pro-clinic-dashboard', 'doc-booker-pro', WPDDBP_PATH . 'languages' );
+        $this->add_week_start( 'wpddb-pro-clinic-dashboard' );
         wp_localize_script( 'wpddb-pro-clinic-dashboard', 'wpddbProClinicDashboardParams', [
             'restApiUrl'     => esc_url_raw( rest_url() ),
             'rest_nonce'     => wp_create_nonce( 'wp_rest' ),
-            'logoutUrl'      => esc_url( wp_logout_url( get_permalink( $page_id ) ) ),
+            'logoutUrl'      => esc_url_raw( wp_logout_url( get_permalink( $page_id ) ) ),
             'online_payment' => \WpDreamers\WPDDBP\Controllers\Helper\Helper::has_online_payment(),
             'multi_clinic_enabled' => StaffContext::is_multi_clinic_enabled(),
         ] );
@@ -180,10 +199,11 @@ class ScriptsController{
         wp_enqueue_style( 'wpddb-pro-receptionist-dashboard', wpddbp()->get_assets_uri( 'public/css/wpd-receptionist-dashboard.css' ), [], $this->version );
         wp_enqueue_script( 'wpddb-pro-receptionist-dashboard', wpddbp()->get_assets_uri( 'public/js/wpd-receptionist-dashboard.js' ), [ 'wp-i18n' ], $this->version, true );
         wp_set_script_translations( 'wpddb-pro-receptionist-dashboard', 'doc-booker-pro', WPDDBP_PATH . 'languages' );
+        $this->add_week_start( 'wpddb-pro-receptionist-dashboard' );
         wp_localize_script( 'wpddb-pro-receptionist-dashboard', 'wpddbProReceptionParams', [
             'restApiUrl'           => esc_url_raw( rest_url() ),
             'rest_nonce'           => wp_create_nonce( 'wp_rest' ),
-            'logoutUrl'            => esc_url( wp_logout_url( get_permalink( $page_id ) ) ),
+            'logoutUrl'            => esc_url_raw( wp_logout_url( get_permalink( $page_id ) ) ),
             'multi_clinic_enabled' => StaffContext::is_multi_clinic_enabled(),
         ] );
     }
@@ -196,6 +216,7 @@ class ScriptsController{
         wp_enqueue_style( 'wpddb-pro-patient-portal', wpddbp()->get_assets_uri( 'public/css/wpd-patient-portal.css' ), [], $this->version );
         wp_enqueue_script( 'wpddb-pro-patient-portal', wpddbp()->get_assets_uri( 'public/js/wpd-patient-portal.js' ), [ 'wp-i18n' ], $this->version, true );
         wp_set_script_translations( 'wpddb-pro-patient-portal', 'doc-booker-pro', WPDDBP_PATH . 'languages' );
+        $this->add_week_start( 'wpddb-pro-patient-portal' );
         wp_localize_script( 'wpddb-pro-patient-portal', 'wpddbProPortalParams', [
             'restApiUrl' => esc_url_raw( rest_url() ),
             'ref'        => isset( $_GET['ref'] ) ? sanitize_text_field( (string) $_GET['ref'] ) : '',
@@ -238,6 +259,13 @@ class ScriptsController{
             'i18n'            => [
                 'bookingFee'      => __( 'Booking fee', 'doc-booker-pro' ),
                 'bookingProgress' => __( 'Booking progress', 'doc-booker-pro' ),
+                'removeClinicFilter'     => __( 'Remove clinic filter', 'doc-booker-pro' ),
+                'removeDepartmentFilter' => __( 'Remove department filter', 'doc-booker-pro' ),
+                'noMoreResults'   => __( 'No more results to load', 'doc-booker-pro' ),
+                'previous'        => __( 'Previous', 'doc-booker-pro' ),
+                'next'            => __( 'Next', 'doc-booker-pro' ),
+                'somethingWrong'  => __( 'Oops! Something went wrong', 'doc-booker-pro' ),
+                'tryAgain'        => __( 'Try Again', 'doc-booker-pro' ),
             ],
         ];
 
@@ -376,4 +404,46 @@ class ScriptsController{
         wp_register_script( $default_swiper_handle, $default_swiper_path, array( 'jquery' ), $this->version, true );
         wp_enqueue_script( $default_swiper_handle );
     }
+
+    /**
+     * On right-to-left sites, swap each of this plugin's stylesheets for the
+     * mirrored <name>-rtl.css the build writes next to it. Styles are enqueued
+     * in many places (shortcodes, dashboards, admin screens), so this looks at
+     * whatever is registered just before printing; a stylesheet without an RTL
+     * file is left alone.
+     */
+    public function rtl_styles() {
+        if ( ! is_rtl() ) {
+            return;
+        }
+        // Plugin stylesheets live in assets/ (laravel-mix) and build/ (blocks).
+        $roots = [
+            wpddbp()->get_assets_uri( '' )                => WPDDBP_PATH . 'assets/',
+            trailingslashit( WPDDBP_URL ) . 'build/'      => WPDDBP_PATH . 'build/',
+        ];
+        foreach ( wp_styles()->registered as $handle => $style ) {
+            $src = is_string( $style->src ) ? $style->src : '';
+            if ( '' === $src || ! preg_match( '/(?<!-rtl)\.css$/', $src ) ) {
+                continue;
+            }
+            foreach ( $roots as $url_prefix => $path_prefix ) {
+                if ( 0 !== strpos( $src, $url_prefix ) ) {
+                    continue;
+                }
+                $rtl_file = $path_prefix . preg_replace( '/\.css$/', '-rtl.css', substr( $src, strlen( $url_prefix ) ) );
+                if ( file_exists( $rtl_file ) ) {
+                    wp_style_add_data( $handle, 'rtl', 'replace' );
+                    // WordPress tags block styles with a ".min" suffix when
+                    // SCRIPT_DEBUG is off and then looks for "-rtl.min.css";
+                    // these files are not minified-named, so clear it.
+                    $suffix = $style->extra['suffix'] ?? '';
+                    if ( '' !== $suffix && false === strpos( $src, $suffix . '.css' ) ) {
+                        wp_style_add_data( $handle, 'suffix', '' );
+                    }
+                }
+                break;
+            }
+        }
+    }
+
 }

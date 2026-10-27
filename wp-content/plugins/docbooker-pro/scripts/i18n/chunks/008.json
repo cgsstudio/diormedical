@@ -1,0 +1,453 @@
+[
+ {
+  "id": "Already completed"
+ },
+ {
+  "id": "Amount typography"
+ },
+ {
+  "id": "Auto (from hours)"
+ },
+ {
+  "id": "Auto-select today"
+ },
+ {
+  "id": "Background Repeat"
+ },
+ {
+  "id": "Children's health"
+ },
+ {
+  "id": "Closed (holiday)."
+ },
+ {
+  "id": "Closes at 6:00 PM"
+ },
+ {
+  "id": "Columns — desktop"
+ },
+ {
+  "id": "Consultation - %s"
+ },
+ {
+  "id": "Contact & Holiday"
+ },
+ {
+  "id": "Contact / hotline"
+ },
+ {
+  "id": "Content alignment"
+ },
+ {
+  "id": "Delete this item?"
+ },
+ {
+  "id": "Description / sub"
+ },
+ {
+  "id": "Description color"
+ },
+ {
+  "id": "Detail chip color"
+ },
+ {
+  "id": "Display meta line"
+ },
+ {
+  "id": "Enable filter bar"
+ },
+ {
+  "id": "Existing Managers"
+ },
+ {
+  "id": "Failed to create."
+ },
+ {
+  "id": "Heading & content"
+ },
+ {
+  "id": "Image band extras"
+ },
+ {
+  "id": "Install DocBooker"
+ },
+ {
+  "id": "Interim Statement"
+ },
+ {
+  "id": "Item number color"
+ },
+ {
+  "id": "Load more doctors"
+ },
+ {
+  "id": "Manager assigned."
+ },
+ {
+  "id": "Name is required."
+ },
+ {
+  "id": "No clinics found."
+ },
+ {
+  "id": "No doctors found."
+ },
+ {
+  "id": "No patients found"
+ },
+ {
+  "id": "Nothing available"
+ },
+ {
+  "id": "Number typography"
+ },
+ {
+  "id": "Numeric (1, 2, 3)"
+ },
+ {
+  "id": "Open accent color"
+ },
+ {
+  "id": "Open — background"
+ },
+ {
+  "id": "Opens today at %s"
+ },
+ {
+  "id": "Processing images"
+ },
+ {
+  "id": "Profile link text"
+ },
+ {
+  "id": "Rated %s out of 5"
+ },
+ {
+  "id": "Report not found."
+ },
+ {
+  "id": "Reveal %s details"
+ },
+ {
+  "id": "Scrim opacity (%)"
+ },
+ {
+  "id": "Section / wrapper"
+ },
+ {
+  "id": "Select Department"
+ },
+ {
+  "id": "Select background"
+ },
+ {
+  "id": "Show \"From\" label"
+ },
+ {
+  "id": "Show context line"
+ },
+ {
+  "id": "Show doctor strip"
+ },
+ {
+  "id": "Show holiday note"
+ },
+ {
+  "id": "Show item numbers"
+ },
+ {
+  "id": "Show status badge"
+ },
+ {
+  "id": "Step %1$d of %2$d"
+ },
+ {
+  "id": "Sticky bar (dark)"
+ },
+ {
+  "id": "Toggle fullscreen"
+ },
+ {
+  "id": "Transition effect"
+ },
+ {
+  "id": "Unknown template."
+ },
+ {
+  "id": "Untitled question"
+ },
+ {
+  "id": "Verification Code"
+ },
+ {
+  "id": "View full profile"
+ },
+ {
+  "id": "Years in practice"
+ },
+ {
+  "id": "opens tomorrow %s"
+ },
+ {
+  "id": "%d row was skipped",
+  "plural": "%d rows were skipped"
+ },
+ {
+  "id": "Accent word/phrase"
+ },
+ {
+  "id": "Accordion — Carded"
+ },
+ {
+  "id": "Activate DocBooker"
+ },
+ {
+  "id": "Add Clinic Manager"
+ },
+ {
+  "id": "Add a second shift"
+ },
+ {
+  "id": "Aside / intro note"
+ },
+ {
+  "id": "Auto (from doctor)"
+ },
+ {
+  "id": "Blob / shape color"
+ },
+ {
+  "id": "Booking cancelled."
+ },
+ {
+  "id": "BrightSmile Dental"
+ },
+ {
+  "id": "ClearView Eye Care"
+ },
+ {
+  "id": "Clinic info saved."
+ },
+ {
+  "id": "Clinic placeholder"
+ },
+ {
+  "id": "Closed %1$s – %2$s"
+ },
+ {
+  "id": "Content horizontal"
+ },
+ {
+  "id": "Create new patient"
+ },
+ {
+  "id": "Default department"
+ },
+ {
+  "id": "Delivery Date/Time"
+ },
+ {
+  "id": "Display subheading"
+ },
+ {
+  "id": "Display trust note"
+ },
+ {
+  "id": "Doctor attribution"
+ },
+ {
+  "id": "Feature first card"
+ },
+ {
+  "id": "Featured spotlight"
+ },
+ {
+  "id": "File exceeds 10MB."
+ },
+ {
+  "id": "Flagship specialty"
+ },
+ {
+  "id": "Floating stat tile"
+ },
+ {
+  "id": "Ghost — hover text"
+ },
+ {
+  "id": "Heading (optional)"
+ },
+ {
+  "id": "Heading typography"
+ },
+ {
+  "id": "Last modified date"
+ },
+ {
+  "id": "License Activation"
+ },
+ {
+  "id": "Mousewheel control"
+ },
+ {
+  "id": "Next (arrow right)"
+ },
+ {
+  "id": "No files received."
+ },
+ {
+  "id": "No filters applied"
+ },
+ {
+  "id": "No recent activity"
+ },
+ {
+  "id": "No spaces allowed."
+ },
+ {
+  "id": "No staff selected."
+ },
+ {
+  "id": "No test orders yet"
+ },
+ {
+  "id": "No waiting on hold"
+ },
+ {
+  "id": "Open / hover color"
+ },
+ {
+  "id": "Opens %1$s at %2$s"
+ },
+ {
+  "id": "Patient not found."
+ },
+ {
+  "id": "Pay at appointment"
+ },
+ {
+  "id": "Permission denied."
+ },
+ {
+  "id": "Pick existing user"
+ },
+ {
+  "id": "Quote cards (grid)"
+ },
+ {
+  "id": "Remove this staff?"
+ },
+ {
+  "id": "Search placeholder"
+ },
+ {
+  "id": "Secondary link URL"
+ },
+ {
+  "id": "Show clinic filter"
+ },
+ {
+  "id": "Show clinic legend"
+ },
+ {
+  "id": "Show tag / eyebrow"
+ },
+ {
+  "id": "Single-clinic mode"
+ },
+ {
+  "id": "Space between (px)"
+ },
+ {
+  "id": "Start your booking"
+ },
+ {
+  "id": "Subtitle / eyebrow"
+ },
+ {
+  "id": "Table — Ruled week"
+ },
+ {
+  "id": "Target date & time"
+ },
+ {
+  "id": "Template imported."
+ },
+ {
+  "id": "URL parameter name"
+ },
+ {
+  "id": "V3 — Compact strip"
+ },
+ {
+  "id": "Vertical — Zig-zag"
+ },
+ {
+  "id": "— Any department —"
+ },
+ {
+  "id": "\"All clinics\" label"
+ },
+ {
+  "id": "Appointment booking"
+ },
+ {
+  "id": "Assignment removed."
+ },
+ {
+  "id": "Autoplay delay (ms)"
+ },
+ {
+  "id": "Background Position"
+ },
+ {
+  "id": "Book an appointment"
+ },
+ {
+  "id": "Booking action card"
+ },
+ {
+  "id": "Bullet marker color"
+ },
+ {
+  "id": "Cards — Big numeral"
+ },
+ {
+  "id": "Cheatin&#8217; huh?"
+ },
+ {
+  "id": "Clinic is required."
+ },
+ {
+  "id": "Closed — background"
+ },
+ {
+  "id": "Confirmed instantly"
+ },
+ {
+  "id": "Creating draft page"
+ },
+ {
+  "id": "Current-step accent"
+ },
+ {
+  "id": "Delete this report?"
+ },
+ {
+  "id": "Department relation"
+ },
+ {
+  "id": "Display description"
+ },
+ {
+  "id": "Display intro panel"
+ },
+ {
+  "id": "Filter bar position"
+ },
+ {
+  "id": "Filter specialties…"
+ },
+ {
+  "id": "Footer strip (dark)"
+ }
+]

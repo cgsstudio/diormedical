@@ -48,51 +48,39 @@
             justify-content: center !important;
             padding: 0 !important;
             margin: 0 !important;
-            border: 1px solid #DCE5EF !important;
+            border: 1px solid #cbdbea !important;
             border-radius: 8px !important;
             background: #fff !important;
             box-sizing: border-box !important;
-            color: #4F46E5 !important;
+            color: #2b70b8 !important;
             line-height: 1 !important;
             text-decoration: none !important;
             cursor: pointer !important;
         }
 
         #tab-telemedicine #dior-tele-table .action-icon-btn:hover {
-            background: #EEF2FF !important;
-            border-color: #6366F1 !important;
-            color: #4338CA !important;
+            background: #f4f9fd !important;
+            border-color: #2b70b8 !important;
+            color: #1a528e !important;
         }
 
-        #tab-telemedicine #dior-tele-table .action-icon-btn svg {
-            display: block !important;
-            margin: auto !important;
-            width: 16px !important;
-            height: 16px !important;
-            max-width: 16px !important;
-            max-height: 16px !important;
-            flex: 0 0 16px !important;
-            fill: currentColor !important;
-        }
-
+        #tab-telemedicine #dior-tele-table .action-icon-btn svg,
         #tab-telemedicine #dior-tele-table .action-icon-btn i {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            margin: auto !important;
             font-size: 14px !important;
             line-height: 1 !important;
-            color: inherit !important;
         }
 
         #tab-telemedicine #dior-tele-table .action-icon-btn.delete-btn {
-            color: #4F46E5 !important;
+            color: #ef4444 !important;
         }
 
         #tab-telemedicine #dior-tele-table .action-icon-btn.delete-btn:hover {
-            color: #DC2626 !important;
-            border-color: #FCA5A5 !important;
-            background: #FEF2F2 !important;
+            color: #dc2626 !important;
+            border-color: #ef4444 !important;
+            background: #fef2f2 !important;
         }
 
         #tab-telemedicine #dior-tele-table .action-icon-btn.is-disabled {
@@ -136,12 +124,8 @@
                         <i class="fas fa-trash"></i>
                     </button>
                     <button type="button" aria-label="Add new record"
-                        class="docs-icon-btn docs-btn-primary dior-ic-54410f9b78 btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;">
-                            <path
-                                d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0" />
-                        </svg>
+                        class="docs-icon-btn docs-btn-primary btn" title="Add New Consultation">
+                        <i class="fas fa-plus"></i>
                     </button>
                     <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success btn"
                         title="Export to CSV" onclick="diorDownloadTeleCSV()">
@@ -154,25 +138,25 @@
                 </div>
             </div>
         </div>
-        <div class="docs-table-wrapper">
-            <table class="docs-table table table-hover" id="dior-tele-table">
-                <thead>
+        <div class="table-responsive mb-0">
+            <table class="table table-hover align-middle mb-0" id="dior-tele-table">
+                <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
                     <tr>
-                        <th class="dior-ic-3fa4d8d717">
-                            <input type="checkbox" class="dior-ic-52ff4d551f form-check-input">
+                        <th style="width: 40px;" class="ps-3">
+                            <input type="checkbox" class="form-check-input">
                         </th>
-                        <th>SESSION ID <i class="fas fa-sort"></i></th>
-                        <th>DOCTOR <i class="fas fa-sort"></i></th>
-                        <th>SPECIALTY <i class="fas fa-sort"></i></th>
-                        <th>DATE <i class="fas fa-sort"></i></th>
-                        <th>TIME <i class="fas fa-sort"></i></th>
-                        <th>DURATION <i class="fas fa-sort"></i></th>
-                        <th>TYPE <i class="fas fa-sort"></i></th>
-                        <th>STATUS <i class="fas fa-sort"></i></th>
-                        <th>ACTIONS</th>
+                        <th>SESSION ID <i class="fas fa-sort text-muted ms-1"></i></th>
+                        <th>DOCTOR <i class="fas fa-sort text-muted ms-1"></i></th>
+                        <th>SPECIALTY <i class="fas fa-sort text-muted ms-1"></i></th>
+                        <th>DATE <i class="fas fa-sort text-muted ms-1"></i></th>
+                        <th>TIME <i class="fas fa-sort text-muted ms-1"></i></th>
+                        <th>DURATION <i class="fas fa-sort text-muted ms-1"></i></th>
+                        <th>TYPE <i class="fas fa-sort text-muted ms-1"></i></th>
+                        <th>STATUS <i class="fas fa-sort text-muted ms-1"></i></th>
+                        <th class="text-end pe-3">ACTIONS</th>
                     </tr>
                 </thead>
-                <tbody id="dior-tele-tbody">
+                <tbody id="dior-tele-tbody" class="border-top-0">
                     <?php if (!empty($appointments)): ?>
                         <?php foreach ($appointments as $apt): ?>
                             <?php
@@ -181,26 +165,38 @@
                             $tele_time = $apt['time'] ?? ($apt['appt_time'] ?? '—');
                             $tele_status = $apt['status'] ?? 'Confirmed';
                             $tele_class = strtolower($tele_status) === 'completed' ? 'col-green' : (strtolower($tele_status) === 'cancelled' ? 'col-red' : 'col-indigo');
+                            $tele_doc = $apt['provider'] ?? ($apt['doctor_name'] ?? 'Attending Physician');
+                            $tele_spec = $apt['provider_spec'] ?? 'Telehealth Physician';
+                            $tele_dur = $apt['duration'] ?? '30 minutes';
+                            $tele_type = $apt['type'] ?? ($apt['visit_type'] ?? 'Video Visit');
+                            $tele_join = $apt['join_url'] ?? '';
                             ?>
-                            <tr>
+                            <tr data-tele-id="<?php echo esc_attr($tele_id ?: '—'); ?>"
+                                data-doctor="<?php echo esc_attr($tele_doc); ?>"
+                                data-specialty="<?php echo esc_attr($tele_spec); ?>"
+                                data-date="<?php echo esc_attr($tele_date); ?>"
+                                data-time="<?php echo esc_attr($tele_time); ?>"
+                                data-duration="<?php echo esc_attr($tele_dur); ?>"
+                                data-type="<?php echo esc_attr($tele_type); ?>"
+                                data-status="<?php echo esc_attr($tele_status); ?>"
+                                data-join-url="<?php echo esc_url($tele_join); ?>">
                                 <td><input type="checkbox" class="dior-ic-52ff4d551f form-check-input"></td>
                                 <td><span class="cell-text"><?php echo esc_html($tele_id ?: '—'); ?></span></td>
                                 <td><span
-                                        class="cell-text"><?php echo esc_html($apt['provider'] ?? ($apt['doctor_name'] ?? 'Attending Physician')); ?></span>
+                                        class="cell-text"><?php echo esc_html($tele_doc); ?></span>
                                 </td>
                                 <td><span
-                                        class="cell-text"><?php echo esc_html($apt['provider_spec'] ?? 'Telehealth Physician'); ?></span>
+                                        class="cell-text"><?php echo esc_html($tele_spec); ?></span>
                                 </td>
                                 <td>
-                                    <div class="cell-content cell-icon-text">
-                                        <span class="cell-text"><?php echo esc_html($tele_date); ?></span>
-                                    </div>
+                                    <div class="cell-content cell-icon-text"><i class="far fa-calendar cell-icon">
+                                        </i><span class="cell-text"><?php echo esc_html($tele_date); ?></span></div>
                                 </td>
                                 <td><span class="cell-text"><?php echo esc_html($tele_time); ?></span></td>
-                                <td><span class="cell-text"><?php echo esc_html($apt['duration'] ?? '30 minutes'); ?></span>
+                                <td><span class="cell-text"><?php echo esc_html($tele_dur); ?></span>
                                 </td>
                                 <td><span
-                                        class="cell-text"><?php echo esc_html($apt['type'] ?? ($apt['visit_type'] ?? 'Video Visit')); ?></span>
+                                        class="cell-text"><?php echo esc_html($tele_type); ?></span>
                                 </td>
                                 <td>
                                     <div class="cell-content">
@@ -212,44 +208,18 @@
                                 <td>
                                     <div class="cell-actions">
                                         <button type="button" class="action-icon-btn edit-btn btn" title="View Session"
-                                            onclick="diorViewTelemedicine(this)"><svg xmlns="http://www.w3.org/2000/svg"
-                                                width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16"
-                                                style="background:transparent;">
-                                                <path
-                                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                                                <path
-                                                    d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                                            </svg></button>
+                                            onclick="diorViewTelemedicine(this)">
+                                            <i class="fas fa-eye text-primary"></i>
+                                        </button>
                                         <?php if (!in_array(strtolower($tele_status), ['completed', 'cancelled', 'no show'], true)): ?>
-                                            <?php if (!empty($apt['join_url'])): ?><a class="action-icon-btn tele-join-btn btn"
-                                                    title="Join Consultation" href="<?php echo esc_url($apt['join_url']); ?>"
-                                                    target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                        height="16" fill="currentColor" class="bi bi-camera-reels" viewBox="0 0 16 16"
-                                                        style="background:transparent;">
-                                                        <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0" />
-                                                        <path
-                                                            d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1" />
-                                                        <path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0" />
-                                                    </svg></a><?php else: ?><button type="button"
+                                            <?php if (!empty($tele_join)): ?><a class="action-icon-btn tele-join-btn btn"
+                                                    title="Join Consultation" href="<?php echo esc_url($tele_join); ?>"
+                                                    target="_blank" rel="noopener"><i class="fas fa-video text-success"></i></a><?php else: ?><button type="button"
                                                     class="action-icon-btn tele-join-btn btn" title="Join Consultation"
-                                                    onclick="diorViewTelemedicine(this)"><svg xmlns="http://www.w3.org/2000/svg"
-                                                        width="16" height="16" fill="currentColor" class="bi bi-camera-reels"
-                                                        viewBox="0 0 16 16" style="background:transparent;">
-                                                        <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0" />
-                                                        <path
-                                                            d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1" />
-                                                        <path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0" />
-                                                    </svg></button><?php endif; ?>
+                                                    onclick="diorViewTelemedicine(this)"><i class="fas fa-video text-success"></i></button><?php endif; ?>
                                         <?php else: ?>
                                             <button type="button" class="action-icon-btn tele-join-btn is-disabled btn"
-                                                title="Call Not Available" disabled><svg xmlns="http://www.w3.org/2000/svg"
-                                                    width="16" height="16" fill="currentColor" class="bi bi-camera-reels"
-                                                    viewBox="0 0 16 16" style="background:transparent;">
-                                                    <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0M1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0" />
-                                                    <path
-                                                        d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm6 8.73V7.27l-3.5 1.555v4.35zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1" />
-                                                    <path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6M7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0" />
-                                                </svg></button>
+                                                title="Call Not Available" disabled><i class="fas fa-video text-muted"></i></button>
                                         <?php endif; ?>
                                         <button type="button" class="action-icon-btn delete-btn btn" title="Cancel Session"
                                             onclick="diorDeleteStaticRow(this, 'telemedicine')"><i
@@ -265,6 +235,69 @@
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Telemedicine Session Details Modal (Strict Bootstrap 5 Rule 3.F Standard) -->
+    <div class="modal fade" id="diorTelemedicineModal" tabindex="-1" aria-labelledby="diorTelemedicineModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
+                    <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorTelemedicineModalLabel">
+                        <i class="fas fa-video text-primary me-2"></i>Telemedicine Consultation
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="diorCloseTelemedicineModal()"></button>
+                </div>
+                <div class="modal-body p-4 bg-white">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="small text-uppercase text-secondary fw-semibold mb-1">Session ID</div>
+                            <div class="fw-bold text-dark fs-6" id="dior-tele-modal-session-id">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-uppercase text-secondary fw-semibold mb-1">Status</div>
+                            <div id="dior-tele-modal-status">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold">Confirmed</span>
+                            </div>
+                        </div>
+                        <div class="col-12"><hr class="my-1 border-secondary-subtle"></div>
+                        <div class="col-sm-6">
+                            <div class="small text-uppercase text-secondary fw-semibold mb-1">Doctor / Attending Physician</div>
+                            <div class="fw-bold text-dark fs-6" id="dior-tele-modal-doctor">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-uppercase text-secondary fw-semibold mb-1">Medical Specialty</div>
+                            <div class="fw-bold text-dark fs-6" id="dior-tele-modal-specialty">—</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-uppercase text-secondary fw-semibold mb-1">Consultation Date</div>
+                            <div class="fw-bold text-dark fs-6 d-flex align-items-center gap-2">
+                                <i class="far fa-calendar text-primary"></i> <span id="dior-tele-modal-date">—</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-uppercase text-secondary fw-semibold mb-1">Time &amp; Duration</div>
+                            <div class="fw-bold text-dark fs-6 d-flex align-items-center gap-2">
+                                <i class="far fa-clock text-primary"></i> <span id="dior-tele-modal-time">—</span> <span class="text-secondary small fw-normal" id="dior-tele-modal-duration">(30 mins)</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-uppercase text-secondary fw-semibold mb-1">Consultation Type</div>
+                            <div class="fw-bold text-dark fs-6" id="dior-tele-modal-type">Video Visit (HD)</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-uppercase text-secondary fw-semibold mb-1">Secure Channel</div>
+                            <div class="fw-bold text-success fs-6"><i class="fas fa-lock me-1"></i> HIPAA Encrypted Telehealth</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-3 px-4 bg-white d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4 fw-semibold" data-bs-dismiss="modal" onclick="diorCloseTelemedicineModal()">Close</button>
+                    <a href="#" id="dior-tele-modal-join-btn" class="btn btn-primary rounded-3 px-4 fw-semibold shadow-sm" target="_blank" rel="noopener">
+                        <i class="fas fa-video me-1"></i> Join Call
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -1,0 +1,456 @@
+[
+ {
+  "id": "Timezone"
+ },
+ {
+  "id": "Tomorrow"
+ },
+ {
+  "id": "Top left"
+ },
+ {
+  "id": "Total %d",
+  "plural": "Total %d"
+ },
+ {
+  "id": "Uploaded"
+ },
+ {
+  "id": "Username"
+ },
+ {
+  "id": "Verified"
+ },
+ {
+  "id": "Wellness"
+ },
+ {
+  "id": "WhatsApp"
+ },
+ {
+  "id": "Working…"
+ },
+ {
+  "id": "optional"
+ },
+ {
+  "id": "patients"
+ },
+ {
+  "id": "question"
+ },
+ {
+  "id": "selected"
+ },
+ {
+  "id": "until %s"
+ },
+ {
+  "id": "%s review",
+  "plural": "%s reviews"
+ },
+ {
+  "id": "Add Staff"
+ },
+ {
+  "id": "Add Tests"
+ },
+ {
+  "id": "Add slide"
+ },
+ {
+  "id": "Add staff"
+ },
+ {
+  "id": "Afternoon"
+ },
+ {
+  "id": "Alignment"
+ },
+ {
+  "id": "Ascending"
+ },
+ {
+  "id": "Body text"
+ },
+ {
+  "id": "Book · %s"
+ },
+ {
+  "id": "Cancelled"
+ },
+ {
+  "id": "Cantonese"
+ },
+ {
+  "id": "Card grid"
+ },
+ {
+  "id": "Clear All"
+ },
+ {
+  "id": "Countdown"
+ },
+ {
+  "id": "Countdown",
+  "ctx": "block title"
+ },
+ {
+  "id": "Dashboard"
+ },
+ {
+  "id": "Day pills"
+ },
+ {
+  "id": "Delete %s"
+ },
+ {
+  "id": "Dentistry"
+ },
+ {
+  "id": "Edit test"
+ },
+ {
+  "id": "Emergency"
+ },
+ {
+  "id": "Font Size"
+ },
+ {
+  "id": "Foot note"
+ },
+ {
+  "id": "Full Name"
+ },
+ {
+  "id": "Full name"
+ },
+ {
+  "id": "Instagram"
+ },
+ {
+  "id": "Lab tests"
+ },
+ {
+  "id": "Languages"
+ },
+ {
+  "id": "Lede text"
+ },
+ {
+  "id": "Link text"
+ },
+ {
+  "id": "Load more"
+ },
+ {
+  "id": "Longitude"
+ },
+ {
+  "id": "Lowercase"
+ },
+ {
+  "id": "Maternity"
+ },
+ {
+  "id": "Max Width"
+ },
+ {
+  "id": "Meta line"
+ },
+ {
+  "id": "Nav title"
+ },
+ {
+  "id": "Neurology"
+ },
+ {
+  "id": "New Order"
+ },
+ {
+  "id": "New Visit"
+ },
+ {
+  "id": "Next page"
+ },
+ {
+  "id": "No Repeat"
+ },
+ {
+  "id": "No-follow"
+ },
+ {
+  "id": "Paths (3)"
+ },
+ {
+  "id": "Per click"
+ },
+ {
+  "id": "Pinterest"
+ },
+ {
+  "id": "Questions"
+ },
+ {
+  "id": "Radiology"
+ },
+ {
+  "id": "Reception"
+ },
+ {
+  "id": "Ref / Txn"
+ },
+ {
+  "id": "Remove %s"
+ },
+ {
+  "id": "Right Top"
+ },
+ {
+  "id": "Secondary"
+ },
+ {
+  "id": "Select %s"
+ },
+ {
+  "id": "Semi Bold"
+ },
+ {
+  "id": "Send Code"
+ },
+ {
+  "id": "Show date"
+ },
+ {
+  "id": "Show days"
+ },
+ {
+  "id": "Show icon"
+ },
+ {
+  "id": "Show lede"
+ },
+ {
+  "id": "Show link"
+ },
+ {
+  "id": "Skin care"
+ },
+ {
+  "id": "Spotlight"
+ },
+ {
+  "id": "Starburst"
+ },
+ {
+  "id": "Tag color"
+ },
+ {
+  "id": "This week"
+ },
+ {
+  "id": "Tile icon"
+ },
+ {
+  "id": "Top right"
+ },
+ {
+  "id": "Try Again"
+ },
+ {
+  "id": "Try again"
+ },
+ {
+  "id": "Uppercase"
+ },
+ {
+  "id": "View link"
+ },
+ {
+  "id": "Wednesday"
+ },
+ {
+  "id": "Week grid"
+ },
+ {
+  "id": "Your info"
+ },
+ {
+  "id": "open slot",
+  "plural": "open slots"
+ },
+ {
+  "id": "questions"
+ },
+ {
+  "id": "this week"
+ },
+ {
+  "id": "24/7 badge"
+ },
+ {
+  "id": "Above grid"
+ },
+ {
+  "id": "Add Doctor"
+ },
+ {
+  "id": "Add Timing"
+ },
+ {
+  "id": "After 5 PM"
+ },
+ {
+  "id": "All status"
+ },
+ {
+  "id": "Alma mater"
+ },
+ {
+  "id": "Background"
+ },
+ {
+  "id": "Badge text"
+ },
+ {
+  "id": "Below grid"
+ },
+ {
+  "id": "Bio & time"
+ },
+ {
+  "id": "Bio source"
+ },
+ {
+  "id": "Booking ID"
+ },
+ {
+  "id": "Box shadow"
+ },
+ {
+  "id": "Button URL"
+ },
+ {
+  "id": "Capitalize"
+ },
+ {
+  "id": "Card / row"
+ },
+ {
+  "id": "Card style"
+ },
+ {
+  "id": "Card title"
+ },
+ {
+  "id": "Cardiology"
+ },
+ {
+  "id": "Center Top"
+ },
+ {
+  "id": "Create new"
+ },
+ {
+  "id": "Currently:"
+ },
+ {
+  "id": "Day & Time"
+ },
+ {
+  "id": "Day labels"
+ },
+ {
+  "id": "Days label"
+ },
+ {
+  "id": "Delete %s?"
+ },
+ {
+  "id": "Department"
+ },
+ {
+  "id": "Descending"
+ },
+ {
+  "id": "Enter Code"
+ },
+ {
+  "id": "Experience"
+ },
+ {
+  "id": "Export CSV"
+ },
+ {
+  "id": "Extra Bold"
+ },
+ {
+  "id": "Fee amount"
+ },
+ {
+  "id": "Fee source"
+ },
+ {
+  "id": "Filter bar"
+ },
+ {
+  "id": "Finalising"
+ },
+ {
+  "id": "Font Style"
+ },
+ {
+  "id": "Footer CTA"
+ },
+ {
+  "id": "Forbidden."
+ },
+ {
+  "id": "Force open"
+ },
+ {
+  "id": "Founded %s"
+ },
+ {
+  "id": "Front desk"
+ },
+ {
+  "id": "Full Width"
+ },
+ {
+  "id": "Gynecology"
+ },
+ {
+  "id": "Heart care"
+ },
+ {
+  "id": "Heavy Bold"
+ },
+ {
+  "id": "Hover Text"
+ },
+ {
+  "id": "Icon cards"
+ },
+ {
+  "id": "Icon color"
+ },
+ {
+  "id": "Import CSV"
+ },
+ {
+  "id": "Laboratory"
+ },
+ {
+  "id": "Last login"
+ },
+ {
+  "id": "Link color"
+ },
+ {
+  "id": "Loading..."
+ },
+ {
+  "id": "Menu order"
+ }
+]

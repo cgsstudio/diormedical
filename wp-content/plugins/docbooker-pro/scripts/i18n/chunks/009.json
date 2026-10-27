@@ -1,0 +1,456 @@
+[
+ {
+  "id": "Front-desk coverage"
+ },
+ {
+  "id": "Gallery (slideshow)"
+ },
+ {
+  "id": "Global accent color"
+ },
+ {
+  "id": "Image (alternating)"
+ },
+ {
+  "id": "Invalid step index."
+ },
+ {
+  "id": "Lumière Dermatology"
+ },
+ {
+  "id": "Meta (e.g. reviews)"
+ },
+ {
+  "id": "Mirror (image left)"
+ },
+ {
+  "id": "No departments yet."
+ },
+ {
+  "id": "PDF only, 10MB each"
+ },
+ {
+  "id": "Request appointment"
+ },
+ {
+  "id": "Role / patient type"
+ },
+ {
+  "id": "Secondary link text"
+ },
+ {
+  "id": "Select a department"
+ },
+ {
+  "id": "Select staff member"
+ },
+ {
+  "id": "Show floating cards"
+ },
+ {
+  "id": "Show next-open hint"
+ },
+ {
+  "id": "Show verified badge"
+ },
+ {
+  "id": "Static placeholders"
+ },
+ {
+  "id": "V5 — Stacked accent"
+ },
+ {
+  "id": "V6 — Multi-CTA card"
+ },
+ {
+  "id": "V7 — Quote headline"
+ },
+ {
+  "id": "Validating template"
+ },
+ {
+  "id": "We’re %s right now."
+ },
+ {
+  "id": "e.g. Cefixime 200mg"
+ },
+ {
+  "id": "— Select a doctor —"
+ },
+ {
+  "id": "Awards & recognition"
+ },
+ {
+  "id": "Booking button label"
+ },
+ {
+  "id": "Cancel this booking?"
+ },
+ {
+  "id": "Card form not ready."
+ },
+ {
+  "id": "Confirmation message"
+ },
+ {
+  "id": "Enter a valid email."
+ },
+ {
+  "id": "Global (all clinics)"
+ },
+ {
+  "id": "Instant confirmation"
+ },
+ {
+  "id": "Invoice / Order Code"
+ },
+ {
+  "id": "Loading block markup"
+ },
+ {
+  "id": "Max awards (0 = all)"
+ },
+ {
+  "id": "Move %d staff member",
+  "plural": "Move %d staff members"
+ },
+ {
+  "id": "Multi-clinic enabled"
+ },
+ {
+  "id": "Opens tomorrow at %s"
+ },
+ {
+  "id": "Overlay (over photo)"
+ },
+ {
+  "id": "Patient is required."
+ },
+ {
+  "id": "Pick a valid clinic."
+ },
+ {
+  "id": "Please enter a name."
+ },
+ {
+  "id": "Remove clinic filter"
+ },
+ {
+  "id": "Save & Print Receipt"
+ },
+ {
+  "id": "Search by order code"
+ },
+ {
+  "id": "Test item not found."
+ },
+ {
+  "id": "Timeline — Icon disc"
+ },
+ {
+  "id": "Unknown bulk action."
+ },
+ {
+  "id": "V4 — Massive display"
+ },
+ {
+  "id": "V8 — Compact divider"
+ },
+ {
+  "id": "Vertical — Left rail"
+ },
+ {
+  "id": "clinic gallery image"
+ },
+ {
+  "id": "— Auto (from name) —"
+ },
+ {
+  "id": "Accent color (bronze)"
+ },
+ {
+  "id": "Active category color"
+ },
+ {
+  "id": "Background Attachment"
+ },
+ {
+  "id": "Booking reference: %s"
+ },
+ {
+  "id": "Cards — Filled accent"
+ },
+ {
+  "id": "Closes in %1$s · %2$s"
+ },
+ {
+  "id": "Confirmation headline"
+ },
+ {
+  "id": "Different-doctor link"
+ },
+ {
+  "id": "Heading / clinic name"
+ },
+ {
+  "id": "Image-led — Image top"
+ },
+ {
+  "id": "Max doctors (0 = all)"
+ },
+ {
+  "id": "Moved %d staff member",
+  "plural": "Moved %d staff members"
+ },
+ {
+  "id": "No CSV file uploaded."
+ },
+ {
+  "id": "No departments found."
+ },
+ {
+  "id": "Please choose a user."
+ },
+ {
+  "id": "Please enter a price."
+ },
+ {
+  "id": "Previous (arrow left)"
+ },
+ {
+  "id": "Search login or email"
+ },
+ {
+  "id": "Show load-more button"
+ },
+ {
+  "id": "Step 03 / 06 · Doctor"
+ },
+ {
+  "id": "Today accent / marker"
+ },
+ {
+  "id": "Transition speed (ms)"
+ },
+ {
+  "id": "Trophy wall (masonry)"
+ },
+ {
+  "id": "Type to search users."
+ },
+ {
+  "id": "V3 — Asymmetric split"
+ },
+ {
+  "id": "V6 — Numbered chapter"
+ },
+ {
+  "id": "doctor(s) with awards"
+ },
+ {
+  "id": "Alternating media rows"
+ },
+ {
+  "id": "At least 6 characters."
+ },
+ {
+  "id": "Boxed — Progress rings"
+ },
+ {
+  "id": "Buttons (card layouts)"
+ },
+ {
+  "id": "Call-to-action buttons"
+ },
+ {
+  "id": "Choose your specialist"
+ },
+ {
+  "id": "Clinic managers are on"
+ },
+ {
+  "id": "Clinics with a manager"
+ },
+ {
+  "id": "Contact (card layouts)"
+ },
+ {
+  "id": "Couldn't load doctors."
+ },
+ {
+  "id": "Department placeholder"
+ },
+ {
+  "id": "Discount (from line %)"
+ },
+ {
+  "id": "Display heading / name"
+ },
+ {
+  "id": "Display primary button"
+ },
+ {
+  "id": "Doctor link (optional)"
+ },
+ {
+  "id": "Doctors at this clinic"
+ },
+ {
+  "id": "Feature the first card"
+ },
+ {
+  "id": "Flagship (filled grid)"
+ },
+ {
+  "id": "Hide empty departments"
+ },
+ {
+  "id": "Inline panel (compact)"
+ },
+ {
+  "id": "Invalid download link."
+ },
+ {
+  "id": "Move to another clinic"
+ },
+ {
+  "id": "No clinic assigned yet"
+ },
+ {
+  "id": "No matching test items"
+ },
+ {
+  "id": "Receptionist Dashboard"
+ },
+ {
+  "id": "Referred by (optional)"
+ },
+ {
+  "id": "Scan for online report"
+ },
+ {
+  "id": "Search login or email…"
+ },
+ {
+  "id": "Show department filter"
+ },
+ {
+  "id": "Show navigation arrows"
+ },
+ {
+  "id": "Show quote (spotlight)"
+ },
+ {
+  "id": "Table — Day-chip strip"
+ },
+ {
+  "id": "V2 — Magazine masthead"
+ },
+ {
+  "id": "\"All departments\" label"
+ },
+ {
+  "id": "Accordion — Split intro"
+ },
+ {
+  "id": "Avg managers per clinic"
+ },
+ {
+  "id": "Clinic managers are off"
+ },
+ {
+  "id": "Could not create order."
+ },
+ {
+  "id": "Could not create visit."
+ },
+ {
+  "id": "Current step (0 = none)"
+ },
+ {
+  "id": "Edit Clinic Information"
+ },
+ {
+  "id": "Generate a new password"
+ },
+ {
+  "id": "Heading accent (italic)"
+ },
+ {
+  "id": "Image-led — Split media"
+ },
+ {
+  "id": "JPG or PNG · up to 2 MB"
+ },
+ {
+  "id": "Mariposa Women's Health"
+ },
+ {
+  "id": "No more results to load"
+ },
+ {
+  "id": "No reports uploaded yet"
+ },
+ {
+  "id": "Pick a different doctor"
+ },
+ {
+  "id": "Please choose a clinic."
+ },
+ {
+  "id": "Please choose a doctor."
+ },
+ {
+  "id": "Received now (optional)"
+ },
+ {
+  "id": "Remove %d staff member?",
+  "plural": "Remove %d staff members?"
+ },
+ {
+  "id": "Remove this assignment?"
+ },
+ {
+  "id": "Removed %d staff member",
+  "plural": "Removed %d staff members"
+ },
+ {
+  "id": "Search by login / email"
+ },
+ {
+  "id": "Side-by-side — Numbered"
+ },
+ {
+  "id": "Status headline (cards)"
+ },
+ {
+  "id": "Step %1$s / %2$s · %3$s"
+ },
+ {
+  "id": "Timeline — Node on line"
+ },
+ {
+  "id": "Upload failed (code %d)"
+ },
+ {
+  "id": "V4 — Editorial gradient"
+ },
+ {
+  "id": "https://wpdreamers.com/"
+ },
+ {
+  "id": "Card — Stacked (sidebar)"
+ },
+ {
+  "id": "Cards per view (desktop)"
+ },
+ {
+  "id": "Clinic contact & holiday"
+ },
+ {
+  "id": "Could not load Razorpay."
+ },
+ {
+  "id": "Display footnote (table)"
+ }
+]

@@ -72,6 +72,7 @@ class BillPage {
 		$total    = (float) $visit['total_charge'];
 		$received = (float) $visit['received'];
 		$due      = max( 0, $total - $received );
+		$credit   = max( 0, round( $received - $total, 2 ) );
 
 		// Relevant doctor: admitting for IPD, consulting for OPD.
 		$doctor_id = $is_ipd
@@ -91,9 +92,15 @@ class BillPage {
 			}
 		}
 
-		$doc_title = $released
-			? __( 'Discharge Bill / Final Invoice', 'doc-booker-pro' )
-			: __( 'Interim Statement', 'doc-booker-pro' );
+		// An outpatient visit is billed in one go; only an admission has an
+		// interim statement while the patient is still in.
+		if ( ! $is_ipd ) {
+			$doc_title = __( 'Bill / Invoice', 'doc-booker-pro' );
+		} else {
+			$doc_title = $released
+				? __( 'Discharge Bill / Final Invoice', 'doc-booker-pro' )
+				: __( 'Interim Statement', 'doc-booker-pro' );
+		}
 
 		nocache_headers();
 		header( 'Content-Type: text/html; charset=utf-8' );
@@ -111,31 +118,35 @@ class BillPage {
 		<div class="r-brand">
 			<h1><?php echo esc_html( $clinic ? $clinic->post_title : get_bloginfo( 'name' ) ); ?></h1>
 			<?php if ( $clinic_address ) : ?><p class="r-addr"><?php echo esc_html( $clinic_address ); ?></p><?php endif; ?>
-			<?php if ( $clinic_hotline ) : ?><p class="r-addr">Hotline: <?php echo esc_html( $clinic_hotline ); ?></p><?php endif; ?>
+			<?php if ( $clinic_hotline ) : ?><p class="r-addr"><?php esc_html_e( 'Hotline:', 'doc-booker-pro' ); ?> <?php echo esc_html( $clinic_hotline ); ?></p><?php endif; ?>
 		</div>
 	</header>
 
 	<p class="r-doc-title"><?php echo esc_html( $doc_title ); ?> &middot; <?php echo esc_html( strtoupper( $visit['visit_type'] ?? '' ) ); ?></p>
 
 	<section class="r-meta">
-		<div><strong>ID No.</strong> <?php echo esc_html( $patient['patient_code'] ?? '' ); ?></div>
-		<div><strong>Name</strong> <?php echo esc_html( $patient['full_name'] ?? '' ); ?></div>
-		<div><strong>Age/Sex</strong> <?php echo esc_html( ( isset( $patient['age'] ) ? $patient['age'] . 'y' : '—' ) . ', ' . ucfirst( $patient['gender'] ?? '—' ) ); ?></div>
-		<div><strong>Phone</strong> <?php echo esc_html( $patient['phone'] ?? '' ); ?></div>
-		<?php if ( $doctor ) : ?><div><strong>Doctor</strong> <?php echo esc_html( $doctor ); ?></div><?php endif; ?>
-		<?php if ( ! empty( $visit['bed_no'] ) ) : ?><div><strong>Bed</strong> <?php echo esc_html( $visit['bed_no'] ); ?></div><?php endif; ?>
-		<div><strong>Admitted</strong> <?php echo esc_html( mysql2date( 'j M y', $admit_raw ) ); ?></div>
-		<?php if ( $released && ! empty( $visit['released_at'] ) ) : ?>
-			<div><strong>Released</strong> <?php echo esc_html( mysql2date( 'j M y', $visit['released_at'] ) ); ?></div>
+		<div><strong><?php esc_html_e( 'ID No.', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( $patient['patient_code'] ?? '' ); ?></div>
+		<div><strong><?php esc_html_e( 'Name', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( $patient['full_name'] ?? '' ); ?></div>
+		<div><strong><?php esc_html_e( 'Age/Sex', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( ( isset( $patient['age'] ) ? sprintf( /* translators: %d: patient age in years, shortened (e.g. 42y) */ __( '%dy', 'doc-booker-pro' ), (int) $patient['age'] ) : '—' ) . ', ' . ucfirst( $patient['gender'] ?? '—' ) ); ?></div>
+		<div><strong><?php esc_html_e( 'Phone', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( $patient['phone'] ?? '' ); ?></div>
+		<?php if ( $doctor ) : ?><div><strong><?php esc_html_e( 'Doctor', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( $doctor ); ?></div><?php endif; ?>
+		<?php if ( ! empty( $visit['bed_no'] ) ) : ?><div><strong><?php esc_html_e( 'Bed', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( $visit['bed_no'] ); ?></div><?php endif; ?>
+		<?php if ( $is_ipd ) : ?>
+			<div><strong><?php esc_html_e( 'Admitted', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( mysql2date( 'j M y', $admit_raw ) ); ?></div>
+		<?php else : ?>
+			<div><strong><?php esc_html_e( 'Visit date', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( mysql2date( 'j M y', $visit['visit_date'] ?: $admit_raw ) ); ?></div>
 		<?php endif; ?>
-		<?php if ( $is_ipd && $days ) : ?><div><strong>Days</strong> <?php echo (int) $days; ?></div><?php endif; ?>
-		<div><strong>Bill #</strong> V<?php echo (int) $id; ?></div>
+		<?php if ( $is_ipd && $released && ! empty( $visit['released_at'] ) ) : ?>
+			<div><strong><?php esc_html_e( 'Released', 'doc-booker-pro' ); ?></strong> <?php echo esc_html( mysql2date( 'j M y', $visit['released_at'] ) ); ?></div>
+		<?php endif; ?>
+		<?php if ( $is_ipd && $days ) : ?><div><strong><?php esc_html_e( 'Days', 'doc-booker-pro' ); ?></strong> <?php echo (int) $days; ?></div><?php endif; ?>
+		<div><strong><?php esc_html_e( 'Bill #', 'doc-booker-pro' ); ?></strong> V<?php echo (int) $id; ?></div>
 	</section>
 
 	<h3 class="r-sub"><?php esc_html_e( 'Charges', 'doc-booker-pro' ); ?></h3>
 	<table class="r-items">
 		<thead>
-			<tr><th>SL</th><th>Type</th><th>Item</th><th>Qty</th><th>Rate</th><th>Disc%</th><th class="ta-r">Amount</th></tr>
+			<tr><th><?php esc_html_e( 'SL', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Type', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Item', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Qty', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Rate', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Disc%', 'doc-booker-pro' ); ?></th><th class="ta-r"><?php esc_html_e( 'Amount', 'doc-booker-pro' ); ?></th></tr>
 		</thead>
 		<tbody>
 			<?php if ( ! $items ) : ?>
@@ -157,7 +168,7 @@ class BillPage {
 	<h3 class="r-sub"><?php esc_html_e( 'Payments', 'doc-booker-pro' ); ?></h3>
 	<table class="r-items">
 		<thead>
-			<tr><th>Date</th><th>Method</th><th>Ref</th><th class="ta-r">Amount</th></tr>
+			<tr><th><?php esc_html_e( 'Date', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Method', 'doc-booker-pro' ); ?></th><th><?php esc_html_e( 'Ref', 'doc-booker-pro' ); ?></th><th class="ta-r"><?php esc_html_e( 'Amount', 'doc-booker-pro' ); ?></th></tr>
 		</thead>
 		<tbody>
 			<?php if ( ! $payments ) : ?>
@@ -178,13 +189,16 @@ class BillPage {
 			<div><span><?php esc_html_e( 'Total billable', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( $total, 2 ); ?></strong></div>
 			<div><span><?php esc_html_e( 'Total paid', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( $received, 2 ); ?></strong></div>
 			<div class="r-total-row"><span><?php echo $due > 0 ? esc_html__( 'Balance due', 'doc-booker-pro' ) : esc_html__( 'Balance', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( $due, 2 ); ?></strong></div>
+			<?php if ( $credit > 0 ) : ?>
+				<div class="r-total-row"><span><?php echo ( $is_ipd && ! $released ) ? esc_html__( 'Advance paid', 'doc-booker-pro' ) : esc_html__( 'Credit (to refund)', 'doc-booker-pro' ); ?></span><strong><?php echo number_format( $credit, 2 ); ?></strong></div>
+			<?php endif; ?>
 		</div>
 		<?php if ( $due <= 0 && $received > 0 ) : ?>
-			<div class="r-paid-stamp">PAID</div>
+			<div class="r-paid-stamp"><?php esc_html_e( 'PAID', 'doc-booker-pro' ); ?></div>
 		<?php endif; ?>
 	</section>
 
-	<?php if ( ! $released ) : ?>
+	<?php if ( $is_ipd && ! $released ) : ?>
 		<p class="r-footer-line"><?php esc_html_e( 'Interim statement — the patient is still admitted; charges may continue to accrue until discharge.', 'doc-booker-pro' ); ?></p>
 	<?php endif; ?>
 </div>

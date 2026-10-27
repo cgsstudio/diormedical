@@ -19,6 +19,7 @@ class DatabaseTable{
             gender ENUM('male','female','other') NULL,
             address TEXT NULL,
             patient_code VARCHAR(30) NULL,
+            registered_clinic_id BIGINT(20) UNSIGNED NULL,
             PRIMARY KEY (id),
             UNIQUE KEY uq_patient_code (patient_code),
             KEY idx_phone (phone)
@@ -41,6 +42,9 @@ class DatabaseTable{
         time VARCHAR(20) NOT NULL,
         patient_note VARCHAR(255) NULL,
         status ENUM('approved', 'cancelled') DEFAULT 'approved',
+        reminder_sent TINYINT(1) NOT NULL DEFAULT 0,
+        admin_seen TINYINT(1) NOT NULL DEFAULT 1,
+        booked_via VARCHAR(10) DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (id),
@@ -52,7 +56,8 @@ class DatabaseTable{
         INDEX idx_status (status),
         INDEX idx_booking_present_status (booking_present_status),
         INDEX idx_patient_doctor_day (patient_id, doctor_id, day),
-        INDEX idx_doctor_date_time (doctor_id, booking_date, time, status)
+        INDEX idx_doctor_date_time (doctor_id, booking_date, time, status),
+        INDEX idx_admin_seen (admin_seen)
         ) $charset_collate;";
         // NOTE: no FOREIGN KEY here on purpose. dbDelta() does not support
         // foreign-key constraints — it rewrites the line into an invalid

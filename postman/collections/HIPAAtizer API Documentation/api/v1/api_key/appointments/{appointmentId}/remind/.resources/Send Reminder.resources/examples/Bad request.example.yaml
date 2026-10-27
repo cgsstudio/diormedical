@@ -1,0 +1,43 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/v1/api_key/appointments/:appointmentId/remind"
+  method: POST
+  headers:
+    - key: Accept
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  pathVariables:
+    appointmentId: ""
+response:
+  statusCode: 400
+  statusText: Bad Request
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "message": "<string>",
+        "type": "WrongStep",
+        "step": "ReviewBillingInformation",
+        "requestId": "<string>",
+        "verificationItems": [
+          {
+            "name": "<string>",
+            "email": "<string>",
+            "phone": "<string>"
+          },
+          {
+            "name": "<string>",
+            "email": "<string>",
+            "phone": "<string>"
+          }
+        ],
+        "errorFields": [
+          "<string>",
+          "<string>"
+        ]
+      }
+order: 2000

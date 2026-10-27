@@ -166,22 +166,22 @@
         }
     </style>
 
-    <!-- Header & Breadcrumb -->
-    <div class="mb-4"
-        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; position: relative; z-index: 3;">
-        <div>
-            <h4 class="mb-0" style="font-size: 20px; font-weight: 700; color: #1e293b;">Alerts &amp; Announcements</h4>
+    <!-- Header & Breadcrumb (100% Native Bootstrap 5) -->
+    <div class="row g-3 align-items-center justify-content-between mb-4">
+        <div class="col-12 col-lg-auto">
+            <div class="h6 mb-1 fw-bold text-dark">
+                <i class="fas fa-bullhorn text-primary me-2"></i>Alerts &amp; Announcements
+            </div>
+            <div class="text-secondary small">Broadcast alerts, clinical operational updates, and practice announcements.</div>
         </div>
-        <div>
-            <ul class="va-breadcrumb-list"
-                style="display: flex; gap: 8px; list-style: none; padding: 0; margin: 0; align-items: center;">
-                <li><a href="javascript:void(0)"><i class="fas fa-house" style="color: #2563eb;"></i></a></li>
-                <li style="color: #cbd5e1;">/</li>
-                <li><a href="javascript:void(0)" style="color: #64748b; text-decoration: none;">Notifications</a></li>
-                <li style="color: #cbd5e1;">/</li>
-                <li class="active"><span style="color: #1e293b; font-weight: 600;">Alerts &amp; Announcements</span>
-                </li>
-            </ul>
+        <div class="col-12 col-lg-auto">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small text-muted">
+                    <li class="breadcrumb-item"><i class="fas fa-house me-1"></i> Dashboard</li>
+                    <li class="breadcrumb-item">Notifications</li>
+                    <li class="breadcrumb-item active fw-semibold text-primary" aria-current="page">Alerts &amp; Announcements</li>
+                </ol>
+            </nav>
         </div>
     </div>
 
@@ -259,7 +259,7 @@
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 14px;">
                         <span
-                            style="background: #e0e7ff; color: #4338ca; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                            style="background: #e0e7ff; color: #1A528E; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
                             <i class="fas fa-thumbtack" style="font-size: 10px;"></i> Published Updates
                         </span>
                         <span style="font-size: 12px; color: #94a3b8; font-weight: 500;">General broadcasts</span>
@@ -321,11 +321,7 @@
                 </div>
                 <button type="button"
                     style="background: #2563eb; color: #ffffff; border: none; border-radius: 8px; padding: 9px 20px; font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        class="bi bi-file-plus-fill" viewBox="0 0 16 16" style="background:transparent;">
-                        <path
-                            d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0" />
-                    </svg> Create Broadcast
+                    <i class="fas fa-plus"></i> Create Broadcast
                 </button>
             </div>
 
@@ -335,7 +331,8 @@
                     style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
                     <div style="flex: 1 1 350px; min-width: 0;">
                         <div class="input-group input-group-sm dior-bs-search-group">
-
+                            <span class="input-group-text bg-white border-end-0 text-muted ps-2 pe-1"><i
+                                    class="fas fa-search"></i></span>
                             <input type="text" id="dior-alerts-search-input" onkeyup="diorFilterAlertsSearch()"
                                 placeholder="Search alerts or announcements by title or content..."
                                 class="form-control border-start-0 ps-0">
@@ -375,25 +372,12 @@
                                             style="font-size: 6px;"></i> Active</span>
                                 </div>
                                 <div style="display: flex; gap: 6px;">
-                                    <button type="button" title="Edit Alert" class="dior-action-btn-sm btn"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16"
-                                            style="background:transparent;">
-                                            <path fill-rule="evenodd"
-                                                d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                                            <path fill-rule="evenodd"
-                                                d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                                        </svg></button>
+                                    <button type="button" title="Edit Alert" class="dior-action-btn-sm btn"><i
+                                            class="fas fa-pen"></i></button>
                                     <button type="button" title="Delete Alert"
                                         onclick="this.closest('.dior-alert-card-item').remove()"
-                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444"
-                                            class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;">
-                                            <path
-                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                            <path
-                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                        </svg></button>
+                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><i
+                                            class="fas fa-trash"></i></button>
                                 </div>
                             </div>
                             <p style="font-size: 13.5px; color: #475569; margin: 0 0 14px 0; line-height: 1.5;">The EMR
@@ -428,25 +412,12 @@
                                             style="font-size: 6px;"></i> Active</span>
                                 </div>
                                 <div style="display: flex; gap: 6px;">
-                                    <button type="button" title="Edit Alert" class="dior-action-btn-sm btn"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16"
-                                            style="background:transparent;">
-                                            <path fill-rule="evenodd"
-                                                d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                                            <path fill-rule="evenodd"
-                                                d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                                        </svg></button>
+                                    <button type="button" title="Edit Alert" class="dior-action-btn-sm btn"><i
+                                            class="fas fa-pen"></i></button>
                                     <button type="button" title="Delete Alert"
                                         onclick="this.closest('.dior-alert-card-item').remove()"
-                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444"
-                                            class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;">
-                                            <path
-                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                            <path
-                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                        </svg></button>
+                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><i
+                                            class="fas fa-trash"></i></button>
                                 </div>
                             </div>
                             <p style="font-size: 13.5px; color: #475569; margin: 0 0 14px 0; line-height: 1.5;">Check
@@ -481,25 +452,12 @@
                                             style="font-size: 6px;"></i> Active</span>
                                 </div>
                                 <div style="display: flex; gap: 6px;">
-                                    <button type="button" title="Edit Alert" class="dior-action-btn-sm btn"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16"
-                                            style="background:transparent;">
-                                            <path fill-rule="evenodd"
-                                                d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                                            <path fill-rule="evenodd"
-                                                d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                                        </svg></button>
+                                    <button type="button" title="Edit Alert" class="dior-action-btn-sm btn"><i
+                                            class="fas fa-pen"></i></button>
                                     <button type="button" title="Delete Alert"
                                         onclick="this.closest('.dior-alert-card-item').remove()"
-                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444"
-                                            class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;">
-                                            <path
-                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                            <path
-                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                        </svg></button>
+                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><i
+                                            class="fas fa-trash"></i></button>
                                 </div>
                             </div>
                             <p style="font-size: 13.5px; color: #475569; margin: 0 0 14px 0; line-height: 1.5;">All
@@ -544,25 +502,12 @@
                                     </span>
                                     <button type="button" title="Pin" class="dior-action-btn-sm btn"><i
                                             class="fas fa-thumbtack"></i></button>
-                                    <button type="button" title="Edit" class="dior-action-btn-sm btn"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16"
-                                            style="background:transparent;">
-                                            <path fill-rule="evenodd"
-                                                d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                                            <path fill-rule="evenodd"
-                                                d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                                        </svg></button>
+                                    <button type="button" title="Edit" class="dior-action-btn-sm btn"><i
+                                            class="fas fa-pen"></i></button>
                                     <button type="button" title="Delete"
                                         onclick="this.closest('.dior-alert-card-item').remove()"
-                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444"
-                                            class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;">
-                                            <path
-                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                            <path
-                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                        </svg></button>
+                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><i
+                                            class="fas fa-trash"></i></button>
                                 </div>
                             </div>
                             <p style="font-size: 13.5px; color: #475569; margin: 0 0 14px 0; line-height: 1.5;">The
@@ -615,25 +560,12 @@
                                     </span>
                                     <button type="button" title="Pin" class="dior-action-btn-sm btn"><i
                                             class="fas fa-thumbtack"></i></button>
-                                    <button type="button" title="Edit" class="dior-action-btn-sm btn"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16"
-                                            style="background:transparent;">
-                                            <path fill-rule="evenodd"
-                                                d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                                            <path fill-rule="evenodd"
-                                                d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                                        </svg></button>
+                                    <button type="button" title="Edit" class="dior-action-btn-sm btn"><i
+                                            class="fas fa-pen"></i></button>
                                     <button type="button" title="Delete"
                                         onclick="this.closest('.dior-alert-card-item').remove()"
-                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444"
-                                            class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;">
-                                            <path
-                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                            <path
-                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                        </svg></button>
+                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><i
+                                            class="fas fa-trash"></i></button>
                                 </div>
                             </div>
                             <p style="font-size: 13.5px; color: #475569; margin: 0 0 14px 0; line-height: 1.5;">Revised
@@ -670,25 +602,12 @@
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <button type="button" title="Pin" class="dior-action-btn-sm btn"><i
                                             class="fas fa-thumbtack"></i></button>
-                                    <button type="button" title="Edit" class="dior-action-btn-sm btn"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16"
-                                            style="background:transparent;">
-                                            <path fill-rule="evenodd"
-                                                d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                                            <path fill-rule="evenodd"
-                                                d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                                        </svg></button>
+                                    <button type="button" title="Edit" class="dior-action-btn-sm btn"><i
+                                            class="fas fa-pen"></i></button>
                                     <button type="button" title="Delete"
                                         onclick="this.closest('.dior-alert-card-item').remove()"
-                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444"
-                                            class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;">
-                                            <path
-                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                            <path
-                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                        </svg></button>
+                                        class="dior-action-btn-sm btn" style="color: #ef4444;"><i
+                                            class="fas fa-trash"></i></button>
                                 </div>
                             </div>
                             <p style="font-size: 13.5px; color: #475569; margin: 0 0 14px 0; line-height: 1.5;">A

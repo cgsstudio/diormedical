@@ -25,6 +25,94 @@ class Installation {
         flush_rewrite_rules();
     }
 
+    /**
+     * Runs only when DocBooker Pro is deleted from the Plugins screen, never on
+     * deactivate. Removes everything Pro stored: its tables, the lab report PDFs
+     * and their folder, its settings (including the payment keys it keeps in the
+     * free plugin's settings), its roles, capabilities, staff user data, cron
+     * and short-lived codes. Users, pages and imported template content stay.
+     * On a network, every site is cleaned.
+     */
+    public static function uninstall() {
+        if ( is_multisite() ) {
+            foreach ( get_sites( [ 'fields' => 'ids', 'number' => 0 ] ) as $site_id ) {
+                switch_to_blog( $site_id );
+                self::uninstall_site();
+                restore_current_blog();
+            }
+        } else {
+            self::uninstall_site();
+        }
+
+        // User meta is shared by every site on a network, so it goes once.
+        foreach ( [ 'wpddb_managed_clinic_id', 'wpddbp_last_login' ] as $meta_key ) {
+            delete_metadata( 'user', 0, $meta_key, '', true );
+        }
+    }
+
+    private static function uninstall_site() {
+        global $wpdb;
+        $p = $wpdb->prefix;
+
+        // Report files first, while the table that lists them still exists.
+        if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', "{$p}wpddb_test_reports" ) ) === "{$p}wpddb_test_reports" ) {
+            foreach ( $wpdb->get_col( "SELECT DISTINCT attachment_id FROM `{$p}wpddb_test_reports`" ) as $attachment_id ) {
+                wp_delete_attachment( (int) $attachment_id, true );
+            }
+        }
+        $reports = trailingslashit( wp_upload_dir( null, false )['basedir'] ) . 'wpddb-reports';
+        if ( is_dir( $reports ) ) {
+            foreach ( (array) glob( $reports . '/{,.}*', GLOB_BRACE ) as $file ) {
+                if ( is_file( $file ) ) {
+                    wp_delete_file( $file );
+                }
+            }
+            @rmdir( $reports );
+        }
+
+        foreach ( [ 'otp_codes', 'patient_visits', 'test_items', 'test_order_items', 'test_orders', 'test_reports', 'visit_items', 'visit_payments' ] as $table ) {
+            $wpdb->query( "DROP TABLE IF EXISTS `{$p}wpddb_{$table}`" );
+        }
+
+        foreach ( [ 'wpddb_sms_settings', 'wpddbp_version', 'wpddbp_db_version' ] as $option ) {
+            delete_option( $option );
+        }
+
+        // Portal sessions, OTP limits, booking-SMS limits, Razorpay checks, retry flag.
+        foreach ( [ 'wpddb_portal_sess_', 'wpddb_otp_ip_', 'wpddb_otp_fail_', 'wpddbp_bsms_', 'wpddbp_rzp_', 'wpddbp_migration_retry' ] as $prefix ) {
+            $like = $wpdb->esc_like( $prefix ) . '%';
+            $wpdb->query( $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+                '_transient_' . $like,
+                '_transient_timeout_' . $like
+            ) );
+        }
+
+        // Pro's keys inside the free plugin's settings, when the free plugin is still installed.
+        $global = get_option( 'wpddb_global_settings' );
+        if ( is_array( $global ) ) {
+            foreach ( [ 'stripe_test_publishable_key', 'stripe_live_publishable_key', 'stripe_test_secret_key', 'stripe_live_secret_key', 'razorpay_test_key_id', 'razorpay_test_secret_key', 'razorpay_live_key_id', 'razorpay_live_secret_key', 'multi_clinic_manage_enable', 'receptionist_manage_enable', 'report_retention_days' ] as $key ) {
+                unset( $global[ $key ] );
+            }
+            update_option( 'wpddb_global_settings', $global );
+        }
+        $pages = get_option( 'wpddb_page_settings' );
+        if ( is_array( $pages ) ) {
+            unset( $pages['patient_report_portal'], $pages['receptionist_dashboard'], $pages['clinic_dashboard'] );
+            update_option( 'wpddb_page_settings', $pages );
+        }
+
+        remove_role( 'wpddb_clinic_manager' );
+        remove_role( 'wpddb_receptionist' );
+        $admin = get_role( 'administrator' );
+        if ( $admin ) {
+            $admin->remove_cap( 'wpddb_manage_clinic' );
+            $admin->remove_cap( 'wpddb_manage_reception' );
+        }
+
+        wp_clear_scheduled_hook( self::CRON_HOOK );
+    }
+
     private static function update_wpddbp_version() {
         update_option( 'wpddbp_version', WPDDBP_VERSION );
     }
@@ -37,7 +125,16 @@ class Installation {
     public static function maybe_upgrade() {
         $stored = get_option( 'wpddbp_db_version', '0.0.0' );
         if ( version_compare( $stored, WPDDBP_DB_VERSION, '<' ) ) {
-            self::run_migrations( $stored );
+            // A step that could not finish is retried at most hourly.
+            if ( get_transient( 'wpddbp_migration_retry' ) ) {
+                return;
+            }
+            if ( false === self::run_migrations( $stored ) ) {
+                // Everything before the report move is done; only it is retried.
+                update_option( 'wpddbp_db_version', '1.1.3' );
+                set_transient( 'wpddbp_migration_retry', 1, HOUR_IN_SECONDS );
+                return;
+            }
             update_option( 'wpddbp_db_version', WPDDBP_DB_VERSION );
         }
     }
@@ -55,6 +152,54 @@ class Installation {
         if ( version_compare( $from, '1.1.3', '<' ) ) {
             self::migrate_1_1_3();
         }
+        if ( version_compare( $from, '1.1.4', '<' ) && ! self::migrate_1_1_4() ) {
+            return false;
+        }
+        if ( version_compare( $from, '1.1.5', '<' ) ) {
+            self::migrate_1_1_5();
+        }
+        return true;
+    }
+
+    /**
+     * 1.1.5 — patients get the clinic whose front desk registered them, so a
+     * walk-in is seen only by that clinic. Existing patients are marked 0
+     * ("from before") and stay visible as they were.
+     */
+    private static function migrate_1_1_5() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'wpddb_patients';
+        if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+            return;
+        }
+        if ( ! $wpdb->get_results( "SHOW COLUMNS FROM `{$table}` LIKE 'registered_clinic_id'" ) ) {
+            $wpdb->query( "ALTER TABLE `{$table}` ADD `registered_clinic_id` BIGINT(20) UNSIGNED NULL AFTER `patient_code`" );
+        }
+        // Runs once, at this upgrade: everyone already here keeps today's
+        // visibility, even if free's schema step added the column first.
+        $wpdb->query( "UPDATE `{$table}` SET registered_clinic_id = 0 WHERE registered_clinic_id IS NULL" );
+    }
+
+    /**
+     * 1.1.4 — lab reports used to be uploaded into the public, dated uploads
+     * folders under their original names. Move each one into the protected
+     * reports folder under a random name. Files that cannot be moved are left
+     * where they are and retried on the next request.
+     */
+    private static function migrate_1_1_4() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'wpddb_test_reports';
+        if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+            return true;
+        }
+        $done = true;
+        foreach ( $wpdb->get_col( "SELECT DISTINCT attachment_id FROM `{$table}`" ) as $attachment_id ) {
+            $file = get_attached_file( (int) $attachment_id );
+            if ( $file && file_exists( $file ) && ! \WpDreamers\WPDDBP\Controllers\Receptionist\ReportStorage::protect_attachment( (int) $attachment_id ) ) {
+                $done = false;
+            }
+        }
+        return $done;
     }
 
     /**

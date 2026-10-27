@@ -46,7 +46,7 @@ foreach ($patients_query as $pq) {
     }
 
     #tab-doc-e-prescriptions .va-btn-primary:hover {
-        background-color: #4338CA !important;
+        background-color: #1A528E !important;
         transform: translateY(-2px) !important;
     }
 
@@ -142,13 +142,14 @@ foreach ($patients_query as $pq) {
             <!-- Table Header -->
             <div class="va-header-container">
                 <div class="va-title-box">
-                    <h2>Digital Prescriptions</h2>
+                    <h2><i class="fas fa-prescription-bottle-medical text-primary me-2"></i>Digital Prescriptions</h2>
                     <div class="va-title-line"></div>
                 </div>
 
                 <div class="va-actions-wrapper">
                     <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
-
+                        <span class="input-group-text bg-white border-end-0 text-muted ps-2 pe-1"><i
+                                class="fas fa-search"></i></span>
                         <input type="text" class="form-control border-start-0 ps-0" placeholder="Search records..."
                             onkeyup="diorFilterPrescriptions(this.value)">
                     </div>
@@ -240,7 +241,6 @@ foreach ($patients_query as $pq) {
                                       </td>';
                                 echo '<td>
                                         <div class="va-user-profile">
-                                            <img src="https://ui-avatars.com/api/?name=' . urlencode($p->patient_name) . '&background=0b1120&color=d4af37" class="va-user-avatar" alt="User">
                                             <span class="va-user-name">' . esc_html($p->patient_name) . '</span>
                                         </div>
                                       </td>';

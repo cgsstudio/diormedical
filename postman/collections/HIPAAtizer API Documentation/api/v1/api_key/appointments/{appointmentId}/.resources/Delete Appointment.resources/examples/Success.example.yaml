@@ -1,0 +1,24 @@
+$kind: http-example
+request:
+  url: https://app.hipaatizer.com/api/v1/api_key/appointments/:appointmentId
+  method: DELETE
+  headers:
+    - key: Accept
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  pathVariables:
+    appointmentId: ""
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "message": "<string>"
+      }
+order: 1000

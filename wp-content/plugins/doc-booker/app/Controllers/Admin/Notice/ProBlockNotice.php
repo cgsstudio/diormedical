@@ -36,7 +36,8 @@ class ProBlockNotice {
 
     public function maybe_render() {
         // Pro active ⇒ blocks render fine; nothing to warn about (also short-circuits
-        // the DB scan below in the normal case).
+        // the DB scan below in the normal case). A Pro that is active but switched
+        // itself off (too old, licence) has its own notice instead.
         if ( function_exists( 'wpddbp' ) ) {
             return;
         }

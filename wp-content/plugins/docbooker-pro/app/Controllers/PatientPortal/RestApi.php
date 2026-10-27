@@ -68,17 +68,26 @@ class RestApi {
 		$body       = $request->get_json_params() ?: $request->get_params();
 		$phone      = trim( (string) ( $body['phone'] ?? '' ) );
 		$order_code = trim( (string) ( $body['order_code'] ?? '' ) );
+		// Where codes go is a site setting, not a fact about this order, so
+		// saying it never reveals whether the order exists.
+		$sent = [ 'ok' => true, 'channel' => Sms::is_configured() ? 'sms' : 'email' ];
 
 		if ( $phone === '' || $order_code === '' ) {
 			// Don't leak which field is missing.
-			return new WP_REST_Response( [ 'ok' => true ], 200 );
+			return new WP_REST_Response( $sent, 200 );
+		}
+
+		// Limited per network before anything is looked up, so the limit itself
+		// says nothing about which phone/order pairs exist.
+		if ( ! Otp::allow_request_from() ) {
+			return new WP_Error( 'wpddbp_otp_ip_limit', __( 'Too many requests from this network. Please try again later.', 'doc-booker-pro' ), [ 'status' => 429 ] );
 		}
 
 		// Validate phone matches an order (without surfacing whether it does).
 		$order = TestOrder::find_for_phone_and_code( $phone, $order_code );
 		if ( ! $order ) {
 			// Pretend success to avoid enumeration.
-			return new WP_REST_Response( [ 'ok' => true ], 200 );
+			return new WP_REST_Response( $sent, 200 );
 		}
 
 		// Check retention window: reports must still be available.
@@ -86,11 +95,41 @@ class RestApi {
 
 		$res = Otp::request( $phone, $order_code );
 		if ( is_wp_error( $res ) ) {
-			return new WP_REST_Response( [ 'ok' => false, 'message' => $res->get_error_message() ], 200 );
+			// A code was sent under a minute ago. Answer exactly as for an
+			// unknown pair; the code already sent still works.
+			return new WP_REST_Response( $sent, 200 );
 		}
 
-		Sms::send_otp( $phone, $res['code'] );
-		return new WP_REST_Response( [ 'ok' => true ], 200 );
+		if ( Sms::is_configured() ) {
+			Sms::send_otp( $phone, $res['code'] );
+		} else {
+			// No text service: email the code to the patient on this order.
+			self::email_otp( $order, $res['code'] );
+		}
+		return new WP_REST_Response( $sent, 200 );
+	}
+
+	/**
+	 * Email a portal login code to the patient on the order.
+	 */
+	private static function email_otp( $order, $code ) {
+		$patient = Patient::find( (int) $order['patient_id'] );
+		$email   = $patient['email'] ?? '';
+		if ( ! is_email( $email ) ) {
+			return false;
+		}
+		$clinic = ! empty( $order['clinic_id'] ) ? get_the_title( (int) $order['clinic_id'] ) : '';
+		$from   = $clinic ?: wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+		/* translators: %s: clinic or site name */
+		$subject = sprintf( __( 'Your code to see your lab reports at %s', 'doc-booker-pro' ), $from );
+		$message = sprintf(
+			/* translators: 1: patient name, 2: 6-digit code, 3: minutes the code is valid */
+			__( "Hello %1\$s,\n\nYour code to see your lab reports is: %2\$s\n\nIt works for %3\$d minutes. If you did not ask for it, you can ignore this email.", 'doc-booker-pro' ),
+			$patient['full_name'] ?? '',
+			preg_replace( '/[^0-9]/', '', (string) $code ),
+			(int) ( Otp::TTL_SECONDS / MINUTE_IN_SECONDS )
+		);
+		return wp_mail( $email, $subject, $message );
 	}
 
 	public function verify_otp( WP_REST_Request $request ) {
@@ -99,13 +138,17 @@ class RestApi {
 		$order_code = trim( (string) ( $body['order_code'] ?? '' ) );
 		$code       = trim( (string) ( $body['code'] ?? '' ) );
 
-		$order = TestOrder::find_for_phone_and_code( $phone, $order_code );
-		if ( ! $order ) {
-			return new WP_Error( 'wpddbp_invalid', __( 'Invalid login.', 'doc-booker-pro' ), [ 'status' => 401 ] );
+		if ( ! Otp::may_try_code() ) {
+			return new WP_Error( 'wpddbp_otp_ip_limit', __( 'Too many attempts from this network. Please try again later.', 'doc-booker-pro' ), [ 'status' => 429 ] );
 		}
-		$verify = Otp::verify( $phone, $order_code, $code );
-		if ( is_wp_error( $verify ) ) {
-			return $verify;
+
+		// One answer for every failure — unknown order, wrong, expired or
+		// used-up code — so a response never confirms that an order exists.
+		$order  = TestOrder::find_for_phone_and_code( $phone, $order_code );
+		$verify = $order ? Otp::verify( $phone, $order_code, $code ) : null;
+		if ( ! $order || is_wp_error( $verify ) ) {
+			Otp::record_failed_try();
+			return new WP_Error( 'wpddbp_invalid', __( 'That code is not valid. Please check it or request a new one.', 'doc-booker-pro' ), [ 'status' => 401 ] );
 		}
 
 		$session = Session::issue( $phone, (int) $order['id'], (int) $order['patient_id'] );
@@ -136,9 +179,10 @@ class RestApi {
 		$reports = TestReport::list_for_order( (int) $order['id'] );
 		$rows    = [];
 		foreach ( $reports as $r ) {
+			$r      = TestReport::for_display( $r );
 			$rows[] = [
 				'id'           => (int) $r['id'],
-				'filename'     => get_the_title( (int) $r['attachment_id'] ) ?: 'Report.pdf',
+				'filename'     => $r['filename'],
 				'uploaded_at'  => $r['uploaded_at'],
 				'expires_at'   => $r['expires_at'],
 				'download_url' => Download::signed_url( (int) $r['id'], 'attachment' ),

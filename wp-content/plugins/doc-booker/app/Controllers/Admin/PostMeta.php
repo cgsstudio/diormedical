@@ -20,6 +20,16 @@ class PostMeta {
 		add_action( 'save_post_wpddb_clinic', [ $this, 'save_wpddb_clinic_post_meta' ], 10, 2 );
 		add_action( 'save_post_wpd_doctor_shortcode', [ $this, 'save_wpddb_doctor_shortcode_post_meta' ], 10, 2 );
 		add_action( 'save_post_wpd_clinic_shortcode', [ $this, 'save_wpddb_clinic_shortcode_post_meta' ], 10, 2 );
+		add_filter( 'is_protected_meta', [ $this, 'protect_plugin_meta' ], 10, 3 );
+		// The Update button waits until the screen has loaded (see wpd-doc-booker-admin.js).
+		add_filter( 'admin_body_class', function ( $classes ) {
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			$types  = [ wpddb()->post_type_doctor, wpddb()->post_type_clinic, wpddb()->post_type_doctor_shortcode, wpddb()->post_type_clinic_shortcode ];
+			if ( $screen && 'post' === $screen->base && in_array( $screen->post_type, $types, true ) ) {
+				$classes .= ' wpdbm-loading wpdbm-screen';
+			}
+			return $classes;
+		} );
 		add_filter( 'use_block_editor_for_post_type', function ( $use_block_editor, $post_type ) {
 			if ( in_array( $post_type, [ wpddb()->post_type_doctor, wpddb()->post_type_clinic,wpddb()->post_type_doctor_shortcode,wpddb()->post_type_clinic_shortcode ], true ) ) {
 				return false; // Disable Gutenberg for these post types
@@ -29,26 +39,41 @@ class PostMeta {
 		}, 10, 2 );
 	}
 
+	/**
+	 * The plugin's post meta keys (wpddb_doctor_degree, wpddb_doctor_schedule, …)
+	 * don't start with "_", so WordPress listed them in the Custom Fields box,
+	 * where editing them raw fights the plugin's own fields. Mark them protected
+	 * so only the plugin's screens edit them.
+	 */
+	public function protect_plugin_meta( $protected, $meta_key, $meta_type ) {
+		if ( 'post' === $meta_type && is_string( $meta_key ) && 0 === strpos( $meta_key, 'wpddb_' ) ) {
+			return true;
+		}
+		return $protected;
+	}
+
 	public function add_wpddb_meta_box( $post ) {
 		add_meta_box(
 			'wpddb_doctor_post_meta',
-			'Doctor Information',
+			esc_html__( 'Doctor details', 'doc-booker' ),
 			[ $this, 'render_wpddb_doctor_meta_box' ],
 			[ wpddb()->post_type_doctor ],
 			'normal',
 			'high'
 		);
+        // Summary cards beside the form (preview, checklist, shortcode to copy,
+        // and the Pro offer on Free). Filled by the same screen as the form.
         add_meta_box(
-            'wpddb_doctor_pro_promo',
-            'DocBooker Pro',
-            [ $this, 'render_docbooker_pro_promo' ],
-            [ wpddb()->post_type_doctor,wpddb()->post_type_clinic,wpddb()->post_type_doctor_shortcode,wpddb()->post_type_clinic_shortcode ],
+            'wpddb_meta_side',
+            esc_html__( 'Summary', 'doc-booker' ),
+            [ $this, 'render_side_box' ],
+            [ wpddb()->post_type_doctor, wpddb()->post_type_clinic, wpddb()->post_type_doctor_shortcode, wpddb()->post_type_clinic_shortcode ],
             'side',
-            'low'
+            'default' // after Publish
         );
 		add_meta_box(
 			'wpddb_clinic_post_meta',
-			'Clinic Information',
+			esc_html__( 'Clinic details', 'doc-booker' ),
 			[ $this, 'render_wpddb_clinic_meta_box' ],
 			[ wpddb()->post_type_clinic ],
 			'normal',
@@ -56,7 +81,7 @@ class PostMeta {
 		);
         add_meta_box(
             'wpddb_doctor_shortcode_post_meta',
-            'Shortcode Settings',
+            esc_html__( 'Doctor list settings', 'doc-booker' ),
             [ $this, 'render_wpddb_doctor_shortcode_meta_box' ],
             [ wpddb()->post_type_doctor_shortcode ],
             'normal',
@@ -64,7 +89,7 @@ class PostMeta {
         );
         add_meta_box(
             'wpddb_clinic_shortcode_post_meta',
-            'Shortcode Settings',
+            esc_html__( 'Clinic list settings', 'doc-booker' ),
             [ $this, 'render_wpddb_clinic_shortcode_meta_box' ],
             [ wpddb()->post_type_clinic_shortcode ],
             'normal',
@@ -76,24 +101,41 @@ class PostMeta {
 
 		wp_nonce_field( $this->nonce_action, $this->nonce_name );
 
-		echo '<div id="wpddb-doctor-meta-container"></div>';
+		echo '<div id="wpddb-doctor-meta-container" class="wpdba-root wpdbm">' . self::skeleton() . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
 	}
 	public function render_wpddb_clinic_meta_box( $post ) {
 
 		wp_nonce_field( $this->nonce_action, $this->nonce_name );
 
-		echo '<div id="wpddb-clinic-meta-container"></div>';
+		echo '<div id="wpddb-clinic-meta-container" class="wpdba-root wpdbm">' . self::skeleton() . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
 	}
 
     public function render_wpddb_doctor_shortcode_meta_box($post) {
         wp_nonce_field( $this->nonce_action, $this->nonce_name );
 
-        echo '<div id="wpddb-doctor-shortcode-meta-container"></div>';
+        echo '<div id="wpddb-doctor-shortcode-meta-container" class="wpdba-root wpdbm">' . self::skeleton() . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
     }
     public function render_wpddb_clinic_shortcode_meta_box($post) {
         wp_nonce_field( $this->nonce_action, $this->nonce_name );
 
-        echo '<div id="wpddb-clinic-shortcode-meta-container"></div>';
+        echo '<div id="wpddb-clinic-shortcode-meta-container" class="wpdba-root wpdbm">' . self::skeleton() . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
+    }
+
+    /**
+     * Shown until the screen has loaded: the same shape as the form, so the
+     * page does not jump when it appears.
+     */
+    private static function skeleton() {
+        $nav  = str_repeat( '<i class="wpdbm-skel is-line"></i>', 5 );
+        $rows = str_repeat( '<div class="wpdbm-skrow"><i class="wpdbm-skel is-label"></i><i class="wpdbm-skel is-field"></i></div>', 4 );
+        return '<div class="wpdbm-shell is-skeleton" aria-busy="true" aria-label="' . esc_attr__( 'Loading…', 'doc-booker' ) . '">'
+            . '<div class="wpdbm-nav"><i class="wpdbm-skel is-search"></i>' . $nav . '</div>'
+            . '<div class="wpdbm-main"><div class="wpdbm-phead"><i class="wpdbm-skel is-crumb"></i><i class="wpdbm-skel is-h"></i><i class="wpdbm-skel is-p"></i></div>'
+            . '<div class="wpdbm-card">' . $rows . '</div></div></div>';
+    }
+
+    public function render_side_box( $post ) {
+        echo '<div id="wpddb-meta-side" class="wpdba-root wpdbm"><div class="wpdbm-side"><i class="wpdbm-skel is-h"></i><i class="wpdbm-skel is-block"></i><i class="wpdbm-skel is-line"></i><i class="wpdbm-skel is-line"></i></div></div>';
     }
 
     public function render_docbooker_pro_promo($post){
@@ -106,7 +148,7 @@ class PostMeta {
         // Mirrors the settings-page ProFeatures promo — every current Pro feature group.
         $features = [
             [ __( 'Online Payments', 'doc-booker' ),      __( 'Stripe & Razorpay checkout at booking', 'doc-booker' ) ],
-            [ __( 'Multi-Clinic & Staff', 'doc-booker' ), __( 'Multiple clinics + Manager / Receptionist roles', 'doc-booker' ) ],
+            [ __( 'Clinic Staff Logins', 'doc-booker' ), __( 'Clinic Manager & Receptionist accounts, each sees only their clinic', 'doc-booker' ) ],
             [ __( 'Patients & Visits', 'doc-booker' ),    __( 'OPD / IPD visits, beds & discharge records', 'doc-booker' ) ],
             [ __( 'Billing & Invoices', 'doc-booker' ),   __( 'Itemised running bills + printable invoices', 'doc-booker' ) ],
             [ __( 'Lab Tests & Portal', 'doc-booker' ),   __( 'Test catalog, report uploads & patient OTP portal', 'doc-booker' ) ],
@@ -182,8 +224,21 @@ class PostMeta {
 		if (  isset( $_POST['wpddb_doctor_degree'] ) ) {
 			update_post_meta( $post_id, 'wpddb_doctor_degree', sanitize_text_field( $_POST['wpddb_doctor_degree'] ) );
 		}
-        $doctor_schedule = json_decode(stripslashes($_POST['wpddb_doctor_schedule']), true);
-        if (!empty($doctor_schedule) && is_array($doctor_schedule)) {
+		// Where the doctor's booking emails go; empty switches them off.
+		if ( isset( $_POST['wpddb_doctor_email'] ) ) {
+			update_post_meta( $post_id, 'wpddb_doctor_email', sanitize_email( wp_unslash( $_POST['wpddb_doctor_email'] ) ) );
+		}
+		// The fee patients see when booking (paid at the clinic, or online with Pro).
+		if ( isset( $_POST['wpddb_doctor_booking_fee'] ) ) {
+			$fee = max( 0, (float) str_replace( ',', '.', sanitize_text_field( wp_unslash( $_POST['wpddb_doctor_booking_fee'] ) ) ) );
+			update_post_meta( $post_id, 'wpddb_doctor_booking_fee', $fee );
+		}
+        // Each block runs only when its field was sent, so a save without it can
+        // never wipe the stored schedule or clinic info.
+        $doctor_schedule = isset( $_POST['wpddb_doctor_schedule'] ) ? json_decode( stripslashes( $_POST['wpddb_doctor_schedule'] ), true ) : null;
+        if ( ! isset( $_POST['wpddb_doctor_schedule'] ) ) {
+            // not sent: leave the stored schedule alone
+        } elseif (!empty($doctor_schedule) && is_array($doctor_schedule)) {
             $processed_schedule = [];
             $doctor_available_clinic_ids = [];
             foreach ($doctor_schedule as $day_data) {
@@ -230,8 +285,10 @@ class PostMeta {
         }
 
         //  Sanitize and Save Clinic Info (Under Clinic ID)
-        $clinic_info = json_decode(stripslashes($_POST['wpddb_clinics_info']), true);
-        if (!empty($clinic_info) && is_array($clinic_info)) {
+        $clinic_info = isset( $_POST['wpddb_clinics_info'] ) ? json_decode( stripslashes( $_POST['wpddb_clinics_info'] ), true ) : null;
+        if ( ! isset( $_POST['wpddb_clinics_info'] ) ) {
+            // not sent: leave the stored clinic info alone
+        } elseif (!empty($clinic_info) && is_array($clinic_info)) {
             $processed_clinic_info = [];
             foreach ($clinic_info as $key=>$clinic) {
 

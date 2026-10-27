@@ -47,7 +47,9 @@ class Download {
 			status_header( 404 );
 			exit;
 		}
-		$filename = basename( $file );
+		// Files are stored under random names; the patient gets the real one.
+		$title    = sanitize_file_name( get_post_field( 'post_title', (int) $report['attachment_id'] ) );
+		$filename = ( $title ?: 'report' ) . '.pdf';
 		nocache_headers();
 		header( 'Content-Type: application/pdf' );
 		header( 'Content-Length: ' . filesize( $file ) );

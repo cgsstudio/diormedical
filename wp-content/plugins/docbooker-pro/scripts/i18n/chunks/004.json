@@ -1,0 +1,455 @@
+[
+ {
+  "id": "Next month"
+ },
+ {
+  "id": "Next photo"
+ },
+ {
+  "id": "Node color"
+ },
+ {
+  "id": "Object fit"
+ },
+ {
+  "id": "On holiday"
+ },
+ {
+  "id": "On request"
+ },
+ {
+  "id": "Pagination"
+ },
+ {
+  "id": "Pediatrics"
+ },
+ {
+  "id": "Phone note"
+ },
+ {
+  "id": "Pill cloud"
+ },
+ {
+  "id": "Portuguese"
+ },
+ {
+  "id": "Print Bill"
+ },
+ {
+  "id": "Psychiatry"
+ },
+ {
+  "id": "Quick Book",
+  "ctx": "block title"
+ },
+ {
+  "id": "Receipt %s"
+ },
+ {
+  "id": "Remove %s?"
+ },
+ {
+  "id": "Row / Card"
+ },
+ {
+  "id": "Save Visit"
+ },
+ {
+  "id": "Show hours"
+ },
+ {
+  "id": "Show icons"
+ },
+ {
+  "id": "Show price"
+ },
+ {
+  "id": "Show title"
+ },
+ {
+  "id": "Side label"
+ },
+ {
+  "id": "Speciality"
+ },
+ {
+  "id": "Star color"
+ },
+ {
+  "id": "Statistics"
+ },
+ {
+  "id": "Status tag"
+ },
+ {
+  "id": "Strip tone"
+ },
+ {
+  "id": "Subheading"
+ },
+ {
+  "id": "Text Color"
+ },
+ {
+  "id": "Text color"
+ },
+ {
+  "id": "Tile label"
+ },
+ {
+  "id": "Tile value"
+ },
+ {
+  "id": "Title text"
+ },
+ {
+  "id": "Total paid"
+ },
+ {
+  "id": "Trust line"
+ },
+ {
+  "id": "Trust note"
+ },
+ {
+  "id": "Trust text"
+ },
+ {
+  "id": "Typography"
+ },
+ {
+  "id": "Up to 5 MB"
+ },
+ {
+  "id": "Uploading…"
+ },
+ {
+  "id": "Vietnamese"
+ },
+ {
+  "id": "Visit Date"
+ },
+ {
+  "id": "\"From\" text"
+ },
+ {
+  "id": "%1$dh %2$sm"
+ },
+ {
+  "id": "%1$s / %2$s"
+ },
+ {
+  "id": "%d selected",
+  "plural": "%d selected"
+ },
+ {
+  "id": "%s out of 5"
+ },
+ {
+  "id": "%s selected"
+ },
+ {
+  "id": "About quote"
+ },
+ {
+  "id": "Add Patient"
+ },
+ {
+  "id": "Add service"
+ },
+ {
+  "id": "Admit (IPD)"
+ },
+ {
+  "id": "All Clinics"
+ },
+ {
+  "id": "All clinics"
+ },
+ {
+  "id": "All doctors"
+ },
+ {
+  "id": "Appointment"
+ },
+ {
+  "id": "Aside color"
+ },
+ {
+  "id": "Attribution"
+ },
+ {
+  "id": "Award image"
+ },
+ {
+  "id": "Award title"
+ },
+ {
+  "id": "Awards from"
+ },
+ {
+  "id": "Balance due"
+ },
+ {
+  "id": "Before noon"
+ },
+ {
+  "id": "Book button"
+ },
+ {
+  "id": "Booking fee"
+ },
+ {
+  "id": "Bottom left"
+ },
+ {
+  "id": "Bulk Import"
+ },
+ {
+  "id": "Button text"
+ },
+ {
+  "id": "Chapter tag"
+ },
+ {
+  "id": "Clinic Info"
+ },
+ {
+  "id": "Clinic name"
+ },
+ {
+  "id": "Clinic step"
+ },
+ {
+  "id": "Close (Esc)"
+ },
+ {
+  "id": "Create item"
+ },
+ {
+  "id": "Credentials"
+ },
+ {
+  "id": "Date · Time"
+ },
+ {
+  "id": "Day & hours"
+ },
+ {
+  "id": "Departments"
+ },
+ {
+  "id": "Departments",
+  "ctx": "block title"
+ },
+ {
+  "id": "Dermatology"
+ },
+ {
+  "id": "Description"
+ },
+ {
+  "id": "Designation"
+ },
+ {
+  "id": "Detail chip"
+ },
+ {
+  "id": "Diagnostics"
+ },
+ {
+  "id": "Doctor from"
+ },
+ {
+  "id": "Doctor name"
+ },
+ {
+  "id": "Doctor step"
+ },
+ {
+  "id": "Edit doctor"
+ },
+ {
+  "id": "Flat colors"
+ },
+ {
+  "id": "Font Family"
+ },
+ {
+  "id": "Font Weight"
+ },
+ {
+  "id": "Footer link"
+ },
+ {
+  "id": "Form fields"
+ },
+ {
+  "id": "Heading tag"
+ },
+ {
+  "id": "Help button"
+ },
+ {
+  "id": "Hero height"
+ },
+ {
+  "id": "Hours color"
+ },
+ {
+  "id": "Hours label"
+ },
+ {
+  "id": "Hover color"
+ },
+ {
+  "id": "Intro panel"
+ },
+ {
+  "id": "Label color"
+ },
+ {
+  "id": "Layout type"
+ },
+ {
+  "id": "Left Bottom"
+ },
+ {
+  "id": "Left Center"
+ },
+ {
+  "id": "Line Height"
+ },
+ {
+  "id": "Media frame"
+ },
+ {
+  "id": "New Patient"
+ },
+ {
+  "id": "No matches."
+ },
+ {
+  "id": "No-fee text"
+ },
+ {
+  "id": "Noon – 5 PM"
+ },
+ {
+  "id": "Open — text"
+ },
+ {
+  "id": "Orthopedics"
+ },
+ {
+  "id": "Percent (%)"
+ },
+ {
+  "id": "Pick clinic"
+ },
+ {
+  "id": "Pill colors"
+ },
+ {
+  "id": "Price color"
+ },
+ {
+  "id": "Primary URL"
+ },
+ {
+  "id": "Processing…"
+ },
+ {
+  "id": "Pulmonology"
+ },
+ {
+  "id": "Reassigned."
+ },
+ {
+  "id": "Reassigning"
+ },
+ {
+  "id": "Reset color"
+ },
+ {
+  "id": "Reset label"
+ },
+ {
+  "id": "Select text"
+ },
+ {
+  "id": "Select time"
+ },
+ {
+  "id": "Show avatar"
+ },
+ {
+  "id": "Show button"
+ },
+ {
+  "id": "Show kicker"
+ },
+ {
+  "id": "Show number"
+ },
+ {
+  "id": "Show rating"
+ },
+ {
+  "id": "Slide image"
+ },
+ {
+  "id": "Slot border"
+ },
+ {
+  "id": "Slot radius"
+ },
+ {
+  "id": "Specialists"
+ },
+ {
+  "id": "Split image"
+ },
+ {
+  "id": "Staff added"
+ },
+ {
+  "id": "Status mode"
+ },
+ {
+  "id": "Status pill"
+ },
+ {
+  "id": "Submitting…"
+ },
+ {
+  "id": "Tab 1 label"
+ },
+ {
+  "id": "Tab 2 label"
+ },
+ {
+  "id": "Test Orders"
+ },
+ {
+  "id": "Testimonial"
+ },
+ {
+  "id": "Time format"
+ },
+ {
+  "id": "Title Color"
+ },
+ {
+  "id": "Title color"
+ },
+ {
+  "id": "Toggle icon"
+ },
+ {
+  "id": "Total staff"
+ },
+ {
+  "id": "Total today"
+ }
+]

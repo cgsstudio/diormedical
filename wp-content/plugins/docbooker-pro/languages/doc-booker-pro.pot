@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the DocBooker Pro - Doctor Appointment & Hospital Management plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: DocBooker Pro - Doctor Appointment & Hospital Management 2.1.0\n"
+"Project-Id-Version: DocBooker Pro - Doctor Appointment & Hospital Management 2.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/doc-booker-pro\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-04T15:30:37+00:00\n"
+"POT-Creation-Date: 2026-10-19T17:50:42+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: doc-booker-pro\n"
@@ -45,6 +45,24 @@ msgstr ""
 
 #: app/Controllers/Admin/Notice/PaymentConfigNotice.php:73
 msgid "Add payment keys"
+msgstr ""
+
+#: app/Controllers/AppPages.php:57
+#: app/Controllers/Staff/AdminMenu.php:52
+#: app/Controllers/Staff/AdminMenu.php:53
+#: src/js/admin/app-pages/StaffPage.jsx:252
+#: src/js/admin/app-pages/StaffPage.jsx:298
+#: src/js/admin/components/staff/App.jsx:181
+#: src/js/admin/components/staff/App.jsx:253
+msgid "Staff"
+msgstr ""
+
+#: app/Controllers/AppPages.php:62
+#: app/Controllers/TestCatalog/AdminMenu.php:44
+#: app/Controllers/TestCatalog/AdminMenu.php:45
+#: src/js/admin/app-pages/TestItemsPage.jsx:195
+#: src/js/admin/components/test-items/App.jsx:90
+msgid "Lab Test Catalog"
 msgstr ""
 
 #: app/Controllers/DepartmentTermMeta.php:137
@@ -97,8 +115,9 @@ msgstr ""
 
 #: app/Controllers/DepartmentTermMeta.php:313
 #: blocks-src/src/utils/doctors-data.php:703
+#: blocks-src/src/blocks/booking-form/edit.js:24
 #: blocks-src/src/blocks/booking-form/view.js:191
-#: blocks-src/src/blocks/booking-form/view.js:431
+#: blocks-src/src/blocks/booking-form/view.js:434
 #: blocks-src/src/blocks/doctors/edit.js:101
 #: blocks-src/src/blocks/quick-book/edit.js:55
 #: blocks-src/src/components/doctors/GeneralPanel.js:107
@@ -113,6 +132,55 @@ msgid "%s specialist in this department"
 msgid_plural "%s specialists in this department"
 msgstr[0] ""
 msgstr[1] ""
+
+#. translators: 1: Plugin name 2: PHP 3: Required PHP version
+#: app/Controllers/Dependencies.php:142
+msgid "\"%1$s\" requires \"%2$s\" version %3$s or greater."
+msgstr ""
+
+#. translators: 1: this plugin's name, 2: "DocBooker"
+#: app/Controllers/Dependencies.php:193
+msgid "%1$s requires the %2$s plugin to be active. Please activate DocBooker to continue."
+msgstr ""
+
+#: app/Controllers/Dependencies.php:194
+msgid "Activate DocBooker"
+msgstr ""
+
+#. translators: 1: this plugin's name, 2: "DocBooker"
+#: app/Controllers/Dependencies.php:199
+msgid "%1$s requires the %2$s plugin to be installed and active. Please install DocBooker to continue."
+msgstr ""
+
+#: app/Controllers/Dependencies.php:200
+msgid "Install DocBooker"
+msgstr ""
+
+#: app/Controllers/Dependencies.php:203
+msgid "More information about DocBooker"
+msgstr ""
+
+#. translators: 1: "DocBooker Pro", 2: link to DocBooker, 3: minimum DocBooker version
+#: app/Controllers/Dependencies.php:206
+msgid "%1$s is enabled but not working: it needs %2$s version %3$s or later."
+msgstr ""
+
+#: app/Controllers/Dependencies.php:207
+msgid "Update DocBooker"
+msgstr ""
+
+#: app/Controllers/Dependencies.php:210
+msgid "License Activation"
+msgstr ""
+
+#. translators: 1: "DocBooker Pro", 2: link to the License Activation page
+#: app/Controllers/Dependencies.php:213
+msgid "%1$s is enabled but not working until your license is active. Activate it on the %2$s page."
+msgstr ""
+
+#: app/Controllers/Dependencies.php:214
+msgid "Activate License"
+msgstr ""
 
 #: app/Controllers/Helper/Helper.php:15
 msgid "Facebook"
@@ -378,208 +446,365 @@ msgstr ""
 msgid "Vaccination"
 msgstr ""
 
+#: app/Controllers/Helper/Helper.php:190
+#: app/Controllers/ScriptsController.php:265
+#: blocks-src/src/blocks/slider/render.php:115
+#: blocks-src/src/blocks/slider/edit.js:199
+msgid "Previous"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:226
+#: app/Controllers/ScriptsController.php:266
+#: blocks-src/src/blocks/slider/render.php:115
+#: blocks-src/src/blocks/slider/edit.js:200
+#: src/js/admin/components/staff/App.jsx:336
+msgid "Next"
+msgstr ""
+
 #: app/Controllers/Helper/Helper.php:260
 msgid "Loading more..."
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:114
-msgid "Years experience"
+#. translators: %d: number of further gallery images
+#: app/Controllers/Helper/Helper.php:352
+msgid "+%d more"
+msgstr ""
+
+#: app/Controllers/Helper/Helper.php:379
+msgid "clinic gallery image"
+msgstr ""
+
+#. translators: %s: rating such as 4.9
+#: app/Controllers/Hooks/ActionHooks.php:99
+msgid "Rated %s out of 5"
+msgstr ""
+
+#. translators: %d: years of experience
+#: app/Controllers/Hooks/ActionHooks.php:112
+msgid "%d yr"
+msgid_plural "%d yrs"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: years of experience
+#: app/Controllers/Hooks/ActionHooks.php:112
+#: blocks-src/src/utils/doctors-data.php:424
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:81
+msgid "Experience"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:115
+#: blocks-src/src/utils/doctors-data.php:427
+#: src/js/public/components/receptionist-dashboard/Sidebar.jsx:16
+#: src/js/public/components/receptionist-dashboard/Topbar.jsx:7
+msgid "Patients"
 msgstr ""
 
 #. translators: %s: number of reviews
-#: app/Controllers/Hooks/ActionHooks.php:121
+#: app/Controllers/Hooks/ActionHooks.php:122
+#: app/Controllers/Hooks/ActionHooks.php:200
 msgid "%s review"
 msgid_plural "%s reviews"
 msgstr[0] ""
 msgstr[1] ""
 
 #: app/Controllers/Hooks/ActionHooks.php:123
+#: blocks-src/src/utils/doctor-schedule-data.php:710
+#: blocks-src/src/utils/doctors-data.php:466
+#: blocks-src/src/blocks/doctor-schedule/edit.js:153
+#: blocks-src/src/components/doctors/GeneralPanel.js:111
+#: blocks-src/src/components/testimonials/ItemEditor.js:38
+msgid "Rating"
+msgstr ""
+
+#. translators: %s: booking fee with currency, e.g. USD 45
+#: app/Controllers/Hooks/ActionHooks.php:151
+msgid "Book · %s"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:193
+msgid "Years experience"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:202
 msgid "Patient rating"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:126
+#: app/Controllers/Hooks/ActionHooks.php:205
 msgid "Patients seen"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:129
+#: app/Controllers/Hooks/ActionHooks.php:208
 #: blocks-src/src/utils/doctor-schedule-data.php:713
 #: blocks-src/src/utils/doctors-data.php:359
 #: blocks-src/src/utils/doctors-data.php:430
 msgid "Languages"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:135
+#: app/Controllers/Hooks/ActionHooks.php:214
 msgid "Alma mater"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:189
+#: app/Controllers/Hooks/ActionHooks.php:268
 #: blocks-src/src/utils/clinics-data.php:28
 msgid "Hospital"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:190
-#: app/Controllers/Hooks/ActionHooks.php:195
+#: app/Controllers/Hooks/ActionHooks.php:269
+#: app/Controllers/Hooks/ActionHooks.php:274
 #: blocks-src/src/utils/clinics-data.php:29
 #: blocks-src/src/utils/clinics-data.php:34
 #: blocks-src/src/utils/doctors-data.php:689
+#: blocks-src/src/blocks/booking-form/edit.js:24
 #: blocks-src/src/blocks/booking-form/view.js:191
-#: blocks-src/src/blocks/booking-form/view.js:341
-#: blocks-src/src/blocks/booking-form/view.js:433
+#: blocks-src/src/blocks/booking-form/view.js:344
+#: blocks-src/src/blocks/booking-form/view.js:436
 #: blocks-src/src/blocks/doctors/edit.js:95
 #: blocks-src/src/components/hero/GeneralPanel.js:238
+#: src/js/admin/app-pages/StaffPage.jsx:90
+#: src/js/admin/app-pages/StaffPage.jsx:304
+#: src/js/admin/app-pages/StaffPage.jsx:319
+#: src/js/admin/app-pages/StaffPage.jsx:352
+#: src/js/admin/app-pages/TestItemsPage.jsx:68
+#: src/js/admin/app-pages/TestItemsPage.jsx:218
+#: src/js/admin/app-pages/TestItemsPage.jsx:230
 #: src/js/admin/components/clinic-managers/ManagersTable.jsx:95
-#: src/js/admin/components/staff/App.jsx:254
+#: src/js/admin/components/staff/App.jsx:255
 #: src/js/admin/components/staff/StaffForm.jsx:60
-#: src/js/admin/components/test-items/App.jsx:216
+#: src/js/admin/components/test-items/App.jsx:218
 msgid "Clinic"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:191
+#: app/Controllers/Hooks/ActionHooks.php:270
 #: blocks-src/src/utils/clinics-data.php:30
 msgid "Urgent Care"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:192
+#: app/Controllers/Hooks/ActionHooks.php:271
 #: blocks-src/src/utils/clinics-data.php:31
 msgid "Specialty Center"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:193
+#: app/Controllers/Hooks/ActionHooks.php:272
 #: blocks-src/src/utils/clinics-data.php:32
 msgid "Pavilion"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:248
+#: app/Controllers/Hooks/ActionHooks.php:327
 msgid "24/7 Emergency"
 msgstr ""
 
 #. translators: %s: founding year.
 #. translators: %s year
-#: app/Controllers/Hooks/ActionHooks.php:252
+#: app/Controllers/Hooks/ActionHooks.php:331
 #: blocks-src/src/utils/clinics-data.php:246
 #: blocks-src/src/utils/clinics-data.php:362
 msgid "est. %s"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:290
+#: app/Controllers/Hooks/ActionHooks.php:369
 #: blocks-src/src/utils/clinics-data.php:293
 msgid "Specialists"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:293
+#: app/Controllers/Hooks/ActionHooks.php:372
 msgid "Patient capacity"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:299
-#: app/Controllers/Hooks/ActionHooks.php:1318
+#: app/Controllers/Hooks/ActionHooks.php:378
+#: app/Controllers/Hooks/ActionHooks.php:1403
 #: blocks-src/src/components/services/GeneralPanel.js:80
 msgid "Services"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:308
+#: app/Controllers/Hooks/ActionHooks.php:387
+#: blocks-src/src/blocks/office-hours/render.php:56
 #: blocks-src/src/utils/doctor-schedule-data.php:99
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:30
+#: blocks-src/src/utils/officeHours.js:14
 msgid "Monday"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:309
+#: app/Controllers/Hooks/ActionHooks.php:388
+#: blocks-src/src/blocks/office-hours/render.php:57
 #: blocks-src/src/utils/doctor-schedule-data.php:100
+#: blocks-src/src/utils/officeHours.js:15
 msgid "Tuesday"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:310
+#: app/Controllers/Hooks/ActionHooks.php:389
+#: blocks-src/src/blocks/office-hours/render.php:58
 #: blocks-src/src/utils/doctor-schedule-data.php:101
+#: blocks-src/src/utils/officeHours.js:16
 msgid "Wednesday"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:311
+#: app/Controllers/Hooks/ActionHooks.php:390
+#: blocks-src/src/blocks/office-hours/render.php:59
 #: blocks-src/src/utils/doctor-schedule-data.php:102
+#: blocks-src/src/utils/officeHours.js:17
 msgid "Thursday"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:312
+#: app/Controllers/Hooks/ActionHooks.php:391
+#: blocks-src/src/blocks/office-hours/render.php:60
 #: blocks-src/src/utils/doctor-schedule-data.php:103
+#: blocks-src/src/utils/officeHours.js:18
 msgid "Friday"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:313
+#: app/Controllers/Hooks/ActionHooks.php:392
+#: blocks-src/src/blocks/office-hours/render.php:61
 #: blocks-src/src/utils/doctor-schedule-data.php:104
+#: blocks-src/src/utils/officeHours.js:19
 msgid "Saturday"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:314
+#: app/Controllers/Hooks/ActionHooks.php:393
+#: blocks-src/src/blocks/office-hours/render.php:62
 #: blocks-src/src/utils/doctor-schedule-data.php:98
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:31
+#: blocks-src/src/utils/officeHours.js:20
 msgid "Sunday"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:316
+#: app/Controllers/Hooks/ActionHooks.php:395
 #: blocks-src/src/components/clinics/GeneralPanel.js:61
 msgid "Hours"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:337
+#: app/Controllers/Hooks/ActionHooks.php:416
+#: blocks-src/src/blocks/office-hours/render.php:32
+#: blocks-src/src/blocks/office-hours/render.php:310
+#: blocks-src/src/blocks/office-hours/render.php:311
+#: blocks-src/src/blocks/office-hours/render.php:325
+#: blocks-src/src/blocks/office-hours/render.php:326
+#: blocks-src/src/blocks/office-hours/render.php:340
+#: blocks-src/src/blocks/office-hours/render.php:341
+#: blocks-src/src/blocks/office-hours/render.php:355
 #: blocks-src/src/utils/doctor-schedule-data.php:514
 #: blocks-src/src/utils/doctor-schedule-data.php:572
 #: blocks-src/src/utils/doctor-schedule-data.php:599
 #: blocks-src/src/utils/doctor-schedule-data.php:806
+#: blocks-src/src/blocks/office-hours/edit.js:106
+#: blocks-src/src/blocks/office-hours/edit.js:175
 #: blocks-src/src/components/office-hours/HoursEditor.js:29
 #: blocks-src/src/components/office-hours/HoursEditor.js:30
+#: blocks-src/src/utils/officeHours.js:67
 msgid "Closed"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:347
+#: app/Controllers/Hooks/ActionHooks.php:426
 msgid "Accreditations"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1181
+#: app/Controllers/Hooks/ActionHooks.php:934
+#: app/Controllers/Hooks/ActionHooks.php:1007
+msgid "Loading..."
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1014
+msgid "Filter Doctors"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1017
+msgid "Select Clinic"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1019
+msgid "All Clinics"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1031
+msgid "Select Department"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1033
+msgid "All Departments"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1045
+msgid "Clear All"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1050
+msgid "No filters applied"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1089
+msgid "Close (Esc)"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1090
+msgid "Share"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1091
+msgid "Toggle fullscreen"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1092
+msgid "Zoom in/out"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1104
+msgid "Previous (arrow left)"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1105
+msgid "Next (arrow right)"
+msgstr ""
+
+#: app/Controllers/Hooks/ActionHooks.php:1266
 msgid "No department"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1197
+#: app/Controllers/Hooks/ActionHooks.php:1282
 msgid "No doctors in this department at this clinic."
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1238
+#: app/Controllers/Hooks/ActionHooks.php:1323
 #: src/js/public/components/clinic-dashboard/views/Doctors.jsx:155
 msgid "Doctors at this clinic"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1241
+#: app/Controllers/Hooks/ActionHooks.php:1326
 msgid "Filter doctors by department"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1243
+#: app/Controllers/Hooks/ActionHooks.php:1328
 msgid "All"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1267
-#: app/Controllers/Hooks/ActionHooks.php:1270
+#: app/Controllers/Hooks/ActionHooks.php:1352
+#: app/Controllers/Hooks/ActionHooks.php:1355
 msgid "Load more doctors"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1268
+#: app/Controllers/Hooks/ActionHooks.php:1353
 msgid "No more doctors"
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1285
+#: app/Controllers/Hooks/ActionHooks.php:1370
 msgid "Nonce verification failed."
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1290
+#: app/Controllers/Hooks/ActionHooks.php:1375
 #: app/Controllers/Staff/Api/StaffRestApi.php:159
 #: app/Controllers/Staff/Api/StaffRestApi.php:218
 #: app/Controllers/Staff/Api/StaffRestApi.php:267
 msgid "Invalid clinic."
 msgstr ""
 
-#: app/Controllers/Hooks/ActionHooks.php:1332
+#: app/Controllers/Hooks/ActionHooks.php:1417
 msgid "Awards"
 msgstr ""
 
 #: app/Controllers/MultiClinic/ClinicReportsApi.php:107
-#: app/Controllers/MultiClinic/ClinicReportsApi.php:125
-#: app/Controllers/MultiClinic/ClinicReportsApi.php:137
-#: app/Controllers/MultiClinic/ClinicReportsApi.php:147
-#: app/Controllers/PatientPortal/RestApi.php:133
+#: app/Controllers/MultiClinic/ClinicReportsApi.php:123
+#: app/Controllers/MultiClinic/ClinicReportsApi.php:133
+#: app/Controllers/MultiClinic/ClinicReportsApi.php:143
+#: app/Controllers/PatientPortal/RestApi.php:176
 #: app/Controllers/Receptionist/ReportUploader.php:27
 msgid "Order not found."
 msgstr ""
@@ -588,9 +813,8 @@ msgstr ""
 msgid "Order is not in your clinic."
 msgstr ""
 
-#: app/Controllers/MultiClinic/ClinicReportsApi.php:151
-#: app/Controllers/PatientPortal/RestApi.php:184
-#: app/Controllers/Receptionist/RestApi.php:563
+#: app/Controllers/MultiClinic/ClinicReportsApi.php:147
+#: app/Controllers/PatientPortal/RestApi.php:228
 msgid "Report not found."
 msgstr ""
 
@@ -625,53 +849,259 @@ msgid "User not found."
 msgstr ""
 
 #: app/Controllers/MultiClinic/UserRole.php:27
-#: src/js/admin/components/staff/App.jsx:288
+#: src/js/admin/components/clinic-managers/ManagersTable.jsx:90
+#: src/js/admin/components/staff/App.jsx:290
 #: src/js/admin/components/staff/StaffForm.jsx:56
 msgid "Clinic Manager"
 msgstr ""
 
-#: app/Controllers/PatientPortal/Otp.php:48
+#: app/Controllers/PatientPortal/Otp.php:51
 msgid "Please wait before requesting another code."
 msgstr ""
 
-#: app/Controllers/PatientPortal/Otp.php:56
-msgid "Too many requests from this network."
-msgstr ""
-
-#: app/Controllers/PatientPortal/Otp.php:104
+#: app/Controllers/PatientPortal/Otp.php:99
 msgid "No active code. Please request a new one."
 msgstr ""
 
-#: app/Controllers/PatientPortal/Otp.php:107
+#: app/Controllers/PatientPortal/Otp.php:102
 msgid "Code expired. Please request a new one."
 msgstr ""
 
-#: app/Controllers/PatientPortal/Otp.php:110
+#: app/Controllers/PatientPortal/Otp.php:105
 msgid "Too many attempts. Please request a new code."
 msgstr ""
 
-#: app/Controllers/PatientPortal/Otp.php:116
+#: app/Controllers/PatientPortal/Otp.php:111
 msgid "Incorrect code."
 msgstr ""
 
-#: app/Controllers/PatientPortal/RestApi.php:104
-msgid "Invalid login."
+#: app/Controllers/PatientPortal/RestApi.php:83
+msgid "Too many requests from this network. Please try again later."
 msgstr ""
 
-#: app/Controllers/PatientPortal/RestApi.php:129
+#. translators: %s: clinic or site name
+#: app/Controllers/PatientPortal/RestApi.php:124
+msgid "Your code to see your lab reports at %s"
+msgstr ""
+
+#. translators: 1: patient name, 2: 6-digit code, 3: minutes the code is valid
+#: app/Controllers/PatientPortal/RestApi.php:127
+msgid ""
+"Hello %1$s,\n"
+"\n"
+"Your code to see your lab reports is: %2$s\n"
+"\n"
+"It works for %3$d minutes. If you did not ask for it, you can ignore this email."
+msgstr ""
+
+#: app/Controllers/PatientPortal/RestApi.php:142
+msgid "Too many attempts from this network. Please try again later."
+msgstr ""
+
+#: app/Controllers/PatientPortal/RestApi.php:151
+msgid "That code is not valid. Please check it or request a new one."
+msgstr ""
+
+#: app/Controllers/PatientPortal/RestApi.php:172
 msgid "Session expired."
 msgstr ""
 
-#: app/Controllers/PatientPortal/RestApi.php:179
+#: app/Controllers/PatientPortal/RestApi.php:223
 msgid "Invalid download link."
 msgstr ""
 
-#: app/Controllers/PatientPortal/RestApi.php:188
+#: app/Controllers/PatientPortal/RestApi.php:232
 msgid "Forbidden."
 msgstr ""
 
-#: app/Controllers/Receipt/Page.php:70
+#: app/Controllers/Payments/BookingPayment.php:192
+msgid "Please pay the booking fee to confirm this appointment."
+msgstr ""
+
+#: app/Controllers/Payments/BookingPayment.php:196
+msgid "This payment has already been used for another booking."
+msgstr ""
+
+#: app/Controllers/Payments/BookingPayment.php:209
+msgid "We could not confirm this payment. Please try again or contact the clinic."
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:73
 msgid "Receipt %s"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:82
+#: app/Controllers/Visits/BillPage.php:121
+msgid "Hotline:"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:87
+#: app/Controllers/Visits/BillPage.php:128
+msgid "ID No."
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:88
+#: app/Controllers/Visits/BillPage.php:129
+#: blocks-src/src/components/clinics/GeneralPanel.js:20
+#: blocks-src/src/components/clinics/StylesPanel.js:32
+#: blocks-src/src/components/departments/GeneralPanel.js:19
+#: blocks-src/src/components/departments/StylesPanel.js:35
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:22
+#: blocks-src/src/components/doctors/GeneralPanel.js:108
+#: blocks-src/src/components/doctors/StylesPanel.js:40
+#: blocks-src/src/components/testimonials/ItemEditor.js:39
+#: blocks-src/src/components/testimonials/StylesPanel.js:27
+#: src/js/admin/app-pages/TestItemsPage.jsx:58
+#: src/js/admin/app-pages/TestItemsPage.jsx:215
+#: src/js/admin/app-pages/TestItemsPage.jsx:227
+#: src/js/admin/components/test-items/App.jsx:124
+#: src/js/admin/components/test-items/App.jsx:192
+#: src/js/public/components/clinic-dashboard/views/Doctors.jsx:291
+#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:58
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:199
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:216
+msgid "Name"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:89
+#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:60
+msgid "Age"
+msgstr ""
+
+#. translators: %d: patient age in years
+#: app/Controllers/Receipt/Page.php:89
+msgid "%d year"
+msgid_plural "%d years"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: patient age in years
+#: app/Controllers/Receipt/Page.php:90
+msgid "Sex"
+msgstr ""
+
+#. translators: short label for the patient's mobile number
+#: app/Controllers/Receipt/Page.php:90
+msgid "M:"
+msgstr ""
+
+#. translators: short label for the patient's mobile number
+#: app/Controllers/Receipt/Page.php:91
+msgid "Refd by"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:92
+#: app/Controllers/Receptionist/RestApi.php:343
+#: blocks-src/src/components/clinics/GeneralPanel.js:52
+#: blocks-src/src/components/departments/GeneralPanel.js:57
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:69
+#: blocks-src/src/components/doctors/GeneralPanel.js:74
+#: src/js/public/components/patient-portal/ReportList.jsx:77
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:132
+msgid "Order"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:93
+#: app/Controllers/Visits/BillPage.php:171
+#: blocks-src/src/components/clinics/GeneralPanel.js:19
+#: blocks-src/src/components/Constants.js:70
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:23
+#: blocks-src/src/components/doctors/GeneralPanel.js:19
+#: blocks-src/src/components/testimonials/ItemEditor.js:41
+#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:38
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:110
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:133
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:253
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:56
+msgid "Date"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:98
+#: app/Controllers/Visits/BillPage.php:149
+msgid "SL"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:98
+msgid "Test/Service"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:98
+#: app/Controllers/Visits/BillPage.php:149
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:200
+msgid "Qty"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:98
+#: app/Controllers/Visits/BillPage.php:149
+#: app/Controllers/Visits/BillPage.php:171
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:50
+#: blocks-src/src/components/doctor-fee-badge/StylesPanel.js:29
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:148
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:254
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:276
+msgid "Amount"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:98
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:236
+msgid "Disc %"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:98
+msgid "Delivery"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:116
+msgid "Total amount"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:117
+msgid "Discount"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:118
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:169
+msgid "Extra discount"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:119
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:173
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:128
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:136
+msgid "Payable"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:120
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:175
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:128
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:158
+msgid "Received"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:121
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:128
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:115
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:137
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:168
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:65
+msgid "Due"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:124
+#: app/Controllers/Visits/BillPage.php:197
+msgid "PAID"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:129
+msgid "QR code for the online report"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:130
+msgid "Scan for online report"
+msgstr ""
+
+#: app/Controllers/Receipt/Page.php:136
+msgid "For online report visit here:"
 msgstr ""
 
 #: app/Controllers/Receptionist/Dashboard.php:71
@@ -695,8 +1125,8 @@ msgid "File is empty or exceeds 10MB."
 msgstr ""
 
 #: app/Controllers/Receptionist/ReportUploader.php:77
-#: src/js/public/components/clinic-dashboard/views/Reports.jsx:52
-#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:42
+#: src/js/public/components/clinic-dashboard/views/Reports.jsx:57
+#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:48
 msgid "Only PDF files are allowed."
 msgstr ""
 
@@ -712,83 +1142,148 @@ msgstr ""
 msgid "A report with identical contents was already uploaded for this order."
 msgstr ""
 
-#: app/Controllers/Receptionist/ReportUploader.php:120
+#: app/Controllers/Receptionist/ReportUploader.php:111
+msgid "The reports folder could not be created."
+msgstr ""
+
+#: app/Controllers/Receptionist/ReportUploader.php:126
 msgid "Upload failed."
 msgstr ""
 
-#: app/Controllers/Receptionist/ReportUploader.php:134
+#: app/Controllers/Receptionist/ReportUploader.php:140
 msgid "Could not create attachment record."
 msgstr ""
 
-#: app/Controllers/Receptionist/ReportUploader.php:146
+#: app/Controllers/Receptionist/ReportUploader.php:155
 msgid "Failed to record report."
 msgstr ""
 
-#: app/Controllers/Receptionist/RestApi.php:302
+#: app/Controllers/Receptionist/RestApi.php:317
 msgid "Your account is not linked to a clinic yet."
 msgstr ""
 
-#: app/Controllers/Receptionist/RestApi.php:332
+#. translators: %s: what was looked up, e.g. "Order".
+#: app/Controllers/Receptionist/RestApi.php:333
+msgid "%s not found."
+msgstr ""
+
+#: app/Controllers/Receptionist/RestApi.php:351
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:135
+msgid "Visit"
+msgstr ""
+
+#: app/Controllers/Receptionist/RestApi.php:359
+#: blocks-src/src/blocks/booking-form/view.js:437
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:219
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:252
+#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:36
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:103
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:65
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:72
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:59
+msgid "Patient"
+msgstr ""
+
+#: app/Controllers/Receptionist/RestApi.php:409
 msgid "Name and phone are required."
 msgstr ""
 
-#: app/Controllers/Receptionist/RestApi.php:336
+#: app/Controllers/Receptionist/RestApi.php:415
 msgid "Could not create patient."
 msgstr ""
 
-#: app/Controllers/Receptionist/RestApi.php:343
-#: app/Controllers/Receptionist/RestApi.php:349
-#: app/Controllers/Receptionist/RestApi.php:465
-msgid "Patient not found."
-msgstr ""
-
-#: app/Controllers/Receptionist/RestApi.php:461
-#: app/Controllers/Receptionist/RestApi.php:642
+#: app/Controllers/Receptionist/RestApi.php:544
+#: app/Controllers/Receptionist/RestApi.php:751
 msgid "Patient is required."
 msgstr ""
 
-#: app/Controllers/Receptionist/RestApi.php:469
+#: app/Controllers/Receptionist/RestApi.php:548
+msgid "Patient not found."
+msgstr ""
+
+#: app/Controllers/Receptionist/RestApi.php:552
 msgid "At least one test item is required."
 msgstr ""
 
-#: app/Controllers/Receptionist/RestApi.php:486
+#: app/Controllers/Receptionist/RestApi.php:569
 msgid "Could not create order."
 msgstr ""
 
-#: app/Controllers/Receptionist/RestApi.php:657
+#: app/Controllers/Receptionist/RestApi.php:625
+#: app/Controllers/Receptionist/RestApi.php:952
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:137
+msgid "Enter an amount above zero."
+msgstr ""
+
+#. translators: %s: the balance still owed, e.g. 15.00
+#: app/Controllers/Receptionist/RestApi.php:631
+#: app/Controllers/Receptionist/RestApi.php:958
+msgid "That is more than the balance due (%s). Enter that amount or less."
+msgstr ""
+
+#: app/Controllers/Receptionist/RestApi.php:672
+#: app/Controllers/TestOrder/Model/TestReport.php:60
+msgid "Report"
+msgstr ""
+
+#: app/Controllers/Receptionist/RestApi.php:774
 msgid "Could not create visit."
 msgstr ""
 
-#: app/Controllers/Receptionist/RestApi.php:667
+#: app/Controllers/Receptionist/RestApi.php:784
 msgid "Consultation - %s"
 msgstr ""
 
-#: app/Controllers/Receptionist/RestApi.php:700
-msgid "Visit not found."
+#: app/Controllers/Receptionist/RestApi.php:882
+#: app/Controllers/Receptionist/RestApi.php:893
+#: app/Controllers/Visits/BillPage.php:149
+msgid "Item"
+msgstr ""
+
+#: app/Controllers/Receptionist/RestApi.php:938
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:223
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:283
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:138
+msgid "Payment"
 msgstr ""
 
 #: app/Controllers/Receptionist/UserRole.php:24
-#: src/js/admin/components/staff/App.jsx:288
+#: src/js/admin/app-pages/StaffPage.jsx:19
+#: src/js/admin/app-pages/StaffPage.jsx:77
+#: src/js/admin/components/staff/App.jsx:290
 #: src/js/admin/components/staff/StaffForm.jsx:57
 msgid "Receptionist"
 msgstr ""
 
-#: app/Controllers/ScriptsController.php:239
+#: app/Controllers/ScriptsController.php:260
 #: blocks-src/src/components/doctors/GeneralPanel.js:113
 #: blocks-src/src/components/doctors/StylesPanel.js:60
 msgid "Booking fee"
 msgstr ""
 
-#: app/Controllers/ScriptsController.php:240
-#: blocks-src/src/blocks/booking-form/view.js:558
+#: app/Controllers/ScriptsController.php:261
+#: blocks-src/src/blocks/booking-form/view.js:561
 msgid "Booking progress"
 msgstr ""
 
-#: app/Controllers/Staff/AdminMenu.php:48
-#: app/Controllers/Staff/AdminMenu.php:49
-#: src/js/admin/components/staff/App.jsx:181
-#: src/js/admin/components/staff/App.jsx:252
-msgid "Staff"
+#: app/Controllers/ScriptsController.php:262
+msgid "Remove clinic filter"
+msgstr ""
+
+#: app/Controllers/ScriptsController.php:263
+msgid "Remove department filter"
+msgstr ""
+
+#: app/Controllers/ScriptsController.php:264
+msgid "No more results to load"
+msgstr ""
+
+#: app/Controllers/ScriptsController.php:267
+msgid "Oops! Something went wrong"
+msgstr ""
+
+#: app/Controllers/ScriptsController.php:268
+msgid "Try Again"
 msgstr ""
 
 #: app/Controllers/Staff/Api/StaffRestApi.php:145
@@ -829,12 +1324,6 @@ msgstr ""
 
 #: app/Controllers/Staff/Api/StaffRestApi.php:374
 msgid "ago"
-msgstr ""
-
-#: app/Controllers/TestCatalog/AdminMenu.php:40
-#: app/Controllers/TestCatalog/AdminMenu.php:41
-#: src/js/admin/components/test-items/App.jsx:90
-msgid "Lab Test Catalog"
 msgstr ""
 
 #: app/Controllers/TestCatalog/RestApi.php:115
@@ -881,53 +1370,163 @@ msgstr ""
 msgid "CSV header must include at least \"name\" and \"price\"."
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:95
+#: app/Controllers/Visits/BillPage.php:98
+msgid "Bill / Invoice"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:101
 msgid "Discharge Bill / Final Invoice"
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:96
+#: app/Controllers/Visits/BillPage.php:102
 msgid "Interim Statement"
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:105
+#: app/Controllers/Visits/BillPage.php:112
 msgid "Bill — Visit #%d"
 msgstr ""
 
+#: app/Controllers/Visits/BillPage.php:130
+msgid "Age/Sex"
+msgstr ""
+
+#. translators: %d: patient age in years, shortened (e.g. 42y)
+#: app/Controllers/Visits/BillPage.php:130
+msgid "%dy"
+msgstr ""
+
+#. translators: %d: patient age in years, shortened (e.g. 42y)
+#: app/Controllers/Visits/BillPage.php:131
+#: blocks-src/src/blocks/booking-form/view.js:424
+#: blocks-src/src/blocks/office-hours/edit.js:184
+#: blocks-src/src/components/faq/GeneralPanel.js:122
+#: blocks-src/src/components/office-hours/GeneralPanel.js:86
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:54
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:87
+#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:59
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:60
+msgid "Phone"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:132
+#: blocks-src/src/blocks/booking-form/edit.js:24
+#: blocks-src/src/blocks/booking-form/view.js:191
+#: blocks-src/src/blocks/booking-form/view.js:342
+#: blocks-src/src/blocks/booking-form/view.js:433
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:47
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:51
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:54
+#: blocks-src/src/components/quick-book/GeneralPanel.js:42
+#: blocks-src/src/components/quick-book/GeneralPanel.js:45
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:212
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:220
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:262
+#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:37
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:83
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:112
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:61
+msgid "Doctor"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:133
+msgid "Bed"
+msgstr ""
+
 #: app/Controllers/Visits/BillPage.php:135
-msgid "Charges"
+msgid "Admitted"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:137
+msgid "Visit date"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:140
+msgid "Released"
 msgstr ""
 
 #: app/Controllers/Visits/BillPage.php:142
+msgid "Days"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:143
+msgid "Bill #"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:146
+msgid "Charges"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:149
+#: blocks-src/src/components/hero/FloatingCardEditor.js:33
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:68
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:111
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:198
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:213
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:57
+msgid "Type"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:149
+msgid "Rate"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:149
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:202
+msgid "Disc%"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:153
 msgid "No charges yet."
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:157
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:225
+#: app/Controllers/Visits/BillPage.php:168
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:245
 msgid "Payments"
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:164
+#: app/Controllers/Visits/BillPage.php:171
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:255
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:310
+msgid "Method"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:171
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:256
+msgid "Ref"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:175
 msgid "No payments yet."
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:178
+#: app/Controllers/Visits/BillPage.php:189
 msgid "Total billable"
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:179
+#: app/Controllers/Visits/BillPage.php:190
 msgid "Total paid"
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:180
+#: app/Controllers/Visits/BillPage.php:191
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:307
 msgid "Balance due"
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:180
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:149
+#: app/Controllers/Visits/BillPage.php:191
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:168
 msgid "Balance"
 msgstr ""
 
-#: app/Controllers/Visits/BillPage.php:188
+#: app/Controllers/Visits/BillPage.php:193
+msgid "Advance paid"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:193
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:163
+msgid "Credit (to refund)"
+msgstr ""
+
+#: app/Controllers/Visits/BillPage.php:202
 msgid "Interim statement — the patient is still admitted; charges may continue to accrue until discharge."
 msgstr ""
 
@@ -936,7 +1535,7 @@ msgstr ""
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
-#: blocks-src/bootstrap.php:144
+#: blocks-src/bootstrap.php:152
 msgid "DocBooker Blocks"
 msgstr ""
 
@@ -960,36 +1559,36 @@ msgstr ""
 msgid "Finalising"
 msgstr ""
 
-#: blocks-src/src/admin/template-importer.php:179
+#: blocks-src/src/admin/template-importer.php:213
 msgid "Unknown template."
 msgstr ""
 
-#: blocks-src/src/admin/template-importer.php:215
+#: blocks-src/src/admin/template-importer.php:249
 msgid "Template imported."
 msgstr ""
 
-#: blocks-src/src/admin/template-importer.php:227
+#: blocks-src/src/admin/template-importer.php:261
 msgid "Import session expired or not found."
 msgstr ""
 
-#: blocks-src/src/admin/template-importer.php:233
-#: blocks-src/src/admin/template-importer.php:266
+#: blocks-src/src/admin/template-importer.php:267
+#: blocks-src/src/admin/template-importer.php:300
 msgid "Invalid step index."
 msgstr ""
 
-#: blocks-src/src/admin/template-importer.php:239
+#: blocks-src/src/admin/template-importer.php:273
 msgid "Already completed"
 msgstr ""
 
-#: blocks-src/src/admin/template-importer.php:254
+#: blocks-src/src/admin/template-importer.php:288
 msgid "Done"
 msgstr ""
 
-#: blocks-src/src/admin/template-importer.php:278
+#: blocks-src/src/admin/template-importer.php:312
 msgid "Permission denied."
 msgstr ""
 
-#: blocks-src/src/admin/template-importer.php:300
+#: blocks-src/src/admin/template-importer.php:335
 msgid "Imported Page"
 msgstr ""
 
@@ -1193,8 +1792,8 @@ msgstr ""
 msgid "Countdown timer"
 msgstr ""
 
-#: blocks-src/src/blocks/doctor-schedule/render.php:50
-#: blocks-src/src/blocks/doctor-schedule/render.php:52
+#: blocks-src/src/blocks/doctor-schedule/render.php:51
+#: blocks-src/src/blocks/doctor-schedule/render.php:53
 #: blocks-src/src/blocks/hero/render.php:275
 #: blocks-src/src/blocks/hero/render.php:277
 #: blocks-src/src/utils/doctor-schedule-data.php:763
@@ -1203,8 +1802,10 @@ msgstr ""
 msgid "Book an appointment"
 msgstr ""
 
-#: blocks-src/src/blocks/doctor-schedule/render.php:53
+#: blocks-src/src/blocks/doctor-schedule/render.php:54
 #: blocks-src/src/blocks/hero/render.php:278
+#: src/js/admin/app-pages/kit.jsx:152
+#: src/js/admin/app-pages/TestItemsPage.jsx:103
 msgid "Close"
 msgstr ""
 
@@ -1217,9 +1818,9 @@ msgid "See full stats"
 msgstr ""
 
 #: blocks-src/src/blocks/doctors/render.php:42
-#: blocks-src/src/blocks/booking-form/view.js:350
+#: blocks-src/src/blocks/booking-form/view.js:353
 #: blocks-src/src/blocks/hero/view.js:233
-#: src/js/admin/components/staff/App.jsx:262
+#: src/js/admin/components/staff/App.jsx:263
 msgid "Loading…"
 msgstr ""
 
@@ -1241,35 +1842,184 @@ msgid "Statistics"
 msgstr ""
 
 #: blocks-src/src/blocks/hero/render.php:256
+#: blocks-src/src/blocks/hero/edit.js:115
 msgid "Start your booking"
 msgstr ""
 
+#: blocks-src/src/blocks/office-hours/render.php:31
+#: blocks-src/src/utils/clinics-data.php:315
+#: blocks-src/src/utils/clinics-data.php:391
+msgid "Open now"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:56
+#: blocks-src/src/utils/doctor-schedule-data.php:99
+#: blocks-src/src/utils/officeHours.js:14
+msgid "Mon"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:57
+#: blocks-src/src/utils/doctor-schedule-data.php:100
+#: blocks-src/src/utils/officeHours.js:15
+msgid "Tue"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:58
+#: blocks-src/src/utils/doctor-schedule-data.php:101
+#: blocks-src/src/utils/officeHours.js:16
+msgid "Wed"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:59
+#: blocks-src/src/utils/doctor-schedule-data.php:102
+#: blocks-src/src/utils/officeHours.js:17
+msgid "Thu"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:60
+#: blocks-src/src/utils/doctor-schedule-data.php:103
+#: blocks-src/src/utils/officeHours.js:18
+msgid "Fri"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:61
+#: blocks-src/src/utils/doctor-schedule-data.php:104
+#: blocks-src/src/utils/officeHours.js:19
+msgid "Sat"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:62
+#: blocks-src/src/utils/doctor-schedule-data.php:98
+#: blocks-src/src/utils/officeHours.js:20
+msgid "Sun"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:120
+#: blocks-src/src/utils/officeHours.js:58
+msgid "PM"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:120
+#: blocks-src/src/utils/officeHours.js:58
+msgid "AM"
+msgstr ""
+
+#. translators: %d: minutes
+#: blocks-src/src/blocks/office-hours/render.php:144
+#: blocks-src/src/utils/officeHours.js:131
+msgid "%dm"
+msgstr ""
+
+#. translators: 1: hours, 2: minutes (two digits)
+#: blocks-src/src/blocks/office-hours/render.php:147
+#: blocks-src/src/utils/officeHours.js:133
+msgid "%1$dh %2$sm"
+msgstr ""
+
+#. translators: 1: time left, e.g. "2h 14m"; 2: closing time
+#: blocks-src/src/blocks/office-hours/render.php:200
+#: blocks-src/src/utils/officeHours.js:150
+msgid "Closes in %1$s · %2$s"
+msgstr ""
+
+#. translators: %s: closing time
+#: blocks-src/src/blocks/office-hours/render.php:202
+#: blocks-src/src/utils/officeHours.js:153
+msgid "Closes at %s"
+msgstr ""
+
+#. translators: %s: opening time
+#: blocks-src/src/blocks/office-hours/render.php:209
+#: blocks-src/src/utils/officeHours.js:158
+msgid "Opens today at %s"
+msgstr ""
+
+#. translators: %s: opening time
+#: blocks-src/src/blocks/office-hours/render.php:212
+#: blocks-src/src/utils/officeHours.js:160
+msgid "Opens tomorrow at %s"
+msgstr ""
+
+#. translators: 1: weekday, 2: opening time
+#: blocks-src/src/blocks/office-hours/render.php:215
+#: blocks-src/src/utils/officeHours.js:162
+msgid "Opens %1$s at %2$s"
+msgstr ""
+
+#. translators: %s: closing time
+#: blocks-src/src/blocks/office-hours/render.php:222
+#: blocks-src/src/utils/officeHours.js:169
+msgid "until %s"
+msgstr ""
+
+#. translators: %s: opening time
+#: blocks-src/src/blocks/office-hours/render.php:228
+#: blocks-src/src/utils/officeHours.js:174
+msgid "opens today %s"
+msgstr ""
+
+#. translators: %s: opening time
+#: blocks-src/src/blocks/office-hours/render.php:231
+#: blocks-src/src/utils/officeHours.js:176
+msgid "opens tomorrow %s"
+msgstr ""
+
+#. translators: 1: weekday, 2: opening time
+#: blocks-src/src/blocks/office-hours/render.php:234
+#: blocks-src/src/utils/officeHours.js:178
+msgid "opens %1$s %2$s"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:276
+#: blocks-src/src/blocks/office-hours/edit.js:126
+#: blocks-src/src/blocks/office-hours/view.js:86
+msgctxt "office hours state"
+msgid "open"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:276
+#: blocks-src/src/blocks/office-hours/edit.js:126
+#: blocks-src/src/blocks/office-hours/view.js:86
+msgctxt "office hours state"
+msgid "closed"
+msgstr ""
+
+#. translators: %s: "open" or "closed", shown emphasised
+#: blocks-src/src/blocks/office-hours/render.php:279
+#: blocks-src/src/blocks/office-hours/edit.js:125
+#: blocks-src/src/blocks/office-hours/view.js:89
+msgid "We’re %s right now."
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:422
+#: blocks-src/src/utils/clinics-data.php:85
+#: blocks-src/src/blocks/office-hours/view.js:107
+msgid "Closed today"
+msgstr ""
+
+#: blocks-src/src/blocks/office-hours/render.php:433
+msgid "Opening Hours"
+msgstr ""
+
 #: blocks-src/src/blocks/process-steps/render.php:140
+#: blocks-src/src/blocks/process-steps/edit.js:141
 msgid "You are here"
 msgstr ""
 
 #: blocks-src/src/blocks/process-steps/render.php:163
+#: blocks-src/src/blocks/process-steps/edit.js:170
 msgid "Currently:"
 msgstr ""
 
 #: blocks-src/src/blocks/process-steps/render.php:163
-#: src/js/admin/components/staff/App.jsx:322
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:407
+#: src/js/admin/components/staff/App.jsx:324
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:410
 #: src/js/public/components/clinic-dashboard/views/Doctors.jsx:237
 msgid "of"
 msgstr ""
 
 #: blocks-src/src/blocks/process-steps/render.php:163
 msgid "steps complete"
-msgstr ""
-
-#: blocks-src/src/blocks/slider/render.php:115
-msgid "Previous"
-msgstr ""
-
-#: blocks-src/src/blocks/slider/render.php:115
-#: src/js/admin/components/staff/App.jsx:334
-msgid "Next"
 msgstr ""
 
 #: blocks-src/src/blocks/testimonials/render.php:21
@@ -1327,13 +2077,9 @@ msgstr[1] ""
 
 #: blocks-src/src/utils/awards-data.php:318
 #: src/js/public/components/clinic-dashboard/views/Bookings.jsx:325
-#: src/js/public/components/patient-portal/ReportList.jsx:60
-#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:72
+#: src/js/public/components/patient-portal/ReportList.jsx:99
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:109
 msgid "Print"
-msgstr ""
-
-#: blocks-src/src/utils/clinics-data.php:85
-msgid "Closed today"
 msgstr ""
 
 #: blocks-src/src/utils/clinics-data.php:203
@@ -1378,10 +2124,11 @@ msgid "24/7 ER"
 msgstr ""
 
 #: blocks-src/src/utils/clinics-data.php:308
+#: blocks-src/src/blocks/office-hours/edit.js:183
 #: blocks-src/src/components/clinics/GeneralPanel.js:60
 #: blocks-src/src/components/office-hours/GeneralPanel.js:85
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:72
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:90
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:73
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:91
 msgid "Address"
 msgstr ""
 
@@ -1393,12 +2140,11 @@ msgstr ""
 #: blocks-src/src/utils/hero-booking-data.php:203
 #: blocks-src/src/blocks/hero/view.js:50
 #: blocks-src/src/blocks/hero/view.js:98
+#: blocks-src/src/blocks/office-hours/edit.js:108
+#: blocks-src/src/blocks/office-hours/edit.js:176
+#: blocks-src/src/blocks/office-hours/view.js:58
+#: blocks-src/src/blocks/office-hours/view.js:64
 msgid "Today"
-msgstr ""
-
-#: blocks-src/src/utils/clinics-data.php:315
-#: blocks-src/src/utils/clinics-data.php:391
-msgid "Open now"
 msgstr ""
 
 #: blocks-src/src/utils/clinics-data.php:321
@@ -1428,7 +2174,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: blocks-src/src/utils/clinics-data.php:450
-#: blocks-src/src/blocks/booking-form/view.js:358
+#: blocks-src/src/blocks/booking-form/view.js:361
 msgid "No clinics found."
 msgstr ""
 
@@ -1458,34 +2204,6 @@ msgstr ""
 
 #: blocks-src/src/utils/departments-data.php:334
 msgid "No matches."
-msgstr ""
-
-#: blocks-src/src/utils/doctor-schedule-data.php:98
-msgid "Sun"
-msgstr ""
-
-#: blocks-src/src/utils/doctor-schedule-data.php:99
-msgid "Mon"
-msgstr ""
-
-#: blocks-src/src/utils/doctor-schedule-data.php:100
-msgid "Tue"
-msgstr ""
-
-#: blocks-src/src/utils/doctor-schedule-data.php:101
-msgid "Wed"
-msgstr ""
-
-#: blocks-src/src/utils/doctor-schedule-data.php:102
-msgid "Thu"
-msgstr ""
-
-#: blocks-src/src/utils/doctor-schedule-data.php:103
-msgid "Fri"
-msgstr ""
-
-#: blocks-src/src/utils/doctor-schedule-data.php:104
-msgid "Sat"
 msgstr ""
 
 #: blocks-src/src/utils/doctor-schedule-data.php:118
@@ -1538,6 +2256,7 @@ msgstr ""
 #: blocks-src/src/blocks/doctor-schedule/edit.js:101
 #: blocks-src/src/blocks/doctor-schedule/edit.js:158
 #: blocks-src/src/blocks/doctor-schedule/edit.js:198
+#: blocks-src/src/blocks/services/edit.js:148
 msgid "From"
 msgstr ""
 
@@ -1567,15 +2286,6 @@ msgstr ""
 #: blocks-src/src/utils/doctors-data.php:341
 #: blocks-src/src/blocks/doctor-schedule/edit.js:153
 msgid "Years"
-msgstr ""
-
-#: blocks-src/src/utils/doctor-schedule-data.php:710
-#: blocks-src/src/utils/doctors-data.php:466
-#: blocks-src/src/blocks/doctor-schedule/edit.js:153
-#: blocks-src/src/components/Constants.js:417
-#: blocks-src/src/components/doctors/GeneralPanel.js:111
-#: blocks-src/src/components/testimonials/ItemEditor.js:38
-msgid "Rating"
 msgstr ""
 
 #: blocks-src/src/utils/doctor-schedule-data.php:750
@@ -1645,17 +2355,6 @@ msgstr ""
 msgid "Practice"
 msgstr ""
 
-#: blocks-src/src/utils/doctors-data.php:424
-#: blocks-src/src/components/doctor-awards/GeneralPanel.js:81
-msgid "Experience"
-msgstr ""
-
-#: blocks-src/src/utils/doctors-data.php:427
-#: src/js/public/components/receptionist-dashboard/Sidebar.jsx:16
-#: src/js/public/components/receptionist-dashboard/Topbar.jsx:7
-msgid "Patients"
-msgstr ""
-
 #: blocks-src/src/utils/doctors-data.php:463
 msgid "Exp"
 msgstr ""
@@ -1679,6 +2378,8 @@ msgstr ""
 
 #: blocks-src/src/utils/doctors-data.php:685
 #: blocks-src/src/blocks/doctors/edit.js:96
+#: src/js/admin/app-pages/TestItemsPage.jsx:70
+#: src/js/admin/app-pages/TestItemsPage.jsx:230
 #: src/js/admin/components/clinic-managers/ManagersTable.jsx:148
 msgid "All clinics"
 msgstr ""
@@ -1693,8 +2394,9 @@ msgid "Reset clinic and department filters"
 msgstr ""
 
 #: blocks-src/src/utils/doctors-data.php:712
+#: blocks-src/src/components/Color.js:49
 #: src/js/public/components/clinic-dashboard/views/AddDoctor.jsx:167
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:384
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:387
 msgid "Reset"
 msgstr ""
 
@@ -1717,7 +2419,7 @@ msgstr ""
 #. translators: %s: payment gateway name (Stripe / Razorpay).
 #: blocks-src/src/utils/quick-book-data.php:124
 #: blocks-src/src/blocks/booking-form/view.js:174
-#: blocks-src/src/blocks/booking-form/view.js:474
+#: blocks-src/src/blocks/booking-form/view.js:477
 msgid "Secured by %s"
 msgstr ""
 
@@ -1730,42 +2432,62 @@ msgstr ""
 msgid "Quick Book: choose a doctor in the block settings."
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/edit.js:70
-#: blocks-src/src/blocks/booking-form/view.js:382
+#: blocks-src/src/blocks/booking-form/edit.js:24
+#: blocks-src/src/blocks/booking-form/view.js:192
+msgid "Day & Time"
+msgstr ""
+
+#: blocks-src/src/blocks/booking-form/edit.js:24
+#: blocks-src/src/blocks/booking-form/view.js:192
+msgid "Your info"
+msgstr ""
+
+#: blocks-src/src/blocks/booking-form/edit.js:24
+#: blocks-src/src/blocks/booking-form/view.js:195
+msgid "Review & Pay"
+msgstr ""
+
+#: blocks-src/src/blocks/booking-form/edit.js:71
+#: blocks-src/src/blocks/booking-form/view.js:385
 msgid "Selected"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/edit.js:70
-#: blocks-src/src/blocks/booking-form/view.js:382
+#: blocks-src/src/blocks/booking-form/edit.js:71
+#: blocks-src/src/blocks/booking-form/view.js:385
 msgid "Pick"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/edit.js:86
+#: blocks-src/src/blocks/booking-form/edit.js:87
 msgid "Step 03 · Doctor"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/edit.js:87
+#: blocks-src/src/blocks/booking-form/edit.js:88
 msgid "Choose your specialist"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/edit.js:92
+#: blocks-src/src/blocks/booking-form/edit.js:93
 msgid "← Back"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/edit.js:93
-#: blocks-src/src/blocks/booking-form/view.js:487
+#: blocks-src/src/blocks/booking-form/edit.js:94
+#: blocks-src/src/blocks/booking-form/view.js:490
 msgid "Continue"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/edit.js:105
+#: blocks-src/src/blocks/booking-form/edit.js:106
 msgid "Step 03 / 06 · Doctor"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/edit.js:125
+#: blocks-src/src/blocks/booking-form/edit.js:126
 msgid "Booking journey · 6 steps"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/edit.js:145
+#: blocks-src/src/blocks/booking-form/edit.js:129
+#: blocks-src/src/blocks/booking-form/view.js:547
+msgid "Step %s"
+msgstr ""
+
+#: blocks-src/src/blocks/booking-form/edit.js:146
 msgid "Preview — the live multi-step booking (real doctors, schedule and payment) runs on the front end."
 msgstr ""
 
@@ -1830,213 +2552,164 @@ msgstr ""
 msgid "Processing…"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:191
-#: blocks-src/src/blocks/booking-form/view.js:339
-#: blocks-src/src/blocks/booking-form/view.js:430
-#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:47
-#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:51
-#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:54
-#: blocks-src/src/components/quick-book/GeneralPanel.js:42
-#: blocks-src/src/components/quick-book/GeneralPanel.js:45
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:212
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:220
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:262
-#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:36
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:82
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:111
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:60
-msgid "Doctor"
+#: blocks-src/src/blocks/booking-form/view.js:195
+msgid "Review"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:192
-msgid "Day & Time"
-msgstr ""
-
-#: blocks-src/src/blocks/booking-form/view.js:192
-msgid "Your info"
-msgstr ""
-
-#: blocks-src/src/blocks/booking-form/view.js:192
-msgid "Review & Pay"
-msgstr ""
-
-#: blocks-src/src/blocks/booking-form/view.js:294
+#: blocks-src/src/blocks/booking-form/view.js:297
 msgid "Please choose a department."
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:295
+#: blocks-src/src/blocks/booking-form/view.js:298
 msgid "Please choose a doctor."
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:296
+#: blocks-src/src/blocks/booking-form/view.js:299
 msgid "Please choose a day and time."
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:298
+#: blocks-src/src/blocks/booking-form/view.js:301
 msgid "Name, phone and email are required."
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:299
+#: blocks-src/src/blocks/booking-form/view.js:302
 msgid "Please enter a valid email."
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:335
+#: blocks-src/src/blocks/booking-form/view.js:338
 msgid "Your appointment is confirmed"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:337
+#: blocks-src/src/blocks/booking-form/view.js:340
 msgid "Booking reference: %s"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:340
-#: blocks-src/src/blocks/booking-form/view.js:432
+#: blocks-src/src/blocks/booking-form/view.js:343
+#: blocks-src/src/blocks/booking-form/view.js:435
 msgid "When"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:367
+#: blocks-src/src/blocks/booking-form/view.js:370
 msgid "%d specialists"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:393
+#: blocks-src/src/blocks/booking-form/view.js:396
 msgid "Loading times…"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:396
+#: blocks-src/src/blocks/booking-form/view.js:399
 msgid "No openings on this day. Try another date."
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:400
+#: blocks-src/src/blocks/booking-form/view.js:403
 msgid "Closed (holiday)."
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:419
+#: blocks-src/src/blocks/booking-form/view.js:422
 #: src/js/public/components/clinic-dashboard/views/AddDoctor.jsx:100
 msgid "Full name"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:420
+#: blocks-src/src/blocks/booking-form/view.js:423
+#: blocks-src/src/blocks/office-hours/edit.js:185
 #: blocks-src/src/components/office-hours/GeneralPanel.js:87
+#: src/js/admin/app-pages/StaffPage.jsx:102
 #: src/js/admin/components/clinic-managers/ManagersTable.jsx:82
 #: src/js/admin/components/staff/StaffForm.jsx:81
 #: src/js/public/components/clinic-dashboard/views/AddDoctor.jsx:125
 #: src/js/public/components/clinic-dashboard/views/ClinicInfo.jsx:62
 #: src/js/public/components/clinic-dashboard/views/Doctors.jsx:209
 #: src/js/public/components/clinic-dashboard/views/Doctors.jsx:312
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:87
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:88
 msgid "Email"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:421
-#: blocks-src/src/components/faq/GeneralPanel.js:122
-#: blocks-src/src/components/office-hours/GeneralPanel.js:86
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:53
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:86
-#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:57
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:59
-msgid "Phone"
-msgstr ""
-
-#: blocks-src/src/blocks/booking-form/view.js:422
+#: blocks-src/src/blocks/booking-form/view.js:425
 msgid "Notes (optional)"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:434
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:219
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:252
-#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:35
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:102
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:64
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:71
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:58
-msgid "Patient"
-msgstr ""
-
-#: blocks-src/src/blocks/booking-form/view.js:436
+#: blocks-src/src/blocks/booking-form/view.js:439
 msgid "Total today"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:441
+#: blocks-src/src/blocks/booking-form/view.js:444
 msgid "Pay at appointment"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:444
+#: blocks-src/src/blocks/booking-form/view.js:447
 msgid "Submitting…"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:444
+#: blocks-src/src/blocks/booking-form/view.js:447
 msgid "Request appointment"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:472
+#: blocks-src/src/blocks/booking-form/view.js:475
 msgid "Confirmed instantly"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:472
+#: blocks-src/src/blocks/booking-form/view.js:475
 msgid "No waiting on hold"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:473
-msgid "SMS & email confirmation"
+#: blocks-src/src/blocks/booking-form/view.js:476
+msgid "Instant confirmation"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:473
+#: blocks-src/src/blocks/booking-form/view.js:476
 msgid "Sent the moment you book"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:474
-msgid "Secure checkout"
+#: blocks-src/src/blocks/booking-form/view.js:477
+msgid "Private and secure"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:474
+#: blocks-src/src/blocks/booking-form/view.js:477
 msgid "Your details stay private"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:484
-#: blocks-src/src/components/Constants.js:328
-#: src/js/public/components/patient-portal/OtpStep.jsx:35
+#: blocks-src/src/blocks/booking-form/view.js:487
+#: src/js/public/components/patient-portal/OtpStep.jsx:51
 msgid "Back"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:486
+#: blocks-src/src/blocks/booking-form/view.js:489
 msgid "%s selected"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:493
+#: blocks-src/src/blocks/booking-form/view.js:496
 msgid "Step %1$s · %2$s"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:506
+#: blocks-src/src/blocks/booking-form/view.js:509
 msgid "Step %1$s / %2$s · %3$s"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:511
+#: blocks-src/src/blocks/booking-form/view.js:514
 msgid "Now"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:521
+#: blocks-src/src/blocks/booking-form/view.js:524
 msgid "What’s next"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:537
+#: blocks-src/src/blocks/booking-form/view.js:540
 msgid "Booking journey · %d steps"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:544
-msgid "Step %s"
-msgstr ""
-
-#: blocks-src/src/blocks/booking-form/view.js:547
-#: src/js/admin/components/test-items/App.jsx:142
+#: blocks-src/src/blocks/booking-form/view.js:550
+#: src/js/admin/app-pages/TestItemsPage.jsx:233
+#: src/js/admin/components/test-items/App.jsx:144
 #: src/js/public/components/clinic-dashboard/views/Doctors.jsx:221
 #: src/js/public/components/clinic-dashboard/views/Doctors.jsx:253
 msgid "Edit"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:558
+#: blocks-src/src/blocks/booking-form/view.js:561
 msgid "Step %1$d of %2$d"
 msgstr ""
 
-#: blocks-src/src/blocks/booking-form/view.js:561
+#: blocks-src/src/blocks/booking-form/view.js:564
 msgid "Your selections stay private until you confirm."
 msgstr ""
 
@@ -2098,6 +2771,16 @@ msgstr ""
 msgid "doctor(s) — filtering & “load more” are interactive on the front end."
 msgstr ""
 
+#: blocks-src/src/blocks/doctors/view.js:102
+#: src/js/admin/app-pages/StaffPage.jsx:294
+#: src/js/admin/app-pages/TestItemsPage.jsx:209
+msgid "Try again"
+msgstr ""
+
+#: blocks-src/src/blocks/doctors/view.js:103
+msgid "Couldn't load doctors."
+msgstr ""
+
 #: blocks-src/src/blocks/hero/view.js:240
 msgid "Nothing available"
 msgstr ""
@@ -2108,6 +2791,42 @@ msgstr ""
 
 #: blocks-src/src/blocks/quick-book/edit.js:111
 msgid "Preview — live doctor profile, fee and booking flow render on the front end."
+msgstr ""
+
+#: blocks-src/src/blocks/services/edit.js:100
+msgid "Flagship"
+msgstr ""
+
+#: blocks-src/src/components/advanced-heading/GeneralPanel.js:11
+msgid "V1 — Editorial classic (centered)"
+msgstr ""
+
+#: blocks-src/src/components/advanced-heading/GeneralPanel.js:12
+msgid "V2 — Magazine masthead"
+msgstr ""
+
+#: blocks-src/src/components/advanced-heading/GeneralPanel.js:13
+msgid "V3 — Asymmetric split"
+msgstr ""
+
+#: blocks-src/src/components/advanced-heading/GeneralPanel.js:14
+msgid "V4 — Massive display"
+msgstr ""
+
+#: blocks-src/src/components/advanced-heading/GeneralPanel.js:15
+msgid "V5 — Stacked accent"
+msgstr ""
+
+#: blocks-src/src/components/advanced-heading/GeneralPanel.js:16
+msgid "V6 — Numbered chapter"
+msgstr ""
+
+#: blocks-src/src/components/advanced-heading/GeneralPanel.js:17
+msgid "V7 — Quote headline"
+msgstr ""
+
+#: blocks-src/src/components/advanced-heading/GeneralPanel.js:18
+msgid "V8 — Compact divider"
 msgstr ""
 
 #: blocks-src/src/components/advanced-heading/GeneralPanel.js:48
@@ -2200,10 +2919,11 @@ msgstr ""
 #: blocks-src/src/components/booking-form/GeneralPanel.js:52
 #: blocks-src/src/components/call-to-action/GeneralPanel.js:47
 #: blocks-src/src/components/call-to-action/StylesPanel.js:28
-#: blocks-src/src/components/Constants.js:406
+#: blocks-src/src/components/Constants.js:72
 #: blocks-src/src/components/countdown/GeneralPanel.js:48
 #: blocks-src/src/components/countdown/StylesPanel.js:15
 #: blocks-src/src/components/doctor-stats/GeneralPanel.js:89
+#: blocks-src/src/components/doctors/GeneralPanel.js:20
 #: blocks-src/src/components/faq/GeneralPanel.js:117
 #: blocks-src/src/components/faq/GeneralPanel.js:142
 #: blocks-src/src/components/info-box/GeneralPanel.js:75
@@ -2278,7 +2998,6 @@ msgid "Display meta line"
 msgstr ""
 
 #: blocks-src/src/components/advanced-heading/GeneralPanel.js:177
-#: blocks-src/src/components/Constants.js:348
 #: blocks-src/src/components/countdown/GeneralPanel.js:67
 #: blocks-src/src/components/slider/StylesPanel.js:65
 msgid "Button"
@@ -2526,6 +3245,14 @@ msgstr ""
 msgid "Background Size"
 msgstr ""
 
+#: blocks-src/src/components/booking-form/GeneralPanel.js:11
+msgid "Full wizard (split-screen)"
+msgstr ""
+
+#: blocks-src/src/components/booking-form/GeneralPanel.js:12
+msgid "Inline panel (compact)"
+msgstr ""
+
 #: blocks-src/src/components/booking-form/GeneralPanel.js:30
 msgid "Target"
 msgstr ""
@@ -2617,6 +3344,7 @@ msgstr ""
 #: blocks-src/src/components/countdown/GeneralPanel.js:44
 #: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:54
 #: blocks-src/src/components/doctor-schedule/GeneralPanel.js:92
+#: blocks-src/src/components/doctors/GeneralPanel.js:27
 #: blocks-src/src/components/hero/GeneralPanel.js:119
 #: blocks-src/src/components/info-box/GeneralPanel.js:70
 #: blocks-src/src/components/quick-book/GeneralPanel.js:53
@@ -2676,6 +3404,7 @@ msgstr ""
 #: blocks-src/src/components/booking-form/StylesPanel.js:15
 #: blocks-src/src/components/call-to-action/StylesPanel.js:15
 #: blocks-src/src/components/clinics/StylesPanel.js:26
+#: blocks-src/src/components/ColorTabs.js:35
 #: blocks-src/src/components/countdown/StylesPanel.js:37
 #: blocks-src/src/components/countdown/StylesPanel.js:41
 #: blocks-src/src/components/departments/StylesPanel.js:28
@@ -2808,6 +3537,30 @@ msgstr ""
 msgid "Primary button"
 msgstr ""
 
+#: blocks-src/src/components/Border.js:7
+#: blocks-src/src/components/BoxShadow.js:6
+#: blocks-src/src/components/Constants.js:43
+#: blocks-src/src/components/doctor-stats/GeneralPanel.js:19
+#: blocks-src/src/components/process-steps/GeneralPanel.js:29
+msgid "None"
+msgstr ""
+
+#: blocks-src/src/components/Border.js:8
+msgid "Solid"
+msgstr ""
+
+#: blocks-src/src/components/Border.js:9
+msgid "Dashed"
+msgstr ""
+
+#: blocks-src/src/components/Border.js:10
+msgid "Dotted"
+msgstr ""
+
+#: blocks-src/src/components/Border.js:11
+msgid "Double"
+msgstr ""
+
 #: blocks-src/src/components/Border.js:34
 msgid "Border Style"
 msgstr ""
@@ -2817,7 +3570,28 @@ msgid "Border Width"
 msgstr ""
 
 #: blocks-src/src/components/Border.js:49
+#: blocks-src/src/components/ColorTabs.js:42
 msgid "Border Color"
+msgstr ""
+
+#: blocks-src/src/components/BoxShadow.js:7
+msgid "Subtle"
+msgstr ""
+
+#: blocks-src/src/components/BoxShadow.js:8
+#: blocks-src/src/components/Constants.js:53
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:16
+msgid "Medium"
+msgstr ""
+
+#: blocks-src/src/components/BoxShadow.js:9
+msgid "Strong"
+msgstr ""
+
+#: blocks-src/src/components/BoxShadow.js:10
+#: blocks-src/src/components/hero/FloatingCardEditor.js:9
+#: blocks-src/src/components/wrapper/GeneralPanel.js:21
+msgid "Custom"
 msgstr ""
 
 #: blocks-src/src/components/BoxShadow.js:42
@@ -2846,6 +3620,30 @@ msgstr ""
 
 #: blocks-src/src/components/BoxShadow.js:62
 msgid "Inset"
+msgstr ""
+
+#: blocks-src/src/components/call-to-action/GeneralPanel.js:13
+msgid "V1 — Centered (photo hero)"
+msgstr ""
+
+#: blocks-src/src/components/call-to-action/GeneralPanel.js:14
+msgid "V2 — Split 50/50"
+msgstr ""
+
+#: blocks-src/src/components/call-to-action/GeneralPanel.js:15
+msgid "V3 — Compact strip"
+msgstr ""
+
+#: blocks-src/src/components/call-to-action/GeneralPanel.js:16
+msgid "V4 — Editorial gradient"
+msgstr ""
+
+#: blocks-src/src/components/call-to-action/GeneralPanel.js:17
+msgid "V5 — Pull-quote"
+msgstr ""
+
+#: blocks-src/src/components/call-to-action/GeneralPanel.js:18
+msgid "V6 — Multi-CTA card"
 msgstr ""
 
 #: blocks-src/src/components/call-to-action/GeneralPanel.js:33
@@ -2949,13 +3747,16 @@ msgid "Side label"
 msgstr ""
 
 #: blocks-src/src/components/call-to-action/GeneralPanel.js:107
-#: blocks-src/src/components/Constants.js:405
-#: blocks-src/src/components/Constants.js:447
+#: blocks-src/src/components/Constants.js:71
 msgid "Author"
 msgstr ""
 
 #: blocks-src/src/components/call-to-action/GeneralPanel.js:108
-#: src/js/admin/components/staff/App.jsx:253
+#: src/js/admin/app-pages/StaffPage.jsx:86
+#: src/js/admin/app-pages/StaffPage.jsx:87
+#: src/js/admin/app-pages/StaffPage.jsx:303
+#: src/js/admin/app-pages/StaffPage.jsx:318
+#: src/js/admin/components/staff/App.jsx:254
 #: src/js/admin/components/staff/StaffForm.jsx:54
 msgid "Role"
 msgstr ""
@@ -3050,6 +3851,53 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
+#: blocks-src/src/components/clinics/GeneralPanel.js:12
+#: blocks-src/src/components/doctors/GeneralPanel.js:15
+msgid "Card (masonry)"
+msgstr ""
+
+#: blocks-src/src/components/clinics/GeneralPanel.js:13
+msgid "Feature (rows)"
+msgstr ""
+
+#: blocks-src/src/components/clinics/GeneralPanel.js:14
+msgid "Gallery (slideshow)"
+msgstr ""
+
+#: blocks-src/src/components/clinics/GeneralPanel.js:15
+msgid "Map"
+msgstr ""
+
+#: blocks-src/src/components/clinics/GeneralPanel.js:16
+msgid "Compact"
+msgstr ""
+
+#: blocks-src/src/components/clinics/GeneralPanel.js:21
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:21
+#: blocks-src/src/components/doctors/GeneralPanel.js:21
+msgid "Menu order"
+msgstr ""
+
+#: blocks-src/src/components/clinics/GeneralPanel.js:22
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:24
+#: blocks-src/src/components/doctors/GeneralPanel.js:22
+msgid "Random"
+msgstr ""
+
+#: blocks-src/src/components/clinics/GeneralPanel.js:24
+#: blocks-src/src/components/departments/GeneralPanel.js:23
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:26
+#: blocks-src/src/components/doctors/GeneralPanel.js:24
+msgid "Descending"
+msgstr ""
+
+#: blocks-src/src/components/clinics/GeneralPanel.js:24
+#: blocks-src/src/components/departments/GeneralPanel.js:23
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:26
+#: blocks-src/src/components/doctors/GeneralPanel.js:24
+msgid "Ascending"
+msgstr ""
+
 #: blocks-src/src/components/clinics/GeneralPanel.js:44
 #: blocks-src/src/components/departments/GeneralPanel.js:49
 #: blocks-src/src/components/doctor-awards/GeneralPanel.js:56
@@ -3066,15 +3914,6 @@ msgstr ""
 #: blocks-src/src/components/doctor-awards/GeneralPanel.js:68
 #: blocks-src/src/components/doctors/GeneralPanel.js:73
 msgid "Order by"
-msgstr ""
-
-#: blocks-src/src/components/clinics/GeneralPanel.js:52
-#: blocks-src/src/components/departments/GeneralPanel.js:57
-#: blocks-src/src/components/doctor-awards/GeneralPanel.js:69
-#: blocks-src/src/components/doctors/GeneralPanel.js:74
-#: src/js/public/components/patient-portal/ReportList.jsx:38
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:131
-msgid "Order"
 msgstr ""
 
 #: blocks-src/src/components/clinics/GeneralPanel.js:53
@@ -3134,6 +3973,7 @@ msgid "Empty message"
 msgstr ""
 
 #: blocks-src/src/components/clinics/StylesPanel.js:17
+#: blocks-src/src/components/departments/GeneralPanel.js:13
 #: blocks-src/src/components/departments/StylesPanel.js:16
 #: blocks-src/src/components/doctors/StylesPanel.js:19
 msgid "Grid"
@@ -3190,24 +4030,13 @@ msgstr ""
 msgid "Card"
 msgstr ""
 
-#: blocks-src/src/components/clinics/StylesPanel.js:32
-#: blocks-src/src/components/departments/StylesPanel.js:35
-#: blocks-src/src/components/doctors/GeneralPanel.js:108
-#: blocks-src/src/components/doctors/StylesPanel.js:40
-#: blocks-src/src/components/testimonials/ItemEditor.js:39
-#: blocks-src/src/components/testimonials/StylesPanel.js:27
-#: src/js/admin/components/test-items/App.jsx:122
-#: src/js/admin/components/test-items/App.jsx:190
-#: src/js/public/components/clinic-dashboard/views/Doctors.jsx:291
-#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:56
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:179
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:196
-msgid "Name"
+#: blocks-src/src/components/Color.js:60
+msgid "Reset color"
 msgstr ""
 
 #: blocks-src/src/components/ColorTabs.js:20
-#: blocks-src/src/components/Constants.js:95
-#: blocks-src/src/components/Constants.js:105
+#: blocks-src/src/components/Constants.js:52
+#: blocks-src/src/components/Constants.js:62
 msgid "Normal"
 msgstr ""
 
@@ -3215,692 +4044,184 @@ msgstr ""
 msgid "Hover"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:47
+#: blocks-src/src/components/ColorTabs.js:29
+msgid "Text Color"
+msgstr ""
+
+#: blocks-src/src/components/ColorTabs.js:54
+msgid "Hover Text"
+msgstr ""
+
+#: blocks-src/src/components/ColorTabs.js:60
+msgid "Hover Background"
+msgstr ""
+
+#: blocks-src/src/components/ColorTabs.js:67
+msgid "Hover Border"
+msgstr ""
+
+#: blocks-src/src/components/Constants.js:4
 msgid "Classic"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:48
+#: blocks-src/src/components/Constants.js:5
 msgid "Gradient"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:52
-#: blocks-src/src/components/Constants.js:65
-#: blocks-src/src/components/Constants.js:72
-#: blocks-src/src/components/Constants.js:80
-#: blocks-src/src/components/Constants.js:93
-#: blocks-src/src/components/Constants.js:104
-#: blocks-src/src/components/Constants.js:369
-#: blocks-src/src/components/Constants.js:379
+#: blocks-src/src/components/Constants.js:9
+#: blocks-src/src/components/Constants.js:22
+#: blocks-src/src/components/Constants.js:29
+#: blocks-src/src/components/Constants.js:37
+#: blocks-src/src/components/Constants.js:50
+#: blocks-src/src/components/Constants.js:61
+#: blocks-src/src/components/FontPicker.js:20
 msgid "Default"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:53
+#: blocks-src/src/components/Constants.js:10
 msgid "Left Top"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:54
+#: blocks-src/src/components/Constants.js:11
 msgid "Left Center"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:55
+#: blocks-src/src/components/Constants.js:12
 msgid "Left Bottom"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:56
+#: blocks-src/src/components/Constants.js:13
 msgid "Right Top"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:57
+#: blocks-src/src/components/Constants.js:14
 msgid "Right Center"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:58
+#: blocks-src/src/components/Constants.js:15
 msgid "Right Bottom"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:59
+#: blocks-src/src/components/Constants.js:16
 msgid "Center Top"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:60
-#: blocks-src/src/components/Constants.js:385
+#: blocks-src/src/components/Constants.js:17
 msgid "Center Center"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:61
+#: blocks-src/src/components/Constants.js:18
 msgid "Center Bottom"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:66
+#: blocks-src/src/components/Constants.js:23
 msgid "Auto"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:67
+#: blocks-src/src/components/Constants.js:24
+#: blocks-src/src/components/doctors/StylesPanel.js:10
 msgid "Cover"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:68
+#: blocks-src/src/components/Constants.js:25
+#: blocks-src/src/components/doctors/StylesPanel.js:10
 msgid "Contain"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:73
+#: blocks-src/src/components/Constants.js:30
 msgid "No Repeat"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:74
+#: blocks-src/src/components/Constants.js:31
 msgid "Repeat"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:75
+#: blocks-src/src/components/Constants.js:32
 msgid "Repeat X"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:76
+#: blocks-src/src/components/Constants.js:33
 msgid "Repeat Y"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:81
+#: blocks-src/src/components/Constants.js:38
 msgid "Scroll"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:82
+#: blocks-src/src/components/Constants.js:39
 msgid "Fixed"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:86
-#: blocks-src/src/components/Constants.js:346
-#: blocks-src/src/components/Constants.js:364
-#: blocks-src/src/components/Constants.js:488
-msgid "None"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:87
+#: blocks-src/src/components/Constants.js:44
 msgid "Lowercase"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:88
+#: blocks-src/src/components/Constants.js:45
 msgid "Capitalize"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:89
+#: blocks-src/src/components/Constants.js:46
 msgid "Uppercase"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:94
+#: blocks-src/src/components/Constants.js:51
 msgid "Light"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:96
-msgid "Medium"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:97
+#: blocks-src/src/components/Constants.js:54
 msgid "Semi Bold"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:98
+#: blocks-src/src/components/Constants.js:55
 msgid "Bold"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:99
+#: blocks-src/src/components/Constants.js:56
 msgid "Extra Bold"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:100
+#: blocks-src/src/components/Constants.js:57
 msgid "Heavy Bold"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:106
+#: blocks-src/src/components/Constants.js:63
 msgid "Italic"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:107
+#: blocks-src/src/components/Constants.js:64
 msgid "Oblique"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:113
-#: blocks-src/src/components/Constants.js:121
-msgid "H1"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:114
-#: blocks-src/src/components/Constants.js:122
-msgid "H2"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:115
-#: blocks-src/src/components/Constants.js:123
-msgid "H3"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:116
-#: blocks-src/src/components/Constants.js:124
-msgid "H4"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:117
-#: blocks-src/src/components/Constants.js:125
-msgid "H5"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:118
-#: blocks-src/src/components/Constants.js:126
-msgid "H6"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:127
-msgid "Span"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:128
-msgid "P"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:260
-#: blocks-src/src/components/Constants.js:276
-msgid "Style 1"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:261
-#: blocks-src/src/components/Constants.js:277
-msgid "Style 2"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:262
-msgid "Style 3"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:282
-#: blocks-src/src/components/Constants.js:292
-msgid "1 Col"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:283
-#: blocks-src/src/components/Constants.js:293
-msgid "2 Col"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:284
-#: blocks-src/src/components/Constants.js:294
-msgid "3 Col"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:285
-#: blocks-src/src/components/Constants.js:295
-msgid "4 Col"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:286
-#: blocks-src/src/components/Constants.js:296
-msgid "5 Col"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:287
-#: blocks-src/src/components/Constants.js:297
-msgid "6 Col"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:288
-msgid "7 Col"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:289
-msgid "8 Col"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:327
-msgid "Front"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:332
-msgid "Default (Flip Left)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:333
-msgid "Flip Right"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:334
-msgid "Flip Up"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:335
-msgid "Flip Bottom"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:336
-msgid "Fade In"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:337
-#: blocks-src/src/components/Constants.js:370
-msgid "Zoom In"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:338
-msgid "Zoom Out"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:339
-msgid "Flip 3D Left"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:340
-msgid "Flip 3D Right"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:341
-msgid "Flip 3D Up"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:342
-msgid "Flip 3D Bottom"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:347
-msgid "Box"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:352
-#: blocks-src/src/components/slider/GeneralPanel.js:104
-msgid "Top"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:353
-#: blocks-src/src/components/Constants.js:359
-#: blocks-src/src/components/slider/GeneralPanel.js:98
-msgid "Center"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:354
-#: blocks-src/src/components/slider/GeneralPanel.js:106
-msgid "Bottom"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:358
-#: blocks-src/src/components/slider/GeneralPanel.js:97
-msgid "Left"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:360
-#: blocks-src/src/components/slider/GeneralPanel.js:99
-msgid "Right"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:365
-msgid "Overlay"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:372
-msgid "From Top"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:373
-msgid "From Bottom"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:374
-msgid "From Left"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:375
-msgid "From Right"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:380
-msgid "Top Left"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:381
-msgid "Top Center"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:382
-msgid "Top Right"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:384
-msgid "Center Left"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:386
-msgid "Center Right"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:388
-msgid "Bottom Left"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:389
-msgid "Bottom Center"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:390
-msgid "Bottom Right"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:395
-msgid "Posts"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:400
-msgid "OR"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:401
-msgid "AND"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:404
-#: blocks-src/src/components/Constants.js:418
-#: blocks-src/src/components/testimonials/ItemEditor.js:41
-#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:37
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:109
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:132
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:233
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:55
-msgid "Date"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:407
+#: blocks-src/src/components/Constants.js:73
 msgid "Last modified date"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:408
+#: blocks-src/src/components/Constants.js:74
 msgid "Post parent ID"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:412
-msgid "Product ID"
+#: blocks-src/src/components/countdown/GeneralPanel.js:11
+msgid "Banner — Gradient band (flip-cards)"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:413
-msgid "Product Title"
+#: blocks-src/src/components/countdown/GeneralPanel.js:12
+msgid "Banner — Cream card (hairline tiles)"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:414
-msgid "Product Slug"
+#: blocks-src/src/components/countdown/GeneralPanel.js:13
+msgid "Banner — Sticky strip (inline mini)"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:415
-#: blocks-src/src/components/services/ItemEditor.js:27
-#: src/js/admin/components/test-items/App.jsx:124
-#: src/js/admin/components/test-items/App.jsx:197
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:181
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:211
-msgid "Price"
+#: blocks-src/src/components/countdown/GeneralPanel.js:14
+msgid "Boxed — Paper cards (colon separators)"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:416
-msgid "Popular"
+#: blocks-src/src/components/countdown/GeneralPanel.js:15
+msgid "Boxed — Ocean tiles (dot-rows)"
 msgstr ""
 
-#: blocks-src/src/components/Constants.js:422
-msgid "Ascending"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:423
-msgid "Descending"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:427
-msgid "Publish"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:428
-msgid "Pending"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:429
-msgid "Draft"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:430
-msgid "Auto draft"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:431
-msgid "Future"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:432
-msgid "Private"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:444
-msgid "Publish Date"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:445
-msgid "Tags"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:446
-msgid "Categories"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:448
-#: blocks-src/src/components/testimonials/ItemEditor.js:46
-msgid "Avatar"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:452
-msgid "Full Excerpt"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:453
-#: blocks-src/src/components/Constants.js:459
-msgid "Character"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:454
-#: blocks-src/src/components/Constants.js:460
-msgid "Word"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:455
-msgid "Full Content"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:464
-#: blocks-src/src/components/Constants.js:470
-msgid "Above Title"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:465
-msgid "Above Excerpt"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:466
-msgid "Below Excerpt"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:471
-msgid "Over Image(Top Left)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:472
-msgid "Over Image(Top Right)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:473
-msgid "Over Image(Bottom Left)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:474
-msgid "Over Image(Bottom Right)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:475
-msgid "Over Image(Center)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:479
-msgid "Default (none)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:480
-msgid "Dot (.)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:481
-msgid "Slash (/)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:482
-msgid "Double Slash (//)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:483
-msgid "Hyphen (-)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:484
-msgid "Vercial Pipe (|)"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:489
-msgid "FadeIn"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:490
-msgid "FadeInDown"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:491
-msgid "FadeInLeft"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:492
-msgid "FadeInRight"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:493
-msgid "FadeInUp"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:495
-msgid "SlideInUp"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:496
-msgid "SlideInDown"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:497
-msgid "SlideInLeft"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:498
-msgid "SlideInRight"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:499
-msgid "ZoomIn"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:500
-msgid "ZoomInDown"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:501
-msgid "ZoomInLeft"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:502
-msgid "ZoomInRight"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:503
-msgid "ZoomInUp"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:505
-msgid "Bounce"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:506
-msgid "BounceIn"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:507
-msgid "BounceInDown"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:508
-msgid "BounceInUp"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:510
-msgid "Flash"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:511
-msgid "Pulse"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:512
-msgid "RubberBand"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:513
-msgid "Swing"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:514
-msgid "Tada"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:515
-msgid "Wobble"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:516
-msgid "Jello"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:518
-msgid "Flip"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:519
-msgid "FlipInX"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:520
-msgid "FlipInY"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:521
-msgid "RotateIn"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:580
-msgid "Solid"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:581
-msgid "Dashed"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:582
-msgid "Dotted"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:583
-msgid "Double"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:584
-msgid "Groove"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:585
-msgid "Outset"
-msgstr ""
-
-#: blocks-src/src/components/Constants.js:586
-msgid "Ridge"
+#: blocks-src/src/components/countdown/GeneralPanel.js:16
+msgid "Boxed — Progress rings"
 msgstr ""
 
 #: blocks-src/src/components/countdown/GeneralPanel.js:28
@@ -3988,6 +4309,27 @@ msgstr ""
 msgid "Segment / tile"
 msgstr ""
 
+#: blocks-src/src/components/departments/GeneralPanel.js:14
+msgid "Pill cloud"
+msgstr ""
+
+#: blocks-src/src/components/departments/GeneralPanel.js:15
+msgid "Icon cards"
+msgstr ""
+
+#: blocks-src/src/components/departments/GeneralPanel.js:18
+#: blocks-src/src/components/departments/GeneralPanel.js:64
+msgid "Specialist count"
+msgstr ""
+
+#: blocks-src/src/components/departments/GeneralPanel.js:20
+msgid "Slug"
+msgstr ""
+
+#: blocks-src/src/components/departments/GeneralPanel.js:21
+msgid "Term ID"
+msgstr ""
+
 #: blocks-src/src/components/departments/GeneralPanel.js:51
 msgid "Specific departments (optional)"
 msgstr ""
@@ -4007,10 +4349,6 @@ msgstr ""
 #: blocks-src/src/components/services/ItemEditor.js:22
 #: blocks-src/src/components/services/StylesPanel.js:29
 msgid "Icon"
-msgstr ""
-
-#: blocks-src/src/components/departments/GeneralPanel.js:64
-msgid "Specialist count"
 msgstr ""
 
 #: blocks-src/src/components/departments/GeneralPanel.js:66
@@ -4063,6 +4401,31 @@ msgstr ""
 
 #: blocks-src/src/components/Device.js:39
 msgid "Mobile"
+msgstr ""
+
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:12
+msgid "Trophy wall (masonry)"
+msgstr ""
+
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:13
+msgid "Credential list"
+msgstr ""
+
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:16
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:353
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:354
+msgid "All doctors"
+msgstr ""
+
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:17
+msgid "Specific doctors"
+msgstr ""
+
+#: blocks-src/src/components/doctor-awards/GeneralPanel.js:18
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:26
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:23
+#: blocks-src/src/components/quick-book/GeneralPanel.js:21
+msgid "Current doctor (single-doctor page)"
 msgstr ""
 
 #: blocks-src/src/components/doctor-awards/GeneralPanel.js:57
@@ -4152,6 +4515,56 @@ msgstr ""
 msgid "Doctor name"
 msgstr ""
 
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:10
+msgid "Pill"
+msgstr ""
+
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:11
+msgid "Starburst"
+msgstr ""
+
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:12
+msgid "Flat"
+msgstr ""
+
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:15
+msgid "Small"
+msgstr ""
+
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:17
+msgid "Large"
+msgstr ""
+
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:20
+#: blocks-src/src/components/hero/GeneralPanel.js:29
+#: blocks-src/src/components/quick-book/GeneralPanel.js:15
+#: blocks-src/src/components/slider/GeneralPanel.js:97
+msgid "Left"
+msgstr ""
+
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:21
+#: blocks-src/src/components/hero/GeneralPanel.js:29
+#: blocks-src/src/components/quick-book/GeneralPanel.js:16
+#: blocks-src/src/components/slider/GeneralPanel.js:98
+msgid "Center"
+msgstr ""
+
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:22
+#: blocks-src/src/components/quick-book/GeneralPanel.js:17
+#: blocks-src/src/components/slider/GeneralPanel.js:99
+msgid "Right"
+msgstr ""
+
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:25
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:22
+#: blocks-src/src/components/quick-book/GeneralPanel.js:20
+msgid "Specific doctor"
+msgstr ""
+
+#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:27
+msgid "Manual amount"
+msgstr ""
+
 #: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:32
 #: blocks-src/src/components/doctor-schedule/GeneralPanel.js:38
 #: blocks-src/src/components/quick-book/GeneralPanel.js:26
@@ -4188,14 +4601,6 @@ msgstr ""
 #: blocks-src/src/components/doctor-schedule/GeneralPanel.js:54
 #: blocks-src/src/components/quick-book/GeneralPanel.js:45
 msgid "Leave on “Select” to use the current doctor on a single-doctor page."
-msgstr ""
-
-#: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:50
-#: blocks-src/src/components/doctor-fee-badge/StylesPanel.js:29
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:146
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:234
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:242
-msgid "Amount"
 msgstr ""
 
 #: blocks-src/src/components/doctor-fee-badge/GeneralPanel.js:55
@@ -4242,6 +4647,38 @@ msgstr ""
 
 #: blocks-src/src/components/doctor-fee-badge/StylesPanel.js:33
 msgid "Amount typography"
+msgstr ""
+
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:10
+msgid "Week grid"
+msgstr ""
+
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:11
+msgid "Day pills"
+msgstr ""
+
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:12
+msgid "Spotlight"
+msgstr ""
+
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:13
+msgid "Timeline"
+msgstr ""
+
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:14
+msgid "Compact list"
+msgstr ""
+
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:17
+msgid "Sidebar (narrow)"
+msgstr ""
+
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:18
+msgid "Inline panel"
+msgstr ""
+
+#: blocks-src/src/components/doctor-schedule/GeneralPanel.js:19
+msgid "Footer strip (dark)"
 msgstr ""
 
 #: blocks-src/src/components/doctor-schedule/GeneralPanel.js:47
@@ -4443,6 +4880,33 @@ msgstr ""
 msgid "Slot radius"
 msgstr ""
 
+#: blocks-src/src/components/doctor-stats/GeneralPanel.js:17
+#: blocks-src/src/components/services/GeneralPanel.js:18
+msgid "Card grid"
+msgstr ""
+
+#: blocks-src/src/components/doctor-stats/GeneralPanel.js:17
+msgid "Compact strip"
+msgstr ""
+
+#: blocks-src/src/components/doctor-stats/GeneralPanel.js:20
+msgid "Plus (+)"
+msgstr ""
+
+#: blocks-src/src/components/doctor-stats/GeneralPanel.js:21
+msgid "Star (★)"
+msgstr ""
+
+#: blocks-src/src/components/doctor-stats/GeneralPanel.js:22
+msgid "Percent (%)"
+msgstr ""
+
+#: blocks-src/src/components/doctor-stats/GeneralPanel.js:27
+#: blocks-src/src/components/hero/GeneralPanel.js:32
+#: blocks-src/src/components/hero/GeneralPanel.js:33
+msgid "New stat"
+msgstr ""
+
 #: blocks-src/src/components/doctor-stats/GeneralPanel.js:34
 #: blocks-src/src/components/hero/TrustItemEditor.js:9
 msgid "Stat"
@@ -4525,6 +4989,42 @@ msgstr ""
 #: blocks-src/src/components/doctor-stats/StylesPanel.js:25
 #: blocks-src/src/components/hero/StylesPanel.js:48
 msgid "Number typography"
+msgstr ""
+
+#: blocks-src/src/components/doctors/GeneralPanel.js:12
+msgid "List"
+msgstr ""
+
+#: blocks-src/src/components/doctors/GeneralPanel.js:13
+msgid "Mini"
+msgstr ""
+
+#: blocks-src/src/components/doctors/GeneralPanel.js:14
+msgid "Feature"
+msgstr ""
+
+#: blocks-src/src/components/doctors/GeneralPanel.js:16
+msgid "Hover reveal"
+msgstr ""
+
+#: blocks-src/src/components/doctors/GeneralPanel.js:25
+msgid "OR"
+msgstr ""
+
+#: blocks-src/src/components/doctors/GeneralPanel.js:25
+msgid "AND"
+msgstr ""
+
+#: blocks-src/src/components/doctors/GeneralPanel.js:26
+msgid "Above grid"
+msgstr ""
+
+#: blocks-src/src/components/doctors/GeneralPanel.js:26
+msgid "Below grid"
+msgstr ""
+
+#: blocks-src/src/components/doctors/GeneralPanel.js:27
+msgid "Excerpt"
 msgstr ""
 
 #: blocks-src/src/components/doctors/GeneralPanel.js:59
@@ -4702,6 +5202,30 @@ msgstr ""
 msgid "Spinner color"
 msgstr ""
 
+#: blocks-src/src/components/faq/GeneralPanel.js:17
+msgid "Accordion — Hairline list"
+msgstr ""
+
+#: blocks-src/src/components/faq/GeneralPanel.js:18
+msgid "Accordion — Carded"
+msgstr ""
+
+#: blocks-src/src/components/faq/GeneralPanel.js:19
+msgid "Accordion — Split intro"
+msgstr ""
+
+#: blocks-src/src/components/faq/GeneralPanel.js:20
+msgid "Categorized — Category nav"
+msgstr ""
+
+#: blocks-src/src/components/faq/GeneralPanel.js:21
+msgid "Categorized — Category tabs"
+msgstr ""
+
+#: blocks-src/src/components/faq/GeneralPanel.js:22
+msgid "Categorized — Masonry cards"
+msgstr ""
+
 #: blocks-src/src/components/faq/GeneralPanel.js:51
 #: blocks-src/src/components/process-steps/GeneralPanel.js:57
 #: blocks-src/src/components/services/GeneralPanel.js:51
@@ -4857,8 +5381,11 @@ msgid "Separate paragraphs with a blank line."
 msgstr ""
 
 #: blocks-src/src/components/faq/ItemEditor.js:22
-#: src/js/admin/components/test-items/App.jsx:126
-#: src/js/admin/components/test-items/App.jsx:206
+#: src/js/admin/app-pages/TestItemsPage.jsx:64
+#: src/js/admin/app-pages/TestItemsPage.jsx:217
+#: src/js/admin/app-pages/TestItemsPage.jsx:229
+#: src/js/admin/components/test-items/App.jsx:128
+#: src/js/admin/components/test-items/App.jsx:208
 msgid "Category"
 msgstr ""
 
@@ -4928,13 +5455,32 @@ msgstr ""
 msgid "Help button"
 msgstr ""
 
-#: blocks-src/src/components/hero/FloatingCardEditor.js:33
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:67
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:110
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:178
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:193
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:56
-msgid "Type"
+#: blocks-src/src/components/hero/FloatingCardEditor.js:6
+msgid "Stat (icon + value + label)"
+msgstr ""
+
+#: blocks-src/src/components/hero/FloatingCardEditor.js:7
+msgid "Rating (stars + score + meta)"
+msgstr ""
+
+#: blocks-src/src/components/hero/FloatingCardEditor.js:8
+msgid "Credential (pulse + text)"
+msgstr ""
+
+#: blocks-src/src/components/hero/FloatingCardEditor.js:12
+msgid "Top left"
+msgstr ""
+
+#: blocks-src/src/components/hero/FloatingCardEditor.js:13
+msgid "Top right"
+msgstr ""
+
+#: blocks-src/src/components/hero/FloatingCardEditor.js:14
+msgid "Bottom left"
+msgstr ""
+
+#: blocks-src/src/components/hero/FloatingCardEditor.js:15
+msgid "Bottom right"
 msgstr ""
 
 #: blocks-src/src/components/hero/FloatingCardEditor.js:37
@@ -4955,6 +5501,26 @@ msgstr ""
 
 #: blocks-src/src/components/hero/FloatingCardEditor.js:42
 msgid "Float animation"
+msgstr ""
+
+#: blocks-src/src/components/hero/GeneralPanel.js:21
+msgid "Image-forward (flagship)"
+msgstr ""
+
+#: blocks-src/src/components/hero/GeneralPanel.js:22
+msgid "Mirror (image left)"
+msgstr ""
+
+#: blocks-src/src/components/hero/GeneralPanel.js:23
+msgid "Centered overlay (full-bleed)"
+msgstr ""
+
+#: blocks-src/src/components/hero/GeneralPanel.js:24
+msgid "Split action (booking card)"
+msgstr ""
+
+#: blocks-src/src/components/hero/GeneralPanel.js:25
+msgid "Minimal editorial (no image)"
 msgstr ""
 
 #: blocks-src/src/components/hero/GeneralPanel.js:115
@@ -5200,6 +5766,42 @@ msgstr ""
 msgid "Select an icon"
 msgstr ""
 
+#: blocks-src/src/components/info-box/GeneralPanel.js:14
+msgid "Icon-stack — Circle (centered)"
+msgstr ""
+
+#: blocks-src/src/components/info-box/GeneralPanel.js:15
+msgid "Icon-stack — Tile (left)"
+msgstr ""
+
+#: blocks-src/src/components/info-box/GeneralPanel.js:16
+msgid "Icon-stack — Watermark (dark)"
+msgstr ""
+
+#: blocks-src/src/components/info-box/GeneralPanel.js:17
+msgid "Side-by-side — Icon pill"
+msgstr ""
+
+#: blocks-src/src/components/info-box/GeneralPanel.js:18
+msgid "Side-by-side — Numbered"
+msgstr ""
+
+#: blocks-src/src/components/info-box/GeneralPanel.js:19
+msgid "Side-by-side — Accent rule"
+msgstr ""
+
+#: blocks-src/src/components/info-box/GeneralPanel.js:20
+msgid "Image-led — Image top"
+msgstr ""
+
+#: blocks-src/src/components/info-box/GeneralPanel.js:21
+msgid "Image-led — Split media"
+msgstr ""
+
+#: blocks-src/src/components/info-box/GeneralPanel.js:22
+msgid "Image-led — Full-bleed overlay"
+msgstr ""
+
 #: blocks-src/src/components/info-box/GeneralPanel.js:42
 msgid "Display icon"
 msgstr ""
@@ -5242,6 +5844,58 @@ msgstr ""
 
 #: blocks-src/src/components/info-box/StylesPanel.js:40
 msgid "Border"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:12
+msgid "Table — Ruled week"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:13
+msgid "Table — Compact list (dark)"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:14
+msgid "Table — Day-chip strip"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:15
+msgid "Card — Split (status + week + directions)"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:16
+msgid "Card — Status band (deep ocean)"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:17
+msgid "Card — Stacked (sidebar)"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:24
+msgid "Site timezone"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:25
+msgid "UTC"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:28
+msgid "Auto (from hours)"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:29
+msgid "Force open"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:30
+msgid "Force closed"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:33
+msgid "Closes at 6:00 PM"
+msgstr ""
+
+#: blocks-src/src/components/office-hours/GeneralPanel.js:34
+msgid "Closes in 2h 14m"
 msgstr ""
 
 #: blocks-src/src/components/office-hours/GeneralPanel.js:50
@@ -5445,6 +6099,54 @@ msgstr ""
 msgid "Contact rows"
 msgstr ""
 
+#: blocks-src/src/components/process-steps/GeneralPanel.js:15
+msgid "Vertical — Left rail"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:16
+msgid "Vertical — Zig-zag"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:17
+msgid "Vertical — Stacked cards"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:18
+msgid "Timeline — Node on line"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:19
+msgid "Timeline — Icon disc"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:20
+msgid "Timeline — Segmented bar"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:21
+msgid "Cards — Big numeral"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:22
+msgid "Cards — Filled accent"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:23
+msgid "Cards — Icon row"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:26
+msgid "Numeric (1, 2, 3)"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:27
+msgid "Padded (01, 02)"
+msgstr ""
+
+#: blocks-src/src/components/process-steps/GeneralPanel.js:28
+msgid "Roman (I, II)"
+msgstr ""
+
 #: blocks-src/src/components/process-steps/GeneralPanel.js:58
 msgid "Numbering style"
 msgstr ""
@@ -5583,6 +6285,18 @@ msgstr ""
 msgid "Footer button"
 msgstr ""
 
+#: blocks-src/src/components/quick-book/GeneralPanel.js:10
+msgid "Sidebar widget"
+msgstr ""
+
+#: blocks-src/src/components/quick-book/GeneralPanel.js:11
+msgid "Sticky bar (dark)"
+msgstr ""
+
+#: blocks-src/src/components/quick-book/GeneralPanel.js:12
+msgid "Hero CTA"
+msgstr ""
+
 #: blocks-src/src/components/quick-book/GeneralPanel.js:33
 msgid "Variant"
 msgstr ""
@@ -5659,6 +6373,18 @@ msgstr ""
 msgid "Booking button"
 msgstr ""
 
+#: blocks-src/src/components/services/GeneralPanel.js:19
+msgid "Alternating media rows"
+msgstr ""
+
+#: blocks-src/src/components/services/GeneralPanel.js:20
+msgid "Numbered list"
+msgstr ""
+
+#: blocks-src/src/components/services/GeneralPanel.js:21
+msgid "Two-column \"what we treat\""
+msgstr ""
+
 #: blocks-src/src/components/services/GeneralPanel.js:54
 msgid "Card style"
 msgstr ""
@@ -5712,11 +6438,23 @@ msgid "Tag / eyebrow"
 msgstr ""
 
 #: blocks-src/src/components/services/ItemEditor.js:26
+#: blocks-src/src/components/slider/GeneralPanel.js:22
 msgid "Bullets"
 msgstr ""
 
 #: blocks-src/src/components/services/ItemEditor.js:26
 msgid "One per line (alternating layout)."
+msgstr ""
+
+#: blocks-src/src/components/services/ItemEditor.js:27
+#: src/js/admin/app-pages/TestItemsPage.jsx:61
+#: src/js/admin/app-pages/TestItemsPage.jsx:216
+#: src/js/admin/app-pages/TestItemsPage.jsx:228
+#: src/js/admin/components/test-items/App.jsx:126
+#: src/js/admin/components/test-items/App.jsx:199
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:201
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:231
+msgid "Price"
 msgstr ""
 
 #: blocks-src/src/components/services/ItemEditor.js:28
@@ -5761,6 +6499,22 @@ msgstr ""
 msgid "Bullet marker color"
 msgstr ""
 
+#: blocks-src/src/components/slider/GeneralPanel.js:18
+msgid "Slide"
+msgstr ""
+
+#: blocks-src/src/components/slider/GeneralPanel.js:19
+msgid "Fade"
+msgstr ""
+
+#: blocks-src/src/components/slider/GeneralPanel.js:23
+msgid "Progress bar"
+msgstr ""
+
+#: blocks-src/src/components/slider/GeneralPanel.js:24
+msgid "Fraction"
+msgstr ""
+
 #: blocks-src/src/components/slider/GeneralPanel.js:87
 msgid "Hero"
 msgstr ""
@@ -5781,8 +6535,16 @@ msgstr ""
 msgid "Content vertical"
 msgstr ""
 
+#: blocks-src/src/components/slider/GeneralPanel.js:104
+msgid "Top"
+msgstr ""
+
 #: blocks-src/src/components/slider/GeneralPanel.js:105
 msgid "Middle"
+msgstr ""
+
+#: blocks-src/src/components/slider/GeneralPanel.js:106
+msgid "Bottom"
 msgstr ""
 
 #: blocks-src/src/components/slider/GeneralPanel.js:126
@@ -5861,6 +6623,30 @@ msgstr ""
 msgid "Space between (px)"
 msgstr ""
 
+#: blocks-src/src/components/slider/SlideEditor.js:14
+msgid "H1"
+msgstr ""
+
+#: blocks-src/src/components/slider/SlideEditor.js:15
+msgid "H2"
+msgstr ""
+
+#: blocks-src/src/components/slider/SlideEditor.js:16
+msgid "H3"
+msgstr ""
+
+#: blocks-src/src/components/slider/SlideEditor.js:17
+msgid "H4"
+msgstr ""
+
+#: blocks-src/src/components/slider/SlideEditor.js:18
+msgid "H5"
+msgstr ""
+
+#: blocks-src/src/components/slider/SlideEditor.js:19
+msgid "H6"
+msgstr ""
+
 #: blocks-src/src/components/slider/SlideEditor.js:29
 msgid "Untitled slide"
 msgstr ""
@@ -5895,6 +6681,18 @@ msgstr ""
 
 #: blocks-src/src/components/slider/StylesPanel.js:50
 msgid "Subtitle"
+msgstr ""
+
+#: blocks-src/src/components/testimonials/GeneralPanel.js:7
+msgid "Quote cards (grid)"
+msgstr ""
+
+#: blocks-src/src/components/testimonials/GeneralPanel.js:8
+msgid "Featured spotlight"
+msgstr ""
+
+#: blocks-src/src/components/testimonials/GeneralPanel.js:9
+msgid "Wall mosaic"
 msgstr ""
 
 #: blocks-src/src/components/testimonials/GeneralPanel.js:38
@@ -5939,6 +6737,10 @@ msgstr ""
 
 #: blocks-src/src/components/testimonials/ItemEditor.js:45
 msgid "Doctor link (optional)"
+msgstr ""
+
+#: blocks-src/src/components/testimonials/ItemEditor.js:46
+msgid "Avatar"
 msgstr ""
 
 #: blocks-src/src/components/testimonials/ItemEditor.js:47
@@ -5997,10 +6799,6 @@ msgstr ""
 msgid "Full Width"
 msgstr ""
 
-#: blocks-src/src/components/wrapper/GeneralPanel.js:21
-msgid "Custom"
-msgstr ""
-
 #: blocks-src/src/components/wrapper/GeneralPanel.js:37
 msgid "Max Width"
 msgstr ""
@@ -6011,6 +6809,581 @@ msgstr ""
 
 #: blocks-src/src/components/wrapper/StylesPanel.js:11
 msgid "Wrapper Styles"
+msgstr ""
+
+#: src/js/admin/app-pages/kit.jsx:104
+msgid "Pagination"
+msgstr ""
+
+#: src/js/admin/app-pages/kit.jsx:106
+msgid "Showing %1$s–%2$s of %3$s"
+msgstr ""
+
+#: src/js/admin/app-pages/kit.jsx:109
+msgid "Previous page"
+msgstr ""
+
+#: src/js/admin/app-pages/kit.jsx:116
+msgid "%1$s / %2$s"
+msgstr ""
+
+#: src/js/admin/app-pages/kit.jsx:117
+msgid "Next page"
+msgstr ""
+
+#: src/js/admin/app-pages/kit.jsx:181
+#: src/js/admin/app-pages/StaffPage.jsx:81
+#: src/js/admin/app-pages/TestItemsPage.jsx:54
+#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:297
+#: src/js/admin/components/clinic-managers/ManagersTable.jsx:121
+#: src/js/admin/components/test-items/App.jsx:149
+#: src/js/admin/components/test-items/App.jsx:184
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:309
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:133
+msgid "Cancel"
+msgstr ""
+
+#: src/js/admin/app-pages/kit.jsx:182
+msgid "Working…"
+msgstr ""
+
+#: src/js/admin/app-pages/kit.jsx:213
+msgid "Dismiss"
+msgstr ""
+
+#: src/js/admin/app-pages/Select.jsx:213
+#: src/js/admin/app-pages/Select.jsx:214
+msgid "Search"
+msgstr ""
+
+#: src/js/admin/app-pages/Select.jsx:252
+msgid "No results"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:13
+#: src/js/admin/app-pages/TestItemsPage.jsx:231
+#: src/js/admin/components/staff/App.jsx:19
+msgid "Active"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:14
+#: src/js/admin/components/staff/App.jsx:20
+msgid "Idle"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:15
+#: src/js/admin/components/staff/App.jsx:21
+msgid "Offline"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:18
+#: src/js/admin/app-pages/StaffPage.jsx:77
+msgid "Clinic manager"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:49
+#: src/js/admin/components/staff/StaffForm.jsx:60
+msgid "Please choose a clinic."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:51
+#: src/js/admin/components/staff/StaffForm.jsx:78
+msgid "Please enter a username."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:52
+#: src/js/admin/components/staff/StaffForm.jsx:81
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:53
+#: src/js/admin/components/staff/StaffForm.jsx:84
+msgid "Please enter a password of at least 6 characters."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:54
+#: src/js/admin/components/staff/StaffForm.jsx:89
+msgid "Please choose a user."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:68
+#: src/js/admin/components/staff/StaffForm.jsx:35
+msgid "Staff added"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:79
+#: src/js/admin/app-pages/StaffPage.jsx:82
+#: src/js/admin/app-pages/StaffPage.jsx:254
+#: src/js/admin/app-pages/StaffPage.jsx:331
+#: src/js/admin/components/staff/App.jsx:188
+msgid "Add staff"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:79
+msgid "Create a login, or give an existing user a staff role."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:82
+msgid "Adding…"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:91
+#: src/js/admin/components/staff/StaffForm.jsx:63
+#: src/js/admin/components/test-items/App.jsx:225
+msgid "Select clinic"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:94
+#: src/js/admin/app-pages/StaffPage.jsx:95
+#: src/js/admin/components/staff/StaffForm.jsx:69
+msgid "User"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:95
+#: src/js/admin/components/staff/StaffForm.jsx:71
+msgid "Create new"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:95
+#: src/js/admin/components/staff/StaffForm.jsx:72
+msgid "Assign existing"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:99
+#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:176
+#: src/js/admin/components/staff/StaffForm.jsx:78
+msgid "Username"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:105
+#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:211
+#: src/js/admin/components/staff/StaffForm.jsx:84
+msgid "Password"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:105
+#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:50
+msgid "At least 6 characters."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:110
+#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:253
+#: src/js/admin/components/staff/StaffForm.jsx:89
+msgid "Existing user"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:113
+msgid "Search by login or email"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:115
+msgid "Users"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:116
+msgid "No users found."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:116
+msgid "Type to search users."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:196
+#: src/js/admin/components/staff/App.jsx:101
+msgid "Removed"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:200
+msgid "Removed %d staff member"
+msgid_plural "Removed %d staff members"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:214
+msgid "Moved %d staff member"
+msgid_plural "Moved %d staff members"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:248
+#: src/js/admin/app-pages/StaffPage.jsx:260
+msgid "Clinic managers"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:248
+#: src/js/admin/app-pages/StaffPage.jsx:262
+#: src/js/admin/components/staff/App.jsx:199
+#: src/js/admin/components/staff/App.jsx:219
+msgid "Receptionists"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:252
+msgid "Logins for clinic managers and the front desk, and which clinic each one works at."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:253
+msgid "Export CSV"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:258
+#: src/js/admin/components/staff/App.jsx:195
+msgid "Total staff"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:259
+msgid "%d active in the last 24 hours"
+msgid_plural "%d active in the last 24 hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:259
+#: src/js/admin/components/staff/App.jsx:196
+msgid "No recent activity"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:261
+msgid "Across %d clinic"
+msgid_plural "Across %d clinics"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:262
+msgid "Front desk"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:263
+#: src/js/admin/components/staff/App.jsx:201
+msgid "Active clinics"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:264
+msgid "Clinic managers are on"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:264
+msgid "Clinic managers are off"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:270
+msgid "Show"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:280
+msgid "Search staff"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:281
+msgid "Search login or email"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:287
+msgid "%d selected"
+msgid_plural "%d selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:288
+msgid "Move to another clinic"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:289
+msgid "Remove selected"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:290
+msgid "Clear selection"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:301
+#: src/js/admin/components/staff/App.jsx:249
+msgid "Select all staff on this page"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:302
+#: src/js/admin/app-pages/StaffPage.jsx:315
+msgid "Staff member"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:305
+#: src/js/admin/app-pages/StaffPage.jsx:320
+#: src/js/admin/app-pages/TestItemsPage.jsx:219
+#: src/js/admin/app-pages/TestItemsPage.jsx:231
+#: src/js/admin/components/staff/App.jsx:256
+#: src/js/admin/components/test-items/App.jsx:134
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:222
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:277
+#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:40
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:116
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:69
+msgid "Status"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:306
+#: src/js/admin/app-pages/StaffPage.jsx:321
+#: src/js/admin/components/staff/App.jsx:257
+msgid "Last login"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:307
+#: src/js/admin/app-pages/TestItemsPage.jsx:220
+#: src/js/admin/components/staff/App.jsx:258
+msgid "Actions"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:314
+msgid "Select"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:314
+msgid "Select %s"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:321
+#: src/js/admin/components/staff/App.jsx:301
+msgid "Never"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:323
+msgid "Remove %s"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:323
+#: src/js/admin/app-pages/StaffPage.jsx:345
+#: src/js/admin/components/clinic-managers/ManagersTable.jsx:120
+#: src/js/admin/components/staff/App.jsx:309
+#: src/js/admin/components/staff/App.jsx:358
+#: src/js/public/components/clinic-dashboard/views/DoctorImageField.jsx:135
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:258
+msgid "Remove"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:330
+msgid "No staff match your search."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:330
+msgid "No staff yet"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:332
+msgid "Add a clinic manager or receptionist to give them their own login."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:343
+msgid "Remove %s?"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:343
+msgid "Remove %d staff member?"
+msgid_plural "Remove %d staff members?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:344
+msgid "They lose their staff role and can no longer open the clinic or front-desk dashboard. Their WordPress account is kept."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:349
+msgid "Move %d staff member"
+msgid_plural "Move %d staff members"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:350
+msgid "Choose the clinic they work at from now on."
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:351
+msgid "Move"
+msgstr ""
+
+#: src/js/admin/app-pages/StaffPage.jsx:353
+#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:240
+#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:281
+msgid "Pick a clinic"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:30
+#: src/js/admin/components/test-items/App.jsx:193
+msgid "Please enter a name."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:31
+msgid "Please enter a price of 0 or more."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:41
+#: src/js/admin/components/test-items/App.jsx:77
+msgid "Saved"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:51
+msgid "Edit test"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:51
+msgid "New test"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:52
+#: src/js/admin/components/test-items/App.jsx:177
+msgid "Update this catalog item."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:52
+msgid "Add a test or service the front desk can order."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:55
+msgid "Saving…"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:55
+#: src/js/admin/components/test-items/App.jsx:183
+msgid "Save changes"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:55
+#: src/js/admin/app-pages/TestItemsPage.jsx:197
+#: src/js/admin/app-pages/TestItemsPage.jsx:242
+msgid "Add test"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:59
+#: src/js/admin/components/test-items/App.jsx:195
+msgid "e.g. Complete Blood Count (CBC)"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:64
+msgid "Optional. For example Lab, Radiology or Pathology."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:68
+msgid "\"All clinics\" makes it available everywhere."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:91
+msgid "Imported: %1$d new, %2$d updated, %3$d skipped"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:101
+msgid "Import tests from a CSV file"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:102
+msgid "Add many tests at once, or update the ones you have."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:106
+msgid "Columns: name, price, category (optional), clinic_id (optional). The first row must be the column names. A test with the same name and clinic is updated."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:107
+msgid "Columns: name, price, category (optional). The first row must be the column names. A test with the same name is updated."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:114
+msgid "Uploading…"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:114
+msgid "Choose a CSV file or drop it here"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:115
+msgid "Up to 5 MB"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:120
+msgid "new"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:121
+msgid "updated"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:122
+msgid "skipped"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:126
+msgid "%d row was skipped"
+msgid_plural "%d rows were skipped"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:127
+msgid "Row"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:127
+msgid "Problem"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:185
+msgid "Deleted"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:195
+msgid "Tests and services the front desk can order, with their prices."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:196
+msgid "Import CSV"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:204
+msgid "Search tests"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:205
+#: src/js/admin/components/test-items/App.jsx:106
+msgid "Search by name or category"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:207
+msgid "%d test"
+msgid_plural "%d tests"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:212
+msgid "Lab tests"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:233
+msgid "Edit %s"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:234
+msgid "Delete %s"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:234
+#: src/js/admin/app-pages/TestItemsPage.jsx:255
+#: src/js/admin/components/test-items/App.jsx:148
+#: src/js/admin/components/test-items/App.jsx:154
+msgid "Delete"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:241
+msgid "No tests match your search."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:241
+msgid "No tests yet"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:243
+msgid "Add the tests your clinic offers, one by one or from a CSV file."
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:253
+msgid "Delete %s?"
+msgstr ""
+
+#: src/js/admin/app-pages/TestItemsPage.jsx:254
+msgid "It is removed from the catalog. Orders that already include it keep it."
 msgstr ""
 
 #: src/js/admin/components/clinic-managers/AddManagerForm.jsx:40
@@ -6033,10 +7406,6 @@ msgstr ""
 #: src/js/public/components/clinic-dashboard/views/AddDoctor.jsx:62
 #: src/js/public/components/clinic-dashboard/views/Doctors.jsx:125
 msgid "Enter a valid email."
-msgstr ""
-
-#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:50
-msgid "At least 6 characters."
 msgstr ""
 
 #: src/js/admin/components/clinic-managers/AddManagerForm.jsx:123
@@ -6063,11 +7432,6 @@ msgstr ""
 msgid "Pick existing user"
 msgstr ""
 
-#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:176
-#: src/js/admin/components/staff/StaffForm.jsx:78
-msgid "Username"
-msgstr ""
-
 #: src/js/admin/components/clinic-managers/AddManagerForm.jsx:187
 msgid "Lowercase, no spaces. Must be unique."
 msgstr ""
@@ -6078,11 +7442,6 @@ msgstr ""
 
 #: src/js/admin/components/clinic-managers/AddManagerForm.jsx:205
 msgid "Used for password reset and notifications."
-msgstr ""
-
-#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:211
-#: src/js/admin/components/staff/StaffForm.jsx:84
-msgid "Password"
 msgstr ""
 
 #: src/js/admin/components/clinic-managers/AddManagerForm.jsx:223
@@ -6098,18 +7457,8 @@ msgstr ""
 msgid "Assign to clinic"
 msgstr ""
 
-#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:240
-#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:281
-msgid "Pick a clinic"
-msgstr ""
-
 #: src/js/admin/components/clinic-managers/AddManagerForm.jsx:245
 msgid "User will only see this clinic's data after login."
-msgstr ""
-
-#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:253
-#: src/js/admin/components/staff/StaffForm.jsx:89
-msgid "Existing user"
 msgstr ""
 
 #: src/js/admin/components/clinic-managers/AddManagerForm.jsx:263
@@ -6122,15 +7471,6 @@ msgstr ""
 
 #: src/js/admin/components/clinic-managers/AddManagerForm.jsx:295
 msgid "They'll get the Clinic Manager role only — no admin access."
-msgstr ""
-
-#: src/js/admin/components/clinic-managers/AddManagerForm.jsx:297
-#: src/js/admin/components/clinic-managers/ManagersTable.jsx:121
-#: src/js/admin/components/test-items/App.jsx:147
-#: src/js/admin/components/test-items/App.jsx:182
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:309
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:132
-msgid "Cancel"
 msgstr ""
 
 #: src/js/admin/components/clinic-managers/AddManagerForm.jsx:305
@@ -6187,6 +7527,10 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
+#: src/js/admin/components/clinic-managers/ManagersTable.jsx:89
+msgid "Booking Manager"
+msgstr ""
+
 #: src/js/admin/components/clinic-managers/ManagersTable.jsx:104
 msgid "Assigned"
 msgstr ""
@@ -6199,13 +7543,6 @@ msgstr ""
 msgid "Removes the Clinic Manager role only — the user account stays."
 msgstr ""
 
-#: src/js/admin/components/clinic-managers/ManagersTable.jsx:120
-#: src/js/admin/components/staff/App.jsx:307
-#: src/js/admin/components/staff/App.jsx:356
-#: src/js/public/components/clinic-dashboard/views/DoctorImageField.jsx:135
-msgid "Remove"
-msgstr ""
-
 #: src/js/admin/components/clinic-managers/ManagersTable.jsx:135
 msgid "Existing Managers"
 msgstr ""
@@ -6215,14 +7552,14 @@ msgid "Search by name, email, or clinic"
 msgstr ""
 
 #: src/js/admin/components/clinic-managers/ManagersTable.jsx:164
-#: src/js/admin/components/staff/App.jsx:348
-#: src/js/admin/components/staff/App.jsx:381
+#: src/js/admin/components/staff/App.jsx:350
+#: src/js/admin/components/staff/App.jsx:383
 msgid "Reassign clinic"
 msgstr ""
 
 #: src/js/admin/components/clinic-managers/ManagersTable.jsx:168
 #: src/js/public/components/clinic-dashboard/views/Doctors.jsx:259
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:46
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:47
 msgid "Save"
 msgstr ""
 
@@ -6230,40 +7567,12 @@ msgstr ""
 msgid "Reassigning"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:19
-msgid "Active"
-msgstr ""
-
-#: src/js/admin/components/staff/App.jsx:20
-msgid "Idle"
-msgstr ""
-
-#: src/js/admin/components/staff/App.jsx:21
-msgid "Offline"
-msgstr ""
-
-#: src/js/admin/components/staff/App.jsx:101
-msgid "Removed"
-msgstr ""
-
 #: src/js/admin/components/staff/App.jsx:183
 msgid "Team members"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:188
-msgid "Add staff"
-msgstr ""
-
-#: src/js/admin/components/staff/App.jsx:195
-msgid "Total staff"
-msgstr ""
-
 #: src/js/admin/components/staff/App.jsx:196
 msgid "active in 24h"
-msgstr ""
-
-#: src/js/admin/components/staff/App.jsx:196
-msgid "No recent activity"
 msgstr ""
 
 #: src/js/admin/components/staff/App.jsx:198
@@ -6274,17 +7583,8 @@ msgstr ""
 msgid "clinics"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:199
-#: src/js/admin/components/staff/App.jsx:219
-msgid "Receptionists"
-msgstr ""
-
 #: src/js/admin/components/staff/App.jsx:200
 msgid "Front-desk coverage"
-msgstr ""
-
-#: src/js/admin/components/staff/App.jsx:201
-msgid "Active clinics"
 msgstr ""
 
 #: src/js/admin/components/staff/App.jsx:202
@@ -6307,67 +7607,53 @@ msgstr ""
 msgid "Export"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:255
-#: src/js/admin/components/test-items/App.jsx:132
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:222
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:277
-#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:39
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:115
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:66
-msgid "Status"
-msgstr ""
-
-#: src/js/admin/components/staff/App.jsx:256
-msgid "Last login"
-msgstr ""
-
-#: src/js/admin/components/staff/App.jsx:265
+#: src/js/admin/components/staff/App.jsx:266
 msgid "No staff yet. Click Add staff to invite the first member."
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:299
-msgid "Never"
+#: src/js/admin/components/staff/App.jsx:274
+msgid "Select staff member"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:303
+#: src/js/admin/components/staff/App.jsx:305
 msgid "Remove this staff?"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:322
+#: src/js/admin/components/staff/App.jsx:324
 #: src/js/public/components/clinic-dashboard/views/Doctors.jsx:237
 msgid "Showing"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:322
+#: src/js/admin/components/staff/App.jsx:324
 msgid "staff"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:326
+#: src/js/admin/components/staff/App.jsx:328
 msgid "Prev"
 msgstr ""
 
 #: src/js/admin/components/staff/App.jsx:344
+msgid "Bulk actions"
+msgstr ""
+
+#: src/js/admin/components/staff/App.jsx:346
 msgid "selected"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:359
+#: src/js/admin/components/staff/App.jsx:361
 msgid "Clear"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:382
+#: src/js/admin/components/staff/App.jsx:384
 msgid "Reassign"
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:388
+#: src/js/admin/components/staff/App.jsx:390
 msgid "Move the selected staff to a different clinic."
 msgstr ""
 
-#: src/js/admin/components/staff/App.jsx:392
+#: src/js/admin/components/staff/App.jsx:394
 msgid "Pick clinic"
-msgstr ""
-
-#: src/js/admin/components/staff/StaffForm.jsx:35
-msgid "Staff added"
 msgstr ""
 
 #: src/js/admin/components/staff/StaffForm.jsx:47
@@ -6375,25 +7661,8 @@ msgid "Add Staff"
 msgstr ""
 
 #: src/js/admin/components/staff/StaffForm.jsx:50
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:46
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:47
 msgid "Create"
-msgstr ""
-
-#: src/js/admin/components/staff/StaffForm.jsx:63
-#: src/js/admin/components/test-items/App.jsx:223
-msgid "Select clinic"
-msgstr ""
-
-#: src/js/admin/components/staff/StaffForm.jsx:69
-msgid "User"
-msgstr ""
-
-#: src/js/admin/components/staff/StaffForm.jsx:71
-msgid "Create new"
-msgstr ""
-
-#: src/js/admin/components/staff/StaffForm.jsx:72
-msgid "Assign existing"
 msgstr ""
 
 #: src/js/admin/components/staff/StaffForm.jsx:92
@@ -6405,12 +7674,8 @@ msgid "Global (all clinics)"
 msgstr ""
 
 #: src/js/admin/components/test-items/App.jsx:29
-#: src/js/admin/components/test-items/App.jsx:130
+#: src/js/admin/components/test-items/App.jsx:132
 msgid "Global"
-msgstr ""
-
-#: src/js/admin/components/test-items/App.jsx:77
-msgid "Saved"
 msgstr ""
 
 #: src/js/admin/components/test-items/App.jsx:93
@@ -6421,10 +7686,6 @@ msgstr ""
 msgid "Add item"
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:106
-msgid "Search by name or category"
-msgstr ""
-
 #: src/js/admin/components/test-items/App.jsx:112
 msgid "item"
 msgstr ""
@@ -6433,64 +7694,43 @@ msgstr ""
 msgid "items"
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:128
+#: src/js/admin/components/test-items/App.jsx:130
 msgid "Scope"
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:145
+#: src/js/admin/components/test-items/App.jsx:147
 msgid "Delete this item?"
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:146
-#: src/js/admin/components/test-items/App.jsx:152
-msgid "Delete"
-msgstr ""
-
-#: src/js/admin/components/test-items/App.jsx:171
+#: src/js/admin/components/test-items/App.jsx:173
 msgid "Edit Test Item"
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:171
+#: src/js/admin/components/test-items/App.jsx:173
 msgid "New Test Item"
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:175
-msgid "Update this catalog item."
-msgstr ""
-
-#: src/js/admin/components/test-items/App.jsx:176
+#: src/js/admin/components/test-items/App.jsx:178
 msgid "Add a test or service to your catalog."
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:181
-msgid "Save changes"
-msgstr ""
-
-#: src/js/admin/components/test-items/App.jsx:181
+#: src/js/admin/components/test-items/App.jsx:183
 msgid "Create item"
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:191
-msgid "Please enter a name."
-msgstr ""
-
-#: src/js/admin/components/test-items/App.jsx:193
-msgid "e.g. Complete Blood Count (CBC)"
-msgstr ""
-
-#: src/js/admin/components/test-items/App.jsx:198
+#: src/js/admin/components/test-items/App.jsx:200
 msgid "Please enter a price."
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:207
+#: src/js/admin/components/test-items/App.jsx:209
 msgid "optional"
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:211
+#: src/js/admin/components/test-items/App.jsx:213
 msgid "e.g. Lab, Radiology, Pathology"
 msgstr ""
 
-#: src/js/admin/components/test-items/App.jsx:217
+#: src/js/admin/components/test-items/App.jsx:219
 msgid "Pick \"Global\" to make this item available to all clinics."
 msgstr ""
 
@@ -6515,12 +7755,12 @@ msgid "Click or drag CSV to upload"
 msgstr ""
 
 #: src/js/public/components/clinic-dashboard/App.jsx:74
-#: src/js/public/components/receptionist-dashboard/App.jsx:74
+#: src/js/public/components/receptionist-dashboard/App.jsx:75
 msgid "No clinic assigned yet"
 msgstr ""
 
 #: src/js/public/components/clinic-dashboard/App.jsx:75
-#: src/js/public/components/receptionist-dashboard/App.jsx:75
+#: src/js/public/components/receptionist-dashboard/App.jsx:76
 msgid "Your account isn’t linked to a clinic. Please ask the site administrator to assign you to one."
 msgstr ""
 
@@ -6547,10 +7787,11 @@ msgid "Clinic Info"
 msgstr ""
 
 #: src/js/public/components/clinic-dashboard/Sidebar.jsx:19
-#: src/js/public/components/clinic-dashboard/views/Reports.jsx:104
+#: src/js/public/components/clinic-dashboard/Topbar.jsx:11
+#: src/js/public/components/clinic-dashboard/views/Reports.jsx:109
 #: src/js/public/components/receptionist-dashboard/Sidebar.jsx:22
 #: src/js/public/components/receptionist-dashboard/Topbar.jsx:11
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:134
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:135
 msgid "Reports"
 msgstr ""
 
@@ -6567,17 +7808,17 @@ msgstr ""
 msgid "Log out"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/Topbar.jsx:16
+#: src/js/public/components/clinic-dashboard/Topbar.jsx:17
 #: src/js/public/components/receptionist-dashboard/Topbar.jsx:17
 msgid "Dashboard"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/Topbar.jsx:24
+#: src/js/public/components/clinic-dashboard/Topbar.jsx:25
 #: src/js/public/components/receptionist-dashboard/Topbar.jsx:25
 msgid "Exit full screen"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/Topbar.jsx:24
+#: src/js/public/components/clinic-dashboard/Topbar.jsx:25
 #: src/js/public/components/receptionist-dashboard/Topbar.jsx:25
 msgid "Full screen — hides theme header & footer"
 msgstr ""
@@ -6588,6 +7829,14 @@ msgstr ""
 
 #: src/js/public/components/clinic-dashboard/views/AddDoctor.jsx:82
 msgid "Doctor added."
+msgstr ""
+
+#: src/js/public/components/clinic-dashboard/views/AddDoctor.jsx:104
+msgid "Dr. Jane Doe"
+msgstr ""
+
+#: src/js/public/components/clinic-dashboard/views/AddDoctor.jsx:114
+msgid "Cardiologist"
 msgstr ""
 
 #: src/js/public/components/clinic-dashboard/views/AddDoctor.jsx:118
@@ -6663,12 +7912,6 @@ msgstr ""
 msgid "Date · Time"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:223
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:283
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:137
-msgid "Payment"
-msgstr ""
-
 #: src/js/public/components/clinic-dashboard/views/Bookings.jsx:304
 msgid "Cancel this booking?"
 msgstr ""
@@ -6682,30 +7925,28 @@ msgid "Keep"
 msgstr ""
 
 #: src/js/public/components/clinic-dashboard/views/Bookings.jsx:332
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:333
 msgid "Search patient or booking ID"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:352
-msgid "All doctors"
-msgstr ""
-
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:364
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:366
 msgid "No doctor found"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:370
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:372
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:373
 msgid "All status"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:374
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:377
 msgid "Approved"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:375
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:378
 msgid "Cancelled"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:381
+#: src/js/public/components/clinic-dashboard/views/Bookings.jsx:384
 msgid "Apply"
 msgstr ""
 
@@ -6833,22 +8074,27 @@ msgstr ""
 msgid "Holiday range"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Reports.jsx:56
-#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:46
+#: src/js/public/components/clinic-dashboard/views/Reports.jsx:59
+#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:50
 msgid "File exceeds 10MB."
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Reports.jsx:119
-#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:116
+#: src/js/public/components/clinic-dashboard/views/Reports.jsx:123
+#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:121
 msgid "Upload PDFs"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Reports.jsx:122
+#: src/js/public/components/clinic-dashboard/views/Reports.jsx:126
 msgid "PDF only, 10MB each"
 msgstr ""
 
-#: src/js/public/components/clinic-dashboard/views/Reports.jsx:124
+#: src/js/public/components/clinic-dashboard/views/Reports.jsx:128
 msgid "No reports yet"
+msgstr ""
+
+#: src/js/public/components/clinic-dashboard/views/Reports.jsx:140
+#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:138
+msgid "Delete this report?"
 msgstr ""
 
 #: src/js/public/components/clinic-dashboard/views/ScheduleEditor.jsx:71
@@ -6867,85 +8113,97 @@ msgstr ""
 msgid "Add Timing"
 msgstr ""
 
-#: src/js/public/components/patient-portal/LookupStep.jsx:15
-msgid "Code sent. Check your phone."
+#: src/js/public/components/patient-portal/LookupStep.jsx:21
+msgid "If the details match an order, a code is on its way to the email address on that order."
 msgstr ""
 
-#: src/js/public/components/patient-portal/LookupStep.jsx:26
+#: src/js/public/components/patient-portal/LookupStep.jsx:22
+msgid "If the details match an order, a code is on its way to that phone."
+msgstr ""
+
+#: src/js/public/components/patient-portal/LookupStep.jsx:33
 msgid "Find Your Report"
 msgstr ""
 
-#: src/js/public/components/patient-portal/LookupStep.jsx:27
+#: src/js/public/components/patient-portal/LookupStep.jsx:34
 msgid "Enter your mobile number and the invoice code from your receipt."
 msgstr ""
 
-#: src/js/public/components/patient-portal/LookupStep.jsx:28
+#: src/js/public/components/patient-portal/LookupStep.jsx:35
 msgid "Mobile Number"
 msgstr ""
 
-#: src/js/public/components/patient-portal/LookupStep.jsx:31
+#: src/js/public/components/patient-portal/LookupStep.jsx:38
 msgid "Invoice / Order Code"
 msgstr ""
 
-#: src/js/public/components/patient-portal/LookupStep.jsx:35
+#: src/js/public/components/patient-portal/LookupStep.jsx:42
 msgid "Send Code"
 msgstr ""
 
-#: src/js/public/components/patient-portal/OtpStep.jsx:26
+#: src/js/public/components/patient-portal/OtpStep.jsx:28
+msgid "Too many wrong codes. Please request a new code."
+msgstr ""
+
+#: src/js/public/components/patient-portal/OtpStep.jsx:40
 msgid "Enter Code"
 msgstr ""
 
-#: src/js/public/components/patient-portal/OtpStep.jsx:27
-msgid "A 6-digit code was sent to"
+#: src/js/public/components/patient-portal/OtpStep.jsx:42
+msgid "If the details match an order, we emailed a 6-digit code to the address on that order."
 msgstr ""
 
-#: src/js/public/components/patient-portal/OtpStep.jsx:28
+#: src/js/public/components/patient-portal/OtpStep.jsx:43
+msgid "If the details match an order, we sent a 6-digit code by text to"
+msgstr ""
+
+#: src/js/public/components/patient-portal/OtpStep.jsx:44
 msgid "Verification Code"
 msgstr ""
 
-#: src/js/public/components/patient-portal/OtpStep.jsx:32
+#: src/js/public/components/patient-portal/OtpStep.jsx:48
 msgid "Verify"
 msgstr ""
 
-#: src/js/public/components/patient-portal/ReportList.jsx:43
+#: src/js/public/components/patient-portal/ReportList.jsx:82
 msgid "No reports uploaded yet for this order."
 msgstr ""
 
-#: src/js/public/components/patient-portal/ReportList.jsx:51
+#: src/js/public/components/patient-portal/ReportList.jsx:90
 msgid "Uploaded"
 msgstr ""
 
-#: src/js/public/components/patient-portal/ReportList.jsx:52
+#: src/js/public/components/patient-portal/ReportList.jsx:91
 msgid "Available until"
 msgstr ""
 
-#: src/js/public/components/patient-portal/ReportList.jsx:57
+#: src/js/public/components/patient-portal/ReportList.jsx:96
 msgid "Download"
 msgstr ""
 
-#: src/js/public/components/patient-portal/ReportList.jsx:69
+#: src/js/public/components/patient-portal/ReportList.jsx:108
 msgid "Sign out"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/App.jsx:85
+#: src/js/public/components/receptionist-dashboard/App.jsx:86
 msgid "Uploads are managed by clinic admin in multi-clinic mode."
 msgstr ""
 
 #: src/js/public/components/receptionist-dashboard/Sidebar.jsx:17
 #: src/js/public/components/receptionist-dashboard/Topbar.jsx:8
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:100
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:101
 msgid "Visits"
 msgstr ""
 
 #: src/js/public/components/receptionist-dashboard/Sidebar.jsx:18
 #: src/js/public/components/receptionist-dashboard/Topbar.jsx:9
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:122
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:123
 msgid "Test Orders"
 msgstr ""
 
 #: src/js/public/components/receptionist-dashboard/Sidebar.jsx:19
 #: src/js/public/components/receptionist-dashboard/Topbar.jsx:10
-#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:52
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:83
 msgid "New Order"
 msgstr ""
 
@@ -6957,405 +8215,423 @@ msgstr ""
 msgid "Receptionist Dashboard"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:34
+#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:35
 msgid "Booking ID"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:38
+#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:39
 msgid "Time"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:49
+#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:50
+#: src/js/public/components/receptionist-dashboard/views/Bookings.jsx:51
 msgid "Search patient / booking"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:58
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:59
 msgid "Add at least one test item"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:66
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:24
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:67
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:25
 msgid "Please fix the highlighted fields."
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:87
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:88
 msgid "Order created"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:100
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:101
 msgid "New Test Order"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:105
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:106
 msgid "Referred by (optional)"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:109
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:110
 msgid "Add Tests"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:113
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:114
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:115
 msgid "Search test items to add…"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:121
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:123
 msgid "Start typing to search and add test items…"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:123
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:125
 msgid "No matching test items"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:153
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:155
 msgid "Delivery Date/Time"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:156
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:125
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:158
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:126
 msgid "Notes"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:162
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:164
 msgid "Subtotal"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:164
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:166
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:167
 msgid "Discount (from line %)"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:167
-msgid "Extra discount"
-msgstr ""
-
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:171
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:135
-msgid "Payable"
-msgstr ""
-
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:173
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:145
-msgid "Received"
-msgstr ""
-
-#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:183
+#: src/js/public/components/receptionist-dashboard/views/NewOrder.jsx:185
 msgid "Save & Print Receipt"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:42
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:43
 msgid "Visit created"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:52
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:45
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:53
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:46
 msgid "New Visit"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:70
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:71
 msgid "Outpatient (OPD)"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:71
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:72
 msgid "Admit (IPD)"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:76
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:77
 msgid "Visit Date"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:85
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:86
 msgid "Select doctor"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:90
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:91
 msgid "Received now (optional)"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:93
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:94
 msgid "Payment method"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:101
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:102
 msgid "Admitting Doctor"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:108
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:109
 msgid "Attending Doctor (optional)"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:116
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:117
 msgid "Admission Time"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:119
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:120
 msgid "Bed / Cabin No"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:130
+#: src/js/public/components/receptionist-dashboard/views/NewVisit.jsx:131
 msgid "Save Visit"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:45
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:50
+msgid "Payment recorded"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:64
+msgid "Lab reports for this clinic are uploaded by its clinic manager from the Clinic Dashboard."
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:65
+msgid "Lab reports are uploaded by the clinic manager, but this clinic has none yet. Until one is added in Staff, only a site admin can upload reports."
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:75
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:76
 msgid "Search by order code"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:32
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:105
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:118
+msgid "Take payment"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:119
+msgid "Record payment"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:132
+msgid "Amount received now"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:134
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:270
+msgid "Enter an amount"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/Orders.jsx:137
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:273
+msgid "More than the balance due"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:33
 msgid "Patient updated"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:32
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:33
 msgid "Patient created"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:43
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:44
 msgid "Edit Patient"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:43
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:44
 msgid "New Patient"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:50
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:51
 msgid "Full Name"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:56
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:57
 msgid "Email (optional)"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:59
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:60
 msgid "Date of Birth"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:62
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:89
-#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:59
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:63
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:90
+#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:61
 msgid "Gender"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:66
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:67
 msgid "Male"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:67
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:68
 msgid "Female"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:68
+#: src/js/public/components/receptionist-dashboard/views/PatientFormModal.jsx:69
 msgid "Other"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientPicker.jsx:46
+#: src/js/public/components/receptionist-dashboard/views/PatientPicker.jsx:48
 msgid "Type a name / phone / code to search"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientPicker.jsx:55
+#: src/js/public/components/receptionist-dashboard/views/PatientPicker.jsx:57
 msgid "No patients found"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientPicker.jsx:56
+#: src/js/public/components/receptionist-dashboard/views/PatientPicker.jsx:58
 msgid "Type to search patients…"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientPicker.jsx:69
+#: src/js/public/components/receptionist-dashboard/views/PatientPicker.jsx:71
 msgid "Create new patient"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:81
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:82
 msgid "Info"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:85
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:86
 msgid "Patient code"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:88
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:89
 msgid "Date of birth"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:93
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:94
 msgid "Edit patient"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:106
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:107
 msgid "No visits yet"
-msgstr ""
-
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:112
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:62
-msgid "Charge"
 msgstr ""
 
 #: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:113
 #: src/js/public/components/receptionist-dashboard/views/Visits.jsx:63
-msgid "Paid"
+msgid "Charge"
 msgstr ""
 
 #: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:114
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:136
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:149
 #: src/js/public/components/receptionist-dashboard/views/Visits.jsx:64
-msgid "Due"
+msgid "Paid"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:128
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:129
 msgid "No test orders yet"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:133
+#: src/js/public/components/receptionist-dashboard/views/PatientProfileDrawer.jsx:134
 msgid "Items"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:38
+#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:39
+#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:40
 msgid "Search name, phone, code, email"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:45
+#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:47
 msgid "Add Patient"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:55
+#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:57
 msgid "Code"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:58
-msgid "Age"
-msgstr ""
-
-#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:63
+#: src/js/public/components/receptionist-dashboard/views/Patients.jsx:65
 msgid "View"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:119
+#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:124
 msgid "PDF only, 10MB each, multiple files allowed"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:121
+#: src/js/public/components/receptionist-dashboard/views/Reports.jsx:126
 msgid "No reports uploaded yet"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:98
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:91
+msgid "Payment removed"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:108
 msgid "Patient released"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:122
-msgid "Visit"
-msgstr ""
-
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:141
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:154
 msgid "Total Charge"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:153
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:163
+msgid "Advance"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:173
+msgid "Overpaid"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:173
 msgid "Unpaid"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:153
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:173
 msgid "Cleared"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:157
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:177
 msgid "Print Bill"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:157
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:177
 msgid "Print Statement"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:162
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:259
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:182
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:293
 msgid "Release Patient"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:170
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:190
 msgid "Billing Items"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:176
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:196
 msgid "No items yet"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:180
-msgid "Qty"
-msgstr ""
-
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:182
-msgid "Disc%"
-msgstr ""
-
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:184
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:204
 msgid "Remove item?"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:191
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:211
 msgid "Add billing item"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:197
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:217
 msgid "e.g. Cefixime 200mg"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:203
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:223
 msgid "No. of"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:204
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:224
 msgid "Total"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:204
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:224
 msgid "price"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:216
-msgid "Disc %"
-msgstr ""
-
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:219
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:239
 msgid "Add"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:231
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:251
 msgid "No payments yet"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:235
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:276
-msgid "Method"
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:258
+msgid "Remove this payment?"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:236
-msgid "Ref"
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:258
+msgid "Use this only for a payment entered by mistake."
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:248
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:259
+msgid "Remove payment"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:282
 msgid "Ref / Txn"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:250
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:284
 msgid "Record"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:263
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:297
 msgid "Release"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:267
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:301
 msgid "Release Time"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:270
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:304
 msgid "Bed days (override qty if bed item exists)"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:273
+#: src/js/public/components/receptionist-dashboard/views/VisitDetail.jsx:307
 msgid "Final payment now (optional)"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:42
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:43
 msgid "Due only"
 msgstr ""
 
-#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:71
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:67
+msgid "Credit"
+msgstr ""
+
+#: src/js/public/components/receptionist-dashboard/views/Visits.jsx:74
 msgid "Manage"
 msgstr ""
 

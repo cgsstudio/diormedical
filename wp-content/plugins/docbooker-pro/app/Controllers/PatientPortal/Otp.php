@@ -13,6 +13,7 @@ class Otp {
 	const MAX_ATTEMPTS        = 5;
 	const PHONE_COOLDOWN_SECS = 60;
 	const IP_HOURLY_LIMIT     = 10;
+	const IP_FAILED_LIMIT     = 20;        // wrong codes per network per hour
 
 	public static function table() {
 		global $wpdb;
@@ -43,19 +44,13 @@ class Otp {
 			)
 		);
 		if ( $recent ) {
-			$last_ts = strtotime( $recent );
+			// created_at is stored in UTC (it used to be site time, which turned
+			// the 60-second cooldown into hours on sites east of UTC).
+			$last_ts = strtotime( $recent . ' UTC' );
 			if ( $last_ts && ( time() - $last_ts ) < self::PHONE_COOLDOWN_SECS ) {
 				return new \WP_Error( 'wpddbp_otp_cooldown', __( 'Please wait before requesting another code.', 'doc-booker-pro' ), [ 'status' => 429 ] );
 			}
 		}
-
-		// Per-IP hourly cap.
-		$ip_key = 'wpddb_otp_ip_' . md5( $ip );
-		$count  = (int) get_transient( $ip_key );
-		if ( $count >= self::IP_HOURLY_LIMIT ) {
-			return new \WP_Error( 'wpddbp_otp_ip_limit', __( 'Too many requests from this network.', 'doc-booker-pro' ), [ 'status' => 429 ] );
-		}
-		set_transient( $ip_key, $count + 1, HOUR_IN_SECONDS );
 
 		$code     = str_pad( (string) wp_rand( 0, 999999 ), 6, '0', STR_PAD_LEFT );
 		$expires  = gmdate( 'Y-m-d H:i:s', time() + self::TTL_SECONDS );
@@ -68,7 +63,7 @@ class Otp {
 			'code_hash'  => '',
 			'expires_at' => $expires,
 			'ip'         => $ip,
-			'created_at' => current_time( 'mysql' ),
+			'created_at' => current_time( 'mysql', true ),
 		] );
 		$id   = (int) $wpdb->insert_id;
 		$hash = hash_hmac( 'sha256', $code, wp_salt( 'auth' ) . '|' . $id );
@@ -117,6 +112,33 @@ class Otp {
 		}
 		$wpdb->update( $t, [ 'verified_at' => current_time( 'mysql' ) ], [ 'id' => $row['id'] ] );
 		return (int) $row['id'];
+	}
+
+	/**
+	 * Count one more code request from this network; false once over the hourly cap.
+	 * Runs before anything is looked up, so the answer says nothing about orders.
+	 */
+	public static function allow_request_from( $ip = null ) {
+		$key   = 'wpddb_otp_ip_' . md5( $ip ?: self::client_ip() );
+		$count = (int) get_transient( $key );
+		if ( $count >= self::IP_HOURLY_LIMIT ) {
+			return false;
+		}
+		set_transient( $key, $count + 1, HOUR_IN_SECONDS );
+		return true;
+	}
+
+	/**
+	 * Whether this network may try another code. Every new code gets fresh
+	 * attempts, so without this a script could keep guessing across codes.
+	 */
+	public static function may_try_code( $ip = null ) {
+		return (int) get_transient( 'wpddb_otp_fail_' . md5( $ip ?: self::client_ip() ) ) < self::IP_FAILED_LIMIT;
+	}
+
+	public static function record_failed_try( $ip = null ) {
+		$key = 'wpddb_otp_fail_' . md5( $ip ?: self::client_ip() );
+		set_transient( $key, (int) get_transient( $key ) + 1, HOUR_IN_SECONDS );
 	}
 
 	public static function client_ip() {

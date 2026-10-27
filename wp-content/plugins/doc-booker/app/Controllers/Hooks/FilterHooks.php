@@ -13,7 +13,16 @@ class FilterHooks {
 		add_filter( 'wp_kses_allowed_html', [ __CLASS__, 'custom_post_tags' ], 10, 2 );
 		add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
 	}
+	/**
+	 * Form fields (input/select/option) are allowed only in the plugin's own
+	 * "wpddb" context, used by Helper::print_html(). Adding them to every
+	 * context let them through comments and other untrusted content too.
+	 */
 	public static function custom_post_tags( $tags, $context ) {
+		if ( 'wpddb' !== $context ) {
+			return $tags;
+		}
+		$tags = wp_kses_allowed_html( 'post' );
 
 		$tags['input']  = [
 			'type'        => true,

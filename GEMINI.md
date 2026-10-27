@@ -53,15 +53,28 @@ Always use Bootstrap 5's responsive grid system to ensure perfect layout across 
   </div>
   ```
 
-### F. Modals
-- Strictly use Bootstrap 5 native modal structure:
+### F. Modals & Popups (Strict Simple Layout Standard)
+- **Simple, Minimalist Layout Only**:
+  - Never build cluttered, over-nested designs (no cards within cards, excessive borders, or heavy colored boxes) inside modal popups.
+  - Present content cleanly using standard Bootstrap 5 grid (`row g-3`), clean key-value text pairs (`small text-uppercase text-secondary fw-semibold` label + `fw-bold text-dark` value), subtle badges, or clean single-level sections.
+- **Native Bootstrap 5 Close Button (`.btn-close`) Required**:
+  - Every modal header MUST use native Bootstrap 5 `<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>`.
+  - NEVER use tiny characters like `&times;`, never make close buttons tiny, and never write custom CSS that strips the `.btn-close` SVG background.
+- **Standard Bootstrap 5 Modal Structure**:
   ```html
-  <div class="modal fade" id="modalId" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="modalId" tabindex="-1" aria-labelledby="modalIdLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="modal-header border-bottom py-3 px-4 bg-white">...</div>
-        <div class="modal-body p-4 bg-light-subtle">...</div>
-        <div class="modal-footer border-top py-3 px-4 bg-white">...</div>
+        <div class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
+          <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="modalIdLabel"><i class="..."></i> Title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4 bg-white">
+          <!-- Clean simple layout using Bootstrap rows, tables, or definition lists -->
+        </div>
+        <div class="modal-footer border-top py-3 px-4 bg-white">
+          <button type="button" class="btn btn-outline-secondary rounded-3 px-4 fw-semibold" data-bs-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>

@@ -34,12 +34,12 @@ class PluginRow{
      */
     public function plugins_setting_links( $links ) {
         $new_links   = [];
-        $demo_url    = 'https://wpdreamers.com/';
-        $new_links[] = '<a href="' . admin_url( 'edit.php?post_type=wpddb_doctor&page=settings' ) . '">' . esc_html__( 'Settings', 'doc-booker' ) . '</a>';
-        $new_links[] = '<a target="_blank" href="' . esc_url( $demo_url ) . '">' . esc_html__( 'Demo', 'doc-booker' ) . '</a>';
-        $new_links[] = '<a target="_blank" href="' . esc_url( 'https://wpdreamers.com/' ) . '">' . esc_html__( 'Documentation', 'doc-booker' ) . '</a>';
+        $new_links[] = '<a href="' . esc_url( admin_url( 'edit.php?post_type=wpddb_doctor&page=settings' ) ) . '">' . esc_html__( 'Settings', 'doc-booker' ) . '</a>';
+        $new_links[] = '<a target="_blank" href="' . esc_url( 'https://docbooker.wpdreamers.com/doctor-booking/' ) . '">' . esc_html__( 'Demo', 'doc-booker' ) . '</a>';
+        $new_links[] = '<a target="_blank" href="' . esc_url( 'https://docbooker.wpdreamers.com/documentation/' ) . '">' . esc_html__( 'Documentation', 'doc-booker' ) . '</a>';
 
-        if(!wpddb()->has_pro()){
+        // Only when Pro isn't installed at all; an outdated Pro gets an update notice instead.
+        if ( ! function_exists( 'wpddbp' ) ) {
             $new_links[] = '<a style="font-weight: bold; color: #008000;" target="_blank" href="' . esc_url( 'https://docbooker.wpdreamers.com/' ) . '">' . esc_html__( 'Get Pro', 'doc-booker' ) . '</a>';
         }
 
@@ -59,12 +59,11 @@ class PluginRow{
     public function plugin_row_meta( $links, $file ) {
 
         if ( WPDDB_BASENAME === $file ) {
-            $report_url         = 'https://wpdreamers.com/contact-us/';
-            $row_meta['issues'] = sprintf(
-                '%2$s <a target="_blank" href="%1$s"><span style="color: red">%3$s</span></a>',
-                esc_url( $report_url ),
-                esc_html__( 'Facing issue?', 'doc-booker' ),
-                esc_html__( 'Please open a support ticket.', 'doc-booker' )
+            // Questions go to the WordPress.org forum, where other owners can find the answers too.
+            $row_meta['support'] = sprintf(
+                '<a target="_blank" href="%1$s">%2$s</a>',
+                esc_url( 'https://wordpress.org/support/plugin/doc-booker/' ),
+                esc_html__( 'Support', 'doc-booker' )
             );
 
             return array_merge( $links, $row_meta );

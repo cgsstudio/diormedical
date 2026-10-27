@@ -4,7 +4,7 @@
  * Plugin Name: DocBooker - Doctor Appointment & Hospital Management
  * Plugin URI: https://docbooker.wpdreamers.com/
  * Description: The Doctor Booking & Hospital Management System.
- * Version: 2.1.1
+ * Version: 2.2.0
  * Author: Wp Dreamers
  * Author URI: https://wpdreamers.com/
  * Text Domain: doc-booker
@@ -22,7 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
-define( 'WPDDB_VERSION', '2.1.1' );
+define( 'WPDDB_VERSION', '2.2.0' );
+// The oldest DocBooker Pro this version works with; an older Pro is left off.
+define( 'WPDDB_MIN_PRO_VERSION', '2.2.0' );
 define( 'WPDDB_DB_VERSION', '1.9.0' );
 
 define( 'WPDDB_FILE', __FILE__ );

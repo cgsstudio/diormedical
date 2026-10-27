@@ -11,12 +11,14 @@ class Dior_Doctor_Dynamic {
     public static function init() {
         add_action('plugins_loaded', [__CLASS__, 'install_schema'], 20);
         $actions = [
-            'appointment_delete','appointment_update','patient_status','patient_delete','patient_bulk_delete',
-            'get_patient_profile','save_consultation','delete_consultation','document_save','document_delete',
+            'appointment_delete','appointment_update','patient_status','patient_delete','patient_bulk_delete','patient_add','patient_update',
+            'get_patient_profile','save_consultation','delete_consultation','document_save','document_delete','document_update_meta',
             'review_save','review_delete','review_bulk_delete','review_get','telemed_save','telemed_delete','notification_read',
             'notification_all_read','settings_save','chat_send','chat_get'
         ];
         foreach ($actions as $action) add_action('wp_ajax_dior_doc_' . $action, [__CLASS__, 'ajax_' . $action]);
+        add_action('wp_ajax_dior_doctor_add_patient', [__CLASS__, 'ajax_patient_add']);
+        add_action('wp_ajax_dior_doctor_update_patient', [__CLASS__, 'ajax_patient_update']);
     }
 
     private static function auth() {
@@ -134,6 +136,10 @@ class Dior_Doctor_Dynamic {
     public static function patient_name($pid) { $p=self::patient($pid); return $p ? trim($p['first_name'].' '.$p['last_name']) : 'Patient'; }
     public static function patient_belongs_to_doctor($pid,$did) {
         if (current_user_can('manage_options')) return true;
+        $user = get_userdata($did);
+        if ($user && array_intersect(['doctor', 'dior_doctor', 'administrator'], (array)$user->roles)) return true;
+        if (user_can($did, 'doctor') || user_can($did, 'administrator')) return true;
+        if (class_exists('Dior_Auth_Service') && Dior_Auth_Service::can_access_patient($pid, $did)) return true;
         foreach (Dior_Appointment_Service::get_doctor_appointments($did) as $a) if ((int)($a['patient_id']??0)===(int)$pid) return true;
         return false;
     }
@@ -149,12 +155,16 @@ class Dior_Doctor_Dynamic {
         self::auth(); global $wpdb; $uid=sanitize_text_field($_POST['appt_uid']??''); $a=Dior_Appointment_Service::get_appointment($uid); if(!$a) wp_send_json_error(['message'=>'Appointment not found.']);
         if(!self::doctor_can_manage_appointment($a)) wp_send_json_error(['message'=>'Access denied.'],403);
         $date=sanitize_text_field($_POST['date']??$a['appt_date']); $time=sanitize_text_field($_POST['time']??$a['appt_time']); $status=sanitize_text_field($_POST['status']??$a['status']);
+        $patient_id=absint($_POST['patient_id']??$a['patient_id']);
         $allowed=['Pending','Confirmed','In Progress','Completed','Cancelled','No Show']; if(!in_array($status,$allowed,true)) wp_send_json_error(['message'=>'Invalid status.']);
-        if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date)) wp_send_json_error(['message'=>'Invalid date.']);
-        $conflict=$wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}dior_appointments WHERE patient_id=%d AND appt_date=%s AND appt_time=%s AND appt_uid<>%s AND status NOT IN('Cancelled','No Show') AND is_deleted=0 LIMIT 1",$a['patient_id'],$date,$time,$uid));
+        if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date) || !preg_match('/^\d{1,2}:\d{2}(\s?[AP]M)?$/i',$time)) wp_send_json_error(['message'=>'Invalid appointment date or time.']);
+        if(!$patient_id || !get_userdata($patient_id)) wp_send_json_error(['message'=>'Please select a valid patient.']);
+        if(!current_user_can('manage_options') && !self::patient_belongs_to_doctor($patient_id,self::doctor_id())) wp_send_json_error(['message'=>'Selected patient is not assigned to your account.'],403);
+        $conflict=$wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}dior_appointments WHERE patient_id=%d AND appt_date=%s AND appt_time=%s AND appt_uid<>%s AND status NOT IN('Cancelled','No Show') AND is_deleted=0 LIMIT 1",$patient_id,$date,$time,$uid));
         if($conflict) wp_send_json_error(['message'=>'This patient already has an active appointment at that time.']);
-        $old=$a; $wpdb->update($wpdb->prefix.'dior_appointments',['appt_date'=>$date,'appt_time'=>$time,'status'=>$status,'updated_at'=>current_time('mysql')],['appt_uid'=>$uid]);
-        if(method_exists('Dior_Appointment_Service','log_history_public')) Dior_Appointment_Service::log_history_public($old,'doctor_update',['new_status'=>$status,'new_date'=>$date,'new_time'=>$time]);
+        $old=$a; $updated=$wpdb->update($wpdb->prefix.'dior_appointments',['patient_id'=>$patient_id,'appt_date'=>$date,'appt_time'=>$time,'status'=>$status,'updated_at'=>current_time('mysql')],['appt_uid'=>$uid]);
+        if($updated===false) wp_send_json_error(['message'=>'The appointment could not be saved. Please try again.'],500);
+        if(method_exists('Dior_Appointment_Service','log_history_public')) Dior_Appointment_Service::log_history_public($old,'doctor_update',['new_status'=>$status,'new_date'=>$date,'new_time'=>$time,'new_patient_id'=>$patient_id]);
         if(class_exists('Dior_Notification_Service')) Dior_Notification_Service::send_appointment_rescheduled($uid,$old['appt_date'],$old['appt_time'],$date,$time,'doctor');
         wp_send_json_success(['message'=>'Appointment updated successfully.','appointment'=>Dior_Appointment_Service::get_appointment($uid)]);
     }
@@ -164,12 +174,419 @@ class Dior_Doctor_Dynamic {
     public static function ajax_patient_bulk_delete(){ self::auth(); $ids=array_map('intval',(array)($_POST['patient_ids']??[])); if(!$ids) wp_send_json_error(['message'=>'Select at least one patient.']); foreach($ids as $id){ if(self::patient_belongs_to_doctor($id,self::doctor_id())){ $_POST['patient_id']=$id; self::delete_patient_quiet($id); } } wp_send_json_success(['message'=>'Selected patients deleted.']); }
     private static function delete_patient_quiet($id){ global $wpdb; $wpdb->update(self::table('patients'),['status'=>'deleted','updated_at'=>current_time('mysql')],['user_id'=>(int)$id]); update_user_meta($id,'dior_patient_status','deleted'); }
 
-    public static function ajax_get_patient_profile(){ self::auth(); $p=self::patient(sanitize_text_field($_POST['patient_id']??'')); if(!$p || !self::patient_belongs_to_doctor($p['user_id'],self::doctor_id())) wp_send_json_error(['message'=>'Patient not found or access denied.']); wp_send_json_success(['patient'=>$p]); }
+    public static function ajax_patient_add() {
+        self::auth();
+        global $wpdb;
+
+        $first_name = trim(sanitize_text_field($_POST['first_name'] ?? ''));
+        $last_name  = trim(sanitize_text_field($_POST['last_name'] ?? ''));
+        $email      = trim(sanitize_email($_POST['email'] ?? ''));
+        $phone      = trim(sanitize_text_field($_POST['phone'] ?? ''));
+        $gender     = trim(sanitize_text_field($_POST['gender'] ?? ''));
+        $dob        = trim(sanitize_text_field($_POST['dob'] ?? ''));
+        $blood_group= trim(sanitize_text_field($_POST['blood_group'] ?? ''));
+        $height     = trim(sanitize_text_field($_POST['height'] ?? ''));
+        $weight     = trim(sanitize_text_field($_POST['weight'] ?? ''));
+        $address    = trim(sanitize_text_field($_POST['address'] ?? ''));
+        $city       = trim(sanitize_text_field($_POST['city'] ?? ''));
+        $state      = trim(sanitize_text_field($_POST['state'] ?? ''));
+        $zip        = trim(sanitize_text_field($_POST['zip'] ?? ''));
+        $country    = trim(sanitize_text_field($_POST['country'] ?? 'United States of America')) ?: 'United States of America';
+
+        // Emergency contact
+        $em_name    = trim(sanitize_text_field($_POST['emergency_name'] ?? ''));
+        $em_rel     = trim(sanitize_text_field($_POST['emergency_relation'] ?? ''));
+        $em_phone   = trim(sanitize_text_field($_POST['emergency_phone'] ?? ''));
+
+        // Pharmacy
+        $pharm_name = trim(sanitize_text_field($_POST['preferred_pharmacy_name'] ?? ''));
+        $pharm_addr = trim(sanitize_text_field($_POST['preferred_pharmacy_address'] ?? ''));
+        $pharm_phone= trim(sanitize_text_field($_POST['preferred_pharmacy_phone'] ?? ''));
+
+        // Password & options
+        $custom_pass= trim($_POST['password'] ?? '');
+        $password   = !empty($custom_pass) ? $custom_pass : wp_generate_password(12, true, false);
+        $send_email = !empty($_POST['send_welcome_email']) ? 1 : 0;
+
+        // Validation - Required fields matching Patient Dashboard
+        $missing = [];
+        if (empty($first_name)) $missing[] = 'First Name';
+        if (empty($last_name))  $missing[] = 'Last Name';
+        if (empty($email))      $missing[] = 'Email Address';
+        if (empty($phone))      $missing[] = 'Phone Number';
+        if (empty($dob))        $missing[] = 'Date of Birth';
+        if (empty($gender))     $missing[] = 'Gender';
+        if (empty($address))    $missing[] = 'Street Address';
+        if (empty($city))       $missing[] = 'City';
+        if (empty($state))      $missing[] = 'State';
+        if (empty($zip))        $missing[] = 'ZIP Code';
+
+        if (!empty($missing)) {
+            wp_send_json_error(['message' => 'Please fill in all required fields: ' . implode(', ', $missing) . '.']);
+        }
+
+        if (!is_email($email)) {
+            wp_send_json_error(['message' => 'Please provide a valid email address.']);
+        }
+
+        if (email_exists($email)) {
+            wp_send_json_error(['message' => 'A patient account with this email (' . esc_html($email) . ') already exists.']);
+        }
+
+        // DOB & Age Verification (Must be 18+ and not in future)
+        $dob_time = strtotime($dob);
+        $now = time();
+        if (!$dob_time || $dob_time > $now) {
+            wp_send_json_error(['message' => 'Invalid Date of Birth: Birth date cannot be in the future.']);
+        }
+
+        $calc_age = (int) date('Y', $now) - (int) date('Y', $dob_time);
+        if (date('md', $now) < date('md', $dob_time)) {
+            $calc_age--;
+        }
+
+        if ($calc_age < 18) {
+            wp_send_json_error(['message' => 'Eligibility Requirement: Patient must be at least 18 years of age (Calculated age: ' . max(0, $calc_age) . ' years).']);
+        }
+
+        // Create WordPress user
+        $username = sanitize_user($email, true);
+        if (username_exists($username)) {
+            $username = strtolower($first_name . '.' . $last_name . '.' . wp_rand(100, 999));
+        }
+
+        $user_id = wp_insert_user([
+            'user_login'   => $username,
+            'user_email'   => $email,
+            'user_pass'    => $password,
+            'first_name'   => $first_name,
+            'last_name'    => $last_name,
+            'display_name' => trim($first_name . ' ' . $last_name),
+            'role'         => 'subscriber',
+        ]);
+
+        if (is_wp_error($user_id)) {
+            wp_send_json_error(['message' => $user_id->get_error_message()]);
+        }
+
+        // Generate Canonical Patient ID
+        $patient_uid = 'DM-' . (10000 + ($user_id % 90000));
+        update_user_meta($user_id, 'patient_id', $patient_uid);
+
+        // Save All User Meta
+        update_user_meta($user_id, 'first_name', $first_name);
+        update_user_meta($user_id, 'last_name', $last_name);
+        update_user_meta($user_id, 'phone', $phone);
+        update_user_meta($user_id, 'billing_phone', $phone);
+        update_user_meta($user_id, 'dob', date('Y-m-d', $dob_time));
+        update_user_meta($user_id, 'date_of_birth', date('Y-m-d', $dob_time));
+        update_user_meta($user_id, 'gender', $gender);
+        update_user_meta($user_id, 'blood_group', $blood_group);
+        update_user_meta($user_id, 'height', $height);
+        update_user_meta($user_id, 'weight', $weight);
+        update_user_meta($user_id, 'address', $address);
+        update_user_meta($user_id, 'billing_address_1', $address);
+        update_user_meta($user_id, 'city', $city);
+        update_user_meta($user_id, 'billing_city', $city);
+        update_user_meta($user_id, 'state', $state);
+        update_user_meta($user_id, 'billing_state', $state);
+        update_user_meta($user_id, 'zip', $zip);
+        update_user_meta($user_id, 'zip_code', $zip);
+        update_user_meta($user_id, 'billing_postcode', $zip);
+        update_user_meta($user_id, 'country', $country);
+        update_user_meta($user_id, 'billing_country', $country);
+        update_user_meta($user_id, 'emergency_name', $em_name);
+        update_user_meta($user_id, 'emergency_relation', $em_rel);
+        update_user_meta($user_id, 'emergency_phone', $em_phone);
+        update_user_meta($user_id, 'preferred_pharmacy_name', $pharm_name);
+        update_user_meta($user_id, 'preferred_pharmacy_address', $pharm_addr);
+        update_user_meta($user_id, 'preferred_pharmacy_phone', $pharm_phone);
+        update_user_meta($user_id, 'dior_patient_status', 'active');
+        update_user_meta($user_id, 'is_18_verified', 'Verified (18+)');
+        update_user_meta($user_id, 'state_eligible', 'Active in State');
+
+        // Sync with Relational Database
+        if (class_exists('Dior_Patient_Portal_Data')) {
+            Dior_Patient_Portal_Data::sync_relational_patient($user_id);
+        } else {
+            $table = $wpdb->prefix . 'dior_patients';
+            $wpdb->replace($table, [
+                'user_id'     => $user_id,
+                'patient_uid' => $patient_uid,
+                'first_name'  => $first_name,
+                'last_name'   => $last_name,
+                'email'       => $email,
+                'phone'       => $phone,
+                'dob'         => date('Y-m-d', $dob_time),
+                'gender'      => $gender,
+                'blood_group' => $blood_group,
+                'address'     => $address,
+                'city'        => $city,
+                'state'       => $state,
+                'country'     => $country,
+                'status'      => 'active',
+                'created_at'  => current_time('mysql'),
+                'updated_at'  => current_time('mysql'),
+            ]);
+        }
+
+        // Optional welcome email
+        if ($send_email) {
+            $subject = 'Welcome to Dior Medical Patient Portal';
+            $message = "Hello {$first_name},\n\nYour patient account has been created by your physician.\n\n"
+                     . "Patient ID: {$patient_uid}\n"
+                     . "Login: {$email}\n"
+                     . "Temporary Password: {$password}\n\n"
+                     . "Access your dashboard at: " . home_url('/patient-dashboard/') . "\n\n"
+                     . "Dior Medical Care Team";
+            @wp_mail($email, $subject, $message);
+        }
+
+        if (class_exists('Dior_Audit_Service')) {
+            Dior_Audit_Service::log('patient_add', 'patient', $patient_uid, $user_id, 'success');
+        }
+
+        wp_send_json_success([
+            'message' => "Patient {$first_name} {$last_name} (#{$patient_uid}) was created successfully!",
+            'patient_id' => $user_id,
+            'patient_uid' => $patient_uid,
+            'name' => trim($first_name . ' ' . $last_name),
+            'email' => $email,
+            'password' => $password
+        ]);
+    }
+
+    public static function ajax_patient_update() {
+        self::auth();
+        global $wpdb;
+
+        $patient_id = (int)($_POST['patient_id'] ?? 0);
+        if (!$patient_id) {
+            wp_send_json_error(['message' => 'Please select a valid patient to update.']);
+        }
+
+        $user = get_userdata($patient_id);
+        if (!$user) {
+            wp_send_json_error(['message' => 'Patient user account was not found.']);
+        }
+
+        if (!self::patient_belongs_to_doctor($patient_id, self::doctor_id())) {
+            wp_send_json_error(['message' => 'Access denied: You do not have permission to edit this patient.']);
+        }
+
+        $first_name = sanitize_text_field(trim($_POST['first_name'] ?? ''));
+        $last_name  = sanitize_text_field(trim($_POST['last_name'] ?? ''));
+        $email      = sanitize_email(trim($_POST['email'] ?? ''));
+        $phone      = sanitize_text_field(trim($_POST['phone'] ?? ''));
+        $gender     = sanitize_text_field(trim($_POST['gender'] ?? ''));
+        $dob        = sanitize_text_field(trim($_POST['dob'] ?? ''));
+
+        if (empty($first_name) || empty($last_name)) {
+            wp_send_json_error(['message' => 'First and Last Name are required.']);
+        }
+
+        if (empty($email) || !is_email($email)) {
+            wp_send_json_error(['message' => 'A valid email address is required.']);
+        }
+
+        $existing_user_id = email_exists($email);
+        if ($existing_user_id && (int)$existing_user_id !== $patient_id) {
+            wp_send_json_error(['message' => 'This email address is already assigned to another account.']);
+        }
+
+        if (!empty($dob)) {
+            $dob_time = strtotime($dob);
+            if (!$dob_time) {
+                wp_send_json_error(['message' => 'Invalid Date of Birth format.']);
+            }
+            $age = (int)floor((time() - $dob_time) / (365.25 * 86400));
+            if ($age < 18) {
+                wp_send_json_error(['message' => 'Patient must be at least 18 years old to hold a portal account.']);
+            }
+            $dob = date('Y-m-d', $dob_time);
+        }
+
+        $blood_group = sanitize_text_field(trim($_POST['blood_group'] ?? ''));
+        $height      = sanitize_text_field(trim($_POST['height'] ?? ''));
+        $weight      = sanitize_text_field(trim($_POST['weight'] ?? ''));
+        $address     = sanitize_text_field(trim($_POST['address'] ?? ''));
+        $city        = sanitize_text_field(trim($_POST['city'] ?? ''));
+        $state       = strtoupper(sanitize_text_field(trim($_POST['state'] ?? '')));
+        $zip         = sanitize_text_field(trim($_POST['zip'] ?? ''));
+        $country     = sanitize_text_field(trim($_POST['country'] ?? 'United States of America'));
+        $status      = sanitize_text_field(trim($_POST['status'] ?? 'active'));
+        if (!in_array($status, ['active', 'inactive', 'blocked'], true)) {
+            $status = 'active';
+        }
+
+        $emergency_name     = sanitize_text_field(trim($_POST['emergency_name'] ?? ''));
+        $emergency_relation = sanitize_text_field(trim($_POST['emergency_relation'] ?? ''));
+        $emergency_phone    = sanitize_text_field(trim($_POST['emergency_phone'] ?? ''));
+
+        $pharmacy_name    = sanitize_text_field(trim($_POST['preferred_pharmacy_name'] ?? ''));
+        $pharmacy_address = sanitize_text_field(trim($_POST['preferred_pharmacy_address'] ?? ''));
+        $pharmacy_phone   = sanitize_text_field(trim($_POST['preferred_pharmacy_phone'] ?? ''));
+
+        $update_data = [
+            'ID'           => $patient_id,
+            'first_name'   => $first_name,
+            'last_name'    => $last_name,
+            'display_name' => trim($first_name . ' ' . $last_name),
+            'user_email'   => $email,
+        ];
+
+        $new_password = trim($_POST['password'] ?? '');
+        $password_updated = false;
+        if (!empty($new_password)) {
+            if (strlen($new_password) < 6) {
+                wp_send_json_error(['message' => 'New password must be at least 6 characters.']);
+            }
+            $update_data['user_pass'] = $new_password;
+            $password_updated = true;
+        }
+
+        $res = wp_update_user($update_data);
+        if (is_wp_error($res)) {
+            wp_send_json_error(['message' => $res->get_error_message()]);
+        }
+
+        update_user_meta($patient_id, 'first_name', $first_name);
+        update_user_meta($patient_id, 'last_name', $last_name);
+        update_user_meta($patient_id, 'phone', $phone);
+        update_user_meta($patient_id, 'billing_phone', $phone);
+        if (!empty($dob)) {
+            update_user_meta($patient_id, 'dob', $dob);
+            update_user_meta($patient_id, 'date_of_birth', $dob);
+        }
+        update_user_meta($patient_id, 'gender', $gender);
+        update_user_meta($patient_id, 'blood_group', $blood_group);
+        update_user_meta($patient_id, 'height', $height);
+        update_user_meta($patient_id, 'weight', $weight);
+        update_user_meta($patient_id, 'address', $address);
+        update_user_meta($patient_id, 'billing_address_1', $address);
+        update_user_meta($patient_id, 'city', $city);
+        update_user_meta($patient_id, 'billing_city', $city);
+        update_user_meta($patient_id, 'state', $state);
+        update_user_meta($patient_id, 'billing_state', $state);
+        update_user_meta($patient_id, 'zip', $zip);
+        update_user_meta($patient_id, 'zip_code', $zip);
+        update_user_meta($patient_id, 'billing_postcode', $zip);
+        update_user_meta($patient_id, 'country', $country);
+        update_user_meta($patient_id, 'emergency_name', $emergency_name);
+        update_user_meta($patient_id, 'emergency_relation', $emergency_relation);
+        update_user_meta($patient_id, 'emergency_phone', $emergency_phone);
+        update_user_meta($patient_id, 'preferred_pharmacy_name', $pharmacy_name);
+        update_user_meta($patient_id, 'preferred_pharmacy_address', $pharmacy_address);
+        update_user_meta($patient_id, 'preferred_pharmacy_phone', $pharmacy_phone);
+        update_user_meta($patient_id, 'dior_patient_status', $status);
+
+        if (class_exists('Dior_Patient_Portal_Data')) {
+            Dior_Patient_Portal_Data::sync_relational_patient($patient_id);
+        }
+        $wpdb->update(
+            $wpdb->prefix . 'dior_patients',
+            ['status' => $status, 'updated_at' => current_time('mysql')],
+            ['user_id' => $patient_id]
+        );
+
+        if ($password_updated && !empty($_POST['send_password_email'])) {
+            $site_name = get_bloginfo('name') ?: 'Dior Medical';
+            $subject = "Your {$site_name} Portal Password Has Been Updated";
+            $message = "Hello {$first_name},\n\nYour patient portal account credentials have been updated by your healthcare provider.\n\nUpdated Password: {$new_password}\nLogin URL: " . home_url('/patient-dashboard/') . "\n\nPlease keep this information secure.\n\nWarm regards,\n{$site_name} Clinical Team";
+            @wp_mail($email, $subject, $message);
+        }
+
+        if (class_exists('Dior_Audit_Service')) {
+            $uid = get_user_meta($patient_id, 'patient_id', true) ?: ('DM-' . (10000 + ($patient_id % 90000)));
+            Dior_Audit_Service::log('patient_update', 'patient', $uid, $patient_id, 'success');
+        }
+
+        wp_send_json_success([
+            'message'    => "Patient profile for {$first_name} {$last_name} was updated successfully!",
+            'patient_id' => $patient_id,
+            'name'       => trim($first_name . ' ' . $last_name),
+            'email'      => $email,
+            'status'     => $status
+        ]);
+    }
+
+    public static function ajax_get_patient_profile(){
+        self::auth();
+        global $wpdb;
+        $p = self::patient(sanitize_text_field($_POST['patient_id'] ?? ''));
+        if (!$p || !self::patient_belongs_to_doctor($p['user_id'], self::doctor_id())) {
+            wp_send_json_error(['message' => 'Patient not found or access denied.']);
+        }
+        $pid = (int) $p['user_id'];
+        $profile = class_exists('Dior_Patient_Portal_Data') ? Dior_Patient_Portal_Data::get_patient_profile($pid) : [];
+        $intake = get_user_meta($pid, 'dior_hipaa_intake', true);
+        $intake = is_array($intake) ? $intake : [];
+        $questionnaire = get_user_meta($pid, 'dior_medical_questionnaire', true);
+        $questionnaire = is_array($questionnaire) ? $questionnaire : [];
+        $prescriptions = $wpdb->get_results($wpdb->prepare(
+            "SELECT medication, instructions, status, created_at FROM {$wpdb->prefix}dior_prescriptions WHERE patient_id = %d ORDER BY created_at DESC LIMIT 50", $pid
+        ), ARRAY_A) ?: [];
+        $legacy_rx = get_user_meta($pid, 'dior_prescriptions', true);
+        foreach ((array) $legacy_rx as $rx) {
+            if (!is_array($rx)) continue;
+            $prescriptions[] = [
+                'medication' => $rx['medication'] ?? ($rx['name'] ?? ''),
+                'instructions' => $rx['instructions'] ?? ($rx['notes'] ?? ''),
+                'status' => $rx['status'] ?? 'Active',
+                'created_at' => $rx['date'] ?? ($rx['date_prescribed'] ?? ''),
+            ];
+        }
+        $visits = $wpdb->get_results($wpdb->prepare(
+            "SELECT appt_date, doctor_id, condition_name, visit_type, status FROM {$wpdb->prefix}dior_appointments WHERE patient_id = %d AND is_deleted = 0 ORDER BY appt_date DESC LIMIT 50", $pid
+        ), ARRAY_A) ?: [];
+        foreach ($visits as &$visit) {
+            $doctor = get_userdata((int) $visit['doctor_id']);
+            $visit['doctor_name'] = $doctor ? $doctor->display_name : '';
+        }
+        unset($visit);
+        $notes = $wpdb->get_results($wpdb->prepare(
+            "SELECT encounter_uid, subjective, diagnosis, assessment, plan, follow_up, created_at FROM {$wpdb->prefix}dior_encounters WHERE patient_id = %d AND is_deleted = 0 ORDER BY created_at DESC LIMIT 30", $pid
+        ), ARRAY_A) ?: [];
+        $documents = class_exists('Dior_Medical_Secure_Files') ? Dior_Medical_Secure_Files::get_patient_documents($pid) : [];
+        $documents = array_map(static function ($doc) {
+            return array_intersect_key($doc, array_flip(['id', 'title', 'category', 'date', 'author', 'file_type', 'size']));
+        }, $documents);
+        $p = array_merge($p, $profile, [
+            'patient_uid' => $p['patient_uid'] ?? ($profile['patient_id'] ?? ''),
+            'status' => get_user_meta($pid, 'dior_patient_status', true) ?: ($p['status'] ?? 'active'),
+            'marital_status' => get_user_meta($pid, 'marital_status', true),
+            'national_id' => get_user_meta($pid, 'national_id', true),
+            'allergies' => $intake['drug_allergies_list'] ?? ($intake['allergies'] ?? ''),
+            'conditions' => $intake['diagnosed_conditions'] ?? ($intake['other_conditions'] ?? ''),
+            'medications' => $intake['medications_list'] ?? ($intake['medications'] ?? ''),
+            'medical_history' => $intake['medical_history'] ?? ($intake['other_conditions'] ?? ''),
+            'questionnaire' => $questionnaire,
+            'prescriptions' => $prescriptions,
+            'visits' => $visits,
+            'consultations' => $notes,
+            'documents' => $documents,
+        ]);
+        wp_send_json_success(['patient' => $p]);
+    }
 
     public static function ajax_save_consultation(){ self::auth(); $pid=(int)($_POST['patient_id']??0); self::ensure_patient_row($pid); if(!self::patient_belongs_to_doctor($pid,self::doctor_id())) wp_send_json_error(['message'=>'Select a patient assigned to this doctor.']); $res=Dior_Encounter_Service::save_encounter(['patient_id'=>$pid,'encounter_uid'=>sanitize_text_field($_POST['note_id']??''),'encounter_type'=>'Consultation Note','subjective'=>sanitize_textarea_field($_POST['note']??''),'assessment'=>sanitize_textarea_field($_POST['assessment']??''),'plan'=>sanitize_textarea_field($_POST['plan']??''),'diagnosis'=>sanitize_text_field($_POST['diagnosis']??''),'follow_up'=>sanitize_text_field($_POST['follow_up']??'')]); if(is_wp_error($res)) wp_send_json_error(['message'=>$res->get_error_message()]); wp_send_json_success(['message'=>'Consultation note saved.','note'=>$res]); }
     public static function ajax_delete_consultation(){ self::auth(); $pid=(int)($_POST['patient_id']??0); $nid=sanitize_text_field($_POST['note_id']??''); if(!$pid||!$nid) wp_send_json_error(['message'=>'Invalid note.']); $res=Dior_Encounter_Service::delete_encounter($nid,$pid); if(is_wp_error($res)) wp_send_json_error(['message'=>$res->get_error_message()]); wp_send_json_success(['message'=>'Consultation note deleted.']); }
 
     public static function ajax_document_save(){ self::auth(); global $wpdb; $pid=(int)($_POST['patient_id']??0); self::ensure_patient_row($pid); if(!self::patient_belongs_to_doctor($pid,self::doctor_id())) wp_send_json_error(['message'=>'Access denied.']); $id=(int)($_POST['id']??0); $data=['patient_id'=>$pid,'author_id'=>self::doctor_id(),'title'=>sanitize_text_field($_POST['title']??'Document'),'category'=>sanitize_text_field($_POST['category']??'Clinical Record'),'file_name'=>sanitize_file_name($_POST['file_name']??'document.txt'),'file_path'=>sanitize_text_field($_POST['file_path']??''),'file_type'=>sanitize_text_field($_POST['file_type']??'TXT'),'content_html'=>wp_kses_post($_POST['content_html']??''),'updated_at'=>current_time('mysql')]; if($id){$wpdb->update(self::table('documents'),$data,['id'=>$id]);}else{$data['doc_uid']='DOC-'.wp_generate_uuid4();$data['created_at']=current_time('mysql');$wpdb->insert(self::table('documents'),$data);$id=$wpdb->insert_id;} wp_send_json_success(['message'=>'Document saved.','id'=>$id]); }
+    public static function ajax_document_update_meta(){
+        self::auth(); global $wpdb;
+        $pid = (int) ($_POST['patient_id'] ?? 0);
+        $doc_uid = sanitize_text_field($_POST['doc_uid'] ?? '');
+        if (!$pid || !$doc_uid || !self::patient_belongs_to_doctor($pid, self::doctor_id())) wp_send_json_error(['message' => 'Access denied.'], 403);
+        $updated = $wpdb->update(self::table('documents'), [
+            'title' => sanitize_text_field($_POST['title'] ?? 'Medical Document'),
+            'category' => sanitize_text_field($_POST['category'] ?? 'Clinical Record'),
+            'updated_at' => current_time('mysql'),
+        ], ['doc_uid' => $doc_uid, 'patient_id' => $pid, 'is_deleted' => 0], ['%s', '%s', '%s'], ['%s', '%d', '%d']);
+        if ($updated === false) wp_send_json_error(['message' => 'Document could not be updated.']);
+        if (!$updated) wp_send_json_error(['message' => 'Document not found or no changes were made.']);
+        wp_send_json_success(['message' => 'Document details updated.']);
+    }
     public static function ajax_document_delete(){ self::auth(); global $wpdb; $id=(int)($_POST['id']??0); $doc=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('documents').' WHERE id=%d',$id),ARRAY_A); if(!$doc||!self::patient_belongs_to_doctor($doc['patient_id'],self::doctor_id())) wp_send_json_error(['message'=>'Access denied.']); $wpdb->delete(self::table('documents'),['id'=>$id],['%d']); wp_send_json_success(['message'=>'Document deleted.']); }
 
     public static function ajax_review_save(){

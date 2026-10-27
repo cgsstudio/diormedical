@@ -38,7 +38,8 @@ if ( '' !== $align ) {
 // can open the booking form already on that slot instead of navigating to the doctor's
 // page and losing the choice. view.js only takes over when window.wpddbpMountBookingForm
 // exists (i.e. a booking-form block is on the page); otherwise the slot's href stands.
-$sch_cfg = wp_json_encode( array(
+$doctor_id = wpddbp_schedule_resolve_doctor_id( $attributes );
+$sch_cfg   = wp_json_encode( array(
 	'apiUrl'   => esc_url_raw( rest_url() ),
 	'nonce'    => wp_create_nonce( 'wp_rest' ),
 	'hasPro'   => function_exists( 'wpddbp' ),

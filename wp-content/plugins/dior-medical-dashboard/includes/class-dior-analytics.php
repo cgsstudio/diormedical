@@ -102,7 +102,7 @@ class Dior_Medical_Analytics
         ]);
 
         // Styles - Consolidated Bootstrap + Custom CSS
-        wp_enqueue_style('dior-bootstrap-css', DIOR_PORTAL_URL . 'assets/css/bootstrap.min.css', [], '5.3.3');
+        wp_enqueue_style('dior-bootstrap-css', DIOR_PORTAL_URL . 'assets/bootstrap/css/bootstrap.min.css', [], '5.3.3');
         wp_enqueue_style('dior-custom-css', DIOR_PORTAL_URL . 'assets/css/dior-custom.css', ['dior-bootstrap-css'], DIOR_PORTAL_VERSION);
     }
 

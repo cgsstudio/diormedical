@@ -5,7 +5,7 @@
  * Plugin Name: DocBooker Pro - Doctor Appointment & Hospital Management
  * Plugin URI:
  * Description: The Doctor Booking & Hospital Management System.
- * Version: 2.1.0
+ * Version: 2.2.0
  * Update URI: https://api.freemius.com
  * Author: Wp Dreamers
  * Author URI: https://wpdreamers.com/
@@ -20,8 +20,8 @@ use WpDreamers\WPDDBP\DocBookerPro;
 if ( !defined( 'ABSPATH' ) ) {
     exit( 'This script cannot be accessed directly.' );
 }
-define( 'WPDDBP_VERSION', '2.1.0' );
-define( 'WPDDBP_DB_VERSION', '1.1.3' );
+define( 'WPDDBP_VERSION', '2.2.0' );
+define( 'WPDDBP_DB_VERSION', '1.1.5' );
 define( 'WPDDBP_FILE', __FILE__ );
 define( 'WPDDBP_BASENAME', plugin_basename( __FILE__ ) );
 define( 'WPDDBP_URL', plugins_url( '', WPDDBP_FILE ) );

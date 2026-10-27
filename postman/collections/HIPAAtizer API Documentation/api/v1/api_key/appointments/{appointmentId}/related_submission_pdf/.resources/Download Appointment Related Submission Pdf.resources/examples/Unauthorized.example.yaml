@@ -1,0 +1,19 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/v1/api_key/appointments/:appointmentId/related_submission_pdf?useGroupedSubmissionIfExists=<boolean>"
+  method: GET
+  headers:
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  queryParams:
+    useGroupedSubmissionIfExists: <boolean>
+  pathVariables:
+    appointmentId: ""
+response:
+  statusCode: 401
+  statusText: Unauthorized
+  body:
+    type: text
+    content: ""
+order: 3000

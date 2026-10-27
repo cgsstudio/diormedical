@@ -1,0 +1,24 @@
+$kind: http-request
+description: Retrieves the count of future appointments at specified locations.
+url: "{{baseUrl}}/api/v1/api_key/appointments/count_future"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "locationIds": [
+        "<uuid>",
+        "<uuid>"
+      ]
+    }
+auth:
+  type: apikey
+  credentials:
+    key: X-Api-Key
+    value: "{{apiKey}}"
+    in: header
+examples: ./.resources/Count Future Appointments.resources/examples
+order: 1000

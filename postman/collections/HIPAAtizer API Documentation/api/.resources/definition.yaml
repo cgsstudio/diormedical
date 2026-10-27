@@ -1,0 +1,3 @@
+$kind: collection
+description: This folder contains all API endpoints organized by version and functionality.
+order: 1000

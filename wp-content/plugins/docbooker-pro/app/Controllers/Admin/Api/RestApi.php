@@ -8,6 +8,7 @@ use WpDreamers\WPDDB\Controllers\Admin\Api\RestApi as FreeRestApi;
 use WpDreamers\WPDDB\Controllers\Helper\Helper as FreeHelper;
 use WpDreamers\WPDDB\Controllers\WpddbOptions;
 use WpDreamers\WPDDBP\Controllers\Helper\Helper;
+use WpDreamers\WPDDBP\Controllers\Payments\BookingPayment;
 use WpDreamers\WPDDBP\Traits\SingletonTrait;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -78,12 +79,12 @@ class RestApi{
         register_rest_route('doctor-details-booking/v1', '/razorpay/create-order', [
             'methods'  => 'POST',
             'callback' => [ $this, 'create_razorpay_order' ],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [ $this, 'verify_nonce' ],
         ]);
         register_rest_route('doctor-details-booking/v1', '/razorpay/verify-payment', [
             'methods'  => 'POST',
             'callback' => [ $this, 'verify_razorpay_payment' ],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [ $this, 'verify_nonce' ],
         ]);
 
         // Pro Booking Management — bulk cancel
@@ -399,8 +400,9 @@ class RestApi{
     public function get_doctor_booking_fee( $request ) {
         try {
             $doctor_id = intval( $request['doctor_id'] );
-            $booking_fee = get_post_meta( $doctor_id, 'wpddb_doctor_booking_fee', true );
-            $booking_fee = floatval( $booking_fee ) ?: 50;
+            // The real fee; 0 means booking this doctor is free. (A missing fee used
+            // to be quoted as 50, which the server never charged.)
+            $booking_fee = BookingPayment::doctor_fee( $doctor_id );
 
             return new \WP_REST_Response( array(
                 'bookingFee' => $booking_fee,
@@ -435,66 +437,54 @@ class RestApi{
 
             // Get request body
             $body = json_decode( $request->get_body(), true );
+            $body = is_array( $body ) ? $body : array();
 
-            // Validate required fields
-            $required_fields = array( 'amount', 'currency', 'paymentMethodId' );
-            foreach ( $required_fields as $field ) {
-                if ( ! isset( $body[ $field ] ) || trim( (string) $body[ $field ] ) === '' ) {
-                    return new \WP_REST_Response( array(
-                        'error' => "Missing required field: {$field}"
-                    ), 400 );
-                }
-            }
-
-            // Validate and convert amount based on currency decimals
-            $raw_amount = $body['amount'];
-            $currency_code = strtoupper( sanitize_text_field( $body['currency'] ??  'USD' ) );
-
-            if ( !  is_numeric( $raw_amount ) ) {
+            if ( empty( $body['paymentMethodId'] ) ) {
                 return new \WP_REST_Response( array(
-                    'error' => 'Invalid amount format'
+                    'error' => 'Missing required field: paymentMethodId'
                 ), 400 );
             }
 
-            $display_amount = floatval( $raw_amount );
-
-            // Get currency details from Helper
-            $currencies = Helper::currency_list();
-            if ( ! isset( $currencies[ $currency_code ] ) ) {
+            // The browser says which doctor; the server decides the price. Any
+            // amount or currency in the request is ignored.
+            $doctor_id = absint( $body['doctorId'] ?? ( $body['metadata']['doctorId'] ?? 0 ) );
+            if ( ! $doctor_id || get_post_status( $doctor_id ) !== 'publish' || get_post_type( $doctor_id ) !== wpddb()->post_type_doctor ) {
                 return new \WP_REST_Response( array(
-                    'error' => 'Unsupported currency: ' . $currency_code
+                    'error' => 'Doctor not found'
+                ), 404 );
+            }
+            if ( 'stripe' !== BookingPayment::active_gateway() || ! BookingPayment::is_required( $doctor_id ) ) {
+                return new \WP_REST_Response( array(
+                    'error' => 'Online payment is not required for this doctor'
                 ), 400 );
             }
 
-            $currency_info = $currencies[ $currency_code ];
-            $decimals = $currency_info['decimals'] ?? 2;
-
-            // Convert display amount to minor unit
-            $multiplier = pow( 10, $decimals );
-            $amount = intval( round( $display_amount * $multiplier ) );
-
-            // Minimum amount validation
-            $min_amount = $decimals > 0 ? 50 : 1;
-            if ( $amount < $min_amount ) {
-                $min_display = $decimals > 0 ? '0. 50' : '1';
-                return new \WP_REST_Response( array(
-                    'error' => "Amount must be at least {$min_display}"
-                ), 400 );
-            }
+            $currency_code = BookingPayment::currency();
+            $amount        = BookingPayment::to_minor( BookingPayment::doctor_fee( $doctor_id ), $currency_code );
+            $metadata      = array(
+                'doctor_id'     => (string) $doctor_id,
+                'patient_email' => sanitize_email( $body['metadata']['patientEmail'] ?? '' ),
+                'booking_day'   => sanitize_text_field( $body['metadata']['bookingDay'] ?? '' ),
+                'booking_time'  => sanitize_text_field( $body['metadata']['bookingTime'] ?? '' ),
+            );
 
             try {
                 // Create payment intent with the payment method
+                $payment_method = sanitize_text_field( $body['paymentMethodId'] );
                 $payment_intent = \Stripe\PaymentIntent::create( array(
                     'amount' => $amount,
                     'currency' => strtolower( $currency_code ),
-                    'payment_method' => sanitize_text_field( $body['paymentMethodId'] ),
+                    'payment_method' => $payment_method,
                     'confirm' => true,
                     'description' => sanitize_text_field( $body['description'] ?? 'Doctor Booking' ),
-                    'metadata' => isset( $body['metadata'] ) ? array_map( 'sanitize_text_field', $body['metadata'] ) : array(),
+                    'metadata' => $metadata,
                     'automatic_payment_methods' => array(
                         'enabled' => true,
                         'allow_redirects' => 'never'
                     ),
+                ), array(
+                    // A retried request with the same card form cannot charge twice.
+                    'idempotency_key' => 'wpddbp_' . md5( $payment_method . '|' . $doctor_id . '|' . $amount ),
                 ) );
 
                 // Check payment status
@@ -603,6 +593,7 @@ class RestApi{
                     'currency_position' => esc_html($currency_position),
                     'mode' => $stripe_mode,
                     'publishableKey' => $publishable_key,
+                    'payAtClinic' => \WpDreamers\WPDDBP\Controllers\Payments\BookingPayment::pay_at_clinic_allowed(),
                 ), 200 );
             }elseif ( $payment_gateway === 'razorpay' ) {
                 $mode = WpddbOptions::get_option('razorpay_mode', 'wpddb_global_settings') ?: 'test';
@@ -622,7 +613,8 @@ class RestApi{
                     'currency' => $currency,
                     'currency_position' => esc_html($currency_position),
                     'mode' => $mode,
-                    'keyId' => $key_id
+                    'keyId' => $key_id,
+                    'payAtClinic' => \WpDreamers\WPDDBP\Controllers\Payments\BookingPayment::pay_at_clinic_allowed(),
                 ], 200);
             }
             return new \WP_REST_Response([
@@ -639,27 +631,25 @@ class RestApi{
     }
     public function create_razorpay_order( $request ) {
         $params = $request->get_json_params();
+        $params = is_array( $params ) ? $params : [];
 
-        $razorpay_mode = WpddbOptions::get_option('razorpay_mode', 'wpddb_global_settings');
-        $key_id = WpddbOptions::get_option(
-            $razorpay_mode === 'live' ? 'razorpay_live_key_id' : 'razorpay_test_key_id',
-            'wpddb_global_settings'
-        );
-        $key_secret = WpddbOptions::get_option(
-            $razorpay_mode === 'live' ? 'razorpay_live_key_secret' : 'razorpay_test_key_secret',
-            'wpddb_global_settings'
-        );
+        // The browser says which doctor; the server decides the price.
+        $doctor_id = absint( $params['doctorId'] ?? ( $params['metadata']['doctorId'] ?? 0 ) );
+        if ( ! $doctor_id || get_post_status( $doctor_id ) !== 'publish' || get_post_type( $doctor_id ) !== wpddb()->post_type_doctor ) {
+            return new \WP_REST_Response( [ 'error' => 'Doctor not found' ], 404 );
+        }
+        if ( 'razorpay' !== BookingPayment::active_gateway() || ! BookingPayment::is_required( $doctor_id ) ) {
+            return new \WP_REST_Response( [ 'error' => 'Online payment is not required for this doctor' ], 400 );
+        }
 
-        $api = new Api($key_id, $key_secret);
-
-        $amount = $params['amount'] * 100;
-        $currency = $params['currency'] ?? 'INR';
+        $api      = BookingPayment::razorpay_api();
+        $currency = BookingPayment::currency();
 
         $orderData = [
-            'receipt'   => 'booking_' . time(),
-            'amount'    => $amount,
-            'currency'  => $currency,
-            'notes'     => $params['metadata'] ?? []
+            'receipt'  => 'booking_' . $doctor_id . '_' . time(),
+            'amount'   => BookingPayment::to_minor( BookingPayment::doctor_fee( $doctor_id ), $currency ),
+            'currency' => $currency,
+            'notes'    => [ 'doctor_id' => (string) $doctor_id ],
         ];
 
         try {
@@ -671,48 +661,53 @@ class RestApi{
                 'currency' => $order['currency']
             ], 200);
         } catch (\Exception $e) {
+            error_log( 'DocBooker Pro: Razorpay order failed: ' . $e->getMessage() );
             return new \WP_REST_Response([
-                'error' => $e->getMessage()
+                'error' => 'Could not start the payment. Please try again.'
             ], 500);
         }
     }
     public function verify_razorpay_payment( $request ) {
         $params = $request->get_json_params();
+        $params = is_array( $params ) ? $params : [];
+        $api    = BookingPayment::razorpay_api();
 
-        $razorpay_mode = WpddbOptions::get_option('razorpay_mode', 'wpddb_global_settings');
-        $key_id = WpddbOptions::get_option(
-            $razorpay_mode === 'live' ? 'razorpay_live_key_id' : 'razorpay_test_key_id',
-            'wpddb_global_settings'
-        );
-        $key_secret = WpddbOptions::get_option(
-            $razorpay_mode === 'live' ? 'razorpay_live_key_secret' : 'razorpay_test_key_secret',
-            'wpddb_global_settings'
-        );
-
-        $api = new Api($key_id, $key_secret);
+        if ( ! $api || empty( $params['razorpay_order_id'] ) || empty( $params['razorpay_payment_id'] ) || empty( $params['razorpay_signature'] ) ) {
+            return new \WP_REST_Response( [ 'error' => 'Payment could not be verified' ], 400 );
+        }
 
         try {
             $attributes = [
-                'razorpay_order_id'   => $params['razorpay_order_id'],
-                'razorpay_payment_id' => $params['razorpay_payment_id'],
-                'razorpay_signature'  => $params['razorpay_signature']
+                'razorpay_order_id'   => sanitize_text_field( $params['razorpay_order_id'] ),
+                'razorpay_payment_id' => sanitize_text_field( $params['razorpay_payment_id'] ),
+                'razorpay_signature'  => sanitize_text_field( $params['razorpay_signature'] ),
             ];
 
             $api->utility->verifyPaymentSignature($attributes);
 
-            // If success, proceed with booking
+            // The signature proves Razorpay saw this payment for this order; the
+            // order itself says how much and for which doctor.
+            $order = $api->order->fetch( $attributes['razorpay_order_id'] );
+            BookingPayment::remember_razorpay_payment(
+                $attributes['razorpay_payment_id'],
+                (int) ( $order['notes']['doctor_id'] ?? 0 ),
+                (int) $order['amount'],
+                (string) $order['currency']
+            );
+
             return new \WP_REST_Response([
                 'verified' => true,
-                'paymentId' => $params['razorpay_payment_id']
+                'paymentId' => $attributes['razorpay_payment_id']
             ], 200);
 
         } catch (SignatureVerificationError $e) {
             return new \WP_REST_Response([
-                'error' => $e->getMessage()
+                'error' => 'Payment could not be verified'
             ], 400);
         } catch (\Exception $e) {
+            error_log( 'DocBooker Pro: Razorpay verification failed: ' . $e->getMessage() );
             return new \WP_REST_Response([
-                'error' => $e->getMessage()
+                'error' => 'Payment could not be verified'
             ], 500);
         }
     }

@@ -187,7 +187,7 @@ class Helper {
 
         $html .= '<a href="#" class="page-link prev-link ' . $prev_disabled . '" data-page="' . $prev_page . '">';
         $html .= '<span class="page-link-icon">‹</span>';
-        $html .= '<span class="page-link-text">Previous</span>';
+        $html .= '<span class="page-link-text">' . esc_html__( 'Previous', 'doc-booker-pro' ) . '</span>';
         $html .= '</a>';
 
 
@@ -223,7 +223,7 @@ class Helper {
         $next_page = min($total_pages, $current_page + 1);
 
         $html .= '<a href="#" class="page-link next-link ' . $next_disabled . '" data-page="' . $next_page . '">';
-        $html .= '<span class="page-link-text">Next</span>';
+        $html .= '<span class="page-link-text">' . esc_html__( 'Next', 'doc-booker-pro' ) . '</span>';
         $html .= '<span class="page-link-icon">›</span>';
         $html .= '</a>';
 
@@ -349,7 +349,7 @@ class Helper {
                              loading="lazy">
                         <?php if ($index === 3 && $total_images > 4): ?>
                             <div class="more-overlay">
-                                +<?php echo ($total_images - 4); ?> more
+                                <?php echo esc_html( sprintf( /* translators: %d: number of further gallery images */ __( '+%d more', 'doc-booker-pro' ), $total_images - 4 ) ); ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -376,7 +376,7 @@ class Helper {
                     <?php foreach ($gallery_images as $index => $image_url): ?>
                         <div class="swiper-slide">
                             <img src="<?php echo esc_url($image_url); ?>"
-                                 alt="clinic gallery image"
+                                 alt="<?php esc_attr_e( 'clinic gallery image', 'doc-booker-pro' ); ?>"
                                  loading="lazy">
                         </div>
                     <?php endforeach; ?>

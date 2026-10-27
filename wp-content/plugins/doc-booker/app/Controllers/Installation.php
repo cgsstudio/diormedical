@@ -3,6 +3,8 @@
 namespace WpDreamers\WPDDB\Controllers;
 // Do not allow directly accessing this file.
 use WpDreamers\WPDDB\Controllers\Admin\CustomUserRole;
+use WpDreamers\WPDDB\Controllers\Admin\RegisterPostType;
+use WpDreamers\WPDDB\Controllers\Admin\Setup\SetupWizard;
 use WpDreamers\WPDDB\Controllers\Helper\Helper;
 use WpDreamers\WPDDB\Controllers\Helper\SchemaUtil;
 use WpDreamers\WPDDB\Controllers\Model\DatabaseTable;
@@ -13,13 +15,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Installation {
 	public static function activate() {
-		if ( ! get_option( 'wpddb_version' ) ) {
+		// No stored version means DocBooker has never run on this site.
+		$fresh = ! get_option( 'wpddb_version' );
+		if ( $fresh ) {
 			self::create_options();
 		}
 		DatabaseTable::create_custom_db_table();
 		CustomUserRole::create_custom_user_roles();
 		self::update_wpddb_version();
-		do_action( 'wpddb_flush_rewrite_rules' );
+		// The listener for wpddb_flush_rewrite_rules is not attached yet while a
+		// plugin is being activated, so the request is left as an option instead.
+		RegisterPostType::flush_rewrite_rules();
+		SetupWizard::offer( $fresh );
 		do_action( 'wpddb_installed' );
 	}
 
@@ -55,6 +62,11 @@ class Installation {
 				'call_for_booking'           => 'on',
 				'showing_bookable_text'      => 'on',
 				'pre_booking_window'         => '0',
+				'min_notice_hours'           => '0',
+				'reminder_email'             => 'on',
+				'doctor_reminder_email'      => 'on',
+				'patient_cancel'             => 'on',
+				'cancel_cutoff_hours'        => '24',
 			],
 			'wpddb_clinic_settings'     => [
 				'clinic_posts_per_page'      => '9',
@@ -104,6 +116,38 @@ class Installation {
 
 	public static function deactivation() {
 		flush_rewrite_rules();
+		wp_clear_scheduled_hook( \WpDreamers\WPDDB\Controllers\BookingReminders::CRON_HOOK );
+	}
+
+	/**
+	 * Schema changes that must not wait for a release: each step runs once,
+	 * on every site, when the stored schema number is lower.
+	 */
+	const SCHEMA = 2;
+
+	public static function update_schema() {
+		$current = (int) get_option( 'wpddb_schema_version', 0 );
+		if ( $current >= self::SCHEMA ) {
+			return;
+		}
+		global $wpdb;
+		$table = $wpdb->prefix . 'wpddb_bookings';
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+			return; // Created complete on activation.
+		}
+		if ( $current < 1 ) {
+			// 1: reminder emails remember which bookings were reminded.
+			SchemaUtil::safe_add_column( 'wpddb_bookings', 'reminder_sent', 'TINYINT(1) NOT NULL DEFAULT 0 AFTER status' );
+		}
+		if ( $current < 2 ) {
+			// 2: the admin app marks bookings nobody has opened yet as new.
+			// Existing bookings count as seen (the default), so an update
+			// does not flood the list with old "new" rows.
+			SchemaUtil::safe_add_column( 'wpddb_bookings', 'admin_seen', 'TINYINT(1) NOT NULL DEFAULT 1 AFTER reminder_sent' );
+			SchemaUtil::safe_add_column( 'wpddb_bookings', 'booked_via', 'VARCHAR(10) NULL DEFAULT NULL AFTER admin_seen' );
+			SchemaUtil::safe_add_index( 'wpddb_bookings', 'idx_admin_seen', '(admin_seen)' );
+		}
+		update_option( 'wpddb_schema_version', self::SCHEMA );
 	}
 
 	/**
@@ -118,12 +162,31 @@ class Installation {
 		}
 	}
 
+	/**
+	 * Cancelling used to write status 'cancel', which the status column cannot
+	 * hold, so those rows were stored with an empty status and dropped out of
+	 * the "Cancelled" filter. Repair them once.
+	 */
+	public static function repair_cancelled_status() {
+		if ( get_option( 'wpddb_cancelled_status_repaired' ) ) {
+			return;
+		}
+		global $wpdb;
+		$table = $wpdb->prefix . 'wpddb_bookings';
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
+			$wpdb->query( "UPDATE $table SET status = 'cancelled' WHERE status = '' OR status IS NULL" );
+		}
+		update_option( 'wpddb_cancelled_status_repaired', 1 );
+	}
+
 	public static function check_and_update_plugin_version() {
 		$installed_version = get_option( 'wpddb_version' );
 
 		if ( $installed_version !== WPDDB_VERSION ) {
             self::database_migration();
 			update_option( 'wpddb_version', WPDDB_VERSION );
+			// Sites activated before this fix may still be missing the doctor and clinic rules.
+			RegisterPostType::flush_rewrite_rules();
 		}
 	}
     public static function database_migration(  ) {
@@ -183,6 +246,9 @@ class Installation {
         SchemaUtil::safe_add_column( 'wpddb_patients', 'gender',       "ENUM('male','female','other') NULL AFTER dob" );
         SchemaUtil::safe_add_column( 'wpddb_patients', 'address',      'TEXT NULL AFTER gender' );
         SchemaUtil::safe_add_column( 'wpddb_patients', 'patient_code', 'VARCHAR(30) NULL AFTER address' );
+        // The clinic whose front desk registered a walk-in (Pro); empty for
+        // patients who came through online booking.
+        SchemaUtil::safe_add_column( 'wpddb_patients', 'registered_clinic_id', 'BIGINT(20) UNSIGNED NULL AFTER patient_code' );
 
         SchemaUtil::safe_add_unique( 'wpddb_patients', 'uq_patient_code', '(patient_code)' );
         SchemaUtil::safe_add_index(  'wpddb_patients', 'idx_phone',       '(phone)' );

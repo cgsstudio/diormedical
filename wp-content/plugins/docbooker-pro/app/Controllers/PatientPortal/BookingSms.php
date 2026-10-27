@@ -19,8 +19,19 @@ class BookingSms {
 		add_action( 'wpddb_booking_created', [ $this, 'on_booking_created' ], 20, 1 );
 	}
 
+	/** Booking texts one phone number can receive per day. */
+	const DAILY_LIMIT_PER_PHONE = 3;
+
 	public function on_booking_created( $data ) {
 		if ( ! is_array( $data ) || empty( $data['patient_phone'] ) ) {
+			return;
+		}
+
+		// Anyone can book with any phone number, so without a cap the booking
+		// form could be used to flood a stranger with texts at the clinic's cost.
+		$limit_key = 'wpddbp_bsms_' . md5( preg_replace( '/\D/', '', (string) $data['patient_phone'] ) );
+		$sent      = (int) get_transient( $limit_key );
+		if ( $sent >= self::DAILY_LIMIT_PER_PHONE ) {
 			return;
 		}
 		$settings = get_option( 'wpddb_sms_settings', [] );
@@ -69,6 +80,7 @@ class BookingSms {
 		] );
 
 		Sms::send_message( (string) $data['patient_phone'], $body, [ 'context' => 'booking' ] );
+		set_transient( $limit_key, $sent + 1, DAY_IN_SECONDS );
 	}
 
 	/**

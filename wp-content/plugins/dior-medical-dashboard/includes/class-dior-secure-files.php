@@ -139,10 +139,17 @@ class Dior_Medical_Secure_Files
             'is_deleted'          => 0
         ]);
 
+        if ($inserted === false) {
+            if (!empty($file_path) && is_file($file_path)) { @unlink($file_path); }
+            return new WP_Error('document_database_error', 'The document could not be recorded in the database. Please try again.');
+        }
+
         self::sync_legacy_usermeta($patient_id);
 
         return [
             'id'                  => $doc_uid,
+            'patient_id'          => $patient_id,
+            'author_id'           => $author_id,
             'title'               => $title,
             'category'            => $category,
             'date'                => date('M j, Y', strtotime($now)),
@@ -221,6 +228,10 @@ class Dior_Medical_Secure_Files
             'size' => size_format($file['size']),
             'author_id' => $author_id,
         ]);
+
+        if (is_wp_error($doc)) {
+            wp_send_json_error(['message' => $doc->get_error_message()], 500);
+        }
 
         Dior_Audit_Service::log('document_upload', 'document', $doc['id'], $patient_id, 'success', ['file_name' => $safe_filename, 'size' => size_format($file['size'])]);
         return $doc;
@@ -313,16 +324,30 @@ class Dior_Medical_Secure_Files
         $category = sanitize_text_field($_POST['doc_category'] ?? ($_POST['category'] ?? 'Lab Report'));
         $formatted_size = size_format($file['size']);
 
-        $doc = self::add_document($patient_id, [
-            'title'     => $title,
-            'category'  => $category,
-            'file_name' => $safe_filename,
-            'file_path' => $target_path,
-            'file_type' => strtoupper($ext),
-            'file_size' => $file['size'],
-            'size'      => $formatted_size,
-            'author_id' => $current_user_id
-        ]);
+        try {
+            $doc = self::add_document($patient_id, [
+                'title'     => $title,
+                'category'  => $category,
+                'file_name' => $safe_filename,
+                'file_path' => $target_path,
+                'file_type' => strtoupper($ext),
+                'file_size' => $file['size'],
+                'size'      => $formatted_size,
+                'author_id' => $current_user_id
+            ]);
+
+            if (is_wp_error($doc)) {
+                if (file_exists($target_path)) {
+                    @unlink($target_path);
+                }
+                wp_send_json_error(['message' => $doc->get_error_message()], 500);
+            }
+        } catch (\Throwable $e) {
+            if (file_exists($target_path)) {
+                @unlink($target_path);
+            }
+            wp_send_json_error(['message' => 'Failed to store document in database: ' . $e->getMessage()], 500);
+        }
 
         Dior_Audit_Service::log('document_upload', 'document', $doc['id'], $patient_id, 'success', [
             'file_name' => $safe_filename,
@@ -347,17 +372,17 @@ class Dior_Medical_Secure_Files
             wp_send_json_error(['message' => 'Invalid parameters.']);
         }
 
-        if (!Dior_Auth_Service::can_manage_document($patient_id, 0, $current_user_id)) {
-            Dior_Audit_Service::log('document_delete', 'document', $doc_uid, $patient_id, 'denied');
-            wp_send_json_error(['message' => 'Unauthorized to delete this medical record.'], 403);
-        }
-
         global $wpdb;
         $table = $wpdb->prefix . 'dior_documents';
         $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE doc_uid = %s AND patient_id = %d AND is_deleted = 0", $doc_uid, $patient_id));
 
         if (!$row) {
             wp_send_json_error(['message' => 'Document not found.']);
+        }
+
+        if (!Dior_Auth_Service::can_manage_document($patient_id, (int)$row->author_id, $current_user_id)) {
+            Dior_Audit_Service::log('document_delete', 'document', $doc_uid, $patient_id, 'denied');
+            wp_send_json_error(['message' => 'Unauthorized to delete this medical record.'], 403);
         }
 
         // Soft delete from database

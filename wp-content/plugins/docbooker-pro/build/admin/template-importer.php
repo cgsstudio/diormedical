@@ -162,6 +162,40 @@ function wpddbp_resolve_pinned_doctors( $content ) {
 	);
 }
 
+/**
+ * Template countdowns carry the fixed end date they were written with, so a
+ * page imported after that date showed an event that had already closed. Any
+ * countdown ending in the past or within two weeks is moved to 30 days after
+ * the import, keeping its time of day (site timezone, as the block reads it).
+ */
+function wpddbp_refresh_countdowns( $content ) {
+	if ( strpos( $content, 'wp:doc-booker-pro/countdown' ) === false ) {
+		return $content;
+	}
+	return preg_replace_callback(
+		'/<!-- wp:doc-booker-pro\/countdown (\{.*?\}) (\/?-->)/s',
+		function ( $m ) {
+			$attrs = json_decode( $m[1], true );
+			if ( ! is_array( $attrs ) || empty( $attrs['endDate'] ) ) {
+				return $m[0];
+			}
+			try {
+				$tz  = wp_timezone();
+				$end = new DateTimeImmutable( (string) $attrs['endDate'], $tz );
+				$now = new DateTimeImmutable( 'now', $tz );
+			} catch ( Exception $e ) {
+				return $m[0];
+			}
+			if ( $end > $now->modify( '+14 days' ) ) {
+				return $m[0];
+			}
+			$attrs['endDate'] = $now->modify( '+30 days' )->setTime( (int) $end->format( 'H' ), (int) $end->format( 'i' ) )->format( 'Y-m-d H:i:s' );
+			return '<!-- wp:doc-booker-pro/countdown ' . serialize_block_attributes( $attrs ) . ' ' . $m[2];
+		},
+		$content
+	);
+}
+
 /* ───────────────── /start — one-shot full import ─────────────────
    The Free UI fires this once and expects the final payload (edit_url, …)
    straight back. So /start creates the session AND runs every step in
@@ -297,6 +331,7 @@ function wpddbp_execute_step( array &$session, $step_index, array $registry ) {
 			// Swap composer intent-markers (acPinDoctor/acPinDepartment) for a real
 			// doctor + clinic from THIS site before the content is inserted.
 			$session['content'] = wpddbp_resolve_pinned_doctors( (string) $session['content'] );
+			$session['content'] = wpddbp_refresh_countdowns( $session['content'] );
 			$page_title = isset( $tpl['page_title'] ) ? $tpl['page_title'] : ( $tpl['title'] ?? __( 'Imported Page', 'doc-booker-pro' ) );
 			$post_id    = wp_insert_post(
 				array(

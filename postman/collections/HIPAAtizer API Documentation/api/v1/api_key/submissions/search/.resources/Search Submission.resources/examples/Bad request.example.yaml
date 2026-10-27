@@ -1,0 +1,73 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/v1/api_key/submissions/search?workflowId=<uuid>"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: X-Api-Key
+      value: <API Key>
+      description: "Added as a part of security scheme: apikey"
+  queryParams:
+    - key: workflowId
+      value: <uuid>
+      description: (Required) Id of workflow
+  body:
+    type: json
+    content: |-
+      {
+        "searchBy": "<string>",
+        "searchFor": "<string>",
+        "searchById": "<string>",
+        "additionalColumns": [
+          "<string>",
+          "<string>"
+        ],
+        "dates": {
+          "from": "<string>",
+          "to": "<string>"
+        },
+        "includeNotCompleted": "<boolean>",
+        "sorting": {
+          "direction": "Desc",
+          "column": "CreatedAt",
+          "additionalColumn": "<string>"
+        },
+        "pagination": {
+          "page": "<integer>",
+          "limit": "<integer>"
+        }
+      }
+response:
+  statusCode: 400
+  statusText: Bad Request
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "message": "<string>",
+        "type": "WrongStep",
+        "step": "ReviewBillingInformation",
+        "requestId": "<string>",
+        "verificationItems": [
+          {
+            "name": "<string>",
+            "email": "<string>",
+            "phone": "<string>"
+          },
+          {
+            "name": "<string>",
+            "email": "<string>",
+            "phone": "<string>"
+          }
+        ],
+        "errorFields": [
+          "<string>",
+          "<string>"
+        ]
+      }
+order: 2000

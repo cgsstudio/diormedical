@@ -16,14 +16,10 @@ $reviews_sql = "SELECT r.*,
     LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = r.patient_id
     LEFT JOIN {$wpdb->users} u ON u.ID = r.patient_id";
 if (!current_user_can('manage_options')) {
-    $review_doctor_ids = class_exists('Dior_Doctor_Resolver')
-        ? Dior_Doctor_Resolver::get_accessible_doctor_ids($doctor_id)
-        : [$doctor_id];
+    $review_doctor_ids = Dior_Doctor_Resolver::get_accessible_doctor_ids($doctor_id);
     if (!empty($review_doctor_ids)) {
         $review_placeholders = implode(',', array_fill(0, count($review_doctor_ids), '%d'));
-        $reviews_sql .= $wpdb->prepare(" WHERE (r.doctor_id IN ($review_placeholders) OR r.doctor_id = 0)", ...$review_doctor_ids);
-    } else {
-        $reviews_sql .= $wpdb->prepare(" WHERE (r.doctor_id = %d OR r.doctor_id = 0)", $doctor_id);
+        $reviews_sql .= $wpdb->prepare(" WHERE r.doctor_id IN ($review_placeholders)", ...$review_doctor_ids);
     }
 }
 $reviews = $wpdb->get_results($reviews_sql . ' ORDER BY r.created_at DESC LIMIT 200', ARRAY_A);
@@ -67,7 +63,7 @@ if (empty($patients)) {
         <!-- Header -->
         <div class="va-header-container">
             <div class="va-title-box">
-                <h2>All Reviews</h2>
+                <h2><i class="fas fa-star text-primary me-2"></i>All Reviews</h2>
                 <div class="va-title-line"></div>
             </div>
             <div class="va-actions-wrapper">
@@ -147,36 +143,20 @@ if (empty($patients)) {
                                 <td><span class="va-badge <?php echo $badge; ?>"><?php echo $status; ?></span></td>
                                 <td>
                                     <div class="va-row-actions">
-                                        <button class="va-action-btn-sm btn" style="background:transparent; border:none;"
-                                            title="View Review" data-enc="<?php echo $enc; ?>"
-                                            data-name="<?php echo esc_attr($fname); ?>" onclick="rvViewReview(this)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#3b82f6"
-                                                class="bi bi-eye" viewBox="0 0 16 16" style="background:transparent;">
-                                                <path
-                                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                                                <path
-                                                    d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                                            </svg>
+                                        <button type="button" class="va-action-btn-sm va-btn-view btn" title="View Review"
+                                            data-enc="<?php echo $enc; ?>" data-name="<?php echo esc_attr($fname); ?>"
+                                            onclick="rvOpenViewModal(this, event)">
+                                            <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="va-action-btn-sm va-btn-edit rv-edit-btn btn"
-                                            data-enc="<?php echo $enc; ?>" title="Edit Review">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                class="bi bi-vector-pen" viewBox="0 0 16 16" style="background:transparent;">
-                                                <path fill-rule="evenodd"
-                                                    d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                                            </svg>
+                                        <button type="button" class="va-action-btn-sm va-btn-edit rv-edit-btn btn"
+                                            data-enc="<?php echo $enc; ?>" title="Edit Review"
+                                            onclick="rvOpenEditModal(this, event)">
+                                            <i class="fas fa-pen"></i>
                                         </button>
-                                        <button class="va-action-btn-sm va-btn-delete rv-delete-btn btn"
-                                            data-id="<?php echo $rid; ?>" title="Delete Review">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef4444"
-                                                class="bi bi-trash" viewBox="0 0 16 16" style="background:transparent;">
-                                                <path
-                                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                                <path
-                                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                            </svg>
+                                        <button type="button" class="va-action-btn-sm va-btn-delete rv-delete-btn btn"
+                                            data-id="<?php echo $rid; ?>" title="Delete Review"
+                                            onclick="rvDeleteDirect(this, event)">
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -194,95 +174,130 @@ if (empty($patients)) {
     </div>
 </section>
 
-<!-- View Review Modal -->
-<div id="rv-view-modal"
-    style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
-    <div
-        style="background:#fff;border-radius:16px;padding:32px;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-            <h3 style="margin:0;font-size:18px;font-weight:700;color:#1e293b;"><i class="fas fa-star"
-                    style="color:#f59e0b;margin-right:8px;"></i>Review Details</h3>
-            <button onclick="document.getElementById('rv-view-modal').style.display='none'"
-                style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;">&times;</button>
+<!-- Standard Bootstrap 5 View Review Modal -->
+<div class="modal fade" id="diorReviewViewModal" tabindex="-1" aria-labelledby="diorReviewViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
+                <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorReviewViewModalLabel">
+                    <i class="fas fa-star text-warning me-2"></i>Review Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 bg-white" id="rv-view-body">
+                <!-- Dynamically populated via JS -->
+            </div>
+            <div class="modal-footer border-top py-3 px-4 bg-white">
+                <button type="button" class="btn btn-outline-secondary rounded-3 px-4 fw-semibold" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div id="rv-view-body"></div>
     </div>
 </div>
 
-<!-- Edit Review Modal -->
-<div id="rv-edit-modal"
-    style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
-    <div
-        style="background:#fff;border-radius:16px;padding:32px;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-            <h3 style="margin:0;font-size:18px;font-weight:700;color:#1e293b;"><svg xmlns="http://www.w3.org/2000/svg"
-                    width="16" height="16" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16"
-                    style="background:transparent;">
-                    <path fill-rule="evenodd"
-                        d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z" />
-                    <path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z" />
-                </svg>Edit Review</h3>
-            <button onclick="document.getElementById('rv-edit-modal').style.display='none'"
-                style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;">&times;</button>
-        </div>
-        <input type="hidden" id="rv-edit-id">
-        <input type="hidden" id="rv-edit-pid">
-        <div style="display:flex;flex-direction:column;gap:16px;">
-            <div>
-                <label
-                    style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:8px;">Rating</label>
-                <div id="rv-star-editor" style="display:flex;gap:6px;font-size:24px;cursor:pointer;color:#CBD5E1;">
-                    <i class="fas fa-star" data-val="1"></i>
-                    <i class="fas fa-star" data-val="2"></i>
-                    <i class="fas fa-star" data-val="3"></i>
-                    <i class="fas fa-star" data-val="4"></i>
-                    <i class="fas fa-star" data-val="5"></i>
+<!-- Standard Bootstrap 5 Edit Review Modal -->
+<div class="modal fade" id="diorReviewEditModal" tabindex="-1" aria-labelledby="diorReviewEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
+                <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorReviewEditModalLabel">
+                    <i class="fas fa-pen text-primary me-2"></i>Edit Review
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 bg-white">
+                <input type="hidden" id="rv-edit-id">
+                <input type="hidden" id="rv-edit-pid">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label small text-uppercase text-secondary fw-semibold mb-1">Rating <span class="text-danger">*</span></label>
+                        <div id="rv-star-editor" class="d-flex gap-2 fs-4 text-warning" style="cursor: pointer;">
+                            <i class="fas fa-star" data-val="1"></i>
+                            <i class="fas fa-star" data-val="2"></i>
+                            <i class="fas fa-star" data-val="3"></i>
+                            <i class="fas fa-star" data-val="4"></i>
+                            <i class="fas fa-star" data-val="5"></i>
+                        </div>
+                        <input type="hidden" id="rv-rating-val" value="5">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-uppercase text-secondary fw-semibold mb-1" for="rv-comment">Comment</label>
+                        <textarea id="rv-comment" rows="4" class="form-control rounded-3 py-2" placeholder="Patient's review comments..."></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-uppercase text-secondary fw-semibold mb-1" for="rv-status">Review Status</label>
+                        <select id="rv-status" class="form-select rounded-3 py-2">
+                            <option value="Published">Published</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
                 </div>
-                <input type="hidden" id="rv-rating-val" value="5">
             </div>
-            <div>
-                <label
-                    style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Comment</label>
-                <textarea id="rv-comment" rows="4"
-                    style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;resize:vertical;"></textarea>
+            <div class="modal-footer border-top py-3 px-4 bg-white d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-secondary rounded-3 px-4 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="rv-save-btn" class="btn btn-primary rounded-3 px-4 fw-semibold shadow-sm">
+                    <i class="fas fa-check me-1"></i> Save Review
+                </button>
             </div>
-            <div>
-                <label
-                    style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px;">Status</label>
-                <select id="rv-status"
-                    style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#374151;">
-                    <option value="Published">Published</option>
-                    <option value="Pending">Pending</option>
-                </select>
-            </div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end;">
-            <button onclick="document.getElementById('rv-edit-modal').style.display='none'"
-                style="padding:10px 20px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;color:#64748b;font-size:14px;cursor:pointer;">Cancel</button>
-            <button id="rv-save-btn"
-                style="padding:10px 24px;border:none;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">
-                <i class="fas fa-check" style="margin-right:6px;"></i>Save Review
-            </button>
         </div>
     </div>
 </div>
 
 <script>
-    window.rvViewReview = function (btn) {
-        var enc = JSON.parse(btn.dataset.enc);
-        var name = btn.dataset.name;
+    window.rvOpenViewModal = function(btn, ev) {
+        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+        // Ensure edit modal is closed
+        var editModalEl = document.getElementById('diorReviewEditModal');
+        if (editModalEl && window.bootstrap && bootstrap.Modal) {
+            var emInst = bootstrap.Modal.getInstance(editModalEl);
+            if (emInst) emInst.hide();
+        }
+
+        var enc = JSON.parse(btn.dataset.enc || '{}');
+        var name = btn.dataset.name || 'Patient';
         var stars = '';
         for (var i = 1; i <= 5; i++) {
-            stars += '<i class="fa-' + (i <= enc.rating ? 'solid' : 'regular') + ' fa-star" style="color:' + (i <= enc.rating ? '#F59E0B' : '#CBD5E1') + '"></i>';
+            stars += '<i class="fa-' + (i <= enc.rating ? 'solid' : 'regular') + ' fa-star ' + (i <= enc.rating ? 'text-warning' : 'text-secondary-subtle') + '"></i> ';
         }
         document.getElementById('rv-view-body').innerHTML =
-            '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
-            '<img src="https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=random" style="width:48px;height:48px;border-radius:50%;" alt="">' +
-            '<div><div style="font-weight:700;color:#1e293b;">' + name + '</div><div style="font-size:13px;color:#64748b;">' + enc.status + '</div></div></div>' +
-            '<div style="margin-bottom:16px;font-size:22px;display:flex;gap:4px;">' + stars + '</div>' +
-            (enc.subject ? '<div style="margin-bottom:8px;font-weight:700;color:#1e293b;">' + enc.subject + '</div>' : '') +
-            '<div style="background:#f8fafc;border-radius:8px;padding:16px;color:#475569;font-size:14px;line-height:1.6;">' + (enc.comment || 'No comment provided.') + '</div>';
-        document.getElementById('rv-view-modal').style.display = 'flex';
+            '<div class="d-flex align-items-center gap-3 mb-3">' +
+            '<img src="https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=random" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;" alt="">' +
+            '<div><div class="fw-bold text-dark fs-6">' + name + '</div><span class="badge bg-light text-secondary border rounded-pill small">' + (enc.status || 'Published') + '</span></div></div>' +
+            '<div class="mb-3 fs-5">' + stars + '</div>' +
+            (enc.subject ? '<div class="fw-bold text-dark mb-2">' + enc.subject + '</div>' : '') +
+            '<div class="p-3 bg-light rounded-3 text-secondary small lh-base">' + (enc.comment || 'No comment provided.') + '</div>';
+
+        var viewModalEl = document.getElementById('diorReviewViewModal');
+        if (window.bootstrap && bootstrap.Modal) {
+            bootstrap.Modal.getOrCreateInstance(viewModalEl).show();
+        }
+    };
+
+    window.rvOpenEditModal = function(btn, ev) {
+        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+        // Ensure view modal is closed
+        var viewModalEl = document.getElementById('diorReviewViewModal');
+        if (viewModalEl && window.bootstrap && bootstrap.Modal) {
+            var vmInst = bootstrap.Modal.getInstance(viewModalEl);
+            if (vmInst) vmInst.hide();
+        }
+
+        var enc = JSON.parse(btn.dataset.enc || '{}');
+        document.getElementById('rv-edit-id').value = enc.id || '';
+        document.getElementById('rv-edit-pid').value = enc.patient_id || '';
+        document.getElementById('rv-rating-val').value = enc.rating || 5;
+        document.getElementById('rv-comment').value = enc.comment || '';
+        document.getElementById('rv-status').value = enc.status || 'Published';
+
+        var stars = document.querySelectorAll('#rv-star-editor i');
+        stars.forEach(function(s) {
+            var sVal = parseInt(s.dataset.val, 10);
+            s.className = (sVal <= (enc.rating || 5) ? 'fas fa-star text-warning' : 'far fa-star text-secondary-subtle');
+        });
+
+        var editModalEl = document.getElementById('diorReviewEditModal');
+        if (window.bootstrap && bootstrap.Modal) {
+            bootstrap.Modal.getOrCreateInstance(editModalEl).show();
+        }
     };
 
     (function () {
@@ -385,15 +400,6 @@ if (empty($patients)) {
                 });
             }
 
-            var tbody = document.getElementById('rv-tbody');
-            if (tbody) {
-                tbody.addEventListener('click', function (e) {
-                    var editBtn = e.target.closest('.rv-edit-btn');
-                    var delBtn = e.target.closest('.rv-delete-btn');
-                    if (editBtn) openEdit(editBtn);
-                    if (delBtn) deleteReview(delBtn);
-                });
-            }
             setupStarEditor();
             var saveBtn = document.getElementById('rv-save-btn');
             if (saveBtn) saveBtn.addEventListener('click', saveReview);
@@ -403,32 +409,25 @@ if (empty($patients)) {
             var stars = document.querySelectorAll('#rv-star-editor i');
             stars.forEach(function (s) {
                 s.addEventListener('click', function () {
-                    var val = parseInt(this.dataset.val);
+                    var val = parseInt(this.dataset.val, 10);
                     document.getElementById('rv-rating-val').value = val;
                     stars.forEach(function (st) {
-                        st.style.color = parseInt(st.dataset.val) <= val ? '#F59E0B' : '#CBD5E1';
+                        var stVal = parseInt(st.dataset.val, 10);
+                        st.className = (stVal <= val ? 'fas fa-star text-warning' : 'far fa-star text-secondary-subtle');
                     });
                 });
             });
         }
 
-        function openEdit(btn) {
-            var enc = JSON.parse(btn.dataset.enc);
-            document.getElementById('rv-edit-id').value = enc.id;
-            document.getElementById('rv-edit-pid').value = enc.patient_id;
-            document.getElementById('rv-rating-val').value = enc.rating;
-            document.getElementById('rv-comment').value = enc.comment;
-            document.getElementById('rv-status').value = enc.status;
-            var stars = document.querySelectorAll('#rv-star-editor i');
-            stars.forEach(function (s) {
-                s.style.color = parseInt(s.dataset.val) <= enc.rating ? '#F59E0B' : '#CBD5E1';
-            });
-            document.getElementById('rv-edit-modal').style.display = 'flex';
-        }
+        window.rvDeleteDirect = function(btn, ev) {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            deleteReview(btn);
+        };
 
         function saveReview() {
             var btn = document.getElementById('rv-save-btn');
             btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Saving...';
             var data = new FormData();
             data.append('action', 'dior_doc_review_save');
             data.append('nonce', nonce);
@@ -440,9 +439,24 @@ if (empty($patients)) {
             fetch(ajaxUrl, { method: 'POST', body: data })
                 .then(function (r) { return r.json(); })
                 .then(function (res) {
-                    if (res.success) { document.getElementById('rv-edit-modal').style.display = 'none'; location.reload(); }
-                    else { Swal.fire({ icon: 'error', title: 'Save Failed', text: res.data && res.data.message ? res.data.message : 'Save failed.' }); }
-                }).finally(function () { btn.disabled = false; });
+                    if (res.success) {
+                        var editModalEl = document.getElementById('diorReviewEditModal');
+                        if (window.bootstrap && bootstrap.Modal) {
+                            var emInst = bootstrap.Modal.getInstance(editModalEl);
+                            if (emInst) emInst.hide();
+                        }
+                        location.reload();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Save Failed', text: res.data && res.data.message ? res.data.message : 'Save failed.' });
+                    }
+                })
+                .catch(function() {
+                    Swal.fire({ icon: 'error', title: 'Network Error', text: 'Could not connect to server.' });
+                })
+                .finally(function () {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check me-1"></i> Save Review';
+                });
         }
 
         function deleteReview(btn) {

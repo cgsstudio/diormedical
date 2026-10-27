@@ -47,7 +47,7 @@ class FilterHooks{
             }
         }
 
-        if ( ! empty( $args['payment_by'] ) && in_array( $args['payment_by'], [ 'stripe', 'razorpay', 'offline' ], true ) ) {
+        if ( ! empty( $args['payment_by'] ) && in_array( $args['payment_by'], [ 'stripe', 'razorpay', 'offline', 'clinic' ], true ) ) {
             $clauses[] = [ 'sql' => 'b.payment_by = %s', 'args' => [ $args['payment_by'] ] ];
         }
 
@@ -193,76 +193,76 @@ class FilterHooks{
     }
 
     public function pro_doctor_settings_save($settings, $data) {
-        $settings['img_border']         = absint( $data['img_border'] ) ?? '';
-        $settings['img_border_color']         = sanitize_text_field( $data['img_border_color'] ) ?? '';
-        $settings['img_border_radius']         = sanitize_text_field( $data['img_border_radius'] ) ?? '';
-        $settings['show_content']         = sanitize_text_field( $data['show_content'] ) ?? 'off';
-        $settings['show_department']         = sanitize_text_field( $data['show_department'] ) ?? 'on';
-        $settings['show_degree']         = sanitize_text_field( $data['show_degree'] ) ?? 'off';
-        $settings['show_workplace']         = sanitize_text_field( $data['show_workplace'] ) ?? 'off';
-        $settings['show_speciality']         = sanitize_text_field( $data['show_speciality'] ) ?? 'off';
-        $settings['show_designation']         = sanitize_text_field( $data['show_designation'] ) ?? 'off';
-        $settings['show_social_icons']         = sanitize_text_field( $data['show_social_icons'] ) ?? 'off';
-        $settings['content_limit']         = absint( $data['content_limit'] ) ?? '3';
+        $settings['img_border']         = absint( $data['img_border'] ?? '' );
+        $settings['img_border_color']         = sanitize_text_field( $data['img_border_color'] ?? '' );
+        $settings['img_border_radius']         = sanitize_text_field( $data['img_border_radius'] ?? '' );
+        $settings['show_content']         = sanitize_text_field( $data['show_content'] ?? 'off' );
+        $settings['show_department']         = sanitize_text_field( $data['show_department'] ?? 'on' );
+        $settings['show_degree']         = sanitize_text_field( $data['show_degree'] ?? 'off' );
+        $settings['show_workplace']         = sanitize_text_field( $data['show_workplace'] ?? 'off' );
+        $settings['show_speciality']         = sanitize_text_field( $data['show_speciality'] ?? 'off' );
+        $settings['show_designation']         = sanitize_text_field( $data['show_designation'] ?? 'off' );
+        $settings['show_social_icons']         = sanitize_text_field( $data['show_social_icons'] ?? 'off' );
+        $settings['content_limit']         = absint( $data['content_limit'] ?? '3' );
         return $settings;
     }
     public function pro_clinic_settings_save($settings, $data) {
-        $settings['img_border']         = absint( $data['img_border'] ) ?? '';
-        $settings['img_border_color']         = sanitize_text_field( $data['img_border_color'] ) ?? '';
-        $settings['img_border_radius']         = sanitize_text_field( $data['img_border_radius'] ) ?? '';
-        $settings['show_content']         = sanitize_text_field( $data['show_content'] ) ?? 'off';
-        $settings['show_map_btn']         = sanitize_text_field( $data['show_map_btn'] ) ?? 'off';
-        $settings['map_btn_text']         = sanitize_text_field( $data['map_btn_text'] ) ?? '';
-        $settings['content_limit']         = absint( $data['content_limit'] ) ?? '3';
-        $settings['details_gallery_view']         = sanitize_text_field( $data['details_gallery_view'] ) ?? 'slider';
+        $settings['img_border']         = absint( $data['img_border'] ?? '' );
+        $settings['img_border_color']         = sanitize_text_field( $data['img_border_color'] ?? '' );
+        $settings['img_border_radius']         = sanitize_text_field( $data['img_border_radius'] ?? '' );
+        $settings['show_content']         = sanitize_text_field( $data['show_content'] ?? 'off' );
+        $settings['show_map_btn']         = sanitize_text_field( $data['show_map_btn'] ?? 'off' );
+        $settings['map_btn_text']         = sanitize_text_field( $data['map_btn_text'] ?? '' );
+        $settings['content_limit']         = absint( $data['content_limit'] ?? '3' );
+        $settings['details_gallery_view']         = sanitize_text_field( $data['details_gallery_view'] ?? 'slider' );
         return $settings;
     }
 
     public function pro_style_settings_save($settings, $data) {
-        $settings['wpddb_doctor_title_font_size']       = absint( $data['wpddb_doctor_title_font_size'] ) ?? '';
-        $settings['wpddb_doctor_title_font_weight']       = absint( $data['wpddb_doctor_title_font_weight'] ) ?? '700';
-        $settings['wpddb_doctor_title_alignment']       = sanitize_text_field( $data['wpddb_doctor_title_alignment'] ) ?? 'default';
+        $settings['wpddb_doctor_title_font_size']       = absint( $data['wpddb_doctor_title_font_size'] ?? '' );
+        $settings['wpddb_doctor_title_font_weight']       = absint( $data['wpddb_doctor_title_font_weight'] ?? '700' );
+        $settings['wpddb_doctor_title_alignment']       = sanitize_text_field( $data['wpddb_doctor_title_alignment'] ?? 'default' );
 
 
-        $settings['wpddb_doctor_content_font_size']       = absint( $data['wpddb_doctor_content_font_size'] ) ?? '';
-        $settings['wpddb_doctor_content_font_weight']       = absint( $data['wpddb_doctor_content_font_weight'] ) ?? '400';
-        $settings['wpddb_doctor_content_alignment']       = sanitize_text_field( $data['wpddb_doctor_content_alignment'] ) ?? 'default';
+        $settings['wpddb_doctor_content_font_size']       = absint( $data['wpddb_doctor_content_font_size'] ?? '' );
+        $settings['wpddb_doctor_content_font_weight']       = absint( $data['wpddb_doctor_content_font_weight'] ?? '400' );
+        $settings['wpddb_doctor_content_alignment']       = sanitize_text_field( $data['wpddb_doctor_content_alignment'] ?? 'default' );
 
-        $settings['wpddb_doctor_department_color']       = sanitize_text_field( $data['wpddb_doctor_department_color'] ) ?? '';
-        $settings['wpddb_doctor_department_font_size']       = absint( $data['wpddb_doctor_department_font_size'] ) ?? '';
-        $settings['wpddb_doctor_department_font_weight']       = absint( $data['wpddb_doctor_department_font_weight'] ) ?? '500';
-        $settings['wpddb_doctor_department_alignment']       = sanitize_text_field( $data['wpddb_doctor_department_alignment'] ) ?? 'default';
-
-
-        $settings['wpddb_doctor_designation_font_size']       = absint( $data['wpddb_doctor_designation_font_size'] ) ?? '';
-        $settings['wpddb_doctor_designation_font_weight']       = absint( $data['wpddb_doctor_designation_font_weight'] ) ?? '500';
-        $settings['wpddb_doctor_designation_alignment']       = sanitize_text_field( $data['wpddb_doctor_designation_alignment'] ) ?? 'default';
+        $settings['wpddb_doctor_department_color']       = sanitize_text_field( $data['wpddb_doctor_department_color'] ?? '' );
+        $settings['wpddb_doctor_department_font_size']       = absint( $data['wpddb_doctor_department_font_size'] ?? '' );
+        $settings['wpddb_doctor_department_font_weight']       = absint( $data['wpddb_doctor_department_font_weight'] ?? '500' );
+        $settings['wpddb_doctor_department_alignment']       = sanitize_text_field( $data['wpddb_doctor_department_alignment'] ?? 'default' );
 
 
-        $settings['wpddb_doctor_speciality_font_size']       = absint( $data['wpddb_doctor_speciality_font_size'] ) ?? '';
-        $settings['wpddb_doctor_speciality_font_weight']       = absint( $data['wpddb_doctor_speciality_font_weight'] ) ?? '500';
-        $settings['wpddb_doctor_speciality_alignment']       = sanitize_text_field( $data['wpddb_doctor_speciality_alignment'] ) ?? 'default';
+        $settings['wpddb_doctor_designation_font_size']       = absint( $data['wpddb_doctor_designation_font_size'] ?? '' );
+        $settings['wpddb_doctor_designation_font_weight']       = absint( $data['wpddb_doctor_designation_font_weight'] ?? '500' );
+        $settings['wpddb_doctor_designation_alignment']       = sanitize_text_field( $data['wpddb_doctor_designation_alignment'] ?? 'default' );
 
-        $settings['wpddb_doctor_degree_font_size']       = absint( $data['wpddb_doctor_degree_font_size'] ) ?? '';
-        $settings['wpddb_doctor_degree_font_weight']       = absint( $data['wpddb_doctor_degree_font_weight'] ) ?? '500';
-        $settings['wpddb_doctor_degree_alignment']       = sanitize_text_field( $data['wpddb_doctor_degree_alignment'] ) ?? 'default';
 
-        $settings['wpddb_doctor_workplace_font_size']       = absint( $data['wpddb_doctor_workplace_font_size'] ) ?? '';
-        $settings['wpddb_doctor_workplace_font_weight']       = absint( $data['wpddb_doctor_workplace_font_weight'] ) ?? '500';
-        $settings['wpddb_doctor_workplace_alignment']       = sanitize_text_field( $data['wpddb_doctor_workplace_alignment'] ) ?? 'default';
+        $settings['wpddb_doctor_speciality_font_size']       = absint( $data['wpddb_doctor_speciality_font_size'] ?? '' );
+        $settings['wpddb_doctor_speciality_font_weight']       = absint( $data['wpddb_doctor_speciality_font_weight'] ?? '500' );
+        $settings['wpddb_doctor_speciality_alignment']       = sanitize_text_field( $data['wpddb_doctor_speciality_alignment'] ?? 'default' );
 
-        $settings['wpddb_clinic_title_font_size']       = absint( $data['wpddb_clinic_title_font_size'] ) ?? '';
-        $settings['wpddb_clinic_title_font_weight']       = absint( $data['wpddb_clinic_title_font_weight'] ) ?? '700';
-        $settings['wpddb_clinic_title_alignment']       = sanitize_text_field( $data['wpddb_clinic_title_alignment'] ) ?? 'default';
+        $settings['wpddb_doctor_degree_font_size']       = absint( $data['wpddb_doctor_degree_font_size'] ?? '' );
+        $settings['wpddb_doctor_degree_font_weight']       = absint( $data['wpddb_doctor_degree_font_weight'] ?? '500' );
+        $settings['wpddb_doctor_degree_alignment']       = sanitize_text_field( $data['wpddb_doctor_degree_alignment'] ?? 'default' );
 
-        $settings['wpddb_clinic_content_font_size']       = absint( $data['wpddb_clinic_content_font_size'] ) ?? '';
-        $settings['wpddb_clinic_content_font_weight']       = absint( $data['wpddb_clinic_content_font_weight'] ) ?? '400';
-        $settings['wpddb_clinic_content_alignment']       = sanitize_text_field( $data['wpddb_clinic_content_alignment'] ) ?? 'default';
+        $settings['wpddb_doctor_workplace_font_size']       = absint( $data['wpddb_doctor_workplace_font_size'] ?? '' );
+        $settings['wpddb_doctor_workplace_font_weight']       = absint( $data['wpddb_doctor_workplace_font_weight'] ?? '500' );
+        $settings['wpddb_doctor_workplace_alignment']       = sanitize_text_field( $data['wpddb_doctor_workplace_alignment'] ?? 'default' );
 
-        $settings['wpddb_clinic_btn_color']       = sanitize_text_field( $data['wpddb_clinic_btn_color'] ) ?? '';
-        $settings['wpddb_clinic_btn_hover_color']       = sanitize_text_field( $data['wpddb_clinic_btn_hover_color'] ) ?? '';
-        $settings['wpddb_clinic_btn_font_size']       = absint( $data['wpddb_clinic_btn_font_size'] ) ?? '';
-        $settings['wpddb_clinic_btn_font_weight']       = absint( $data['wpddb_clinic_btn_font_weight'] ) ?? '500';
+        $settings['wpddb_clinic_title_font_size']       = absint( $data['wpddb_clinic_title_font_size'] ?? '' );
+        $settings['wpddb_clinic_title_font_weight']       = absint( $data['wpddb_clinic_title_font_weight'] ?? '700' );
+        $settings['wpddb_clinic_title_alignment']       = sanitize_text_field( $data['wpddb_clinic_title_alignment'] ?? 'default' );
+
+        $settings['wpddb_clinic_content_font_size']       = absint( $data['wpddb_clinic_content_font_size'] ?? '' );
+        $settings['wpddb_clinic_content_font_weight']       = absint( $data['wpddb_clinic_content_font_weight'] ?? '400' );
+        $settings['wpddb_clinic_content_alignment']       = sanitize_text_field( $data['wpddb_clinic_content_alignment'] ?? 'default' );
+
+        $settings['wpddb_clinic_btn_color']       = sanitize_text_field( $data['wpddb_clinic_btn_color'] ?? '' );
+        $settings['wpddb_clinic_btn_hover_color']       = sanitize_text_field( $data['wpddb_clinic_btn_hover_color'] ?? '' );
+        $settings['wpddb_clinic_btn_font_size']       = absint( $data['wpddb_clinic_btn_font_size'] ?? '' );
+        $settings['wpddb_clinic_btn_font_weight']       = absint( $data['wpddb_clinic_btn_font_weight'] ?? '500' );
 
 
         return $settings;
@@ -495,7 +495,7 @@ class FilterHooks{
         }
         if (!empty($doctor_border_radius)){
             $css .= "#{$ID} .doctor-item .doctor-thumb {";
-            $css .= 'border-radius:' . esc_html($doctor_border_radius) .';overflow:hidden';
+            $css .= 'border-radius:' . esc_html( is_numeric( $doctor_border_radius ) ? $doctor_border_radius . 'px' : $doctor_border_radius ) .';overflow:hidden';
             $css .= '}';
         }
         return $css;
@@ -574,7 +574,7 @@ class FilterHooks{
         }
         if (!empty($img_border_radius)){
             $css .= "#{$ID} .clinic-item .clinic-thumb img{";
-            $css .= 'border-radius:' . esc_html($img_border_radius) . ';overflow:hidden;';
+            $css .= 'border-radius:' . esc_html( is_numeric( $img_border_radius ) ? $img_border_radius . 'px' : $img_border_radius ) . ';overflow:hidden;';
             $css .= '}';
         }
         if ( $phone_color || $phone_font_size || $phone_font_weight || $phone_alignment ) {
@@ -634,9 +634,10 @@ class FilterHooks{
         $clinic_btn_hover_color        = WpddbOptions::get_option( 'wpddb_clinic_btn_hover_color', 'wpddb_style_settings' ) ?: '';
         $clinic_btn_font_weight        = WpddbOptions::get_option( 'wpddb_clinic_btn_font_weight', 'wpddb_style_settings' ) ?: '';
         $clinic_btn_font_size          = WpddbOptions::get_option( 'wpddb_clinic_btn_font_size', 'wpddb_style_settings' ) ?: '';
-        $doctor_img_border_color       = WpddbOptions::get_option( 'img_border_color', 'wpddb_clinic_settings' ) ?: '';
-        $doctor_img_border_width       = WpddbOptions::get_option( 'img_border', 'wpddb_clinic_settings' ) ?: '';
-        $doctor_img_border_radius      = WpddbOptions::get_option( 'img_border_radius', 'wpddb_clinic_settings' ) ?: '';
+        // The doctor image border lives in Doctor Settings (it was read from Clinic Settings).
+        $doctor_img_border_color       = WpddbOptions::get_option( 'img_border_color', 'wpddb_doctor_settings' ) ?: '';
+        $doctor_img_border_width       = WpddbOptions::get_option( 'img_border', 'wpddb_doctor_settings' ) ?: '';
+        $doctor_img_border_radius      = WpddbOptions::get_option( 'img_border_radius', 'wpddb_doctor_settings' ) ?: '';
         $clinic_img_border_color       = WpddbOptions::get_option( 'img_border_color', 'wpddb_clinic_settings' ) ?: '';
         $clinic_img_border_width       = WpddbOptions::get_option( 'img_border', 'wpddb_clinic_settings' ) ?: '';
         $clinic_img_border_radius      = WpddbOptions::get_option( 'img_border_radius', 'wpddb_clinic_settings' ) ?: '';
@@ -758,7 +759,7 @@ class FilterHooks{
         }
         if ($doctor_img_border_radius){
             $css .= ".wpddb-doctor-items .doctor-item .doctor-thumb img{";
-            $css .= 'border-radius:' . esc_html($doctor_img_border_radius) . ';overflow:hidden;';
+            $css .= 'border-radius:' . esc_html( is_numeric( $doctor_img_border_radius ) ? $doctor_img_border_radius . 'px' : $doctor_img_border_radius ) . ';overflow:hidden;';
             $css .= '}';
         }
         if ($clinic_title_font_size || $clinic_title_font_weight || $clinic_title_alignment) {
@@ -788,7 +789,9 @@ class FilterHooks{
             $css .= '}';
         }
         if($clinic_btn_color || $clinic_btn_font_size || $clinic_btn_font_weight){
-            $css .= ".wpddb-clinic-items .clinic-item .clinic-details-btn a{";
+            // The button is a#wpddb-primary-btn, styled by `.wpddb #wpddb-primary-btn`:
+            // without the id here that rule wins and the setting never shows.
+            $css .= ".wpddb-clinic-items .clinic-item .clinic-details-btn a,.wpddb-clinic-items .clinic-item .clinic-details-btn a#wpddb-primary-btn{";
             if ($clinic_btn_color){
                 $css .= 'color:' . esc_html($clinic_btn_color) . ';';
             }
@@ -801,7 +804,7 @@ class FilterHooks{
             $css .= '}';
         }
         if($clinic_btn_hover_color){
-            $css .= ".wpddb-clinic-items .clinic-item .clinic-details-btn a:hover{";
+            $css .= ".wpddb-clinic-items .clinic-item .clinic-details-btn a:hover,.wpddb-clinic-items .clinic-item .clinic-details-btn a#wpddb-primary-btn:hover{";
             $css .= 'color:' . esc_html($clinic_btn_hover_color) . ';';
             $css .= '}';
         }
@@ -812,7 +815,7 @@ class FilterHooks{
         }
         if ($clinic_img_border_radius){
             $css .= ".wpddb-clinic-items .clinic-item .clinic-thumb img{";
-            $css .= 'border-radius:' . esc_html($clinic_img_border_radius) . ';overflow:hidden;';
+            $css .= 'border-radius:' . esc_html( is_numeric( $clinic_img_border_radius ) ? $clinic_img_border_radius . 'px' : $clinic_img_border_radius ) . ';overflow:hidden;';
             $css .= '}';
         }
 
