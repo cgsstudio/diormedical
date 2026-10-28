@@ -395,9 +395,30 @@
         return host;
     }
 
+    function hasDedicatedPagination(table) {
+        if (!table) return false;
+        if (['dior-insurance-table', 'dior-patient-records-table'].includes(table.id)) return true;
+
+        // Some report cards already render their own pagination footer.
+        // Detect the report by its local heading so we don't add a second pager.
+        let node = table.parentElement;
+        let depth = 0;
+        while (node && depth < 8) {
+            const headings = node.querySelectorAll ? node.querySelectorAll('h1, h2, h3, h4, h5, h6') : [];
+            for (const heading of headings) {
+                if (heading.textContent.trim().toLowerCase() === 'recent clinical reports') {
+                    return true;
+                }
+            }
+            node = node.parentElement;
+            depth++;
+        }
+        return false;
+    }
+
     function renderTable(table, requestedPage) {
-        // Insurance Claims has its own footer pagination; do not inject a second table pager.
-        if (!table || !table.querySelector('tbody') || isDashboardOverview(table) || ['dior-insurance-table', 'dior-patient-records-table'].includes(table.id)) return;
+        // Skip tables that already own their pagination controls.
+        if (!table || !table.querySelector('tbody') || isDashboardOverview(table) || hasDedicatedPagination(table)) return;
 
         // Ensure Bootstrap hoverable row styling & responsive wrapper
         table.classList.add('table-hover');
