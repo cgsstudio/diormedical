@@ -938,8 +938,8 @@ class Dior_Doctor_Dashboard
         }
 
         if (empty($appt_uid) || $appt_uid === 'new' || $appt_uid === 'undefined') {
-            if (!$patient_id) {
-                wp_send_json_error(["message" => "Please select a valid patient to schedule or update an appointment."]);
+            if (!$patient_id || !get_userdata($patient_id) || !Dior_Auth_Service::is_patient($patient_id)) {
+                wp_send_json_error(["message" => "Please select a valid patient to schedule or update an appointment."], 400);
             }
             $appt_uid = 'APT-' . strtoupper(wp_generate_password(8, false));
             $wpdb->insert($table_appts, [
