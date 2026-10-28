@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.31
+ * Version: 17.2.32
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.31');
+define('DIOR_PORTAL_VERSION', '17.2.32');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -3262,12 +3262,14 @@ class Dior_Medical_Auth
         }
 
         $doctor_id = absint($_POST['doctor_id'] ?? 0);
-        $date = sanitize_text_field(wp_unslash($_POST['date'] ?? ''));
+        $raw_date = sanitize_text_field(wp_unslash($_POST['date'] ?? ''));
+        $date = class_exists('Dior_Auth_Service') ? Dior_Auth_Service::validate_date($raw_date) : '';
         $time = sanitize_text_field(wp_unslash($_POST['time'] ?? ''));
-        $reason = sanitize_text_field(wp_unslash($_POST['reason'] ?? 'Telehealth Consultation'));
+        $visit_type = sanitize_text_field(wp_unslash($_POST['visit_type'] ?? ''));
+        $reason = sanitize_text_field(wp_unslash($_POST['reason'] ?? ''));
 
-        if (!$doctor_id || !$date || !$time) {
-            wp_send_json_error(['message' => 'Please select a provider, date, and available time slot.'], 400);
+        if (!$doctor_id || !$date || !$time || !$visit_type) {
+            wp_send_json_error(['message' => 'Please select a provider, valid date, available time slot, and visit type.'], 400);
         }
 
         $doctor_post = get_post($doctor_id);
@@ -3282,6 +3284,19 @@ class Dior_Medical_Auth
         global $wpdb;
         $table = $wpdb->prefix . 'dior_appointments';
         $patient_id = get_current_user_id();
+
+        // Reject a slot already reserved for this provider. Check the canonical table
+        // immediately before insert so stale browser availability cannot double-book it.
+        $slot_conflict = $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM {$table} WHERE doctor_id = %d AND appt_date = %s AND appt_time = %s AND status NOT IN ('Cancelled', 'No Show') AND is_deleted = 0 LIMIT 1",
+            $doctor_id,
+            $date,
+            $time
+        ));
+        if ($slot_conflict) {
+            wp_send_json_error(['message' => 'This provider’s time slot has just been booked. Please select another available time.'], 409);
+        }
+
         $appt_uid = 'APT-' . strtoupper(wp_generate_password(16, false, false));
         $now = current_time('mysql');
         $doctor_user_id = class_exists('Dior_Doctor_Resolver')
@@ -3294,7 +3309,7 @@ class Dior_Medical_Auth
             'patient_id' => $patient_id,
             'doctor_id' => $doctor_id,
             'condition_name' => $reason ?: 'Telehealth Consultation',
-            'visit_type' => sanitize_text_field(wp_unslash($_POST['visit_type'] ?? 'Video Visit (HD)')),
+            'visit_type' => $visit_type,
             'status' => 'Pending',
             'appt_date' => $date,
             'appt_time' => $time,
