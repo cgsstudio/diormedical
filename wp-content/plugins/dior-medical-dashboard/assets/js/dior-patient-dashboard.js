@@ -127,14 +127,14 @@ let diorBookingState = {
                                 html += `<button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(${dept.id}, '${dept.name.replace(/'/g, "\\'")}')">${dept.name}</button>`;
                     });
                 } else {
-                    html = '<button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(1, \'Urgent Care Telehealth\')">Urgent Care Telehealth</button><button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(2, \'Primary Care & General Medicine\')">Primary Care</button>';
+                    html = '<p class="text-secondary">No services are currently available.</p>';
                 }
                 let el = document.getElementById('treatments-list');
                 if (el) el.innerHTML = html;
             })
             .catch(() => {
                 let el = document.getElementById('treatments-list');
-                if (el) el.innerHTML = '<button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(1, \'Urgent Care Telehealth\')">Urgent Care Telehealth</button><button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(2, \'Primary Care & General Medicine\')">Primary Care</button>';
+                if (el) el.innerHTML = '<p class="text-danger">Services could not be loaded. Please try again later.</p>';
             });
     }
 
@@ -156,27 +156,12 @@ let diorBookingState = {
                                                                         </div>`;
                     });
                 } else {
-                    html = `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                        <h4>Dr. James Chen, DO</h4>
-                                                                        <p>Primary Care & Urgent Care</p>
-                                                                    </div>
-                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                        <h4>Dr. Marcus Sterling, DO</h4>
-                                                                        <p>Urgent Care Physician</p>
-                                                                    </div>`;
+                    html = '<p class="text-secondary">No providers are currently available for this service.</p>';
                 }
                 document.getElementById('doctors-list').innerHTML = html;
             })
             .catch(() => {
-                document.getElementById('doctors-list').innerHTML = `
-                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                <h4>Dr. James Chen, DO</h4>
-                                                                <p>Primary Care & Urgent Care</p>
-                                                            </div>
-                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                <h4>Dr. Marcus Sterling, DO</h4>
-                                                                <p>Urgent Care Physician</p>
-                                                            </div>`;
+                document.getElementById('doctors-list').innerHTML = '<p class="text-danger">Providers could not be loaded. Please try again later.</p>';
             });
     }
 
@@ -195,14 +180,9 @@ let diorBookingState = {
         document.getElementById('time-slots-list').innerHTML = '<p>Loading availability...</p>';
         diorBookingState.date = dateStr;
 
-        function renderDefaultTimes() {
-            const defaultTimes = ['09:00 AM', '10:30 AM', '01:00 PM', '02:30 PM', '04:00 PM', '05:30 PM'];
-            let h = '<h4>Available Telehealth Slots</h4><div class="dior-time-grid">';
-            defaultTimes.forEach(t => {
-                h += `<button type="button" class="dior-time-btn" onclick="diorSelectTime(1, '${t}')">${t}</button>`;
-            });
-            h += '</div>';
-            document.getElementById('time-slots-list').innerHTML = h;
+        function renderNoAvailability(message) {
+            var slots = document.getElementById('time-slots-list');
+            if (slots) slots.innerHTML = '<p class="text-secondary">' + message + '</p>';
         }
 
         fetch(diorRestUrl + `doctor-details-booking/v1/doctors/${diorBookingState.doctorId}/availability?date=${dateStr}`, {
@@ -230,11 +210,11 @@ let diorBookingState = {
                 if (html) {
                     document.getElementById('time-slots-list').innerHTML = html;
                 } else {
-                    renderDefaultTimes();
+                    renderNoAvailability('No available time slots were returned for this date. Please choose another date.');
                 }
             })
             .catch(() => {
-                renderDefaultTimes();
+                renderNoAvailability('No available time slots were returned for this date. Please choose another date.');
             });
     }
 
@@ -836,14 +816,14 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
         return raw.map(function(item, idx) {
             var dateRaw = item.date || item.appt_date || '';
             var ymd = item.ymd || normalizeYmd(dateRaw);
-            var id = item.id || item.appt_uid || ('APT-' + (1000 + idx));
-            var doc = item.doc || item.provider || item.doctor_name || 'Dr. Marcus Sterling, DO';
-            var spec = item.spec || item.provider_spec || 'Telehealth Urgent Care';
-            var time = item.time || item.appt_time || '09:00 AM - 10:00 AM';
-            var status = item.status || item.appt_status || 'Confirmed';
-            var type = item.type || item.visit_type || 'Video Visit (HD)';
-            var join_url = item.join_url || 'https://zoom.us/join';
-            var notes = item.notes || item.condition || 'Telehealth Consultation';
+            var id = item.id || item.appt_uid || '';
+            var doc = item.doc || item.provider || item.doctor_name || 'Provider not recorded';
+            var spec = item.spec || item.provider_spec || 'Specialty not recorded';
+            var time = item.time || item.appt_time || '—';
+            var status = item.status || item.appt_status || 'Status unavailable';
+            var type = item.type || item.visit_type || 'Visit type not recorded';
+            var join_url = item.join_url || '';
+            var notes = item.notes || item.condition || 'No notes recorded.';
             return {
                 id: id,
                 doc: doc,
@@ -2296,7 +2276,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             var tableBody = document.getElementById('pat-modal-rx-table-body');
 
             var actualId = found ? (found.id || rxId) : rxId;
-            var rawDoc = found ? (found.prescribed_by || 'Dr. Marcus Sterling') : 'Dr. Marcus Sterling';
+            var rawDoc = found ? (found.prescribed_by || 'Provider not recorded') : 'Provider not recorded';
             var cleanDoc = rawDoc.replace(/^(Dr\.?\s*)+/i, 'Dr. ').replace(/\s*\(NPI:[^)]*\)/i, '').replace(/,\s*MD\b/i, '').replace(/\s*\bMD\b/i, '').trim();
             var actualDate = found ? (found.date_prescribed || found.date || '—') : '—';
             var actualRouting = found ? (found.routing_status || 'Sent to Pharmacy') : 'Sent to Pharmacy';
@@ -2621,11 +2601,11 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
 
         window.diorDownloadCurrentDocumentPdf = function () {
             var title = (document.getElementById('doc-preview-title') && document.getElementById('doc-preview-title').textContent) || 'Clinical Medical Certificate';
-            var docId = (document.getElementById('doc-preview-id') && document.getElementById('doc-preview-id').textContent) || 'DOC-88219';
+            var docId = (document.getElementById('doc-preview-id') && document.getElementById('doc-preview-id').textContent) || '';
             var cat = (document.getElementById('doc-preview-category') && document.getElementById('doc-preview-category').textContent) || 'Official Document';
-            var author = (document.getElementById('doc-preview-author') && document.getElementById('doc-preview-author').textContent) || 'Dr. Marcus Sterling, MD';
-            var date = (document.getElementById('doc-preview-date') && document.getElementById('doc-preview-date').textContent) || 'Sept 14, 2026';
-            var patientName = (document.getElementById('doc-preview-patient') && document.getElementById('doc-preview-patient').textContent) || 'Verified Patient';
+            var author = (document.getElementById('doc-preview-author') && document.getElementById('doc-preview-author').textContent) || 'Author not recorded';
+            var date = (document.getElementById('doc-preview-date') && document.getElementById('doc-preview-date').textContent) || '';
+            var patientName = (document.getElementById('doc-preview-patient') && document.getElementById('doc-preview-patient').textContent) || 'Patient';
 
             var logoUrl = (window.dior_vars && window.dior_vars.logo_url) ? window.dior_vars.logo_url : '';
             var docSigUrl = (window.dior_vars && window.dior_vars.default_doctor_signature) ? window.dior_vars.default_doctor_signature : '';
