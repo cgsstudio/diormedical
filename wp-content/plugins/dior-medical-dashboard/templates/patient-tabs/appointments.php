@@ -199,30 +199,40 @@
             $appt_hipaa = (!empty($hipaa_intake) && is_array($hipaa_intake)) ? $hipaa_intake : Dior_Patient_Portal_Data::get_normalized_hipaa_intake($appt_user_id);
             $appt_has_intake = !empty($appt_hipaa) && (!empty($appt_hipaa['is_submitted']) || !empty($appt_hipaa['submitted_at']));
 
-            // Attending doctor lookup for Step 2
-            $appt_doctor_user_id = class_exists('Dior_Doctor_Resolver') ? Dior_Doctor_Resolver::get_default_doctor_id() : 4;
-            $appt_doctor_id = 1957;
-            $appt_doctor_post = get_post($appt_doctor_id);
-            if (!$appt_doctor_post || $appt_doctor_post->post_type !== 'wpddb_doctor') {
-                $published_docs = get_posts([
-                    'post_type' => 'wpddb_doctor',
-                    'post_status' => 'publish',
-                    'posts_per_page' => 1,
-                ]);
-                if (!empty($published_docs)) {
-                    $appt_doctor_post = $published_docs[0];
-                    $appt_doctor_id = $appt_doctor_post->ID;
-                }
+            // Resolve an actual published provider instead of assuming a fixed post/user ID.
+            $appt_doctor_id = 0;
+            $appt_doctor_post = null;
+            $published_docs = get_posts([
+                'post_type' => 'wpddb_doctor',
+                'post_status' => 'publish',
+                'posts_per_page' => 1,
+                'orderby' => 'title',
+                'order' => 'ASC',
+            ]);
+            if (!empty($published_docs)) {
+                $appt_doctor_post = $published_docs[0];
+                $appt_doctor_id = (int) $appt_doctor_post->ID;
             }
-            $appt_doctor_name = $appt_doctor_post ? $appt_doctor_post->post_title : 'Dr. Marcus Sterling, DO';
-            $appt_doctor_spec = $appt_doctor_post ? (get_post_meta($appt_doctor_id, 'wpddb_doctor_speciality', true) ?: 'General Practice & Internal Medicine') : 'General Practice & Internal Medicine';
-            $appt_doctor_avatar = get_avatar_url($appt_doctor_user_id, ['size' => 120]) ?: (DIOR_PORTAL_URL . 'assets/images/doctor-placeholder.jpg');
+
+            $appt_doctor_name = $appt_doctor_post ? $appt_doctor_post->post_title : '';
+            $appt_doctor_spec = $appt_doctor_post
+                ? (get_post_meta($appt_doctor_id, 'wpddb_doctor_speciality', true) ?: '')
+                : '';
+            $appt_doctor_user_id = ($appt_doctor_id && class_exists('Dior_Doctor_Resolver'))
+                ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($appt_doctor_id)
+                : 0;
+            $appt_doctor_avatar = '';
+            if ($appt_doctor_user_id) {
+                $appt_doctor_avatar = get_user_meta($appt_doctor_user_id, 'dior_profile_image', true)
+                    ?: get_user_meta($appt_doctor_user_id, 'doctor_avatar', true)
+                    ?: get_avatar_url($appt_doctor_user_id, ['size' => 120]);
+            }
 
             $appt_patient_profile = ($appt_user_id && class_exists('Dior_Patient_Portal_Data')) ? Dior_Patient_Portal_Data::get_patient_profile($appt_user_id) : [];
             $appt_patient_name = !empty($appt_patient_profile['full_name']) ? $appt_patient_profile['full_name'] : '';
             $appt_patient_email = !empty($appt_patient_profile['email']) ? $appt_patient_profile['email'] : '';
             $appt_patient_phone = !empty($appt_patient_profile['phone']) ? $appt_patient_profile['phone'] : (!empty($appt_hipaa['phone']) ? $appt_hipaa['phone'] : '');
-            $appt_patient_reason = !empty($appt_hipaa['service_condition']) ? $appt_hipaa['service_condition'] : (!empty($appt_hipaa['symptoms']) ? $appt_hipaa['symptoms'] : 'General Consultation');
+            $appt_patient_reason = !empty($appt_hipaa['service_condition']) ? $appt_hipaa['service_condition'] : (!empty($appt_hipaa['symptoms']) ? $appt_hipaa['symptoms'] : '');
             $appt_today_ymd = current_time('Y-m-d');
             ?>
 
