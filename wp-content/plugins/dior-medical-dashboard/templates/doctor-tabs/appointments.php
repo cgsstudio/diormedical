@@ -106,7 +106,6 @@ $calendar_json = json_encode($calendar_cards);
                 </span>
                 Appointment Calendar
             </h4>
-            <p class="text-secondary small mb-0">Clinical consultations, telemedicine visits, and daily schedule management.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
             <button type="button" 
@@ -148,7 +147,7 @@ $calendar_json = json_encode($calendar_cards);
                     </span>
                 </div>
                 <div class="mt-2 text-secondary small">
-                    <span class="text-primary fw-semibold"><i class="fas fa-chart-line me-1"></i>All records</span> across clinic
+                    <span class="text-primary fw-semibold"><i class="fas fa-chart-line me-1"></i>Single-doctor schedule</span>
                 </div>
             </div>
         </div>
