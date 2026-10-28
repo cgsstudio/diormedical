@@ -288,20 +288,23 @@ class Dior_Doctor_Dashboard
         // The canonical ID is used for new appointments; aliases are for existing records only.
         $canonical_id = !empty($linked_post_ids) ? (int) $linked_post_ids[0] : $doctor_user_id;
 
+        $doctor_ids = array_values(array_unique(array_filter(array_map('intval', $doctor_ids), static function ($id) {
+            return $id > 0;
+        })));
+
+        // Only appointment queries may include legacy unassigned IDs. Other clinical
+        // resources (prescriptions, telemedicine, documents) must use real doctor IDs.
+        $appointment_ids = $doctor_ids;
         if (class_exists('Dior_Doctor_Resolver') &&
             $doctor_user_id === (int) Dior_Doctor_Resolver::get_default_doctor_id()) {
-            // Historical unassigned bookings belong to the sole configured doctor.
-            $doctor_ids = array_merge($doctor_ids, [0, 1]);
+            $appointment_ids = array_values(array_unique(array_merge($appointment_ids, [0, 1])));
         }
-
-        $doctor_ids = array_values(array_unique(array_filter(array_map('intval', $doctor_ids), static function ($id) {
-            return $id >= 0;
-        })));
 
         return [
             'user_id' => $doctor_user_id,
             'canonical_id' => $canonical_id,
             'ids' => $doctor_ids,
+            'appointment_ids' => $appointment_ids,
             'profile' => self::get_doctor_profile($doctor_user_id),
         ];
     }
@@ -315,7 +318,7 @@ class Dior_Doctor_Dashboard
             return false;
         }
         $context = is_array($context) ? $context : self::get_single_doctor_context();
-        $doctor_ids = array_map('intval', (array) ($context['ids'] ?? []));
+        $doctor_ids = array_map('intval', (array) ($context['appointment_ids'] ?? $context['ids'] ?? []));
         return in_array((int) ($appointment['doctor_id'] ?? 0), $doctor_ids, true);
     }
 
