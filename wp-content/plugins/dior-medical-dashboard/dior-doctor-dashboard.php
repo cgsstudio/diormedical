@@ -314,46 +314,34 @@ class Dior_Doctor_Dashboard
 
     private static function does_appointment_belong_to_doctor($appt, $doctor_user_id)
     {
-        if (self::is_user_admin($doctor_user_id)) {
-            return true;
+        if (!is_array($appt)) {
+            return false;
         }
-        if (!empty($appt["doctor_user_id"]) && (int) $appt["doctor_user_id"] === (int) $doctor_user_id) {
-            return true;
+
+        $context = self::get_single_doctor_context((int) $doctor_user_id);
+        $configured_user_id = (int) ($context['user_id'] ?? 0);
+        $allowed_ids = array_values(array_unique(array_map(
+            'intval',
+            (array) ($context['appointment_ids'] ?? $context['ids'] ?? [])
+        )));
+        if (!$configured_user_id || !$allowed_ids) {
+            return false;
         }
-        $linked_doc_id = get_user_meta($doctor_user_id, "_docbooker_doctor_id", true);
-        if ($linked_doc_id && !empty($appt["doctor_id"]) && (int) $appt["doctor_id"] === (int) $linked_doc_id) {
+
+        $appointment_doctor_id = (int) ($appt['doctor_id'] ?? 0);
+        if ($appointment_doctor_id && in_array($appointment_doctor_id, $allowed_ids, true)) {
             return true;
         }
 
-        // Use smart resolver to match
-        $doc_ref = !empty($appt["doctor_id"]) ? $appt["doctor_id"] : ($appt["provider"] ?? ($appt["doctor_name"] ?? ""));
-        if ($doc_ref && class_exists('Dior_Doctor_Resolver')) {
-            $resolved_uid = Dior_Doctor_Resolver::resolve_doctor_user_id($doc_ref);
-            if ($resolved_uid && (int) $resolved_uid === (int) $doctor_user_id) {
-                return true;
-            }
-        }
-
-        $u = get_userdata($doctor_user_id);
-        if ($u) {
-            $fname = get_user_meta($doctor_user_id, "first_name", true) ?: $u->first_name;
-            $lname = get_user_meta($doctor_user_id, "last_name", true) ?: $u->last_name;
-            $disp = $u->display_name;
-            $prov = $appt["provider"] ?? ($appt["doctor_name"] ?? "");
-
-            if ($prov) {
-                if ($disp && stripos($prov, $disp) !== false)
-                    return true;
-                if ($lname && strlen($lname) >= 3 && stripos($prov, $lname) !== false)
-                    return true;
-                if ($fname && strlen($fname) >= 3 && stripos($prov, $fname) !== false)
-                    return true;
-            }
-        }
-
-        $only_doctors = get_users(["role" => "doctor"]);
-        if (count($only_doctors) === 1 && $only_doctors[0]->ID == $doctor_user_id) {
+        if (!empty($appt['doctor_user_id']) && (int) $appt['doctor_user_id'] === $configured_user_id) {
             return true;
+        }
+
+        // Only accept a legacy provider label when it exactly resolves to the one
+        // configured doctor. Do not match partial names or unknown provider IDs.
+        $provider_ref = $appt['provider'] ?? ($appt['doctor_name'] ?? '');
+        if ($provider_ref !== '' && class_exists('Dior_Doctor_Resolver')) {
+            return (int) Dior_Doctor_Resolver::resolve_doctor_user_id($provider_ref) === $configured_user_id;
         }
 
         return false;
