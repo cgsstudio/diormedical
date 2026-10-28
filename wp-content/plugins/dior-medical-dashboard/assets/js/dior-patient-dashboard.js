@@ -293,17 +293,23 @@ let diorBookingState = {
     function diorSubmitBooking() {
         let btn = document.getElementById('btn-confirm-booking');
         let msg = document.getElementById('booking-message');
+        if (!btn || !msg) return;
+        if (!diorBookingState || !diorBookingState.doctorId || !diorBookingState.date || !diorBookingState.time) {
+            msg.style.color = '#DC2626';
+            msg.innerText = 'Please select an available provider, date, and time slot before booking.';
+            return;
+        }
         btn.disabled = true;
         btn.innerText = 'Booking Consultation...';
 
         const formData = new FormData();
         formData.append('action', 'dior_patient_book_appointment');
         formData.append('nonce', diorPortalNonce);
-        formData.append('doctorId', diorBookingState.doctorId || 1695);
-        formData.append('doctor_name', diorBookingState.doctorName || 'Doctor');
+        formData.append('doctorId', diorBookingState.doctorId || '');
+        formData.append('doctor_name', diorBookingState.doctorName || '');
         formData.append('date', diorBookingState.date || '');
         formData.append('time', diorBookingState.time || '');
-        formData.append('condition', diorBookingState.departmentName || 'Telehealth Consultation');
+        formData.append('condition', diorBookingState.departmentName || '');
         formData.append('name', diorBookingState.patient.name || '');
         formData.append('email', diorBookingState.patient.email || '');
         formData.append('phone', diorBookingState.patient.phone || '');
