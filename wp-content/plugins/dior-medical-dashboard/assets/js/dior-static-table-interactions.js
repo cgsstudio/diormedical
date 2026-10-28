@@ -397,7 +397,7 @@
 
     function renderTable(table, requestedPage) {
         // Insurance Claims has its own footer pagination; do not inject a second table pager.
-        if (!table || !table.querySelector('tbody') || isDashboardOverview(table) || table.id === 'dior-insurance-table') return;
+        if (!table || !table.querySelector('tbody') || isDashboardOverview(table) || ['dior-insurance-table', 'dior-patient-records-table'].includes(table.id)) return;
 
         // Ensure Bootstrap hoverable row styling & responsive wrapper
         table.classList.add('table-hover');
