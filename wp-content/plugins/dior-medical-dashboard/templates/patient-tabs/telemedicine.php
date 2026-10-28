@@ -138,25 +138,25 @@
                 </div>
             </div>
         </div>
-        <div class="table-responsive mb-0">
-            <table class="table table-hover align-middle mb-0" id="dior-tele-table">
-                <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
+        <div class="docs-table-wrapper">
+            <table class="docs-table table table-hover" id="dior-tele-table">
+                <thead>
                     <tr>
-                        <th style="width: 40px;" class="ps-3">
-                            <input type="checkbox" class="form-check-input">
+                        <th class="dior-ic-3fa4d8d717">
+                            <input type="checkbox" class="dior-ic-52ff4d551f form-check-input">
                         </th>
-                        <th>SESSION ID <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>DOCTOR <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>SPECIALTY <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>DATE <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>TIME <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>DURATION <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>TYPE <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>STATUS <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th class="text-end pe-3">ACTIONS</th>
+                        <th>SESSION ID <i class="fas fa-sort"></i></th>
+                        <th>DOCTOR <i class="fas fa-sort"></i></th>
+                        <th>SPECIALTY <i class="fas fa-sort"></i></th>
+                        <th>DATE <i class="fas fa-sort"></i></th>
+                        <th>TIME <i class="fas fa-sort"></i></th>
+                        <th>DURATION <i class="fas fa-sort"></i></th>
+                        <th>TYPE <i class="fas fa-sort"></i></th>
+                        <th>STATUS <i class="fas fa-sort"></i></th>
+                        <th>ACTIONS</th>
                     </tr>
                 </thead>
-                <tbody id="dior-tele-tbody" class="border-top-0">
+                <tbody id="dior-tele-tbody">
                     <?php if (!empty($appointments)): ?>
                         <?php foreach ($appointments as $apt): ?>
                             <?php

@@ -34,52 +34,52 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="ai1wm-row">
 		<div class="ai1wm-left">
 			<div class="ai1wm-holder">
-				<h1><i class="ai1wm-icon-gear"></i> <?php _e( 'Settings', AI1WMUE_PLUGIN_NAME ); ?></h1>
+				<h1><i class="ai1wm-icon-gear"></i> <?php esc_html_e( 'Settings', AI1WMUE_PLUGIN_NAME ); ?></h1>
 				<br />
 				<br />
 
 				<?php if ( Ai1wm_Message::has( 'settings' ) ) : ?>
 					<div class="ai1wm-message ai1wm-success-message">
-						<p><?php echo Ai1wm_Message::get( 'settings' ); ?></p>
+						<p><?php echo esc_html( Ai1wm_Message::get( 'settings' ) ); ?></p>
 					</div>
 				<?php endif; ?>
 
 				<form method="post" action="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=ai1wmue_settings' ), 'ai1wmue_settings_save' ) ); ?>">
 
 					<article class="ai1wmue-article">
-						<h3><?php _e( 'Retention settings', AI1WMUE_PLUGIN_NAME ); ?></h3>
+						<h3><?php esc_html_e( 'Retention settings', AI1WMUE_PLUGIN_NAME ); ?></h3>
 						<p>
 							<div class="ai1wm-field">
 								<label for="ai1wmue-backups">
-									<?php _e( 'Keep the most recent', AI1WMUE_PLUGIN_NAME ); ?>
+									<?php esc_html_e( 'Keep the most recent', AI1WMUE_PLUGIN_NAME ); ?>
 									<input style="width: 4.5em;" type="number" min="0" name="ai1wmue_backups" id="ai1wmue-backups" value="<?php echo intval( $backups ); ?>" />
 								</label>
-								<?php _e( 'backups. <small>Default: <strong>0</strong> unlimited</small>', AI1WMUE_PLUGIN_NAME ); ?>
+								<?php echo wp_kses( __( 'backups. <small>Default: <strong>0</strong> unlimited</small>', AI1WMUE_PLUGIN_NAME ), ai1wmue_allowed_html_tags() ); ?>
 							</div>
 
 							<div class="ai1wm-field">
 								<label for="ai1wmue-total">
-									<?php _e( 'Limit the total size of backups to', AI1WMUE_PLUGIN_NAME ); ?>
+									<?php esc_html_e( 'Limit the total size of backups to', AI1WMUE_PLUGIN_NAME ); ?>
 									<input style="width: 4.5em;" type="number" min="0" name="ai1wmue_total" id="ai1wmue-total" value="<?php echo intval( $total ); ?>" />
 								</label>
 								<select style="margin-top: -2px;" name="ai1wmue_total_unit" id="ai1wmue-total-unit">
-									<option value="MB" <?php echo strpos( $total, 'MB' ) !== false ? 'selected="selected"' : null; ?>><?php _e( 'MB', AI1WMUE_PLUGIN_NAME ); ?></option>
-									<option value="GB" <?php echo strpos( $total, 'GB' ) !== false ? 'selected="selected"' : null; ?>><?php _e( 'GB', AI1WMUE_PLUGIN_NAME ); ?></option>
+									<option value="MB" <?php echo strpos( $total, 'MB' ) !== false ? 'selected="selected"' : null; ?>><?php esc_html_e( 'MB', AI1WMUE_PLUGIN_NAME ); ?></option>
+									<option value="GB" <?php echo strpos( $total, 'GB' ) !== false ? 'selected="selected"' : null; ?>><?php esc_html_e( 'GB', AI1WMUE_PLUGIN_NAME ); ?></option>
 								</select>
-								<?php _e( '<small>Default: <strong>0</strong> unlimited</small>', AI1WMUE_PLUGIN_NAME ); ?>
+								<?php echo wp_kses( __( '<small>Default: <strong>0</strong> unlimited</small>', AI1WMUE_PLUGIN_NAME ), ai1wmue_allowed_html_tags() ); ?>
 							</div>
 
 							<div class="ai1wm-field">
 								<label for="ai1wmue-days">
-									<?php _e( 'Remove backups older than ', AI1WMUE_PLUGIN_NAME ); ?>
+									<?php esc_html_e( 'Remove backups older than ', AI1WMUE_PLUGIN_NAME ); ?>
 									<input style="width: 4.5em;" type="number" min="0" name="ai1wmue_days" id="ai1wmue-days" value="<?php echo intval( $days ); ?>" />
 								</label>
-								<?php _e( 'days. <small>Default: <strong>0</strong> off</small>', AI1WMUE_PLUGIN_NAME ); ?>
+								<?php echo wp_kses( __( 'days. <small>Default: <strong>0</strong> off</small>', AI1WMUE_PLUGIN_NAME ), ai1wmue_allowed_html_tags() ); ?>
 							</div>
 
 							<div class="ai1wm-field" id="ai1wmue-backups-path">
-								<folder-browser destination="<?php echo $destination; ?>" dir-separator="<?php echo DIRECTORY_SEPARATOR; ?>">
-									<h3><?php _e( 'Backups directory', AI1WMUE_PLUGIN_NAME ); ?></h3>
+								<folder-browser destination="<?php echo esc_attr( $destination ); ?>" dir-separator="<?php echo esc_attr( DIRECTORY_SEPARATOR ); ?>">
+									<h3><?php esc_html_e( 'Backups directory', AI1WMUE_PLUGIN_NAME ); ?></h3>
 								</folder-browser>
 							</div>
 						</p>
@@ -87,7 +87,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<p>
 						<button type="submit" class="ai1wm-button-blue" name="ai1wmue_update" id="ai1wmue-update">
 							<i class="ai1wm-icon-database"></i>
-							<?php _e( 'Update', AI1WMUE_PLUGIN_NAME ); ?>
+							<?php esc_html_e( 'Update', AI1WMUE_PLUGIN_NAME ); ?>
 						</button>
 					</p>
 				</form>
@@ -100,7 +100,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php require AI1WM_TEMPLATES_PATH . '/common/share-buttons.php'; ?>
 					<?php endif; ?>
 
-					<h2><?php _e( 'Leave Feedback', AI1WMUE_PLUGIN_NAME ); ?></h2>
+					<h2><?php esc_html_e( 'Leave Feedback', AI1WMUE_PLUGIN_NAME ); ?></h2>
 
 					<?php require AI1WM_TEMPLATES_PATH . '/common/leave-feedback.php'; ?>
 				</div>

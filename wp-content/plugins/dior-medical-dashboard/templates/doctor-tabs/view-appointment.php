@@ -334,20 +334,21 @@ $status_badges = [
         <!-- Responsive Table Wrapper -->
         <div class="va-table-wrapper">
             <table class="va-table table table-hover align-middle mb-0" id="va-appointments-table">
-                <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
+                <thead>
                     <tr>
                         <th style="width: 45px;" class="text-center">
                             <input type="checkbox" class="va-checkbox form-check-input" id="va-select-all" aria-label="Select all rows">
                         </th>
-                        <th>PATIENT NAME <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>CONSULTATION / TYPE <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>DATE &amp; TIME <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>CONTACT <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>STATUS <i class="fas fa-sort text-muted ms-1"></i></th>
+                        <th>PATIENT NAME <i class="fas fa-sort"></i></th>
+
+                        <th>CONSULTATION / TYPE <i class="fas fa-sort"></i></th>
+                        <th>DATE &amp; TIME <i class="fas fa-sort"></i></th>
+                        <th>CONTACT <i class="fas fa-sort"></i></th>
+                        <th>STATUS <i class="fas fa-sort"></i></th>
                         <th style="text-align: right;">ACTIONS</th>
                     </tr>
                 </thead>
-                <tbody id="va-appointments-tbody" class="border-top-0">
+                <tbody id="va-appointments-tbody">
                     <?php if (!empty($appointments)): ?>
                         <?php foreach ($appointments as $a):
                             $fname = trim(($a['first_name'] ?? '') . ' ' . ($a['last_name'] ?? ''));

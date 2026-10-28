@@ -30,13 +30,13 @@
     window.diorFdaState = {
         medicationsList: [],
         itemNumber: 1,
-        brandName: "SPORANOX",
-        genericName: "ITRACONAZOLE",
-        strength: "100 MG",
-        containsText: "Contains: ITRACONAZOLE (100 MG)",
+        brandName: "",
+        genericName: "",
+        strength: "500 mg",
+        containsText: "",
         includeGeneric: true,
         takeOrApply: "Take",
-        doseForm: "Capsule(s)",
+        doseForm: "Tablet(s)",
         route: "Orally",
         durationVal: 1,
         durationUnit: "Week(s)",
@@ -63,21 +63,34 @@
             return;
         }
 
+        // Reset state so every open is clean and fresh
+        var s = window.diorFdaState;
+        s.medicationsList = [];
+        s.brandName = "";
+        s.genericName = "";
+        s.strength = "500 mg";
+
         // Set default date
         var dateInput = document.getElementById('dior-fda-presc-date');
         if (dateInput && !dateInput.value) {
             dateInput.value = new Date().toISOString().split('T')[0];
         }
 
-        // Reset or init state
+        var searchInput = document.getElementById('dior-fda-med-search');
+        if (searchInput) searchInput.value = '';
+
+        window.diorFdaRenderPrescribedList();
         window.diorFdaUpdateAllUI();
 
-        modal.style.display = 'flex';
-        void modal.offsetHeight;
-        modal.classList.add('is-open');
-        document.body.style.overflow = 'hidden';
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            var bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+            bsModal.show();
+        } else {
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            modal.classList.add('is-open');
+        }
 
-        var searchInput = document.getElementById('dior-fda-med-search');
         if (searchInput) {
             setTimeout(function() { searchInput.focus(); }, 150);
         }
@@ -89,11 +102,14 @@
     window.diorCloseFdaPrescriptionModal = function() {
         var modal = document.getElementById('dior-fda-prescription-modal');
         if (!modal) return;
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            var bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+            bsModal.hide();
+        }
         modal.classList.remove('is-open');
-        setTimeout(function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }, 250);
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
     };
 
     /**
@@ -629,25 +645,25 @@
         var searchInp = document.getElementById('dior-fda-med-search');
         var typedMedName = searchInp ? searchInp.value.trim() : '';
 
-        // If no medication is in the list yet, but the user filled out the form, auto-add it
+        // If no medication is in the list yet, auto-add from the current form fields
         if (s.medicationsList.length === 0) {
             if (typedMedName || (s.brandName && s.brandName.trim() !== '')) {
                 window.diorFdaAddMedicineToList(e);
             } else {
-                Swal.fire({ icon: 'warning', title: 'No Medication Added', text: 'Please search or type at least one medication name.' });
-                if (searchInp) searchInp.focus();
-                return;
+                var prescTitleFallback = (document.getElementById('dior-fda-presc-title') ? document.getElementById('dior-fda-presc-title').value.trim() : '') || 'Clinical Medication';
+                s.brandName = prescTitleFallback;
+                window.diorFdaAddMedicineToList(e);
             }
-        } else if (typedMedName || (s.brandName && s.brandName.trim() !== '')) {
-            // If user has another medication in the form that hasn't been added yet, auto add it too
-            window.diorFdaAddMedicineToList(e);
         }
+        // NOTE: If medicationsList already has items, DO NOT add more! Save what has been added!
 
         if (s.medicationsList.length === 0) {
+            Swal.fire({ icon: 'warning', title: 'No Medication Added', text: 'Please search or type at least one medication name.' });
             return;
         }
 
-        var prescDate = document.getElementById('dior-fda-presc-date').value || new Date().toISOString().split('T')[0];
+        var dateInputEl = document.getElementById('dior-fda-presc-date');
+        var prescDate = (dateInputEl && dateInputEl.value) ? dateInputEl.value : new Date().toISOString().split('T')[0];
         var btn = document.getElementById('dior-fda-btn-submit');
         if (btn) {
             btn.disabled = true;
@@ -676,11 +692,13 @@
         var compiledDuration = durations.join(' | ');
         var compiledInstructions = instructions.join(' || ');
 
-        var prescTitle = (document.getElementById('dior-fda-presc-title') ? document.getElementById('dior-fda-presc-title').value.trim() : '') || 'General Care Prescription';
+        var prescTitle = (document.getElementById('dior-fda-presc-title') ? document.getElementById('dior-fda-presc-title').value.trim() : '') || 'General Medical Prescription';
 
         var formData = new FormData();
         formData.append('action', 'dior_doctor_add_prescription');
-        var nonceVal = (document.getElementById('dior-fda-nonce') ? document.getElementById('dior-fda-nonce').value : '') ||
+        var nonceVal = window.dior_doctor_nonce ||
+                       (document.getElementById('dior-fda-nonce') ? document.getElementById('dior-fda-nonce').value : '') ||
+                       (window.dior_fda_vars ? window.dior_fda_vars.nonce : '') ||
                        (typeof dior_doctor_vars !== 'undefined' ? dior_doctor_vars.nonce : '') ||
                        (typeof dior_vars !== 'undefined' ? dior_vars.nonce : '');
         formData.append('nonce', nonceVal);
@@ -697,9 +715,14 @@
         formData.append('quantity', s.medicationsList.length + ' Item(s)');
         formData.append('status', 'Active');
 
-        var ajaxUrl = (typeof dior_doctor_vars !== 'undefined' ? dior_doctor_vars.ajax_url : '') ||
+        var ajaxUrl = window.dior_ajax_url ||
+                      (window.dior_fda_vars && window.dior_fda_vars.ajax_url) ||
+                      (typeof dior_doctor_vars !== 'undefined' ? dior_doctor_vars.ajax_url : '') ||
                       (typeof dior_vars !== 'undefined' ? dior_vars.ajax_url : '') ||
-                      (typeof dior_patient_dashboard !== 'undefined' ? dior_patient_dashboard.ajax_url : '/wp-admin/admin-ajax.php');
+                      (window.dior_ajax_object ? window.dior_ajax_object.ajax_url : '') ||
+                      (window.ajaxurl ? window.ajaxurl : '') ||
+                      (typeof dior_patient_dashboard !== 'undefined' ? dior_patient_dashboard.ajax_url : null) ||
+                      (window.location.origin + '/diormedical/wp-admin/admin-ajax.php');
 
         fetch(ajaxUrl, {
             method: 'POST',
@@ -709,7 +732,7 @@
         .then(function(res) {
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-file-prescription"></i> SAVE &amp; ISSUE PRESCRIPTION';
+                btn.innerHTML = '<i class="fas fa-file-prescription me-1"></i> Save &amp; Issue Prescription';
             }
 
             if (res.success) {
@@ -735,14 +758,18 @@
 
                 // Reset state
                 s.medicationsList = [];
+                s.brandName = "";
+                s.genericName = "";
                 window.diorFdaRenderPrescribedList();
                 window.diorCloseFdaPrescriptionModal();
 
                 Swal.fire({
                     icon: 'success',
-                    title: 'Prescription Issued!',
-                    html: '<strong>' + totalCount + ' medication(s)</strong> prescribed successfully for <strong>' + patientName + '</strong> under <em>' + savedTitle + '</em>.',
-                    confirmButtonColor: '#0b1120'
+                    title: 'Prescription Issued Successfully!',
+                    html: 'Prescription <strong>' + savedRxId + '</strong> (' + totalCount + ' medication(s)) saved for <strong>' + patientName + '</strong>.<br><small class="text-secondary">Synced to both Doctor and Patient portals.</small>',
+                    confirmButtonColor: '#2563eb'
+                }).then(function() {
+                    window.location.reload();
                 });
             } else {
                 var msg = (res.data && res.data.message) ? res.data.message : 'Failed to save prescription.';
@@ -753,7 +780,7 @@
             console.error('[Dior Medical] Prescription save error:', err);
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-file-prescription"></i> SAVE &amp; ISSUE PRESCRIPTION';
+                btn.innerHTML = '<i class="fas fa-file-prescription me-1"></i> Save &amp; Issue Prescription';
             }
             Swal.fire({ icon: 'error', title: 'Network Error', text: 'Network request failed. Please check your connection and try again.' });
         });
@@ -924,12 +951,25 @@
             });
         }
 
-        modal.classList.add('is-open');
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            bootstrap.Modal.getOrCreateInstance(modal).show();
+        } else {
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            modal.classList.add('is-open');
+        }
     };
 
     window.diorClosePrescriptionDetailModal = function() {
         var modal = document.getElementById('dior-prescription-view-modal');
-        if (modal) modal.classList.remove('is-open');
+        if (!modal) return;
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            bootstrap.Modal.getOrCreateInstance(modal).hide();
+        }
+        modal.classList.remove('is-open');
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
     };
 
     // Close autocomplete when clicking outside

@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <li id="ai1wmve-file-excluder">
 	<label for="ai1wmve-exclude_files">
 		<input type="checkbox" id="ai1wmve-exclude_files" name="options[exclude_files]"/>
-		<?php _e( 'Exclude the selected files', AI1WM_PLUGIN_NAME ); ?>
+		<?php esc_html_e( 'Exclude the selected files', AI1WM_PLUGIN_NAME ); ?>
 	</label>
 	<file-browser></file-browser>
 </li>

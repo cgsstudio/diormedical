@@ -19,6 +19,9 @@ class Dior_Doctor_Dynamic {
         foreach ($actions as $action) add_action('wp_ajax_dior_doc_' . $action, [__CLASS__, 'ajax_' . $action]);
         add_action('wp_ajax_dior_doctor_add_patient', [__CLASS__, 'ajax_patient_add']);
         add_action('wp_ajax_dior_doctor_update_patient', [__CLASS__, 'ajax_patient_update']);
+        add_action('wp_ajax_dior_doctor_add_prescription', [__CLASS__, 'ajax_prescription_add']);
+        add_action('wp_ajax_dior_doc_prescription_add', [__CLASS__, 'ajax_prescription_add']);
+        add_action('wp_ajax_dior_doc_prescription_delete', [__CLASS__, 'ajax_prescription_delete']);
     }
 
     private static function auth() {
@@ -679,5 +682,133 @@ class Dior_Doctor_Dynamic {
     public static function render_reviews(){global $wpdb;$ids=self::doctor_scope_ids();$in=implode(',',array_fill(0,count($ids),'%d'));$rows=$wpdb->get_results($wpdb->prepare('SELECT * FROM '.self::table('reviews')." WHERE doctor_id IN ($in) ORDER BY id DESC",...$ids),ARRAY_A);foreach($rows as &$r)$r['patient_name']=self::patient_name($r['patient_id']);return $rows;}
     public static function render_telemedicine(){global $wpdb;$ids=self::doctor_scope_ids();$in=implode(',',array_fill(0,count($ids),'%d'));$rows=$wpdb->get_results($wpdb->prepare('SELECT * FROM '.self::table('telemedicine')." WHERE doctor_id IN ($in) ORDER BY id DESC",...$ids),ARRAY_A);foreach($rows as &$r)$r['patient_name']=self::patient_name($r['patient_id']);return $rows;}
     public static function render_notifications($type='all'){global $wpdb;$ids=self::doctor_scope_ids();$in=implode(',',array_fill(0,count($ids),'%d'));$where="doctor_id IN ($in)";$args=$ids;if($type==='alerts'){$where.=" AND type='appointment'";}elseif($type==='system'){$where.=" AND type<>'appointment'";}return $wpdb->get_results($wpdb->prepare('SELECT * FROM '.self::table('notifications')." WHERE $where ORDER BY id DESC LIMIT 100",...$args),ARRAY_A);}
+
+    public static function ajax_prescription_add() {
+        if (!is_user_logged_in()) {
+            wp_send_json_error(['message' => 'Unauthorized: Please log in.'], 401);
+        }
+
+        $nonce = $_POST['nonce'] ?? '';
+        if (!wp_verify_nonce($nonce, self::NONCE) && !wp_verify_nonce($nonce, 'dior_portal_nonce') && !current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Security check failed. Please refresh the page.'], 403);
+        }
+
+        global $wpdb;
+
+        $patient_id = (int) ($_POST['patient_id'] ?? 0);
+        if (!$patient_id) {
+            wp_send_json_error(['message' => 'Please select a valid patient.']);
+        }
+
+        $doctor_id = self::doctor_id();
+        $doctor_user = get_userdata($doctor_id);
+        $doctor_name = $doctor_user ? $doctor_user->display_name : 'Dr. Alexander Reynolds, MD';
+
+        $title = sanitize_text_field($_POST['title'] ?? 'General Medical Prescription');
+        $patient_name = sanitize_text_field($_POST['patient_name'] ?? '');
+        if (!$patient_name) {
+            $pat_user = get_userdata($patient_id);
+            $patient_name = $pat_user ? $pat_user->display_name : 'Patient';
+        }
+
+        $rx_id = sanitize_text_field($_POST['prescription_id'] ?? '');
+        if (!$rx_id) {
+            $rx_id = 'RX-' . date('y') . mt_rand(100000, 999999);
+        }
+
+        $presc_date = sanitize_text_field($_POST['prescription_date'] ?? current_time('Y-m-d'));
+        $medications = sanitize_textarea_field($_POST['medications'] ?? '');
+        $dosage = sanitize_text_field($_POST['dosage'] ?? '');
+        $frequency = sanitize_text_field($_POST['frequency'] ?? '');
+        $duration = sanitize_text_field($_POST['duration'] ?? '');
+        $instructions = sanitize_textarea_field($_POST['instructions'] ?? '');
+        $quantity = sanitize_text_field($_POST['quantity'] ?? '1 Item(s)');
+        $refills = (int) ($_POST['refills'] ?? 0);
+        $status = sanitize_text_field($_POST['status'] ?? 'Active');
+
+        $table = $wpdb->prefix . 'dior_prescriptions';
+
+        if (class_exists('Dior_DB')) {
+            Dior_DB::install_schema();
+        }
+
+        $data = [
+            'prescription_uid' => uniqid('rx_'),
+            'prescription_id' => $rx_id,
+            'patient_id' => $patient_id,
+            'doctor_id' => $doctor_id,
+            'title' => $title,
+            'patient_name' => $patient_name,
+            'prescription_date' => $presc_date,
+            'medications' => $medications,
+            'dosage' => $dosage,
+            'frequency' => $frequency,
+            'duration' => $duration,
+            'doctor_name' => $doctor_name,
+            'medication' => $medications,
+            'instructions' => $instructions,
+            'quantity' => $quantity,
+            'refills' => $refills,
+            'status' => $status,
+            'created_at' => current_time('mysql'),
+            'updated_at' => current_time('mysql')
+        ];
+
+        $inserted = $wpdb->insert($table, $data);
+        if ($inserted === false) {
+            wp_send_json_error(['message' => 'Database error: ' . $wpdb->last_error]);
+        }
+
+        $user_rx = get_user_meta($patient_id, 'dior_prescriptions', true);
+        if (!is_array($user_rx)) {
+            $user_rx = [];
+        }
+
+        $entry = [
+            'id' => $rx_id,
+            'order_id' => $rx_id,
+            'prescription_uid' => $data['prescription_uid'],
+            'title' => $title,
+            'medication' => $medications,
+            'dosage' => $dosage,
+            'frequency' => $frequency,
+            'duration' => $duration,
+            'quantity' => $quantity,
+            'refills' => $refills,
+            'date_prescribed' => $presc_date,
+            'prescribed_by' => $doctor_name,
+            'instructions' => $instructions,
+            'status' => $status
+        ];
+
+        array_unshift($user_rx, $entry);
+        update_user_meta($patient_id, 'dior_prescriptions', $user_rx);
+
+        wp_send_json_success([
+            'prescription_id' => $rx_id,
+            'title' => $title,
+            'patient_name' => $patient_name,
+            'date' => date('M d, Y', strtotime($presc_date)),
+            'message' => 'Prescription issued successfully'
+        ]);
+    }
+
+    public static function ajax_prescription_delete() {
+        if (!is_user_logged_in()) {
+            wp_send_json_error(['message' => 'Unauthorized'], 401);
+        }
+        $nonce = $_POST['nonce'] ?? '';
+        if (!wp_verify_nonce($nonce, self::NONCE) && !wp_verify_nonce($nonce, 'dior_portal_nonce') && !current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Security check failed.'], 403);
+        }
+        global $wpdb;
+        $rx_id = sanitize_text_field($_POST['prescription_id'] ?? '');
+        if (!$rx_id) {
+            wp_send_json_error(['message' => 'Missing prescription ID.']);
+        }
+        $table = $wpdb->prefix . 'dior_prescriptions';
+        $wpdb->delete($table, ['prescription_id' => $rx_id]);
+        wp_send_json_success(['message' => 'Prescription deleted.']);
+    }
 }
 Dior_Doctor_Dynamic::init();

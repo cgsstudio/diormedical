@@ -36,10 +36,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="ai1wm-holder" id="ai1wmve-schedule-event-form-component">
 				<h1 class="ai1wmve-schedule-title">
 					<i class="ai1wm-icon-calendar"></i>
-					<?php _e( 'Create Event', AI1WM_PLUGIN_NAME ); ?>
+					<?php esc_html_e( 'Create Event', AI1WM_PLUGIN_NAME ); ?>
 				</h1>
 
-				<schedule-event :event='<?php echo $event->to_json(); ?>' :advanced-options='<?php echo json_encode( $event->advanced_options() ); ?>' :incremental-storages='<?php echo json_encode( $incremental_storages ); ?>' />
+				<schedule-event :event="<?php echo esc_attr( $event->to_json() ); ?>" :advanced-options="<?php echo esc_attr( wp_json_encode( $event->advanced_options() ) ); ?>" :incremental-storages="<?php echo esc_attr( wp_json_encode( $incremental_storages ) ); ?>" />
 
 			</div>
 

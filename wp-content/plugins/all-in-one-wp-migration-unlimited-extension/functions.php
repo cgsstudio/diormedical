@@ -114,3 +114,24 @@ function ai1wmue_install_base_plugin() {
 
 	return $result;
 }
+
+/**
+ * Get allowed HTML tags when output with `wp_kses()`
+ *
+ * @return array<string, mixed>
+ */
+function ai1wmue_allowed_html_tags() {
+	return array(
+		'a'      => array(
+			'href'   => array(),
+			'target' => array(),
+			'class'  => array(),
+		),
+		'br'     => array(),
+		'i'      => array(
+			'class' => array(),
+		),
+		'small'  => array(),
+		'strong' => array(),
+	);
+}

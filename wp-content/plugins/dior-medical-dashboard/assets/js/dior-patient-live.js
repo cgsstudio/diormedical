@@ -22,9 +22,13 @@
     };
 
     function switchTab(tabId, updateHash) {
+        if (typeof window.diorSafeSwitchPatientTab === 'function') {
+            return window.diorSafeSwitchPatientTab(tabId, updateHash);
+        }
         var app = document.getElementById('dior-patient-portal-app');
         if (!app || !tabId) return false;
         var panel = document.getElementById('tab-' + tabId);
+        if (!panel && app) panel = document.getElementById(tabId);
         if (!panel || !app.contains(panel)) return false;
 
         app.querySelectorAll('.dior-nav-btn[data-tab]').forEach(function (button) {
@@ -34,9 +38,17 @@
         app.querySelectorAll('.dior-tab-panel').forEach(function (item) {
             var active = item === panel;
             item.classList.toggle('active', active);
-            item.style.display = active ? 'block' : 'none';
-            item.style.visibility = active ? 'visible' : 'hidden';
-            item.style.opacity = active ? '1' : '0';
+            if (active) {
+                item.removeAttribute('hidden');
+                item.style.setProperty('display', 'block', 'important');
+                item.style.setProperty('visibility', 'visible', 'important');
+                item.style.setProperty('opacity', '1', 'important');
+            } else {
+                item.setAttribute('hidden', 'hidden');
+                item.style.setProperty('display', 'none', 'important');
+                item.style.setProperty('visibility', 'hidden', 'important');
+                item.style.setProperty('opacity', '0', 'important');
+            }
         });
 
         var title = document.getElementById('dior-current-page-title');
@@ -62,6 +74,9 @@
     window._diorLastApptToggleTime = window._diorLastApptToggleTime || 0;
 
     function toggleApptDropdown(e) {
+        if (typeof window.diorToggleApptDropdown === 'function' && window.diorToggleApptDropdown !== toggleApptDropdown) {
+            return window.diorToggleApptDropdown(e);
+        }
         if (e) {
             if (typeof e.preventDefault === 'function') e.preventDefault();
             if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
@@ -91,10 +106,10 @@
             }
         }
     }
-    window.diorToggleApptDropdown = toggleApptDropdown;
+    if (!window.diorToggleApptDropdown) window.diorToggleApptDropdown = toggleApptDropdown;
 
-    window.diorSwitchTab = switchTab;
-    window.diorSafeSwitchPatientTab = switchTab;
+    if (!window.diorSwitchTab) window.diorSwitchTab = switchTab;
+    if (!window.diorSafeSwitchPatientTab) window.diorSafeSwitchPatientTab = switchTab;
 
     function bindNavigation() {
         var app = document.getElementById('dior-patient-portal-app');

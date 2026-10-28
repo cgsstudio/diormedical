@@ -60,24 +60,24 @@
                     </div>
                 </div>
 
-                <div class="table-responsive mb-0">
-                    <table class="table table-hover align-middle mb-0" id="dior-rx-table">
-                        <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
+                <div class="docs-table-wrapper">
+                    <table class="docs-table table table-hover" id="dior-rx-table">
+                        <thead>
                             <tr>
-                                <th style="width: 40px;" class="ps-3">
+                                <th style="width:36px;">
                                     <input type="checkbox" id="dior-select-all-rx"
                                         class="master-checkbox form-check-input" onclick="diorToggleSelectAllRx(this)">
                                 </th>
-                                <th>ID <i class="fas fa-sort text-muted ms-1"></i></th>
-                                <th>MEDICATION <i class="fas fa-sort text-muted ms-1"></i></th>
-                                <th>PRESCRIBED BY <i class="fas fa-sort text-muted ms-1"></i></th>
-                                <th>DATE <i class="fas fa-sort text-muted ms-1"></i></th>
-                                <th>CONDITION <i class="fas fa-sort text-muted ms-1"></i></th>
-                                <th>STATUS <i class="fas fa-sort text-muted ms-1"></i></th>
-                                <th class="text-end pe-3">ACTIONS</th>
+                                <th>ID <i class="fas fa-sort"></i></th>
+                                <th>MEDICATION <i class="fas fa-sort"></i></th>
+                                <th>PRESCRIBED BY <i class="fas fa-sort"></i></th>
+                                <th>DATE <i class="fas fa-sort"></i></th>
+                                <th>CONDITION <i class="fas fa-sort"></i></th>
+                                <th>STATUS <i class="fas fa-sort"></i></th>
+                                <th>ACTIONS <i class="fas fa-sort"></i></th>
                             </tr>
                         </thead>
-                        <tbody id="dior-rx-tbody" class="border-top-0">
+                        <tbody id="dior-rx-tbody">
                             <?php
                             $patient_rx_rows = is_array($prescriptions ?? []) ? $prescriptions : [];
                             foreach ($patient_rx_rows as $rx):

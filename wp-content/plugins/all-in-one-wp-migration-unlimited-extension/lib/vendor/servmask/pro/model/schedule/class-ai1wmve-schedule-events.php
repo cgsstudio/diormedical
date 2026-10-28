@@ -93,7 +93,7 @@ if ( ! class_exists( 'Ai1wmve_Schedule_Events' ) ) {
 				return $this->update_option();
 			}
 
-			throw new Ai1wmve_Schedules_Exception( __( 'Unable to find scheduled event', AI1WM_PLUGIN_NAME ) );
+			throw new Ai1wmve_Schedules_Exception( esc_html__( 'Unable to find scheduled event', AI1WM_PLUGIN_NAME ) );
 		}
 
 		public function clear( $extension = null ) {

@@ -111,7 +111,7 @@ if ( ! class_exists( 'Ai1wmve_Schedule_Event' ) ) {
 
 		public function __construct( $data ) {
 			if ( ! is_array( $data ) ) {
-				throw new Ai1wmve_Schedules_Exception( __( 'Event data must be array', AI1WM_PLUGIN_NAME ) );
+				throw new Ai1wmve_Schedules_Exception( esc_html__( 'Event data must be array', AI1WM_PLUGIN_NAME ) );
 			}
 
 			if ( empty( $data['event_id'] ) ) {
@@ -331,7 +331,7 @@ if ( ! class_exists( 'Ai1wmve_Schedule_Event' ) ) {
 					return 'monthly';
 
 				default:
-					throw new Ai1wmve_Schedules_Exception( __( 'Undefined schedule interval!', AI1WM_PLUGIN_NAME ) );
+					throw new Ai1wmve_Schedules_Exception( esc_html__( 'Undefined schedule interval!', AI1WM_PLUGIN_NAME ) );
 			}
 		}
 

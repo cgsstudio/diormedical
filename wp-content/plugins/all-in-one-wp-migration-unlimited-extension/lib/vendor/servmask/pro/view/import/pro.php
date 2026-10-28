@@ -30,5 +30,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<?php _e( 'Maximum upload file size: ', AI1WM_PLUGIN_NAME ); ?>
-<span class="ai1wm-max-upload-size"><?php _e( 'Unlimited', AI1WM_PLUGIN_NAME ); ?></span>
+<?php esc_html_e( 'Maximum upload file size: ', AI1WM_PLUGIN_NAME ); ?>
+<span class="ai1wm-max-upload-size"><?php esc_html_e( 'Unlimited', AI1WM_PLUGIN_NAME ); ?></span>

@@ -401,84 +401,31 @@ function diorDownloadTodayAppointmentsCSV() {
                                 URL.revokeObjectURL(url);
                             }
 
-let diorTodayCurrentPage = 1;
-const diorTodayRowsPerPage = 10;
+                            function diorFilterTodayAppointments() {
+                                const input = document.getElementById('dior-today-search-input');
+                                const filter = input ? input.value.toLowerCase() : '';
+                                const rows = document.querySelectorAll('#dior-today-appointments-tbody tr');
+                                let visibleCount = 0;
 
-function diorGetTodayActiveRows() {
-    const input = document.getElementById('dior-today-search-input');
-    const filter = input ? input.value.toLowerCase() : '';
-    const allRows = Array.from(document.querySelectorAll('#dior-today-appointments-tbody tr'));
-    return allRows.filter(function(row) {
-        return row.innerText.toLowerCase().includes(filter);
-    });
-}
+                                rows.forEach(function(row) {
+                                    const text = row.innerText.toLowerCase();
+                                    if (text.includes(filter)) {
+                                        row.style.display = '';
+                                        visibleCount++;
+                                    } else {
+                                        row.style.display = 'none';
+                                    }
+                                });
 
-function diorRenderTodayPagination() {
-    const activeRows = diorGetTodayActiveRows();
-    const allRows = Array.from(document.querySelectorAll('#dior-today-appointments-tbody tr'));
-    const totalPages = Math.ceil(activeRows.length / diorTodayRowsPerPage) || 1;
-
-    if (diorTodayCurrentPage > totalPages) diorTodayCurrentPage = totalPages;
-    if (diorTodayCurrentPage < 1) diorTodayCurrentPage = 1;
-
-    allRows.forEach(row => row.style.display = 'none');
-
-    const startIndex = (diorTodayCurrentPage - 1) * diorTodayRowsPerPage;
-    const endIndex = startIndex + diorTodayRowsPerPage;
-    const pageRows = activeRows.slice(startIndex, endIndex);
-
-    pageRows.forEach(row => row.style.display = '');
-
-    const pagContainer = document.getElementById('dior-today-pagination');
-    if (pagContainer) {
-        pagContainer.innerHTML = diorBuildPagerHtml(diorTodayCurrentPage, totalPages, 'diorGoTodayPage');
-    }
-
-    diorUpdateTodaySelectedCount(activeRows.length);
-}
-
-function diorGoTodayPage(page) {
-    diorTodayCurrentPage = page;
-    diorRenderTodayPagination();
-}
-
-function diorFilterTodayAppointments() {
-    diorTodayCurrentPage = 1;
-    diorRenderTodayPagination();
-}
-
-function diorToggleSelectAllToday(master) {
-    const activeRows = diorGetTodayActiveRows();
-    activeRows.forEach(function(row) {
-        const cb = row.querySelector('.today-row-checkbox');
-        if (cb) cb.checked = master.checked;
-    });
-    diorUpdateTodaySelectedCount();
-}
-
-function diorUpdateTodaySelectedCount(customVisibleCount) {
-    const checkboxes = document.querySelectorAll('.today-row-checkbox');
-    let selectedCount = 0;
-    let visibleCount = 0;
-
-    checkboxes.forEach(function(cb) {
-        const row = cb.closest('tr');
-        if (row) {
-            visibleCount++;
-            if (cb.checked) selectedCount++;
-        }
-    });
-
-    const total = (typeof customVisibleCount === 'number') ? customVisibleCount : visibleCount;
-    const pageCountEl = document.getElementById('dior-today-page-count');
-    if (pageCountEl) {
-        pageCountEl.innerText = `${selectedCount} selected / ${total} total`;
-    }
-}
+                                const pageCountEl = document.getElementById('dior-today-page-count');
+                                if (pageCountEl) {
+                                    pageCountEl.innerText = `0 selected / ${visibleCount} total`;
+                                }
+                            }
 
 // --- Extracted dashboard script 3 ---
 let diorUpcomingCurrentPage = 1;
-                            const diorUpcomingRowsPerPage = 10;
+                            const diorUpcomingRowsPerPage = 5;
 
                             function diorGetUpcomingActiveRows() {
                                 const input = document.getElementById('dior-upcoming-search-input');
@@ -628,136 +575,105 @@ let diorUpcomingCurrentPage = 1;
 
 // --- Extracted dashboard script 4 ---
 let diorPastCurrentPage = 1;
-const diorPastRowsPerPage = 10;
+                            const diorPastRowsPerPage = 5;
 
-function diorGetPastActiveRows() {
-    const input = document.getElementById('dior-past-search-input');
-    const filter = input ? input.value.toLowerCase() : '';
-    const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
-    
-    return allRows.filter(function(row) {
-        const text = row.innerText.toLowerCase();
-        return text.includes(filter);
-    });
-}
+                            function diorGetPastActiveRows() {
+                                const input = document.getElementById('dior-past-search-input');
+                                const filter = input ? input.value.toLowerCase() : '';
+                                const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
+                                
+                                return allRows.filter(function(row) {
+                                    const text = row.innerText.toLowerCase();
+                                    return text.includes(filter);
+                                });
+                            }
 
-function diorRenderPastPagination() {
-    const activeRows = diorGetPastActiveRows();
-    const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
-    const totalPages = Math.ceil(activeRows.length / diorPastRowsPerPage) || 1;
+                            function diorRenderPastPagination() {
+                                const activeRows = diorGetPastActiveRows();
+                                const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
+                                const totalPages = Math.ceil(activeRows.length / diorPastRowsPerPage) || 1;
 
-    if (diorPastCurrentPage > totalPages) {
-        diorPastCurrentPage = totalPages;
-    }
-    if (diorPastCurrentPage < 1) {
-        diorPastCurrentPage = 1;
-    }
+                                if (diorPastCurrentPage > totalPages) {
+                                    diorPastCurrentPage = totalPages;
+                                }
+                                if (diorPastCurrentPage < 1) {
+                                    diorPastCurrentPage = 1;
+                                }
 
-    allRows.forEach(row => row.style.display = 'none');
+                                allRows.forEach(row => row.style.display = 'none');
 
-    const startIndex = (diorPastCurrentPage - 1) * diorPastRowsPerPage;
-    const endIndex = startIndex + diorPastRowsPerPage;
-    const pageRows = activeRows.slice(startIndex, endIndex);
+                                const startIndex = (diorPastCurrentPage - 1) * diorPastRowsPerPage;
+                                const endIndex = startIndex + diorPastRowsPerPage;
+                                const pageRows = activeRows.slice(startIndex, endIndex);
 
-    pageRows.forEach(row => row.style.display = '');
+                                pageRows.forEach(row => row.style.display = '');
 
-    const pagContainer = document.getElementById('dior-past-pagination');
-    if (pagContainer) {
-        pagContainer.innerHTML = diorBuildPagerHtml(diorPastCurrentPage, totalPages, 'diorGoPastPage');
-    }
+                                const pagContainer = document.getElementById('dior-past-pagination');
+                                if (pagContainer) {
+                                    pagContainer.innerHTML = diorBuildPagerHtml(diorPastCurrentPage, totalPages, 'diorGoPastPage');
+                                }
 
-    diorUpdatePastSelectedCount(activeRows.length);
-}
+                                const pageCountEl = document.getElementById('dior-past-page-count');
+                                if (pageCountEl) {
+                                    pageCountEl.innerText = `0 selected / ${activeRows.length} total`;
+                                }
+                            }
 
-function diorGoPastPage(page) {
-    diorPastCurrentPage = page;
-    diorRenderPastPagination();
-}
+                            function diorGoPastPage(page) {
+                                diorPastCurrentPage = page;
+                                diorRenderPastPagination();
+                            }
 
-function diorFilterPastAppointments() {
-    diorPastCurrentPage = 1;
-    diorRenderPastPagination();
-}
+                            function diorFilterPastAppointments() {
+                                diorPastCurrentPage = 1;
+                                diorRenderPastPagination();
+                            }
+                            
+                            function diorDownloadPastAppointmentsCSV() {
+                                const table = document.getElementById('dior-past-appointments-table');
+                                if (!table) return;
 
-function diorToggleSelectAllPast(master) {
-    const activeRows = diorGetPastActiveRows();
-    activeRows.forEach(function(row) {
-        const cb = row.querySelector('.past-row-checkbox');
-        if (cb) cb.checked = master.checked;
-    });
-    diorUpdatePastSelectedCount();
-}
+                                let csv = [];
+                                csv.push(['Doctor', 'Date', 'Time', 'Email', 'Mobile', 'Injury', 'Type', 'Next Appointment'].join(','));
 
-function diorUpdatePastSelectedCount(customVisibleCount) {
-    const checkboxes = document.querySelectorAll('.past-row-checkbox');
-    let selectedCount = 0;
-    let visibleCount = 0;
+                                const activeRows = diorGetPastActiveRows();
+                                activeRows.forEach(function(row) {
+                                    const cols = row.querySelectorAll('td');
+                                    if (cols.length >= 8) {
+                                        let doctor = cols[0].innerText.replace(/\s+/g, ' ').trim();
+                                        let date = cols[1].innerText.replace(/\s+/g, ' ').trim();
+                                        let time = cols[2].innerText.replace(/\s+/g, ' ').trim();
+                                        let email = cols[3].innerText.replace(/\s+/g, ' ').trim();
+                                        let mobile = cols[4].innerText.replace(/\s+/g, ' ').trim();
+                                        let injury = cols[5].innerText.replace(/\s+/g, ' ').trim();
+                                        let type = cols[6].innerText.replace(/\s+/g, ' ').trim();
+                                        let nextAppt = cols[7].innerText.replace(/\s+/g, ' ').trim();
 
-    checkboxes.forEach(function(cb) {
-        const row = cb.closest('tr');
-        if (row) {
-            visibleCount++;
-            if (cb.checked) selectedCount++;
-        }
-    });
+                                        let rowData = [
+                                            `"${doctor.replace(/"/g, '""')}"`,
+                                            `"${date.replace(/"/g, '""')}"`,
+                                            `"${time.replace(/"/g, '""')}"`,
+                                            `"${email.replace(/"/g, '""')}"`,
+                                            `"${mobile.replace(/"/g, '""')}"`,
+                                            `"${injury.replace(/"/g, '""')}"`,
+                                            `"${type.replace(/"/g, '""')}"`,
+                                            `"${nextAppt.replace(/"/g, '""')}"`
+                                        ];
+                                        csv.push(rowData.join(','));
+                                    }
+                                });
 
-    const total = (typeof customVisibleCount === 'number') ? customVisibleCount : visibleCount;
-    const pageCountEl = document.getElementById('dior-past-page-count');
-    if (pageCountEl) {
-        pageCountEl.innerText = `${selectedCount} selected / ${total} total`;
-    }
-}
-
-function diorDownloadPastAppointmentsCSV() {
-    const table = document.getElementById('dior-past-appointments-table');
-    if (!table) return;
-
-    let csv = [];
-    csv.push(['Patient Name', 'Appointment Date', 'Time', 'Email', 'Mobile', 'Gender', 'Status', 'Address', 'Disease', 'Last Visit'].join(','));
-
-    const activeRows = diorGetPastActiveRows();
-    activeRows.forEach(function(row) {
-        const cols = row.querySelectorAll('td');
-        if (cols.length >= 11) {
-            let name = cols[1].innerText.replace(/\s+/g, ' ').trim();
-            let date = cols[2].innerText.replace(/\s+/g, ' ').trim();
-            let time = cols[3].innerText.replace(/\s+/g, ' ').trim();
-            let email = cols[4].innerText.replace(/\s+/g, ' ').trim();
-            let mobile = cols[5].innerText.replace(/\s+/g, ' ').trim();
-            let gender = cols[6].innerText.replace(/\s+/g, ' ').trim();
-            let status = cols[7].innerText.replace(/\s+/g, ' ').trim();
-            let address = cols[8].innerText.replace(/\s+/g, ' ').trim();
-            let disease = cols[9].innerText.replace(/\s+/g, ' ').trim();
-            let lastVisit = cols[10].innerText.replace(/\s+/g, ' ').trim();
-
-            let rowData = [
-                `"${name.replace(/"/g, '""')}"`,
-                `"${date.replace(/"/g, '""')}"`,
-                `"${time.replace(/"/g, '""')}"`,
-                `"${email.replace(/"/g, '""')}"`,
-                `"${mobile.replace(/"/g, '""')}"`,
-                `"${gender.replace(/"/g, '""')}"`,
-                `"${status.replace(/"/g, '""')}"`,
-                `"${address.replace(/"/g, '""')}"`,
-                `"${disease.replace(/"/g, '""')}"`,
-                `"${lastVisit.replace(/"/g, '""')}"`
-            ];
-            csv.push(rowData.join(','));
-        }
-    });
-
-    const csvString = csv.join('\r\n');
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'past_appointments.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-}
-
+                                const csvString = csv.join('\r\n');
+                                const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+                                const url = URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.setAttribute('href', url);
+                                link.setAttribute('download', 'past_appointments.csv');
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                URL.revokeObjectURL(url);
+                            }
 
                             document.addEventListener('DOMContentLoaded', function() {
                                 diorRenderPastPagination();
@@ -2934,72 +2850,157 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         };
 
         window.diorDownloadRxPdf = function (rxId) {
-            var element = document.getElementById('rx-pdf-template-' + rxId);
-            if (!element) {
-                var allTemplates = document.querySelectorAll('[id^="rx-pdf-template-"]');
-                if (allTemplates && allTemplates.length > 0) {
-                    for (var k = 0; k < allTemplates.length; k++) {
-                        var rawIds = (allTemplates[k].getAttribute('data-raw-ids') || '').split(',');
-                        if (allTemplates[k].id.indexOf(rxId) !== -1 || rawIds.indexOf(String(rxId)) !== -1) {
-                            element = allTemplates[k];
-                            break;
-                        }
-                    }
-                }
+            if (!rxId) return;
+
+            var cleanId = String(rxId).trim();
+            var baseUrl = window.location.origin;
+            if (window.location.pathname.indexOf('/diormedical') !== -1) {
+                baseUrl += '/diormedical';
             }
-            if (!element) { Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' }); return; }
+            if (window.dior_ajax_object && window.dior_ajax_object.site_url) {
+                baseUrl = window.dior_ajax_object.site_url;
+            }
+            var pdfUrl = baseUrl + '/?dior_action=view_rx_pdf&rx_id=' + encodeURIComponent(cleanId);
 
-            var cleanFileName = 'Dior-Prescription-' + String(rxId).replace(/[^a-zA-Z0-9]/g, '-') + '.pdf';
-            var innerContent = element.innerHTML;
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Generating Prescription PDF',
+                    html: '<div class="py-2"><div class="spinner-border text-primary" role="status"></div><div class="mt-2 text-muted small">Loading high-resolution e-prescription...</div></div>',
+                    showConfirmButton: false,
+                    allowOutsideClick: false
+                });
+            }
 
-            var tempContainer = document.createElement('div');
-            tempContainer.style.position = 'fixed';
-            tempContainer.style.left = '0';
-            tempContainer.style.top = '0';
-            tempContainer.style.width = '750px';
-            tempContainer.style.background = '#FFFFFF';
-            tempContainer.style.zIndex = '-999999';
-            tempContainer.style.opacity = '1';
-            tempContainer.style.pointerEvents = 'none';
-            tempContainer.style.margin = '0';
-            tempContainer.style.padding = '0';
-            tempContainer.innerHTML = innerContent;
-            document.body.appendChild(tempContainer);
+            var iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.left = '-9999px';
+            iframe.style.top = '-9999px';
+            iframe.style.width = '794px';
+            iframe.style.height = '1123px';
+            iframe.style.border = 'none';
+            iframe.style.visibility = 'hidden';
 
-            if (typeof html2pdf !== 'undefined' && html2pdf) {
-                var opt = {
-                    margin: [6, 6, 6, 6],
-                    filename: cleanFileName,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        logging: false,
-                        scrollY: 0,
-                        scrollX: 0,
-                        windowWidth: 794
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                };
+            var fallbackDownload = function () {
+                if (typeof Swal !== 'undefined') Swal.close();
+                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+                window.open(pdfUrl + '&download=1', '_blank');
+            };
+
+            var timer = setTimeout(fallbackDownload, 10000);
+
+            iframe.onload = function () {
                 try {
-                    html2pdf().set(opt).from(tempContainer.firstElementChild || tempContainer).save().then(function () {
-                        if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                    }).catch(function (err) {
-                        console.error('PDF export error:', err);
-                        if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                        fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
-                    });
+                    setTimeout(function () {
+                        try {
+                            clearTimeout(timer);
+                            if (iframe.contentWindow && typeof iframe.contentWindow.downloadAsPdf === 'function') {
+                                iframe.contentWindow.downloadAsPdf().then(function () {
+                                    if (typeof Swal !== 'undefined') Swal.close();
+                                    setTimeout(function () { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); }, 1500);
+                                }).catch(function (err) {
+                                    console.error('PDF error in iframe:', err);
+                                    fallbackDownload();
+                                });
+                            } else {
+                                fallbackDownload();
+                            }
+                        } catch (ex) {
+                            console.error('Iframe access failed:', ex);
+                            fallbackDownload();
+                        }
+                    }, 800);
                 } catch (e) {
-                    console.error('PDF generation error:', e);
-                    if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                    fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
+                    clearTimeout(timer);
+                    fallbackDownload();
                 }
-            } else {
-                console.warn('html2pdf library not loaded, falling back to print');
-                if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
-                fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
+            };
+
+            iframe.src = pdfUrl;
+            document.body.appendChild(iframe);
+        };
+
+        window.diorDownloadInvoicePdf = function (invId) {
+            var cleanId = invId ? String(invId).trim() : 'INV-2026-001';
+            var baseUrl = window.location.origin;
+            if (window.location.pathname.indexOf('/diormedical') !== -1) {
+                baseUrl += '/diormedical';
             }
+            if (window.dior_ajax_object && window.dior_ajax_object.site_url) {
+                baseUrl = window.dior_ajax_object.site_url;
+            }
+            var pdfUrl = baseUrl + '/?dior_action=view_invoice_pdf&inv_id=' + encodeURIComponent(cleanId);
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Generating Invoice PDF',
+                    html: '<div class="py-2"><div class="spinner-border text-primary" role="status"></div><div class="mt-2 text-muted small">Loading invoice and official watermark...</div></div>',
+                    showConfirmButton: false,
+                    allowOutsideClick: false
+                });
+            }
+
+            var iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.left = '-9999px';
+            iframe.style.top = '-9999px';
+            iframe.style.width = '1060px';
+            iframe.style.height = '1120px';
+            iframe.style.border = 'none';
+            iframe.style.visibility = 'hidden';
+
+            var fallbackDownload = function () {
+                if (typeof Swal !== 'undefined') Swal.close();
+                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+                window.open(pdfUrl + '&download=1', '_blank');
+            };
+
+            var timer = setTimeout(fallbackDownload, 10000);
+
+            iframe.onload = function () {
+                try {
+                    setTimeout(function () {
+                        try {
+                            clearTimeout(timer);
+                            if (iframe.contentWindow && typeof iframe.contentWindow.downloadAsPdf === 'function') {
+                                iframe.contentWindow.downloadAsPdf().then(function () {
+                                    if (typeof Swal !== 'undefined') Swal.close();
+                                    setTimeout(function () { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); }, 1500);
+                                }).catch(function (err) {
+                                    console.error('Invoice PDF error in iframe:', err);
+                                    fallbackDownload();
+                                });
+                            } else {
+                                fallbackDownload();
+                            }
+                        } catch (ex) {
+                            console.error('Iframe access failed:', ex);
+                            fallbackDownload();
+                        }
+                    }, 800);
+                } catch (e) {
+                    clearTimeout(timer);
+                    fallbackDownload();
+                }
+            };
+
+            iframe.src = pdfUrl;
+            document.body.appendChild(iframe);
+        };
+
+        window.diorViewInvoicePdf = function (invId) {
+            var cleanId = invId ? String(invId).trim() : 'INV-2026-001';
+            var baseUrl = window.location.origin;
+            if (window.location.pathname.indexOf('/diormedical') !== -1) {
+                baseUrl += '/diormedical';
+            }
+            if (window.dior_ajax_object && window.dior_ajax_object.site_url) {
+                baseUrl = window.dior_ajax_object.site_url;
+            }
+            window.open(baseUrl + '/?dior_action=view_invoice_pdf&inv_id=' + encodeURIComponent(cleanId), '_blank');
+        };
+
+        window.diorPrintInvoicePdf = function (invId) {
+            window.diorDownloadInvoicePdf(invId);
         };
 
         function diorInitThemeMode() {
@@ -3148,7 +3149,13 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
     'use strict';
 
     function switchPatientTab(tabId, updateHash) {
+        if (typeof window.diorSafeSwitchPatientTab === 'function') {
+            return window.diorSafeSwitchPatientTab(tabId, updateHash);
+        }
         var panel = document.getElementById('tab-' + tabId);
+        if (!panel) {
+            panel = document.getElementById(tabId);
+        }
         if (!panel) {
             return false;
         }
@@ -3162,14 +3169,18 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         });
 
         document.querySelectorAll('.dior-tab-panel').forEach(function (item) {
-            if (item.id === 'tab-' + tabId) {
+            if (item === panel) {
                 item.classList.add('active');
+                item.removeAttribute('hidden');
                 item.style.setProperty('display', 'block', 'important');
                 item.style.setProperty('visibility', 'visible', 'important');
                 item.style.setProperty('opacity', '1', 'important');
             } else {
                 item.classList.remove('active');
+                item.setAttribute('hidden', 'hidden');
                 item.style.setProperty('display', 'none', 'important');
+                item.style.setProperty('visibility', 'hidden', 'important');
+                item.style.setProperty('opacity', '0', 'important');
             }
         });
 

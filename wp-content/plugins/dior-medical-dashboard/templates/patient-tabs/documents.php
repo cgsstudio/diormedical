@@ -74,23 +74,23 @@
             <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 dior-doc-cat-pill" onclick="diorFilterDocsByCategory('Other', this)">Other</button>
         </div>
 
-        <div class="table-responsive mb-0">
-            <table class="table table-hover align-middle mb-0" id="dior-docs-table">
-                <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
+        <div class="docs-table-wrapper">
+            <table class="docs-table table table-hover" id="dior-docs-table">
+                <thead>
                     <tr>
-                        <th style="width: 40px;" class="ps-3">
-                            <input type="checkbox" class="form-check-input">
+                        <th class="dior-ic-3fa4d8d717">
+                            <input type="checkbox" class="dior-ic-52ff4d551f form-check-input">
                         </th>
-                        <th>DOCUMENT TITLE <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>CATEGORY <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>TYPE <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>UPLOAD DATE <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>SIZE <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>STATUS <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th class="text-end pe-3">ACTIONS</th>
+                        <th>DOCUMENT TITLE <i class="fas fa-sort"></i></th>
+                        <th>CATEGORY <i class="fas fa-sort"></i></th>
+                        <th>TYPE <i class="fas fa-sort"></i></th>
+                        <th>UPLOAD DATE <i class="fas fa-sort"></i></th>
+                        <th>SIZE <i class="fas fa-sort"></i></th>
+                        <th>STATUS <i class="fas fa-sort"></i></th>
+                        <th>ACTIONS</th>
                     </tr>
                 </thead>
-                <tbody id="dior-docs-tbody" class="border-top-0">
+                <tbody id="dior-docs-tbody">
                     <?php if (!empty($documents)): ?>
                         <?php foreach ($documents as $doc): ?>
                             <tr data-doc-id="<?php echo esc_attr($doc['id'] ?? ''); ?>"

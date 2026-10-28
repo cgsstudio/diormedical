@@ -51,21 +51,21 @@
                 </div>
             </div>
         </div>
-        <div class="table-responsive mb-0">
-            <table class="table table-hover align-middle mb-0" id="dior-bill-table">
-                <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
+        <div class="docs-table-wrapper">
+            <table class="docs-table table table-hover" id="dior-bill-table">
+                <thead>
                     <tr>
-                        <th>Invoice No <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>Doctor <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>Date <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>Amount <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>Tax <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>Discount <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th>Total <i class="fas fa-sort text-muted ms-1"></i></th>
-                        <th class="text-end pe-3">Actions</th>
+                        <th>Invoice No</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Tax</th>
+                        <th>Discount</th>
+                        <th>Total</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="dior-bill-tbody" class="border-top-0">
+                <tbody id="dior-bill-tbody">
                     <?php
                     $payments = is_array($payments ?? null) ? $payments : Dior_Patient_Portal_Data::get_patient_payments(get_current_user_id());
                     $payments = is_array($payments) ? $payments : [];
@@ -104,13 +104,13 @@
                             <td><span class="cell-text"><?php echo esc_html($p_tot); ?></span></td>
                             <td>
                                 <div class="cell-content action-cell" style="gap:8px;">
-                                    <button type="button" class="btn btn-sm btn-success" title="Download Bill">
+                                    <button type="button" class="btn btn-sm btn-success" title="Download Bill" onclick="event.stopPropagation(); if(typeof diorDownloadInvoicePdf==='function') diorDownloadInvoicePdf('<?php echo esc_js($p_inv); ?>');">
                                         <i class="fas fa-download"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-info" title="View Bill">
+                                    <button type="button" class="btn btn-sm btn-info" title="View Bill" onclick="event.stopPropagation(); if(typeof diorViewInvoicePdf==='function') diorViewInvoicePdf('<?php echo esc_js($p_inv); ?>');">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-secondary" title="Print Bill">
+                                    <button type="button" class="btn btn-sm btn-secondary" title="Print Bill" onclick="event.stopPropagation(); if(typeof diorPrintInvoicePdf==='function') diorPrintInvoicePdf('<?php echo esc_js($p_inv); ?>');">
                                         <i class="fas fa-print"></i>
                                     </button>
                                 </div>

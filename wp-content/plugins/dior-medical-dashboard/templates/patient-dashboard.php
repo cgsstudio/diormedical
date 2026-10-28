@@ -248,7 +248,7 @@
             </header>
 
             <!-- TAB PANELS CONTAINER -->
-            <div class="dior-tab-container">
+            <div class="dior-tab-container py-3 pb-5">
 
                 <?php
                 $is_prof_complete = Dior_Patient_Portal_Data::is_profile_complete($user_id);

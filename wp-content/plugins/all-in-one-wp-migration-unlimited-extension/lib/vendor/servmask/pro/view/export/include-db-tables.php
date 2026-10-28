@@ -34,8 +34,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php if ( ! empty( $tables ) ) { ?>
 		<label for="ai1wmve-include_db_tables" v-show="showDbTablesIncluder">
 			<input type="checkbox" id="ai1wmve-include_db_tables" name="options[include_db_tables]"/>
-			<?php _e( 'Include the selected non‑WP tables', AI1WM_PLUGIN_NAME ); ?>
-			<small style="color: red;"><?php _e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
+			<?php esc_html_e( 'Include the selected non‑WP tables', AI1WM_PLUGIN_NAME ); ?>
+			<small style="color: red;"><?php esc_html_e( 'new', AI1WM_PLUGIN_NAME ); ?></small>
 		</label>
 		<db-tables-includer v-show="showDbTablesIncluder" :db-tables='<?php echo json_encode( $tables, JSON_HEX_APOS ); ?>' label-id="#ai1wmve-include_db_tables" field-name="included_db_tables" />
 	<?php } ?>

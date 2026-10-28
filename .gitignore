@@ -18,3 +18,4 @@ wp-content/wp-rocket-config/
 
 # ── WP config with secrets ──
 wp-config.php
+wp-content/litespeed/

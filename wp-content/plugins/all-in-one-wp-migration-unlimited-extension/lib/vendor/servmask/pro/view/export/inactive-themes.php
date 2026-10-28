@@ -33,6 +33,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <li>
 	<label for="ai1wm-no-inactive-themes">
 		<input type="checkbox" id="ai1wm-no-inactive-themes" name="options[no_inactive_themes]" />
-		<?php _e( 'Exclude inactive themes', AI1WM_PLUGIN_NAME ); ?>
+		<?php esc_html_e( 'Exclude inactive themes', AI1WM_PLUGIN_NAME ); ?>
 	</label>
 </li>

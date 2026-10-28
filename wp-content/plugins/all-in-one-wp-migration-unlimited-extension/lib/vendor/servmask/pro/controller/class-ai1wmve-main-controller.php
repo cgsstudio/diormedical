@@ -95,17 +95,17 @@ if ( ! class_exists( 'Ai1wmve_Main_Controller' ) ) {
 			$message = __( '%s constant must be defined!', $this->plugin_name ? $this->plugin_name : 'default' );
 
 			if ( ! defined( $constant = $this->plugin_prefix . '_PLUGIN_BASENAME' ) ) {
-				throw new Ai1wmve_Error_Exception( sprintf( $message, $constant ) );
+				throw new Ai1wmve_Error_Exception( esc_html( sprintf( $message, $constant ) ) );
 			}
 			$this->plugin_base_name = constant( $constant );
 
 			if ( ! defined( $constant = $this->plugin_prefix . '_PLUGIN_NAME' ) ) {
-				throw new Ai1wmve_Error_Exception( sprintf( $message, $constant ) );
+				throw new Ai1wmve_Error_Exception( esc_html( sprintf( $message, $constant ) ) );
 			}
 			$this->plugin_name = constant( $constant );
 
 			if ( ! defined( $constant = $this->plugin_prefix . '_PURCHASE_ID' ) ) {
-				throw new Ai1wmve_Error_Exception( sprintf( $message, $constant ) );
+				throw new Ai1wmve_Error_Exception( esc_html( sprintf( $message, $constant ) ) );
 			}
 			$this->purchase_id = constant( $constant );
 
@@ -587,7 +587,7 @@ if ( ! class_exists( 'Ai1wmve_Main_Controller' ) ) {
 			add_action( 'wp_ajax_ai1wm_schedule_event_manual_run', 'Ai1wmve_Schedules_Controller::manual_run' );
 			add_action( 'wp_ajax_ai1wm_schedule_event_status', 'Ai1wmve_Schedules_Controller::event_status' );
 
-			if ( current_user_can( 'export' ) ) {
+			if ( current_user_can( 'ai1wm_export_site' ) ) {
 				add_action( 'wp_ajax_ai1wmve_file_list', 'Ai1wmve_Export_Controller::list_files' );
 				add_action( 'wp_ajax_ai1wm_reset', 'Ai1wmve_Reset_Controller::reset' );
 			}
@@ -782,7 +782,7 @@ if ( ! class_exists( 'Ai1wmve_Main_Controller' ) ) {
 					'ai1wm_export',
 					__( 'Reset Hub', $this->plugin_name ),
 					__( 'Reset Hub', $this->plugin_name ),
-					'import',
+					'ai1wm_import_site',
 					'ai1wmve_reset',
 					'Ai1wmve_Reset_Controller::index'
 				);
@@ -795,7 +795,7 @@ if ( ! class_exists( 'Ai1wmve_Main_Controller' ) ) {
 					'ai1wm_export',
 					__( 'Schedules', AI1WM_PLUGIN_NAME ),
 					__( 'Schedules', AI1WM_PLUGIN_NAME ),
-					'export',
+					'ai1wm_export_site',
 					'ai1wmve_schedules',
 					'Ai1wmve_Schedules_Controller::index'
 				);
@@ -809,12 +809,20 @@ if ( ! class_exists( 'Ai1wmve_Main_Controller' ) ) {
 			}
 
 			if ( defined( 'WP_CLI' ) ) {
-				$message = __( 'All-in-One WP Migration is not the latest version. You must update the plugin before you can use it. ', AI1WM_PLUGIN_NAME );
-			} else {
-				$message = sprintf( __( '<strong>All-in-One WP Migration</strong> is not the latest version. <br />You must <a href="%s">update the plugin</a> before you can use it. <br />', AI1WM_PLUGIN_NAME ), network_admin_url( 'plugins.php' ) );
+				throw new Ai1wm_Compatibility_Exception(
+					esc_html__( 'All-in-One WP Migration is not the latest version. You must update the plugin before you can use it. ', AI1WM_PLUGIN_NAME )
+				);
 			}
 
-			throw new Ai1wm_Compatibility_Exception( $message );
+			throw new Ai1wm_Compatibility_Exception(
+				wp_kses(
+					sprintf(
+						__( '<strong>All-in-One WP Migration</strong> is not the latest version. <br />You must <a href="%s">update the plugin</a> before you can use it. <br />', AI1WM_PLUGIN_NAME ),
+						esc_url( network_admin_url( 'plugins.php' ) )
+					),
+					ai1wm_allowed_html_tags()
+				)
+			);
 		}
 
 		private function needs_file_retention() {

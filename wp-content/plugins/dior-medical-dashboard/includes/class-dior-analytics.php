@@ -101,9 +101,10 @@ class Dior_Medical_Analytics
             'nonce' => wp_create_nonce('dior_analytics_nonce'),
         ]);
 
-        // Styles - Consolidated Bootstrap + Custom CSS
+        // Styles - Consolidated Bootstrap + Google Fonts + Custom CSS
+        wp_enqueue_style('dior-google-fonts', 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap', [], null);
         wp_enqueue_style('dior-bootstrap-css', DIOR_PORTAL_URL . 'assets/bootstrap/css/bootstrap.min.css', [], '5.3.3');
-        wp_enqueue_style('dior-custom-css', DIOR_PORTAL_URL . 'assets/css/dior-custom.css', ['dior-bootstrap-css'], DIOR_PORTAL_VERSION);
+        wp_enqueue_style('dior-custom-css', DIOR_PORTAL_URL . 'assets/css/dior-custom.css', ['dior-bootstrap-css', 'dior-google-fonts'], DIOR_PORTAL_VERSION);
     }
 
     /**

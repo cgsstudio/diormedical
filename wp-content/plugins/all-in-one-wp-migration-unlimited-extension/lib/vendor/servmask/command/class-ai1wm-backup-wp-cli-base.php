@@ -155,6 +155,34 @@ if ( defined( 'WP_CLI' ) && ! class_exists( 'Ai1wm_Backup_WP_CLI_Base' ) ) {
 				$params['options']['no_cache'] = true;
 			}
 
+			if ( isset( $assoc_args['exclude-files'] ) ) {
+				$excluded_files = array();
+
+				// Prompt for files to exclude
+				if ( $assoc_args['exclude-files'] === true || empty( $assoc_args['exclude-files'] ) ) {
+					while ( $file = trim( readline( 'Enter file or folder path relative to wp-content to exclude from backup (q=quit, empty=continue): ' ) ) ) {
+						switch ( $file ) {
+							case 'q':
+								exit;
+
+							default:
+								if ( ! file_exists( WP_CONTENT_DIR . DIRECTORY_SEPARATOR . untrailingslashit( $file ) ) ) {
+									WP_CLI::warning( __( 'Unknown file or folder: ', AI1WM_PLUGIN_NAME ) . $file );
+									break;
+								}
+								$excluded_files[] = $file;
+						}
+					}
+				} else {
+					$excluded_files = array_filter( array_map( 'trim', explode( ',', $assoc_args['exclude-files'] ) ) );
+				}
+
+				if ( ! empty( $excluded_files ) ) {
+					$params['options']['exclude_files'] = true;
+					$params['excluded_files']           = implode( ',', $excluded_files );
+				}
+			}
+
 			if ( isset( $assoc_args['exclude-database'] ) ) {
 				$params['options']['no_database'] = true;
 			} else {
@@ -209,7 +237,7 @@ if ( defined( 'WP_CLI' ) && ! class_exists( 'Ai1wm_Backup_WP_CLI_Base' ) ) {
 					} else {
 						$excluded_tables = array_intersect(
 							$all_tables,
-							array_filter( explode( ',', $assoc_args['exclude-tables'] ), 'trim' )
+							array_filter( array_map( 'trim', explode( ',', $assoc_args['exclude-tables'] ) ) )
 						);
 					}
 
@@ -266,7 +294,7 @@ if ( defined( 'WP_CLI' ) && ! class_exists( 'Ai1wm_Backup_WP_CLI_Base' ) ) {
 					} else {
 						$included_tables = array_intersect(
 							$all_tables,
-							array_filter( explode( ',', $assoc_args['include-tables'] ), 'trim' )
+							array_filter( array_map( 'trim', explode( ',', $assoc_args['include-tables'] ) ) )
 						);
 					}
 
@@ -293,7 +321,7 @@ if ( defined( 'WP_CLI' ) && ! class_exists( 'Ai1wm_Backup_WP_CLI_Base' ) ) {
 			if ( is_multisite() && isset( $assoc_args['sites'] ) ) {
 				$sites = array();
 				if ( ! is_bool( $assoc_args['sites'] ) ) {
-					$sites = array_filter( explode( ',', $assoc_args['sites'] ), 'trim' );
+					$sites = array_filter( array_map( 'trim', explode( ',', $assoc_args['sites'] ) ) );
 				}
 
 				if ( ! empty( $sites ) ) {

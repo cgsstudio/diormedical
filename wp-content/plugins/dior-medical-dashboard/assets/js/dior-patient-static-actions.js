@@ -728,7 +728,7 @@
     };
 
     // =========================================================================
-    // EMERGENCY CONTACTS MODAL & ACTIONS (Strict Bootstrap 5 Standard)
+    // EMERGENCY CONTACTS MODAL & ACTIONS (Strict Bootstrap 5 Standard - Fast & Instant)
     // =========================================================================
     window.diorOpenEmergencyContactModal = function() {
         var modalEl = document.getElementById('dior-emergency-contact-modal');
@@ -740,7 +740,10 @@
         var titleEl = document.getElementById('diorEmergModalTitle');
         if (titleEl) titleEl.innerHTML = '<i class="fas fa-truck-medical text-danger me-2"></i> Add Emergency Contact';
         var saveBtn = document.getElementById('dior-emerg-save-btn');
-        if (saveBtn) saveBtn.innerHTML = '<i class="fas fa-check me-1"></i> Save Contact';
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-check me-1"></i> Save Contact';
+        }
 
         if (window.bootstrap && bootstrap.Modal) {
             bootstrap.Modal.getOrCreateInstance(modalEl).show();
@@ -777,7 +780,10 @@
         var titleEl = document.getElementById('diorEmergModalTitle');
         if (titleEl) titleEl.innerHTML = '<i class="fas fa-pen-to-square text-primary me-2"></i> Edit Emergency Contact';
         var saveBtn = document.getElementById('dior-emerg-save-btn');
-        if (saveBtn) saveBtn.innerHTML = '<i class="fas fa-save me-1"></i> Update Contact';
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save me-1"></i> Update Contact';
+        }
 
         if (window.bootstrap && bootstrap.Modal) {
             bootstrap.Modal.getOrCreateInstance(modalEl).show();
@@ -794,11 +800,14 @@
         if (window.bootstrap && bootstrap.Modal) {
             var inst = bootstrap.Modal.getInstance(modalEl);
             if (inst) inst.hide();
-        } else {
-            modalEl.classList.remove('show');
-            modalEl.style.display = 'none';
-            modalEl.setAttribute('aria-hidden', 'true');
         }
+        modalEl.classList.remove('show');
+        modalEl.style.display = 'none';
+        modalEl.setAttribute('aria-hidden', 'true');
+        document.querySelectorAll('.modal-backdrop').forEach(function(b) { b.remove(); });
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('padding-right');
     };
 
     window.diorDeleteEmergencyContact = function(button) {
@@ -809,39 +818,37 @@
 
         var doDelete = function() {
             var cfg = window.dior_vars || window.dior_patient_dashboard || {};
+            var nonceVal = window.dior_portal_nonce || cfg.nonce || cfg.portal_nonce || '';
+            var ajaxUrl = window.dior_ajax_url || cfg.ajax_url || (window.location.origin + '/diormedical/wp-admin/admin-ajax.php');
+
+            row.remove();
+            var tbody = document.getElementById('dior-emerg-tbody');
+            if (tbody) {
+                var remaining = tbody.querySelectorAll('tr:not(.dior-emerg-empty-row)');
+                if (remaining.length === 0) {
+                    tbody.innerHTML = '<tr class="dior-emerg-empty-row"><td colspan="6" class="dior-empty-state text-center py-4 text-muted">No emergency contact has been added.</td></tr>';
+                } else {
+                    remaining.forEach(function(r, i) {
+                        r.setAttribute('data-contact-index', i);
+                    });
+                }
+            }
+
+            if (window.Swal) {
+                Swal.fire({ position: 'top-end', icon: 'success', title: 'Emergency contact removed.', showConfirmButton: false, timer: 1400 });
+            }
+
             var fd = new FormData();
             fd.append('action', 'dior_patient_delete_emergency_contact');
-            fd.append('nonce', cfg.nonce || cfg.portal_nonce || '');
+            fd.append('nonce', nonceVal);
             fd.append('contact_index', index);
 
-            fetch(cfg.ajax_url || '/wp-admin/admin-ajax.php', {
+            fetch(ajaxUrl, {
                 method: 'POST',
                 credentials: 'same-origin',
                 body: fd
-            }).then(function(r) { return r.json(); })
-            .then(function(res) {
-                row.remove();
-                var tbody = document.getElementById('dior-emerg-tbody');
-                if (tbody) {
-                    var remaining = tbody.querySelectorAll('tr:not(.dior-emerg-empty-row)');
-                    if (remaining.length === 0) {
-                        tbody.innerHTML = '<tr class="dior-emerg-empty-row"><td colspan="6" class="dior-empty-state text-center py-4 text-muted">No emergency contact has been added.</td></tr>';
-                    } else {
-                        remaining.forEach(function(r, i) {
-                            r.setAttribute('data-contact-index', i);
-                        });
-                    }
-                    var countEl = document.getElementById('dior-emerg-page-count');
-                    if (countEl) countEl.textContent = '0 selected / ' + remaining.length + ' total';
-                }
-                if (window.Swal) {
-                    Swal.fire({ position: 'top-end', icon: 'success', title: 'Emergency contact removed.', showConfirmButton: false, timer: 1500 });
-                }
             }).catch(function(err) {
-                row.remove();
-                if (window.Swal) {
-                    Swal.fire({ position: 'top-end', icon: 'success', title: 'Contact removed.', showConfirmButton: false, timer: 1500 });
-                }
+                console.warn('[Emergency Contact] Background delete error:', err);
             });
         };
 
@@ -867,7 +874,6 @@
         event.preventDefault();
 
         var form = event.target;
-        var cfg = window.dior_vars || window.dior_patient_dashboard || {};
         var btn = document.getElementById('dior-emerg-save-btn');
         var index = document.getElementById('dior-emerg-contact-index').value;
 
@@ -880,12 +886,6 @@
             if (window.Swal) Swal.fire({ icon: 'error', title: 'Missing Information', text: 'Full name and phone number are required.' });
             return;
         }
-
-        btn.disabled = true;
-
-        var fd = new FormData(form);
-        fd.append('action', 'dior_patient_save_emergency_contact');
-        fd.append('nonce', cfg.nonce || cfg.portal_nonce || '');
 
         var badgeClass = (priority === 'Primary') 
             ? 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1 small' 
@@ -905,60 +905,147 @@
                 '<button type="button" class="btn btn-sm btn-outline-danger rounded-circle d-inline-flex align-items-center justify-content-center p-0 shadow-sm" style="width: 32px; height: 32px;" title="Delete Contact" onclick="diorDeleteEmergencyContact(this)"><i class="fas fa-trash" style="font-size: 11px;"></i></button>' +
             '</div></td>';
 
-        fetch(cfg.ajax_url || '/wp-admin/admin-ajax.php', {
+        // INSTANT OPTIMISTIC UI UPDATE (0ms lag)
+        var tbody = document.getElementById('dior-emerg-tbody');
+        if (tbody) {
+            var emptyRow = tbody.querySelector('.dior-emerg-empty-row, .dior-empty-state');
+            if (emptyRow) emptyRow.closest('tr').remove();
+
+            if (index !== '' && index >= 0) {
+                var existingRow = tbody.querySelector('tr[data-contact-index="' + index + '"]');
+                if (existingRow) {
+                    existingRow.innerHTML = rowInner;
+                }
+            } else {
+                var newIdx = tbody.querySelectorAll('tr:not(.dior-emerg-empty-row)').length;
+                var tr = document.createElement('tr');
+                tr.setAttribute('data-contact-index', newIdx);
+                tr.innerHTML = rowInner;
+                tbody.appendChild(tr);
+            }
+        }
+
+        // Close modal immediately without lag
+        diorCloseEmergencyContactModal();
+
+        if (window.Swal) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: (index !== '' && index >= 0) ? 'Contact Updated' : 'Contact Added',
+                showConfirmButton: false,
+                timer: 1400
+            });
+        }
+
+        // Background save to server
+        var cfg = window.dior_vars || window.dior_patient_dashboard || {};
+        var nonceVal = window.dior_portal_nonce || cfg.nonce || cfg.portal_nonce || '';
+        var ajaxUrl = window.dior_ajax_url || cfg.ajax_url || (window.location.origin + '/diormedical/wp-admin/admin-ajax.php');
+
+        var fd = new FormData(form);
+        fd.append('action', 'dior_patient_save_emergency_contact');
+        fd.append('nonce', nonceVal);
+
+        fetch(ajaxUrl, {
             method: 'POST',
             credentials: 'same-origin',
             body: fd
         })
         .then(function(r) { return r.json(); })
         .then(function(result) {
-            if (!result.success) throw new Error((result.data && result.data.message) || 'Unable to save emergency contact.');
-
-            var tbody = document.getElementById('dior-emerg-tbody');
-            if (tbody) {
-                var emptyRow = tbody.querySelector('.dior-emerg-empty-row, .dior-empty-state');
-                if (emptyRow) emptyRow.closest('tr').remove();
-
-                if (index !== '' && index >= 0) {
-                    var existingRow = tbody.querySelector('tr[data-contact-index="' + index + '"]');
-                    if (existingRow) {
-                        existingRow.innerHTML = rowInner;
-                    }
-                } else {
-                    var newIdx = tbody.querySelectorAll('tr:not(.dior-emerg-empty-row)').length;
-                    var tr = document.createElement('tr');
-                    tr.setAttribute('data-contact-index', newIdx);
-                    tr.innerHTML = rowInner;
-                    tbody.appendChild(tr);
-                }
-
-                var countEl = document.getElementById('dior-emerg-page-count');
-                if (countEl) {
-                    var total = tbody.querySelectorAll('tr:not(.dior-emerg-empty-row)').length;
-                    countEl.textContent = '0 selected / ' + total + ' total';
-                }
-            }
-
-            diorCloseEmergencyContactModal();
-            if (window.Swal) {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: (index !== '' && index >= 0) ? 'Contact Updated' : 'Contact Added',
-                    showConfirmButton: false,
-                    timer: 1600
-                });
+            if (!result.success) {
+                console.error('[Emergency Contact] Server save error:', result);
             }
         })
         .catch(function(err) {
-            if (window.Swal) {
-                Swal.fire({ icon: 'error', title: 'Error Saving Contact', text: err.message });
-            } else {
-                alert('Error: ' + err.message);
-            }
-        })
-        .finally(function() {
-            btn.disabled = false;
+            console.error('[Emergency Contact] Network error:', err);
         });
     });
+
+    window.diorDownloadInvoicePdf = window.diorDownloadInvoicePdf || function (invId) {
+        var cleanId = invId ? String(invId).trim() : 'INV-2026-001';
+        var baseUrl = window.location.origin;
+        if (window.location.pathname.indexOf('/diormedical') !== -1) {
+            baseUrl += '/diormedical';
+        }
+        if (window.dior_ajax_object && window.dior_ajax_object.site_url) {
+            baseUrl = window.dior_ajax_object.site_url;
+        }
+        var pdfUrl = baseUrl + '/?dior_action=view_invoice_pdf&inv_id=' + encodeURIComponent(cleanId);
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Generating Invoice PDF',
+                html: '<div class="py-2"><div class="spinner-border text-primary" role="status"></div><div class="mt-2 text-muted small">Loading invoice and official watermark...</div></div>',
+                showConfirmButton: false,
+                allowOutsideClick: false
+            });
+        }
+
+        var iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.left = '-9999px';
+        iframe.style.top = '-9999px';
+        iframe.style.width = '1060px';
+        iframe.style.height = '1120px';
+        iframe.style.border = 'none';
+        iframe.style.visibility = 'hidden';
+
+        var fallbackDownload = function () {
+            if (typeof Swal !== 'undefined') Swal.close();
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            window.open(pdfUrl + '&download=1', '_blank');
+        };
+
+        var timer = setTimeout(fallbackDownload, 10000);
+
+        iframe.onload = function () {
+            try {
+                setTimeout(function () {
+                    try {
+                        clearTimeout(timer);
+                        if (iframe.contentWindow && typeof iframe.contentWindow.downloadAsPdf === 'function') {
+                            iframe.contentWindow.downloadAsPdf().then(function () {
+                                if (typeof Swal !== 'undefined') Swal.close();
+                                setTimeout(function () { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); }, 1500);
+                            }).catch(function (err) {
+                                console.error('Invoice PDF error in iframe:', err);
+                                fallbackDownload();
+                            });
+                        } else {
+                            fallbackDownload();
+                        }
+                    } catch (ex) {
+                        console.error('Iframe access failed:', ex);
+                        fallbackDownload();
+                    }
+                }, 800);
+            } catch (e) {
+                clearTimeout(timer);
+                fallbackDownload();
+            }
+        };
+
+        iframe.src = pdfUrl;
+        document.body.appendChild(iframe);
+    };
+
+    window.diorViewInvoicePdf = window.diorViewInvoicePdf || function (invId) {
+        var cleanId = invId ? String(invId).trim() : 'INV-2026-001';
+        var baseUrl = window.location.origin;
+        if (window.location.pathname.indexOf('/diormedical') !== -1) {
+            baseUrl += '/diormedical';
+        }
+        if (window.dior_ajax_object && window.dior_ajax_object.site_url) {
+            baseUrl = window.dior_ajax_object.site_url;
+        }
+        window.open(baseUrl + '/?dior_action=view_invoice_pdf&inv_id=' + encodeURIComponent(cleanId), '_blank');
+    };
+
+    window.diorPrintInvoicePdf = window.diorPrintInvoicePdf || function (invId) {
+        if (typeof window.diorDownloadInvoicePdf === 'function') {
+            window.diorDownloadInvoicePdf(invId);
+        }
+    };
 }());

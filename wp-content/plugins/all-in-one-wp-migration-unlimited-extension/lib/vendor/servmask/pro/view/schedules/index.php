@@ -37,16 +37,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<?php if ( Ai1wm_Message::has( 'schedules' ) ) : ?>
 					<div class="ai1wm-message ai1wm-success-message">
-						<p><?php echo Ai1wm_Message::get( 'schedules' ); ?></p>
+						<p><?php echo esc_html( Ai1wm_Message::get( 'schedules' ) ); ?></p>
 					</div>
 				<?php endif; ?>
 
 				<h1 class="ai1wmve-schedule-title">
 					<i class="ai1wm-icon-calendar"></i>
-					<?php _e( 'List Created Events', AI1WM_PLUGIN_NAME ); ?>
+					<?php esc_html_e( 'List Created Events', AI1WM_PLUGIN_NAME ); ?>
 					<a href="<?php echo esc_url( add_query_arg( array( 'action' => 'create-event' ), network_admin_url( 'admin.php?page=ai1wmve_schedules' ) ) ); ?>" class="ai1wm-button-green">
 						<i class="ai1wm-icon-plus2"></i>
-						<?php _e( 'New event', AI1WM_PLUGIN_NAME ); ?>
+						<?php esc_html_e( 'New event', AI1WM_PLUGIN_NAME ); ?>
 					</a>
 				</h1>
 

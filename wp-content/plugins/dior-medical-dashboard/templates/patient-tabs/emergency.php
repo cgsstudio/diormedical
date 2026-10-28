@@ -1,4 +1,8 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-emergency">
+    <script>
+    window.dior_ajax_url = "<?php echo esc_url(admin_url('admin-ajax.php')); ?>";
+    window.dior_portal_nonce = "<?php echo esc_js(wp_create_nonce('dior_portal_nonce')); ?>";
+    </script>
     <?php
     $emerg_user_id = get_current_user_id();
     $emergency_contacts_list = get_user_meta($emerg_user_id, 'dior_emergency_contacts_list', true);

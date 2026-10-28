@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.24
+ * Version: 17.2.25
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.24');
+define('DIOR_PORTAL_VERSION', '17.2.25');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -71,6 +71,14 @@ if (!class_exists('Dior_Google_Meet')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-google-meet.php');
 }
 Dior_Google_Meet::init();
+
+if (!class_exists('Dior_Prescription_Pdf_Service')) {
+    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-prescription-pdf.php');
+}
+
+if (!class_exists('Dior_Invoice_Pdf_Service')) {
+    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-invoice-pdf.php');
+}
 
 /**
  * Universal Dynamic Relative Notification Time Formatter
@@ -159,6 +167,12 @@ add_action('plugins_loaded', function () {
     }
 });
 
+
+// Preconnect Google Fonts for ultra-fast typography loading
+add_action('wp_head', function () {
+    echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
+    echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+}, 0);
 
 // Completely disable WordPress Admin Bar on all frontend portal pages
 add_filter('show_admin_bar', '__return_false', 9999);
@@ -1094,6 +1108,14 @@ class Dior_Medical_Auth
     public static function enqueue_assets()
     {
 
+        // Google Fonts: Montserrat & DM Sans for portal typography
+        wp_enqueue_style(
+            'dior-google-fonts',
+            'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap',
+            [],
+            null
+        );
+
         // Font Awesome for modern icons
         wp_enqueue_style(
             'font-awesome-6',
@@ -1133,7 +1155,7 @@ class Dior_Medical_Auth
         wp_enqueue_style(
             'dior-custom-css',
             DIOR_PORTAL_URL . 'assets/css/dior-custom.css',
-            ['dior-bootstrap-css'],
+            ['dior-bootstrap-css', 'dior-google-fonts'],
             $custom_css_ver
         );
 
@@ -1308,6 +1330,10 @@ class Dior_Medical_Auth
             $fda_modal_js_ver,
             true
         );
+        wp_localize_script('dior-fda-prescription-modal-js', 'dior_fda_vars', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('dior_doctor_nonce'),
+        ]);
 
         $portal_url = home_url('/patient-dashboard/');
         $login_url = home_url('/dior-login/');

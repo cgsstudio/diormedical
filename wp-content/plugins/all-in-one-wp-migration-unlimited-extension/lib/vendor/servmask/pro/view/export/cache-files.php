@@ -33,6 +33,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <li>
 	<label for="ai1wm-no-cache">
 		<input type="checkbox" id="ai1wm-no-cache" name="options[no_cache]" />
-		<?php _e( 'Exclude cache files', AI1WM_PLUGIN_NAME ); ?>
+		<?php esc_html_e( 'Exclude cache files', AI1WM_PLUGIN_NAME ); ?>
 	</label>
 </li>

@@ -44,7 +44,7 @@ class Ai1wmue_Import_Upload {
 						<a href="https://help.servmask.com/knowledgebase/upload-file-error/" target="_blank">Technical details</a>',
 						'all-in-one-wp-migration'
 					),
-					ai1wm_allowed_html_tags()
+					ai1wmue_allowed_html_tags()
 				),
 				400
 			);
@@ -61,7 +61,7 @@ class Ai1wmue_Import_Upload {
 						<a href="https://help.servmask.com/knowledgebase/upload-file-error/" target="_blank">Technical details</a>',
 						'all-in-one-wp-migration'
 					),
-					ai1wm_allowed_html_tags()
+					ai1wmue_allowed_html_tags()
 				),
 				400
 			);
@@ -78,7 +78,7 @@ class Ai1wmue_Import_Upload {
 						<a href="https://help.servmask.com/knowledgebase/upload-file-error/" target="_blank">Technical details</a>',
 						'all-in-one-wp-migration'
 					),
-					ai1wm_allowed_html_tags()
+					ai1wmue_allowed_html_tags()
 				),
 				400
 			);
@@ -96,7 +96,7 @@ class Ai1wmue_Import_Upload {
 								<a href="https://help.servmask.com/knowledgebase/invalid-backup-file/" target="_blank">Technical details</a>',
 								'all-in-one-wp-migration'
 							),
-							ai1wm_allowed_html_tags()
+							ai1wmue_allowed_html_tags()
 						),
 						415
 					);
@@ -112,7 +112,7 @@ class Ai1wmue_Import_Upload {
 									<a href="https://help.servmask.com/knowledgebase/invalid-backup-file/" target="_blank">Technical details</a>',
 									'all-in-one-wp-migration'
 								),
-								ai1wm_allowed_html_tags()
+								ai1wmue_allowed_html_tags()
 							),
 							415
 						);
@@ -134,7 +134,7 @@ class Ai1wmue_Import_Upload {
 								),
 								$e->getMessage()
 							),
-							ai1wm_allowed_html_tags()
+							ai1wmue_allowed_html_tags()
 						),
 						400
 					);
@@ -153,7 +153,7 @@ class Ai1wmue_Import_Upload {
 							<a href="https://help.servmask.com/knowledgebase/upload-file-error/" target="_blank">Technical details</a>',
 							'all-in-one-wp-migration'
 						),
-						ai1wm_allowed_html_tags()
+						ai1wmue_allowed_html_tags()
 					),
 					413
 				);
@@ -166,7 +166,7 @@ class Ai1wmue_Import_Upload {
 							<a href="https://help.servmask.com/knowledgebase/upload-file-error/" target="_blank">Technical details</a>',
 							'all-in-one-wp-migration'
 						),
-						ai1wm_allowed_html_tags()
+						ai1wmue_allowed_html_tags()
 					),
 					400
 				);
@@ -179,7 +179,7 @@ class Ai1wmue_Import_Upload {
 							<a href="https://help.servmask.com/knowledgebase/upload-file-error/" target="_blank">Technical details</a>',
 							'all-in-one-wp-migration'
 						),
-						ai1wm_allowed_html_tags()
+						ai1wmue_allowed_html_tags()
 					),
 					400
 				);
@@ -192,7 +192,7 @@ class Ai1wmue_Import_Upload {
 							<a href="https://help.servmask.com/knowledgebase/upload-file-error/" target="_blank">Technical details</a>',
 							'all-in-one-wp-migration'
 						),
-						ai1wm_allowed_html_tags()
+						ai1wmue_allowed_html_tags()
 					),
 					400
 				);
@@ -209,7 +209,7 @@ class Ai1wmue_Import_Upload {
 							),
 							$upload_error
 						),
-						ai1wm_allowed_html_tags()
+						ai1wmue_allowed_html_tags()
 					),
 					400
 				);

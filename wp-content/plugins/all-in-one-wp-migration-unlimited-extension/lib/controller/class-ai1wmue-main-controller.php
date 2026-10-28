@@ -42,7 +42,7 @@ class Ai1wmue_Main_Controller extends Ai1wmve_Main_Controller {
 			'ai1wm_export',
 			__( 'Settings', AI1WMUE_PLUGIN_NAME ),
 			__( 'Settings', AI1WMUE_PLUGIN_NAME ),
-			'export',
+			'ai1wm_export_site',
 			'ai1wmue_settings',
 			'Ai1wmue_Settings_Controller::index'
 		);
@@ -130,12 +130,12 @@ class Ai1wmue_Main_Controller extends Ai1wmve_Main_Controller {
 			<div class="error">
 				<p>
 					<?php
-					_e(
+					echo wp_kses(
 						sprintf(
-							'Unlimited Extension requires All-in-One WP Migration plugin to be activated. <a href="%s">Activate Now</a>',
-							wp_nonce_url( 'plugins.php?action=activate&plugin=all-in-one-wp-migration/all-in-one-wp-migration.php', 'activate-plugin_all-in-one-wp-migration/all-in-one-wp-migration.php' )
+							__( 'Unlimited Extension requires All-in-One WP Migration plugin to be activated. <a href="%s">Activate Now</a>', AI1WMUE_PLUGIN_NAME ),
+							esc_url( wp_nonce_url( 'plugins.php?action=activate&plugin=all-in-one-wp-migration/all-in-one-wp-migration.php', 'activate-plugin_all-in-one-wp-migration/all-in-one-wp-migration.php' ) )
 						),
-						AI1WMUE_PLUGIN_NAME
+						ai1wmue_allowed_html_tags()
 					);
 					?>
 				</p>
@@ -147,13 +147,13 @@ class Ai1wmue_Main_Controller extends Ai1wmve_Main_Controller {
 			<div class="error">
 				<p>
 					<?php
-					_e(
+					echo wp_kses(
 						sprintf(
-							'Unlimited Extension requires All-in-One WP Migration plugin to be installed. <a href="%s">Install Now</a> or <a href="%s" target="_blank">Download Manually</a>',
-							wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=all-in-one-wp-migration' ), 'install-plugin_all-in-one-wp-migration' ),
-							'https://wordpress.org/plugins/all-in-one-wp-migration/'
+							__( 'Unlimited Extension requires All-in-One WP Migration plugin to be installed. <a href="%s">Install Now</a> or <a href="%s" target="_blank">Download Manually</a>', AI1WMUE_PLUGIN_NAME ),
+							esc_url( wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=all-in-one-wp-migration' ), 'install-plugin_all-in-one-wp-migration' ) ),
+							esc_url( 'https://wordpress.org/plugins/all-in-one-wp-migration/' )
 						),
-						AI1WMUE_PLUGIN_NAME
+						ai1wmue_allowed_html_tags()
 					);
 					?>
 				</p>
@@ -228,7 +228,7 @@ class Ai1wmue_Main_Controller extends Ai1wmve_Main_Controller {
 					'chunk_size'  => (int) apply_filters( 'ai1wm_max_chunk_size', AI1WM_MAX_CHUNK_SIZE ),
 					'max_retries' => (int) apply_filters( 'ai1wm_max_chunk_retries', AI1WM_MAX_CHUNK_RETRIES ),
 				),
-				'url'     => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wm_import' ) ) ),
+				'url'     => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1, 'ai1wm_manual_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wm_import' ) ) ),
 				'params'  => array(
 					'priority'   => 5,
 					'secret_key' => get_option( AI1WM_SECRET_KEY ),
@@ -516,7 +516,7 @@ class Ai1wmue_Main_Controller extends Ai1wmve_Main_Controller {
 	 * @return void
 	 */
 	public function router() {
-		if ( current_user_can( 'export' ) ) {
+		if ( current_user_can( 'ai1wm_export_site' ) ) {
 			add_action( 'wp_ajax_ai1wmue_folder_browser', 'Ai1wmue_Settings_Controller::list_folders' );
 		}
 	}

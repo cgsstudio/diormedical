@@ -217,8 +217,8 @@ if ( ! class_exists( 'Ai1wmve_Schedules_Controller' ) ) {
 
 		public static function save( $params = array() ) {
 			check_admin_referer( 'ai1wm_schedule_event_save' );
-			if ( ! current_user_can( 'export' ) ) {
-				wp_die( __( 'You are not allowed to perform this action.', AI1WM_PLUGIN_NAME ) );
+			if ( ! current_user_can( 'ai1wm_export_site' ) ) {
+				wp_die( esc_html__( 'You are not allowed to perform this action.', AI1WM_PLUGIN_NAME ) );
 			}
 
 			ai1wm_setup_environment();

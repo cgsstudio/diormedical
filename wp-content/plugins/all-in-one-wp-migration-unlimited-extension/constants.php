@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WMUE_VERSION', '2.84' );
+define( 'AI1WMUE_VERSION', '2.88' );
 
 // ===============
 // = Plugin Name =
@@ -77,9 +77,9 @@ define( 'AI1WMUE_RETENTION_NAME', 'retention.json' );
 // ===============================
 // = Minimal Base Plugin Version =
 // ===============================
-define( 'AI1WMUE_MIN_AI1WM_VERSION', '7.103' );
+define( 'AI1WMUE_MIN_AI1WM_VERSION', '7.111' );
 
 // ===============
 // = Purchase ID =
 // ===============
-define( 'AI1WMUE_PURCHASE_ID', '5cb27f74-3ec2-4bf3-a5d9-9cb2c5797404' );
+define( 'AI1WMUE_PURCHASE_ID', 'ZIMEEK00-0000-0000-0000-51A9E6E1A930' );

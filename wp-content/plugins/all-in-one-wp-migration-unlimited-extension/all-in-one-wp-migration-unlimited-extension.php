@@ -5,7 +5,7 @@
  * Description: Extension for All-in-One WP Migration that enables unlimited size exports and imports
  * Author: ServMask
  * Author URI: https://servmask.com/
- * Version: 2.84
+ * Version: 2.88
  * Text Domain: all-in-one-wp-migration-unlimited-extension
  * Domain Path: /languages
  * Network: True
@@ -72,7 +72,7 @@ add_filter('pre_http_request', function($pre, $args, $url) {
 	if (strpos($url, 'check/unlimited-extension') !== false) {
 		return array('response' => array('code' => 200, 'message' => 'OK'), 'body' => json_encode(array()));
 	}
-if (strpos($url, 'servmask.com/purchase/activations') !== false && isset($args['body']['uuid']) && $args['body']['uuid'] === 'OYLITE00-0000-0000-0000-5199BAEE264D') {
+if (strpos($url, 'servmask.com/purchase/activations') !== false && isset($args['body']['uuid']) && $args['body']['uuid'] === 'ZIMEEK00-0000-0000-0000-51A9E6E1A930') {
 		return array('response' => array('code' => 200, 'message' => 'OK'), 'body' => json_encode(array('success' => true)));
 	}
 	return $pre;
@@ -108,9 +108,12 @@ function ai1wmue_activate_plugin() {
 			// Installation failed, deactivate this plugin
 			deactivate_plugins( plugin_basename( __FILE__ ) );
 			wp_die(
-				sprintf(
-					__( 'The All-in-One WP Migration plugin could not be installed automatically. Please <a href="%s" target="_blank">download and install it manually</a> before activating this extension.', AI1WMUE_PLUGIN_NAME ),
-					'https://wordpress.org/plugins/all-in-one-wp-migration/'
+				wp_kses(
+					sprintf(
+						__( 'The All-in-One WP Migration plugin could not be installed automatically. Please <a href="%s" target="_blank">download and install it manually</a> before activating this extension.', AI1WMUE_PLUGIN_NAME ),
+						esc_url( 'https://wordpress.org/plugins/all-in-one-wp-migration/' )
+					),
+					ai1wmue_allowed_html_tags()
 				)
 			);
 		}
@@ -128,9 +131,12 @@ function ai1wmue_activate_plugin() {
 			// Activation failed, deactivate this plugin
 			deactivate_plugins( plugin_basename( __FILE__ ) );
 			wp_die(
-				sprintf(
-					__( 'The All-in-One WP Migration plugin could not be activated automatically. Please <a href="%s">activate it manually</a> before activating this extension.', AI1WMUE_PLUGIN_NAME ),
-					admin_url( 'plugins.php' )
+				wp_kses(
+					sprintf(
+						__( 'The All-in-One WP Migration plugin could not be activated automatically. Please <a href="%s">activate it manually</a> before activating this extension.', AI1WMUE_PLUGIN_NAME ),
+						esc_url( admin_url( 'plugins.php' ) )
+					),
+					ai1wmue_allowed_html_tags()
 				)
 			);
 		}
