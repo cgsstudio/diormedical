@@ -32,12 +32,25 @@ class Dior_Doctor_Dynamic {
             wp_send_json_error(['message'=>'Security check failed.'], 403);
         }
     }
-    private static function doctor_id() { return (int)get_current_user_id(); }
+    private static function doctor_id() {
+        if (class_exists('Dior_Doctor_Dashboard')) {
+            $context = Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id());
+            return (int) ($context['user_id'] ?? 0);
+        }
+        return (int) get_current_user_id();
+    }
     private static function doctor_scope_ids() {
-        $ids = class_exists('Dior_Doctor_Resolver')
-            ? Dior_Doctor_Resolver::get_accessible_doctor_ids(self::doctor_id())
-            : [self::doctor_id()];
-        return array_values(array_unique(array_filter(array_map('intval', (array)$ids))));
+        if (class_exists('Dior_Doctor_Dashboard')) {
+            $context = Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id());
+            $ids = (array) ($context['ids'] ?? []);
+        } else {
+            $ids = class_exists('Dior_Doctor_Resolver')
+                ? Dior_Doctor_Resolver::get_accessible_doctor_ids(self::doctor_id())
+                : [self::doctor_id()];
+        }
+        return array_values(array_unique(array_filter(array_map('intval', $ids), static function ($id) {
+            return $id > 0;
+        })));
     }
     private static function doctor_scope_placeholders() {
         return implode(',', array_fill(0, count(self::doctor_scope_ids()), '%d'));
@@ -45,7 +58,11 @@ class Dior_Doctor_Dynamic {
     private static function ensure_patient_row($pid) {
         global $wpdb; $t=self::table('patients'); $p=self::patient($pid); if(!$p) return; $exists=$wpdb->get_var($wpdb->prepare("SELECT id FROM $t WHERE user_id=%d",(int)$pid)); if(!$exists){$wpdb->insert($t,['user_id'=>(int)$pid,'patient_uid'=>$p['patient_uid'],'first_name'=>$p['first_name']??'','last_name'=>$p['last_name']??'','email'=>$p['email']??'','phone'=>$p['phone']??'','status'=>$p['status']??'active','avatar_url'=>$p['avatar_url']??'','created_at'=>current_time('mysql'),'updated_at'=>current_time('mysql')]);} }
     private static function doctor_can_manage_appointment($a) {
-        if(current_user_can('manage_options')) return true; if((int)($a['doctor_id']??0)===self::doctor_id()) return true; $docs=get_users(['role'=>'doctor','number'=>2,'fields'=>'ID']); return count($docs)===1 && (int)$docs[0]===self::doctor_id();
+        if (!is_array($a) || !class_exists('Dior_Doctor_Dashboard')) {
+            return false;
+        }
+        $context = Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id());
+        return Dior_Doctor_Dashboard::appointment_belongs_to_single_doctor($a, $context);
     }
     private static function table($name) { global $wpdb; return $wpdb->prefix . 'dior_' . $name; }
 
