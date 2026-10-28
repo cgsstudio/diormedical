@@ -160,16 +160,16 @@
     $apt_cards = [];
 
     foreach ($appointments as $idx => $apt) {
-        $a_id = !empty($apt['id']) ? $apt['id'] : (!empty($apt['appt_uid']) ? $apt['appt_uid'] : 'APT-' . (1000 + $idx));
-        $a_doc = !empty($apt['provider']) ? $apt['provider'] : (!empty($apt['doctor_name']) ? $apt['doctor_name'] : 'Dr. Marcus Sterling, DO');
-        $a_spec = !empty($apt['provider_spec']) ? $apt['provider_spec'] : 'Telehealth Urgent Care';
+        $a_id = !empty($apt['id']) ? $apt['id'] : (!empty($apt['appt_uid']) ? $apt['appt_uid'] : '');
+        $a_doc = !empty($apt['provider']) ? $apt['provider'] : (!empty($apt['doctor_name']) ? $apt['doctor_name'] : '');
+        $a_spec = !empty($apt['provider_spec']) ? $apt['provider_spec'] : '';
         $a_date_raw = !empty($apt['date']) ? $apt['date'] : (!empty($apt['appt_date']) ? $apt['appt_date'] : '');
         $a_time = !empty($apt['time']) ? $apt['time'] : (!empty($apt['appt_time']) ? $apt['appt_time'] : '');
         $a_status = !empty($apt['status']) ? $apt['status'] : 'Scheduled';
         $a_type = !empty($apt['type']) ? $apt['type'] : (!empty($apt['visit_type']) ? $apt['visit_type'] : 'Video Visit');
-        $a_join = !empty($apt['join_url']) ? $apt['join_url'] : 'https://zoom.us/join';
+        $a_join = !empty($apt['join_url']) ? $apt['join_url'] : '';
         $a_notes = !empty($apt['notes']) ? $apt['notes'] : '';
-        $a_condition = !empty($apt['condition']) ? $apt['condition'] : (!empty($apt['condition_name']) ? $apt['condition_name'] : 'Telehealth Consultation');
+        $a_condition = !empty($apt['condition']) ? $apt['condition'] : (!empty($apt['condition_name']) ? $apt['condition_name'] : '');
         $a_ymd = dior_normalize_date($a_date_raw);
         $apt_cards[] = [
             'id' => $a_id,
@@ -642,30 +642,6 @@
                                     $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
                                 ];
                             }
-                            if (empty($today_mock)) {
-                                $today_mock = [
-                                    [
-                                        'Dr. Marcus Sterling, DO',
-                                        'General Practice & Internal Medicine',
-                                        wp_date('M j, Y', strtotime($today_ymd)),
-                                        '11:30 AM - 12:00 PM',
-                                        !empty($appt_patient_reason) ? $appt_patient_reason : 'Asthma Consultation (Telehealth)',
-                                        !empty($appt_patient_phone) ? $appt_patient_phone : '+1 (800) 555-0199',
-                                        'Confirmed',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
-                                    ],
-                                    [
-                                        'Dr. Sophia Reyes, MD',
-                                        'Telehealth Urgent Care & Pulmonology',
-                                        wp_date('M j, Y', strtotime($today_ymd)),
-                                        '03:15 PM - 03:45 PM',
-                                        'Clinical Follow-up & Vitals Review',
-                                        !empty($appt_patient_phone) ? $appt_patient_phone : '+1 (800) 555-0199',
-                                        'Scheduled',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-2.webp')
-                                    ]
-                                ];
-                            }
                             ?>
                             <?php foreach ($today_mock as $tm): ?>
                             <tr>
@@ -715,6 +691,9 @@
                                 </td>
                             </tr>
                             <?php endforeach; ?>
+                            <?php if (empty($today_mock)): ?>
+                                <tr class="dior-empty-state"><td colspan="9" class="text-center py-4 text-secondary">No appointments are scheduled for today.</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -808,67 +787,6 @@
                                     $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
                                 ];
                             }
-                            if (empty($upcoming_mock)) {
-                                $up_date_1 = date('Y-m-d', strtotime('+2 days'));
-                                $up_date_2 = date('Y-m-d', strtotime('+5 days'));
-                                $up_date_3 = date('Y-m-d', strtotime('+10 days'));
-                                $upcoming_mock = [
-                                    [
-                                        'Dr. Marcus Sterling, DO',
-                                        wp_date('M j, Y', strtotime($up_date_1)),
-                                        '02:00 PM - 02:30 PM',
-                                        !empty($appt_patient_reason) ? $appt_patient_reason : 'Asthma Maintenance Consultation',
-                                        'Confirmed',
-                                        'Routine 48-hour follow-up on prescribed therapy & inhaler usage',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
-                                    ],
-                                    [
-                                        'Dr. Ethan Walker, MD',
-                                        wp_date('M j, Y', strtotime($up_date_2)),
-                                        '10:15 AM - 10:45 AM',
-                                        'Allergy & Respiratory Review',
-                                        'Scheduled',
-                                        'Review respiratory panel test results and environmental allergy triggers',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-3.webp')
-                                    ],
-                                    [
-                                        'Dr. Evelyn Vance, MD',
-                                        wp_date('M j, Y', strtotime($up_date_3)),
-                                        '04:00 PM - 04:30 PM',
-                                        'Wellness & Telehealth Check-up',
-                                        'Pending',
-                                        'General telehealth assessment and treatment progress verification',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-4.webp')
-                                    ],
-                                    [
-                                        'Dr. Sophia Reyes, MD',
-                                        wp_date('M j, Y', strtotime('+14 days')),
-                                        '11:00 AM - 11:30 AM',
-                                        'Pulmonology Spirometry Follow-up',
-                                        'Confirmed',
-                                        'Evaluate peak flow meter readings and adjust bronchodilator regimen',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-2.webp')
-                                    ],
-                                    [
-                                        'Dr. James Chen, MD',
-                                        wp_date('M j, Y', strtotime('+20 days')),
-                                        '01:30 PM - 02:00 PM',
-                                        'Cardiopulmonary Assessment',
-                                        'Scheduled',
-                                        'Comprehensive exercise tolerance and cardiovascular risk evaluation',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-1.webp')
-                                    ],
-                                    [
-                                        'Dr. Liam Bennett, MD',
-                                        wp_date('M j, Y', strtotime('+28 days')),
-                                        '09:00 AM - 09:30 AM',
-                                        'Routine Preventive Health Check',
-                                        'Scheduled',
-                                        'Annual wellness consultation and metabolic blood panel review',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-5.webp')
-                                    ]
-                                ];
-                            }
                             ?>
                             <?php foreach ($upcoming_mock as $um): ?>
                             <tr>
@@ -928,6 +846,9 @@
                                 </td>
                             </tr>
                             <?php endforeach; ?>
+                            <?php if (empty($upcoming_mock)): ?>
+                                <tr class="dior-empty-state"><td colspan="8" class="text-center py-4 text-secondary">No upcoming appointments found.</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -1020,82 +941,6 @@
                                     $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
                                 ];
                             }
-                            if (empty($past_mock)) {
-                                $past_date_1 = date('Y-m-d', strtotime('-7 days'));
-                                $past_date_2 = date('Y-m-d', strtotime('-21 days'));
-                                $past_date_3 = date('Y-m-d', strtotime('-35 days'));
-                                $past_date_4 = date('Y-m-d', strtotime('-48 days'));
-                                $past_date_5 = date('Y-m-d', strtotime('-60 days'));
-                                $past_date_6 = date('Y-m-d', strtotime('-90 days'));
-                                $past_mock = [
-                                    [
-                                        'Dr. Marcus Sterling, DO',
-                                        wp_date('M j, Y', strtotime($past_date_1)),
-                                        '09:30 AM - 10:00 AM',
-                                        !empty($appt_patient_email) ? $appt_patient_email : 'patient@diormedical.com',
-                                        !empty($appt_patient_phone) ? $appt_patient_phone : '+1 (800) 555-0199',
-                                        'Initial Telehealth Consultation',
-                                        'Video Visit (HD)',
-                                        wp_date('M j, Y', strtotime('+2 days')),
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
-                                    ],
-                                    [
-                                        'Dr. James Chen, MD',
-                                        wp_date('M j, Y', strtotime($past_date_2)),
-                                        '02:15 PM - 02:45 PM',
-                                        !empty($appt_patient_email) ? $appt_patient_email : 'patient@diormedical.com',
-                                        !empty($appt_patient_phone) ? $appt_patient_phone : '+1 (800) 555-0199',
-                                        'Seasonal Respiratory Evaluation',
-                                        'Phone Consultation',
-                                        'Completed',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-1.webp')
-                                    ],
-                                    [
-                                        'Dr. Sophia Reyes, MD',
-                                        wp_date('M j, Y', strtotime($past_date_3)),
-                                        '11:00 AM - 11:30 AM',
-                                        !empty($appt_patient_email) ? $appt_patient_email : 'patient@diormedical.com',
-                                        !empty($appt_patient_phone) ? $appt_patient_phone : '+1 (800) 555-0199',
-                                        'Allergy Panel Discussion',
-                                        'Video Visit (HD)',
-                                        'Completed',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-2.webp')
-                                    ],
-                                    [
-                                        'Dr. Ethan Walker, MD',
-                                        wp_date('M j, Y', strtotime($past_date_4)),
-                                        '03:45 PM - 04:15 PM',
-                                        !empty($appt_patient_email) ? $appt_patient_email : 'patient@diormedical.com',
-                                        !empty($appt_patient_phone) ? $appt_patient_phone : '+1 (800) 555-0199',
-                                        'Bronchial Therapy Check',
-                                        'Video Visit (HD)',
-                                        'Completed',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-3.webp')
-                                    ],
-                                    [
-                                        'Dr. Evelyn Vance, MD',
-                                        wp_date('M j, Y', strtotime($past_date_5)),
-                                        '10:30 AM - 11:00 AM',
-                                        !empty($appt_patient_email) ? $appt_patient_email : 'patient@diormedical.com',
-                                        !empty($appt_patient_phone) ? $appt_patient_phone : '+1 (800) 555-0199',
-                                        'Annual Wellness Checkup',
-                                        'Video Visit (HD)',
-                                        'Completed',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-4.webp')
-                                    ],
-                                    [
-                                        'Dr. Liam Bennett, MD',
-                                        wp_date('M j, Y', strtotime($past_date_6)),
-                                        '01:00 PM - 01:30 PM',
-                                        !empty($appt_patient_email) ? $appt_patient_email : 'patient@diormedical.com',
-                                        !empty($appt_patient_phone) ? $appt_patient_phone : '+1 (800) 555-0199',
-                                        'Baseline Respiratory Panel',
-                                        'In-Clinic Visit',
-                                        'Completed',
-                                        home_url('/wp-content/uploads/2026/10/diormedical-experts-5.webp')
-                                    ]
-                                ];
-                            }
                             ?>
                             <?php foreach ($past_mock as $pm): ?>
                             <tr>
@@ -1134,6 +979,9 @@
                                 </td>
                             </tr>
                             <?php endforeach; ?>
+                            <?php if (empty($past_mock)): ?>
+                                <tr class="dior-empty-state"><td colspan="10" class="text-center py-4 text-secondary">No past appointments found.</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
