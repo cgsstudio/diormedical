@@ -6039,7 +6039,7 @@ function dior_sync_docbooker_appointment($booking_data)
         ));
     }
 
-    if (!$existing_record && preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $booking_date) && $booking_time !== '') {
+    if (!$existing_record) {
         $booking_uid = !empty($booking_data['booking_id'])
             ? sanitize_text_field($booking_data['booking_id'])
             : 'DOCBOOKER-' . substr(hash('sha256', $user_id . '|' . $booking_date . '|' . $booking_time . '|' . $docbooker_doctor_id), 0, 24);
