@@ -11,56 +11,6 @@ if (class_exists('Dior_Patient_Portal_Data') && method_exists('Dior_Patient_Port
     $patient_notif_rows = Dior_Patient_Portal_Data::get_patient_notifications($user_id);
 }
 
-// Fallback high-quality notifications if user has no live entries yet
-if (empty($patient_notif_rows)) {
-    $patient_notif_rows = [
-        [
-            'id' => 'welcome_portal_01',
-            'title' => 'Welcome to Dior Medical Portal',
-            'message' => 'Your secure HIPAA-compliant patient portal is active. You can review your medical records, book visits, and manage prescriptions anytime.',
-            'type' => 'system',
-            'action_url' => '#tab=overview',
-            'icon' => 'fa-bell',
-            'is_read' => 0,
-            'created_at' => current_time('mysql'),
-            'timestamp' => time()
-        ],
-        [
-            'id' => 'telemed_consult_02',
-            'title' => 'Upcoming Telehealth Consultation Ready',
-            'message' => 'Your next virtual consultation room is prepared. Check your scheduled time and prepare your medical questions.',
-            'type' => 'appointment',
-            'action_url' => '#tab=telemedicine',
-            'icon' => 'fa-calendar-check',
-            'is_read' => 0,
-            'created_at' => date('Y-m-d H:i:s', time() - 3600),
-            'timestamp' => time() - 3600
-        ],
-        [
-            'id' => 'intake_form_03',
-            'title' => 'Medical Intake Questionnaire Received',
-            'message' => 'Your health history submission has been securely recorded and encrypted in your permanent medical file.',
-            'type' => 'intake',
-            'action_url' => '#tab=medical_record',
-            'icon' => 'fa-clipboard-list',
-            'is_read' => 1,
-            'created_at' => date('Y-m-d H:i:s', time() - 86400),
-            'timestamp' => time() - 86400
-        ],
-        [
-            'id' => 'rx_meds_04',
-            'title' => 'Prescription Summary Available',
-            'message' => 'Your electronic prescription records and dosage instructions are accessible in the Prescriptions section.',
-            'type' => 'prescription',
-            'action_url' => '#tab=docs_meds',
-            'icon' => 'fa-prescription-bottle-medical',
-            'is_read' => 1,
-            'created_at' => date('Y-m-d H:i:s', time() - 172800),
-            'timestamp' => time() - 172800
-        ]
-    ];
-}
-
 // Compute notification metrics
 $total_count = count($patient_notif_rows);
 $unread_count = 0;
