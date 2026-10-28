@@ -849,13 +849,43 @@ class Dior_Patient_Portal_Data
     {
         global $wpdb;
         $table = $wpdb->prefix . 'dior_payments';
+        $results = [];
         if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) {
             $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE patient_id=%d ORDER BY created_at DESC", (int) $user_id), ARRAY_A);
-            if (!empty($rows))
-                return $rows;
+            if (is_array($rows)) {
+                $results = $rows;
+            }
         }
-        $payments = get_user_meta($user_id, 'dior_payments', true);
-        return is_array($payments) ? $payments : [];
+
+        // Merge legacy payment entries that have not been migrated yet without duplicating invoice IDs.
+        $legacy_payments = get_user_meta($user_id, 'dior_payments', true);
+        if (is_array($legacy_payments)) {
+            $known_ids = [];
+            foreach ($results as $row) {
+                $key = (string) ($row['invoice_id'] ?? ($row['payment_uid'] ?? ($row['id'] ?? '')));
+                if ($key !== '') {
+                    $known_ids[$key] = true;
+                }
+            }
+            foreach ($legacy_payments as $payment) {
+                if (!is_array($payment)) {
+                    continue;
+                }
+                $key = (string) ($payment['invoice_id'] ?? ($payment['payment_uid'] ?? ($payment['id'] ?? '')));
+                if ($key !== '' && !isset($known_ids[$key])) {
+                    $results[] = $payment;
+                    $known_ids[$key] = true;
+                }
+            }
+        }
+
+        usort($results, static function ($a, $b) {
+            $a_date = strtotime((string) ($a['created_at'] ?? ($a['date'] ?? ''))) ?: 0;
+            $b_date = strtotime((string) ($b['created_at'] ?? ($b['date'] ?? ''))) ?: 0;
+            return $b_date <=> $a_date;
+        });
+
+        return $results;
     }
 
     /**
