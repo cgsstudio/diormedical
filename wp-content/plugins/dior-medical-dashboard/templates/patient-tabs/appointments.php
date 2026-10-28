@@ -1,5 +1,11 @@
 <section class="dior-tab-panel py-3 py-md-4 px-2 px-md-3 pb-5" id="tab-appointments">
     <style>
+    /* Keep appointment tab labels consistently bold and black. */
+    #tab-appointments .dior-subtab-pill .dior-subtab-label {
+        color: #000000 !important;
+        font-weight: 600 !important;
+    }
+
     /* Shared typography and spacing for Today, Upcoming and Past appointment tables. */
     #tab-appointments .dior-appointment-list-table {
         width: 100%;
@@ -89,16 +95,16 @@
     <!-- Subtab Navigation Bar -->
     <div class="dior-subtab-nav-bar px-3 px-md-4 mb-4">
         <button type="button" class="dior-subtab-pill btn" data-appt-subtab="book" onclick="diorSwitchApptSubTab('book')">
-            <i class="fas fa-calendar-plus"></i> Book Appointment
+            <i class="fas fa-calendar-plus"></i> <span class="dior-subtab-label">Book Appointment</span>
         </button>
         <button type="button" class="dior-subtab-pill btn active" data-appt-subtab="today" onclick="diorSwitchApptSubTab('today')">
-            <i class="fas fa-calendar-check"></i> Today Appointments
+            <i class="fas fa-calendar-check"></i> <span class="dior-subtab-label">Today Appointments</span>
         </button>
         <button type="button" class="dior-subtab-pill btn" data-appt-subtab="upcoming" onclick="diorSwitchApptSubTab('upcoming')">
-            <i class="fas fa-clock"></i> Upcoming Appointments
+            <i class="fas fa-clock"></i> <span class="dior-subtab-label">Upcoming Appointments</span>
         </button>
         <button type="button" class="dior-subtab-pill btn" data-appt-subtab="past" onclick="diorSwitchApptSubTab('past')">
-            <i class="fas fa-history"></i> Past Appointments
+            <i class="fas fa-history"></i> <span class="dior-subtab-label">Past Appointments</span>
         </button>
     </div>
 
