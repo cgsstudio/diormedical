@@ -72,7 +72,7 @@ class Dior_Invoice_Pdf_Service
         $patient_row = is_array($patient_row) ? $patient_row : [];
         $patient_name = trim((string) ($patient_profile['full_name'] ?? ''));
         if ($patient_name === '') {
-            $patient_name = trim((string) (($patient_row['first_name'] ?? '') . ' ' . ($patient_row['last_name'] ?? ''));
+            $patient_name = trim((string) (($patient_row['first_name'] ?? '') . ' ' . ($patient_row['last_name'] ?? '')));
         }
         if ($patient_name === '') {
             $patient_name = $patient_user ? $patient_user->display_name : 'Patient';
