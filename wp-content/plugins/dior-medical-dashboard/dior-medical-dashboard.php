@@ -4335,7 +4335,7 @@ class Dior_Medical_Auth
             'clinics' => [
                 [
                     'id' => 1,
-                    'name' => 'Beverly Hills Telehealth Clinic',
+                    'name' => 'Available times',
                     'timings' => $slots
                 ]
             ]
