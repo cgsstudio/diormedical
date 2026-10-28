@@ -242,7 +242,7 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
               else:
                 foreach ($prev_apts as $prev_apt):
                   $pa_cond = !empty($prev_apt['condition']) ? $prev_apt['condition'] : (!empty($prev_apt['condition_name']) ? $prev_apt['condition_name'] : 'General Consultation');
-                  $pa_doc = !empty($prev_apt['provider']) ? $prev_apt['provider'] : (!empty($prev_apt['doctor_name']) ? $prev_apt['doctor_name'] : 'Dr. Diorca Aquino de la Cruz');
+                  $pa_doc = !empty($prev_apt['provider']) ? $prev_apt['provider'] : (!empty($prev_apt['doctor_name']) ? $prev_apt['doctor_name'] : 'Provider not recorded');
                   $pa_date_raw = !empty($prev_apt['date']) ? $prev_apt['date'] : (!empty($prev_apt['appt_date']) ? $prev_apt['appt_date'] : '');
                   $pa_date = $pa_date_raw;
                   if (!empty($pa_date_raw)) {
@@ -250,7 +250,7 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                     if ($ts)
                       $pa_date = date('M d, Y', $ts);
                   }
-                  $pa_time = !empty($prev_apt['time']) ? $prev_apt['time'] : (!empty($prev_apt['appt_time']) ? $prev_apt['appt_time'] : '03:00 PM');
+                  $pa_time = !empty($prev_apt['time']) ? $prev_apt['time'] : (!empty($prev_apt['appt_time']) ? $prev_apt['appt_time'] : '—');
                   $pa_status = !empty($prev_apt['status']) ? strtolower($prev_apt['status']) : 'completed';
                   if ($pa_status === 'confirmed')
                     $pa_status = 'completed';
