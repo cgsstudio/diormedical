@@ -695,7 +695,7 @@
                                         <button type="button" class="action-icon-btn edit-btn btn" title="View Details" onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('<?php echo esc_js($tm[8] ?? ''); ?>');">
                                             <i class="fas fa-eye text-secondary"></i>
                                         </button>
-                                        <button type="button" class="action-icon-btn delete-btn btn" title="Cancel Appointment" onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('<?php echo esc_js($tm[8] ?? ''); ?>');">
+                                        <button type="button" class="action-icon-btn delete-btn btn" title="Cancel Appointment" onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('<?php echo esc_js($tm[8] ?? ''); ?>', this);">
                                             <i class="fas fa-trash text-danger"></i>
                                         </button>
                                     </div>
@@ -852,7 +852,7 @@
                                             <i class="fas fa-eye text-secondary"></i>
                                         </button>
                                         <button type="button" class="action-icon-btn delete-btn btn"
-                                            title="Cancel Appointment" onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('<?php echo esc_js($um[7] ?? ''); ?>');">
+                                            title="Cancel Appointment" onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('<?php echo esc_js($um[7] ?? ''); ?>', this);">
                                             <i class="fas fa-trash text-danger"></i>
                                         </button>
                                     </div>
