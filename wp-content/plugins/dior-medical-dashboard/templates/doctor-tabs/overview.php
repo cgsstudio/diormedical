@@ -370,7 +370,7 @@ $followup_appointments = array_slice($followup_appointments, 0, 8);
                                     </td>
                                 </tr>
                             <?php endforeach; endif; ?>
-                        </tbody>                </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -412,7 +412,8 @@ $followup_appointments = array_slice($followup_appointments, 0, 8);
                 <div class="col-12 col-md-6 col-xl-12">
                     <div class="card tasks border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 d-flex flex-column">
                         <h3 class="section-title mb-3 fs-5 fw-bold text-dark"><i class="fas fa-list-check text-primary me-2"></i>Pending Tasks</h3>
-                        <div class="tasks-body dior-card-scrollable d-flex flex-column gap-2 flex-grow-1" style="max-height: 280px; overflow-y: auto; padding-right: 4px;"><?php if (empty($pending_tasks)): ?>
+                        <div class="tasks-body dior-card-scrollable d-flex flex-column gap-2 flex-grow-1" style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
+                            <?php if (empty($pending_tasks)): ?>
                             <div class="p-4 text-center text-secondary small">No pending clinical tasks.</div>
                             <?php else: foreach ($pending_tasks as $task):
                                 $task_timestamp = !empty($task['date']) ? strtotime($task['date']) : false;
@@ -426,7 +427,7 @@ $followup_appointments = array_slice($followup_appointments, 0, 8);
                                     </div>
                                 </div>
                             <?php endforeach; endif; ?>
-                                                </div>
+                        </div>
                     </div>
                 </div>
 
@@ -434,7 +435,8 @@ $followup_appointments = array_slice($followup_appointments, 0, 8);
                 <div class="col-12 col-md-6 col-xl-12">
                     <div class="card follow border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 d-flex flex-column">
                         <h3 class="section-title mb-3 fs-5 fw-bold text-dark"><i class="fas fa-bell text-primary me-2"></i>Follow-up Reminders</h3>
-                        <div class="follow-body dior-card-scrollable d-flex flex-column gap-2 flex-grow-1" style="max-height: 320px; overflow-y: auto; padding-right: 4px;"><?php if (empty($followup_appointments)): ?>
+                        <div class="follow-body dior-card-scrollable d-flex flex-column gap-2 flex-grow-1" style="max-height: 320px; overflow-y: auto; padding-right: 4px;">
+                            <?php if (empty($followup_appointments)): ?>
                             <div class="p-4 text-center text-secondary small">No upcoming appointments require follow-up.</div>
                             <?php else: foreach ($followup_appointments as $followup):
                                 $follow_patient_name = (string) ($followup['patient_name'] ?? 'Patient');
@@ -468,7 +470,7 @@ $followup_appointments = array_slice($followup_appointments, 0, 8);
                                     </div>
                                 </div>
                             <?php endforeach; endif; ?>
-                                                </div>
+                        </div>
                     </div>
                 </div>
 
