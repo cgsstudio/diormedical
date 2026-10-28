@@ -1893,12 +1893,12 @@ class Dior_Medical_Auth
                                 html += `<button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(${dept.id}, '${dept.name.replace(/'/g, "\\'")}')">${dept.name}</button>`;
                     });
                 } else {
-                    html = '<button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(1, \'Urgent Care Telehealth\')">Urgent Care Telehealth</button><button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(2, \'Primary Care & General Medicine\')">Primary Care</button>';
+                    html = '<p>No services are currently available.</p>';
                 }
                 document.getElementById('treatments-list').innerHTML = html;
             })
             .catch(() => {
-                document.getElementById('treatments-list').innerHTML = '<button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(1, \'Urgent Care Telehealth\')">Urgent Care Telehealth</button><button type="button" class="dior-grid-btn" onclick="diorSelectTreatment(2, \'Primary Care & General Medicine\')">Primary Care</button>';
+                document.getElementById('treatments-list').innerHTML = '<p>Services could not be loaded. Please try again later.</p>';
             });
     }
 
@@ -1920,27 +1920,12 @@ class Dior_Medical_Auth
                                                                                                                                 </div>`;
                     });
                 } else {
-                    html = `<div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                                                                                <h4>Dr. James Chen, DO</h4>
-                                                                                                                                <p>Primary Care & Urgent Care</p>
-                                                                                                                            </div>
-                                                                                                                            <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                                                                                <h4>Dr. Marcus Sterling, DO</h4>
-                                                                                                                                <p>Urgent Care Physician</p>
-                                                                                                                            </div>`;
+                    html = '<p>No providers are currently available for this service.</p>';
                 }
                 document.getElementById('doctors-list').innerHTML = html;
             })
             .catch(() => {
-                document.getElementById('doctors-list').innerHTML = `
-                                                                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1695, 'Dr. James Chen, DO')">
-                                                                                                                        <h4>Dr. James Chen, DO</h4>
-                                                                                                                        <p>Primary Care & Urgent Care</p>
-                                                                                                                    </div>
-                                                                                                                    <div class="dior-doctor-card-select" onclick="diorSelectDoctor(1693, 'Dr. Marcus Sterling, DO')">
-                                                                                                                        <h4>Dr. Marcus Sterling, DO</h4>
-                                                                                                                        <p>Urgent Care Physician</p>
-                                                                                                                    </div>`;
+                document.getElementById('doctors-list').innerHTML = '<p>Providers could not be loaded. Please try again later.</p>';
             });
     }
 
@@ -1959,14 +1944,9 @@ class Dior_Medical_Auth
         document.getElementById('time-slots-list').innerHTML = '<p>Loading availability...</p>';
         diorBookingState.date = dateStr;
 
-        function renderDefaultTimes() {
-            const defaultTimes = ['09:00 AM', '10:30 AM', '01:00 PM', '02:30 PM', '04:00 PM', '05:30 PM'];
-            let h = '<h4>Available Telehealth Slots</h4><div class="dior-time-grid">';
-            defaultTimes.forEach(t => {
-                h += `<button type="button" class="dior-time-btn" onclick="diorSelectTime(1, '${t}')">${t}</button>`;
-            });
-            h += '</div>';
-            document.getElementById('time-slots-list').innerHTML = h;
+        function renderNoAvailability(message) {
+            const slots = document.getElementById('time-slots-list');
+            if (slots) slots.innerHTML = '<p>' + message + '</p>';
         }
 
         fetch(diorRestUrl + `doctor-details-booking/v1/doctors/${diorBookingState.doctorId}/availability?date=${dateStr}`, {
@@ -1994,11 +1974,11 @@ class Dior_Medical_Auth
                 if (html) {
                     document.getElementById('time-slots-list').innerHTML = html;
                 } else {
-                    renderDefaultTimes();
+                    renderNoAvailability('No available time slots were returned for this date. Please choose another date.');
                 }
             })
             .catch(() => {
-                renderDefaultTimes();
+                renderNoAvailability('No available time slots were returned for this date. Please choose another date.');
             });
     }
 
@@ -2007,11 +1987,11 @@ class Dior_Medical_Auth
         diorBookingState.time = time;
 
         document.getElementById('booking-summary').innerHTML = `
-                                                                                                            <p><strong>Treatment:</strong> ${diorBookingState.departmentName || 'Telehealth Urgent Care'}</p>
-                                                                                                            <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
+                                                                                                            <p><strong>Treatment:</strong> ${diorBookingState.departmentName || '—'}</p>
+                                                                                                            <p><strong>Doctor:</strong> ${diorBookingState.doctorName || '—'}</p>
                                                                                                             <p><strong>Date:</strong> ${diorBookingState.date}</p>
                                                                                                             <p><strong>Time:</strong> ${diorBookingState.time}</p>
-                                                                                                            <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
+                                                                                                            <p><strong>Patient:</strong> ${diorBookingState.patient.name || '—'}</p>
                                                                                                         `;
         diorBookingGoToStep(4);
     }
@@ -2019,17 +1999,23 @@ class Dior_Medical_Auth
     function diorSubmitBooking() {
         let btn = document.getElementById('btn-confirm-booking');
         let msg = document.getElementById('booking-message');
+        if (!btn || !msg) return;
+        if (!diorBookingState.doctorId || !diorBookingState.date || !diorBookingState.time) {
+            msg.style.color = '#DC2626';
+            msg.innerText = 'Please select an available provider, date, and time slot before booking.';
+            return;
+        }
         btn.disabled = true;
         btn.innerText = 'Booking Consultation...';
 
         const formData = new FormData();
         formData.append('action', 'dior_patient_book_appointment');
         formData.append('nonce', diorPortalNonce);
-        formData.append('doctorId', diorBookingState.doctorId || 1695);
-        formData.append('doctor_name', diorBookingState.doctorName || 'Doctor');
+        formData.append('doctorId', diorBookingState.doctorId || '');
+        formData.append('doctor_name', diorBookingState.doctorName || '');
         formData.append('date', diorBookingState.date || '');
         formData.append('time', diorBookingState.time || '');
-        formData.append('condition', diorBookingState.departmentName || 'Telehealth Consultation');
+        formData.append('condition', diorBookingState.departmentName || '');
         formData.append('name', diorBookingState.patient.name || '');
         formData.append('email', diorBookingState.patient.email || '');
         formData.append('phone', diorBookingState.patient.phone || '');
