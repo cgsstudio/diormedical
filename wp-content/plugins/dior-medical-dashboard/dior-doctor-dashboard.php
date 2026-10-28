@@ -781,7 +781,12 @@ class Dior_Doctor_Dashboard
             Dior_Medical_Auth::enqueue_assets();
         }
 
-        $user_id = get_current_user_id();
+        $requested_user_id = get_current_user_id();
+        $doctor_context = self::get_single_doctor_context($requested_user_id);
+        $user_id = (int) ($doctor_context['user_id'] ?? 0);
+        if (!$user_id) {
+            return "<div style='text-align:center;padding:60px 20px;background:#FEF2F2;border-radius:12px;'><h3 style='color:#DC2626;'>Doctor profile unavailable</h3><p>The single-doctor dashboard is not configured.</p></div>";
+        }
         $doctor = self::get_doctor_profile($user_id);
         $patients = self::get_all_patients($user_id);
         $appointments = self::get_all_appointments($user_id);
