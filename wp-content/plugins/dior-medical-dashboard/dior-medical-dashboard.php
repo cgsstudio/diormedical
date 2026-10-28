@@ -3225,7 +3225,7 @@ class Dior_Medical_Auth
             'appt_date' => $date,
             'appt_time' => $time,
             'join_url' => 'https://zoom.us/join',
-            'payment_status' => 'Paid',
+            'payment_status' => 'Pending',
             'notes' => $reason,
             'created_at' => $now,
             'updated_at' => $now,
@@ -4386,17 +4386,14 @@ class Dior_Medical_Auth
         }
         $existing_profile = Dior_Patient_Portal_Data::get_patient_profile($user_id);
         $user_intake = get_user_meta($user_id, 'dior_hipaa_intake', true);
-        if (empty($existing_profile['dob'])) {
-            $dob_val = !empty($user_intake['dob']) ? $user_intake['dob'] : '1990-01-01';
-            update_user_meta($user_id, 'dob', $dob_val);
+        if (empty($existing_profile['dob']) && is_array($user_intake) && !empty($user_intake['dob'])) {
+            update_user_meta($user_id, 'dob', sanitize_text_field($user_intake['dob']));
         }
-        if (empty($existing_profile['gender'])) {
-            $gender_val = !empty($user_intake['gender']) ? $user_intake['gender'] : 'Declined to state';
-            update_user_meta($user_id, 'gender', $gender_val);
+        if (empty($existing_profile['gender']) && is_array($user_intake) && !empty($user_intake['gender'])) {
+            update_user_meta($user_id, 'gender', sanitize_text_field($user_intake['gender']));
         }
-        if (empty($existing_profile['address'])) {
-            $addr_val = !empty($user_intake['address']) ? $user_intake['address'] : 'Telehealth Patient - On File';
-            update_user_meta($user_id, 'address', $addr_val);
+        if (empty($existing_profile['address']) && is_array($user_intake) && !empty($user_intake['address'])) {
+            update_user_meta($user_id, 'address', sanitize_text_field($user_intake['address']));
         }
 
         // Validate personal profile completion
@@ -4422,13 +4419,20 @@ class Dior_Medical_Auth
             }
         }
 
-        $condition = sanitize_text_field($_POST['condition'] ?? ($_POST['treatment'] ?? 'Urgent Care Telehealth'));
-        $type = sanitize_text_field($_POST['type'] ?? ($_POST['visit_type'] ?? 'Video Visit (HD)'));
-        $provider_raw = sanitize_text_field($_POST['provider'] ?? ($_POST['doctor'] ?? ($_POST['doctor_name'] ?? '')));
-        $doctor_id_raw = intval($_POST['doctorId'] ?? ($_POST['doctor_id'] ?? 1957));
-        $date = sanitize_text_field($_POST['date'] ?? ($_POST['bookingDate'] ?? current_time('Y-m-d')));
-        $time = sanitize_text_field($_POST['time'] ?? '09:00 AM - 10:00 AM');
-        $notes = sanitize_textarea_field($_POST['notes'] ?? ($_POST['patient_note'] ?? ''));
+        $condition = sanitize_text_field(wp_unslash($_POST['condition'] ?? ($_POST['treatment'] ?? '')));
+        $type = sanitize_text_field(wp_unslash($_POST['type'] ?? ($_POST['visit_type'] ?? '')));
+        $provider_raw = sanitize_text_field(wp_unslash($_POST['provider'] ?? ($_POST['doctor'] ?? ($_POST['doctor_name'] ?? ''))));
+        $doctor_id_raw = absint($_POST['doctorId'] ?? ($_POST['doctor_id'] ?? 0));
+        $date = sanitize_text_field(wp_unslash($_POST['date'] ?? ($_POST['bookingDate'] ?? '')));
+        $time = sanitize_text_field(wp_unslash($_POST['time'] ?? ''));
+        $notes = sanitize_textarea_field(wp_unslash($_POST['notes'] ?? ($_POST['patient_note'] ?? '')));
+
+        if (!$doctor_id_raw || !$date || !$time || !$condition || !$type) {
+            wp_send_json_error([
+                'message' => 'Please select an available provider, service, date, time, and visit type before booking.',
+                'code' => 'missing_booking_details'
+            ], 400);
+        }
 
         // Enforce 15-minute advance slot booking rule
         if (!self::is_slot_bookable_15min($date, $time, 15)) {
@@ -4438,40 +4442,44 @@ class Dior_Medical_Auth
             ], 400);
         }
 
-        // Resolve Doctor WP User ID & Name
+        // Resolve the selected provider against a published provider record or a real doctor account.
         $doctor_user_id = 0;
-        $doctor_name = $provider_raw ?: 'Dr. Marcus Sterling, DO';
-
-        if (class_exists('Dior_Doctor_Resolver')) {
-            $doctor_user_id = Dior_Doctor_Resolver::resolve_doctor_user_id($doctor_id_raw ?: $provider_raw);
-        }
-        if (!$doctor_user_id) {
-            $doctor_user_id = 4;
-        }
-
-        if ($doctor_id_raw && is_numeric($doctor_id_raw)) {
-            $doc_post = get_post($doctor_id_raw);
-            if ($doc_post && $doc_post->post_type === 'wpddb_doctor') {
-                $doctor_name = $doc_post->post_title;
+        $doctor_name = '';
+        $doc_post = get_post($doctor_id_raw);
+        if ($doc_post && $doc_post->post_type === 'wpddb_doctor' && $doc_post->post_status === 'publish') {
+            $doctor_name = get_the_title($doc_post);
+            if (class_exists('Dior_Doctor_Resolver')) {
+                $doctor_user_id = (int) Dior_Doctor_Resolver::resolve_doctor_user_id($doctor_id_raw);
             }
-        } elseif ($doctor_user_id) {
-            $du = get_userdata($doctor_user_id);
-            if ($du)
-                $doctor_name = $du->display_name;
+        } else {
+            $candidate_user = get_userdata($doctor_id_raw);
+            if ($candidate_user && (in_array('doctor', (array) $candidate_user->roles, true) || in_array('administrator', (array) $candidate_user->roles, true))) {
+                $doctor_user_id = (int) $candidate_user->ID;
+                $doctor_name = $candidate_user->display_name;
+            }
+        }
+        if (!$doctor_name) {
+            wp_send_json_error([
+                'message' => 'The selected provider could not be verified. Please choose a provider from the available list.',
+                'code' => 'invalid_provider'
+            ], 400);
         }
 
         if (stripos($type, 'phone') !== false) {
-            $join_url = 'tel:' . preg_replace('/[^0-9+]/', '', $patient_phone ?: '+13105550100');
+            $normalized_patient_phone = preg_replace('/[^0-9+]/', '', (string) $patient_phone);
+            if (!$normalized_patient_phone) {
+                wp_send_json_error(['message' => 'A valid phone number is required for a phone consultation.'], 400);
+            }
+            $join_url = 'tel:' . $normalized_patient_phone;
         } else {
-            // Use a real Google Meet URL when the site administrator has connected Google Meet.
-            // Preserve the existing Zoom fallback when Google Meet is not configured or unavailable.
+            // Only save a meeting URL when the configured integration returns a real link.
             $google_meet_url = class_exists('Dior_Google_Meet') ? Dior_Google_Meet::create_meeting_link() : false;
-            $join_url = $google_meet_url ? $google_meet_url : 'https://zoom.us/join';
+            $join_url = is_string($google_meet_url) ? esc_url_raw($google_meet_url) : '';
         }
 
         $new_apt = Dior_Appointment_Service::book_appointment([
             'patient_id' => $user_id,
-            'doctor_id' => $doctor_id_raw ?: ($doctor_user_id ?: 1957),
+            'doctor_id' => $doctor_id_raw,
             'doctor_user_id' => $doctor_user_id,
             'provider' => $doctor_name,
             'condition' => $condition,
