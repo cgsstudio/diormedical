@@ -503,43 +503,63 @@ class Dior_DB
         $tbl_encounters = $wpdb->prefix . 'dior_encounters';
 
         foreach ($meta_notes as $row) {
-            $patient_id = (int)$row->user_id;
+            $patient_id = absint($row->user_id);
             $notes = maybe_unserialize($row->meta_value);
-            if (!is_array($notes)) continue;
+            if (!$patient_id || !is_array($notes)) {
+                continue;
+            }
 
-            foreach ($notes as $n) {
-                $uid = $n['id'] ?? ('SOAP-' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 6)));
+            foreach ($notes as $note) {
+                if (!is_array($note)) {
+                    continue;
+                }
+
+                $uid = sanitize_text_field($note['encounter_uid'] ?? ($note['id'] ?? ''));
+                $raw_created_at = $note['timestamp'] ?? ($note['created_at'] ?? ($note['date'] ?? ''));
+                $created_ts = $raw_created_at !== '' ? strtotime((string) $raw_created_at) : false;
+                $has_content = !empty($note['subjective']) || !empty($note['note']) || !empty($note['objective'])
+                    || !empty($note['assessment']) || !empty($note['plan']) || !empty($note['diagnosis']);
+                if ($uid === '' || !$created_ts || !$has_content) {
+                    continue;
+                }
+
                 $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tbl_encounters WHERE encounter_uid = %s", $uid));
-                if ($exists) continue;
+                if ($exists) {
+                    continue;
+                }
 
-                $created_at = !empty($n['timestamp']) ? date('Y-m-d H:i:s', strtotime($n['timestamp'])) : current_time('mysql');
-                $doc_id = (int)($n['doctor_id'] ?? ($n['doctor'] ?? 1));
-                $doc_name = sanitize_text_field($n['doctor_name'] ?? 'Doctor');
+                $created_at = wp_date('Y-m-d H:i:s', $created_ts);
+                $doc_id = absint($note['doctor_id'] ?? 0);
+                $doc_name = sanitize_text_field($note['doctor_name'] ?? 'Provider not recorded');
+                $status = sanitize_text_field($note['status'] ?? 'finalized');
+                if (!in_array($status, ['draft', 'finalized', 'amended', 'archived'], true)) {
+                    $status = 'finalized';
+                }
                 $hash = hash('sha256', $uid . '|' . $patient_id . '|' . $doc_id . '|' . $created_at);
 
                 $wpdb->insert($tbl_encounters, [
-                    'encounter_uid'        => $uid,
-                    'patient_id'           => $patient_id,
-                    'doctor_id'            => $doc_id,
-                    'appointment_id'       => sanitize_text_field($n['appointment_id'] ?? ''),
-                    'encounter_type'       => sanitize_text_field($n['encounter_type'] ?? 'Telehealth Consultation'),
-                    'status'               => 'finalized',
-                    'subjective'           => $n['subjective'] ?? ($n['note'] ?? ''),
-                    'objective'            => $n['objective'] ?? '',
-                    'assessment'           => $n['assessment'] ?? '',
-                    'plan'                 => $n['plan'] ?? '',
-                    'diagnosis'            => sanitize_text_field($n['diagnosis'] ?? ''),
-                    'follow_up'            => sanitize_text_field($n['follow_up'] ?? 'As needed / 7-10 days'),
-                    'vitals_bp'            => sanitize_text_field($n['vitals']['bp'] ?? ''),
-                    'vitals_hr'            => sanitize_text_field($n['vitals']['hr'] ?? ''),
-                    'vitals_temp'          => sanitize_text_field($n['vitals']['temp'] ?? ''),
-                    'vitals_weight'        => sanitize_text_field($n['vitals']['weight'] ?? ''),
-                    'attestation_hash'     => $hash,
-                    'attestation_author'   => $doc_name,
-                    'attestation_timestamp'=> $created_at,
-                    'created_at'           => $created_at,
-                    'updated_at'           => $created_at,
-                    'is_deleted'           => 0
+                    'encounter_uid'         => $uid,
+                    'patient_id'            => $patient_id,
+                    'doctor_id'             => $doc_id,
+                    'appointment_id'        => sanitize_text_field($note['appointment_id'] ?? ''),
+                    'encounter_type'        => sanitize_text_field($note['encounter_type'] ?? 'Telehealth Consultation'),
+                    'status'                => $status,
+                    'subjective'            => $note['subjective'] ?? ($note['note'] ?? ''),
+                    'objective'             => $note['objective'] ?? '',
+                    'assessment'            => $note['assessment'] ?? '',
+                    'plan'                  => $note['plan'] ?? '',
+                    'diagnosis'             => sanitize_text_field($note['diagnosis'] ?? ''),
+                    'follow_up'             => sanitize_text_field($note['follow_up'] ?? ''),
+                    'vitals_bp'             => sanitize_text_field($note['vitals']['bp'] ?? ''),
+                    'vitals_hr'             => sanitize_text_field($note['vitals']['hr'] ?? ''),
+                    'vitals_temp'           => sanitize_text_field($note['vitals']['temp'] ?? ''),
+                    'vitals_weight'         => sanitize_text_field($note['vitals']['weight'] ?? ''),
+                    'attestation_hash'      => $hash,
+                    'attestation_author'    => $doc_name,
+                    'attestation_timestamp' => $created_at,
+                    'created_at'            => $created_at,
+                    'updated_at'            => $created_at,
+                    'is_deleted'            => 0
                 ]);
             }
         }
@@ -549,32 +569,52 @@ class Dior_DB
         $tbl_docs = $wpdb->prefix . 'dior_documents';
 
         foreach ($meta_docs as $row) {
-            $patient_id = (int)$row->user_id;
+            $patient_id = absint($row->user_id);
             $docs = maybe_unserialize($row->meta_value);
-            if (!is_array($docs)) continue;
+            if (!$patient_id || !is_array($docs)) {
+                continue;
+            }
 
-            foreach ($docs as $d) {
-                $uid = $d['id'] ?? ('DOC-' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 7)));
+            foreach ($docs as $document) {
+                if (!is_array($document)) {
+                    continue;
+                }
+
+                $uid = sanitize_text_field($document['doc_uid'] ?? ($document['id'] ?? ''));
+                $raw_created_at = $document['timestamp'] ?? ($document['created_at'] ?? ($document['date'] ?? ''));
+                $created_ts = $raw_created_at !== '' ? strtotime((string) $raw_created_at) : false;
+                $file_path = sanitize_text_field($document['file_path'] ?? ($document['file_url'] ?? ($document['url'] ?? '')));
+                $content_html = $document['content_html'] ?? null;
+                if ($uid === '' || !$created_ts || ($file_path === '' && empty($content_html))) {
+                    continue;
+                }
+
                 $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tbl_docs WHERE doc_uid = %s", $uid));
-                if ($exists) continue;
+                if ($exists) {
+                    continue;
+                }
 
-                $created_at = !empty($d['timestamp']) ? date('Y-m-d H:i:s', strtotime($d['timestamp'])) : current_time('mysql');
-                $is_letter = !empty($d['is_letter']) ? 1 : 0;
-                $letter_meta = !empty($d['letter_meta']) ? json_encode($d['letter_meta']) : null;
+                $created_at = wp_date('Y-m-d H:i:s', $created_ts);
+                $is_letter = !empty($document['is_letter']) ? 1 : 0;
+                $letter_meta = !empty($document['letter_meta']) ? wp_json_encode($document['letter_meta']) : null;
                 $hash = hash('sha256', $uid . '|' . $patient_id . '|' . $created_at);
+                $file_name = sanitize_file_name($document['file_name'] ?? basename((string) parse_url($file_path, PHP_URL_PATH)));
+                if ($file_name === '') {
+                    $file_name = $uid . '.pdf';
+                }
 
                 $wpdb->insert($tbl_docs, [
                     'doc_uid'             => $uid,
                     'patient_id'          => $patient_id,
-                    'author_id'           => (int)($d['author_id'] ?? 1),
-                    'title'               => sanitize_text_field($d['title'] ?? 'Medical Document'),
-                    'category'            => sanitize_text_field($d['category'] ?? 'Clinical Record'),
-                    'file_name'           => sanitize_file_name($d['file_name'] ?? ($uid . '.pdf')),
-                    'file_path'           => sanitize_text_field($d['file_path'] ?? ''),
-                    'file_type'           => sanitize_text_field($d['file_type'] ?? 'PDF'),
-                    'file_size'           => 0,
-                    'file_size_formatted' => sanitize_text_field($d['size'] ?? '150 KB'),
-                    'content_html'        => $d['content_html'] ?? null,
+                    'author_id'            => absint($document['author_id'] ?? 0),
+                    'title'               => sanitize_text_field($document['title'] ?? 'Medical Document'),
+                    'category'            => sanitize_text_field($document['category'] ?? 'Clinical Record'),
+                    'file_name'           => $file_name,
+                    'file_path'           => $file_path,
+                    'file_type'           => sanitize_text_field($document['file_type'] ?? ($document['type'] ?? 'Unknown')),
+                    'file_size'           => absint($document['file_size'] ?? 0),
+                    'file_size_formatted' => sanitize_text_field($document['size'] ?? ''),
+                    'content_html'        => $content_html,
                     'letter_meta'         => $letter_meta,
                     'is_letter'           => $is_letter,
                     'attestation_hash'    => $hash,
