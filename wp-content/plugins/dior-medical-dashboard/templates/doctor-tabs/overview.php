@@ -1,6 +1,17 @@
 <?php
 // Dashboard overview uses only live records passed by the dashboard controller.
 global $wpdb;
+$doctor_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : ['user_id' => get_current_user_id(), 'ids' => [get_current_user_id()]];
+$overview_doctor_id = (int) ($doctor_context['user_id'] ?? 0);
+$overview_doctor_ids = array_values(array_unique(array_filter(array_map(
+    'intval',
+    (array) ($doctor_context['ids'] ?? [$overview_doctor_id])
+), static function ($id) { return $id > 0; })));
+$overview_doctor_placeholders = $overview_doctor_ids
+    ? implode(',', array_fill(0, count($overview_doctor_ids), '%d'))
+    : '';
 $today = current_time('Y-m-d');
 $today_appointments = [];
 $upcoming_appointments = [];
@@ -24,73 +35,64 @@ foreach ((array)$patients as $patient) {
 }
 $recent_appointments = array_slice(array_reverse((array)$appointments), 0, 5);
 
-// Fetch dynamic reviews from dior_reviews
-$db_reviews = $wpdb->get_results(
-    "SELECT r.*, 
-     COALESCE(NULLIF(TRIM(CONCAT(COALESCE(p.first_name, ''), ' ', COALESCE(p.last_name, ''))), ''), NULLIF(u.display_name, ''), 'Patient') AS patient_display_name,
-     COALESCE(p.avatar_url, '') AS patient_avatar
-     FROM {$wpdb->prefix}dior_reviews r
-     LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = r.patient_id
-     LEFT JOIN {$wpdb->users} u ON u.ID = r.patient_id
-     ORDER BY r.created_at DESC LIMIT 10",
-    ARRAY_A
-);
+// Fetch only reviews belonging to the configured single doctor.
+$db_reviews = [];
+if ($overview_doctor_ids) {
+    $reviews_sql = "SELECT r.*,
+        COALESCE(NULLIF(TRIM(CONCAT(COALESCE(p.first_name, ''), ' ', COALESCE(p.last_name, ''))), ''), NULLIF(u.display_name, ''), 'Patient') AS patient_display_name,
+        COALESCE(p.avatar_url, '') AS patient_avatar
+        FROM {$wpdb->prefix}dior_reviews r
+        LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = r.patient_id
+        LEFT JOIN {$wpdb->users} u ON u.ID = r.patient_id
+        WHERE r.doctor_id IN ({$overview_doctor_placeholders})
+        ORDER BY r.created_at DESC LIMIT 10";
+    $db_reviews = $wpdb->get_results($wpdb->prepare($reviews_sql, $overview_doctor_ids), ARRAY_A);
+}
 if (!is_array($db_reviews)) {
     $db_reviews = [];
 }
-if (empty($db_reviews)) {
-    $db_reviews = [
-        [
-            'patient_display_name' => 'Mia Song',
-            'rating' => 5,
-            'comment' => 'Excellent doctor! Very professional, attentive, and caring throughout.',
-            'patient_avatar' => 'https://ui-avatars.com/api/?name=Mia+Song&background=eef2ff&color=4f46e5'
-        ],
-        [
-            'patient_display_name' => 'John Johnson',
-            'rating' => 5,
-            'comment' => 'Great experience. Prompt follow-up and clear explanation of treatment.',
-            'patient_avatar' => 'https://ui-avatars.com/api/?name=John+Johnson&background=f0fdf4&color=166534'
-        ],
-        [
-            'patient_display_name' => 'Elizabeth Brown',
-            'rating' => 5,
-            'comment' => 'Very knowledgeable and patient. Answered all my health questions.',
-            'patient_avatar' => 'https://ui-avatars.com/api/?name=Elizabeth+Brown&background=fef3c7&color=b45309'
-        ]
-    ];
-}
 
-// Fetch dynamic prescriptions from dior_prescriptions
-$db_prescriptions = $wpdb->get_results(
-    "SELECT * FROM {$wpdb->prefix}dior_prescriptions ORDER BY id DESC LIMIT 10",
-    ARRAY_A
-);
+// Fetch prescriptions and aggregate counts for this doctor only.
+$db_prescriptions = [];
+$rx_stats = [];
+if ($overview_doctor_ids) {
+    $prescription_sql = "SELECT * FROM {$wpdb->prefix}dior_prescriptions
+        WHERE doctor_id IN ({$overview_doctor_placeholders})
+        ORDER BY id DESC LIMIT 10";
+    $db_prescriptions = $wpdb->get_results($wpdb->prepare($prescription_sql, $overview_doctor_ids), ARRAY_A);
+    $stats_sql = "SELECT status, COUNT(*) as cnt FROM {$wpdb->prefix}dior_prescriptions
+        WHERE doctor_id IN ({$overview_doctor_placeholders}) GROUP BY status";
+    $rx_stats = $wpdb->get_results($wpdb->prepare($stats_sql, $overview_doctor_ids), ARRAY_A);
+}
 if (!is_array($db_prescriptions)) {
     $db_prescriptions = [];
+}
+if (!is_array($rx_stats)) {
+    $rx_stats = [];
 }
 
 $rx_active_count = 0;
 $rx_inactive_count = 0;
 $rx_expired_count = 0;
-$rx_stats = $wpdb->get_results("SELECT status, COUNT(*) as cnt FROM {$wpdb->prefix}dior_prescriptions GROUP BY status", ARRAY_A);
-if (!empty($rx_stats)) {
-    foreach ($rx_stats as $st_row) {
-        $st = strtolower(trim($st_row['status'] ?? ''));
-        if (in_array($st, ['active', 'confirmed', 'in progress', 'in-progress'])) {
-            $rx_active_count += (int)$st_row['cnt'];
-        } elseif (in_array($st, ['expired', 'cancelled', 'canceled'])) {
-            $rx_expired_count += (int)$st_row['cnt'];
-        } else {
-            $rx_inactive_count += (int)$st_row['cnt'];
-        }
+foreach ($rx_stats as $st_row) {
+    $st = strtolower(trim($st_row['status'] ?? ''));
+    if (in_array($st, ['active', 'confirmed', 'in progress', 'in-progress'])) {
+        $rx_active_count += (int) $st_row['cnt'];
+    } elseif (in_array($st, ['expired', 'cancelled', 'canceled'])) {
+        $rx_expired_count += (int) $st_row['cnt'];
+    } else {
+        $rx_inactive_count += (int) $st_row['cnt'];
     }
-} else {
-    $rx_active_count = count(array_filter($db_prescriptions, fn($r) => strtolower($r['status'] ?? '') === 'active'));
-    $rx_inactive_count = count(array_filter($db_prescriptions, fn($r) => strtolower($r['status'] ?? '') === 'inactive'));
-    $rx_expired_count = count(array_filter($db_prescriptions, fn($r) => in_array(strtolower($r['status'] ?? ''), ['expired', 'cancelled'])));
 }
 
+// Doctor identity is sourced from the configured profile, never demo credentials.
+$overview_profile = (array) ($doctor_context['profile'] ?? []);
+$doc_name = !empty($doctor['full_name']) ? $doctor['full_name'] : (!empty($overview_profile['full_name']) ? $overview_profile['full_name'] : 'Configured Doctor');
+$doc_spec = !empty($doctor['specialty']) ? $doctor['specialty'] : (!empty($overview_profile['specialty']) ? $overview_profile['specialty'] : '');
+$doc_email = !empty($doctor['email']) ? $doctor['email'] : (!empty($overview_profile['email']) ? $overview_profile['email'] : '');
+$doc_phone = !empty($doctor['phone']) ? $doctor['phone'] : (!empty($overview_profile['phone']) ? $overview_profile['phone'] : '');
+$doc_qual = !empty($doctor['qualifications']) ? $doctor['qualifications'] : (!empty($overview_profile['qualifications']) ? $overview_profile['qualifications'] : '');
+$doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : (!empty($overview_profile['avatar_url']) ? $overview_profile['avatar_url'] : '');
 // Doctor profile details
 $doc_name = !empty($doctor['full_name']) ? $doctor['full_name'] : 'Dr. Diorca Aquino De La Cruz';
 $doc_spec = !empty($doctor['specialty']) ? $doctor['specialty'] : 'Cardiologist / General Care';
