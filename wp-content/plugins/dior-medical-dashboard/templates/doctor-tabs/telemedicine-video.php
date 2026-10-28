@@ -1,11 +1,13 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
 global $wpdb;
-$doctor_id = get_current_user_id();
+$doctor_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : ['user_id' => get_current_user_id(), 'ids' => [get_current_user_id()]];
+$doctor_id = (int) ($doctor_context['user_id'] ?? get_current_user_id());
 $doctor_nonce = wp_create_nonce('dior_doctor_nonce');
-$doctor_ids = class_exists('Dior_Doctor_Resolver') ? Dior_Doctor_Resolver::get_accessible_doctor_ids($doctor_id) : [$doctor_id];
-$doctor_ids = array_values(array_unique(array_filter(array_map('intval', (array) $doctor_ids))));
-if (!$doctor_ids) { $doctor_ids = [$doctor_id]; }
+$doctor_ids = array_values(array_unique(array_filter(array_map('intval', (array) ($doctor_context['ids'] ?? [$doctor_id])))));
+if (!$doctor_ids && $doctor_id) { $doctor_ids = [$doctor_id]; }
 $placeholders = implode(',', array_fill(0, count($doctor_ids), '%d'));
 
 $sql = "SELECT t.*, p.first_name, p.last_name, p.avatar_url, p.patient_uid, a.appt_date, a.appt_time, u.display_name AS doctor_name
