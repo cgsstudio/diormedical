@@ -1159,6 +1159,17 @@ class Dior_Medical_Auth
             $custom_css_ver
         );
 
+        // Load brand color overrides after the consolidated stylesheet.
+        $brand_css_path = DIOR_PORTAL_PATH . 'assets/css/dior-brand-overrides.css';
+        if (file_exists($brand_css_path)) {
+            wp_enqueue_style(
+                'dior-brand-overrides-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-brand-overrides.css',
+                ['dior-custom-css'],
+                filemtime($brand_css_path)
+            );
+        }
+
         // Alias handles to dior-custom-css to prevent any extra duplicate CSS downloads
         wp_register_style('dior-auth-css', false, ['dior-custom-css']);
         wp_register_style('dior-bootstrap-unify-css', false, ['dior-custom-css']);
