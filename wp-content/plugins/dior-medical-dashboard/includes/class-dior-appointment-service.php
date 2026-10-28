@@ -576,17 +576,7 @@ class Dior_Appointment_Service
                     }
                 }
             }
-            if (empty($doc_avatar)) {
-                $doc_users = get_users(['role' => 'doctor', 'number' => 1]);
-                if (!empty($doc_users)) {
-                    $doc_avatar = get_user_meta($doc_users[0]->ID, 'dior_profile_image', true)
-                        ?: get_user_meta($doc_users[0]->ID, 'doctor_avatar', true)
-                        ?: get_user_meta($doc_users[0]->ID, 'profile_picture', true);
-                }
-            }
-            if (empty($doc_avatar)) {
-                $doc_avatar = home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp');
-            }
+            // Leave avatar empty when the linked provider has no image; never borrow another doctor's photo.
             $r['avatar'] = $doc_avatar;
 
             $status = $r['status'] ?? 'Success';
