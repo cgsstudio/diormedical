@@ -755,7 +755,7 @@ class Dior_Patient_Portal_Data
                         $idx++;
                     }
 
-                    if (empty($items) && !empty($row['medication'] ?? $med_name)) {
+                    if (empty($items) && !empty($med_name)) {
                         $items[] = [
                             'id' => $rx_uid,
                             'medication' => $row['medication'] ?? $med_name,
