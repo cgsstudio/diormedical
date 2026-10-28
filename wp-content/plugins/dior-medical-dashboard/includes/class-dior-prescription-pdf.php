@@ -54,7 +54,7 @@ class Dior_Prescription_Pdf_Service
         }
 
         // Render template
-        $template_path = DIOR_PORTAL_PATH . 'templates/dior-prescription-pdf-template.php';
+        $template_path = DIOR_PORTAL_PATH . 'templates/pdf/prescription.php';
         if (file_exists($template_path)) {
             include $template_path;
             exit;
