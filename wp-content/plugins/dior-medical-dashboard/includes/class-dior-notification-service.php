@@ -153,103 +153,60 @@ class Dior_Notification_Service
     public static function render_email_template($headline, $preheader, $content_html, $button = null)
     {
         $site_name = get_bloginfo('name') ?: 'Dior Medical';
-        $site_url  = home_url();
-        $year      = date('Y');
+        $site_url  = home_url('/');
+        $year      = gmdate('Y');
 
         $button_html = '';
         if (!empty($button) && !empty($button['url']) && !empty($button['label'])) {
             $button_html = '
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 28px 0 10px 0;">
-                <tr>
-                    <td align="left" style="border-radius: 6px; background-color: #2C6CB1;">
-                        <a href="' . esc_url($button['url']) . '" target="_blank" style="font-family: \'Helvetica Neue\', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 600; color: #FFFFFF; text-decoration: none; display: inline-block; padding: 13px 26px; border-radius: 6px; background-color: #2C6CB1; border: 1px solid #2C6CB1;">
-                            ' . esc_html($button['label']) . ' &rarr;
-                        </a>
-                    </td>
-                </tr>
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:24px 0 8px;border-collapse:collapse;">
+                <tr><td align="center" bgcolor="#2C6CB1" style="border-radius:6px;background:#2C6CB1;">
+                    <a href="' . esc_url($button['url']) . '" target="_blank" style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-weight:700;color:#FFFFFF;text-decoration:none;display:inline-block;padding:12px 22px;border-radius:6px;">' . esc_html($button['label']) . ' &rarr;</a>
+                </td></tr>
             </table>';
         }
 
-        return '<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>' . esc_html($headline) . '</title>
-<style type="text/css">
-    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
-    table { border-collapse: collapse !important; }
-    body { margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #F8FAFC; }
-</style>
-</head>
-<body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: \'Helvetica Neue\', Helvetica, Arial, sans-serif; color: #1E293B;">
-<div style="display: none; font-size: 1px; color: #F8FAFC; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
-    ' . esc_html($preheader) . '
-</div>
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F8FAFC; padding: 30px 10px;">
-    <tr>
-        <td align="center">
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width: 600px; background-color: #FFFFFF; border-radius: 8px; border: 1px solid #E2E8F0; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-                <!-- Header -->
-                <tr>
-                    <td style="padding: 24px 32px; background: linear-gradient(135deg, #1A528E 0%, #2C6CB1 100%); text-align: left;">
-                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                            <tr>
-                                <td>
-                                    <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px;">
-                                        ' . esc_html($site_name) . '
-                                    </h1>
-                                    <span style="font-size: 12px; color: #E0F2FE; font-weight: 400; letter-spacing: 0.3px;">
-                                        Concierge Telehealth &amp; Clinical Medicine
-                                    </span>
-                                </td>
-                                <td align="right">
-                                    <span style="display: inline-block; padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 12px; font-size: 11px; color: #FFFFFF; font-weight: 600;">
-                                        HIPAA Compliant
-                                    </span>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <!-- Headline Strip -->
-                <tr>
-                    <td style="padding: 20px 32px 10px; border-bottom: 1px solid #F1F5F9;">
-                        <h2 style="margin: 0; font-size: 19px; font-weight: 700; color: #1E293B;">
-                            ' . esc_html($headline) . '
-                        </h2>
-                    </td>
-                </tr>
-                <!-- Body Content -->
-                <tr>
-                    <td style="padding: 24px 32px 30px; font-size: 14.5px; line-height: 1.6; color: #334155;">
-                        ' . $content_html . '
-                        ' . $button_html . '
-                    </td>
-                </tr>
-                <!-- Clinic Footer & Anti-Spam -->
-                <tr>
-                    <td style="padding: 20px 32px; background-color: #F8FAFC; border-top: 1px solid #E2E8F0; text-align: left; font-size: 12px; line-height: 1.5; color: #64748B;">
-                        <p style="margin: 0 0 6px 0;">
-                            <strong>' . esc_html($site_name) . ' Telehealth Practice</strong> &bull; Secure Digital Health Platform
-                        </p>
-                        <p style="margin: 0 0 8px 0; color: #94A3B8;">
-                            This is an automated notification regarding your healthcare portal activity. Please do not reply directly to this automated email. For assistance, sign in to your dashboard.
-                        </p>
-                        <p style="margin: 0; color: #94A3B8; font-size: 11px;">
-                            &copy; ' . esc_html($year) . ' ' . esc_html($site_name) . '. All rights reserved. &bull; <a href="' . esc_url($site_url) . '" style="color: #2C6CB1; text-decoration: none;">Visit Website</a>
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-</body>
-</html>';
+        // Keep event emails in separate template files while sharing one consistent,
+        // responsive layout. Existing send methods and their dynamic event content remain unchanged.
+        $headline_lc = strtolower((string) $headline);
+        $template_key = 'general';
+
+        if (strpos($headline_lc, 'welcome') !== false || strpos($headline_lc, 'account confirmation') !== false) {
+            $template_key = 'registration';
+        } elseif (strpos($headline_lc, 'payment') !== false || strpos($headline_lc, 'receipt') !== false) {
+            $template_key = 'payment-confirmation';
+        } elseif (strpos($headline_lc, 'reschedul') !== false || strpos($headline_lc, 'schedule changed') !== false) {
+            $template_key = 'appointment-rescheduled';
+        } elseif (strpos($headline_lc, 'cancel') !== false) {
+            $template_key = 'appointment-cancelled';
+        } elseif (strpos($headline_lc, 'video room') !== false || strpos($headline_lc, 'room is ready') !== false) {
+            $template_key = 'consultation-ready';
+        } elseif (strpos($headline_lc, 'missed visit') !== false || strpos($headline_lc, 'missed appointment') !== false) {
+            $template_key = 'appointment-missed';
+        } elseif (strpos($headline_lc, 'completed') !== false) {
+            $template_key = 'consultation-completed';
+        } elseif (strpos($headline_lc, 'consultation reminder') !== false) {
+            $template_key = 'consultation-reminder';
+        } elseif (strpos($headline_lc, 'reminder') !== false) {
+            $template_key = 'appointment-reminder';
+        } elseif (strpos($headline_lc, 'status') !== false) {
+            $template_key = 'appointment-status';
+        } elseif (strpos($headline_lc, 'appointment') !== false || strpos($headline_lc, 'scheduled') !== false) {
+            $template_key = 'appointment-confirmation';
+        }
+
+        $template_path = plugin_dir_path(dirname(__FILE__)) . 'templates/emails/' . $template_key . '.php';
+        if (!is_readable($template_path)) {
+            $template_path = plugin_dir_path(dirname(__FILE__)) . 'templates/emails/general.php';
+        }
+        if (!is_readable($template_path)) {
+            error_log('Dior Medical email template missing: ' . $template_key);
+            return '';
+        }
+
+        ob_start();
+        include $template_path;
+        return (string) ob_get_clean();
     }
 
     /**
