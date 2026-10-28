@@ -592,12 +592,68 @@ class Dior_Doctor_Dynamic {
     public static function ajax_save_consultation(){ self::auth(); $pid=(int)($_POST['patient_id']??0); self::ensure_patient_row($pid); if(!self::patient_belongs_to_doctor($pid,self::doctor_id())) wp_send_json_error(['message'=>'Select a patient assigned to this doctor.']); $res=Dior_Encounter_Service::save_encounter(['patient_id'=>$pid,'encounter_uid'=>sanitize_text_field($_POST['note_id']??''),'encounter_type'=>'Consultation Note','subjective'=>sanitize_textarea_field($_POST['note']??''),'assessment'=>sanitize_textarea_field($_POST['assessment']??''),'plan'=>sanitize_textarea_field($_POST['plan']??''),'diagnosis'=>sanitize_text_field($_POST['diagnosis']??''),'follow_up'=>sanitize_text_field($_POST['follow_up']??'')]); if(is_wp_error($res)) wp_send_json_error(['message'=>$res->get_error_message()]); wp_send_json_success(['message'=>'Consultation note saved.','note'=>$res]); }
     public static function ajax_delete_consultation(){ self::auth(); $pid=(int)($_POST['patient_id']??0); $nid=sanitize_text_field($_POST['note_id']??''); if(!$pid||!$nid) wp_send_json_error(['message'=>'Invalid note.']); $res=Dior_Encounter_Service::delete_encounter($nid,$pid); if(is_wp_error($res)) wp_send_json_error(['message'=>$res->get_error_message()]); wp_send_json_success(['message'=>'Consultation note deleted.']); }
 
-    public static function ajax_document_save(){ self::auth(); global $wpdb; $pid=(int)($_POST['patient_id']??0); self::ensure_patient_row($pid); if(!self::patient_belongs_to_doctor($pid,self::doctor_id())) wp_send_json_error(['message'=>'Access denied.']); $id=(int)($_POST['id']??0); $data=['patient_id'=>$pid,'author_id'=>self::doctor_id(),'title'=>sanitize_text_field($_POST['title']??'Document'),'category'=>sanitize_text_field($_POST['category']??'Clinical Record'),'file_name'=>sanitize_file_name($_POST['file_name']??'document.txt'),'file_path'=>sanitize_text_field($_POST['file_path']??''),'file_type'=>sanitize_text_field($_POST['file_type']??'TXT'),'content_html'=>wp_kses_post($_POST['content_html']??''),'updated_at'=>current_time('mysql')]; if($id){$wpdb->update(self::table('documents'),$data,['id'=>$id]);}else{$data['doc_uid']='DOC-'.wp_generate_uuid4();$data['created_at']=current_time('mysql');$wpdb->insert(self::table('documents'),$data);$id=$wpdb->insert_id;} wp_send_json_success(['message'=>'Document saved.','id'=>$id]); }
+    public static function ajax_document_save()
+    {
+        self::auth();
+        global $wpdb;
+        $pid = (int) ($_POST['patient_id'] ?? 0);
+        self::ensure_patient_row($pid);
+        if (!$pid || !self::patient_belongs_to_doctor($pid, self::doctor_id())) {
+            wp_send_json_error(['message' => 'Access denied.'], 403);
+        }
+
+        $id = absint($_POST['id'] ?? 0);
+        $doctor_ids = self::doctor_scope_ids();
+        $data = [
+            'patient_id' => $pid,
+            'author_id' => self::doctor_id(),
+            'title' => sanitize_text_field($_POST['title'] ?? 'Document'),
+            'category' => sanitize_text_field($_POST['category'] ?? 'Clinical Record'),
+            'file_name' => sanitize_file_name($_POST['file_name'] ?? 'document.txt'),
+            'file_path' => sanitize_text_field($_POST['file_path'] ?? ''),
+            'file_type' => sanitize_text_field($_POST['file_type'] ?? 'TXT'),
+            'content_html' => wp_kses_post($_POST['content_html'] ?? ''),
+            'updated_at' => current_time('mysql'),
+        ];
+
+        if ($id) {
+            $existing = $wpdb->get_row($wpdb->prepare(
+                'SELECT * FROM ' . self::table('documents') . ' WHERE id = %d AND is_deleted = 0',
+                $id
+            ), ARRAY_A);
+            if (!$existing || (!empty($existing['author_id']) && !in_array((int) $existing['author_id'], $doctor_ids, true))) {
+                wp_send_json_error(['message' => 'Document not found or access denied.'], 403);
+            }
+            $updated = $wpdb->update(self::table('documents'), $data, ['id' => $id]);
+            if ($updated === false) {
+                wp_send_json_error(['message' => 'Document could not be saved.'], 500);
+            }
+        } else {
+            $data['doc_uid'] = 'DOC-' . wp_generate_uuid4();
+            $data['created_at'] = current_time('mysql');
+            $inserted = $wpdb->insert(self::table('documents'), $data);
+            if (!$inserted) {
+                wp_send_json_error(['message' => 'Document could not be saved.'], 500);
+            }
+            $id = (int) $wpdb->insert_id;
+        }
+
+        wp_send_json_success(['message' => 'Document saved.', 'id' => $id]);
+    }
+
     public static function ajax_document_update_meta(){
         self::auth(); global $wpdb;
         $pid = (int) ($_POST['patient_id'] ?? 0);
         $doc_uid = sanitize_text_field($_POST['doc_uid'] ?? '');
         if (!$pid || !$doc_uid || !self::patient_belongs_to_doctor($pid, self::doctor_id())) wp_send_json_error(['message' => 'Access denied.'], 403);
+        $existing = $wpdb->get_row($wpdb->prepare(
+            'SELECT * FROM ' . self::table('documents') . ' WHERE doc_uid = %s AND patient_id = %d AND is_deleted = 0',
+            $doc_uid,
+            $pid
+        ), ARRAY_A);
+        if (!$existing || (!empty($existing['author_id']) && !in_array((int) $existing['author_id'], self::doctor_scope_ids(), true))) {
+            wp_send_json_error(['message' => 'Document not found or access denied.'], 403);
+        }
         $updated = $wpdb->update(self::table('documents'), [
             'title' => sanitize_text_field($_POST['title'] ?? 'Medical Document'),
             'category' => sanitize_text_field($_POST['category'] ?? 'Clinical Record'),
@@ -607,7 +663,7 @@ class Dior_Doctor_Dynamic {
         if (!$updated) wp_send_json_error(['message' => 'Document not found or no changes were made.']);
         wp_send_json_success(['message' => 'Document details updated.']);
     }
-    public static function ajax_document_delete(){ self::auth(); global $wpdb; $id=(int)($_POST['id']??0); $doc=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('documents').' WHERE id=%d',$id),ARRAY_A); if(!$doc||!self::patient_belongs_to_doctor($doc['patient_id'],self::doctor_id())) wp_send_json_error(['message'=>'Access denied.']); $wpdb->delete(self::table('documents'),['id'=>$id],['%d']); wp_send_json_success(['message'=>'Document deleted.']); }
+    public static function ajax_document_delete(){ self::auth(); global $wpdb; $id=(int)($_POST['id']??0); $doc=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('documents').' WHERE id=%d',$id),ARRAY_A); if(!$doc||!self::patient_belongs_to_doctor($doc['patient_id'],self::doctor_id())||(!empty($doc['author_id'])&&!in_array((int)$doc['author_id'],self::doctor_scope_ids(),true))) wp_send_json_error(['message'=>'Access denied.'],403); $wpdb->delete(self::table('documents'),['id'=>$id],['%d']); wp_send_json_success(['message'=>'Document deleted.']); }
 
     public static function ajax_review_save(){
         self::auth();
