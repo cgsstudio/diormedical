@@ -2162,7 +2162,11 @@ class Dior_Doctor_Dashboard
             wp_send_json_error(["message" => "Unauthorized"], 403);
         }
 
-        $doctor_id = get_current_user_id();
+        $doctor_context = self::get_single_doctor_context();
+        $doctor_id = (int) ($doctor_context['user_id'] ?? 0);
+        if (!$doctor_id) {
+            wp_send_json_error(["message" => "The single-doctor dashboard is not configured."], 403);
+        }
         $patient_id = intval($_POST['patient_id'] ?? 0);
         $visit_date = sanitize_text_field($_POST['visit_date'] ?? '');
         $visit_time = sanitize_text_field($_POST['visit_time'] ?? '');
@@ -2423,15 +2427,15 @@ class Dior_Doctor_Dashboard
             $patient_id = absint($matched_user_id);
             $patient_user = $patient_id ? get_userdata($patient_id) : false;
         }
-        if (!$patient_user) {
-            $patient_id = 1;
-            $patient_user = get_userdata(1);
-        }
-        if (!$patient_user) {
+        if (!$patient_user || !Dior_Auth_Service::is_patient($patient_id)) {
             wp_send_json_error(["message" => "Select a valid patient record you are authorized to access."], 403);
         }
 
-        $current_user_id = get_current_user_id();
+        $doctor_context = self::get_single_doctor_context();
+        $current_user_id = (int) ($doctor_context['user_id'] ?? 0);
+        if (!$current_user_id) {
+            wp_send_json_error(["message" => "The single-doctor dashboard is not configured."], 403);
+        }
         $doctor_user = get_userdata($current_user_id);
         $doctor_name = trim((string) get_user_meta($current_user_id, 'first_name', true) . ' ' . (string) get_user_meta($current_user_id, 'last_name', true));
         if ($doctor_name === '') {
