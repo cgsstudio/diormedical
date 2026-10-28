@@ -478,26 +478,24 @@
 
 </section>
 
-<!-- html2pdf.js library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const downloadBtn = document.getElementById('download-invoice-pdf');
-    if(downloadBtn) {
-        downloadBtn.addEventListener('click', function() {
-            const invoiceElement = document.getElementById('invoice-pdf-content');
-            
-            // Generate PDF
-            const opt = {
-                margin:       [10, 10, 10, 10], // top, left, bottom, right
-                filename:     'Invoice_345766.pdf',
-                image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            
-            html2pdf().set(opt).from(invoiceElement).save();
-        });
-    }
+    if (!downloadBtn) return;
+
+    downloadBtn.addEventListener('click', function() {
+        const heading = document.querySelector('#invoice-pdf-content .dior-invoice-header h2');
+        const match = heading ? heading.textContent.match(/INVOICE\\s*#?\\s*([A-Za-z0-9_-]+)/i) : null;
+        if (!match || !match[1]) {
+            window.alert('Unable to identify this invoice. Please open it from the billing records and try again.');
+            return;
+        }
+
+        const pdfUrl = new URL(window.location.href);
+        pdfUrl.hash = '';
+        pdfUrl.searchParams.set('dior_action', 'download_invoice_pdf');
+        pdfUrl.searchParams.set('inv_id', match[1]);
+        window.location.assign(pdfUrl.toString());
+    });
 });
 </script>
