@@ -12,7 +12,7 @@ global $wpdb;
 $_cal_context = class_exists('Dior_Doctor_Dashboard')
     ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
     : ['user_id' => get_current_user_id(), 'ids' => [get_current_user_id()]];
-$_cal_doctor_ids = array_values(array_unique(array_map('intval', (array) ($_cal_context['ids'] ?? []))));
+$_cal_doctor_ids = array_values(array_unique(array_map('intval', (array) ($_cal_context['appointment_ids'] ?? $_cal_context['ids'] ?? []))));
 $_cal_doctor_ids = array_values(array_filter($_cal_doctor_ids, static function ($id) {
     return $id >= 0;
 }));
