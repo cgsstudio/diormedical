@@ -3,13 +3,15 @@ if (!defined('ABSPATH')) {
     exit;
 }
 global $wpdb;
-$doctor_id = get_current_user_id();
+$doctor_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : ['user_id' => get_current_user_id(), 'ids' => [get_current_user_id()]];
+$doctor_id = (int) ($doctor_context['user_id'] ?? get_current_user_id());
 $doctor_nonce = wp_create_nonce('dior_doctor_nonce');
 $ajax_url = admin_url('admin-ajax.php');
 
-$doctor_ids = class_exists('Dior_Doctor_Resolver') ? Dior_Doctor_Resolver::get_accessible_doctor_ids($doctor_id) : [$doctor_id];
-$doctor_ids = array_values(array_unique(array_filter(array_map('intval', (array) $doctor_ids))));
-if (!$doctor_ids) {
+$doctor_ids = array_values(array_unique(array_filter(array_map('intval', (array) ($doctor_context['ids'] ?? [$doctor_id])))));
+if (!$doctor_ids && $doctor_id) {
     $doctor_ids = [$doctor_id];
 }
 $placeholders = implode(',', array_fill(0, count($doctor_ids), '%d'));
