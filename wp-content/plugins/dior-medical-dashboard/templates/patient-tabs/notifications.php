@@ -64,6 +64,52 @@ foreach ($patient_notif_rows as $row) {
         #tab-notifications .dior-big-title {
             display: none !important;
         }
+
+        /* Consistent typography across notification cards, metadata and actions. */
+        #tab-notifications .notification-title {
+            font-size: 16px !important;
+            line-height: 1.45 !important;
+            font-weight: 700 !important;
+            color: #0f2f57 !important;
+        }
+        #tab-notifications .notification-text {
+            font-size: 16px !important;
+            line-height: 1.55 !important;
+            font-weight: 400 !important;
+            color: #475569 !important;
+        }
+        #tab-notifications .timestamp-tag,
+        #tab-notifications .notification-meta,
+        #tab-notifications .notification-time {
+            font-size: 12px !important;
+            line-height: 1.4 !important;
+            color: #64748b !important;
+        }
+        #tab-notifications .badge-priority,
+        #tab-notifications .notification-category,
+        #tab-notifications .notification-type-badge {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            padding: 4px 9px !important;
+            border-radius: 999px !important;
+            background: #dbeafe !important;
+            color: #1d4ed8 !important;
+            border: 0 !important;
+            font-size: 12px !important;
+            line-height: 1.2 !important;
+            font-weight: 600 !important;
+        }
+        #tab-notifications .notification-action-bar .btn,
+        #tab-notifications .notification-controls .btn,
+        #tab-notifications .notification-filter-btn {
+            font-size: 13px !important;
+            line-height: 1.35 !important;
+            font-weight: 600 !important;
+        }
+        #tab-notifications .notification-item-row {
+            color: #334155 !important;
+        }
     </style>
 
     <!-- Header & Breadcrumb -->
