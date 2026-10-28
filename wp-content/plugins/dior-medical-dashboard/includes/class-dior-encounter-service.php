@@ -35,7 +35,14 @@ class Dior_Encounter_Service
             return new WP_Error('unauthorized', 'Only authorized healthcare providers can record clinical encounters.');
         }
 
-        $doctor_id = $current_user_id;
+        $doctor_context = class_exists('Dior_Doctor_Dashboard')
+            ? Dior_Doctor_Dashboard::get_single_doctor_context($current_user_id)
+            : ['user_id' => $current_user_id, 'ids' => [$current_user_id]];
+        $doctor_id = (int) ($doctor_context['user_id'] ?? 0);
+        $doctor_ids = array_map('intval', (array) ($doctor_context['ids'] ?? [$doctor_id]));
+        if (!$doctor_id || !$doctor_ids) {
+            return new WP_Error('unauthorized', 'The single-doctor dashboard is not configured.');
+        }
         $doctor_user = get_userdata($doctor_id);
         $doc_fn = get_user_meta($doctor_id, 'first_name', true) ?: ($doctor_user ? $doctor_user->first_name : '');
         $doc_ln = get_user_meta($doctor_id, 'last_name', true) ?: ($doctor_user ? $doctor_user->last_name : '');
@@ -68,6 +75,9 @@ class Dior_Encounter_Service
         $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE encounter_uid = %s AND is_deleted = 0", $encounter_uid));
 
         if ($existing) {
+            if (!in_array((int) $existing->doctor_id, $doctor_ids, true)) {
+                return new WP_Error('unauthorized', 'This clinical note is not part of this doctor’s records.');
+            }
             // If already finalized, do not allow silent modification without status change to amended
             if ($existing->status === 'finalized' && $status === 'finalized') {
                 $status = 'amended';
@@ -189,10 +199,20 @@ class Dior_Encounter_Service
             return new WP_Error('unauthorized', 'Unauthorized to delete clinical record.');
         }
 
+        $doctor_context = class_exists('Dior_Doctor_Dashboard')
+            ? Dior_Doctor_Dashboard::get_single_doctor_context($current_user_id)
+            : ['user_id' => $current_user_id, 'ids' => [$current_user_id]];
+        $doctor_ids = array_map('intval', (array) ($doctor_context['ids'] ?? []));
+        $existing = self::get_encounter_by_uid($encounter_uid);
+        if (!$existing || (int) ($existing['patient_id'] ?? 0) !== (int) $patient_id ||
+            !in_array((int) ($existing['doctor_id'] ?? 0), $doctor_ids, true)) {
+            return new WP_Error('unauthorized', 'This clinical note is not part of this doctor’s records.');
+        }
+
         $updated = $wpdb->update(
             $table,
             ['is_deleted' => 1, 'updated_at' => current_time('mysql')],
-            ['encounter_uid' => $encounter_uid, 'patient_id' => (int)$patient_id]
+            ['encounter_uid' => $encounter_uid, 'patient_id' => (int)$patient_id, 'doctor_id' => (int) $doctor_context['user_id']]
         );
 
         if ($updated) {
