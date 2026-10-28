@@ -93,13 +93,6 @@ $doc_email = !empty($doctor['email']) ? $doctor['email'] : (!empty($overview_pro
 $doc_phone = !empty($doctor['phone']) ? $doctor['phone'] : (!empty($overview_profile['phone']) ? $overview_profile['phone'] : '');
 $doc_qual = !empty($doctor['qualifications']) ? $doctor['qualifications'] : (!empty($overview_profile['qualifications']) ? $overview_profile['qualifications'] : '');
 $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : (!empty($overview_profile['avatar_url']) ? $overview_profile['avatar_url'] : '');
-// Doctor profile details
-$doc_name = !empty($doctor['full_name']) ? $doctor['full_name'] : 'Dr. Diorca Aquino De La Cruz';
-$doc_spec = !empty($doctor['specialty']) ? $doctor['specialty'] : 'Cardiologist / General Care';
-$doc_email = !empty($doctor['email']) ? $doctor['email'] : 'doctor@diormedical.com';
-$doc_phone = !empty($doctor['phone']) ? $doctor['phone'] : '+1 (555) 234-5678';
-$doc_qual = !empty($doctor['qualifications']) ? $doctor['qualifications'] : 'MBBS, MD';
-$doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : ('https://ui-avatars.com/api/?name=' . rawurlencode($doc_name) . '&background=0b1120&color=d4af37');
 ?>
 
 
