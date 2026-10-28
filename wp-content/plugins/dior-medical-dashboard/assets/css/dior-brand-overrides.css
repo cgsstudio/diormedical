@@ -52,3 +52,118 @@
     border-color: #dce5ef;
     color: #31506f;
 }
+
+/*
+ * Shared dashboard typography system.
+ * Keep patient and doctor portal pages consistent without changing layout,
+ * data, or component functionality.
+ */
+.dior-patient-portal-wrap,
+.dior-doctor-wrap {
+    --dior-font-body: 14px;
+    --dior-font-small: 12px;
+    --dior-font-label: 13px;
+    --dior-font-section: 18px;
+    --dior-font-page: 22px;
+    --dior-line-body: 1.5;
+    font-size: var(--dior-font-body);
+    line-height: var(--dior-line-body);
+}
+
+.dior-patient-portal-wrap .dior-main-content,
+.dior-doctor-wrap .dior-main-content {
+    font-size: var(--dior-font-body);
+    line-height: var(--dior-line-body);
+}
+
+.dior-patient-portal-wrap h1,
+.dior-patient-portal-wrap h2,
+.dior-doctor-wrap h1,
+.dior-doctor-wrap h2 {
+    font-size: var(--dior-font-page) !important;
+    line-height: 1.3 !important;
+    font-weight: 700 !important;
+}
+
+.dior-patient-portal-wrap h3,
+.dior-doctor-wrap h3,
+.dior-patient-portal-wrap .card-header,
+.dior-doctor-wrap .card-header {
+    font-size: var(--dior-font-section) !important;
+    line-height: 1.4 !important;
+    font-weight: 700 !important;
+}
+
+.dior-patient-portal-wrap h4,
+.dior-patient-portal-wrap h5,
+.dior-patient-portal-wrap h6,
+.dior-doctor-wrap h4,
+.dior-doctor-wrap h5,
+.dior-doctor-wrap h6 {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    font-weight: 600 !important;
+}
+
+.dior-patient-portal-wrap .dior-side-nav,
+.dior-doctor-wrap .dior-side-nav,
+.dior-patient-portal-wrap .dior-subtab-pill,
+.dior-doctor-wrap .dior-subtab-pill,
+.dior-patient-portal-wrap .nav-link,
+.dior-doctor-wrap .nav-link {
+    font-size: var(--dior-font-label) !important;
+    line-height: 1.4 !important;
+}
+
+.dior-patient-portal-wrap table,
+.dior-doctor-wrap table {
+    font-size: var(--dior-font-label);
+    line-height: 1.45;
+}
+
+.dior-patient-portal-wrap table thead th,
+.dior-doctor-wrap table thead th {
+    font-size: var(--dior-font-small) !important;
+    line-height: 1.4 !important;
+    font-weight: 700 !important;
+    letter-spacing: .035em;
+}
+
+.dior-patient-portal-wrap table tbody td,
+.dior-doctor-wrap table tbody td {
+    font-size: var(--dior-font-label) !important;
+    line-height: 1.45 !important;
+}
+
+.dior-patient-portal-wrap .form-label,
+.dior-doctor-wrap .form-label,
+.dior-patient-portal-wrap label,
+.dior-doctor-wrap label {
+    font-size: var(--dior-font-label);
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.dior-patient-portal-wrap input,
+.dior-patient-portal-wrap select,
+.dior-patient-portal-wrap textarea,
+.dior-doctor-wrap input,
+.dior-doctor-wrap select,
+.dior-doctor-wrap textarea {
+    font-size: var(--dior-font-label);
+    line-height: 1.4;
+}
+
+.dior-patient-portal-wrap .text-muted,
+.dior-doctor-wrap .text-muted,
+.dior-patient-portal-wrap small,
+.dior-doctor-wrap small,
+.dior-patient-portal-wrap .form-text,
+.dior-doctor-wrap .form-text {
+    line-height: 1.45;
+}
+
+.dior-patient-portal-wrap .btn,
+.dior-doctor-wrap .btn {
+    line-height: 1.35;
+}
