@@ -15,7 +15,6 @@ $max_dob = date('Y-m-d', strtotime('-18 years'));
             <h4 class="mb-1 text-dark fw-bold fs-5">
                 <i class="fas fa-user-plus text-primary me-2"></i>Add New Patient
             </h4>
-            <p class="text-secondary small mb-0">Create an official patient record and portal account synced with the Patient Dashboard.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
             <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold shadow-sm" onclick="if(typeof diorSwitchDocTab==='function'){diorSwitchDocTab('doc-patients-all');}else if(typeof diorSwitchTab==='function'){diorSwitchTab('doc-patients-all');}">
