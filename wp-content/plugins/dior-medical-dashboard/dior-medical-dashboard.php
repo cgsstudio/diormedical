@@ -638,14 +638,14 @@ class Dior_Patient_Portal_Data
                     'order_id' => $group_key,
                     'raw_ids' => [],
                     'items' => [],
-                    'date' => !empty($rx['date_prescribed']) ? $rx['date_prescribed'] : (!empty($rx['date']) ? $rx['date'] : current_time('M j, Y')),
-                    'date_prescribed' => !empty($rx['date_prescribed']) ? $rx['date_prescribed'] : (!empty($rx['date']) ? $rx['date'] : current_time('M j, Y')),
+                    'date' => !empty($rx['date_prescribed']) ? $rx['date_prescribed'] : (!empty($rx['date']) ? $rx['date'] : '—'),
+                    'date_prescribed' => !empty($rx['date_prescribed']) ? $rx['date_prescribed'] : (!empty($rx['date']) ? $rx['date'] : '—'),
                     'prescribed_by' => $rx['prescribed_by'] ?? '',
                     'pharmacy' => $rx['pharmacy'] ?? '',
-                    'routing_status' => $rx['routing_status'] ?? 'Sent to Pharmacy',
-                    'status' => $rx['status'] ?? 'Active',
+                    'routing_status' => $rx['routing_status'] ?? 'Status unavailable',
+                    'status' => $rx['status'] ?? 'Status unavailable',
                     'status_class' => $rx['status_class'] ?? 'status-success',
-                    'is_active' => $rx['is_active'] ?? true,
+                    'is_active' => $rx['is_active'] ?? false,
                 ];
                 $order[] = $group_key;
             }
@@ -653,11 +653,11 @@ class Dior_Patient_Portal_Data
             $current_id = !empty($rx['id']) ? (string) $rx['id'] : $group_key;
             $groups[$group_key]['raw_ids'][] = $current_id;
 
-            $med_name = $rx['medication'] ?? $rx['name'] ?? 'Medication';
-            $dosage = $rx['dosage'] ?? $rx['dose'] ?? 'As directed';
-            $qty = !empty($rx['quantity']) ? $rx['quantity'] : 'As Prescribed';
-            $refills = !empty($rx['refills']) ? $rx['refills'] : '0 Refills Remaining';
-            $instructions = !empty($rx['instructions']) ? $rx['instructions'] : (!empty($rx['notes']) ? $rx['notes'] : 'Take as directed by prescribing physician.');
+            $med_name = $rx['medication'] ?? $rx['name'] ?? '';
+            $dosage = $rx['dosage'] ?? $rx['dose'] ?? '';
+            $qty = !empty($rx['quantity']) ? $rx['quantity'] : '—';
+            $refills = !empty($rx['refills']) ? $rx['refills'] : '—';
+            $instructions = !empty($rx['instructions']) ? $rx['instructions'] : (!empty($rx['notes']) ? $rx['notes'] : '');
 
             $groups[$group_key]['items'][] = [
                 'id' => $current_id,
@@ -669,8 +669,8 @@ class Dior_Patient_Portal_Data
                 'refills' => $refills,
                 'notes' => $rx['notes'] ?? '',
                 'instructions' => $instructions,
-                'fda_approved' => true,
-                'fda_source' => $rx['fda_source'] ?? 'U.S. FDA & NIH RxNorm',
+                'fda_approved' => !empty($rx['fda_approved']),
+                'fda_source' => $rx['fda_source'] ?? '',
             ];
         }
 
@@ -692,13 +692,13 @@ class Dior_Patient_Portal_Data
             $g['medication'] = $g['name'];
             $g['dosage'] = implode(' • ', $dosages);
             $g['dose'] = $g['dosage'];
-            $g['quantity'] = $item_count > 1 ? ($item_count . ' Items Prescribed') : ($g['items'][0]['quantity'] ?? 'As Prescribed');
-            $g['refills'] = $g['items'][0]['refills'] ?? '0 Refills Remaining';
+            $g['quantity'] = $item_count > 1 ? ($item_count . ' Items Prescribed') : ($g['items'][0]['quantity'] ?? '—');
+            $g['refills'] = $g['items'][0]['refills'] ?? '—';
             $g['instructions'] = implode("\n\n", $instructions);
             $g['notes'] = $g['instructions'];
             $g['is_multi'] = ($item_count > 1);
-            $g['fda_approved'] = true;
-            $g['fda_source'] = 'U.S. FDA & NIH RxNorm';
+            $g['fda_approved'] = !empty($g['fda_approved']);
+            $g['fda_source'] = $g['fda_source'] ?? '';
 
             $result[] = $g;
         }
