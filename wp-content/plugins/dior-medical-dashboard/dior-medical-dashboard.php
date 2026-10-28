@@ -811,12 +811,33 @@ class Dior_Patient_Portal_Data
             }
         }
 
-        if (empty($results)) {
-            $legacy_prescriptions = get_user_meta($user_id, 'dior_prescriptions', true);
-            if (is_array($legacy_prescriptions) && !empty($legacy_prescriptions)) {
-                $results = self::group_prescriptions($legacy_prescriptions);
+        // Merge any legacy prescriptions not yet migrated into the relational table.
+        $legacy_prescriptions = get_user_meta($user_id, 'dior_prescriptions', true);
+        if (is_array($legacy_prescriptions) && !empty($legacy_prescriptions)) {
+            $legacy_groups = self::group_prescriptions($legacy_prescriptions);
+            $known_ids = [];
+            foreach ($results as $existing) {
+                foreach (['prescription_uid', 'order_id', 'group_id', 'id'] as $key) {
+                    if (!empty($existing[$key])) {
+                        $known_ids[(string) $existing[$key]] = true;
+                    }
+                }
+            }
+
+            foreach ($legacy_groups as $legacy) {
+                $legacy_id = (string) ($legacy['prescription_uid'] ?? ($legacy['order_id'] ?? ($legacy['group_id'] ?? ($legacy['id'] ?? ''))));
+                if ($legacy_id !== '' && !isset($known_ids[$legacy_id])) {
+                    $results[] = $legacy;
+                    $known_ids[$legacy_id] = true;
+                }
             }
         }
+
+        usort($results, static function ($a, $b) {
+            $a_date = strtotime((string) ($a['date_prescribed'] ?? ($a['date'] ?? ''))) ?: 0;
+            $b_date = strtotime((string) ($b['date_prescribed'] ?? ($b['date'] ?? ''))) ?: 0;
+            return $b_date <=> $a_date;
+        });
 
         return $results;
     }
