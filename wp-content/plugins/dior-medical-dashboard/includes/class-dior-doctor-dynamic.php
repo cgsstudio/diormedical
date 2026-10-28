@@ -160,7 +160,7 @@ class Dior_Doctor_Dynamic {
         if ($user && array_intersect(['doctor', 'dior_doctor', 'administrator'], (array)$user->roles)) return true;
         if (user_can($did, 'doctor') || user_can($did, 'administrator')) return true;
         if (class_exists('Dior_Auth_Service') && Dior_Auth_Service::can_access_patient($pid, $did)) return true;
-        foreach (Dior_Appointment_Service::get_doctor_appointments($did) as $a) if ((int)($a['patient_id']??0)===(int)$pid) return true;
+        foreach (Dior_Appointment_Service::get_doctor_appointments($did, null, null, true) as $a) if ((int)($a['patient_id']??0)===(int)$pid) return true;
         return false;
     }
 
