@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.32
+ * Version: 17.2.33
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.32');
+define('DIOR_PORTAL_VERSION', '17.2.33');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -490,7 +490,7 @@ class Dior_Patient_Portal_Data
             'city' => get_user_meta($user_id, 'city', true) ?: (get_user_meta($user_id, 'billing_city', true) ?: ''),
             'state' => get_user_meta($user_id, 'state', true) ?: (get_user_meta($user_id, 'billing_state', true) ?: ''),
             'zip' => get_user_meta($user_id, 'zip', true) ?: (get_user_meta($user_id, 'zip_code', true) ?: (get_user_meta($user_id, 'billing_postcode', true) ?: '')),
-            'country' => get_user_meta($user_id, 'country', true) ?: (get_user_meta($user_id, 'billing_country', true) ?: 'United States of America'),
+            'country' => get_user_meta($user_id, 'country', true) ?: (get_user_meta($user_id, 'billing_country', true) ?: ''),
             'address' => $address ?: '',
             'emergency_name' => $em_name ?: '',
             'emergency_relation' => $em_rel ?: '',
