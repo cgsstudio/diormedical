@@ -136,7 +136,7 @@ th:nth-child(6),td:nth-child(6){text-align:right;width:16%}
 .notes li{padding-left:3px;margin-bottom:2px}
 .footer{display:grid;grid-template-columns:150px minmax(0,1fr) 220px;align-items:center;gap:14px;margin-top:18px;padding-top:10px;border-top:4px solid transparent;border-image:linear-gradient(90deg,var(--gold) 0 18%,var(--blue) 18% 88%,var(--navy) 88%) 1;break-inside:avoid}
 .footer-logo{width:135px;height:65px;object-fit:contain;object-position:left center}
-.thanks{text-align:center;font-size:13px;line-height:1.65;color:var(--navy}
+.thanks{text-align:center;font-size:13px;line-height:1.65;color:var(--navy)}
 .thanks strong{font-weight:800}
 .footer-contact{font-size:11px;line-height:1.8;justify-self:end;overflow-wrap:anywhere}
 .footer-contact div{white-space:normal}
