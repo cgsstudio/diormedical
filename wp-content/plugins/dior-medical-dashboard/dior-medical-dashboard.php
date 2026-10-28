@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.33
+ * Version: 17.2.34
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.33');
+define('DIOR_PORTAL_VERSION', '17.2.34');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -763,8 +763,8 @@ class Dior_Patient_Portal_Data
                             'frequency' => $row['frequency'] ?? '',
                             'duration' => $row['duration'] ?? '',
                             'instructions' => $row['instructions'] ?? '',
-                            'quantity' => $row['quantity'] ?? '1 Unit',
-                            'refills' => $row['refills'] ?? 0,
+                            'quantity' => $row['quantity'] ?? '—',
+                            'refills' => $row['refills'] ?? '—',
                         ];
                     }
 
@@ -795,8 +795,8 @@ class Dior_Patient_Portal_Data
                         'dosage' => $row['dosage'] ?? '',
                         'frequency' => $row['frequency'] ?? '',
                         'duration' => $row['duration'] ?? '',
-                        'quantity' => $row['quantity'] ?? '1 Unit',
-                        'refills' => $row['refills'] ?? 0,
+                        'quantity' => $row['quantity'] ?? '—',
+                        'refills' => $row['refills'] ?? '—',
                         'instructions' => $row['instructions'] ?? '',
                         'notes' => $row['instructions'] ?? '',
                         'status' => $row['status'] ?? 'Status unavailable',
@@ -923,7 +923,7 @@ class Dior_Patient_Portal_Data
                     'title' => 'Clinical Intake Questionnaire (' . (!empty($hipaa['service_condition']) ? $hipaa['service_condition'] : 'Urgent Care') . ')',
                     'status' => 'Submitted',
                     'type' => 'hipaa_intake',
-                    'updated_at' => !empty($hipaa['submitted_at']) ? substr($hipaa['submitted_at'], 0, 10) : current_time('Y-m-d'),
+                    'updated_at' => !empty($hipaa['submitted_at']) ? substr($hipaa['submitted_at'], 0, 10) : '',
                     'pdf_url' => $hipaa['download_pdf_link'] ?? '',
                 ]);
             }
