@@ -976,6 +976,9 @@ class Dior_Doctor_Dashboard
         if (!$patient_id && !empty($appt['patient_id'])) {
             $patient_id = (int) $appt['patient_id'];
         }
+        if (!$patient_id || !get_userdata($patient_id) || !Dior_Auth_Service::is_patient($patient_id)) {
+            wp_send_json_error(["message" => "Please select a valid patient record."], 400);
+        }
 
         // 1. Core Appointment fields
         $new_date = sanitize_text_field($_POST['appt_date'] ?? ($_POST['date'] ?? $appt['appt_date']));
