@@ -227,7 +227,7 @@ let diorBookingState = {
                                                     <p><strong>Doctor:</strong> ${diorBookingState.doctorName || 'Attending Physician'}</p>
                                                     <p><strong>Date:</strong> ${diorBookingState.date}</p>
                                                     <p><strong>Time:</strong> ${diorBookingState.time}</p>
-                                                    <p><strong>Patient:</strong> ${diorBookingState.patient.name || 'Verified Patient'}</p>
+                                                    <p><strong>Patient:</strong> ${diorBookingState.patient.name || '—'}</p>
                                                 `;
         diorBookingGoToStep(4);
     }
@@ -2377,8 +2377,8 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                             medication: m.replace(/^\d+\.\s*/, ''),
                             dosage: doseParts[idx] ? doseParts[idx].replace(/^\d+\.\s*/, '') : rawDosageText,
                             instructions: instParts[idx] ? instParts[idx].replace(/^\d+\.\s*/, '') : rawInstText,
-                            quantity: (found ? found.quantity : '') || 'As Prescribed',
-                            refills: (found ? found.refills : '') || '0 Refills Remaining'
+                            quantity: (found ? found.quantity : '') || '—',
+                            refills: (found ? found.refills : '') || '—'
                         };
                     });
                 } else if (rawMedText || rawDosageText || rawInstText) {
@@ -2450,14 +2450,15 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
         };
 
         window.diorRequestRefill = function (rxId) {
-            Swal.fire({
-                position: 'top-end',
-                icon: 'success',
-                title: 'Refill Requested',
-                text: 'Refill request submitted electronically to prescribing physician for Rx #' + rxId,
-                showConfirmButton: false,
-                timer: 2500
-            });
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Refill request unavailable',
+                    text: 'A saved refill-request endpoint is not connected to this dashboard. No refill request was submitted.'
+                });
+            } else {
+                window.alert('A saved refill-request endpoint is not connected to this dashboard. No refill request was submitted.');
+            }
         };
 
         window.diorViewDocumentModal = function (title, category, author, date, id) {
@@ -2763,7 +2764,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             var invId = (document.getElementById('rec-inv-id') && document.getElementById('rec-inv-id').textContent) || 'INV-8829';
             var date = (document.getElementById('rec-date') && document.getElementById('rec-date').textContent) || 'Sept 4, 2026';
             var patientInfo = (document.getElementById('rec-patient-info') && document.getElementById('rec-patient-info').textContent) || 'Patient';
-            var service = (document.getElementById('rec-service') && document.getElementById('rec-service').textContent) || 'Urgent Care Telehealth Consultation';
+            var service = (document.getElementById('rec-service') && document.getElementById('rec-service').textContent) || 'Service not recorded';
             var amount = (document.getElementById('rec-amount') && document.getElementById('rec-amount').textContent) || '$49.00';
             var logoUrl = (window.dior_vars && window.dior_vars.logo_url) ? window.dior_vars.logo_url : '';
 
