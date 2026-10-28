@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 class Dior_DB
 {
-    const DB_VERSION = '4.0.4';
+    const DB_VERSION = '4.0.5';
     const DB_VERSION_OPTION = 'dior_medical_db_version';
 
     /**
@@ -135,11 +135,11 @@ class Dior_DB
             doctor_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             condition_name VARCHAR(255) NOT NULL,
             visit_type VARCHAR(100) NOT NULL DEFAULT 'Video Visit (HD)',
-            status ENUM('Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show') NOT NULL DEFAULT 'Confirmed',
+            status ENUM('Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show') NOT NULL DEFAULT 'Pending',
             appt_date DATE NOT NULL,
             appt_time VARCHAR(50) NOT NULL,
             join_url VARCHAR(500) NULL,
-            payment_status ENUM('Pending', 'Paid', 'Refunded', 'Failed') NOT NULL DEFAULT 'Paid',
+            payment_status ENUM('Pending', 'Paid', 'Refunded', 'Failed') NOT NULL DEFAULT 'Pending',
             notes TEXT NULL,
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
@@ -595,27 +595,65 @@ class Dior_DB
             if (!is_array($apts)) continue;
 
             foreach ($apts as $a) {
-                $uid = $a['id'] ?? ('APT-' . rand(1000, 9999));
-                $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tbl_apts WHERE appt_uid = %s", $uid));
-                if ($exists) continue;
+                if (!is_array($a) || !empty($a['from_hipaa'])) {
+                    continue;
+                }
 
-                $appt_date = !empty($a['date']) ? date('Y-m-d', strtotime($a['date'])) : date('Y-m-d');
-                $created_at = current_time('mysql');
+                $uid = sanitize_text_field($a['appt_uid'] ?? ($a['id'] ?? ''));
+                $raw_date = $a['raw_date'] ?? ($a['appt_date'] ?? ($a['date'] ?? ''));
+                $date_timestamp = $raw_date !== '' ? strtotime((string) $raw_date) : false;
+                $appt_time = sanitize_text_field($a['appt_time'] ?? ($a['time'] ?? ''));
+                $doctor_id = absint($a['doctor_id'] ?? ($a['doctor_user_id'] ?? 0));
+
+                if ($uid === '' || !$date_timestamp || $appt_time === '' || in_array(strtolower($appt_time), ['pending', 'asap', '—', '-'], true) || !$doctor_id) {
+                    continue;
+                }
+
+                $doctor_post = get_post($doctor_id);
+                $doctor_user = get_userdata($doctor_id);
+                $is_provider_post = $doctor_post && $doctor_post->post_type === 'wpddb_doctor' && $doctor_post->post_status === 'publish';
+                $is_provider_user = $doctor_user && (
+                    in_array('doctor', (array) $doctor_user->roles, true)
+                    || in_array('administrator', (array) $doctor_user->roles, true)
+                );
+                if (!$is_provider_post && !$is_provider_user) {
+                    continue;
+                }
+
+                $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tbl_apts WHERE appt_uid = %s", $uid));
+                if ($exists) {
+                    continue;
+                }
+
+                $appt_date = wp_date('Y-m-d', $date_timestamp);
+                $created_at = !empty($a['created_at']) && strtotime($a['created_at'])
+                    ? wp_date('Y-m-d H:i:s', strtotime($a['created_at']))
+                    : current_time('mysql');
+                $allowed_statuses = ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show'];
+                $status = sanitize_text_field($a['status'] ?? 'Pending');
+                if (!in_array($status, $allowed_statuses, true)) {
+                    $status = 'Pending';
+                }
+                $allowed_payment_statuses = ['Pending', 'Paid', 'Refunded', 'Failed'];
+                $payment_status = sanitize_text_field($a['payment_status'] ?? 'Pending');
+                if (!in_array($payment_status, $allowed_payment_statuses, true)) {
+                    $payment_status = 'Pending';
+                }
 
                 $wpdb->insert($tbl_apts, [
                     'appt_uid'       => $uid,
                     'patient_id'     => $patient_id,
-                    'doctor_id'      => (int)($a['doctor_user_id'] ?? ($a['doctor_id'] ?? 1)),
+                    'doctor_id'      => $doctor_id,
                     'condition_name' => sanitize_text_field($a['condition'] ?? 'Telehealth Consultation'),
-                    'visit_type'     => sanitize_text_field($a['type'] ?? 'Video Visit (HD)'),
-                    'status'         => in_array($a['status'] ?? '', ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show']) ? $a['status'] : 'Confirmed',
+                    'visit_type'     => sanitize_text_field($a['type'] ?? ($a['visit_type'] ?? 'Video Visit')),
+                    'status'         => $status,
                     'appt_date'      => $appt_date,
-                    'appt_time'      => sanitize_text_field($a['time'] ?? '10:00 AM'),
-                    'join_url'       => esc_url_raw($a['join_url'] ?? 'https://zoom.us/join'),
-                    'payment_status' => sanitize_text_field($a['payment_status'] ?? 'Paid'),
+                    'appt_time'      => $appt_time,
+                    'join_url'       => !empty($a['join_url']) ? esc_url_raw($a['join_url']) : '',
+                    'payment_status' => $payment_status,
                     'notes'          => sanitize_textarea_field($a['notes'] ?? ''),
                     'created_at'     => $created_at,
-                    'updated_at'     => $created_at,
+                    'updated_at'     => current_time('mysql'),
                     'is_deleted'     => 0
                 ]);
             }
