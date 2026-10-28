@@ -355,76 +355,51 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
           function dior_get_doctor_avatar_url($doc_id = 0, $doc_name = '')
           {
             $avatar = '';
+            $doc_id = absint($doc_id);
+            $doc_post = $doc_id ? get_post($doc_id) : null;
+            $doctor_user_id = 0;
 
-            // 1. If doc_id is provided, check if it's a WP User ID
-            if (!empty($doc_id) && is_numeric($doc_id)) {
-              $user = get_userdata((int) $doc_id);
-              if ($user) {
-                $avatar = get_user_meta($user->ID, 'dior_profile_image', true)
-                  ?: get_user_meta($user->ID, 'doctor_avatar', true)
-                  ?: get_user_meta($user->ID, 'profile_picture', true)
-                  ?: get_user_meta($user->ID, 'profile_image', true)
-                  ?: get_user_meta($user->ID, 'avatar_url', true);
-              }
+            // Resolve the avatar from the exact provider record first. Do not treat a
+            // provider post ID as a WordPress user ID or borrow another provider's image.
+            if ($doc_post && $doc_post->post_type === 'wpddb_doctor') {
+              $avatar = get_post_meta($doc_id, '_wpddb_doctor_avatar', true)
+                ?: get_post_meta($doc_id, 'wpddb_doctor_avatar', true)
+                ?: get_the_post_thumbnail_url($doc_id, 'full');
 
-              // 2. If doc_id is a post ID (e.g. wpddb_doctor post 1957)
-              if (empty($avatar)) {
-                $avatar = get_post_meta((int) $doc_id, '_wpddb_doctor_avatar', true)
-                  ?: get_post_meta((int) $doc_id, 'wpddb_doctor_avatar', true)
-                  ?: get_the_post_thumbnail_url((int) $doc_id, 'full');
-
-                if (empty($avatar)) {
-                  $linked_uid = get_post_meta((int) $doc_id, '_wpddb_doctor_user_id', true);
-                  if ($linked_uid) {
-                    $avatar = get_user_meta((int) $linked_uid, 'dior_profile_image', true)
-                      ?: get_user_meta((int) $linked_uid, 'doctor_avatar', true)
-                      ?: get_user_meta((int) $linked_uid, 'profile_picture', true)
-                      ?: get_user_meta((int) $linked_uid, 'profile_image', true)
-                      ?: get_user_meta((int) $linked_uid, 'avatar_url', true);
-                  }
+              $doctor_user_id = (int) (
+                get_post_meta($doc_id, '_doctor_user_id', true)
+                ?: get_post_meta($doc_id, '_wpddb_doctor_user_id', true)
+              );
+              if (!$doctor_user_id && $doc_post->post_author) {
+                $author = get_userdata((int) $doc_post->post_author);
+                if ($author && (in_array('doctor', (array) $author->roles, true) || in_array('administrator', (array) $author->roles, true))) {
+                  $doctor_user_id = (int) $author->ID;
                 }
               }
-            }
-
-            // 3. Get doctor image directly from doctor dashboard profile (active doctor user)
-            if (empty($avatar)) {
-              $doctor_users = get_users(['role' => 'doctor', 'number' => 1]);
-              if (!empty($doctor_users)) {
-                $du_id = $doctor_users[0]->ID;
-                $avatar = get_user_meta($du_id, 'dior_profile_image', true)
-                  ?: get_user_meta($du_id, 'doctor_avatar', true)
-                  ?: get_user_meta($du_id, 'profile_picture', true)
-                  ?: get_user_meta($du_id, 'profile_image', true)
-                  ?: get_user_meta($du_id, 'avatar_url', true);
+            } else {
+              $candidate = $doc_id ? get_userdata($doc_id) : null;
+              if ($candidate && (in_array('doctor', (array) $candidate->roles, true) || in_array('administrator', (array) $candidate->roles, true))) {
+                $doctor_user_id = (int) $candidate->ID;
               }
             }
 
-            // 4. Check if wpddb_doctor post has avatar
-            if (empty($avatar)) {
-              $doc_posts = get_posts(['post_type' => 'wpddb_doctor', 'numberposts' => 1]);
-              if (!empty($doc_posts)) {
-                $avatar = get_post_meta($doc_posts[0]->ID, '_wpddb_doctor_avatar', true)
-                  ?: get_the_post_thumbnail_url($doc_posts[0]->ID, 'full');
-              }
+            if (!$avatar && $doctor_user_id) {
+              $avatar = get_user_meta($doctor_user_id, 'dior_profile_image', true)
+                ?: get_user_meta($doctor_user_id, 'doctor_avatar', true)
+                ?: get_user_meta($doctor_user_id, 'profile_picture', true)
+                ?: get_user_meta($doctor_user_id, 'profile_image', true)
+                ?: get_user_meta($doctor_user_id, 'avatar_url', true)
+                ?: get_avatar_url($doctor_user_id, ['size' => 160]);
             }
 
-            // 5. Final fallback to site doctor photo or clean UI avatar
-            if (empty($avatar)) {
-              $fallback = home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp');
-              $upload_dir = wp_upload_dir();
-              if (file_exists($upload_dir['basedir'] . '/2026/10/diormedical-experts-6.webp')) {
-                $avatar = $fallback;
-              } else {
-                $clean_name = preg_replace('/^(?:dr\.?\s*)+/i', '', trim($doc_name ?: 'Doctor'));
-                $avatar = 'https://ui-avatars.com/api/?name=' . rawurlencode($clean_name) . '&background=eef2ff&color=2C6CB1';
-              }
+            if ($avatar) {
+              return esc_url($avatar);
             }
 
-            return $avatar;
+            $clean_name = preg_replace('/^(?:dr\\.?\\s*)+/i', '', trim((string) $doc_name));
+            return 'https://ui-avatars.com/api/?name=' . rawurlencode($clean_name ?: 'Provider') . '&background=eef2ff&color=2C6CB1';
           }
         }
-
-        // 1. Doctor Consultation Card
         ?>
         <div class="col-12 col-md-6 col-xl-12">
           <div
