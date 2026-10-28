@@ -50,7 +50,7 @@
                                         <div class="flex-grow-1 overflow-hidden dior-ic-aea598fd73">
                                             <div class="d-flex align-items-center justify-content-between mb-1 dior-ic-bce91fe330">
                                                 <span class="text-xs text-muted font-weight-600 text-uppercase text-truncate dior-ic-d48d9220c2">Care Phase</span>
-                                                <span class="badge bg-info-subtle text-info rounded-pill text-2xs dior-ic-c37f987d84">Live Care</span>
+                                                <span class="badge bg-info-subtle text-info rounded-pill text-2xs dior-ic-c37f987d84">Record</span>
                                             </div>
                                             <h5 class="mb-0 font-weight-bold text-dark text-truncate dior-ic-c4e98ce9b3"><?php echo esc_html($appointments[0]['condition'] ?? $appointments[0]['condition_name'] ?? 'No recent appointment'); ?></h5>
                                         </div>
@@ -81,10 +81,10 @@
                                         </div>
                                         <div class="flex-grow-1 overflow-hidden dior-ic-aea598fd73">
                                             <div class="d-flex align-items-center justify-content-between mb-1 dior-ic-bce91fe330">
-                                                <span class="text-xs text-muted font-weight-600 text-uppercase text-truncate dior-ic-d48d9220c2">EMR Security</span>
-                                                <span class="badge bg-success-subtle text-success rounded-pill text-2xs dior-ic-4db3afa214">HIPAA</span>
+                                                <span class="text-xs text-muted font-weight-600 text-uppercase text-truncate dior-ic-d48d9220c2">Record Details</span>
+                                                <span class="badge bg-secondary-subtle text-secondary rounded-pill text-2xs dior-ic-4db3afa214">Clinical</span>
                                             </div>
-                                            <h5 class="mb-0 font-weight-bold text-success text-truncate dior-ic-c2f54c19e7"><i class="fas fa-lock me-1 text-xs"></i> Encrypted</h5>
+                                            <h5 class="mb-0 font-weight-bold text-dark text-truncate dior-ic-c2f54c19e7"><i class="fas fa-file-medical me-1 text-xs"></i> Medical Record</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -165,7 +165,7 @@
                                             'type' => 'APPOINTMENT',
                                             'title' => $appointment['condition'] ?? ($appointment['condition_name'] ?? 'Telehealth Consultation'),
                                             'doctor' => $appointment['provider'] ?? ($appointment['doctor_name'] ?? 'Provider not recorded'),
-                                            'description' => 'Appointment status: ' . ($appointment['status'] ?? 'Confirmed') . '.',
+                                            'description' => 'Appointment status: ' . (!empty($appointment['status']) ? $appointment['status'] : 'Status unavailable') . '.',
                                             'icon' => 'fa-calendar-check',
                                         ];
                                     }
@@ -185,7 +185,7 @@
                                             'type' => 'QUESTIONNAIRE',
                                             'title' => $questionnaire['title'] ?? 'Clinical Intake Form',
                                             'doctor' => 'Patient / Clinical Intake',
-                                            'description' => 'Status: ' . ($questionnaire['status'] ?? 'Submitted') . ' — Clinical information on file.',
+                                            'description' => 'Status: ' . (!empty($questionnaire['status']) ? $questionnaire['status'] : 'Status unavailable') . '.',
                                             'icon' => 'fa-clipboard-check',
                                         ];
                                     }
