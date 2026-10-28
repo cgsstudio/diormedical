@@ -3,7 +3,7 @@
  * Shared footer for Dior Medical HTML emails.
  *
  * Expected optional variable: $site_url.
- * Closes the content heading, main container and document opened by email-header.php.
+ * Closes the outer container and document opened by email-header.php.
  */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $email_footer_url = isset( $site_url ) && $site_url ? $site_url : home_url( '/' );
 ?>
-                    </td>
-                </tr>
                 <tr>
                     <td style="padding:18px 28px 22px;background-color:#f8fafc;color:#71839c;font-size:11px;line-height:17px;">
                         <div style="font-weight:700;">DIOR MEDICAL Telehealth Practice · Secure Digital Health Platform</div>
