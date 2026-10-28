@@ -6,118 +6,68 @@
 if (!defined('ABSPATH')) { exit; }
 
 global $wpdb;
-$doctor_id = get_current_user_id();
+$doctor_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : ['user_id' => get_current_user_id(), 'canonical_id' => get_current_user_id(), 'ids' => [get_current_user_id()], 'profile' => []];
+$doctor_id = (int) ($doctor_context['user_id'] ?? 0);
+$canonical_doctor_id = (int) ($doctor_context['canonical_id'] ?? $doctor_id);
+$doctor_ids = array_values(array_unique(array_map('intval', (array) ($doctor_context['ids'] ?? []))));
+$doctor_ids = array_values(array_filter($doctor_ids, static function ($id) { return $id >= 0; }));
+$doctor_profile = (array) ($doctor_context['profile'] ?? []);
+$doctor_name = $doctor_profile['full_name'] ?? 'Doctor';
+$doctor_email = $doctor_profile['email'] ?? '';
+$doctor_specialty = $doctor_profile['specialty'] ?? 'General Practice & Internal Medicine';
+$doctor_avatar = $doctor_profile['avatar_url'] ?? '';
 $nonce = wp_create_nonce('dior_doctor_nonce');
 $ajax_url = admin_url('admin-ajax.php');
 
-// Fetch patient list for edit modal dropdown
+// Patient options remain available for scheduling, but appointment records are scoped
+// to this dashboard's single configured doctor.
 $edit_patients = $wpdb->get_results(
-    "SELECT user_id, first_name, last_name, patient_uid 
-     FROM {$wpdb->prefix}dior_patients 
-     WHERE status <> 'deleted' 
-     ORDER BY first_name ASC 
-     LIMIT 500", 
+    "SELECT user_id, first_name, last_name, patient_uid
+     FROM {$wpdb->prefix}dior_patients
+     WHERE status <> 'deleted'
+     ORDER BY first_name ASC
+     LIMIT 500",
     ARRAY_A
 );
 
-// Fetch doctors list for filter and edit modal
-$all_doc_users = get_users(['role__in' => ['doctor', 'dior_doctor', 'administrator'], 'orderby' => 'display_name', 'order' => 'ASC']);
+// Keep a single doctor profile mapped to legacy appointment ID aliases so old records
+// display correctly without exposing a multi-doctor selector.
 $doctor_list = [];
-foreach ($all_doc_users as $du) {
-    if (in_array('administrator', (array)$du->roles, true) && !in_array('doctor', (array)$du->roles, true)) {
-        continue;
-    }
-    $d_name = trim($du->first_name . ' ' . $du->last_name) ?: $du->display_name;
-    if (stripos($d_name, 'Dr.') !== 0 && stripos($d_name, 'Dr ') !== 0) {
-        $d_name = 'Dr. ' . $d_name;
-    }
-    $d_spec = get_user_meta($du->ID, 'doctor_specialty', true) ?: (get_user_meta($du->ID, 'dior_specialty', true) ?: 'General Practice & Internal Medicine');
-    $d_dept = get_user_meta($du->ID, 'doctor_department', true) ?: 'Outpatient Care';
-    $d_avatar = get_user_meta($du->ID, 'dior_profile_image', true) 
-        ?: get_user_meta($du->ID, 'doctor_avatar', true)
-        ?: ('https://ui-avatars.com/api/?name=' . urlencode($d_name) . '&background=00346c&color=ffffff&bold=true');
-    
-    $doctor_list[$du->ID] = [
-        'id'         => $du->ID,
-        'name'       => $d_name,
-        'email'      => $du->user_email,
-        'specialty'  => $d_spec,
-        'department' => $d_dept,
-        'avatar'     => $d_avatar,
+foreach ($doctor_ids as $doctor_alias_id) {
+    $doctor_list[$doctor_alias_id] = [
+        'id' => $doctor_alias_id,
+        'name' => $doctor_name,
+        'email' => $doctor_email,
+        'specialty' => $doctor_specialty,
+        'department' => 'Outpatient Care',
+        'avatar' => $doctor_avatar,
     ];
 }
 
-// Fallback if doctor_list is empty
-if (empty($doctor_list)) {
-    $doctor_list[35] = [
-        'id'         => 35,
-        'name'       => 'Dr. Marcus Sterling',
-        'email'      => 'marcus.sterling@diormedical.com',
-        'specialty'  => 'Cardiology & Cardiovascular Surgery',
-        'department' => 'Cardiology Department',
-        'avatar'     => 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
-    ];
-}
-
-// Fetch appointments with full patient and doctor joins
-$_va_is_admin = current_user_can('administrator') || current_user_can('manage_options');
-
-if ($_va_is_admin) {
-    $appointments = $wpdb->get_results(
-        "SELECT a.*, 
+// Always scope appointment reads, including administrator previews of this single-doctor dashboard.
+$appointments = [];
+if ($doctor_ids) {
+    $doctor_placeholders = implode(',', array_fill(0, count($doctor_ids), '%d'));
+    $appointments_sql = "SELECT a.*,
                 p.first_name, p.last_name, p.phone, p.gender, p.avatar_url, p.patient_uid, p.user_id as patient_user_id,
                 u.display_name as user_display_name, u.user_email,
-                doc.display_name as doctor_name, doc.user_email as doctor_email
+                COALESCE(dp.post_title, doc.display_name, %s) as doctor_name,
+                COALESCE(doc.user_email, %s) as doctor_email
          FROM {$wpdb->prefix}dior_appointments a
          LEFT JOIN {$wpdb->prefix}dior_patients p ON (p.user_id = a.patient_id OR p.id = a.patient_id)
          LEFT JOIN {$wpdb->users} u ON u.ID = a.patient_id
+         LEFT JOIN {$wpdb->posts} dp ON dp.ID = a.doctor_id AND dp.post_type = 'wpddb_doctor'
          LEFT JOIN {$wpdb->users} doc ON doc.ID = a.doctor_id
-         WHERE a.is_deleted = 0
+         WHERE a.is_deleted = 0 AND a.doctor_id IN ({$doctor_placeholders})
          ORDER BY a.appt_date DESC, a.created_at DESC
-         LIMIT 250",
-        ARRAY_A
-    );
-} else {
-    $appointments = $wpdb->get_results($wpdb->prepare(
-        "SELECT a.*, 
-                p.first_name, p.last_name, p.phone, p.gender, p.avatar_url, p.patient_uid, p.user_id as patient_user_id,
-                u.display_name as user_display_name, u.user_email,
-                doc.display_name as doctor_name, doc.user_email as doctor_email
-         FROM {$wpdb->prefix}dior_appointments a
-         LEFT JOIN {$wpdb->prefix}dior_patients p ON (p.user_id = a.patient_id OR p.id = a.patient_id)
-         LEFT JOIN {$wpdb->users} u ON u.ID = a.patient_id
-         LEFT JOIN {$wpdb->users} doc ON doc.ID = a.doctor_id
-         WHERE a.is_deleted = 0 AND a.doctor_id = %d
-         ORDER BY a.appt_date DESC, a.created_at DESC
-         LIMIT 250",
-        $doctor_id
-    ), ARRAY_A);
+         LIMIT 250";
+    $query_params = array_merge([$doctor_name, $doctor_email], $doctor_ids);
+    $appointments = $wpdb->get_results($wpdb->prepare($appointments_sql, $query_params), ARRAY_A);
 }
-
-// Fallback: build from usermeta if table is empty
-if (empty($appointments)) {
-    $patients = get_users(['role__in' => ['patient', 'subscriber', 'customer'], 'number' => 50]);
+if (!is_array($appointments)) {
     $appointments = [];
-    foreach ($patients as $u) {
-        $raw = get_user_meta($u->ID, 'dior_appointments', true);
-        $list = is_array($raw) ? $raw : (is_string($raw) ? maybe_unserialize($raw) : []);
-        if (!is_array($list)) continue;
-        foreach ($list as $a) {
-            $appointments[] = array_merge($a, [
-                'first_name' => $u->first_name ?: $u->display_name,
-                'last_name' => $u->last_name,
-                'phone' => get_user_meta($u->ID, 'phone', true),
-                'gender' => get_user_meta($u->ID, 'gender', true),
-                'avatar_url' => get_user_meta($u->ID, 'dior_profile_image', true),
-                'patient_uid' => get_user_meta($u->ID, 'patient_id', true) ?: 'DM-' . (10000 + $u->ID),
-                'patient_user_id' => $u->ID,
-                'patient_id' => $u->ID,
-                'doctor_id' => 35,
-                'doctor_name' => 'Dr. Marcus Sterling',
-                'doctor_email' => 'marcus.sterling@diormedical.com'
-            ]);
-        }
-    }
 }
 
 // Compute KPI Stats dynamically
@@ -289,16 +239,6 @@ $status_badges = [
                 <!-- Search, Filters & Actions -->
                 <div class="input-group input-group-sm dior-bs-search-group" style="width: 220px;">
                     <input type="text" id="va-appt-search" class="form-control border-start-0 ps-0 shadow-none" placeholder="Search patient, doctor, UID...">
-                </div>
-
-                <!-- Doctor / Physician Filter -->
-                <div style="width: 175px;">
-                    <select id="va-doctor-filter" class="form-select form-select-sm shadow-none">
-                        <option value="">All Doctors</option>
-                        <?php foreach ($doctor_list as $doc_item): ?>
-                            <option value="<?php echo esc_attr($doc_item['name']); ?>"><?php echo esc_html($doc_item['name']); ?></option>
-                        <?php endforeach; ?>
-                    </select>
                 </div>
 
                 <!-- Status Filter -->
@@ -730,14 +670,9 @@ $status_badges = [
                     </div>
 
                     <div class="col-md-6 col-12">
-                        <label for="va-edit-doctor" class="form-label small fw-semibold text-secondary mb-1">Attending Doctor <span class="text-danger">*</span></label>
-                        <select id="va-edit-doctor" class="form-select rounded-3">
-                            <?php foreach ($doctor_list as $d_id => $doc_item): ?>
-                                <option value="<?php echo (int) $d_id; ?>">
-                                    <?php echo esc_html($doc_item['name'] . ' · ' . $doc_item['specialty']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <label for="va-edit-doctor" class="form-label small fw-semibold text-secondary mb-1">Attending Physician</label>
+                        <div class="form-control rounded-3 bg-light"><?php echo esc_html($doctor_name . ' · ' . $doctor_specialty); ?></div>
+                        <input type="hidden" id="va-edit-doctor" value="<?php echo esc_attr($canonical_doctor_id); ?>">
                     </div>
 
                     <div class="col-md-6 col-12">
