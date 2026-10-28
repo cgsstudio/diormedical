@@ -216,7 +216,6 @@ if (!empty($first_appt_uid) && isset($appts_data_map[$first_appt_uid])) {
                 </span>
                 Edit Appointment
             </h4>
-            <div class="text-secondary small mb-1">Modify appointment schedule, clinical details, patient demographics, and consultation notes.</div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 small text-secondary">
                     <li class="breadcrumb-item"><i class="fas fa-house me-1"></i> Dashboard</li>
