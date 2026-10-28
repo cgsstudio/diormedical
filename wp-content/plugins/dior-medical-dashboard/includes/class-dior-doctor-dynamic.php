@@ -178,7 +178,7 @@ class Dior_Doctor_Dynamic {
         $patient_id=absint($_POST['patient_id']??$a['patient_id']);
         $allowed=['Pending','Confirmed','In Progress','Completed','Cancelled','No Show']; if(!in_array($status,$allowed,true)) wp_send_json_error(['message'=>'Invalid status.']);
         if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date) || !preg_match('/^\d{1,2}:\d{2}(\s?[AP]M)?$/i',$time)) wp_send_json_error(['message'=>'Invalid appointment date or time.']);
-        if(!$patient_id || !get_userdata($patient_id)) wp_send_json_error(['message'=>'Please select a valid patient.']);
+        if(!$patient_id || !get_userdata($patient_id) || !Dior_Auth_Service::is_patient($patient_id)) wp_send_json_error(['message'=>'Please select a valid patient.']);
         if(!current_user_can('manage_options') && !self::patient_belongs_to_doctor($patient_id,self::doctor_id())) wp_send_json_error(['message'=>'Selected patient is not assigned to your account.'],403);
         $conflict=$wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}dior_appointments WHERE patient_id=%d AND appt_date=%s AND appt_time=%s AND appt_uid<>%s AND status NOT IN('Cancelled','No Show') AND is_deleted=0 LIMIT 1",$patient_id,$date,$time,$uid));
         if($conflict) wp_send_json_error(['message'=>'This patient already has an active appointment at that time.']);
@@ -768,7 +768,7 @@ class Dior_Doctor_Dynamic {
         $appt_uid = sanitize_text_field($_POST['appointment_uid'] ?? '');
         $doctor_id = self::doctor_id();
         $doctor_ids = self::doctor_scope_ids();
-        if (!$pid || !$doctor_id || !self::patient_belongs_to_doctor($pid, $doctor_id)) {
+        if (!$pid || !get_userdata($pid) || !Dior_Auth_Service::is_patient($pid) || !$doctor_id || !self::patient_belongs_to_doctor($pid, $doctor_id)) {
             wp_send_json_error(['message' => 'Access denied.'], 403);
         }
 
@@ -848,7 +848,7 @@ class Dior_Doctor_Dynamic {
         global $wpdb;
 
         $patient_id = (int) ($_POST['patient_id'] ?? 0);
-        if (!$patient_id) {
+        if (!$patient_id || !get_userdata($patient_id) || !Dior_Auth_Service::is_patient($patient_id)) {
             wp_send_json_error(['message' => 'Please select a valid patient.']);
         }
 
