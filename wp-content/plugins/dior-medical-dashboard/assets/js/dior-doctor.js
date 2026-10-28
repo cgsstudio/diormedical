@@ -941,6 +941,7 @@ window.diorDocCloseMobile = function () {
     const backdrop = document.getElementById('dior-doc-backdrop');
     if (sidebar) sidebar.classList.remove('mobile-open');
     if (backdrop) backdrop.classList.remove('active');
+    document.body.style.overflow = '';
 };
 
 // Search patients with pagination reset
@@ -2177,7 +2178,7 @@ window.diorDocMarkAllRead = function (e) {
     }
 
     function pollDoctorLiveNotifications() {
-        if (isDoctorNotifPolling) return;
+        if (!document.getElementById('dior-doctor-app') || isDoctorNotifPolling) return;
         if (document.hidden) return;
 
         const ajaxUrl = getDiorDocAjax();
@@ -3002,7 +3003,7 @@ document.addEventListener('DOMContentLoaded', function () {
   window.diorDocOpenMobile = function(e) {
     if (e && e.preventDefault) e.preventDefault();
     var sidebar = document.querySelector('#dior-doc-sidebar, #dior-sidebar, .dior-sidebar, .dior-side-nav, .dior-sidebar-wrap');
-    var backdrop = document.getElementById('dior-drawer-backdrop');
+    var backdrop = document.getElementById('dior-doc-backdrop');
     if (window.innerWidth > 1024) {
       var wrap = document.querySelector('.dior-patient-portal-wrap') || document.querySelector('.dior-app') || document.querySelector('.dior-doctor-dashboard-wrap');
       if (wrap) wrap.classList.toggle('dior-sidebar-collapsed');

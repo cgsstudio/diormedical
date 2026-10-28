@@ -2,11 +2,11 @@
 
     <!-- Top Emergency Banner -->
     <div class="dior-top-emergency-banner">
-        This is not for medical emergencies. Call 911 or go to the nearest ER.
+        This is not for medical emergencies. Call <a href="tel:911">911</a> or go to the nearest ER.
     </div>
 
     <!-- Mobile Drawer Backdrop -->
-    <div class="dior-drawer-backdrop" id="dior-drawer-backdrop" onclick="diorCloseMobileDrawer()"></div>
+    <div class="dior-drawer-backdrop" id="dior-drawer-backdrop"></div>
 
     <div class="dior-app">
 
@@ -20,10 +20,10 @@
                         <img src="<?php echo esc_url($logo_url); ?>" alt="Dior Medical" class="brand-logo">
                     </a>
                 </div>
-                <!-- <button type="button" class="dior-side-close btn" id="dior-side-close" onclick="diorCloseMobileDrawer()"
-                    aria-label="Close sidebar">
-                    <i class="fas fa-xmark"></i>
-                </button> -->
+                <button type="button" class="dior-side-close btn" id="dior-side-close"
+                    aria-label="Close navigation menu">
+                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                </button>
             </div>
 
             <!-- Navigation Links -->
@@ -126,7 +126,7 @@
             <header class="dior-topbar">
                 <div class="dior-topbar-left">
                     <button type="button" class="dior-mobile-menu-toggle btn" id="dior-mobile-menu-toggle"
-                        onclick="diorOpenMobileDrawer()" aria-label="Open navigation menu">
+                        aria-label="Open navigation menu" aria-controls="dior-sidebar" aria-expanded="false">
                         <i class="fas fa-bars"></i>
                     </button>
 

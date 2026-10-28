@@ -67,7 +67,7 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
         <div class="col-12 col-xxl-6">
           <div class="card patient-card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column justify-content-between">
             <div>
-              <div class="d-flex align-items-center gap-3">
+              <div class="d-flex flex-wrap flex-sm-nowrap align-items-center gap-3">
                 <div class="patient-photo rounded-4 overflow-hidden flex-shrink-0" id="dior-patient-photo-box" style="width: 88px; height: 88px;">
                   <?php if (!empty($profile['avatar_url'])): ?>
                     <img id="dior-overview-patient-img" class="w-100 h-100 object-fit-cover"
@@ -142,7 +142,7 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                   $w_display = !empty($p_weight_num) ? $p_weight_num . ' kg' : (!empty($p_weight) ? $p_weight : '—');
                   ?>
                   <div class="d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-4">
+                    <div class="d-flex align-items-center flex-wrap gap-3 gap-sm-4">
                       <div>
                         <strong id="dior-patient-metric-height" class="d-block text-dark fs-5 fw-bold lh-1 mb-1 text-nowrap"><?php echo esc_html($h_display); ?></strong>
                         <span class="text-secondary small">Height</span>
