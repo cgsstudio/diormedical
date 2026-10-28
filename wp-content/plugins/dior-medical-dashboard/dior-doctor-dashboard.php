@@ -2313,6 +2313,17 @@ class Dior_Doctor_Dashboard
         $table_tele = $wpdb->prefix . 'dior_telemedicine';
         $rec = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_tele WHERE tele_uid = %s LIMIT 1", $tele_uid));
         if ($rec) {
+            $doctor_context = self::get_single_doctor_context();
+            $related_appt = !empty($rec->appointment_uid)
+                ? Dior_Appointment_Service::get_appointment($rec->appointment_uid)
+                : null;
+            $record_belongs_to_doctor = $related_appt
+                ? self::appointment_belongs_to_single_doctor($related_appt, $doctor_context)
+                : in_array((int) ($rec->doctor_id ?? 0), array_map('intval', (array) ($doctor_context['ids'] ?? [])), true);
+            if (!$record_belongs_to_doctor) {
+                wp_send_json_error(["message" => "This visit is not part of this doctor's records."], 403);
+            }
+
             $wpdb->delete($table_tele, ['tele_uid' => $tele_uid], ['%s']);
             if (!empty($rec->appointment_uid)) {
                 $wpdb->update(
@@ -2338,26 +2349,33 @@ class Dior_Doctor_Dashboard
         if (!$user)
             wp_send_json_error(["message" => "Patient not found"]);
 
-        // Prevent a doctor from opening unrelated patient records.
-        $current_doctor_id = get_current_user_id();
-        if (!self::is_user_admin($current_doctor_id)) {
-            $doctor_appointments = Dior_Appointment_Service::get_doctor_appointments($current_doctor_id);
-            $has_relation = false;
-            foreach ($doctor_appointments as $doctor_appt) {
-                if ((int) ($doctor_appt['patient_id'] ?? 0) === (int) $pid) {
-                    $has_relation = true;
-                    break;
-                }
+        // Use the single configured doctor's identity for doctors and admin previews alike.
+        $doctor_context = self::get_single_doctor_context();
+        $current_doctor_id = (int) ($doctor_context['user_id'] ?? 0);
+        $allowed_doctor_ids = array_map('intval', (array) ($doctor_context['ids'] ?? []));
+        if (!$current_doctor_id || !$allowed_doctor_ids) {
+            wp_send_json_error(["message" => "The single-doctor dashboard is not configured."], 403);
+        }
+
+        $doctor_appointments = Dior_Appointment_Service::get_doctor_appointments($current_doctor_id);
+        $has_relation = false;
+        foreach ($doctor_appointments as $doctor_appt) {
+            if ((int) ($doctor_appt['patient_id'] ?? ($doctor_appt['patient_user_id'] ?? 0)) === (int) $pid) {
+                $has_relation = true;
+                break;
             }
-            if (!$has_relation) {
-                wp_send_json_error(["message" => "You do not have access to this patient record."], 403);
-            }
+        }
+        if (!$has_relation) {
+            wp_send_json_error(["message" => "You do not have access to this patient record."], 403);
         }
 
         $doctor = self::get_doctor_profile($current_doctor_id);
         $profile = Dior_Patient_Portal_Data::get_patient_profile($pid);
         $intake = get_user_meta($pid, "dior_hipaa_intake", true);
         $apts = Dior_Appointment_Service::get_patient_appointments($pid);
+        $apts = array_values(array_filter((array) $apts, static function ($appointment) use ($allowed_doctor_ids) {
+            return in_array((int) ($appointment['doctor_id'] ?? 0), $allowed_doctor_ids, true);
+        }));
         $rxs = get_user_meta($pid, "dior_prescriptions", true) ?: [];
         $notes = Dior_Encounter_Service::get_patient_encounters($pid);
         $docs = Dior_Medical_Secure_Files::get_patient_documents($pid);
