@@ -441,7 +441,7 @@ class Dior_Doctor_Dashboard
         // Admins can see the full patient population, capped for dashboard performance.
         $patient_ids = [];
         if (!$is_admin && $doctor_user_id) {
-            $appointments = Dior_Appointment_Service::get_doctor_appointments($doctor_user_id);
+            $appointments = Dior_Appointment_Service::get_doctor_appointments($doctor_user_id, null, null, true);
             foreach ($appointments as $appointment) {
                 $pid = (int) ($appointment['patient_id'] ?? ($appointment['patient_user_id'] ?? 0));
                 if ($pid > 0) {
