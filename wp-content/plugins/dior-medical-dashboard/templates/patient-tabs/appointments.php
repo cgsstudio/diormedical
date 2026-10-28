@@ -137,8 +137,8 @@
     $today_ymd = current_time('Y-m-d');
     foreach ($appointments as $idx => $apt) {
         $a_date = !empty($apt['date']) ? $apt['date'] : (!empty($apt['appt_date']) ? $apt['appt_date'] : '');
-        $a_status = !empty($apt['status']) ? $apt['status'] : 'Scheduled';
-        $a_type = !empty($apt['type']) ? $apt['type'] : (!empty($apt['visit_type']) ? $apt['visit_type'] : 'Video Visit');
+        $a_status = !empty($apt['status']) ? $apt['status'] : 'Status unavailable';
+        $a_type = !empty($apt['type']) ? $apt['type'] : (!empty($apt['visit_type']) ? $apt['visit_type'] : '');
         $status_lc = strtolower($a_status);
         $type_lc = strtolower($a_type);
         if (strpos($type_lc, 'video') !== false || strpos($type_lc, 'telehealth') !== false) {
