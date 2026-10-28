@@ -1,4 +1,55 @@
 <section class="dior-tab-panel py-3 py-md-4 px-2 px-md-3 pb-5" id="tab-appointments">
+    <style>
+    /* Shared compact styling for Today, Upcoming and Past appointment tables. */
+    #tab-appointments .dior-appointment-list-table {
+        width: 100%;
+        margin-bottom: 0;
+        border-color: #e5ebf3;
+        font-size: 13px;
+    }
+    #tab-appointments .dior-appointment-list-table th {
+        padding: 12px 14px;
+        color: #64748b;
+        background: #f7f9fc;
+        border-bottom: 1px solid #dfe7f1;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .045em;
+        line-height: 1.35;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+    #tab-appointments .dior-appointment-list-table td {
+        padding: 12px 14px;
+        color: #334155;
+        border-color: #edf1f6;
+        line-height: 1.4;
+        vertical-align: middle;
+    }
+    #tab-appointments .dior-appointment-list-table .dior-appointment-doctor-name {
+        display: inline-block;
+        color: #172b49;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.4;
+        white-space: nowrap;
+    }
+    #tab-appointments .dior-appointment-list-table td:nth-child(3),
+    #tab-appointments .dior-appointment-list-table td:nth-child(4) {
+        white-space: nowrap;
+    }
+    #tab-appointments .dior-appointment-list-table tbody tr:hover {
+        background-color: #f8fbff;
+    }
+    @media (max-width: 767.98px) {
+        #tab-appointments .dior-appointment-list-table th,
+        #tab-appointments .dior-appointment-list-table td {
+            padding: 10px 12px;
+        }
+    }
+</style>
+
+
     <!-- Breadcrumb Header -->
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 px-3 px-md-4 pt-2">
         <div>
@@ -528,7 +579,7 @@
 
                 <!-- Responsive Table Wrapper -->
                 <div class="table-responsive mb-0">
-                    <table class="table table-hover align-middle mb-0" id="dior-today-appointments-table">
+                    <table class="table table-hover align-middle mb-0 dior-appointment-list-table" id="dior-today-appointments-table">
                         <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
                             <tr>
                                 <th class="ps-3 py-3" style="width: 40px;"><input type="checkbox" class="form-check-input" onclick="diorBulkDeleteStaticRows(this)"></th>
@@ -592,11 +643,7 @@
                             <tr>
                                 <td class="ps-3 py-3"><input type="checkbox" class="form-check-input"></td>
                                 <td class="py-3">
-                                    <div class="d-flex align-items-center gap-2.5">
-                                        <img src="<?php echo esc_url(!empty($tm[7]) ? $tm[7] : home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>"
-                                            alt="<?php echo esc_attr($tm[0]); ?>" class="rounded-circle border shadow-sm flex-shrink-0" style="width: 38px; height: 38px; object-fit: cover;" onerror="this.src='<?php echo esc_url(home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>'">
-                                        <span class="fw-bold text-dark"><?php echo esc_html($tm[0]); ?></span>
-                                    </div>
+<span class="dior-appointment-doctor-name"><?php echo esc_html($tm[0]); ?></span>
                                 </td>
                                 <td class="py-3"><span class="text-secondary small fw-medium"><?php echo esc_html($tm[1]); ?></span></td>
                                 <td class="py-3">
@@ -612,7 +659,7 @@
                                     </div>
                                 </td>
                                 <td class="py-3"><span class="badge bg-light text-dark border rounded-pill px-2.5 py-1 small fw-medium"><?php echo esc_html($tm[4]); ?></span></td>
-                                <td class="py-3"><span class="text-secondary small"><i class="fas fa-phone-alt text-muted me-1"></i><?php echo esc_html($tm[5]); ?></span></td>
+                                <td class="py-3"><span class="text-secondary small"><?php echo esc_html($tm[5]); ?></span></td>
                                 <td class="py-3">
                                     <?php
                                     $st_cls = 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold';
@@ -696,7 +743,7 @@
 
                 <!-- Responsive Table Wrapper -->
                 <div class="table-responsive mb-0">
-                    <table class="table table-hover align-middle mb-0" id="dior-upcoming-appointments-table">
+                    <table class="table table-hover align-middle mb-0 dior-appointment-list-table" id="dior-upcoming-appointments-table">
                         <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
                             <tr>
                                 <th class="ps-3 py-3" style="width: 40px;">
@@ -803,11 +850,7 @@
                                         onclick="diorUpdateUpcomingSelectedCount()">
                                 </td>
                                 <td>
-                                    <div class="d-flex align-items-center gap-2.5">
-                                        <img src="<?php echo esc_url(!empty($um[6]) ? $um[6] : home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>"
-                                            alt="<?php echo esc_attr($um[0]); ?>" class="rounded-circle border shadow-sm flex-shrink-0" style="width: 38px; height: 38px; object-fit: cover;" onerror="this.src='<?php echo esc_url(home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>'">
-                                        <span class="fw-bold text-dark"><?php echo esc_html($um[0]); ?></span>
-                                    </div>
+<span class="dior-appointment-doctor-name"><?php echo esc_html($um[0]); ?></span>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center gap-1.5 text-secondary">
@@ -912,7 +955,7 @@
 
                 <!-- Responsive Table Wrapper -->
                 <div class="table-responsive mb-0">
-                    <table class="table table-hover align-middle mb-0" id="dior-past-appointments-table">
+                    <table class="table table-hover align-middle mb-0 dior-appointment-list-table" id="dior-past-appointments-table">
                         <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
                             <tr>
                                 <th class="ps-3 py-3" style="width: 40px;"><input type="checkbox" class="form-check-input" onclick="diorBulkDeleteStaticRows(this)"></th>
@@ -1030,11 +1073,7 @@
                             <tr>
                                 <td class="ps-3"><input type="checkbox" class="form-check-input"></td>
                                 <td>
-                                    <div class="d-flex align-items-center gap-2.5">
-                                        <img src="<?php echo esc_url(!empty($pm[8]) ? $pm[8] : home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>"
-                                            alt="<?php echo esc_attr($pm[0]); ?>" class="rounded-circle border shadow-sm flex-shrink-0" style="width: 38px; height: 38px; object-fit: cover;" onerror="this.src='<?php echo esc_url(home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')); ?>'">
-                                        <span class="fw-bold text-dark"><?php echo esc_html($pm[0]); ?></span>
-                                    </div>
+<span class="dior-appointment-doctor-name"><?php echo esc_html($pm[0]); ?></span>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center gap-1.5 text-secondary">
@@ -1049,7 +1088,7 @@
                                     </div>
                                 </td>
                                 <td><span class="text-secondary small"><?php echo esc_html($pm[3]); ?></span></td>
-                                <td><span class="text-secondary small"><i class="fas fa-phone-alt text-muted me-1"></i><?php echo esc_html($pm[4]); ?></span></td>
+                                <td><span class="text-secondary small"><?php echo esc_html($pm[4]); ?></span></td>
                                 <td><span class="badge bg-light text-dark border rounded-pill px-2.5 py-1 small fw-medium"><?php echo esc_html($pm[5]); ?></span></td>
                                 <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold"><?php echo esc_html($pm[6]); ?></span></td>
                                 <td>
