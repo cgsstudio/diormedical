@@ -1,20 +1,18 @@
 # Dior Medical Email Templates
 
-This directory holds reusable HTML email templates for the Dior Medical WordPress plugin.
+This directory contains editable email presentation templates.
 
 ## Files
-- `email-header.php` — shared branded header and email container opening.
-- `email-footer.php` — shared footer and container closing.
-- `patient-activation.php` — patient account activation/welcome email.
+- `layout.php` — shared responsive branded layout used by the individual email templates.
+- `patient-activation.php` — account activation/welcome email content.
+- `email-header.php` and `email-footer.php` — legacy header/footer partials retained for compatibility with any existing mailer references.
+
+The plugin's event-specific templates live in `wp-content/plugins/dior-medical-dashboard/templates/emails/` and use the same shared design. Keep the design consistent by updating the shared `layout.php` in both locations when changing global email styling.
 
 ## Template variables
-Templates expect WordPress to be loaded and use these optional variables:
 - `$patient_name` — recipient display name.
 - `$dashboard_url` — patient dashboard URL.
 - `$site_url` — website URL.
 - `$site_name` — site/practice name.
 
-All dynamic text is escaped with WordPress escaping functions. URLs are escaped with `esc_url()`.
-
-## Important integration note
-These files define the presentation layer only. The existing mail-sending function must load the relevant template and pass the variables before sending the email. Do not replace existing mail hooks or sending logic without checking the plugin's current mailer first. Keep email styles inline for compatibility with common email clients.
+WordPress escaping functions are used for dynamic text and URLs. Email markup uses tables and inline styles for email-client compatibility.
