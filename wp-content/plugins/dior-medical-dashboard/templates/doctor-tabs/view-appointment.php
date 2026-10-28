@@ -822,11 +822,9 @@ $status_badges = [
             if (!btn) return;
             btn.addEventListener('click', function () {
                 var search = document.getElementById('va-appt-search');
-                var doctorFilter = document.getElementById('va-doctor-filter');
                 var status = document.getElementById('va-status-filter');
                 var dateFilter = document.getElementById('va-date-filter');
                 if (search) search.value = '';
-                if (doctorFilter) doctorFilter.value = '';
                 if (status) status.value = '';
                 if (dateFilter) dateFilter.value = '';
                 
@@ -843,18 +841,15 @@ $status_badges = [
 
         function getVisibleRows() {
             var search = (document.getElementById('va-appt-search').value || '').toLowerCase().trim();
-            var docFilter = (document.getElementById('va-doctor-filter') ? document.getElementById('va-doctor-filter').value : '').toLowerCase().trim();
             var status = (document.getElementById('va-status-filter').value || '').toLowerCase().trim();
             var dateFilter = (document.getElementById('va-date-filter').value || '').toLowerCase().trim();
 
             return allRows.filter(function (r) {
                 var text = r.textContent.toLowerCase();
                 var rowStatus = (r.dataset.status || '').toLowerCase().trim();
-                var rowDoc = (r.dataset.doctorName || '').toLowerCase().trim();
                 var rowDate = r.dataset.date || '';
 
                 var matchSearch = !search || text.indexOf(search) !== -1;
-                var matchDoctor = !docFilter || rowDoc.indexOf(docFilter) !== -1;
                 var matchStatus = !status || rowStatus === status;
                 var matchDate = true;
 
@@ -866,7 +861,7 @@ $status_badges = [
                     matchDate = (rowDate < todayStr);
                 }
 
-                return matchSearch && matchDoctor && matchStatus && matchDate;
+                return matchSearch && matchStatus && matchDate;
             });
         }
 
@@ -944,10 +939,8 @@ $status_badges = [
         }
 
         function setupFilters() {
-            var df = document.getElementById('va-doctor-filter');
             var sf = document.getElementById('va-status-filter');
             var dateF = document.getElementById('va-date-filter');
-            if (df) df.addEventListener('change', applyFilters);
             if (sf) sf.addEventListener('change', applyFilters);
             if (dateF) dateF.addEventListener('change', applyFilters);
         }
