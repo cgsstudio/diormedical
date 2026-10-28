@@ -82,12 +82,12 @@
                             $patient_rx_rows = is_array($prescriptions ?? []) ? $prescriptions : [];
                             foreach ($patient_rx_rows as $rx):
                                 $rx_id = $rx['id'] ?? ($rx['order_id'] ?? '—');
-                                $rx_name = $rx['name'] ?? ($rx['medication'] ?? 'Prescription');
-                                $rx_doctor = $rx['prescribed_by'] ?? 'Attending Physician';
+                                $rx_name = $rx['name'] ?? ($rx['medication'] ?? '');
+                                $rx_doctor = $rx['prescribed_by'] ?? 'Provider not recorded';
                                 $rx_date = $rx['date_prescribed'] ?? ($rx['date'] ?? '—');
                                 $rx_title = !empty($rx['title']) ? $rx['title'] : '';
-                                $rx_disease = !empty($rx['condition']) ? $rx['condition'] : (!empty($rx['diagnosis']) ? $rx['diagnosis'] : (!empty($rx['title']) ? $rx['title'] : 'General Care'));
-                                $rx_status = $rx['status'] ?? 'Active';
+                                $rx_disease = !empty($rx['condition']) ? $rx['condition'] : (!empty($rx['diagnosis']) ? $rx['diagnosis'] : (!empty($rx['title']) ? $rx['title'] : 'Condition not recorded'));
+                                $rx_status = $rx['status'] ?? 'Status unavailable';
                                 $rx_status_lc = strtolower($rx_status);
                                 if ($rx_status_lc === 'active') {
                                     $rx_st_cls = 'status-confirm';
