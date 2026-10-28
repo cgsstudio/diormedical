@@ -7,30 +7,21 @@ if (!defined('ABSPATH')) { exit; }
 
 global $wpdb;
 
-// Determine current user and whether they are an admin
-$_cal_user_id  = get_current_user_id();
-$_cal_is_admin = current_user_can('administrator') || current_user_can('manage_options');
+// Resolve the one doctor configured for this dashboard. Legacy linked IDs are
+// included only so appointments created before account consolidation remain visible.
+$_cal_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : ['user_id' => get_current_user_id(), 'ids' => [get_current_user_id()]];
+$_cal_doctor_ids = array_values(array_unique(array_map('intval', (array) ($_cal_context['ids'] ?? []))));
+$_cal_doctor_ids = array_values(array_filter($_cal_doctor_ids, static function ($id) {
+    return $id >= 0;
+}));
 
-// Resolve doctor post ID if current user is a doctor
-$_cal_doctor_post_id = 0;
-if (!$_cal_is_admin) {
-    // Check if user has an associated wpddb_doctor post
-    $doc_post = get_posts([
-        'post_type'   => 'wpddb_doctor',
-        'meta_key'    => 'wpddb_doctor_user_id',
-        'meta_value'  => $_cal_user_id,
-        'numberposts' => 1,
-        'fields'      => 'ids'
-    ]);
-    if (!empty($doc_post)) {
-        $_cal_doctor_post_id = (int)$doc_post[0];
-    }
-}
-
-// Fetch appointments from DB
-if ($_cal_is_admin || !$_cal_doctor_post_id) {
-    $raw_appts = $wpdb->get_results(
-        "SELECT a.*, 
+// Never fall back to an unscoped appointment query in the Doctor Dashboard.
+$raw_appts = [];
+if (!empty($_cal_doctor_ids)) {
+    $doctor_placeholders = implode(',', array_fill(0, count($_cal_doctor_ids), '%d'));
+    $calendar_sql = "SELECT a.*,
             COALESCE(p.display_name, 'Patient') AS patient_name,
             COALESCE(p.user_email, '') AS patient_email,
             COALESCE(d.post_title, u.display_name, 'Dr. Attending Physician') AS doc_name
@@ -38,44 +29,13 @@ if ($_cal_is_admin || !$_cal_doctor_post_id) {
         LEFT JOIN {$wpdb->users} p ON p.ID = a.patient_id
         LEFT JOIN {$wpdb->posts} d ON d.ID = a.doctor_id AND d.post_type = 'wpddb_doctor'
         LEFT JOIN {$wpdb->users} u ON u.ID = a.doctor_id
-        WHERE a.is_deleted = 0
-        ORDER BY a.appt_date ASC, a.appt_time ASC",
-        ARRAY_A
-    );
-} else {
-    $raw_appts = $wpdb->get_results($wpdb->prepare(
-        "SELECT a.*, 
-            COALESCE(p.display_name, 'Patient') AS patient_name,
-            COALESCE(p.user_email, '') AS patient_email,
-            COALESCE(d.post_title, u.display_name, 'Dr. Attending Physician') AS doc_name
-        FROM {$wpdb->prefix}dior_appointments a
-        LEFT JOIN {$wpdb->users} p ON p.ID = a.patient_id
-        LEFT JOIN {$wpdb->posts} d ON d.ID = a.doctor_id AND d.post_type = 'wpddb_doctor'
-        LEFT JOIN {$wpdb->users} u ON u.ID = a.doctor_id
-        WHERE a.is_deleted = 0 AND (a.doctor_id = %d OR a.doctor_id = %d)
-        ORDER BY a.appt_date ASC, a.appt_time ASC",
-        $_cal_doctor_post_id,
-        $_cal_user_id
-    ), ARRAY_A);
+        WHERE a.is_deleted = 0 AND a.doctor_id IN ({$doctor_placeholders})
+        ORDER BY a.appt_date ASC, a.appt_time ASC";
+    $raw_appts = $wpdb->get_results($wpdb->prepare($calendar_sql, $_cal_doctor_ids), ARRAY_A);
 }
 
-if (empty($raw_appts)) {
+if (!is_array($raw_appts)) {
     $raw_appts = [];
-}
-
-// Fetch active doctors for filter from wpddb_doctor posts
-$all_doc_posts = get_posts([
-    'post_type'   => 'wpddb_doctor',
-    'numberposts' => 50,
-    'post_status' => 'publish',
-    'orderby'     => 'title',
-    'order'       => 'ASC'
-]);
-
-// If no wpddb_doctor posts, fallback to users with doctor role
-$all_doc_users = [];
-if (empty($all_doc_posts)) {
-    $all_doc_users = get_users(['role' => 'doctor', 'number' => 50, 'orderby' => 'display_name', 'order' => 'ASC']);
 }
 
 // Compute Dynamic KPIs
@@ -274,23 +234,6 @@ $calendar_json = json_encode($calendar_cards);
 
                 <!-- Filters & View Toggles -->
                 <div id="dior-doc-cal-toolbar-actions" class="d-flex flex-wrap align-items-center justify-content-end gap-2">
-                    <!-- Filter by Doctor -->
-                    <div class="d-none d-sm-block">
-                        <select class="form-select form-select-sm rounded-pill border-secondary-subtle"
-                            id="dior-doc-cal-doctor-filter" style="min-width: 160px;">
-                            <option value="all">All Healthcare Providers</option>
-                            <?php if (!empty($all_doc_posts)): ?>
-                                <?php foreach ($all_doc_posts as $dp): ?>
-                                    <option value="<?php echo esc_attr($dp->ID); ?>"><?php echo esc_html($dp->post_title); ?></option>
-                                <?php endforeach; ?>
-                            <?php elseif (!empty($all_doc_users)): ?>
-                                <?php foreach ($all_doc_users as $du): ?>
-                                    <option value="<?php echo esc_attr($du->ID); ?>"><?php echo esc_html($du->display_name); ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
-
                     <!-- Filter by Visit Type -->
                     <div class="d-none d-md-block">
                         <select class="form-select form-select-sm rounded-pill border-secondary-subtle"
@@ -447,7 +390,6 @@ window.dior_doc_calendar_data = <?php echo $calendar_json; ?>;
     var calDate = new Date();
     var selectedYmd = calDate.getFullYear() + '-' + String(calDate.getMonth() + 1).padStart(2, '0') + '-' + String(calDate.getDate()).padStart(2, '0');
     var viewMode = 'month';
-    var doctorFilter = 'all';
     var typeFilter = 'all';
     var statusFilter = 'all';
 
@@ -460,9 +402,6 @@ window.dior_doc_calendar_data = <?php echo $calendar_json; ?>;
     function getFilteredEvents() {
         var data = window.dior_doc_calendar_data || [];
         return data.filter(function(item) {
-            if (doctorFilter !== 'all' && String(item.doctor_id) !== String(doctorFilter)) {
-                return false;
-            }
             if (typeFilter !== 'all') {
                 var t = (item.visit_type || '').toLowerCase();
                 if (typeFilter === 'video' && t.indexOf('video') === -1 && t.indexOf('telehealth') === -1) return false;
@@ -758,16 +697,6 @@ window.dior_doc_calendar_data = <?php echo $calendar_json; ?>;
                 var today = new Date();
                 selectedYmd = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
                 renderMonthGrid();
-            });
-        }
-
-        var docSelect = document.getElementById('dior-doc-cal-doctor-filter');
-        if (docSelect && !docSelect.__diorBound) {
-            docSelect.__diorBound = true;
-            docSelect.addEventListener('change', function() {
-                doctorFilter = this.value;
-                if (viewMode === 'month') renderMonthGrid();
-                else renderAgendaList();
             });
         }
 
