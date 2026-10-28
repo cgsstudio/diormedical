@@ -509,8 +509,77 @@ class Dior_Appointment_Service
             $patient_id
         ), ARRAY_A);
 
-        if (!$results) {
-            return [];
+        if (!is_array($results)) {
+            $results = [];
+        }
+
+        // Older DocBooker integrations also persisted appointment history in user meta.
+        // Merge any legacy records missing from the canonical table so the Past tab does
+        // not appear empty for patients whose historical bookings predate the DB migration.
+        $seen_ids = [];
+        $seen_slots = [];
+        foreach ($results as $db_row) {
+            $db_id = trim((string) ($db_row['appt_uid'] ?? $db_row['id'] ?? ''));
+            if ($db_id !== '') {
+                $seen_ids[strtolower($db_id)] = true;
+            }
+            $db_date = (string) ($db_row['appt_date'] ?? '');
+            $db_time = strtolower(trim((string) ($db_row['appt_time'] ?? '')));
+            $db_doctor = strtolower(trim((string) ($db_row['doctor_name'] ?? $db_row['provider'] ?? $db_row['doctor_id'] ?? '')));
+            if ($db_date !== '' && $db_time !== '') {
+                $seen_slots[$db_date . '|' . $db_time . '|' . $db_doctor] = true;
+            }
+        }
+
+        $legacy_appointments = get_user_meta($patient_id, 'dior_appointments', true);
+        if (is_array($legacy_appointments)) {
+            foreach ($legacy_appointments as $legacy) {
+                if (!is_array($legacy)) {
+                    continue;
+                }
+                $legacy_id = trim((string) ($legacy['appt_uid'] ?? $legacy['id'] ?? ''));
+                $legacy_date = trim((string) ($legacy['raw_date'] ?? $legacy['appt_date'] ?? $legacy['date'] ?? ''));
+                $legacy_time = trim((string) ($legacy['appt_time'] ?? $legacy['time'] ?? ''));
+                $legacy_ts = $legacy_date !== '' ? strtotime($legacy_date) : false;
+                $legacy_ymd = $legacy_ts ? date('Y-m-d', $legacy_ts) : '';
+                $legacy_doctor = trim((string) ($legacy['doctor_name'] ?? $legacy['provider'] ?? ''));
+                $legacy_doctor_id = (string) ($legacy['doctor_id'] ?? '');
+                $slot_doctor = strtolower($legacy_doctor_id !== '' ? $legacy_doctor_id : $legacy_doctor);
+                $slot_key = $legacy_ymd . '|' . strtolower($legacy_time) . '|' . $slot_doctor;
+
+                if (($legacy_id !== '' && isset($seen_ids[strtolower($legacy_id)])) ||
+                    ($legacy_ymd !== '' && $legacy_time !== '' && isset($seen_slots[$slot_key]))) {
+                    continue;
+                }
+
+                $legacy['id'] = $legacy_id !== '' ? $legacy_id : ('LEGACY-' . md5($patient_id . '|' . $legacy_date . '|' . $legacy_time . '|' . $legacy_doctor));
+                $legacy['appt_uid'] = $legacy['id'];
+                $legacy['date'] = $legacy['date'] ?? ($legacy_ymd ?: $legacy_date);
+                $legacy['appt_date'] = $legacy_ymd ?: $legacy_date;
+                $legacy['time'] = $legacy_time;
+                $legacy['appt_time'] = $legacy_time;
+                $legacy['condition'] = $legacy['condition'] ?? ($legacy['condition_name'] ?? '—');
+                $legacy['type'] = $legacy['type'] ?? ($legacy['visit_type'] ?? 'Video Visit (HD)');
+                $legacy['provider'] = $legacy['provider'] ?? ($legacy_doctor !== '' ? $legacy_doctor : 'Attending Physician');
+                $legacy['doctor_name'] = $legacy['doctor_name'] ?? $legacy['provider'];
+                $legacy['provider_spec'] = $legacy['provider_spec'] ?? ($legacy['provider_title'] ?? 'Telehealth Physician');
+                $legacy['status'] = $legacy['status'] ?? 'Pending';
+                $legacy['email'] = $legacy['email'] ?? ($legacy['patient_email'] ?? '');
+                $legacy['phone'] = $legacy['phone'] ?? ($legacy['patient_phone'] ?? '');
+                $legacy['avatar'] = $legacy['avatar'] ?? '';
+                $legacy['doctor_user_id'] = (int) ($legacy['doctor_user_id'] ?? 0);
+                $legacy['can_reschedule'] = false;
+                $legacy['can_cancel'] = false;
+                $legacy['can_join'] = false;
+
+                $results[] = $legacy;
+                if ($legacy_id !== '') {
+                    $seen_ids[strtolower($legacy_id)] = true;
+                }
+                if ($legacy_ymd !== '' && $legacy_time !== '') {
+                    $seen_slots[$slot_key] = true;
+                }
+            }
         }
 
         foreach ($results as &$r) {
