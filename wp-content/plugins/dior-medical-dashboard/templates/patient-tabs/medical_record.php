@@ -36,7 +36,7 @@
                                                 <span class="text-xs text-muted font-weight-600 text-uppercase text-truncate dior-ic-d48d9220c2">Milestones</span>
                                                 <span class="badge bg-primary-subtle text-primary rounded-pill text-2xs dior-ic-b9bd20e3e0">Active</span>
                                             </div>
-                                            <h5 class="mb-0 font-weight-bold text-dark text-truncate dior-ic-c4e98ce9b3"><?php echo esc_html(count($appointments) + count($documents) + count($questionnaires)); ?> Care Events</h5>
+                                            <h5 class="mb-0 font-weight-bold text-dark text-truncate dior-ic-c4e98ce9b3"><?php echo esc_html(count($appointments) + count($encounters ?? []) + count($documents) + count($questionnaires)); ?> Care Events</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -52,7 +52,7 @@
                                                 <span class="text-xs text-muted font-weight-600 text-uppercase text-truncate dior-ic-d48d9220c2">Care Phase</span>
                                                 <span class="badge bg-info-subtle text-info rounded-pill text-2xs dior-ic-c37f987d84">Live Care</span>
                                             </div>
-                                            <h5 class="mb-0 font-weight-bold text-dark text-truncate dior-ic-c4e98ce9b3"><?php echo esc_html($appointments[0]['condition'] ?? 'Active Care'); ?></h5>
+                                            <h5 class="mb-0 font-weight-bold text-dark text-truncate dior-ic-c4e98ce9b3"><?php echo esc_html($appointments[0]['condition'] ?? $appointments[0]['condition_name'] ?? 'No recent appointment'); ?></h5>
                                         </div>
                                     </div>
                                 </div>
@@ -66,9 +66,9 @@
                                         <div class="flex-grow-1 overflow-hidden dior-ic-aea598fd73">
                                             <div class="d-flex align-items-center justify-content-between mb-1 dior-ic-bce91fe330">
                                                 <span class="text-xs text-muted font-weight-600 text-uppercase text-truncate dior-ic-d48d9220c2">Lead Physician</span>
-                                                <span class="badge bg-purple-subtle text-purple rounded-pill text-2xs dior-ic-f6785667b0">Cardiology</span>
+                                                <span class="badge bg-purple-subtle text-purple rounded-pill text-2xs dior-ic-f6785667b0"><?php echo esc_html($appointments[0]['provider_spec'] ?? 'Specialty not recorded'); ?></span>
                                             </div>
-                                            <h5 class="mb-0 font-weight-bold text-dark text-truncate dior-ic-c4e98ce9b3"><?php echo esc_html($appointments[0]['provider'] ?? 'Attending Physician'); ?></h5>
+                                            <h5 class="mb-0 font-weight-bold text-dark text-truncate dior-ic-c4e98ce9b3"><?php echo esc_html($appointments[0]['provider'] ?? $appointments[0]['doctor_name'] ?? 'Provider not recorded'); ?></h5>
                                         </div>
                                     </div>
                                 </div>
@@ -95,7 +95,7 @@
                             <div class="card-body p-3 dior-ic-30853ea1b7">
                                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                                     <div class="d-flex flex-wrap gap-2 flex-grow-1">
-                                        <button type="button" class="btn btn-sm rounded-pill btn-primary dior-medical-record-filter is-active px-3 shadow-sm text-white" data-filter="ALL"><i class="fas fa-th-large me-1"></i> All Events (<?php echo esc_html(count($appointments) + count($documents) + count($questionnaires) + count($prescriptions)); ?>)</button>
+                                        <button type="button" class="btn btn-sm rounded-pill btn-primary dior-medical-record-filter is-active px-3 shadow-sm text-white" data-filter="ALL"><i class="fas fa-th-large me-1"></i> All Events (<?php echo esc_html(count($appointments) + count($encounters ?? []) + count($documents) + count($questionnaires) + count($prescriptions)); ?>)</button>
                                         <button type="button" class="btn btn-sm rounded-pill btn-outline-primary dior-medical-record-filter px-3" data-filter="CONSULTATION"><i class="fas fa-stethoscope me-1"></i> Consultations</button>
                                         <button type="button" class="btn btn-sm rounded-pill btn-outline-primary dior-medical-record-filter px-3" data-filter="PRESCRIPTION"><i class="fas fa-pills me-1"></i> Prescriptions</button>
                                         <button type="button" class="btn btn-sm rounded-pill btn-outline-primary dior-medical-record-filter px-3" data-filter="DIAGNOSTIC"><i class="fas fa-file-medical-alt me-1"></i> Diagnostics &amp; Scans</button>
@@ -144,7 +144,7 @@
                                             'date' => $encounter['created_at'] ?? '',
                                             'type' => 'CONSULTATION',
                                             'title' => $encounter['encounter_type'] ?? 'Clinical Consultation',
-                                            'doctor' => $encounter['attestation_author'] ?? 'Attending Physician',
+                                            'doctor' => $encounter['attestation_author'] ?? 'Provider not recorded',
                                             'description' => $encounter['assessment'] ?? ($encounter['subjective'] ?? 'Clinical encounter recorded in the medical record.'),
                                             'icon' => 'fa-stethoscope',
                                         ];
@@ -164,7 +164,7 @@
                                             'date' => $appointment['appt_date'] ?? ($appointment['date'] ?? ''),
                                             'type' => 'APPOINTMENT',
                                             'title' => $appointment['condition'] ?? ($appointment['condition_name'] ?? 'Telehealth Consultation'),
-                                            'doctor' => $appointment['provider'] ?? ($appointment['doctor_name'] ?? 'Attending Physician'),
+                                            'doctor' => $appointment['provider'] ?? ($appointment['doctor_name'] ?? 'Provider not recorded'),
                                             'description' => 'Appointment status: ' . ($appointment['status'] ?? 'Confirmed') . '.',
                                             'icon' => 'fa-calendar-check',
                                         ];
@@ -174,7 +174,7 @@
                                             'date' => $prescription['date_prescribed'] ?? ($prescription['date'] ?? ''),
                                             'type' => 'PRESCRIPTION',
                                             'title' => $prescription['name'] ?? ($prescription['medication'] ?? 'Prescription'),
-                                            'doctor' => $prescription['prescribed_by'] ?? 'Attending Physician',
+                                            'doctor' => $prescription['prescribed_by'] ?? 'Provider not recorded',
                                             'description' => $prescription['condition'] ?? ($prescription['diagnosis'] ?? 'Prescription recorded in the medical record.'),
                                             'icon' => 'fa-pills',
                                         ];
