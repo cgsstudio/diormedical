@@ -2512,10 +2512,84 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             var i = document.getElementById('doc-preview-id');
             if (t) t.textContent = title || 'Medical Record';
             if (c) c.textContent = category || 'Official Document';
-            if (a) a.textContent = author || 'Dior Medical Urgent Care';
+            if (a) a.textContent = author || 'Author not recorded';
             if (d) d.textContent = date || '';
-            if (i) i.textContent = id || 'DOC-88219';
+            if (i) i.textContent = id || '—';
             window.diorOpenModal('modal-view-document');
+        };
+
+        window.diorCancelPatientAppointment = function (apptId, button) {
+            apptId = String(apptId || '').trim();
+            if (!apptId) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'error', title: 'Unable to cancel', text: 'This appointment has no valid database ID.' });
+                } else {
+                    window.alert('This appointment has no valid database ID.');
+                }
+                return;
+            }
+
+            var sendCancellation = function () {
+                if (button) button.disabled = true;
+                var formData = new FormData();
+                formData.append('action', 'dior_patient_cancel_appointment');
+                formData.append('nonce', typeof getNonce === 'function' ? getNonce() : '');
+                formData.append('appt_id', apptId);
+                formData.append('reason', 'Cancelled by patient');
+
+                fetch(typeof getAjaxUrl === 'function' ? getAjaxUrl() : '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    body: formData
+                })
+                .then(function (response) { return response.json(); })
+                .then(function (response) {
+                    if (!response || !response.success) {
+                        if (button) button.disabled = false;
+                        var message = response && response.data && response.data.message
+                            ? response.data.message
+                            : 'The appointment could not be cancelled. Please refresh and try again.';
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({ icon: 'error', title: 'Cancellation failed', text: message });
+                        } else {
+                            window.alert(message);
+                        }
+                        return;
+                    }
+
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ icon: 'success', title: 'Appointment cancelled', text: 'Your appointment status has been updated.', timer: 1400, showConfirmButton: false })
+                            .then(function () { window.location.reload(); });
+                    } else {
+                        window.alert('Appointment cancelled successfully.');
+                        window.location.reload();
+                    }
+                })
+                .catch(function () {
+                    if (button) button.disabled = false;
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ icon: 'error', title: 'Request failed', text: 'The server could not confirm cancellation. Please check your connection and try again.' });
+                    } else {
+                        window.alert('The server could not confirm cancellation. Please try again.');
+                    }
+                });
+            };
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cancel appointment?',
+                    text: 'This will update the appointment record in the database.',
+                    showCancelButton: true,
+                    confirmButtonText: 'Cancel appointment',
+                    cancelButtonText: 'Keep appointment',
+                    confirmButtonColor: '#dc3545'
+                }).then(function (result) {
+                    if (result.isConfirmed) sendCancellation();
+                });
+            } else if (window.confirm('Cancel this appointment?')) {
+                sendCancellation();
+            }
         };
 
         window.diorViewAppointmentDetails = function (apptId) {
@@ -2541,20 +2615,20 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
 
             if (found) {
                 if (idEl) idEl.textContent = 'APPT #' + (found.id || found.appt_uid || apptId);
-                if (provEl) provEl.textContent = found.provider || found.doctor_name || 'Attending Physician';
-                if (specEl) specEl.textContent = found.provider_spec || found.provider_title || 'Telehealth Urgent Care';
+                if (provEl) provEl.textContent = found.provider || found.doctor_name || 'Provider not recorded';
+                if (specEl) specEl.textContent = found.provider_spec || found.provider_title || 'Specialty not recorded';
                 if (statusBadge) {
-                    var st = found.status || found.appt_status || 'Confirmed';
+                    var st = found.status || found.appt_status || 'Status unavailable';
                     statusBadge.textContent = st;
                     statusBadge.className = 'dior-st ' + (st === 'Confirmed' || st === 'Completed' ? 'ok' : (st === 'Cancelled' ? 'error' : 'pending'));
                 }
                 if (dtEl) dtEl.textContent = (found.date || found.appt_date || '') + ' ' + (found.time || found.appt_time || '');
-                if (modeEl) modeEl.innerHTML = '<i class="fa-solid fa-video dior-ic-be91c47dad"></i> ' + (found.type || found.visit_type || 'Video Visit');
-                if (condEl) condEl.textContent = found.condition || found.condition_name || 'Telehealth Consultation';
-                if (notesEl) notesEl.textContent = found.notes || 'Standard telehealth clinical consultation scheduled. All submitted medical intake questionnaires are pre-verified.';
+                if (modeEl) modeEl.textContent = found.type || found.visit_type || 'Visit type not recorded';
+                if (condEl) condEl.textContent = found.condition || found.condition_name || 'Condition not recorded';
+                if (notesEl) notesEl.textContent = found.notes || 'No appointment notes recorded.';
 
-                var joinUrl = found.join_url || 'https://zoom.us/join';
-                var isLive = (found.status === 'Confirmed' || found.status === 'Scheduled' || found.status === 'In-Queue');
+                var joinUrl = found.join_url || '';
+                var isLive = !!joinUrl && ['Confirmed', 'Scheduled', 'In-Queue', 'In Progress'].indexOf(found.status) !== -1;
                 if (zoomWrap) {
                     zoomWrap.style.display = isLive ? 'flex' : 'none';
                     if (zoomLink) zoomLink.href = joinUrl;
