@@ -1,16 +1,18 @@
 <section class="dior-tab-panel py-3 py-md-4 px-2 px-md-3 pb-5" id="tab-appointments">
     <style>
-    /* Shared compact styling for Today, Upcoming and Past appointment tables. */
+    /* Shared typography and spacing for Today, Upcoming and Past appointment tables. */
     #tab-appointments .dior-appointment-list-table {
         width: 100%;
         margin-bottom: 0;
         border-color: #e5ebf3;
-        font-size: 13px;
+        table-layout: auto;
+        font-size: 12px;
+        color: #334155;
     }
     #tab-appointments .dior-appointment-list-table th {
         padding: 12px 14px;
         color: #64748b;
-        background: #f7f9fc;
+        background: #fff;
         border-bottom: 1px solid #dfe7f1;
         font-size: 11px;
         font-weight: 700;
@@ -22,24 +24,44 @@
     #tab-appointments .dior-appointment-list-table td {
         padding: 12px 14px;
         color: #334155;
+        background: transparent;
         border-color: #edf1f6;
+        font-size: 12px;
         line-height: 1.4;
         vertical-align: middle;
     }
     #tab-appointments .dior-appointment-list-table .dior-appointment-doctor-name {
         display: inline-block;
         color: #172b49;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 700;
         line-height: 1.4;
         white-space: nowrap;
     }
-    #tab-appointments .dior-appointment-list-table td:nth-child(3),
-    #tab-appointments .dior-appointment-list-table td:nth-child(4) {
-        white-space: nowrap;
+    /* Keep table surfaces neutral; emphasize text with text color only. */
+    #tab-appointments .dior-appointment-list-table tbody tr,
+    #tab-appointments .dior-appointment-list-table tbody tr:hover,
+    #tab-appointments .dior-appointment-list-table tbody tr:focus-within {
+        background: transparent !important;
     }
-    #tab-appointments .dior-appointment-list-table tbody tr:hover {
-        background-color: #f8fbff;
+    #tab-appointments .dior-appointment-list-table tbody tr > *,
+    #tab-appointments .dior-appointment-list-table tbody tr:hover > * {
+        background: transparent !important;
+    }
+    #tab-appointments .dior-appointment-list-table .badge,
+    #tab-appointments .dior-appointment-list-table .rounded-pill {
+        background: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+    }
+    /* Keep dates and time ranges on one line where space permits. */
+    #tab-appointments #dior-today-appointments-table td:nth-child(4),
+    #tab-appointments #dior-today-appointments-table td:nth-child(5),
+    #tab-appointments #dior-upcoming-appointments-table td:nth-child(3),
+    #tab-appointments #dior-upcoming-appointments-table td:nth-child(4),
+    #tab-appointments #dior-past-appointments-table td:nth-child(3),
+    #tab-appointments #dior-past-appointments-table td:nth-child(4) {
+        white-space: nowrap;
     }
     @media (max-width: 767.98px) {
         #tab-appointments .dior-appointment-list-table th,
