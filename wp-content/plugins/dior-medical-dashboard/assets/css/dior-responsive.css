@@ -835,3 +835,278 @@
     }
 }
 
+
+
+/* =========================================================
+   Mobile/tablet usability pass — Patient + Doctor dashboards
+   All rules are breakpoint-scoped; desktop styling is untouched.
+   Use Bootstrap's existing .row/.col grid and utility classes.
+   ========================================================= */
+@media (max-width: 991.98px) {
+    .dior-patient-portal-wrap .container,
+    .dior-patient-portal-wrap .container-fluid,
+    .dior-doctor-wrap .container,
+    .dior-doctor-wrap .container-fluid {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .dior-patient-portal-wrap .row,
+    .dior-doctor-wrap .row {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap [class*="col-"],
+    .dior-doctor-wrap [class*="col-"] {
+        min-width: 0;
+        overflow-wrap: break-word;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel > *,
+    .dior-doctor-wrap .dior-tab-panel > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .content-head,
+    .dior-doctor-wrap .content-head,
+    .dior-patient-portal-wrap .dior-tab-panel .d-flex.justify-content-between,
+    .dior-doctor-wrap .dior-tab-panel .d-flex.justify-content-between {
+        column-gap: 12px;
+        row-gap: 10px;
+    }
+
+    .dior-patient-portal-wrap .content-head h1,
+    .dior-patient-portal-wrap .content-head h2,
+    .dior-doctor-wrap .content-head h1,
+    .dior-doctor-wrap .content-head h2 {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    /* Keep action/search controls together and let them wrap instead of overlap. */
+    .dior-patient-portal-wrap .d-flex.gap-2,
+    .dior-doctor-wrap .d-flex.gap-2,
+    .dior-patient-portal-wrap .table-toolbar,
+    .dior-doctor-wrap .table-toolbar,
+    .dior-patient-portal-wrap .card-header,
+    .dior-doctor-wrap .card-header {
+        flex-wrap: wrap;
+        min-width: 0;
+        row-gap: 8px;
+    }
+
+    .dior-patient-portal-wrap .table-responsive,
+    .dior-doctor-wrap .table-responsive,
+    .dior-patient-portal-wrap .table-container,
+    .dior-doctor-wrap .table-container,
+    .dior-patient-portal-wrap .table-wrapper,
+    .dior-doctor-wrap .table-wrapper,
+    .dior-patient-portal-wrap .dior-table-wrap,
+    .dior-doctor-wrap .dior-table-wrap {
+        max-width: 100%;
+        overflow-x: auto !important;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel table,
+    .dior-doctor-wrap .dior-tab-panel table {
+        width: max-content;
+        min-width: 100%;
+        max-width: none;
+        white-space: normal;
+    }
+
+    /* When legacy templates don't provide a Bootstrap .table-responsive wrapper,
+       the table itself becomes the horizontal scroll region without squeezing cells. */
+    .dior-patient-portal-wrap .dior-tab-panel > table,
+    .dior-doctor-wrap .dior-tab-panel > table,
+    .dior-patient-portal-wrap .dior-tab-panel .card-body > table,
+    .dior-doctor-wrap .dior-tab-panel .card-body > table {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel table th,
+    .dior-patient-portal-wrap .dior-tab-panel table td,
+    .dior-doctor-wrap .dior-tab-panel table th,
+    .dior-doctor-wrap .dior-tab-panel table td {
+        overflow-wrap: normal;
+        word-break: normal;
+    }
+
+    .dior-patient-portal-wrap .form-control,
+    .dior-patient-portal-wrap .form-select,
+    .dior-patient-portal-wrap input,
+    .dior-patient-portal-wrap select,
+    .dior-patient-portal-wrap textarea,
+    .dior-doctor-wrap .form-control,
+    .dior-doctor-wrap .form-select,
+    .dior-doctor-wrap input,
+    .dior-doctor-wrap select,
+    .dior-doctor-wrap textarea {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .modal,
+    .dior-doctor-wrap .modal {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .dior-patient-portal-wrap .modal-dialog,
+    .dior-doctor-wrap .modal-dialog {
+        width: auto;
+        max-width: calc(100vw - 16px);
+    }
+
+    /* Calendar controls stack cleanly while preserving the existing calendar. */
+    .dior-doctor-wrap .fc-header-toolbar,
+    .dior-doctor-wrap .calendar-toolbar,
+    .dior-doctor-wrap .calendar-controls,
+    .dior-doctor-wrap .appointment-calendar-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .dior-patient-portal-wrap .dior-tab-panel,
+    .dior-doctor-wrap .dior-tab-panel {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel .row,
+    .dior-doctor-wrap .dior-tab-panel .row {
+        --bs-gutter-x: .75rem;
+        --bs-gutter-y: .75rem;
+    }
+
+    .dior-patient-portal-wrap [style*="grid-template-columns"],
+    .dior-doctor-wrap [style*="grid-template-columns"] {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel .card-header,
+    .dior-doctor-wrap .dior-tab-panel .card-header {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel .card-body,
+    .dior-doctor-wrap .dior-tab-panel .card-body {
+        min-width: 0;
+        overflow-wrap: break-word;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel .btn,
+    .dior-doctor-wrap .dior-tab-panel .btn,
+    .dior-patient-portal-wrap .dior-tab-panel button,
+    .dior-doctor-wrap .dior-tab-panel button {
+        min-height: 38px;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel .btn-group,
+    .dior-doctor-wrap .dior-tab-panel .btn-group {
+        flex-wrap: wrap;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel .pagination,
+    .dior-doctor-wrap .dior-tab-panel .pagination {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    /* Medical timeline: use readable, full-width event cards on phones.
+       Do not compress date, icon, author and clinical content into narrow columns. */
+    .dior-patient-portal-wrap #tab-medical_record .modern-treatment-timeline {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow: visible !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-item {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        gap: 8px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        align-items: stretch !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-time-col {
+        display: flex !important;
+        flex-flow: row wrap !important;
+        align-items: center !important;
+        gap: 6px 10px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        padding: 0 2px !important;
+        font-size: 12px !important;
+        line-height: 1.45 !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-content-card {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 14px !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-content-card *,
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-content-card p,
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-content-card span {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .dior-timeline-author-avatar {
+        flex: 0 0 32px;
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+    }
+
+    /* No dashboard page should create horizontal viewport overflow. */
+    .dior-patient-portal-wrap,
+    .dior-doctor-wrap,
+    .dior-patient-portal-wrap .dior-app,
+    .dior-doctor-wrap .dior-app,
+    .dior-patient-portal-wrap .dior-main-content,
+    .dior-doctor-wrap .dior-main-content,
+    .dior-patient-portal-wrap .dior-tab-panel,
+    .dior-doctor-wrap .dior-tab-panel {
+        min-width: 0;
+        max-width: 100%;
+    }
+}
