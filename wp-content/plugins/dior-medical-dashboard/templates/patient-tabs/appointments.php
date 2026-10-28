@@ -5,6 +5,12 @@
         color: #000000 !important;
         font-weight: 600 !important;
     }
+    /* Active appointment tab: keep the label white against the blue active background. */
+    #tab-appointments .dior-subtab-pill.active,
+    #tab-appointments .dior-subtab-pill.active .dior-subtab-label,
+    #tab-appointments .dior-subtab-pill.active i {
+        color: #ffffff !important;
+    }
 
     /* Shared typography and spacing for Today, Upcoming and Past appointment tables. */
     #tab-appointments .dior-appointment-list-table {
