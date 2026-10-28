@@ -4194,6 +4194,11 @@ class Dior_Medical_Auth
      */
     public static function get_doctor_slots_for_date($doctor_id = 0, $date = '')
     {
+        $doctor_id = absint($doctor_id);
+        $doctor_post = $doctor_id ? get_post($doctor_id) : null;
+        if (!$doctor_post || $doctor_post->post_type !== 'wpddb_doctor' || $doctor_post->post_status !== 'publish') {
+            return [];
+        }
         if (empty($date)) {
             $date = current_time('Y-m-d');
         }
@@ -4224,17 +4229,9 @@ class Dior_Medical_Auth
             }
         }
 
-        // Default telehealth slots if no custom schedule defined
+        // Do not invent availability when a provider has no configured schedule.
         if (empty($raw_slots)) {
-            $raw_slots = [
-                '09:00 AM - 10:00 AM',
-                '10:00 AM - 11:00 AM',
-                '11:00 AM - 12:00 PM',
-                '01:00 PM - 02:00 PM',
-                '02:00 PM - 03:00 PM',
-                '03:00 PM - 04:00 PM',
-                '04:00 PM - 05:00 PM'
-            ];
+            return [];
         }
 
         // Check booked slots from database
@@ -4245,8 +4242,8 @@ class Dior_Medical_Auth
         $dior_table = $wpdb->prefix . 'dior_appointments';
         if ($wpdb->get_var("SHOW TABLES LIKE '$dior_table'") === $dior_table) {
             $booked_dior = $wpdb->get_col($wpdb->prepare(
-                "SELECT appt_time FROM $dior_table WHERE appt_date = %s AND status NOT IN ('Cancelled', 'No Show') AND is_deleted = 0",
-                $date
+                "SELECT appt_time FROM $dior_table WHERE doctor_id = %d AND appt_date = %s AND status NOT IN ('Cancelled', 'No Show') AND is_deleted = 0",
+                $doctor_id, $date
             ));
             if (!empty($booked_dior)) {
                 foreach ($booked_dior as $bt) {
@@ -4259,8 +4256,8 @@ class Dior_Medical_Auth
         $wpddb_table = $wpdb->prefix . 'wpddb_bookings';
         if ($wpdb->get_var("SHOW TABLES LIKE '$wpddb_table'") === $wpddb_table) {
             $booked_wpddb = $wpdb->get_col($wpdb->prepare(
-                "SELECT time FROM $wpddb_table WHERE booking_date = %s AND status = 'approved' AND booking_present_status = 'upcoming'",
-                $date
+                "SELECT time FROM $wpddb_table WHERE doctor_id = %d AND booking_date = %s AND status = 'approved' AND booking_present_status = 'upcoming'",
+                $doctor_id, $date
             ));
             if (!empty($booked_wpddb)) {
                 foreach ($booked_wpddb as $wt) {
@@ -4298,8 +4295,11 @@ class Dior_Medical_Auth
      */
     public static function rest_doctor_availability($request)
     {
-        $doctor_id = intval($request->get_param('id') ?: 1957);
+        $doctor_id = absint($request->get_param('id') ?: 0);
         $date = sanitize_text_field($request->get_param('date') ?: current_time('Y-m-d'));
+        if (!$doctor_id) {
+            return new \WP_Error('invalid_provider', 'A valid provider ID is required to check availability.', ['status' => 400]);
+        }
 
         $slots = self::get_doctor_slots_for_date($doctor_id, $date);
 
@@ -4309,7 +4309,7 @@ class Dior_Medical_Auth
             'clinics' => [
                 [
                     'id' => 1,
-                    'name' => 'Beverly Hills Telehealth Clinic',
+                    'name' => 'Available times',
                     'timings' => $slots
                 ]
             ]
@@ -4321,8 +4321,11 @@ class Dior_Medical_Auth
      */
     public static function ajax_doctor_availability()
     {
-        $doctor_id = intval($_GET['doctor_id'] ?? ($_POST['doctor_id'] ?? 1957));
+        $doctor_id = absint($_GET['doctor_id'] ?? ($_POST['doctor_id'] ?? 0));
         $date = sanitize_text_field($_GET['date'] ?? ($_POST['date'] ?? current_time('Y-m-d')));
+        if (!$doctor_id) {
+            wp_send_json_error(['message' => 'A valid provider ID is required to check availability.'], 400);
+        }
 
         $slots = self::get_doctor_slots_for_date($doctor_id, $date);
 
@@ -4561,7 +4564,7 @@ class Dior_Medical_Auth
                 'doctor_id' => $sync_doc_id,
                 'clinic_id' => $sync_clinic_id,
                 'amount_paid' => 0.00,
-                'payment_status' => 'Paid',
+                'payment_status' => 'Pending',
                 'payment_by' => 'Direct',
                 'booking_present_status' => 'upcoming',
                 'booking_date' => $date,
