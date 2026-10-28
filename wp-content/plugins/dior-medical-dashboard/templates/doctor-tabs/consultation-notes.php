@@ -6,22 +6,32 @@
 global $wpdb;
 $nonce = wp_create_nonce('dior_doctor_nonce');
 $ajax_url = admin_url('admin-ajax.php');
-$doctor_id = get_current_user_id();
-$doc_name = wp_get_current_user()->display_name;
+$doctor_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : ['user_id' => get_current_user_id(), 'ids' => [get_current_user_id()]];
+$doctor_id = (int) ($doctor_context['user_id'] ?? 0);
+$doctor_ids = array_values(array_unique(array_filter(array_map(
+    'intval',
+    (array) ($doctor_context['ids'] ?? [$doctor_id])
+), static function ($id) { return $id > 0; })));
+$doc_name = (string) (($doctor_context['profile']['full_name'] ?? '') ?: (wp_get_current_user()->display_name ?? 'Doctor'));
 
-// Fetch consultation notes (encounters)
-$notes = $wpdb->get_results(
-    $wpdb->prepare(
-        "SELECT e.*, 
-                p.first_name, p.last_name, p.avatar_url, p.patient_uid, p.user_id as patient_user_id
-         FROM {$wpdb->prefix}dior_encounters e
-         LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = e.patient_id
-         WHERE e.is_deleted = 0
-         ORDER BY e.created_at DESC
-         LIMIT 200"
-    ),
-    ARRAY_A
-);
+// Fetch only consultation notes owned by the configured single doctor.
+$notes = [];
+if ($doctor_ids) {
+    $doctor_placeholders = implode(',', array_fill(0, count($doctor_ids), '%d'));
+    $notes_sql = "SELECT e.*,
+                         p.first_name, p.last_name, p.avatar_url, p.patient_uid, p.user_id as patient_user_id
+                  FROM {$wpdb->prefix}dior_encounters e
+                  LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = e.patient_id
+                  WHERE e.is_deleted = 0 AND e.doctor_id IN ({$doctor_placeholders})
+                  ORDER BY e.created_at DESC
+                  LIMIT 200";
+    $notes = $wpdb->get_results($wpdb->prepare($notes_sql, $doctor_ids), ARRAY_A);
+}
+if (!is_array($notes)) {
+    $notes = [];
+}
 
 // Fetch patients for dropdown
 $patients = $wpdb->get_results(
