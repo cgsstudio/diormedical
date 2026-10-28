@@ -80,10 +80,10 @@
                     <?php
                     else:
                         foreach ($payments as $p):
-                            $p_inv = $p['invoice_id'] ?? ($p['id'] ?? '#INV-' . ($p['id'] ?? '001'));
-                            $p_doc = $p['doctor_name'] ?? ($p['provider'] ?? 'Specialist Care');
+                            $p_inv = $p['invoice_id'] ?? ($p['id'] ?? '—');
+                            $p_doc = $p['doctor_name'] ?? ($p['provider'] ?? 'Provider not recorded');
                             $p_date = !empty($p['date']) ? $p['date'] : (!empty($p['created_at']) ? wp_date('M j, Y', strtotime($p['created_at'])) : '—');
-                            $p_amt = !empty($p['amount']) ? ((strpos($p['amount'], '$') === false ? '$' : '') . $p['amount']) : '$0';
+                            $p_amt = !empty($p['amount']) ? ((strpos($p['amount'], '$') === false ? '$' : '') . $p['amount']) : '—';
                             $p_tax = !empty($p['tax']) ? ((strpos($p['tax'], '$') === false && strpos($p['tax'], '%') === false ? '$' : '') . $p['tax']) : '$0';
                             $p_disc = !empty($p['discount']) ? ((strpos($p['discount'], '$') === false && strpos($p['discount'], '%') === false ? '$' : '') . $p['discount']) : '$0';
                             $p_tot = !empty($p['total']) ? ((strpos($p['total'], '$') === false ? '$' : '') . $p['total']) : $p_amt;
