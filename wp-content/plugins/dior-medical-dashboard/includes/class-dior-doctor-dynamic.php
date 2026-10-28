@@ -538,17 +538,29 @@ class Dior_Doctor_Dynamic {
             wp_send_json_error(['message' => 'Patient not found or access denied.']);
         }
         $pid = (int) $p['user_id'];
+        $doctor_context = Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id());
+        $doctor_ids = array_values(array_unique(array_map('intval', (array) ($doctor_context['ids'] ?? []))));
+        $appointment_ids = array_values(array_unique(array_map('intval', (array) ($doctor_context['appointment_ids'] ?? $doctor_ids))));
+        if (!$doctor_ids || !$appointment_ids) {
+            wp_send_json_error(['message' => 'The single-doctor dashboard is not configured.'], 403);
+        }
+        $doctor_placeholders = implode(',', array_fill(0, count($doctor_ids), '%d'));
+        $appointment_placeholders = implode(',', array_fill(0, count($appointment_ids), '%d'));
         $profile = class_exists('Dior_Patient_Portal_Data') ? Dior_Patient_Portal_Data::get_patient_profile($pid) : [];
         $intake = get_user_meta($pid, 'dior_hipaa_intake', true);
         $intake = is_array($intake) ? $intake : [];
         $questionnaire = get_user_meta($pid, 'dior_medical_questionnaire', true);
         $questionnaire = is_array($questionnaire) ? $questionnaire : [];
         $prescriptions = $wpdb->get_results($wpdb->prepare(
-            "SELECT medication, instructions, status, created_at FROM {$wpdb->prefix}dior_prescriptions WHERE patient_id = %d ORDER BY created_at DESC LIMIT 50", $pid
+            "SELECT medication, instructions, status, created_at, doctor_id FROM {$wpdb->prefix}dior_prescriptions
+             WHERE patient_id = %d AND doctor_id IN ($doctor_placeholders)
+             ORDER BY created_at DESC LIMIT 50",
+            array_merge([$pid], $doctor_ids)
         ), ARRAY_A) ?: [];
         $legacy_rx = get_user_meta($pid, 'dior_prescriptions', true);
         foreach ((array) $legacy_rx as $rx) {
             if (!is_array($rx)) continue;
+            if (!empty($rx['doctor_id']) && !in_array((int) $rx['doctor_id'], $doctor_ids, true)) continue;
             $prescriptions[] = [
                 'medication' => $rx['medication'] ?? ($rx['name'] ?? ''),
                 'instructions' => $rx['instructions'] ?? ($rx['notes'] ?? ''),
@@ -557,7 +569,10 @@ class Dior_Doctor_Dynamic {
             ];
         }
         $visits = $wpdb->get_results($wpdb->prepare(
-            "SELECT appt_date, doctor_id, condition_name, visit_type, status FROM {$wpdb->prefix}dior_appointments WHERE patient_id = %d AND is_deleted = 0 ORDER BY appt_date DESC LIMIT 50", $pid
+            "SELECT appt_date, doctor_id, condition_name, visit_type, status FROM {$wpdb->prefix}dior_appointments
+             WHERE patient_id = %d AND is_deleted = 0 AND doctor_id IN ($appointment_placeholders)
+             ORDER BY appt_date DESC LIMIT 50",
+            array_merge([$pid], $appointment_ids)
         ), ARRAY_A) ?: [];
         foreach ($visits as &$visit) {
             $doctor = get_userdata((int) $visit['doctor_id']);
@@ -565,9 +580,16 @@ class Dior_Doctor_Dynamic {
         }
         unset($visit);
         $notes = $wpdb->get_results($wpdb->prepare(
-            "SELECT encounter_uid, subjective, diagnosis, assessment, plan, follow_up, created_at FROM {$wpdb->prefix}dior_encounters WHERE patient_id = %d AND is_deleted = 0 ORDER BY created_at DESC LIMIT 30", $pid
+            "SELECT encounter_uid, subjective, diagnosis, assessment, plan, follow_up, created_at FROM {$wpdb->prefix}dior_encounters
+             WHERE patient_id = %d AND is_deleted = 0 AND doctor_id IN ($doctor_placeholders)
+             ORDER BY created_at DESC LIMIT 30",
+            array_merge([$pid], $doctor_ids)
         ), ARRAY_A) ?: [];
         $documents = class_exists('Dior_Medical_Secure_Files') ? Dior_Medical_Secure_Files::get_patient_documents($pid) : [];
+        $documents = array_values(array_filter((array) $documents, static function ($doc) use ($doctor_ids) {
+            $author_id = (int) ($doc['author_id'] ?? $doc['doctor_id'] ?? 0);
+            return !$author_id || in_array($author_id, $doctor_ids, true);
+        }));
         $documents = array_map(static function ($doc) {
             return array_intersect_key($doc, array_flip(['id', 'title', 'category', 'date', 'author', 'file_type', 'size']));
         }, $documents);
