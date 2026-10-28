@@ -111,7 +111,7 @@
                 </div>
                 <div class="dior-sidebar-user-info">
                     <strong
-                        class="dior-sidebar-user-name"><?php echo esc_html(!empty($profile['full_name']) ? $profile['full_name'] : 'Mia Song'); ?></strong>
+                        class="dior-sidebar-user-name"><?php echo esc_html(!empty($profile['full_name']) ? $profile['full_name'] : 'Patient'); ?></strong>
                     <span class="dior-sidebar-user-status">Available</span>
                 </div>
             </div>
@@ -209,7 +209,7 @@
                                 </div>
                                 <div class="dior-pill-user-meta">
                                     <strong
-                                        class="dior-pill-user-name"><?php echo esc_html(!empty($profile['full_name']) ? $profile['full_name'] : 'Mia Song'); ?></strong>
+                                        class="dior-pill-user-name"><?php echo esc_html(!empty($profile['full_name']) ? $profile['full_name'] : 'Patient'); ?></strong>
                                     <span class="dior-pill-user-status">Available</span>
                                 </div>
                             </div>
@@ -895,7 +895,7 @@
                     <div class="dior-ic-f9030d0190">
                         <div>
                             <div class="dior-rx-doc-name dior-ic-3752d6b3fd" id="pat-modal-rx-doc-header">
-                                <span id="pat-modal-rx-doc">Dr. Marcus Sterling, MD</span>
+                                <span id="pat-modal-rx-doc"><?php echo esc_html($appointments[0]['provider'] ?? $appointments[0]['doctor_name'] ?? 'Provider not recorded'); ?></span>
                             </div>
                             <div class="dior-rx-clinic-sub dior-ic-502f59757f">
                                 <strong class="dior-ic-25e0cc2c47">DIOR MEDICAL TELEHEALTH &amp; URGENT
@@ -933,7 +933,7 @@
                             </div>
                             <div class="dior-ic-5e92856bee">
                                 Unique Rx UID: <strong id="pat-modal-rx-id" class="dior-ic-7b6e16631f">Rx
-                                    #ORDER</strong>
+                                    #—</strong>
                             </div>
                         </div>
                     </div>
@@ -1025,11 +1025,7 @@
                             <i class="fas fa-notes-medical"></i> Advice Given &amp; Clinical Instructions:
                         </div>
                         <div class="dior-rx-advice-body" id="pat-modal-rx-advice">
-                            &bull; Take medication strictly as prescribed. Do not exceed the stated dose.<br>
-                            &bull; Take with a full glass of water. Avoid alcohol and heavy unprescribed
-                            interactions.<br>
-                            &bull; If any hypersensitivity, rash, or adverse effect occurs, discontinue immediately and
-                            contact the clinic.
+                            Prescription-specific instructions will appear here when available.
                         </div>
                     </div>
 
@@ -1047,14 +1043,14 @@
                             <div class="dior-rx-sig-line">
                                 <img id="pat-modal-rx-sig-img" src="" alt="Doctor Signature" class="dior-ic-3771746c5d">
                                 <span id="pat-modal-rx-sig-name" class="dior-rx-sig-script">
-                                    /s/ Dr. Marcus Sterling, MD
+                                    <?php echo esc_html($appointments[0]['provider'] ?? $appointments[0]['doctor_name'] ?? 'Provider not recorded'); ?>
                                 </span>
                             </div>
                             <div class="dior-rx-sig-lbl">
                                 Authorized Physician Signature
                             </div>
                             <div id="pat-modal-rx-sig-date" class="dior-rx-sig-stamp">
-                                SHA256 Encrypted &bull; Issued Sep 14, 2026
+                                Issued: —
                             </div>
                         </div>
                     </div>
