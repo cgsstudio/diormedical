@@ -49,7 +49,7 @@ class Dior_Doctor_Dashboard
         add_action("init", [__CLASS__, "register_doctor_role"]);
         add_action("init", [__CLASS__, "ensure_doctor_page"]);
         add_action("init", ["Dior_Doctor_Resolver", "ensure_default_doctor"]);
-        add_action("admin_init", ["Dior_Doctor_Resolver", "consolidate_legacy_accounts"], 1);
+        // Single-doctor dashboards must not automatically merge unrelated doctor accounts.
         add_filter("wp_authenticate_user", ["Dior_Doctor_Resolver", "block_merged_account_login"], 20, 2);
         add_action("save_post_wpddb_doctor", ["Dior_Doctor_Resolver", "sync_docbooker_doctor_to_wp_user"]);
     }
@@ -235,7 +235,7 @@ class Dior_Doctor_Dashboard
         $requested_id = (int) ($user_id ?: get_current_user_id());
         $requested_user = $requested_id ? get_userdata($requested_id) : false;
         if (!$requested_user) {
-            return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'profile' => []];
+            return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'appointment_ids' => [], 'profile' => []];
         }
 
         if (user_can($requested_id, 'doctor')) {
@@ -245,66 +245,51 @@ class Dior_Doctor_Dashboard
                 ? (int) Dior_Doctor_Resolver::get_default_doctor_id()
                 : $requested_id;
         } else {
-            return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'profile' => []];
+            return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'appointment_ids' => [], 'profile' => []];
         }
 
         if (!$doctor_user_id || !get_userdata($doctor_user_id)) {
-            return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'profile' => []];
+            return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'appointment_ids' => [], 'profile' => []];
         }
 
-        $doctor_ids = [$doctor_user_id];
-        if (class_exists('Dior_Doctor_Resolver')) {
-            $doctor_ids = array_merge(
-                $doctor_ids,
-                (array) Dior_Doctor_Resolver::get_accessible_doctor_ids($doctor_user_id)
-            );
-        }
-
-        $linked_post_ids = [];
-        foreach (['_wpddb_doctor_user_id', 'wpddb_doctor_user_id'] as $meta_key) {
-            $matches = get_posts([
+        /*
+         * This dashboard represents exactly one doctor. Do not merge every legacy
+         * doctor account or every DocBooker doctor post into the current doctor's
+         * permissions. Keep only the current doctor user and the one explicitly
+         * configured DocBooker profile, when one exists.
+         */
+        $canonical_id = $doctor_user_id;
+        $docbooker_id = (int) get_user_meta($doctor_user_id, '_docbooker_doctor_id', true);
+        if ($docbooker_id && get_post_type($docbooker_id) === 'wpddb_doctor') {
+            $canonical_id = $docbooker_id;
+        } else {
+            // Recover a profile only when its original owner is explicitly this user.
+            $owned_profiles = get_posts([
                 'post_type' => 'wpddb_doctor',
                 'post_status' => ['publish', 'private', 'draft', 'pending'],
-                'posts_per_page' => -1,
+                'posts_per_page' => 2,
                 'fields' => 'ids',
+                'meta_key' => '_dior_original_doctor_user_id',
+                'meta_value' => (string) $doctor_user_id,
                 'orderby' => 'ID',
                 'order' => 'ASC',
-                'meta_key' => $meta_key,
-                'meta_value' => (string) $doctor_user_id,
             ]);
-            if (is_array($matches)) {
-                $linked_post_ids = array_merge($linked_post_ids, array_map('intval', $matches));
+            if (is_array($owned_profiles) && count($owned_profiles) === 1) {
+                $canonical_id = (int) $owned_profiles[0];
+                update_user_meta($doctor_user_id, '_docbooker_doctor_id', $canonical_id);
             }
         }
 
-        $docbooker_id = (int) get_user_meta($doctor_user_id, '_docbooker_doctor_id', true);
-        if ($docbooker_id && get_post_type($docbooker_id) === 'wpddb_doctor') {
-            array_unshift($linked_post_ids, $docbooker_id);
-        }
-
-        $linked_post_ids = array_values(array_unique(array_filter($linked_post_ids)));
-        $doctor_ids = array_merge($doctor_ids, $linked_post_ids);
-
-        // The canonical ID is used for new appointments; aliases are for existing records only.
-        $canonical_id = !empty($linked_post_ids) ? (int) $linked_post_ids[0] : $doctor_user_id;
-
-        $doctor_ids = array_values(array_unique(array_filter(array_map('intval', $doctor_ids), static function ($id) {
-            return $id > 0;
-        })));
-
-        // Only appointment queries may include legacy unassigned IDs. Other clinical
-        // resources (prescriptions, telemedicine, documents) must use real doctor IDs.
-        $appointment_ids = $doctor_ids;
-        if (class_exists('Dior_Doctor_Resolver') &&
-            $doctor_user_id === (int) Dior_Doctor_Resolver::get_default_doctor_id()) {
-            $appointment_ids = array_values(array_unique(array_merge($appointment_ids, [0, 1])));
-        }
+        $doctor_ids = array_values(array_unique(array_filter([
+            $doctor_user_id,
+            $canonical_id !== $doctor_user_id ? $canonical_id : 0,
+        ])));
 
         return [
             'user_id' => $doctor_user_id,
             'canonical_id' => $canonical_id,
             'ids' => $doctor_ids,
-            'appointment_ids' => $appointment_ids,
+            'appointment_ids' => $doctor_ids,
             'profile' => self::get_doctor_profile($doctor_user_id),
         ];
     }
