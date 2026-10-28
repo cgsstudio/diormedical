@@ -1056,8 +1056,8 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             html += '</div>';
 
             html += '<div class="d-flex flex-wrap align-items-center gap-2">';
-            if (canJoin) {
-                html += '<a href="' + (apt.join_url || 'https://zoom.us/join') + '" target="_blank" class="btn btn-success btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">';
+            if (canJoin && apt.join_url) {
+                html += '<a href="' + apt.join_url + '" target="_blank" class="btn btn-success btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">';
                 html += '<i class="fas fa-video"></i> Join Visit';
                 html += '</a>';
             }
@@ -1146,8 +1146,8 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             html += '</div>';
             html += '</div>';
 
-            if (canJoin) {
-                html += '<a href="' + (apt.join_url || 'https://zoom.us/join') + '" target="_blank" class="btn btn-success btn-sm w-100 fw-bold mb-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5 py-1.5">';
+            if (canJoin && apt.join_url) {
+                html += '<a href="' + apt.join_url + '" target="_blank" class="btn btn-success btn-sm w-100 fw-bold mb-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5 py-1.5">';
                 html += '<i class="fas fa-video"></i> Join Telehealth Room';
                 html += '</a>';
             }
