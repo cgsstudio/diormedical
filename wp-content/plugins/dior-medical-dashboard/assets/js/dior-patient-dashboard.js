@@ -2381,14 +2381,14 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                             refills: (found ? found.refills : '') || '0 Refills Remaining'
                         };
                     });
-                } else {
+                } else if (rawMedText || rawDosageText || rawInstText) {
                     items = [{
                         id: actualId + '-1',
                         medication: rawMedText,
                         dosage: rawDosageText,
                         instructions: rawInstText,
-                        quantity: (found ? found.quantity : '') || 'As Prescribed',
-                        refills: (found ? found.refills : '') || '0 Refills Remaining'
+                        quantity: (found ? found.quantity : '') || '—',
+                        refills: (found ? found.refills : '') || '—'
                     }];
                 }
             }
@@ -2401,18 +2401,15 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                     var itemUid = (it && it.id) ? it.id : (actualId + '-' + (j + 1));
                     var medName = escapeHtml(it.medication);
                     var doseStr = escapeHtml(it.dosage);
-                    var sigStr = escapeHtml(it.instructions || it.dosage || 'Take as directed by physician.');
-                    var qtyStr = escapeHtml(it.quantity || 'As Prescribed');
-                    var refillStr = escapeHtml(it.refills || '0 Refills Remaining');
+                    var sigStr = escapeHtml(it.instructions || it.dosage || 'Instructions not recorded.');
+                    var qtyStr = escapeHtml(it.quantity || '—');
+                    var refillStr = escapeHtml(it.refills || '—');
 
                     if (it.notes && it.notes !== sigStr) {
                         adviceNotes.push(escapeHtml(it.notes));
                     }
 
-                    var formattedMed = medName;
-                    if (!/^(TAB|CAP|SYR|INJ|SOL)\b/i.test(formattedMed)) {
-                        formattedMed = 'TAB. ' + formattedMed;
-                    }
+                    var formattedMed = medName || 'Medication name not recorded';
 
                     html += '<tr>' +
                         '<td class="text-secondary small fw-bold text-center align-top pt-3" style="width: 32px;">' + (j + 1) + '</td>' +
@@ -2420,31 +2417,25 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                         '<div class="fw-bold text-dark fs-6 mb-1">' + formattedMed + '</div>' +
                         '<div class="d-flex align-items-center gap-2 flex-wrap small">' +
                         '<span class="badge bg-light text-secondary border">Rx Item: ' + escapeHtml(itemUid) + '</span>' +
-                        '<span class="badge bg-success-subtle text-success border border-success-subtle"><i class="fa-solid fa-check me-1"></i>FDA Approved</span>' +
-                        '<span class="text-muted small">Oral Formulation &bull; Single Patient</span>' +
+
                         '</div>' +
                         '</td>' +
                         '<td class="align-top py-2.5">' +
                         '<div class="small mb-1"><strong class="text-primary text-uppercase me-1">SIG:</strong> <span class="text-dark fw-medium">' + sigStr + '</span></div>' +
-                        '<div class="small text-muted">Dosage: <strong class="text-dark">' + doseStr + '</strong> &bull; Route: Oral</div>' +
+                        '<div class="small text-muted">Dosage: <strong class="text-dark">' + doseStr + '</strong></div>' +
                         '</td>' +
                         '<td class="align-top py-2.5 text-nowrap">' +
                         '<div class="fw-bold text-dark small mb-0.5">Qty: ' + qtyStr + '</div>' +
                         '<div class="small text-secondary mb-1">' + refillStr + '</div>' +
-                        '<span class="badge bg-light text-secondary border small">DAW-0 (Generic Auth)</span>' +
+
                         '</td>' +
                         '</tr>';
                 }
-                tableBody.innerHTML = html;
+                tableBody.innerHTML = html || '<tr><td colspan="4" class="text-center py-4 text-secondary">Prescription details are not available for this record.</td></tr>';
 
                 if (adviceEl) {
-                    var adviceHtml = '&bull; Take medication strictly as directed with a full glass of water.<br>' +
-                        '&bull; Complete the full course of treatment unless instructed otherwise by your doctor.<br>' +
-                        '&bull; Avoid alcohol during the active course of treatment.';
-                    if (adviceNotes.length > 0) {
-                        adviceHtml += '<br>&bull; <strong>Physician Notes:</strong> ' + adviceNotes.join('; ');
-                    }
-                    adviceEl.innerHTML = adviceHtml;
+                    var adviceText = (found && (found.instructions || found.notes)) || adviceNotes.join('\n');
+                    adviceEl.textContent = adviceText || 'No prescription-specific instructions recorded.';
                 }
             }
 
