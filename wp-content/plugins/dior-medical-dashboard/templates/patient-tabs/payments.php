@@ -84,8 +84,8 @@
                             $p_doc = $p['doctor_name'] ?? ($p['provider'] ?? 'Provider not recorded');
                             $p_date = !empty($p['date']) ? $p['date'] : (!empty($p['created_at']) ? wp_date('M j, Y', strtotime($p['created_at'])) : '—');
                             $p_amt = !empty($p['amount']) ? ((strpos($p['amount'], '$') === false ? '$' : '') . $p['amount']) : '—';
-                            $p_tax = !empty($p['tax']) ? ((strpos($p['tax'], '$') === false && strpos($p['tax'], '%') === false ? '$' : '') . $p['tax']) : '$0';
-                            $p_disc = !empty($p['discount']) ? ((strpos($p['discount'], '$') === false && strpos($p['discount'], '%') === false ? '$' : '') . $p['discount']) : '$0';
+                            $p_tax = !empty($p['tax']) ? ((strpos($p['tax'], '$') === false && strpos($p['tax'], '%') === false ? '$' : '') . $p['tax']) : '—';
+                            $p_disc = !empty($p['discount']) ? ((strpos($p['discount'], '$') === false && strpos($p['discount'], '%') === false ? '$' : '') . $p['discount']) : '—';
                             $p_tot = !empty($p['total']) ? ((strpos($p['total'], '$') === false ? '$' : '') . $p['total']) : $p_amt;
                         ?>
                         <tr onclick="diorOpenBillingModal('<?php echo esc_js($p_inv); ?>', '<?php echo esc_js($p_doc); ?>', '<?php echo esc_js($p_date); ?>', '<?php echo esc_js($p_amt); ?>', '<?php echo esc_js($p_tax); ?>', '<?php echo esc_js($p_disc); ?>', '<?php echo esc_js($p_tot); ?>')"
