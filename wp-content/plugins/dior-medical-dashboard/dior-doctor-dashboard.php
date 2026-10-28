@@ -2659,7 +2659,7 @@ class Dior_Doctor_Dashboard
 }
 
 /**
- * Dior Medical — Dynamic Doctor Resolver & Multi-Doctor Synchronization Service
+ * Dior Medical — Single-Doctor Resolver & DocBooker Integration Service
  */
 class Dior_Doctor_Resolver
 {
@@ -2766,114 +2766,6 @@ class Dior_Doctor_Resolver
         return $user;
     }
 
-    public static function consolidate_legacy_accounts()
-    {
-        $trusted_cli = defined('WP_CLI') && WP_CLI;
-        if ((!is_admin() && !$trusted_cli) || !current_user_can('manage_options') || get_option('dior_doctor_accounts_consolidated_v1'))
-            return;
-
-        $central_id = self::get_default_doctor_id();
-        $central = $central_id ? get_userdata($central_id) : false;
-        if (!$central || $central->user_email !== self::DEFAULT_DOCTOR_EMAIL)
-            return;
-
-        $legacy_user_ids = [];
-        $legacy_profiles = get_user_meta($central_id, '_dior_merged_doctor_profiles', true);
-        $legacy_profiles = is_array($legacy_profiles) ? $legacy_profiles : [];
-        $profile_meta_keys = ['first_name', 'last_name', 'doctor_specialty', 'doctor_license', 'doctor_npi', 'doctor_bio', 'phone', 'dior_profile_image', 'dior_doctor_signature'];
-
-        foreach (get_users(['role' => 'doctor', 'fields' => 'all', 'number' => 500]) as $doctor_user) {
-            $doctor_id = (int) $doctor_user->ID;
-            if ($doctor_id === $central_id || in_array('administrator', (array) $doctor_user->roles, true))
-                continue;
-
-            $profile_snapshot = [];
-            foreach ($profile_meta_keys as $meta_key) {
-                $meta_value = get_user_meta($doctor_id, $meta_key, true);
-                if ($meta_value !== '' && $meta_value !== null)
-                    $profile_snapshot[$meta_key] = $meta_value;
-            }
-            $legacy_profiles[$doctor_id] = [
-                'user_login' => $doctor_user->user_login,
-                'user_email' => $doctor_user->user_email,
-                'display_name' => $doctor_user->display_name,
-                'roles' => array_values((array) $doctor_user->roles),
-                'profile' => $profile_snapshot,
-            ];
-            $legacy_user_ids[] = $doctor_id;
-
-            $merged_notifications = get_user_meta($central_id, 'dior_doctor_notifications', true);
-            $merged_notifications = is_array($merged_notifications) ? $merged_notifications : [];
-            $old_notifications = get_user_meta($doctor_id, 'dior_doctor_notifications', true);
-            if (is_array($old_notifications)) {
-                $known_notification_ids = array_column($merged_notifications, 'id');
-                foreach ($old_notifications as $notification) {
-                    $notification_id = $notification['id'] ?? '';
-                    if (!$notification_id || !in_array($notification_id, $known_notification_ids, true)) {
-                        $merged_notifications[] = $notification;
-                        if ($notification_id)
-                            $known_notification_ids[] = $notification_id;
-                    }
-                }
-            }
-            update_user_meta($central_id, 'dior_doctor_notifications', array_slice($merged_notifications, 0, 100));
-
-            update_user_meta($doctor_id, '_dior_merged_into_doctor_id', $central_id);
-            $legacy_user = new WP_User($doctor_id);
-            $legacy_user->set_role('subscriber');
-            if (class_exists('WP_Session_Tokens')) {
-                WP_Session_Tokens::get_instance($doctor_id)->destroy_all();
-            } elseif (function_exists('wp_destroy_all_sessions') && get_current_user_id() === (int)$doctor_id) {
-                wp_destroy_all_sessions();
-            }
-        }
-
-        $existing_legacy_ids = get_user_meta($central_id, '_dior_merged_doctor_user_ids', true);
-        $legacy_user_ids = array_values(array_unique(array_merge(is_array($existing_legacy_ids) ? $existing_legacy_ids : [], $legacy_user_ids)));
-        update_user_meta($central_id, '_dior_merged_doctor_user_ids', $legacy_user_ids);
-        update_user_meta($central_id, '_dior_merged_doctor_profiles', $legacy_profiles);
-
-        $docbooker_post_ids = [];
-        foreach (get_posts([
-            'post_type' => 'wpddb_doctor',
-            'post_status' => ['publish', 'private', 'draft', 'pending'],
-            'posts_per_page' => -1,
-            'fields' => 'ids',
-        ]) as $post_id) {
-            $linked_user_id = (int) get_post_meta($post_id, '_wpddb_doctor_user_id', true);
-            if ($linked_user_id && $linked_user_id !== $central_id && !get_post_meta($post_id, '_dior_original_doctor_user_id', true)) {
-                update_post_meta($post_id, '_dior_original_doctor_user_id', $linked_user_id);
-            }
-            update_post_meta($post_id, '_wpddb_doctor_user_id', $central_id);
-            $docbooker_post_ids[] = (int) $post_id;
-        }
-        $existing_post_ids = get_user_meta($central_id, '_dior_merged_docbooker_post_ids', true);
-        $docbooker_post_ids = array_values(array_unique(array_merge(is_array($existing_post_ids) ? $existing_post_ids : [], $docbooker_post_ids)));
-        update_user_meta($central_id, '_dior_merged_docbooker_post_ids', $docbooker_post_ids);
-
-        $old_email = get_user_meta($central_id, '_dior_doctor_email_updated_from', true);
-        if ($old_email && $old_email !== self::DEFAULT_DOCTOR_EMAIL) {
-            wp_mail(
-                self::DEFAULT_DOCTOR_EMAIL,
-                'Your Dior Medical doctor account was consolidated',
-                'Your doctor account is now available at ' . home_url('/doctor-dashboard/') . '. Use ' . wp_lostpassword_url() . ' to set a new password.'
-            );
-            delete_user_meta($central_id, '_dior_doctor_email_updated_from');
-        }
-
-        update_option('dior_doctor_accounts_consolidated_v1', [
-            'central_user_id' => $central_id,
-            'central_user_login' => $central->user_login,
-            'central_previous_email' => $old_email ?: '',
-            'legacy_user_ids' => $legacy_user_ids,
-            'docbooker_post_ids' => $docbooker_post_ids,
-            'migrated_at' => current_time('mysql'),
-        ], false);
-    }
-
-    /**
-     * Resolves DocBooker doctor ID (CPT post ID), doctor name, or existing WP User ID to an actual WordPress User ID
-     */
     public static function resolve_doctor_user_id($doctor_ref)
     {
         $central_id = self::get_default_doctor_id();
@@ -2951,22 +2843,30 @@ class Dior_Doctor_Resolver
 
         $canonical_post_id = (int) get_user_meta($central_id, '_docbooker_doctor_id', true);
         $original_owner_id = (int) get_post_meta($post_id, '_dior_original_doctor_user_id', true);
+        $linked_user_id = (int) get_post_meta($post_id, '_wpddb_doctor_user_id', true);
 
-        // If a canonical profile is already configured, never replace it with another
-        // DocBooker doctor post just because that post was edited or saved.
-        if ($canonical_post_id && get_post_type($canonical_post_id) === 'wpddb_doctor' && $canonical_post_id !== (int) $post_id) {
-            return 0;
+        // Keep the one explicitly configured DocBooker profile stable.
+        if ($canonical_post_id && get_post_type($canonical_post_id) === 'wpddb_doctor') {
+            if ($canonical_post_id !== (int) $post_id) {
+                return 0;
+            }
+            update_post_meta($post_id, '_wpddb_doctor_user_id', $central_id);
+            return $central_id;
         }
 
-        // Legacy posts known to belong to a different doctor must remain separate.
+        // A profile known to belong to another user is never adopted.
         if ($original_owner_id && $original_owner_id !== $central_id) {
             return 0;
         }
 
-        // Only claim a profile with an explicit link to this doctor, or when no profile
-        // has been configured and this post has no conflicting owner metadata.
-        $linked_user_id = (int) get_post_meta($post_id, '_wpddb_doctor_user_id', true);
-        if ($linked_user_id && $linked_user_id !== $central_id && $original_owner_id !== $central_id) {
+        // Without a configured profile, only claim a post with explicit original-owner
+        // metadata for this doctor. A shared _wpddb_doctor_user_id alone is ambiguous
+        // because older migrations assigned it to every provider post.
+        if ($original_owner_id !== $central_id) {
+            return 0;
+        }
+
+        if ($linked_user_id && $linked_user_id !== $central_id) {
             return 0;
         }
 
