@@ -1158,17 +1158,42 @@ class Dior_Doctor_Dashboard
         global $wpdb;
         $table_appts = $wpdb->prefix . 'dior_appointments';
         $table_patients = $wpdb->prefix . 'dior_patients';
+        $doctor_context = self::get_single_doctor_context();
+        $doctor_ids = array_values(array_unique(array_map('intval', (array) ($doctor_context['ids'] ?? []))));
+        if (!$doctor_ids) {
+            wp_send_json_error(["message" => "The single-doctor dashboard is not configured."], 403);
+        }
+        $doctor_placeholders = implode(',', array_fill(0, count($doctor_ids), '%d'));
 
         $target_appt = null;
         if (!empty($appt_uid)) {
-            $target_appt = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_appts WHERE appt_uid = %s AND is_deleted = 0", $appt_uid), ARRAY_A);
-            if ($target_appt && empty($patient_id)) {
+            $target_appt = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM $table_appts WHERE appt_uid = %s AND is_deleted = 0 AND doctor_id IN ($doctor_placeholders)",
+                array_merge([$appt_uid], $doctor_ids)
+            ), ARRAY_A);
+            if (!$target_appt) {
+                wp_send_json_error(["message" => "Appointment not found in this doctor's schedule."], 403);
+            }
+            if (!empty($patient_id) && (int) $target_appt['patient_id'] !== $patient_id) {
+                wp_send_json_error(["message" => "The appointment does not match the selected patient."], 403);
+            }
+            if (empty($patient_id)) {
                 $patient_id = (int) $target_appt['patient_id'];
             }
         }
 
         if (!$patient_id) {
             wp_send_json_error(["message" => "Patient ID or Appointment UID is required."]);
+        }
+
+        // A patient record is available in this dashboard only when it has an appointment
+        // assigned to the configured doctor.
+        $has_scoped_appointment = $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM $table_appts WHERE patient_id = %d AND is_deleted = 0 AND doctor_id IN ($doctor_placeholders) LIMIT 1",
+            array_merge([$patient_id], $doctor_ids)
+        ));
+        if (!$has_scoped_appointment) {
+            wp_send_json_error(["message" => "Patient not found in this doctor's records."], 403);
         }
 
         // 1. Fetch patient profile
@@ -1186,8 +1211,8 @@ class Dior_Doctor_Dashboard
 
         // 2. Fetch all appointments for this patient
         $appointments = $wpdb->get_results($wpdb->prepare(
-            "SELECT * FROM $table_appts WHERE patient_id = %d AND is_deleted = 0 ORDER BY appt_date DESC, appt_time DESC",
-            $patient_id
+            "SELECT * FROM $table_appts WHERE patient_id = %d AND is_deleted = 0 AND doctor_id IN ($doctor_placeholders) ORDER BY appt_date DESC, appt_time DESC",
+            array_merge([$patient_id], $doctor_ids)
         ), ARRAY_A);
 
         $patient_data = [
