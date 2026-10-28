@@ -224,3 +224,119 @@
     line-height: 1.35 !important;
     font-weight: 600;
 }
+
+
+/* =========================================================
+   Portal-wide final consistency pass (patient + doctor)
+   Keep page headings aligned and remove only header subtitles.
+   ========================================================= */
+.dior-patient-portal-wrap,
+.dior-doctor-wrap {
+    --dior-font-page: 22px;
+    --dior-font-section: 18px;
+    --dior-font-label: 13px;
+    --dior-font-small: 12px;
+    font-family: inherit;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+}
+
+/* Same page-title scale regardless of Bootstrap utility classes or inline sizes. */
+.dior-patient-portal-wrap .dior-tab-panel > .content-head h1,
+.dior-doctor-wrap .dior-tab-panel > .content-head h1,
+.dior-patient-portal-wrap .dior-tab-panel > .mb-4 > div:first-child > h1,
+.dior-doctor-wrap .dior-tab-panel > .mb-4 > div:first-child > h1,
+.dior-patient-portal-wrap .dior-tab-panel > .d-flex.justify-content-between > div:first-child > h1,
+.dior-doctor-wrap .dior-tab-panel > .d-flex.justify-content-between > div:first-child > h1 {
+    font-size: 22px !important;
+    line-height: 1.3 !important;
+    font-weight: 700 !important;
+}
+
+/* Normalize the top-level subpage headings that use h4/h5/h6 or fs-* utilities. */
+.dior-patient-portal-wrap .dior-tab-panel > .mb-4 > div:first-child > h2,
+.dior-doctor-wrap .dior-tab-panel > .mb-4 > div:first-child > h2,
+.dior-patient-portal-wrap .dior-tab-panel > .mb-4 > div:first-child > h3,
+.dior-doctor-wrap .dior-tab-panel > .mb-4 > div:first-child > h3,
+.dior-patient-portal-wrap .dior-tab-panel > .mb-4 > div:first-child > h4,
+.dior-doctor-wrap .dior-tab-panel > .mb-4 > div:first-child > h4,
+.dior-patient-portal-wrap .dior-tab-panel > .d-flex.flex-wrap.align-items-center.justify-content-between > div:first-child > h4,
+.dior-doctor-wrap .dior-tab-panel > .d-flex.flex-wrap.align-items-center.justify-content-between > div:first-child > h4,
+.dior-patient-portal-wrap .dior-tab-panel > .d-flex.justify-content-between.align-items-center > div:first-child > h4,
+.dior-doctor-wrap .dior-tab-panel > .d-flex.justify-content-between.align-items-center > div:first-child > h4,
+.dior-patient-portal-wrap .dior-tab-panel > .row.g-3.align-items-center.justify-content-between .col-12 > div[id$="-page-title"],
+.dior-doctor-wrap .dior-tab-panel > .row.g-3.align-items-center.justify-content-between .col-12 > div[id$="-page-title"] {
+    font-size: 22px !important;
+    line-height: 1.3 !important;
+    font-weight: 700 !important;
+}
+
+/* Remove only the short explanatory subtitle beneath each page heading.
+   Descriptions inside forms, cards, medical records and task items remain visible. */
+.dior-patient-portal-wrap .dior-tab-panel > .content-head > div:first-child > p.text-secondary.small,
+.dior-doctor-wrap .dior-tab-panel > .content-head > div:first-child > p.text-secondary.small,
+.dior-patient-portal-wrap .dior-tab-panel > .d-flex.flex-wrap.align-items-center.justify-content-between > div:first-child > p.text-secondary.small,
+.dior-doctor-wrap .dior-tab-panel > .d-flex.flex-wrap.align-items-center.justify-content-between > div:first-child > p.text-secondary.small,
+.dior-patient-portal-wrap .dior-tab-panel > .d-flex.justify-content-between.align-items-center > div:first-child > p.text-secondary.small,
+.dior-doctor-wrap .dior-tab-panel > .d-flex.justify-content-between.align-items-center > div:first-child > p.text-secondary.small,
+.dior-patient-portal-wrap .dior-tab-panel > .row.g-3.align-items-center.justify-content-between > .col-12 > p.text-secondary.small,
+.dior-doctor-wrap .dior-tab-panel > .row.g-3.align-items-center.justify-content-between > .col-12 > p.text-secondary.small,
+.dior-patient-portal-wrap .dior-tab-panel > .mb-4 > div:first-child > p.text-secondary.small,
+.dior-doctor-wrap .dior-tab-panel > .mb-4 > div:first-child > p.text-secondary.small {
+    display: none !important;
+}
+
+/* Consistent typography for navigation, buttons, fields, breadcrumbs and data tables. */
+.dior-patient-portal-wrap .dior-subtab-pill,
+.dior-doctor-wrap .dior-subtab-pill,
+.dior-patient-portal-wrap .nav-link,
+.dior-doctor-wrap .nav-link,
+.dior-patient-portal-wrap .breadcrumb,
+.dior-doctor-wrap .breadcrumb,
+.dior-patient-portal-wrap .va-breadcrumb-list,
+.dior-doctor-wrap .va-breadcrumb-list {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+}
+
+.dior-patient-portal-wrap .btn,
+.dior-doctor-wrap .btn {
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+    font-weight: 600 !important;
+}
+
+.dior-patient-portal-wrap input,
+.dior-patient-portal-wrap select,
+.dior-patient-portal-wrap textarea,
+.dior-doctor-wrap input,
+.dior-doctor-wrap select,
+.dior-doctor-wrap textarea {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+}
+
+.dior-patient-portal-wrap table,
+.dior-doctor-wrap table {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+}
+
+.dior-patient-portal-wrap table thead th,
+.dior-doctor-wrap table thead th {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    font-weight: 700 !important;
+}
+
+.dior-patient-portal-wrap table tbody td,
+.dior-doctor-wrap table tbody td {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+}
+
+.dior-patient-portal-wrap .badge,
+.dior-doctor-wrap .badge {
+    font-size: 12px !important;
+    line-height: 1.25 !important;
+}
