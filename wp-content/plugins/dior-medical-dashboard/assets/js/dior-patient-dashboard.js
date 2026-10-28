@@ -1887,39 +1887,18 @@ let diorEmergCurrentPage = 1;
 
 // --- Extracted dashboard script 12 ---
 function diorSendChatMessage() {
-            var input = document.getElementById('dior-chat-input');
-            var container = document.getElementById('dior-chat-messages-container');
-            if(!input || !container) return;
-            var text = input.value.trim();
-            if(!text) return;
-            
-            var now = new Date();
-            var hours = now.getHours();
-            var minutes = now.getMinutes();
-            var ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            minutes = minutes < 10 ? '0'+minutes : minutes;
-            var timeString = hours + ':' + minutes + ' ' + ampm;
-            
-            var msgHtml = `
-                <div class="dior-ic-5d9c324602">
-                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=100" class="dior-ic-5fc13777e2">
-                    <div>
-                        <div class="dior-ic-dff7aabfd2">
-                            <span class="dior-ic-8fa9cd12a9">Sarah Jenkins</span>
-                            <span class="dior-ic-0b48e6248d">${timeString}</span>
-                        </div>
-                        <div class="dior-ic-60cdfae882">
-                            ${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', msgHtml);
-            input.value = '';
-            container.scrollTop = container.scrollHeight;
-        }
+    // The current consultation UI has no persisted patient/provider messaging endpoint.
+    // Never append a message only to the browser and imply it was delivered or saved.
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'info',
+            title: 'Secure chat unavailable',
+            text: 'Messaging is not connected to a saved consultation yet. Your message has not been sent.'
+        });
+    } else {
+        window.alert('Messaging is not connected to a saved consultation yet. Your message has not been sent.');
+    }
+}
 
 // --- Extracted dashboard script 13 ---
 let diorNotifCurrentPage = 1;
