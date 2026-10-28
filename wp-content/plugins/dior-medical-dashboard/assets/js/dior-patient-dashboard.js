@@ -2285,14 +2285,14 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             var rawDoc = found ? (found.prescribed_by || 'Provider not recorded') : 'Provider not recorded';
             var cleanDoc = rawDoc.replace(/^(Dr\.?\s*)+/i, 'Dr. ').replace(/\s*\(NPI:[^)]*\)/i, '').replace(/,\s*MD\b/i, '').replace(/\s*\bMD\b/i, '').trim();
             var actualDate = found ? (found.date_prescribed || found.date || '—') : '—';
-            var actualRouting = found ? (found.routing_status || 'Sent to Pharmacy') : 'Sent to Pharmacy';
-            var actualPharm = found ? (found.pharmacy || 'Preferred Pharmacy on File') : 'Preferred Pharmacy on File';
+            var actualRouting = found ? (found.routing_status || 'Status unavailable') : 'Status unavailable';
+            var actualPharm = found ? (found.pharmacy || 'Pharmacy not recorded') : 'Pharmacy not recorded';
 
             if (idEl) idEl.textContent = 'Rx #' + actualId;
             if (barcodeTxt) barcodeTxt.textContent = '*RX-' + String(actualId).replace(/[^0-9a-zA-Z]/g, '') + '*';
             if (docEl) docEl.textContent = cleanDoc;
-            if (docHeaderEl) docHeaderEl.innerHTML = '<span>' + escapeHtml(cleanDoc) + ', MD</span>';
-            if (docCellEl) docCellEl.textContent = cleanDoc + ', MD';
+            if (docHeaderEl) docHeaderEl.textContent = cleanDoc;
+            if (docCellEl) docCellEl.textContent = cleanDoc;
             if (dateEl) dateEl.textContent = actualDate;
             var padDateEl = document.getElementById('pat-modal-rx-pad-date');
             if (padDateEl) padDateEl.textContent = actualDate;
@@ -2309,9 +2309,9 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             var patGender = (found && found.patient_gender) || profileObj.gender || '—';
             var rawWeight = (found && found.patient_weight) || profileObj.weight || '';
             var patWeight = rawWeight ? (isFinite(rawWeight) ? rawWeight + ' kg' : rawWeight) : '—';
-            var patDiag = (found && (found.diagnosis || found.condition || found.title)) || 'Clinical Telehealth Consultation';
+            var patDiag = (found && (found.diagnosis || found.condition || found.title)) || 'Diagnosis not recorded';
             if (patDiag === 'General Medical Prescription' || patDiag === 'Prescription') {
-                patDiag = 'Clinical Telehealth Consultation';
+                patDiag = 'Diagnosis not recorded';
             }
 
             var patAge = '—';
@@ -2333,10 +2333,10 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             if (patDiagEl) patDiagEl.textContent = patDiag;
 
             if (routingEl) routingEl.innerHTML = '<i class="fa-solid fa-circle-check dior-ic-2eb9f328f2"></i> ' + actualRouting;
-            if (statusBadge) statusBadge.innerHTML = '<i class="fa-solid fa-check"></i> ' + (found.routing_status || (actualRouting === 'Sent to Pharmacy' ? 'Transmission Confirmed' : actualRouting));
+            if (statusBadge) statusBadge.textContent = actualRouting;
             if (pharmNameEl) pharmNameEl.textContent = actualPharm;
             if (sigNameEl) sigNameEl.textContent = '/s/ ' + cleanDoc + ', MD';
-            if (sigDateEl) sigDateEl.textContent = 'SHA256 Encrypted \u2022 Issued ' + actualDate;
+            if (sigDateEl) sigDateEl.textContent = actualDate && actualDate !== '—' ? 'Issued ' + actualDate : 'Issue date unavailable';
 
             var sigImgEl = document.getElementById('pat-modal-rx-sig-img');
             var docSigUrl = (found && (found.doctor_signature || found.signature_url)) || (window.dior_vars && window.dior_vars.default_doctor_signature ? window.dior_vars.default_doctor_signature : '');
@@ -2362,9 +2362,9 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             if (found && found.items && found.items.length) {
                 items = found.items;
             } else {
-                var rawMedText = (found ? (found.medication || found.name) : '') || fallbackMed || 'Prescription Medication';
-                var rawDosageText = (found ? (found.dosage || found.dose) : '') || 'As Prescribed';
-                var rawInstText = (found ? (found.instructions || found.notes) : '') || fallbackInst || 'Take as directed by prescribing physician.';
+                var rawMedText = (found ? (found.medication || found.name) : '') || fallbackMed || '';
+                var rawDosageText = (found ? (found.dosage || found.dose) : '') || '';
+                var rawInstText = (found ? (found.instructions || found.notes) : '') || fallbackInst || '';
 
                 var medParts = rawMedText.split(/;\s*|\r\n|\n/).map(function(s) { return s.trim(); }).filter(Boolean);
                 var doseParts = rawDosageText.split(/\|\s*|;\s*|\r\n|\n/).map(function(s) { return s.trim(); }).filter(Boolean);
