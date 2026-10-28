@@ -160,7 +160,10 @@ class Dior_Appointment_Service
         ]);
 
         if (!$inserted) {
-            return new WP_Error('db_error', 'Failed to schedule appointment.');
+            // Always capture the underlying DB failure for diagnosis, even when WP_DEBUG is off.
+            // Keep SQL/schema details out of the patient-facing response.
+            error_log('[Dior Medical] Appointment insert failed; table=' . $table . '; patient_id=' . $patient_id . '; doctor_id=' . $doctor_id . '; date=' . $appt_date . '; time=' . $appt_time . '; status=' . $booking_status . '; db_error=' . ($wpdb->last_error ?: 'unknown database error'));
+            return new WP_Error('db_error', 'Failed to schedule appointment. Please try again. If the issue persists, contact support.');
         }
 
         $created_appt = self::get_appointment_by_uid($appt_uid);
