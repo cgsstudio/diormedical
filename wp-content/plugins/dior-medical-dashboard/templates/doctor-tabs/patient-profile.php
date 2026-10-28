@@ -8,28 +8,36 @@ if (!defined('ABSPATH')) {
 }
 
 global $wpdb;
-$pp_doctor_id = get_current_user_id();
+$pp_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : ['user_id' => get_current_user_id(), 'ids' => [get_current_user_id()], 'appointment_ids' => [get_current_user_id()]];
+$pp_doctor_id = (int) ($pp_context['user_id'] ?? get_current_user_id());
+$pp_doctor_ids = array_values(array_unique(array_filter(array_map('intval', (array) ($pp_context['ids'] ?? [$pp_doctor_id])))));
+$pp_appointment_ids = array_values(array_unique(array_map('intval', (array) ($pp_context['appointment_ids'] ?? $pp_doctor_ids))));
+$pp_patients = [];
 
-// Retrieve accessible patient list for the doctor selector
-if (current_user_can('manage_options')) {
-    $pp_patients = $wpdb->get_results(
-        "SELECT user_id, first_name, last_name, patient_uid 
-         FROM {$wpdb->prefix}dior_patients 
-         WHERE status <> 'deleted' 
-         ORDER BY first_name ASC LIMIT 500",
-        ARRAY_A
-    );
-} else {
-    $pp_patients = $wpdb->get_results($wpdb->prepare(
-        "SELECT DISTINCT p.user_id, p.first_name, p.last_name, p.patient_uid 
-         FROM {$wpdb->prefix}dior_patients p 
-         LEFT JOIN {$wpdb->prefix}dior_appointments a ON a.patient_id = p.user_id 
-         WHERE p.status <> 'deleted' 
-           AND (a.doctor_id = %d OR p.user_id IN (SELECT DISTINCT patient_id FROM {$wpdb->prefix}dior_prescriptions WHERE doctor_id = %d))
-         ORDER BY p.first_name ASC LIMIT 500",
-        $pp_doctor_id,
-        $pp_doctor_id
-    ), ARRAY_A);
+if ($pp_doctor_ids && $pp_appointment_ids) {
+    $pp_appt_placeholders = implode(',', array_fill(0, count($pp_appointment_ids), '%d'));
+    $pp_rx_placeholders = implode(',', array_fill(0, count($pp_doctor_ids), '%d'));
+    $pp_sql = "SELECT DISTINCT p.user_id, p.first_name, p.last_name, p.patient_uid
+        FROM {$wpdb->prefix}dior_patients p
+        LEFT JOIN {$wpdb->prefix}dior_appointments a
+            ON a.patient_id = p.user_id
+            AND a.is_deleted = 0
+            AND a.doctor_id IN ({$pp_appt_placeholders})
+        WHERE p.status <> 'deleted'
+          AND (a.id IS NOT NULL OR p.user_id IN (
+              SELECT DISTINCT patient_id
+              FROM {$wpdb->prefix}dior_prescriptions
+              WHERE doctor_id IN ({$pp_rx_placeholders})
+          ))
+        ORDER BY p.first_name ASC
+        LIMIT 500";
+    $pp_params = array_merge($pp_appointment_ids, $pp_doctor_ids);
+    $pp_patients = $wpdb->get_results($wpdb->prepare($pp_sql, $pp_params), ARRAY_A);
+    if (!is_array($pp_patients)) {
+        $pp_patients = [];
+    }
 }
 
 $pp_nonce = wp_create_nonce('dior_doctor_nonce');
