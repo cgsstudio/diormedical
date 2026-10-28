@@ -615,6 +615,7 @@
             window.diorFetchDocBookerAvailability(window.diorDocBookerState.date);
         }
 
+        modal.hidden = false;
         modal.style.display = 'flex';
         void modal.offsetHeight;
         modal.classList.add('is-open');
@@ -630,10 +631,9 @@
         if (!modal) return;
         modal.classList.remove('is-open');
         modal.setAttribute('aria-hidden', 'true');
-        setTimeout(function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }, 300);
+        modal.hidden = true;
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
     };
 
     /**

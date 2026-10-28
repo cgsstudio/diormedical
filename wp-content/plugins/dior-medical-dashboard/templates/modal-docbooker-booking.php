@@ -42,7 +42,7 @@ $today_ymd = current_time('Y-m-d');
 ?>
 
 <!-- ── DIOR MEDICAL CLEAN REGISTRATION-STYLE APPOINTMENT MODAL ── -->
-<div id="dior-docbooker-modal" class="dior-db-modal" aria-hidden="true" style="display: none;">
+<div id="dior-docbooker-modal" class="dior-db-modal" aria-hidden="true" hidden>
     <div class="dior-db-modal-overlay" onclick="diorCloseDocBookerModal()"></div>
     
     <div class="dior-db-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="dior-db-modal-title">

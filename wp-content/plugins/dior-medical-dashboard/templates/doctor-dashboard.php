@@ -20,6 +20,9 @@
                         <?php endif; ?>
                     </a>
                 </div>
+                <button type="button" class="dior-side-close btn" onclick="diorDocCloseMobile()" aria-label="Close navigation menu">
+                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                </button>
             </div>
 
             <!-- Doctor Identity Card Removed -->
@@ -215,7 +218,7 @@
             <!-- Topbar -->
             <header class="dior-topbar">
                 <div class="dior-topbar-left">
-                    <button type="button" class="dior-mobile-menu-toggle btn" onclick="diorDocOpenMobile()">
+                    <button type="button" class="dior-mobile-menu-toggle btn" onclick="diorDocOpenMobile()" aria-label="Open navigation menu" aria-controls="dior-doc-sidebar" aria-expanded="false">
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="dior-top-search">
@@ -226,11 +229,11 @@
                     </div>
                 </div>
                 <div class="dior-topbar-right">
-                    <button type="button" class="dior-msg-btn dior-ic-fa44d4cb47 btn">
+                    <button type="button" class="dior-msg-btn dior-ic-fa44d4cb47 btn" aria-label="Messages">
                         <i class="far fa-envelope"></i>
                     </button>
                     <div class="dior-notif-wrap">
-                        <button type="button" class="dior-notif-btn btn" onclick="diorDocToggleNotif(event)">
+                        <button type="button" class="dior-notif-btn btn" onclick="diorDocToggleNotif(event)" aria-label="Notifications">
                             <i class="far fa-bell"></i>
                             <?php if ($unread_count > 0): ?>
                                 <span class="dior-notif-indicator doc-unread-badge"><?php echo $unread_count; ?></span>

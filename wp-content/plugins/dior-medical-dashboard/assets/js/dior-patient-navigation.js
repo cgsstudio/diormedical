@@ -150,7 +150,7 @@
             if (!w) return;
             var isOpen = w.classList.contains('open');
             var ch = w.querySelector('.fa-chevron-down');
-            if (isOpen) {
+            if (isOpen && document.getElementById('tab-appointments').classList.contains('active')) {
                 w.classList.remove('open');
                 if (ch) ch.style.transform = 'rotate(0deg)';
             } else {
