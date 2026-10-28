@@ -1110,3 +1110,15 @@
         max-width: 100%;
     }
 }
+
+/* Tablet/mobile tab-panel spacing shared by Patient, Doctor and Admin dashboards. */
+@media (max-width: 1024px) {
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap, .dior-admin-wrap) .dior-tab-panel:not(#tab-overview):not(#tab-doc-overview) {
+        padding: 24px 0px !important;
+        background-color: #F8FAFC !important;
+    }
+
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap, .dior-admin-wrap) .dior-tab-panel:not(#tab-overview):not(#tab-doc-overview) .card-body {
+        padding: 0px !important;
+    }
+}
