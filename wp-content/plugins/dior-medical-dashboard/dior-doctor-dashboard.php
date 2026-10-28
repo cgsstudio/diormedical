@@ -673,17 +673,26 @@ class Dior_Doctor_Dashboard
     }
 
 
-    private static function get_all_documents($patients = [])
+    private static function get_all_documents($patients = [], $doctor_ids = [])
     {
         $all_docs = [];
+        $doctor_ids = array_map('intval', (array) $doctor_ids);
+        if (empty($doctor_ids)) {
+            $context = self::get_single_doctor_context();
+            $doctor_ids = array_map('intval', (array) ($context['ids'] ?? []));
+        }
         if (!empty($patients) && is_array($patients)) {
             foreach ($patients as $p) {
                 $pid = $p["user_id"] ?? 0;
-                if (!$pid)
+                if (!$pid) {
                     continue;
+                }
                 $p_docs = Dior_Medical_Secure_Files::get_patient_documents($pid);
-
-                foreach ($p_docs as $d) {
+                foreach ((array) $p_docs as $d) {
+                    $author_id = (int) ($d['author_id'] ?? $d['doctor_id'] ?? 0);
+                    if ($author_id && !in_array($author_id, $doctor_ids, true)) {
+                        continue;
+                    }
                     $d["patient_id_num"] = $p["patient_id"] ?? ("DM-" . (10000 + $pid));
                     $d["patient_name"] = $p["full_name"] ?? "Patient";
                     $d["patient_user_id"] = $pid;
@@ -704,6 +713,7 @@ class Dior_Doctor_Dashboard
         $requested_user_id = (int) ($doctor_user_id ?: get_current_user_id());
         $doctor_context = self::get_single_doctor_context($requested_user_id);
         $doctor_user_id = (int) ($doctor_context['user_id'] ?? 0);
+        $doctor_ids = array_map('intval', (array) ($doctor_context['ids'] ?? []));
         if (isset($cache[$doctor_user_id])) {
             return $cache[$doctor_user_id];
         }
@@ -727,6 +737,9 @@ class Dior_Doctor_Dashboard
             $rxs = get_user_meta($patient_id, 'dior_prescriptions', true);
             if (is_array($rxs)) {
                 foreach ($rxs as $rx) {
+                    if (!empty($rx['doctor_id']) && !in_array((int) $rx['doctor_id'], $doctor_ids, true)) {
+                        continue;
+                    }
                     $rx['patient_user_id'] = $patient_id;
                     $rx['patient_name'] = self::resolve_patient_name($patient_id);
                     $prescriptions[] = $rx;
@@ -736,6 +749,9 @@ class Dior_Doctor_Dashboard
                 $notes = Dior_Encounter_Service::get_patient_encounters($patient_id);
                 if (is_array($notes)) {
                     foreach ($notes as $note) {
+                        if (!empty($note['doctor_id']) && !in_array((int) $note['doctor_id'], $doctor_ids, true)) {
+                            continue;
+                        }
                         $note['patient_user_id'] = $patient_id;
                         $note['patient_name'] = self::resolve_patient_name($patient_id);
                         $encounters[] = $note;
@@ -746,6 +762,10 @@ class Dior_Doctor_Dashboard
                 $docs = Dior_Medical_Secure_Files::get_patient_documents($patient_id);
                 if (is_array($docs)) {
                     foreach ($docs as $doc) {
+                        $author_id = (int) ($doc['author_id'] ?? $doc['doctor_id'] ?? 0);
+                        if ($author_id && !in_array($author_id, $doctor_ids, true)) {
+                            continue;
+                        }
                         $doc['patient_user_id'] = $patient_id;
                         $doc['patient_name'] = self::resolve_patient_name($patient_id);
                         $documents[] = $doc;
@@ -791,7 +811,7 @@ class Dior_Doctor_Dashboard
         $patients = self::get_all_patients($user_id);
         $appointments = self::get_all_appointments($user_id);
         $notifications = self::get_doctor_notifications($user_id);
-        $documents = self::get_all_documents($patients);
+        $documents = self::get_all_documents($patients, (array) ($doctor_context['ids'] ?? []));
 
         // Dashboard cards must reflect live records only; never inject demo patients,
         // appointments, notifications, or documents into a production dashboard.
