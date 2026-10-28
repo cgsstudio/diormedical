@@ -6,8 +6,23 @@ if (!defined('ABSPATH')) {
 
 global $wpdb;
 
-// Fetch patient list for prescription assignment dropdown
-$patients_query = $wpdb->get_results("SELECT ID, display_name, user_email FROM {$wpdb->users} ORDER BY display_name ASC LIMIT 100");
+// Use the configured doctor's identity and keep prescription workflows scoped to that doctor.
+$doctor_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : ['user_id' => get_current_user_id(), 'ids' => [get_current_user_id()]];
+$doctor_id = (int) ($doctor_context['user_id'] ?? get_current_user_id());
+$doctor_ids = array_values(array_unique(array_filter(array_map('intval', (array) ($doctor_context['ids'] ?? [$doctor_id])))));
+if (!$doctor_ids && $doctor_id) {
+    $doctor_ids = [$doctor_id];
+}
+
+// Fetch patient accounts only; do not offer administrators or other provider accounts as patients.
+$patients_query = get_users([
+    'role__in' => ['patient', 'subscriber', 'customer'],
+    'number' => 100,
+    'orderby' => 'display_name',
+    'order' => 'ASC',
+]);
 $patients_list = [];
 foreach ($patients_query as $pq) {
     $puid = get_user_meta($pq->ID, 'patient_id', true) ?: ('DM-' . (10000 + $pq->ID));
@@ -97,14 +112,13 @@ window.dior_doctor_nonce = "<?php echo esc_js(wp_create_nonce('dior_doctor_nonce
                     </thead>
                     <tbody>
                         <?php
-                        // Restrict prescription visibility to the current doctor's records; administrators may view all.
-                        if (current_user_can('manage_options')) {
-                            $prescriptions = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}dior_prescriptions ORDER BY id DESC");
-                        } else {
-                            $prescriptions = $wpdb->get_results($wpdb->prepare(
-                                "SELECT * FROM {$wpdb->prefix}dior_prescriptions WHERE doctor_id = %d ORDER BY id DESC",
-                                get_current_user_id()
-                            ));
+                        // Even administrator previews of this dashboard are limited to the configured doctor.
+                        $prescriptions = [];
+                        if (!empty($doctor_ids)) {
+                            $prescription_placeholders = implode(',', array_fill(0, count($doctor_ids), '%d'));
+                            $prescription_sql = "SELECT * FROM {$wpdb->prefix}dior_prescriptions
+                                WHERE doctor_id IN ({$prescription_placeholders}) ORDER BY id DESC";
+                            $prescriptions = $wpdb->get_results($wpdb->prepare($prescription_sql, $doctor_ids));
                         }
 
                         if ($prescriptions && count($prescriptions) > 0) {
