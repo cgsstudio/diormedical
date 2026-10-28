@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 class Dior_DB
 {
-    const DB_VERSION = '4.0.5';
+    const DB_VERSION = '4.0.6';
     const DB_VERSION_OPTION = 'dior_medical_db_version';
 
     /**
