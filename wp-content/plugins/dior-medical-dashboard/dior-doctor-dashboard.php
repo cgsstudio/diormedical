@@ -2385,8 +2385,18 @@ class Dior_Doctor_Dashboard
             return in_array((int) ($appointment['doctor_id'] ?? 0), $allowed_appointment_ids, true);
         }));
         $rxs = get_user_meta($pid, "dior_prescriptions", true) ?: [];
+        $rxs = array_values(array_filter((array) $rxs, static function ($rx) use ($allowed_doctor_ids) {
+            return !is_array($rx) || empty($rx['doctor_id']) || in_array((int) $rx['doctor_id'], $allowed_doctor_ids, true);
+        }));
         $notes = Dior_Encounter_Service::get_patient_encounters($pid);
+        $notes = array_values(array_filter((array) $notes, static function ($note) use ($allowed_doctor_ids) {
+            return !is_array($note) || empty($note['doctor_id']) || in_array((int) $note['doctor_id'], $allowed_doctor_ids, true);
+        }));
         $docs = Dior_Medical_Secure_Files::get_patient_documents($pid);
+        $docs = array_values(array_filter((array) $docs, static function ($doc) use ($allowed_doctor_ids) {
+            $author_id = (int) ($doc['author_id'] ?? $doc['doctor_id'] ?? 0);
+            return !$author_id || in_array($author_id, $allowed_doctor_ids, true);
+        }));
 
         ob_start();
         include DIOR_PORTAL_PATH . "templates/patient-detail-modal.php";
