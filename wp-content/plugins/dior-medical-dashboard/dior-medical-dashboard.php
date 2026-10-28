@@ -3195,36 +3195,48 @@ class Dior_Medical_Auth
      */
     public static function handle_book_appointment_from_page()
     {
-        if (!isset($_POST['doctor_id']) || !isset($_POST['date']) || !isset($_POST['time'])) {
-            wp_send_json_error('Missing required booking details.');
+        if (!is_user_logged_in()) {
+            wp_send_json_error(['message' => 'Please sign in before booking an appointment.'], 401);
         }
 
-        $doctor_id = intval($_POST['doctor_id']);
-        $date = sanitize_text_field($_POST['date']);
-        $time = sanitize_text_field($_POST['time']);
-        $reason = isset($_POST['reason']) ? sanitize_text_field($_POST['reason']) : 'Telehealth Consultation';
+        $doctor_id = absint($_POST['doctor_id'] ?? 0);
+        $date = sanitize_text_field(wp_unslash($_POST['date'] ?? ''));
+        $time = sanitize_text_field(wp_unslash($_POST['time'] ?? ''));
+        $reason = sanitize_text_field(wp_unslash($_POST['reason'] ?? 'Telehealth Consultation'));
 
-        // Enforce 15-minute advance slot booking rule
+        if (!$doctor_id || !$date || !$time) {
+            wp_send_json_error(['message' => 'Please select a provider, date, and available time slot.'], 400);
+        }
+
+        $doctor_post = get_post($doctor_id);
+        if (!$doctor_post || $doctor_post->post_type !== 'wpddb_doctor' || $doctor_post->post_status !== 'publish') {
+            wp_send_json_error(['message' => 'The selected provider is unavailable. Please choose a provider from the current list.'], 400);
+        }
+
         if (!self::is_slot_bookable_15min($date, $time, 15)) {
-            wp_send_json_error('This appointment time slot is no longer available. Appointments must be scheduled at least 15 minutes prior to the start time.');
+            wp_send_json_error(['message' => 'This appointment time slot is no longer available. Appointments must be scheduled at least 15 minutes prior to the start time.'], 400);
         }
 
         global $wpdb;
         $table = $wpdb->prefix . 'dior_appointments';
-        $patient_id = get_current_user_id() ?: 0;
-        $appt_uid = 'APT-' . ($patient_id ?: '0') . rand(100, 999);
+        $patient_id = get_current_user_id();
+        $appt_uid = 'APT-' . strtoupper(wp_generate_password(16, false, false));
         $now = current_time('mysql');
+        $doctor_user_id = class_exists('Dior_Doctor_Resolver')
+            ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($doctor_id)
+            : 0;
+        $join_url = $doctor_user_id ? esc_url_raw(get_user_meta($doctor_user_id, 'doctor_zoom_link', true)) : '';
 
         $inserted = $wpdb->insert($table, [
             'appt_uid' => $appt_uid,
             'patient_id' => $patient_id,
-            'doctor_id' => $doctor_id ?: 1957,
+            'doctor_id' => $doctor_id,
             'condition_name' => $reason ?: 'Telehealth Consultation',
-            'visit_type' => 'Video Visit (HD)',
+            'visit_type' => sanitize_text_field(wp_unslash($_POST['visit_type'] ?? 'Video Visit (HD)')),
             'status' => 'Pending',
             'appt_date' => $date,
             'appt_time' => $time,
-            'join_url' => 'https://zoom.us/join',
+            'join_url' => $join_url,
             'payment_status' => 'Pending',
             'notes' => $reason,
             'created_at' => $now,
@@ -3233,7 +3245,7 @@ class Dior_Medical_Auth
         ]);
 
         if ($inserted === false) {
-            wp_send_json_error('Database error: Unable to record appointment.');
+            wp_send_json_error(['message' => 'Database error: Unable to record appointment.'], 500);
         }
 
         wp_send_json_success([
