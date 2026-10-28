@@ -10,10 +10,10 @@
         $emergency_contacts_list = [];
         if (!empty($profile['emergency_name']) || !empty($profile['emergency_phone'])) {
             $emergency_contacts_list[] = [
-                'name' => $profile['emergency_name'] ?: 'Michael Johnson',
-                'relation' => $profile['emergency_relation'] ?: 'Spouse',
-                'phone' => $profile['emergency_phone'] ?: '+1 (555) 014-2099',
-                'priority' => get_user_meta($emerg_user_id, 'emergency_priority', true) ?: 'Emergency',
+                'name' => $profile['emergency_name'] ?? '',
+                'relation' => $profile['emergency_relation'] ?? '—',
+                'phone' => $profile['emergency_phone'] ?? '',
+                'priority' => get_user_meta($emerg_user_id, 'emergency_priority', true) ?: '—',
             ];
         }
     }
