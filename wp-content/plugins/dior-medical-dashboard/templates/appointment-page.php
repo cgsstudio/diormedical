@@ -109,11 +109,11 @@ $current_patient = wp_get_current_user();
                 .dior-step-number{display:inline-flex;flex:0 0 38px;align-items:center;justify-content:center;width:38px;height:38px;padding:0;border:1px solid #dfe6ef;border-radius:50%;background:#e8edf4;color:#60738c;font-size:14px;font-weight:700;box-shadow:none}
                 .dior-step-copy{min-width:0}
                 .dior-step-meta{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:3px;color:#718096;font-size:10px;line-height:1.3;font-weight:700;letter-spacing:.065em}
-                .dior-step-status{display:none;padding:3px 9px;border-radius:999px;background:#e5efff;color:#1764d8;font-size:10px;font-weight:700;letter-spacing:0}
+                .dior-step-status{display:none;padding:3px 9px;border-radius:999px;background:#e5efff;color:#2865a5;font-size:10px;font-weight:700;letter-spacing:0}
                 .dior-step-title{margin:0;color:#586a80;font-size:14px;line-height:1.35;font-weight:700}
                 .dior-step-description{margin-top:2px;color:#8290a3;font-size:11px;line-height:1.4}
-                .dior-booking-step.is-active .dior-step-number{border-color:#1769ed;background:#1769ed;color:#fff;box-shadow:0 3px 8px rgba(23,105,237,.18)}
-                .dior-booking-step.is-active .dior-step-meta{color:#1769ed}
+                .dior-booking-step.is-active .dior-step-number{border-color:#2865a5;background:#2865a5;color:#fff;box-shadow:0 3px 8px rgba(40,101,165,.18)}
+                .dior-booking-step.is-active .dior-step-meta{color:#2865a5}
                 .dior-booking-step.is-active .dior-step-status{display:inline-flex}
                 .dior-booking-step.is-active .dior-step-title{color:#172b49}
                 .dior-booking-step.is-complete .dior-step-number{border-color:#d4e8dc;background:#e5f5eb;color:#23804b}
