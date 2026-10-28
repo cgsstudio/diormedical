@@ -556,7 +556,7 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                   $rx_name = !empty($rx['title']) && $rx['title'] !== 'General Medical Prescription' ? $rx['title'] : (!empty($rx['name']) ? $rx['name'] : (!empty($rx['medication']) ? $rx['medication'] : 'Medication'));
                   $rx_sub = !empty($rx['medication']) && $rx['medication'] !== $rx_name ? $rx['medication'] : (!empty($rx['instructions']) ? $rx['instructions'] : '');
                   $rx_by = !empty($rx['prescribed_by']) ? $rx['prescribed_by'] : 'Provider';
-                  $rx_status = !empty($rx['status']) ? $rx['status'] : 'Active';
+                  $rx_status = !empty($rx['status']) ? $rx['status'] : 'Status unavailable';
                   $is_active = (strtolower($rx_status) === 'active');
                   $rx_badge_cls = $is_active ? 'badge bg-success-subtle text-success border border-success-subtle' : 'badge bg-secondary-subtle text-secondary border';
                   ?>
