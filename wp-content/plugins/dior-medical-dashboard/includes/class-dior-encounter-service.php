@@ -212,7 +212,7 @@ class Dior_Encounter_Service
         $updated = $wpdb->update(
             $table,
             ['is_deleted' => 1, 'updated_at' => current_time('mysql')],
-            ['encounter_uid' => $encounter_uid, 'patient_id' => (int)$patient_id, 'doctor_id' => (int) $doctor_context['user_id']]
+            ['encounter_uid' => $encounter_uid, 'patient_id' => (int)$patient_id, 'doctor_id' => (int) $existing['doctor_id']]
         );
 
         if ($updated) {
