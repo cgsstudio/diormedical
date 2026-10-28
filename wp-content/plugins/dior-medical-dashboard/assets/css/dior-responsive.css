@@ -149,6 +149,14 @@
         max-width: 100%;
     }
 
+    /* Responsive fallback for existing dashboard grids declared inline in templates. */
+    .dior-patient-portal-wrap [style*="grid-template-columns"],
+    .dior-doctor-wrap [style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        min-width: 0;
+        max-width: 100%;
+    }
+
     .dior-patient-portal-wrap .d-flex,
     .dior-doctor-wrap .d-flex {
         min-width: 0;
@@ -283,6 +291,21 @@
         max-width: 100%;
     }
 
+    .dior-patient-portal-wrap [style*="grid-template-columns"],
+    .dior-doctor-wrap [style*="grid-template-columns"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    /* Keep wide clinical tables scrollable inside their own panel, not the page. */
+    .dior-patient-portal-wrap .dior-tab-panel table,
+    .dior-doctor-wrap .dior-tab-panel table {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .dior-patient-portal-wrap .card,
     .dior-doctor-wrap .card {
         margin-bottom: 12px;
@@ -403,6 +426,11 @@
         flex: 0 0 100%;
         width: 100%;
         max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap [style*="grid-template-columns"],
+    .dior-doctor-wrap [style*="grid-template-columns"] {
+        grid-template-columns: minmax(0, 1fr) !important;
     }
 
     .dior-patient-portal-wrap .table-responsive > table,
