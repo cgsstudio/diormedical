@@ -113,6 +113,19 @@
                             </div>
                         </div>
 
+                        <?php
+                        $record_patient_user_id = !empty($user_id) ? absint($user_id) : get_current_user_id();
+                        $record_patient_name = !empty($profile['full_name']) ? $profile['full_name'] : (wp_get_current_user()->display_name ?: 'Patient');
+                        $record_patient_avatar = !empty($profile['avatar_url']) ? $profile['avatar_url'] : '';
+                        if (empty($record_patient_avatar) && $record_patient_user_id) {
+                            $record_patient_avatar = get_user_meta($record_patient_user_id, 'dior_profile_image', true)
+                                ?: get_user_meta($record_patient_user_id, 'profile_image', true)
+                                ?: get_avatar_url($record_patient_user_id, ['size' => 96]);
+                        }
+                        if (empty($record_patient_avatar)) {
+                            $record_patient_avatar = get_avatar_url($record_patient_user_id, ['size' => 96]);
+                        }
+                        ?>
                         <div class="card border-0 shadow-sm rounded-16 dior-ic-18f15f6b14">
                             <div class="card-header bg-transparent py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-3 dior-ic-a6b4a26983">
                                 <h5 class="card-title-text mb-0 dior-ic-e6680bba01"><i class="fas fa-history me-2 text-primary dior-ic-9e5c8d5e64"></i>Patient Treatment &amp; Clinical Timeline Log</h5>
@@ -179,18 +192,6 @@
                                     usort($timeline_events, static function ($a, $b) {
                                         return (strtotime((string)($b['date'] ?? '')) ?: 0) <=> (strtotime((string)($a['date'] ?? '')) ?: 0);
                                     });
-                                    $record_patient_user_id = !empty($user_id) ? absint($user_id) : get_current_user_id();
-                                    $record_patient_name = !empty($profile['full_name']) ? $profile['full_name'] : wp_get_current_user()->display_name;
-                                    $record_patient_avatar = !empty($profile['avatar_url']) ? $profile['avatar_url'] : '';
-                                    if (empty($record_patient_avatar) && $record_patient_user_id) {
-                                        $record_patient_avatar = get_user_meta($record_patient_user_id, 'dior_profile_image', true)
-                                            ?: get_user_meta($record_patient_user_id, 'profile_image', true)
-                                            ?: get_avatar_url($record_patient_user_id, ['size' => 96]);
-                                    }
-                                    if (empty($record_patient_avatar)) {
-                                        $record_patient_avatar = get_avatar_url($record_patient_user_id, ['size' => 96]);
-                                    }
-
                                     foreach (array_slice($timeline_events, 0, 20) as $event):
                                         $event_ts = !empty($event['date']) ? strtotime((string) $event['date']) : false;
                                         $event_type = strtoupper((string)($event['type'] ?? 'APPOINTMENT'));
