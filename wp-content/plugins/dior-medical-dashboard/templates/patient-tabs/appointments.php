@@ -633,13 +633,14 @@
                                     continue;
                                 $today_mock[] = [
                                     $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
-                                    $apt_row['provider_spec'] ?? 'General Practice & Internal Medicine',
+                                    $apt_row['provider_spec'] ?? '—',
                                     $date_ymd ? wp_date('M j, Y', strtotime($date_ymd)) : '—',
                                     $apt_row['time'] ?? ($apt_row['appt_time'] ?? '—'),
                                     $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
-                                    $apt_row['phone'] ?? ($apt_row['contact'] ?? '+1 (800) 555-0199'),
-                                    $status ?: 'Scheduled',
-                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                    $apt_row['phone'] ?? ($apt_row['contact'] ?? '—'),
+                                    $status ?: '—',
+                                    $apt_row['avatar'] ?? '',
+                                    $apt_row['id'] ?? ($apt_row['appt_uid'] ?? '')
                                 ];
                             }
                             ?>
@@ -681,10 +682,10 @@
                                         <button type="button" class="action-icon-btn edit-btn btn" title="Join Video Consultation" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('consultation');">
                                             <i class="fas fa-video text-primary"></i>
                                         </button>
-                                        <button type="button" class="action-icon-btn edit-btn btn" title="View Details" onclick="if(typeof diorOpenAppointmentDetail==='function') diorOpenAppointmentDetail('APT-100');">
+                                        <button type="button" class="action-icon-btn edit-btn btn" title="View Details" onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('<?php echo esc_js($tm[8] ?? ''); ?>');">
                                             <i class="fas fa-eye text-secondary"></i>
                                         </button>
-                                        <button type="button" class="action-icon-btn delete-btn btn" title="Cancel Appointment" onclick="this.closest('tr').remove();">
+                                        <button type="button" class="action-icon-btn delete-btn btn" title="Cancel Appointment" onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('<?php echo esc_js($tm[8] ?? ''); ?>');">
                                             <i class="fas fa-trash text-danger"></i>
                                         </button>
                                     </div>
@@ -774,7 +775,7 @@
                             foreach ((array) $appointments as $apt_row) {
                                 $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
                                 $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
-                                $status = sanitize_text_field($apt_row['status'] ?? 'Scheduled');
+                                $status = sanitize_text_field($apt_row['status'] ?? '');
                                 if (!$date_ymd || $date_ymd < $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled', 'completed', 'done'], true))
                                     continue;
                                 $upcoming_mock[] = [
@@ -784,7 +785,9 @@
                                     $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
                                     $status,
                                     $apt_row['notes'] ?? '—',
-                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                    $apt_row['avatar'] ?? '',
+                                    $apt_row['id'] ?? ($apt_row['appt_uid'] ?? ''),
+                                    $date_raw
                                 ];
                             }
                             ?>
@@ -831,15 +834,15 @@
                                             <i class="fas fa-video text-primary"></i>
                                         </button>
                                         <button type="button" class="action-icon-btn edit-btn btn"
-                                            title="Reschedule Appointment" onclick="if(typeof diorOpenRescheduleModal==='function') diorOpenRescheduleModal('APT-101', '<?php echo esc_js($um[0]); ?>');">
+                                            title="Reschedule Appointment" onclick="if(typeof diorOpenRescheduleModal==='function') diorOpenRescheduleModal('<?php echo esc_js($um[7] ?? ''); ?>', '<?php echo esc_js($um[8] ?? ''); ?>');">
                                             <i class="fas fa-calendar-days text-info"></i>
                                         </button>
                                         <button type="button" class="action-icon-btn edit-btn btn"
-                                            title="View Details" onclick="if(typeof diorOpenAppointmentDetail==='function') diorOpenAppointmentDetail('APT-101');">
+                                            title="View Details" onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('<?php echo esc_js($um[7] ?? ''); ?>');">
                                             <i class="fas fa-eye text-secondary"></i>
                                         </button>
                                         <button type="button" class="action-icon-btn delete-btn btn"
-                                            title="Cancel Appointment" onclick="this.closest('tr').remove(); if(typeof diorUpdateUpcomingSelectedCount==='function') diorUpdateUpcomingSelectedCount();">
+                                            title="Cancel Appointment" onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('<?php echo esc_js($um[7] ?? ''); ?>');">
                                             <i class="fas fa-trash text-danger"></i>
                                         </button>
                                     </div>
@@ -936,9 +939,10 @@
                                     $apt_row['email'] ?? '—',
                                     $apt_row['phone'] ?? '—',
                                     $apt_row['condition'] ?? '—',
-                                    $apt_row['type'] ?? ($apt_row['visit_type'] ?? 'Consultation'),
+                                    $apt_row['type'] ?? ($apt_row['visit_type'] ?? '—'),
                                     '—',
-                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                    $apt_row['avatar'] ?? '',
+                                    $apt_row['id'] ?? ($apt_row['appt_uid'] ?? '')
                                 ];
                             }
                             ?>
@@ -969,7 +973,7 @@
                                 </td>
                                 <td class="text-end pe-3">
                                     <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
-                                        <button type="button" class="action-icon-btn edit-btn btn" title="View Consultation Summary" onclick="if(typeof diorOpenAppointmentDetail==='function') diorOpenAppointmentDetail('APT-99');">
+                                        <button type="button" class="action-icon-btn edit-btn btn" title="View Consultation Summary" onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('<?php echo esc_js($pm[9] ?? ''); ?>');">
                                             <i class="fas fa-file-medical text-secondary"></i>
                                         </button>
                                         <button type="button" class="action-icon-btn edit-btn btn" title="Book Again" onclick="if(typeof diorSwitchSubtab==='function') diorSwitchSubtab('book');">
