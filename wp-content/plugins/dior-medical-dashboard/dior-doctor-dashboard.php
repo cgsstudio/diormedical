@@ -2365,7 +2365,7 @@ class Dior_Doctor_Dashboard
             wp_send_json_error(["message" => "The single-doctor dashboard is not configured."], 403);
         }
 
-        $doctor_appointments = Dior_Appointment_Service::get_doctor_appointments($current_doctor_id);
+        $doctor_appointments = Dior_Appointment_Service::get_doctor_appointments($current_doctor_id, null, null, true);
         $has_relation = false;
         foreach ($doctor_appointments as $doctor_appt) {
             if ((int) ($doctor_appt['patient_id'] ?? ($doctor_appt['patient_user_id'] ?? 0)) === (int) $pid) {
