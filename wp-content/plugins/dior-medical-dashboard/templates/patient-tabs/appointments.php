@@ -60,6 +60,21 @@
         border-color: transparent !important;
         box-shadow: none !important;
     }
+    /* Keep doctor/contact cells text-only even if stale markup injects media/icons. */
+    #tab-appointments .dior-appointment-list-table tbody td:nth-child(2) img,
+    #tab-appointments .dior-appointment-list-table tbody td .fa-phone,
+    #tab-appointments .dior-appointment-list-table tbody td .fa-phone-volume {
+        display: none !important;
+    }
+    /* Highlight status and visit type through text color, never filled pills. */
+    #tab-appointments .dior-appointment-list-table .badge,
+    #tab-appointments .dior-appointment-list-table .rounded-pill {
+        background-color: transparent !important;
+        background-image: none !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+    }
+
     /* Keep dates and time ranges on one line where space permits. */
     #tab-appointments #dior-today-appointments-table td:nth-child(4),
     #tab-appointments #dior-today-appointments-table td:nth-child(5),
