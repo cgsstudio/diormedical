@@ -6007,7 +6007,7 @@ function dior_sync_docbooker_appointment($booking_data)
         'provider_spec' => $spec ?: 'General Practice & Telehealth',
         'provider_title' => $spec ?: 'General Practice & Telehealth',
         'status' => 'Pending',
-        'join_url' => (!empty($matched_doc_uid) && ($doc_zoom = get_user_meta($matched_doc_uid, 'doctor_zoom_link', true))) ? $doc_zoom : 'https://zoom.us/join',
+        'join_url' => (!empty($matched_doc_uid) && ($doc_zoom = get_user_meta($matched_doc_uid, 'doctor_zoom_link', true))) ? esc_url_raw($doc_zoom) : '',
         'raw_date' => !empty($booking_data['booking_date']) ? $booking_data['booking_date'] : '',
         'doctor_id' => $booking_data['doctor_id'] ?? 0,
         'doctor_name' => $doctor_name,
@@ -6018,9 +6018,60 @@ function dior_sync_docbooker_appointment($booking_data)
         'patient_user_id' => $user_id,
     ];
 
-    // add to beginning of array
-    array_unshift($appointments, $new_appointment);
+    // The relational appointment table is canonical for the dashboard. Sync this
+    // DocBooker event into it if the primary booking hook has not already done so.
+    global $wpdb;
+    $appointments_table = $wpdb->prefix . 'dior_appointments';
+    $booking_date = !empty($booking_data['booking_date']) ? sanitize_text_field($booking_data['booking_date']) : '';
+    $booking_time = !empty($booking_data['time']) ? sanitize_text_field($booking_data['time']) : '';
+    $existing_record = false;
+    if ($booking_date && $booking_time) {
+        $existing_record = $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM {$appointments_table} WHERE patient_id = %d AND appt_date = %s AND appt_time = %s AND status NOT IN ('Cancelled', 'No Show') AND is_deleted = 0 LIMIT 1",
+            $user_id,
+            $booking_date,
+            $booking_time
+        ));
+    }
 
+    if (!$existing_record && preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $booking_date) && $booking_time !== '') {
+        $booking_uid = !empty($booking_data['booking_id'])
+            ? sanitize_text_field($booking_data['booking_id'])
+            : 'DOCBOOKER-' . substr(hash('sha256', $user_id . '|' . $booking_date . '|' . $booking_time . '|' . $docbooker_doctor_id), 0, 24);
+        $uid_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM {$appointments_table} WHERE appt_uid = %s LIMIT 1",
+            $booking_uid
+        ));
+        if ($uid_exists) {
+            $booking_uid = 'DOCBOOKER-' . substr(hash('sha256', $booking_uid . '|' . $user_id . '|' . $booking_date . '|' . $booking_time), 0, 24);
+        }
+
+        $now = current_time('mysql');
+        $inserted = $wpdb->insert($appointments_table, [
+            'appt_uid' => $booking_uid,
+            'patient_id' => (int) $user_id,
+            'doctor_id' => (int) ($booking_data['doctor_id'] ?? 0),
+            'condition_name' => sanitize_text_field($booking_data['condition'] ?? 'Telehealth Consultation'),
+            'visit_type' => sanitize_text_field($booking_data['visit_type'] ?? 'Telehealth Video Visit'),
+            'status' => sanitize_text_field($booking_data['status'] ?? 'Pending'),
+            'appt_date' => $booking_date,
+            'appt_time' => $booking_time,
+            'join_url' => $new_appointment['join_url'],
+            'payment_status' => 'Pending',
+            'notes' => sanitize_textarea_field($booking_data['notes'] ?? ($booking_data['patient_note'] ?? '')),
+            'created_at' => $now,
+            'updated_at' => $now,
+            'is_deleted' => 0,
+        ]);
+
+        if ($inserted === false) {
+            error_log('[Dior Medical] DocBooker appointment sync failed for patient ' . (int) $user_id . ': ' . $wpdb->last_error);
+            return;
+        }
+    }
+
+    // Keep legacy metadata for older integrations, but the relational table remains canonical.
+    array_unshift($appointments, $new_appointment);
     update_user_meta($user_id, 'dior_appointments', $appointments);
 
     // 1. Add notification for Patient
