@@ -226,6 +226,99 @@ class Dior_Doctor_Dashboard
         return $missing;
     }
 
+    /**
+     * Resolve the single configured doctor for Doctor Dashboard workflows.
+     * Legacy user/post IDs are retained only as aliases for existing records.
+     */
+    public static function get_single_doctor_context($user_id = 0)
+    {
+        $requested_id = (int) ($user_id ?: get_current_user_id());
+        $requested_user = $requested_id ? get_userdata($requested_id) : false;
+        if (!$requested_user) {
+            return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'profile' => []];
+        }
+
+        if (user_can($requested_id, 'doctor')) {
+            $doctor_user_id = $requested_id;
+        } elseif (self::is_user_admin($requested_id)) {
+            $doctor_user_id = class_exists('Dior_Doctor_Resolver')
+                ? (int) Dior_Doctor_Resolver::get_default_doctor_id()
+                : $requested_id;
+        } else {
+            return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'profile' => []];
+        }
+
+        if (!$doctor_user_id || !get_userdata($doctor_user_id)) {
+            return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'profile' => []];
+        }
+
+        $doctor_ids = [$doctor_user_id];
+        if (class_exists('Dior_Doctor_Resolver')) {
+            $doctor_ids = array_merge(
+                $doctor_ids,
+                (array) Dior_Doctor_Resolver::get_accessible_doctor_ids($doctor_user_id)
+            );
+        }
+
+        $linked_post_ids = [];
+        foreach (['_wpddb_doctor_user_id', 'wpddb_doctor_user_id'] as $meta_key) {
+            $matches = get_posts([
+                'post_type' => 'wpddb_doctor',
+                'post_status' => ['publish', 'private', 'draft', 'pending'],
+                'posts_per_page' => -1,
+                'fields' => 'ids',
+                'orderby' => 'ID',
+                'order' => 'ASC',
+                'meta_key' => $meta_key,
+                'meta_value' => (string) $doctor_user_id,
+            ]);
+            if (is_array($matches)) {
+                $linked_post_ids = array_merge($linked_post_ids, array_map('intval', $matches));
+            }
+        }
+
+        $docbooker_id = (int) get_user_meta($doctor_user_id, '_docbooker_doctor_id', true);
+        if ($docbooker_id && get_post_type($docbooker_id) === 'wpddb_doctor') {
+            array_unshift($linked_post_ids, $docbooker_id);
+        }
+
+        $linked_post_ids = array_values(array_unique(array_filter($linked_post_ids)));
+        $doctor_ids = array_merge($doctor_ids, $linked_post_ids);
+
+        // The canonical ID is used for new appointments; aliases are for existing records only.
+        $canonical_id = !empty($linked_post_ids) ? (int) $linked_post_ids[0] : $doctor_user_id;
+
+        if (class_exists('Dior_Doctor_Resolver') &&
+            $doctor_user_id === (int) Dior_Doctor_Resolver::get_default_doctor_id()) {
+            // Historical unassigned bookings belong to the sole configured doctor.
+            $doctor_ids = array_merge($doctor_ids, [0, 1]);
+        }
+
+        $doctor_ids = array_values(array_unique(array_filter(array_map('intval', $doctor_ids), static function ($id) {
+            return $id >= 0;
+        })));
+
+        return [
+            'user_id' => $doctor_user_id,
+            'canonical_id' => $canonical_id,
+            'ids' => $doctor_ids,
+            'profile' => self::get_doctor_profile($doctor_user_id),
+        ];
+    }
+
+    /**
+     * Confirm an appointment belongs to the configured single-doctor dashboard.
+     */
+    public static function appointment_belongs_to_single_doctor($appointment, $context = null)
+    {
+        if (!is_array($appointment)) {
+            return false;
+        }
+        $context = is_array($context) ? $context : self::get_single_doctor_context();
+        $doctor_ids = array_map('intval', (array) ($context['ids'] ?? []));
+        return in_array((int) ($appointment['doctor_id'] ?? 0), $doctor_ids, true);
+    }
+
     private static function is_user_admin($user_id)
     {
         return user_can($user_id, "administrator") || user_can($user_id, "manage_options");
@@ -605,7 +698,9 @@ class Dior_Doctor_Dashboard
     public static function get_dashboard_data($doctor_user_id = 0)
     {
         static $cache = [];
-        $doctor_user_id = (int) ($doctor_user_id ?: get_current_user_id());
+        $requested_user_id = (int) ($doctor_user_id ?: get_current_user_id());
+        $doctor_context = self::get_single_doctor_context($requested_user_id);
+        $doctor_user_id = (int) ($doctor_context['user_id'] ?? 0);
         if (isset($cache[$doctor_user_id])) {
             return $cache[$doctor_user_id];
         }
