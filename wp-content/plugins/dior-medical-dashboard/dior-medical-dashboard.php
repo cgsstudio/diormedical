@@ -4598,13 +4598,21 @@ class Dior_Medical_Auth
         if (empty($booking) || !is_array($booking))
             return;
 
-        $booking_id = $booking['booking_id'] ?? ('BK-' . time());
-        $patient_email = $booking['patient_email'] ?? '';
-        $patient_name = $booking['patient_name'] ?? 'Patient';
-        $docbooker_doctor_id = $booking['doctor_id'] ?? 0;
-        $date = $booking['booking_date'] ?? current_time('Y-m-d');
-        $time = $booking['time'] ?? 'ASAP';
-        $notes = $booking['notes'] ?? ($booking['patient_note'] ?? 'Telehealth Consultation');
+        $booking_id = !empty($booking['booking_id']) ? sanitize_text_field($booking['booking_id']) : '';
+        $patient_email = !empty($booking['patient_email']) ? sanitize_email($booking['patient_email']) : '';
+        $patient_name = !empty($booking['patient_name']) ? sanitize_text_field($booking['patient_name']) : '';
+        $docbooker_doctor_id = absint($booking['doctor_id'] ?? 0);
+        $date = !empty($booking['booking_date']) ? sanitize_text_field($booking['booking_date']) : '';
+        $time = !empty($booking['time']) ? sanitize_text_field($booking['time']) : '';
+        $notes = sanitize_textarea_field($booking['notes'] ?? ($booking['patient_note'] ?? ''));
+
+        if (!is_email($patient_email) || !$docbooker_doctor_id || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || $time === '') {
+            error_log('[Dior Medical] DocBooker booking hook skipped: missing/invalid patient, provider, date, or time.');
+            return;
+        }
+        if ($booking_id === '') {
+            $booking_id = 'BK-' . substr(hash('sha256', $patient_email . '|' . $docbooker_doctor_id . '|' . $date . '|' . $time), 0, 24);
+        }
 
         // Resolve Patient User ID
         $patient_user_id = 0;
@@ -4638,7 +4646,7 @@ class Dior_Medical_Auth
 
         // Resolve Doctor WP User ID & Name
         $doctor_user_id = 0;
-        $doctor_name = 'Dr. Dior Specialist';
+        $doctor_name = 'Provider not recorded';
         if (class_exists('Dior_Doctor_Resolver')) {
             $doctor_user_id = Dior_Doctor_Resolver::resolve_doctor_user_id($docbooker_doctor_id);
         }
@@ -4676,8 +4684,8 @@ class Dior_Medical_Auth
                     'appt_date' => $date,
                     'appt_time' => $time,
                     'status' => 'Pending',
-                    'join_url' => 'https://zoom.us/join',
-                    'payment_status' => 'Paid',
+                    'join_url' => (!empty($doctor_user_id) && ($doctor_zoom = get_user_meta($doctor_user_id, 'doctor_zoom_link', true))) ? esc_url_raw($doctor_zoom) : '',
+                    'payment_status' => 'Pending',
                     'notes' => $notes,
                     'booking_id' => $booking_id
                 ]);
@@ -5993,7 +6001,7 @@ function dior_sync_docbooker_appointment($booking_data)
 
     // Create new appointment record
     $doctor = get_post($booking_data['doctor_id']);
-    $doctor_name = $doctor ? $doctor->post_title : 'Doctor';
+    $doctor_name = ($doctor && $doctor->post_type === 'wpddb_doctor') ? $doctor->post_title : 'Provider not recorded';
     $spec = get_post_meta($booking_data['doctor_id'], 'wpddb_doctor_speciality', true);
     $matched_doc_uid = dior_find_doctor_user_id($booking_data['doctor_id'], $doctor_name);
 
@@ -6004,8 +6012,8 @@ function dior_sync_docbooker_appointment($booking_data)
         'condition' => 'Telehealth Consultation',
         'type' => 'Telehealth Video Visit',
         'provider' => $doctor_name,
-        'provider_spec' => $spec ?: 'General Practice & Telehealth',
-        'provider_title' => $spec ?: 'General Practice & Telehealth',
+        'provider_spec' => $spec ?: 'Specialty not recorded',
+        'provider_title' => $spec ?: 'Specialty not recorded',
         'status' => 'Pending',
         'join_url' => (!empty($matched_doc_uid) && ($doc_zoom = get_user_meta($matched_doc_uid, 'doctor_zoom_link', true))) ? esc_url_raw($doc_zoom) : '',
         'raw_date' => !empty($booking_data['booking_date']) ? $booking_data['booking_date'] : '',
