@@ -18,45 +18,31 @@ class Dior_Appointment_Service
     private static function doctor_owns_appointment($appointment, $user_id)
     {
         $user_id = (int) $user_id;
-        if (!$user_id || Dior_Auth_Service::is_admin($user_id)) return (bool) $user_id;
-        if (!Dior_Auth_Service::is_doctor($user_id)) return false;
+        if (!$user_id || !is_array($appointment)) {
+            return false;
+        }
 
-        $doctor_ids = class_exists('Dior_Doctor_Resolver')
+        // Admins using the dashboard still operate within the one configured doctor.
+        if (Dior_Auth_Service::is_admin($user_id)) {
+            $user_id = class_exists('Dior_Doctor_Resolver')
+                ? (int) Dior_Doctor_Resolver::get_default_doctor_id()
+                : 0;
+        }
+        if (!$user_id || !Dior_Auth_Service::is_doctor($user_id)) {
+            return false;
+        }
+
+        if (class_exists('Dior_Doctor_Dashboard')) {
+            return Dior_Doctor_Dashboard::appointment_belongs_to_single_doctor(
+                $appointment,
+                Dior_Doctor_Dashboard::get_single_doctor_context($user_id)
+            );
+        }
+
+        $allowed_ids = class_exists('Dior_Doctor_Resolver')
             ? Dior_Doctor_Resolver::get_accessible_doctor_ids($user_id)
             : [$user_id];
-        $appointment_doctor_id = (int) ($appointment['doctor_id'] ?? 0);
-        if (in_array($appointment_doctor_id, $doctor_ids, true)) return true;
-
-        if (class_exists('Dior_Doctor_Resolver') && $appointment_doctor_id) {
-            return (int) Dior_Doctor_Resolver::resolve_doctor_user_id($appointment_doctor_id) === $user_id;
-        }
-        return false;
-    }
-
-    /**
-     * Persist an appointment lifecycle event without breaking the booking flow.
-     */
-    private static function log_history($appt, $action, $extra = [])
-    {
-        global $wpdb;
-        $table = $wpdb->prefix . 'dior_appointment_history';
-        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table || empty($appt)) return;
-        $wpdb->insert($table, [
-            'appointment_id' => isset($appt['id']) ? (int) $appt['id'] : null,
-            'appt_uid' => sanitize_text_field($appt['appt_uid'] ?? ''),
-            'patient_id' => (int) ($appt['patient_id'] ?? 0),
-            'doctor_id' => (int) ($appt['doctor_id'] ?? 0),
-            'action' => sanitize_key($action),
-            'old_status' => sanitize_text_field($extra['old_status'] ?? ''),
-            'new_status' => sanitize_text_field($extra['new_status'] ?? ($appt['status'] ?? '')),
-            'old_date' => !empty($extra['old_date']) ? $extra['old_date'] : null,
-            'new_date' => !empty($extra['new_date']) ? $extra['new_date'] : ($appt['appt_date'] ?? null),
-            'old_time' => sanitize_text_field($extra['old_time'] ?? ''),
-            'new_time' => sanitize_text_field($extra['new_time'] ?? ($appt['appt_time'] ?? '')),
-            'changed_by' => (int) (Dior_Auth_Service::get_current_user_id() ?: 0),
-            'notes' => sanitize_textarea_field($extra['notes'] ?? ''),
-            'created_at' => current_time('mysql'),
-        ]);
+        return in_array((int) ($appointment['doctor_id'] ?? 0), array_map('intval', $allowed_ids), true);
     }
 
     public static function log_history_public($appt, $action, $extra = []) { self::log_history($appt, $action, $extra); }
@@ -97,9 +83,18 @@ class Dior_Appointment_Service
             return new WP_Error('incomplete_profile', 'Please complete your personal profile (' . implode(', ', $missing) . ') before booking an appointment.');
         }
 
-        $doctor_id = absint($data['doctor_id'] ?? 0);
+        // All patient and dashboard bookings are assigned to the configured single doctor.
+        // Never trust a submitted provider ID from the browser.
+        $doctor_id = 0;
+        if (class_exists('Dior_Doctor_Resolver') && class_exists('Dior_Doctor_Dashboard')) {
+            $configured_doctor_user_id = (int) Dior_Doctor_Resolver::get_default_doctor_id();
+            $single_doctor_context = Dior_Doctor_Dashboard::get_single_doctor_context($configured_doctor_user_id);
+            $doctor_id = (int) ($single_doctor_context['canonical_id'] ?? 0);
+        } else {
+            $doctor_id = absint($data['doctor_id'] ?? 0);
+        }
         if (!$doctor_id) {
-            return new WP_Error('invalid_doctor', 'A valid provider ID is required to book an appointment.');
+            return new WP_Error('invalid_doctor', 'The configured doctor profile is not available for booking.');
         }
 
         $condition = sanitize_text_field($data['condition'] ?? 'Telehealth Consultation');
@@ -671,40 +666,29 @@ class Dior_Appointment_Service
         global $wpdb;
         $table = $wpdb->prefix . 'dior_appointments';
 
-        $where = ['a.is_deleted = 0'];
-        $params = [];
-
-        // Dashboard views may run under an administrator account, but must still
-        // stay scoped to the single configured doctor. Other admin callers retain
-        // the previous clinic-wide behavior unless they explicitly request scoping.
-        $is_admin = Dior_Auth_Service::is_admin($doctor_id) && !$force_doctor_scope;
-        $default_doc_id = class_exists('Dior_Doctor_Resolver') ? Dior_Doctor_Resolver::get_default_doctor_id() : 0;
-
-        // Strict Doctor Filtering: Each doctor only sees their own appointments
-        if (!$is_admin && $doctor_id) {
-            $linked_post_ids = $wpdb->get_col($wpdb->prepare(
-                "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_wpddb_doctor_user_id' AND meta_value = %s",
-                (string)$doctor_id
-            ));
-            
-            $managed_ids = class_exists('Dior_Doctor_Resolver')
-                ? Dior_Doctor_Resolver::get_accessible_doctor_ids((int) $doctor_id)
-                : [(int) $doctor_id];
-            $allowed_ids = array_unique(array_filter(array_merge($managed_ids, array_map('intval', (array)$linked_post_ids))));
-            
-            // If primary clinic default doctor, allow general/unassigned appointments
-            if ($doctor_id == $default_doc_id) {
-                $allowed_ids[] = 0;
-                $allowed_ids[] = 1;
-                $allowed_ids = array_unique($allowed_ids);
-            }
-
-            $in_placeholders = implode(',', array_fill(0, count($allowed_ids), '%d'));
-            $where[] = "a.doctor_id IN ($in_placeholders)";
-            foreach ($allowed_ids as $aid) {
-                $params[] = $aid;
-            }
+        $requested_id = (int) $doctor_id;
+        if (!$requested_id || Dior_Auth_Service::is_admin($requested_id)) {
+            $requested_id = class_exists('Dior_Doctor_Resolver')
+                ? (int) Dior_Doctor_Resolver::get_default_doctor_id()
+                : 0;
         }
+
+        $context = class_exists('Dior_Doctor_Dashboard')
+            ? Dior_Doctor_Dashboard::get_single_doctor_context($requested_id)
+            : ['user_id' => $requested_id, 'ids' => [$requested_id]];
+        $allowed_ids = array_values(array_unique(array_filter(array_map(
+            'intval',
+            (array) ($context['appointment_ids'] ?? $context['ids'] ?? [])
+        ), static function ($id) { return $id > 0; })));
+
+        // Fail closed: never return clinic-wide appointments from a single-doctor dashboard.
+        if (!$requested_id || !$allowed_ids) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($allowed_ids), '%d'));
+        $where = ['a.is_deleted = 0', "a.doctor_id IN ($placeholders)"];
+        $params = $allowed_ids;
 
         if (!empty($status)) {
             $where[] = 'a.status = %s';
@@ -717,21 +701,21 @@ class Dior_Appointment_Service
         }
 
         $where_sql = implode(' AND ', $where);
-        $sql = "SELECT a.*, 
-                       u.display_name as patient_display_name, 
+        $sql = "SELECT a.*,
+                       u.display_name as patient_display_name,
                        u.user_email as patient_email
                 FROM $table a
                 LEFT JOIN {$wpdb->users} u ON a.patient_id = u.ID
                 WHERE $where_sql
                 ORDER BY a.appt_date DESC, a.id DESC";
+        $results = $wpdb->get_results($wpdb->prepare($sql, $params), ARRAY_A);
 
-        $results = !empty($params) ? $wpdb->get_results($wpdb->prepare($sql, $params), ARRAY_A) : $wpdb->get_results($sql, ARRAY_A);
+        if (!$results) {
+            return [];
+        }
 
-        if (!$results) return [];
-
-        // Attach resolved metadata
         foreach ($results as &$r) {
-            $pid = (int)$r['patient_id'];
+            $pid = (int) $r['patient_id'];
             $fn = get_user_meta($pid, 'first_name', true);
             $ln = get_user_meta($pid, 'last_name', true);
             $fullName = trim($fn . ' ' . $ln);
@@ -756,6 +740,14 @@ class Dior_Appointment_Service
     public static function sync_legacy_usermeta($patient_id)
     {
         $apts = self::get_patient_appointments($patient_id);
+        $provider_name = 'Configured Doctor';
+        if (class_exists('Dior_Doctor_Resolver') && class_exists('Dior_Doctor_Dashboard')) {
+            $configured_doctor_id = (int) Dior_Doctor_Resolver::get_default_doctor_id();
+            $doctor_profile = Dior_Doctor_Dashboard::get_doctor_profile($configured_doctor_id);
+            if (!empty($doctor_profile['full_name'])) {
+                $provider_name = $doctor_profile['full_name'];
+            }
+        }
         $legacy = [];
         foreach ($apts as $a) {
             $legacy[] = [
@@ -763,7 +755,7 @@ class Dior_Appointment_Service
                 'date'           => $a['appt_date'],
                 'time'           => $a['appt_time'],
                 'condition'      => $a['condition_name'],
-                'provider'       => 'Dr. Evelyn Vance, MD',
+                'provider'       => $provider_name,
                 'provider_spec'  => 'Board Certified Urgent Care Physician',
                 'type'           => $a['visit_type'],
                 'status'         => $a['status'],
