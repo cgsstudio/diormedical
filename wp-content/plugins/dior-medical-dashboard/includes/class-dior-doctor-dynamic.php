@@ -621,7 +621,7 @@ class Dior_Doctor_Dynamic {
         if ($id) {
             $r = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . self::table('reviews') . ' WHERE id=%d', $id), ARRAY_A);
             if (!$r) wp_send_json_error(['message' => 'Review not found.']);
-            if (!current_user_can('manage_options') && !in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true)) {
+            if (!in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true)) {
                 wp_send_json_error(['message' => 'Access denied.'], 403);
             }
             $update_data = [
@@ -657,7 +657,7 @@ class Dior_Doctor_Dynamic {
         global $wpdb;
         $id = (int)($_POST['id'] ?? 0);
         $r = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . self::table('reviews') . ' WHERE id=%d', $id), ARRAY_A);
-        if (!$r || (!current_user_can('manage_options') && !in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true))) {
+        if (!$r || !in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true)) {
             wp_send_json_error(['message' => 'Access denied.'], 403);
         }
         $wpdb->delete(self::table('reviews'), ['id' => $id], ['%d']);
@@ -673,17 +673,17 @@ class Dior_Doctor_Dynamic {
         $deleted = 0;
         foreach ($ids as $id) {
             $r = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . self::table('reviews') . ' WHERE id=%d', $id), ARRAY_A);
-            if ($r && (current_user_can('manage_options') || in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true))) {
+            if ($r && in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true)) {
                 $wpdb->delete(self::table('reviews'), ['id' => $id], ['%d']);
                 $deleted++;
             }
         }
         wp_send_json_success(['message' => "$deleted review(s) deleted."]);
     }
-    public static function ajax_review_get(){ self::auth(); global $wpdb; $id=(int)($_POST['id']??0); $r=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('reviews').' WHERE id=%d',$id),ARRAY_A); if(!$r)wp_send_json_error(['message'=>'Review not found.']); wp_send_json_success(['review'=>$r,'patient'=>self::patient($r['patient_id'])]); }
+    public static function ajax_review_get(){ self::auth(); global $wpdb; $id=(int)($_POST['id']??0); $r=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('reviews').' WHERE id=%d',$id),ARRAY_A); if(!$r || !in_array((int)$r['doctor_id'], self::doctor_scope_ids(), true))wp_send_json_error(['message'=>'Review not found or access denied.'],403); wp_send_json_success(['review'=>$r,'patient'=>self::patient($r['patient_id'])]); }
 
     public static function ajax_telemed_save(){ self::auth(); global $wpdb; $pid=(int)($_POST['patient_id']??0); $appt=sanitize_text_field($_POST['appointment_uid']??''); if(!$pid||!self::patient_belongs_to_doctor($pid,self::doctor_id()))wp_send_json_error(['message'=>'Access denied.']);$id=(int)($_POST['id']??0);$data=['appointment_uid'=>$appt,'patient_id'=>$pid,'doctor_id'=>self::doctor_id(),'room_url'=>esc_url_raw($_POST['room_url']??''),'status'=>sanitize_text_field($_POST['status']??'Scheduled'),'notes'=>sanitize_textarea_field($_POST['notes']??''),'updated_at'=>current_time('mysql')];if($id)$wpdb->update(self::table('telemedicine'),$data,['id'=>$id]);else{$data['tele_uid']='TEL-'.wp_generate_uuid4();$data['created_at']=current_time('mysql');$wpdb->insert(self::table('telemedicine'),$data);$id=$wpdb->insert_id;}wp_send_json_success(['message'=>'Telemedicine record saved.','id'=>$id]);}
-    public static function ajax_telemed_delete(){self::auth();global $wpdb;$id=(int)($_POST['id']??0);$r=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('telemedicine').' WHERE id=%d',$id),ARRAY_A);if(!$r||(!current_user_can('manage_options')&&!in_array((int)$r['doctor_id'],self::doctor_scope_ids(),true)))wp_send_json_error(['message'=>'Access denied.']);$wpdb->delete(self::table('telemedicine'),['id'=>$id],['%d']);wp_send_json_success(['message'=>'Telemedicine record deleted.']);}
+    public static function ajax_telemed_delete(){self::auth();global $wpdb;$id=(int)($_POST['id']??0);$r=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table('telemedicine').' WHERE id=%d',$id),ARRAY_A);if(!$r||!in_array((int)$r['doctor_id'],self::doctor_scope_ids(),true))wp_send_json_error(['message'=>'Access denied.'],403);$wpdb->delete(self::table('telemedicine'),['id'=>$id],['%d']);wp_send_json_success(['message'=>'Telemedicine record deleted.']);}
 
     public static function ajax_notification_read(){self::auth();global $wpdb;$id=(int)($_POST['id']??0);$ids=self::doctor_scope_ids();$in=implode(',',array_fill(0,count($ids),'%d'));$args=array_merge([current_time('mysql'),$id],$ids);$wpdb->query($wpdb->prepare('UPDATE '.self::table('notifications')." SET is_read=1,read_at=%s WHERE id=%d AND doctor_id IN ($in)",...$args));wp_send_json_success(['message'=>'Notification marked as read.']);}
     public static function ajax_notification_all_read(){self::auth();global $wpdb;$ids=self::doctor_scope_ids();$in=implode(',',array_fill(0,count($ids),'%d'));$args=array_merge([current_time('mysql')],$ids);$wpdb->query($wpdb->prepare('UPDATE '.self::table('notifications')." SET is_read=1,read_at=%s WHERE doctor_id IN ($in)",...$args));wp_send_json_success(['message'=>'All notifications marked as read.']);}
@@ -824,7 +824,19 @@ class Dior_Doctor_Dynamic {
             wp_send_json_error(['message' => 'Missing prescription ID.']);
         }
         $table = $wpdb->prefix . 'dior_prescriptions';
-        $wpdb->delete($table, ['prescription_id' => $rx_id]);
+        $doctor_ids = self::doctor_scope_ids();
+        if (!$doctor_ids) {
+            wp_send_json_error(['message' => 'The single-doctor dashboard is not configured.'], 403);
+        }
+        $placeholders = implode(',', array_fill(0, count($doctor_ids), '%d'));
+        $prescription = $wpdb->get_row($wpdb->prepare(
+            "SELECT id FROM $table WHERE prescription_id = %s AND doctor_id IN ($placeholders) LIMIT 1",
+            array_merge([$rx_id], $doctor_ids)
+        ), ARRAY_A);
+        if (!$prescription) {
+            wp_send_json_error(['message' => 'Prescription not found or access denied.'], 403);
+        }
+        $wpdb->delete($table, ['id' => (int) $prescription['id']], ['%d']);
         wp_send_json_success(['message' => 'Prescription deleted.']);
     }
 }
