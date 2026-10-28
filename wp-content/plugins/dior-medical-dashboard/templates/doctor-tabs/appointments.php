@@ -247,7 +247,7 @@ $calendar_json = json_encode($calendar_cards);
         
         <!-- Toolbar Header -->
         <div class="card-header bg-white border-bottom py-3 px-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 dior-doc-cal-toolbar">
 
                 <!-- Navigation Controls (Prev, Month Title, Next, Today) -->
                 <div class="d-flex align-items-center gap-2">
@@ -273,7 +273,7 @@ $calendar_json = json_encode($calendar_cards);
                 </div>
 
                 <!-- Filters & View Toggles -->
-                <div class="d-flex flex-wrap align-items-center gap-2">
+                <div id="dior-doc-cal-toolbar-actions" class="d-flex flex-wrap align-items-center justify-content-end gap-2">
                     <!-- Filter by Doctor -->
                     <div class="d-none d-sm-block">
                         <select class="form-select form-select-sm rounded-pill border-secondary-subtle"
@@ -328,7 +328,7 @@ $calendar_json = json_encode($calendar_cards);
 
                     <!-- Add Event / Book Visit Button -->
                     <button type="button" onclick="if (typeof diorOpenDocBookerModal === 'function') { diorOpenDocBookerModal(); } else if (typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-appointments-book'); }"
-                        class="btn btn-primary btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm ms-2">
+                        class="btn btn-primary btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center justify-content-center gap-1 shadow-sm ms-0" style="width:auto !important; flex:0 0 auto; white-space:nowrap;">
                         <i class="fas fa-plus"></i> New Event
                     </button>
                 </div>
