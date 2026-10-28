@@ -558,8 +558,11 @@ class Dior_Appointment_Service
                 $legacy['appt_date'] = $legacy_ymd ?: $legacy_date;
                 $legacy['time'] = $legacy_time;
                 $legacy['appt_time'] = $legacy_time;
-                $legacy['condition'] = $legacy['condition'] ?? ($legacy['condition_name'] ?? '—');
-                $legacy['type'] = $legacy['type'] ?? ($legacy['visit_type'] ?? 'Video Visit (HD)');
+                $legacy['condition_name'] = $legacy['condition_name'] ?? ($legacy['condition'] ?? '—');
+                $legacy['visit_type'] = $legacy['visit_type'] ?? ($legacy['type'] ?? 'Video Visit (HD)');
+                $legacy['doctor_id'] = (int) ($legacy['doctor_id'] ?? 0);
+                $legacy['condition'] = $legacy['condition'] ?? $legacy['condition_name'];
+                $legacy['type'] = $legacy['type'] ?? $legacy['visit_type'];
                 $legacy['provider'] = $legacy['provider'] ?? ($legacy_doctor !== '' ? $legacy_doctor : 'Attending Physician');
                 $legacy['doctor_name'] = $legacy['doctor_name'] ?? $legacy['provider'];
                 $legacy['provider_spec'] = $legacy['provider_spec'] ?? ($legacy['provider_title'] ?? 'Telehealth Physician');
@@ -589,7 +592,7 @@ class Dior_Appointment_Service
             $r['condition'] = $r['condition_name'];
             $r['type'] = $r['visit_type'];
 
-            $doc_id = (int)$r['doctor_id'];
+            $doc_id = (int) ($r['doctor_id'] ?? 0);
             $doc_user_id = 0;
             $doc_name = '';
             $doc_spec = '';
