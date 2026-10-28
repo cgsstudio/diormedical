@@ -229,18 +229,38 @@ class Dior_Notification_Service
             'fa-user-check'
         );
 
-        // Luxury Email
+        // Registration email content follows the supplied branded HTML reference.
         $content = '
-        <p>Dear <strong>' . esc_html($name) . '</strong>,</p>
-        <p>Welcome to <strong>' . esc_html(get_bloginfo('name') ?: 'Dior Medical') . '</strong>. Your secure patient portal account has been successfully activated.</p>
-        <p>Through your portal, you can:</p>
-        <ul style="padding-left: 20px; margin: 12px 0; color: #475569;">
-            <li style="margin-bottom: 6px;">Book on-demand and scheduled Telehealth video consultations</li>
-            <li style="margin-bottom: 6px;">Manage, reschedule, and review all upcoming appointments</li>
-            <li style="margin-bottom: 6px;">Access digital e-prescriptions sent directly to your local pharmacy</li>
-            <li style="margin-bottom: 6px;">Complete clinical intake questionnaires with certified electronic signature</li>
-        </ul>
-        <p style="margin-top: 16px;">Please take a moment to review and complete your personal profile to ensure eligibility for your next appointment.</p>';
+        <p style="margin:0 0 22px;font-size:20px;line-height:1.5;">Dear ' . esc_html($name) . ',</p>
+        <p style="margin:0 0 26px;font-size:20px;line-height:1.55;">Welcome to <strong style="color:#176dbb;">' . esc_html(get_bloginfo('name') ?: 'DIOR MEDICAL') . '.</strong> Your secure patient portal account has been successfully activated.</p>
+        <p style="margin:0 0 20px;font-size:20px;line-height:1.5;">Through your portal, you can:</p>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-collapse:collapse;margin:0 0 12px;">
+          <tr>
+            <td class="dior-welcome-icon-cell" width="100" valign="middle" style="width:100px;padding:0 0 16px;">
+              <table role="presentation" class="dior-welcome-icon" width="78" height="78" cellspacing="0" cellpadding="0" border="0" style="width:78px;height:78px;background:#edf6ff;border-radius:50%;border-collapse:separate;"><tr><td align="center" valign="middle" style="font-size:36px;color:#0873d1;">&#128187;</td></tr></table>
+            </td>
+            <td class="dior-welcome-feature" valign="middle" style="padding:0 0 16px 18px;font-size:20px;line-height:1.5;color:#142c59;">Book on-demand and scheduled telehealth video consultations</td>
+          </tr>
+          <tr>
+            <td class="dior-welcome-icon-cell" width="100" valign="middle" style="width:100px;padding:0 0 16px;">
+              <table role="presentation" class="dior-welcome-icon" width="78" height="78" cellspacing="0" cellpadding="0" border="0" style="width:78px;height:78px;background:#edf6ff;border-radius:50%;border-collapse:separate;"><tr><td align="center" valign="middle" style="font-size:36px;color:#0873d1;">&#128197;</td></tr></table>
+            </td>
+            <td class="dior-welcome-feature" valign="middle" style="padding:0 0 16px 18px;font-size:20px;line-height:1.5;color:#142c59;">Manage, reschedule, and review all upcoming appointments</td>
+          </tr>
+          <tr>
+            <td class="dior-welcome-icon-cell" width="100" valign="middle" style="width:100px;padding:0 0 16px;">
+              <table role="presentation" class="dior-welcome-icon" width="78" height="78" cellspacing="0" cellpadding="0" border="0" style="width:78px;height:78px;background:#edf6ff;border-radius:50%;border-collapse:separate;"><tr><td align="center" valign="middle" style="font-size:36px;color:#0873d1;">&#128196;</td></tr></table>
+            </td>
+            <td class="dior-welcome-feature" valign="middle" style="padding:0 0 16px 18px;font-size:20px;line-height:1.5;color:#142c59;">Access digital e-prescriptions sent directly to your local pharmacy</td>
+          </tr>
+          <tr>
+            <td class="dior-welcome-icon-cell" width="100" valign="middle" style="width:100px;padding:0 0 16px;">
+              <table role="presentation" class="dior-welcome-icon" width="78" height="78" cellspacing="0" cellpadding="0" border="0" style="width:78px;height:78px;background:#edf6ff;border-radius:50%;border-collapse:separate;"><tr><td align="center" valign="middle" style="font-size:36px;color:#0873d1;">&#128221;</td></tr></table>
+            </td>
+            <td class="dior-welcome-feature" valign="middle" style="padding:0 0 16px 18px;font-size:20px;line-height:1.5;color:#142c59;">Complete clinical intake questionnaires with certified electronic signature</td>
+          </tr>
+        </table>
+        <p style="margin:8px 0 0;font-size:19px;line-height:1.55;">Please take a moment to review and complete your personal profile to ensure eligibility for your next appointment.</p>';
 
         $html = self::render_email_template(
             'Welcome to Dior Medical Telehealth',
