@@ -569,6 +569,8 @@ let diorPastCurrentPage = 1;
                                 const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
                                 
                                 return allRows.filter(function(row) {
+                                    // Empty-state placeholder is not an appointment record.
+                                    if (row.classList.contains('dior-empty-state')) return false;
                                     const text = row.innerText.toLowerCase();
                                     return text.includes(filter);
                                 });
