@@ -342,31 +342,6 @@
                     </button>
                 </div>
 
-                <!-- Attending Physician Card -->
-                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 bg-white">
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="position-relative">
-                                <img src="<?php echo esc_url($appt_doctor_avatar); ?>" alt="<?php echo esc_attr($appt_doctor_name); ?>" class="rounded-circle border shadow-sm" style="width: 58px; height: 58px; object-fit: cover; flex-shrink: 0;">
-                                <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white border-2 rounded-circle" title="Available for Telehealth"></span>
-                            </div>
-                            <div class="min-w-0">
-                                <div class="d-flex align-items-center gap-2 mb-1">
-                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-0.5 small fw-semibold">Attending Physician</span>
-                                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5 small"><i class="fas fa-certificate text-primary me-1"></i> Board Certified</span>
-                                </div>
-                                <h5 class="fw-bold text-dark mb-0 text-truncate"><?php echo esc_html($appt_doctor_name); ?></h5>
-                                <div class="text-secondary small text-truncate mt-0.5"><?php echo esc_html($appt_doctor_spec); ?> &bull; Dior Medical Urgent Care</div>
-                            </div>
-                        </div>
-                        <div class="text-end d-none d-md-block">
-                            <span class="badge bg-light text-dark border rounded-pill px-3 py-1.5 small fw-semibold">
-                                <i class="fas fa-video text-primary me-1"></i> Telehealth Verified
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- DocBooker Inline Form -->
                 <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 bg-white">
                     <?php
@@ -417,10 +392,7 @@
                                 <div class="col-12 col-md-6">
                                     <div class="p-3 rounded-4 border bg-white d-flex align-items-center justify-content-between cursor-pointer dior-service-card-item opacity-75" id="dior-fmt-phone" onclick="diorSelectInlineFormat('Phone Consultation', this)" style="cursor: pointer; transition: all 0.2s ease;">
                                         <div class="d-flex align-items-center gap-3">
-                                            <div class="rounded-circle bg-light text-secondary border d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
-                                                <i class="fas fa-phone"></i>
-                                            </div>
-                                            <div>
+                                            <div class="min-w-0">
                                                 <div class="fw-bold text-dark fs-6">Phone Consultation</div>
                                                 <div class="small text-secondary">Direct call to your registered phone</div>
                                             </div>
