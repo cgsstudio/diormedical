@@ -9,41 +9,69 @@ $patients_table = $wpdb->prefix . 'dior_patients';
 $users_table = $wpdb->users;
 
 $doctor_doc_nonce = wp_create_nonce('dior_doctor_nonce');
-$current_doctor_user = wp_get_current_user();
-$doctor_display_name = $current_doctor_user->display_name ?: 'Doctor';
+$doctor_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : ['user_id' => get_current_user_id(), 'ids' => [get_current_user_id()], 'appointment_ids' => [get_current_user_id()], 'profile' => []];
+$doctor_user_id = (int) ($doctor_context['user_id'] ?? 0);
+$doctor_ids = array_values(array_unique(array_filter(array_map('intval', (array) ($doctor_context['ids'] ?? [$doctor_user_id])), static function ($id) { return $id > 0; })));
+$appointment_ids = array_values(array_unique(array_filter(array_map('intval', (array) ($doctor_context['appointment_ids'] ?? $doctor_ids)), static function ($id) { return $id > 0; })));
+$doctor_display_name = (string) (($doctor_context['profile']['full_name'] ?? '') ?: (wp_get_current_user()->display_name ?: 'Doctor'));
+$doc_placeholders = $doctor_ids ? implode(',', array_fill(0, count($doctor_ids), '%d')) : '';
+$appt_placeholders = $appointment_ids ? implode(',', array_fill(0, count($appointment_ids), '%d')) : '';
 
-// 1. Fetch real documents from database
-$doc_records = $wpdb->get_results("
-    SELECT d.*,
-           COALESCE(p.patient_uid, CONCAT('DM-', (10000 + d.patient_id))) AS patient_code,
-           COALESCE(NULLIF(CONCAT(p.first_name, ' ', p.last_name), ' '), u.display_name, 'Patient') AS patient_name,
-           p.avatar_url AS patient_avatar,
-           u.user_email AS patient_email,
-           COALESCE(author.display_name, 'Staff') AS author_name
-    FROM $doc_table d
-    LEFT JOIN $patients_table p ON p.user_id = d.patient_id
-    LEFT JOIN $users_table u ON u.ID = d.patient_id
-    LEFT JOIN $users_table author ON author.ID = d.author_id
-    WHERE d.is_deleted = 0
-    ORDER BY d.created_at DESC
-    LIMIT 300
-", ARRAY_A);
+// 1. Fetch real documents authored by this doctor or belonging to this doctor's patients.
+$doc_records = [];
+$signed_consents_records = [];
+if ($doctor_ids && $appointment_ids) {
+    $documents_sql = "
+        SELECT d.*,
+               COALESCE(p.patient_uid, CONCAT('DM-', (10000 + d.patient_id))) AS patient_code,
+               COALESCE(NULLIF(CONCAT(p.first_name, ' ', p.last_name), ' '), u.display_name, 'Patient') AS patient_name,
+               p.avatar_url AS patient_avatar,
+               u.user_email AS patient_email,
+               COALESCE(author.display_name, 'Staff') AS author_name
+        FROM $doc_table d
+        LEFT JOIN $patients_table p ON p.user_id = d.patient_id
+        LEFT JOIN $users_table u ON u.ID = d.patient_id
+        LEFT JOIN $users_table author ON author.ID = d.author_id
+        WHERE d.is_deleted = 0
+          AND (d.author_id IN ($doc_placeholders)
+               OR d.patient_id IN (SELECT a.patient_id FROM {$wpdb->prefix}dior_appointments a
+                                   WHERE a.is_deleted = 0 AND a.doctor_id IN ($appt_placeholders)))
+        ORDER BY d.created_at DESC
+        LIMIT 300";
+    $doc_records = $wpdb->get_results(
+        $wpdb->prepare($documents_sql, array_merge($doctor_ids, $appointment_ids)),
+        ARRAY_A
+    );
 
-// 1b. Fetch signed consent forms from database
-$signed_consents_records = $wpdb->get_results("
-    SELECT d.*,
-           COALESCE(p.patient_uid, CONCAT('DM-', (10000 + d.patient_id))) AS patient_code,
-           COALESCE(NULLIF(CONCAT(p.first_name, ' ', p.last_name), ' '), u.display_name, 'Patient') AS patient_name,
-           p.avatar_url AS patient_avatar,
-           u.user_email AS patient_email
-    FROM $doc_table d
-    LEFT JOIN $patients_table p ON p.user_id = d.patient_id
-    LEFT JOIN $users_table u ON u.ID = d.patient_id
-    WHERE d.is_deleted = 0 
-      AND (d.category LIKE '%Consent%' OR d.title LIKE '%Consent%')
-    ORDER BY d.created_at DESC
-    LIMIT 200
-", ARRAY_A);
+    $consents_sql = "
+        SELECT d.*,
+               COALESCE(p.patient_uid, CONCAT('DM-', (10000 + d.patient_id))) AS patient_code,
+               COALESCE(NULLIF(CONCAT(p.first_name, ' ', p.last_name), ' '), u.display_name, 'Patient') AS patient_name,
+               p.avatar_url AS patient_avatar,
+               u.user_email AS patient_email
+        FROM $doc_table d
+        LEFT JOIN $patients_table p ON p.user_id = d.patient_id
+        LEFT JOIN $users_table u ON u.ID = d.patient_id
+        WHERE d.is_deleted = 0
+          AND (d.category LIKE '%Consent%' OR d.title LIKE '%Consent%')
+          AND (d.author_id IN ($doc_placeholders)
+               OR d.patient_id IN (SELECT a.patient_id FROM {$wpdb->prefix}dior_appointments a
+                                   WHERE a.is_deleted = 0 AND a.doctor_id IN ($appt_placeholders)))
+        ORDER BY d.created_at DESC
+        LIMIT 200";
+    $signed_consents_records = $wpdb->get_results(
+        $wpdb->prepare($consents_sql, array_merge($doctor_ids, $appointment_ids)),
+        ARRAY_A
+    );
+}
+if (!is_array($doc_records)) {
+    $doc_records = [];
+}
+if (!is_array($signed_consents_records)) {
+    $signed_consents_records = [];
+}
 
 // 2. Fetch all registered patients for the upload modal dropdown
 $dp_map = [];
