@@ -225,7 +225,7 @@ class Dior_Patient_Portal_Data
             'address' => get_user_meta($user_id, 'address', true) ?: get_user_meta($user_id, 'billing_address_1', true),
             'city' => get_user_meta($user_id, 'city', true),
             'state' => get_user_meta($user_id, 'state', true),
-            'country' => get_user_meta($user_id, 'country', true) ?: (get_user_meta($user_id, 'billing_country', true) ?: 'United States of America'),
+            'country' => get_user_meta($user_id, 'country', true) ?: (get_user_meta($user_id, 'billing_country', true) ?: ''),
             'avatar_url' => get_user_meta($user_id, 'dior_profile_image', true) ?: get_user_meta($user_id, 'profile_image', true),
             'status' => 'active',
             'is_demo' => get_user_meta($user_id, 'dior_demo_record', true) ? 1 : 0,
@@ -464,16 +464,16 @@ class Dior_Patient_Portal_Data
         $pharmacy_phone = get_user_meta($user_id, 'preferred_pharmacy_phone', true) ?: '';
 
         // Eligibility snapshots (Read only)
-        $is_18_verified = get_user_meta($user_id, 'is_18_verified', true) ?: 'Verified (18+)';
-        $pregnancy_status = get_user_meta($user_id, 'pregnancy_status', true) ?: 'Not Pregnant';
-        $state_eligible = get_user_meta($user_id, 'state_eligible', true) ?: 'Active in State';
+        $is_18_verified = get_user_meta($user_id, 'is_18_verified', true) ?: 'Not verified';
+        $pregnancy_status = get_user_meta($user_id, 'pregnancy_status', true) ?: 'Not recorded';
+        $state_eligible = get_user_meta($user_id, 'state_eligible', true) ?: 'Not verified';
 
         $avatar_url = get_user_meta($user_id, 'dior_profile_image', true);
         if (empty($avatar_url)) {
             $avatar_url = get_user_meta($user_id, 'profile_image', true) ?: '';
         }
 
-        return [
+        $profile = [
             'user_id' => $user_id,
             'patient_id' => $patient_id,
             'avatar_url' => $avatar_url,
@@ -503,9 +503,9 @@ class Dior_Patient_Portal_Data
             'state_eligible' => $state_eligible,
             'has_hipaa_intake' => !empty($hipaa_intake),
             'hipaa_intake' => $hipaa_intake ?: [],
-            'optin_appointment_reminders' => (get_user_meta($user_id, 'optin_appointment_reminders', true) !== '0') ? '1' : '0',
-            'optin_reminder_email' => (get_user_meta($user_id, 'optin_reminder_email', true) !== '0') ? '1' : '0',
-            'optin_reminder_dashboard' => (get_user_meta($user_id, 'optin_reminder_dashboard', true) !== '0') ? '1' : '0',
+            'optin_appointment_reminders' => (get_user_meta($user_id, 'optin_appointment_reminders', true) === '1') ? '1' : '0',
+            'optin_reminder_email' => (get_user_meta($user_id, 'optin_reminder_email', true) === '1') ? '1' : '0',
+            'optin_reminder_dashboard' => (get_user_meta($user_id, 'optin_reminder_dashboard', true) === '1') ? '1' : '0',
             'signature_url' => get_user_meta($user_id, 'dior_patient_signature', true) ?: '',
         ];
 
