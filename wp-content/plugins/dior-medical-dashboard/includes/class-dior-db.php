@@ -38,6 +38,14 @@ class Dior_DB
             self::migrate_legacy_data();
             update_option(self::DB_VERSION_OPTION, self::DB_VERSION);
         }
+
+        // One-time, validated sync for legacy appointment metadata created after
+        // the original schema migration. Invalid/mock entries are intentionally skipped.
+        $appointment_sync_version = get_option('dior_patient_appointment_sync_version', '0.0.0');
+        if (version_compare($appointment_sync_version, '1.0.0', '<')) {
+            self::migrate_legacy_appointments_safely();
+            update_option('dior_patient_appointment_sync_version', '1.0.0');
+        }
     }
 
     /**
@@ -357,6 +365,114 @@ class Dior_DB
             KEY idx_status (status)
         ) $charset_collate;";
         dbDelta($sql_patients);
+    }
+
+    /**
+     * Safely migrate valid legacy appointment records into the canonical relational table.
+     * Intake-only placeholders and records without a real provider/date/time are ignored.
+     */
+    public static function migrate_legacy_appointments_safely()
+    {
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'dior_appointments';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
+            return;
+        }
+
+        $rows = $wpdb->get_results(
+            "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'dior_appointments' AND meta_value != ''"
+        );
+
+        foreach ((array) $rows as $row) {
+            $patient_id = absint($row->user_id);
+            $appointments = maybe_unserialize($row->meta_value);
+            if (!$patient_id || !is_array($appointments)) {
+                continue;
+            }
+
+            foreach ($appointments as $appointment) {
+                if (!is_array($appointment) || !empty($appointment['from_hipaa'])) {
+                    continue;
+                }
+
+                $uid = sanitize_text_field($appointment['appt_uid'] ?? ($appointment['id'] ?? ''));
+                $raw_date = $appointment['raw_date'] ?? ($appointment['appt_date'] ?? ($appointment['date'] ?? ''));
+                $raw_time = sanitize_text_field($appointment['appt_time'] ?? ($appointment['time'] ?? ''));
+                $date_timestamp = $raw_date !== '' ? strtotime((string) $raw_date) : false;
+                if ($uid === '' || !$date_timestamp || $raw_time === '' || in_array(strtolower($raw_time), ['pending', 'asap', '—', '-'], true)) {
+                    continue;
+                }
+
+                $doctor_id = absint($appointment['doctor_id'] ?? ($appointment['doctor_user_id'] ?? 0));
+                if (!$doctor_id) {
+                    continue;
+                }
+
+                $doctor_post = get_post($doctor_id);
+                $doctor_user = get_userdata($doctor_id);
+                $is_provider_post = $doctor_post && $doctor_post->post_type === 'wpddb_doctor' && $doctor_post->post_status === 'publish';
+                $is_provider_user = $doctor_user && (
+                    in_array('doctor', (array) $doctor_user->roles, true)
+                    || in_array('administrator', (array) $doctor_user->roles, true)
+                );
+                if (!$is_provider_post && !$is_provider_user) {
+                    continue;
+                }
+
+                $existing_uid = $wpdb->get_var($wpdb->prepare(
+                    "SELECT id FROM {$table} WHERE appt_uid = %s LIMIT 1",
+                    $uid
+                ));
+                if ($existing_uid) {
+                    continue;
+                }
+
+                $appt_date = wp_date('Y-m-d', $date_timestamp);
+                $existing_slot = $wpdb->get_var($wpdb->prepare(
+                    "SELECT id FROM {$table} WHERE patient_id = %d AND appt_date = %s AND appt_time = %s AND status NOT IN ('Cancelled', 'No Show') AND is_deleted = 0 LIMIT 1",
+                    $patient_id,
+                    $appt_date,
+                    $raw_time
+                ));
+                if ($existing_slot) {
+                    continue;
+                }
+
+                $allowed_statuses = ['Pending', 'Confirmed', 'Scheduled', 'Success', 'In Progress', 'Completed', 'Cancelled', 'No Show', 'In-Queue'];
+                $status = sanitize_text_field($appointment['status'] ?? 'Pending');
+                if (!in_array($status, $allowed_statuses, true)) {
+                    $status = 'Pending';
+                }
+
+                $allowed_payment_statuses = ['Pending', 'Paid', 'Refunded', 'Failed'];
+                $payment_status = sanitize_text_field($appointment['payment_status'] ?? 'Pending');
+                if (!in_array($payment_status, $allowed_payment_statuses, true)) {
+                    $payment_status = 'Pending';
+                }
+
+                $created_at = !empty($appointment['created_at']) && strtotime($appointment['created_at'])
+                    ? wp_date('Y-m-d H:i:s', strtotime($appointment['created_at']))
+                    : current_time('mysql');
+
+                $wpdb->insert($table, [
+                    'appt_uid' => $uid,
+                    'patient_id' => $patient_id,
+                    'doctor_id' => $doctor_id,
+                    'condition_name' => sanitize_text_field($appointment['condition'] ?? 'Telehealth Consultation'),
+                    'visit_type' => sanitize_text_field($appointment['type'] ?? ($appointment['visit_type'] ?? 'Video Visit')),
+                    'status' => $status,
+                    'appt_date' => $appt_date,
+                    'appt_time' => $raw_time,
+                    'join_url' => !empty($appointment['join_url']) ? esc_url_raw($appointment['join_url']) : '',
+                    'payment_status' => $payment_status,
+                    'notes' => sanitize_textarea_field($appointment['notes'] ?? ''),
+                    'created_at' => $created_at,
+                    'updated_at' => current_time('mysql'),
+                    'is_deleted' => 0,
+                ]);
+            }
+        }
     }
 
     /**
