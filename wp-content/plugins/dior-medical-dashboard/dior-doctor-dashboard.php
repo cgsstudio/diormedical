@@ -1162,7 +1162,7 @@ class Dior_Doctor_Dashboard
         $table_appts = $wpdb->prefix . 'dior_appointments';
         $table_patients = $wpdb->prefix . 'dior_patients';
         $doctor_context = self::get_single_doctor_context();
-        $doctor_ids = array_values(array_unique(array_map('intval', (array) ($doctor_context['ids'] ?? []))));
+        $doctor_ids = array_values(array_unique(array_map('intval', (array) ($doctor_context['appointment_ids'] ?? $doctor_context['ids'] ?? []))));
         if (!$doctor_ids) {
             wp_send_json_error(["message" => "The single-doctor dashboard is not configured."], 403);
         }
@@ -2356,6 +2356,7 @@ class Dior_Doctor_Dashboard
         $doctor_context = self::get_single_doctor_context();
         $current_doctor_id = (int) ($doctor_context['user_id'] ?? 0);
         $allowed_doctor_ids = array_map('intval', (array) ($doctor_context['ids'] ?? []));
+        $allowed_appointment_ids = array_map('intval', (array) ($doctor_context['appointment_ids'] ?? $allowed_doctor_ids));
         if (!$current_doctor_id || !$allowed_doctor_ids) {
             wp_send_json_error(["message" => "The single-doctor dashboard is not configured."], 403);
         }
@@ -2376,8 +2377,8 @@ class Dior_Doctor_Dashboard
         $profile = Dior_Patient_Portal_Data::get_patient_profile($pid);
         $intake = get_user_meta($pid, "dior_hipaa_intake", true);
         $apts = Dior_Appointment_Service::get_patient_appointments($pid);
-        $apts = array_values(array_filter((array) $apts, static function ($appointment) use ($allowed_doctor_ids) {
-            return in_array((int) ($appointment['doctor_id'] ?? 0), $allowed_doctor_ids, true);
+        $apts = array_values(array_filter((array) $apts, static function ($appointment) use ($allowed_appointment_ids) {
+            return in_array((int) ($appointment['doctor_id'] ?? 0), $allowed_appointment_ids, true);
         }));
         $rxs = get_user_meta($pid, "dior_prescriptions", true) ?: [];
         $notes = Dior_Encounter_Service::get_patient_encounters($pid);
