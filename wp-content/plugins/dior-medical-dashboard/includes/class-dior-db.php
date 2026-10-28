@@ -380,6 +380,14 @@ class Dior_DB
             return;
         }
 
+        // Hide previously generated intake placeholders that were never real bookings.
+        $wpdb->query($wpdb->prepare(
+            "UPDATE {$table} SET is_deleted = 1, updated_at = %s WHERE is_deleted = 0 AND appt_uid LIKE %s AND notes = %s",
+            current_time('mysql'),
+            'APT-HIPAA-%',
+            'Appointment created from HIPAAtizer intake form.'
+        ));
+
         $rows = $wpdb->get_results(
             "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'dior_appointments' AND meta_value != ''"
         );
@@ -390,6 +398,14 @@ class Dior_DB
             if (!$patient_id || !is_array($appointments)) {
                 continue;
             }
+
+            $clean_appointments = array_values(array_filter($appointments, function ($item) {
+                return !(is_array($item) && !empty($item['from_hipaa']));
+            }));
+            if (count($clean_appointments) !== count($appointments)) {
+                update_user_meta($patient_id, 'dior_appointments', $clean_appointments);
+            }
+            $appointments = $clean_appointments;
 
             foreach ($appointments as $appointment) {
                 if (!is_array($appointment) || !empty($appointment['from_hipaa'])) {
