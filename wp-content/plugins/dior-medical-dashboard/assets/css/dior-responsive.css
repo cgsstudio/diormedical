@@ -460,9 +460,3 @@
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .dior-patient-portal-wrap .dior-side,
-    .dior-doctor-wrap .dior-side {
-        transition: none !important;
-    }
-}
