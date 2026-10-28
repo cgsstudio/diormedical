@@ -888,6 +888,8 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
         // Deep linking via URL hash & hashchange listener
         function handleUrlHash() {
+            // The patient safety controller restores both the tab and subtab.
+            if (document.getElementById('dior-patient-portal-app') && typeof window.diorSafeSwitchPatientTab === 'function') return;
             if (window.location.hash && window.location.hash.startsWith('#tab=')) {
                 const hashTab = window.location.hash.replace('#tab=', '');
                 if (typeof window.diorSwitchTab === 'function') {

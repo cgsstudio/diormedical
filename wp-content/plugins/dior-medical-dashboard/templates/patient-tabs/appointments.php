@@ -696,7 +696,7 @@
                             </tr>
                             <?php endforeach; ?>
                             <?php if (empty($today_mock)): ?>
-                                <tr class="dior-empty-state"><td colspan="9" class="text-center py-4 text-secondary">No appointments are scheduled for today.</td></tr>
+                                <tr class="dior-empty-state"><td colspan="9" class="text-center py-4 text-secondary">No appointments are scheduled for today. <button type="button" class="btn btn-link" data-appt-subtab="book">Book an appointment</button></td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>

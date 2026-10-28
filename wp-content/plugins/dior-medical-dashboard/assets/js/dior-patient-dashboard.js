@@ -683,25 +683,14 @@ let diorPastCurrentPage = 1;
 
 // --- Extracted dashboard script 5 ---
 window.diorSwitchApptSubTab = function(targetSubTab) {
-                        if (!targetSubTab || targetSubTab === 'calendar') targetSubTab = 'today';
-                        var navBtns = document.querySelectorAll('.dior-nav-btn');
-                        var tabPanels = document.querySelectorAll('.dior-tab-panel');
-                        
-                        // Switch Main Tab to Appointments
-                        navBtns.forEach(function(b) {
-                            if (b.getAttribute('data-tab') === 'appointments') b.classList.add('active');
-                            else b.classList.remove('active');
-                        });
-                        tabPanels.forEach(function(p) {
-                            if (p.id === 'tab-appointments') {
-                                p.classList.add('active');
-                                p.style.setProperty('display', 'block', 'important');
-                                p.style.setProperty('visibility', 'visible', 'important');
-                                p.style.setProperty('opacity', '1', 'important');
-                            } else {
-                                p.classList.remove('active');
-                            }
-                        });
+                        if (['book', 'today', 'upcoming', 'past'].indexOf(targetSubTab) === -1) targetSubTab = 'today';
+                        // The main navigation controller owns panel visibility. Never leave
+                        // appointment-only inline styles on the main panel.
+                        var appointmentPanel = document.getElementById('tab-appointments');
+                        if (appointmentPanel && !appointmentPanel.classList.contains('active') &&
+                            typeof window.diorSafeSwitchPatientTab === 'function') {
+                            window.diorSafeSwitchPatientTab('appointments', false);
+                        }
 
                         // Switch inner tab
                         var panels = document.querySelectorAll('.dior-subtab-panel');
@@ -745,7 +734,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
                                 item.classList.remove('active');
                             }
                         });
-                        document.querySelectorAll('.dior-subtab-pill').forEach(function(item) {
+                        document.querySelectorAll('#tab-appointments .dior-subtab-pill[data-appt-subtab]').forEach(function(item) {
                             if (item.getAttribute('data-appt-subtab') === targetSubTab) {
                                 item.classList.add('active');
                             } else {

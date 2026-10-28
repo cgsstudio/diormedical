@@ -1424,6 +1424,15 @@ class Dior_Medical_Auth
             true
         );
 
+        // Shared small-screen table and navigation accessibility enhancements.
+        wp_enqueue_script(
+            'dior-responsive-dashboard',
+            DIOR_PORTAL_URL . 'assets/js/dior-responsive-dashboard.js',
+            ['dior-static-table-interactions'],
+            filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-responsive-dashboard.js'),
+            true
+        );
+
         // ── DocBooker Booking Modal Controller ─────────────────────────────
         $db_modal_js_ver = file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-docbooker-modal.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-docbooker-modal.js') : DIOR_PORTAL_VERSION;
         wp_enqueue_script(
@@ -2221,7 +2230,7 @@ class Dior_Medical_Auth
 
                 <div class="dior-form-check-row" style="justify-content: space-between;">
                     <label class="dior-custom-checkbox">
-                        <input type="checkbox" name="rememberme" value="forever" checked>
+                        <input type="checkbox" name="rememberme" value="forever">
                         <span class="dior-checkmark"></span>
                         <span class="dior-check-text">Remember me on this device</span>
                     </label>

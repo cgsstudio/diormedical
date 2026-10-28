@@ -53825,122 +53825,7 @@ a.va-btn-primary:hover {
         -webkit-overflow-scrolling: touch;
     }
 
-    #dior-patient-portal-app .docs-table-wrapper:has(#dior-today-appointments-table),
-    #dior-patient-portal-app .docs-table-wrapper:has(#dior-upcoming-appointments-table),
-    #dior-patient-portal-app .docs-table-wrapper:has(#dior-past-appointments-table) {
-        overflow: visible !important;
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table,
-    #dior-patient-portal-app #dior-upcoming-appointments-table,
-    #dior-patient-portal-app #dior-past-appointments-table {
-        display: block !important;
-        width: 100% !important;
-        border: 0 !important;
-        border-collapse: separate !important;
-        border-spacing: 0 10px !important;
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table thead,
-    #dior-patient-portal-app #dior-upcoming-appointments-table thead,
-    #dior-patient-portal-app #dior-past-appointments-table thead {
-        display: none !important;
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table tbody,
-    #dior-patient-portal-app #dior-upcoming-appointments-table tbody,
-    #dior-patient-portal-app #dior-past-appointments-table tbody {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 12px;
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table tr,
-    #dior-patient-portal-app #dior-upcoming-appointments-table tr,
-    #dior-patient-portal-app #dior-past-appointments-table tr {
-        display: grid !important;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        gap: 0 12px;
-        padding: 12px !important;
-        background: #fff !important;
-        border: 1px solid #e1e8f1 !important;
-        border-radius: 14px !important;
-        box-shadow: 0 2px 8px rgba(25, 55, 90, .04);
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td,
-    #dior-patient-portal-app #dior-past-appointments-table td {
-        display: flex !important;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-        min-width: 0;
-        padding: 9px 0 !important;
-        border: 0 !important;
-        border-bottom: 1px solid #eef2f7 !important;
-        font-size: 13px !important;
-        overflow-wrap: anywhere;
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td:first-child,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td:first-child,
-    #dior-patient-portal-app #dior-past-appointments-table td:first-child {
-        grid-column: 1/-1;
-        font-size: 15px !important;
-        font-weight: 700;
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(1)::before,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(1)::before,
-    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(1)::before {
-        content: 'DOCTOR';
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(2)::before,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(2)::before,
-    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(2)::before {
-        content: 'SPECIALIZATION';
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(3)::before,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(3)::before,
-    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(3)::before {
-        content: 'DATE';
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(4)::before,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(4)::before,
-    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(4)::before {
-        content: 'TIME';
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(5)::before,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(5)::before,
-    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(5)::before {
-        content: 'TREATMENT';
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(6)::before,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(6)::before,
-    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(6)::before {
-        content: 'CONTACT';
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(7)::before,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(7)::before,
-    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(7)::before {
-        content: 'STATUS';
-    }
-
-    #dior-patient-portal-app #dior-today-appointments-table td::before,
-    #dior-patient-portal-app #dior-upcoming-appointments-table td::before,
-    #dior-patient-portal-app #dior-past-appointments-table td::before {
-        color: #718198;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: .055em;
-    }
+    /* Appointment tables retain their real column headers on small screens. */
 
     #dior-patient-portal-app .cell-content {
         min-width: 0;
@@ -54202,4 +54087,61 @@ a.va-btn-primary:hover {
     background-color: #af8920 !important;
     border-color: #af8920 !important;
     color: #ffffff !important;
+}
+/* The booking dialog is removed from the focus order while closed. */
+.dior-db-modal[hidden] { display: none !important; }
+
+/* Shared mobile/tablet corrections. Desktop layout is intentionally unchanged. */
+@media (min-width: 1025px) {
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-side-close { display: none !important; }
+}
+@media (max-width: 1024px) {
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-side-close {
+        display: flex !important;
+        width: 44px !important;
+        height: 44px !important;
+        z-index: 1;
+    }
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-main-content,
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel,
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .row > [class*="col-"] {
+        min-width: 0;
+        max-width: 100%;
+    }
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-responsive-table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-responsive-table:focus-visible,
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) :focus-visible {
+        outline: 2px solid #2c6cb1;
+        outline-offset: 2px;
+    }
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel img,
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel iframe {
+        max-width: 100%;
+    }
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel input:not([type="checkbox"]):not([type="radio"]),
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel select,
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel textarea {
+        max-width: 100%;
+        min-width: 0;
+    }
+    #tab-consultation .dior-ic-2b25452d99,
+    #tab-consultation .dior-ic-f6cf83e34f {
+        flex: 1 1 100% !important;
+        min-width: 0 !important;
+        max-width: 100%;
+    }
+}
+@media (max-width: 767.98px) {
+    #tab-consultation .dior-ic-2b25452d99 { height: 360px !important; }
+    #tab-consultation .dior-ic-f6cf83e34f { height: 440px !important; }
+    #tab-consultation .dior-ic-5c4ccb1aea { flex-wrap: wrap; }
+    #tab-overview .patient-info { min-width: 0; }
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-topbar-left { min-width: 0; }
+    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-top-search { min-width: 0; }
 }
