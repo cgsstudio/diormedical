@@ -5,43 +5,54 @@
  * Strictly 100% Bootstrap 5 Utilities Only (No Custom CSS)
  */
 global $wpdb;
-$doctor_id = get_current_user_id();
+$doctor_context = class_exists('Dior_Doctor_Dashboard')
+    ? Dior_Doctor_Dashboard::get_single_doctor_context(get_current_user_id())
+    : [];
+$doctor_id = (int) ($doctor_context['user_id'] ?? get_current_user_id());
+$canonical_doctor_id = (int) ($doctor_context['canonical_id'] ?? $doctor_id);
+$doctor_profile = (array) ($doctor_context['profile'] ?? []);
+$doctor_display_name = (string) ($doctor_profile['full_name'] ?? 'Configured Doctor');
+$doctor_query_ids = array_values(array_unique(array_filter(array_map(
+    'intval',
+    (array) ($doctor_context['appointment_ids'] ?? $doctor_context['ids'] ?? [])
+), static function ($id) { return $id > 0; })));
+$doctor_placeholders = $doctor_query_ids ? implode(',', array_fill(0, count($doctor_query_ids), '%d')) : '';
 $doctor_nonce = wp_create_nonce('dior_doctor_nonce');
 $admin_nonce  = wp_create_nonce('dior_admin_nonce');
 $table_appts = $wpdb->prefix . 'dior_appointments';
 $table_patients = $wpdb->prefix . 'dior_patients';
 $users_table = $wpdb->users;
 
-// 1. Fetch all appointments with patient details from DB
-$db_appointments = $wpdb->get_results("
-    SELECT a.*,
-           COALESCE(p.first_name, u.display_name, 'Patient') as patient_first_name,
-           COALESCE(p.last_name, '') as patient_last_name,
-           p.phone as patient_phone,
-           p.gender as patient_gender,
-           p.dob as patient_dob,
-           p.blood_group as patient_blood_group,
-           p.address as patient_address,
-           p.city as patient_city,
-           p.state as patient_state,
-           p.country as patient_country,
-           p.avatar_url as patient_avatar,
-           COALESCE(p.patient_uid, CONCAT('DM-', (10000 + a.patient_id))) as patient_code,
-           u.user_email as patient_email
-    FROM $table_appts a
-    LEFT JOIN $table_patients p ON p.user_id = a.patient_id
-    LEFT JOIN $users_table u ON u.ID = a.patient_id
-    WHERE a.is_deleted = 0
-    ORDER BY a.appt_date DESC, a.created_at DESC
-    LIMIT 300
-", ARRAY_A);
-
-// 2. Fetch doctors list for consulting doctor dropdown
-$doctor_users = get_users([
-    'role__in' => ['doctor', 'dior_doctor', 'administrator'],
-    'orderby'  => 'display_name',
-    'number'   => 50
-]);
+// 1. Fetch only appointments assigned to the configured single doctor.
+$db_appointments = [];
+if (!empty($doctor_query_ids)) {
+    $appointment_sql = "
+        SELECT a.*,
+               COALESCE(p.first_name, u.display_name, 'Patient') as patient_first_name,
+               COALESCE(p.last_name, '') as patient_last_name,
+               p.phone as patient_phone,
+               p.gender as patient_gender,
+               p.dob as patient_dob,
+               p.blood_group as patient_blood_group,
+               p.address as patient_address,
+               p.city as patient_city,
+               p.state as patient_state,
+               p.country as patient_country,
+               p.avatar_url as patient_avatar,
+               COALESCE(p.patient_uid, CONCAT('DM-', (10000 + a.patient_id))) as patient_code,
+               u.user_email as patient_email
+        FROM $table_appts a
+        LEFT JOIN $table_patients p ON p.user_id = a.patient_id
+        LEFT JOIN $users_table u ON u.ID = a.patient_id
+        WHERE a.is_deleted = 0 AND a.doctor_id IN ($doctor_placeholders)
+        ORDER BY a.appt_date DESC, a.created_at DESC
+        LIMIT 300
+    ";
+    $db_appointments = $wpdb->get_results($wpdb->prepare($appointment_sql, $doctor_query_ids), ARRAY_A);
+}
+if (!is_array($db_appointments)) {
+    $db_appointments = [];
+}
 
 // 3. Fetch comprehensive patient list from both dior_patients and wp_users
 $db_patients = $wpdb->get_results("
@@ -63,7 +74,13 @@ if (!empty($db_patients)) {
 }
 
 // Ensure every patient who has an existing appointment is also in the patient list
-$appt_patient_ids = $wpdb->get_col("SELECT DISTINCT patient_id FROM {$wpdb->prefix}dior_appointments WHERE is_deleted = 0 AND patient_id > 0");
+$appt_patient_ids = [];
+if (!empty($doctor_query_ids)) {
+    $appt_patient_ids = $wpdb->get_col($wpdb->prepare(
+        "SELECT DISTINCT patient_id FROM {$wpdb->prefix}dior_appointments WHERE is_deleted = 0 AND patient_id > 0 AND doctor_id IN ($doctor_placeholders)",
+        $doctor_query_ids
+    ));
+}
 if (!empty($appt_patient_ids)) {
     foreach ($appt_patient_ids as $pid) {
         $pid = (int)$pid;
@@ -142,7 +159,7 @@ if (!empty($db_appointments)) {
             'id'                     => (int)$item['id'],
             'appt_uid'               => $uid,
             'patient_id'             => $p_id,
-            'doctor_id'              => (int)($item['doctor_id'] ?: $doctor_id),
+            'doctor_id'              => (int)($item['doctor_id'] ?: $canonical_doctor_id),
             'condition_name'         => $item['condition_name'] ?: 'General Consultation',
             'visit_type'             => $item['visit_type'] ?: 'Video Visit (HD)',
             'status'                 => $item['status'] ?: 'Success',
@@ -363,18 +380,8 @@ if (!empty($first_appt_uid) && isset($appts_data_map[$first_appt_uid])) {
                     <label class="form-label small text-uppercase text-secondary fw-semibold mb-1" for="edit-consulting-doctor">
                         Consulting Doctor <span class="text-danger">*</span>
                     </label>
-                    <select class="form-select rounded-3 py-2" id="edit-consulting-doctor" name="doctor_id">
-                        <option value="<?php echo esc_attr($doctor_id); ?>">Dr. Marcus Sterling, DO (Current Provider)</option>
-                        <?php if (!empty($doctor_users)): ?>
-                            <?php foreach ($doctor_users as $doc_u): ?>
-                                <?php if ($doc_u->ID != $doctor_id): ?>
-                                    <option value="<?php echo esc_attr($doc_u->ID); ?>">
-                                        <?php echo esc_html($doc_u->display_name); ?>
-                                    </option>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
+                    <input type="hidden" id="edit-consulting-doctor" name="doctor_id" value="<?php echo esc_attr($canonical_doctor_id); ?>">
+                    <div class="form-control rounded-3 py-2 bg-light" aria-readonly="true"><?php echo esc_html($doctor_display_name); ?></div>
                 </div>
 
                 <div class="col-xl-4 col-md-6">
@@ -999,7 +1006,7 @@ if (!empty($first_appt_uid) && isset($appts_data_map[$first_appt_uid])) {
         document.getElementById('edit-join-url').value = data.join_url || '';
 
         if (document.getElementById('edit-consulting-doctor')) {
-            document.getElementById('edit-consulting-doctor').value = data.doctor_id || '<?php echo esc_js($doctor_id); ?>';
+            document.getElementById('edit-consulting-doctor').value = '<?php echo esc_js($canonical_doctor_id); ?>';
         }
 
         // Clinical Details
