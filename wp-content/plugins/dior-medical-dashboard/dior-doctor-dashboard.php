@@ -825,6 +825,12 @@ class Dior_Doctor_Dashboard
         $aid = sanitize_text_field($_POST["appt_id"] ?? "");
         $status = sanitize_text_field($_POST["status"] ?? "");
 
+        $appt = Dior_Appointment_Service::get_appointment($aid);
+        $doctor_context = self::get_single_doctor_context();
+        if (!$appt || !self::appointment_belongs_to_single_doctor($appt, $doctor_context)) {
+            wp_send_json_error(["message" => "Appointment not found in this doctor's schedule."], 403);
+        }
+
         $res = Dior_Appointment_Service::update_status($aid, $status);
         if (is_wp_error($res)) {
             wp_send_json_error(["message" => $res->get_error_message()]);
@@ -841,6 +847,12 @@ class Dior_Doctor_Dashboard
         if (empty($aid)) {
             wp_send_json_error(["message" => "Missing appointment ID"]);
         }
+        $appt = Dior_Appointment_Service::get_appointment($aid);
+        $doctor_context = self::get_single_doctor_context();
+        if (!$appt || !self::appointment_belongs_to_single_doctor($appt, $doctor_context)) {
+            wp_send_json_error(["message" => "Appointment not found in this doctor's schedule."], 403);
+        }
+
         $res = Dior_Appointment_Service::send_reminder($aid, 'doctor');
         if (is_wp_error($res)) {
             wp_send_json_error(["message" => $res->get_error_message()]);
@@ -860,6 +872,12 @@ class Dior_Doctor_Dashboard
 
         if (empty($aid) || empty($new_date) || empty($new_time)) {
             wp_send_json_error(["message" => "Missing appointment ID, date or time"]);
+        }
+
+        $appt = Dior_Appointment_Service::get_appointment($aid);
+        $doctor_context = self::get_single_doctor_context();
+        if (!$appt || !self::appointment_belongs_to_single_doctor($appt, $doctor_context)) {
+            wp_send_json_error(["message" => "Appointment not found in this doctor's schedule."], 403);
         }
 
         $res = Dior_Appointment_Service::reschedule_appointment($aid, $new_date, $new_time, $notes, 'doctor');
@@ -885,6 +903,11 @@ class Dior_Doctor_Dashboard
         global $wpdb;
         $table_appts = $wpdb->prefix . 'dior_appointments';
         $table_patients = $wpdb->prefix . 'dior_patients';
+        $doctor_context = self::get_single_doctor_context();
+        $canonical_doctor_id = (int) ($doctor_context['canonical_id'] ?? 0);
+        if (!$canonical_doctor_id) {
+            wp_send_json_error(["message" => "The single-doctor dashboard is not configured."], 403);
+        }
 
         if (empty($appt_uid) || $appt_uid === 'new' || $appt_uid === 'undefined') {
             if (!$patient_id) {
@@ -894,7 +917,7 @@ class Dior_Doctor_Dashboard
             $wpdb->insert($table_appts, [
                 'appt_uid' => $appt_uid,
                 'patient_id' => $patient_id,
-                'doctor_id' => (int) ($_POST['doctor_id'] ?? get_current_user_id()),
+                'doctor_id' => $canonical_doctor_id,
                 'appt_date' => sanitize_text_field($_POST['appt_date'] ?? ($_POST['date'] ?? current_time('Y-m-d'))),
                 'appt_time' => sanitize_text_field($_POST['appt_time'] ?? ($_POST['time'] ?? '10:00 AM')),
                 'status' => sanitize_text_field($_POST['status'] ?? 'Confirmed'),
@@ -917,6 +940,9 @@ class Dior_Doctor_Dashboard
             if (!$appt) {
                 wp_send_json_error(["message" => "Appointment not found."]);
             }
+            if (!self::appointment_belongs_to_single_doctor($appt, $doctor_context)) {
+                wp_send_json_error(["message" => "Appointment not found in this doctor's schedule."], 403);
+            }
         }
 
         if (!$patient_id && !empty($appt['patient_id'])) {
@@ -932,7 +958,8 @@ class Dior_Doctor_Dashboard
         $new_join_url = esc_url_raw($_POST['join_url'] ?? $appt['join_url']);
         $new_payment = sanitize_text_field($_POST['payment_status'] ?? $appt['payment_status']);
         $new_notes = sanitize_textarea_field($_POST['notes'] ?? $appt['notes']);
-        $new_doctor_id = (int) ($_POST['doctor_id'] ?? $appt['doctor_id']);
+        // Appointment ownership is fixed to the single configured doctor; never trust a posted provider ID.
+        $new_doctor_id = $canonical_doctor_id;
 
         $allowed_statuses = ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show'];
         if (!in_array($new_status, $allowed_statuses, true)) {
@@ -961,7 +988,7 @@ class Dior_Doctor_Dashboard
                 'join_url' => $new_join_url,
                 'payment_status' => $new_payment,
                 'notes' => $new_notes,
-                'doctor_id' => $new_doctor_id ?: get_current_user_id(),
+                'doctor_id' => $new_doctor_id,
                 'updated_at' => $now,
             ],
             ['appt_uid' => $appt_uid]
