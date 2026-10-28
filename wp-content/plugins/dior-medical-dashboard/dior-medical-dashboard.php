@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.45
+ * Version: 17.2.46
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.45');
+define('DIOR_PORTAL_VERSION', '17.2.46');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -3143,76 +3143,18 @@ class Dior_Medical_Auth
         $site_name = get_bloginfo('name') ?: 'Dior Medical';
         $user_name = $user->display_name ?: $user->user_login;
 
-        // Compose HTML email
-        $subject = sprintf('[%s] Password Reset Request', $site_name);
+        // Compose the branded responsive HTML email from its dedicated template.
+        $subject = sprintf( '[%s] Password Reset Request', $site_name );
+        $site_url = home_url( '/' );
+        $year = gmdate( 'Y' );
+        $custom_logo_id = (int) get_theme_mod( 'custom_logo' );
+        $upload_dir = wp_upload_dir();
+        $custom_logo_url = $custom_logo_id ? wp_get_attachment_image_url( $custom_logo_id, 'full' ) : '';
+        $logo_url = $custom_logo_url ? $custom_logo_url : trailingslashit( $upload_dir['baseurl'] ) . '2026/08/diormedical-logo.png';
 
-        $body = '<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>' . esc_html($subject) . '</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; color: #1E293B;">
-<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F8FAFC; padding: 40px 20px;">
-    <tr>
-        <td align="center">
-            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 540px; background-color: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); border: 1px solid #E2E8F0;">
-                <!-- Header -->
-                <tr>
-                    <td style="padding: 32px 32px 20px; text-align: center; background: linear-gradient(135deg, #0B1030 0%, #00346C 100%);">
-                        <h1 style="color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0; letter-spacing: 0.5px;">' . esc_html($site_name) . '</h1>
-                        <p style="color: #94A3B8; font-size: 13px; margin: 6px 0 0; text-transform: uppercase; letter-spacing: 1px;">Patient & Provider Portal</p>
-                    </td>
-                </tr>
-                <!-- Body -->
-                <tr>
-                    <td style="padding: 32px 32px 24px;">
-                        <h2 style="font-size: 18px; color: #0F172A; margin: 0 0 14px; font-weight: 600;">Password Reset Request</h2>
-                        <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 20px;">
-                            Hello <strong>' . esc_html($user_name) . '</strong>,
-                        </p>
-                        <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 24px;">
-                            We received a request to reset the password associated with your Dior Medical account. To proceed, please click the button below:
-                        </p>
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 0 0 24px;">
-                            <tr>
-                                <td align="center">
-                                    <a href="' . esc_url($reset_url) . '" target="_blank" style="display: inline-block; background-color: #0284C7; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none; padding: 13px 32px; border-radius: 8px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
-                                        Reset My Password
-                                    </a>
-                                </td>
-                            </tr>
-                        </table>
-                        <p style="font-size: 13px; line-height: 1.5; color: #64748B; margin: 0 0 16px;">
-                            Or copy and paste this link into your web browser:<br>
-                            <a href="' . esc_url($reset_url) . '" style="color: #0284C7; word-break: break-all; font-size: 12.5px;">' . esc_html($reset_url) . '</a>
-                        </p>
-                        <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0 20px;">
-                        <p style="font-size: 12.5px; line-height: 1.5; color: #94A3B8; margin: 0;">
-                            <strong>Security Note:</strong> This reset link will expire in 24 hours and can only be used once. If you did not request this password reset, no further action is required and your account remains secure.
-                        </p>
-                    </td>
-                </tr>
-                <!-- Footer -->
-                <tr>
-                    <td style="padding: 16px 32px 24px; text-align: center; background-color: #F8FAFC; border-top: 1px solid #F1F5F9;">
-                        <p style="font-size: 12px; color: #94A3B8; margin: 0;">
-                            &copy; ' . date('Y') . ' ' . esc_html($site_name) . '. All rights reserved.
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-</body>
-</html>';
-
-        $headers = [
-            'Content-Type: text/html; charset=UTF-8',
-            'From: ' . $site_name . ' <noreply@' . (isset($_SERVER['HTTP_HOST']) ? sanitize_text_field($_SERVER['HTTP_HOST']) : 'diormedical.com') . '>'
-        ];
+        ob_start();
+        include plugin_dir_path( __FILE__ ) . 'templates/emails/password-reset.php';
+        $body = ob_get_clean();
 
         // Send Email
         @wp_mail($user->user_email, $subject, $body, $headers);
