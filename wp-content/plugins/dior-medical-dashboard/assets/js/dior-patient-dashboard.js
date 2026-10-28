@@ -1062,7 +1062,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             html += '<div class="d-flex flex-wrap align-items-center justify-content-between gap-3">';
             
             html += '<div class="d-flex align-items-center gap-3">';
-            html += '<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 44px; height: 44px; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); font-size: 14px;">';
+            html += '<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 44px; height: 44px; background: linear-gradient(135deg, #2865a5 0%, #1e4e80 100%); font-size: 14px;">';
             html += '<i class="fas ' + (isVideo ? 'fa-video' : 'fa-user-doctor') + '"></i>';
             html += '</div>';
             html += '<div>';
@@ -1146,7 +1146,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             html += '</div>';
 
             html += '<div class="d-flex align-items-center gap-2 mb-2">';
-            html += '<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 38px; height: 38px; background: #4f46e5; font-size: 13px; flex-shrink: 0;">';
+            html += '<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 38px; height: 38px; background: #2865a5; font-size: 13px; flex-shrink: 0;">';
             html += '<i class="fas ' + (isVideo ? 'fa-video' : 'fa-user-doctor') + '"></i>';
             html += '</div>';
             html += '<div class="lh-sm overflow-hidden">';
@@ -2227,7 +2227,7 @@ let diorNotifCurrentPage = 1;
                 html: `
                     <div style="text-align:left;font-size:14px;color:#475569;line-height:1.6;margin-top:10px;">
                         <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center;">
-                            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e0e7ff;color:#3730a3;">${type}</span>
+                            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e6f0fa;color:#1e4e80;">${type}</span>
                             <span style="font-size:12px;color:#94a3b8;">${date}</span>
                         </div>
                         <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;color:#334155;white-space:pre-wrap;">${message}</div>
