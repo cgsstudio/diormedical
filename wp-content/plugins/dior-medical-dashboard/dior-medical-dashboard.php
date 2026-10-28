@@ -6109,7 +6109,7 @@ function dior_sync_docbooker_appointment($booking_data)
     if (!$existing_record) {
         $booking_uid = !empty($booking_data['booking_id'])
             ? sanitize_text_field($booking_data['booking_id'])
-            : 'DOCBOOKER-' . substr(hash('sha256', $user_id . '|' . $booking_date . '|' . $booking_time . '|' . $docbooker_doctor_id), 0, 24);
+            : 'DOCBOOKER-' . substr(hash('sha256', $user_id . '|' . $booking_date . '|' . $booking_time . '|' . absint($booking_data['doctor_id'] ?? 0)), 0, 24);
         $uid_exists = $wpdb->get_var($wpdb->prepare(
             "SELECT id FROM {$appointments_table} WHERE appt_uid = %s LIMIT 1",
             $booking_uid
