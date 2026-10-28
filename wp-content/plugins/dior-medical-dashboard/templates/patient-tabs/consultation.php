@@ -27,7 +27,7 @@
         </div>
         <div class="dior-ic-c047e12f84">
             <span class="dior-ic-a931cc6ff0">
-                <i class="fas fa-wifi dior-ic-9bf73c3191"></i> Signal: Strong (5G)
+                <i class="fas fa-wifi dior-ic-9bf73c3191"></i> Connection status: Not connected
             </span>
             <span class="dior-ic-9b5f085d48">Secure video: Not connected</span>
         </div>
@@ -40,7 +40,7 @@
             <div class="dior-ic-000b842d7a dior-video-unavailable d-flex flex-column align-items-center justify-content-center text-white" role="status"><i class="fas fa-video-slash mb-2"></i><span>Waiting for secure video connection</span></div>
             
             <div class="dior-ic-4a1fefb9df">
-                <i class="far fa-clock dior-ic-8b19df99a6"></i> 01:19
+                <i class="far fa-clock dior-ic-8b19df99a6"></i> —
             </div>
 
             <!-- PIP Window -->
