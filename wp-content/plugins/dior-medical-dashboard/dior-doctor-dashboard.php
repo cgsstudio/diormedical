@@ -2738,6 +2738,9 @@ class Dior_Doctor_Resolver
     public static function get_accessible_doctor_ids($doctor_user_id = 0)
     {
         $doctor_user_id = (int) ($doctor_user_id ?: get_current_user_id());
+        if ($doctor_user_id && (user_can($doctor_user_id, 'administrator') || user_can($doctor_user_id, 'manage_options'))) {
+            $doctor_user_id = self::get_default_doctor_id();
+        }
         if (!$doctor_user_id || !get_userdata($doctor_user_id)) {
             return [];
         }
