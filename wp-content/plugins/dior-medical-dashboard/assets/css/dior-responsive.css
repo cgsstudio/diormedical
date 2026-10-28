@@ -1,0 +1,441 @@
+/**
+ * Dior Medical dashboard responsive layer.
+ *
+ * This stylesheet is intentionally limited to tablet/mobile breakpoints.
+ * Desktop layout and styling are not modified.
+ */
+
+@media (max-width: 991.98px) {
+    .dior-patient-portal-wrap,
+    .dior-doctor-wrap {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: clip;
+    }
+
+    .dior-patient-portal-wrap .dior-app,
+    .dior-doctor-wrap .dior-app {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .dior-patient-portal-wrap .dior-main-content,
+    .dior-doctor-wrap .dior-main-content {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        margin-left: 0 !important;
+    }
+
+    /* Mobile/tablet navigation drawer; existing menu buttons and JS remain in use. */
+    .dior-patient-portal-wrap .dior-side,
+    .dior-doctor-wrap .dior-side {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        z-index: 10001 !important;
+        width: min(300px, 86vw) !important;
+        max-width: 86vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+        transition: transform .25s ease !important;
+    }
+
+    .dior-patient-portal-wrap .dior-side {
+        transform: translateX(-105%);
+    }
+
+    .dior-patient-portal-wrap .dior-side.open {
+        transform: translateX(0);
+    }
+
+    .dior-doctor-wrap .dior-side {
+        transform: translateX(-105%);
+    }
+
+    .dior-doctor-wrap .dior-side.mobile-open {
+        transform: translateX(0);
+    }
+
+    .dior-patient-portal-wrap .dior-drawer-backdrop,
+    .dior-doctor-wrap .dior-drawer-backdrop {
+        display: none;
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 10000 !important;
+        background: rgba(9, 20, 42, .48) !important;
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+    }
+
+    .dior-patient-portal-wrap .dior-drawer-backdrop.active,
+    .dior-doctor-wrap .dior-drawer-backdrop.active {
+        display: block !important;
+    }
+
+    .dior-patient-portal-wrap .dior-mobile-menu-toggle,
+    .dior-doctor-wrap .dior-mobile-menu-toggle {
+        display: inline-flex !important;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    /* Keep the top bar usable at tablet widths without squeezing search/actions. */
+    .dior-patient-portal-wrap .dior-topbar,
+    .dior-doctor-wrap .dior-topbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        min-height: 60px;
+        padding: 10px 14px;
+    }
+
+    .dior-patient-portal-wrap .dior-topbar-left,
+    .dior-doctor-wrap .dior-topbar-left {
+        display: flex;
+        flex: 1 1 240px;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .dior-patient-portal-wrap .dior-topbar-right,
+    .dior-doctor-wrap .dior-topbar-right {
+        display: flex;
+        flex: 0 1 auto;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        min-width: 0;
+        margin-left: auto;
+    }
+
+    .dior-patient-portal-wrap .dior-top-search,
+    .dior-doctor-wrap .dior-top-search {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .dior-top-search input,
+    .dior-doctor-wrap .dior-top-search input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Prevent dashboard panels, grids and toolbars from forcing viewport overflow. */
+    .dior-patient-portal-wrap .dior-tab-panel,
+    .dior-doctor-wrap .dior-tab-panel,
+    .dior-patient-portal-wrap [id^="tab-"],
+    .dior-doctor-wrap [id^="tab-"],
+    .dior-patient-portal-wrap .card,
+    .dior-doctor-wrap .card,
+    .dior-patient-portal-wrap .card-body,
+    .dior-doctor-wrap .card-body {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .d-flex,
+    .dior-doctor-wrap .d-flex {
+        min-width: 0;
+    }
+
+    .dior-patient-portal-wrap .d-flex.justify-content-between,
+    .dior-doctor-wrap .d-flex.justify-content-between,
+    .dior-patient-portal-wrap .d-flex.align-items-center,
+    .dior-doctor-wrap .d-flex.align-items-center {
+        flex-wrap: wrap;
+        row-gap: 10px;
+    }
+
+    .dior-patient-portal-wrap .table-responsive,
+    .dior-doctor-wrap .table-responsive,
+    .dior-patient-portal-wrap .table-container,
+    .dior-doctor-wrap .table-container,
+    .dior-patient-portal-wrap .dior-table-wrap,
+    .dior-doctor-wrap .dior-table-wrap,
+    .dior-patient-portal-wrap .table-wrapper,
+    .dior-doctor-wrap .table-wrapper {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+    }
+
+    .dior-patient-portal-wrap .table-responsive > table,
+    .dior-doctor-wrap .table-responsive > table,
+    .dior-patient-portal-wrap .table-container > table,
+    .dior-doctor-wrap .table-container > table,
+    .dior-patient-portal-wrap .dior-table-wrap > table,
+    .dior-doctor-wrap .dior-table-wrap > table,
+    .dior-patient-portal-wrap .table-wrapper > table,
+    .dior-doctor-wrap .table-wrapper > table {
+        min-width: 620px;
+        width: 100%;
+        max-width: none;
+    }
+
+    .dior-patient-portal-wrap .form-control,
+    .dior-patient-portal-wrap .form-select,
+    .dior-patient-portal-wrap input,
+    .dior-patient-portal-wrap select,
+    .dior-patient-portal-wrap textarea,
+    .dior-doctor-wrap .form-control,
+    .dior-doctor-wrap .form-select,
+    .dior-doctor-wrap input,
+    .dior-doctor-wrap select,
+    .dior-doctor-wrap textarea {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .dior-patient-portal-wrap .modal-dialog,
+    .dior-doctor-wrap .modal-dialog {
+        width: auto;
+        max-width: calc(100vw - 24px);
+        margin: 12px auto;
+    }
+
+    .dior-patient-portal-wrap .modal-content,
+    .dior-doctor-wrap .modal-content {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .dior-patient-portal-wrap .modal-body,
+    .dior-doctor-wrap .modal-body {
+        max-height: calc(100dvh - 150px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .dior-patient-portal-wrap iframe,
+    .dior-doctor-wrap iframe {
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap img,
+    .dior-doctor-wrap img,
+    .dior-patient-portal-wrap svg,
+    .dior-doctor-wrap svg,
+    .dior-patient-portal-wrap canvas,
+    .dior-doctor-wrap canvas {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .dior-patient-portal-wrap .dior-topbar,
+    .dior-doctor-wrap .dior-topbar {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .dior-patient-portal-wrap .dior-topbar-left,
+    .dior-doctor-wrap .dior-topbar-left {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    .dior-patient-portal-wrap .dior-topbar-right,
+    .dior-doctor-wrap .dior-topbar-right {
+        flex: 1 1 100%;
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .dior-patient-portal-wrap .dior-top-search,
+    .dior-doctor-wrap .dior-top-search {
+        min-width: 0;
+    }
+
+    .dior-patient-portal-wrap .dior-tab-panel,
+    .dior-doctor-wrap .dior-tab-panel {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .dior-patient-portal-wrap .row,
+    .dior-doctor-wrap .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .dior-patient-portal-wrap .row > [class*="col-"],
+    .dior-doctor-wrap .row > [class*="col-"] {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .card,
+    .dior-doctor-wrap .card {
+        margin-bottom: 12px;
+        border-radius: 12px;
+    }
+
+    .dior-patient-portal-wrap .card-header,
+    .dior-doctor-wrap .card-header,
+    .dior-patient-portal-wrap .card-body,
+    .dior-doctor-wrap .card-body {
+        padding: 12px !important;
+    }
+
+    .dior-patient-portal-wrap .btn,
+    .dior-doctor-wrap .btn,
+    .dior-patient-portal-wrap button,
+    .dior-doctor-wrap button {
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .dior-patient-portal-wrap .btn-group,
+    .dior-doctor-wrap .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .btn-group > .btn,
+    .dior-doctor-wrap .btn-group > .btn {
+        border-radius: 8px !important;
+    }
+
+    .dior-patient-portal-wrap .nav-tabs,
+    .dior-doctor-wrap .nav-tabs,
+    .dior-patient-portal-wrap .dior-subtab-nav,
+    .dior-doctor-wrap .dior-subtab-nav,
+    .dior-patient-portal-wrap .dior-subtab-pills,
+    .dior-doctor-wrap .dior-subtab-pills {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .dior-patient-portal-wrap .nav-tabs > *,
+    .dior-doctor-wrap .nav-tabs > *,
+    .dior-patient-portal-wrap .dior-subtab-nav > *,
+    .dior-doctor-wrap .dior-subtab-nav > *,
+    .dior-patient-portal-wrap .dior-subtab-pills > *,
+    .dior-doctor-wrap .dior-subtab-pills > * {
+        flex: 0 0 auto;
+    }
+
+    .dior-patient-portal-wrap .dior-subtab-pill,
+    .dior-doctor-wrap .dior-subtab-pill {
+        min-height: 40px;
+        padding: 9px 12px;
+    }
+
+    .dior-patient-portal-wrap .content-head,
+    .dior-doctor-wrap .content-head {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .dior-patient-portal-wrap .content-head > *,
+    .dior-doctor-wrap .content-head > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .modal-footer,
+    .dior-doctor-wrap .modal-footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .dior-patient-portal-wrap .modal-footer > *,
+    .dior-doctor-wrap .modal-footer > * {
+        flex: 1 1 auto;
+    }
+
+    .dior-patient-portal-wrap .dior-top-emergency-banner {
+        padding: 8px 12px;
+        font-size: 12px;
+        line-height: 1.4;
+        text-align: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .dior-patient-portal-wrap h1,
+    .dior-patient-portal-wrap h2,
+    .dior-doctor-wrap h1,
+    .dior-doctor-wrap h2 {
+        overflow-wrap: anywhere;
+    }
+
+    .dior-patient-portal-wrap .d-flex.justify-content-between > *,
+    .dior-doctor-wrap .d-flex.justify-content-between > * {
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .row > .col,
+    .dior-doctor-wrap .row > .col,
+    .dior-patient-portal-wrap .row > [class*="col-"],
+    .dior-doctor-wrap .row > [class*="col-"] {
+        flex: 0 0 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .dior-patient-portal-wrap .table-responsive > table,
+    .dior-doctor-wrap .table-responsive > table,
+    .dior-patient-portal-wrap .table-container > table,
+    .dior-doctor-wrap .table-container > table,
+    .dior-patient-portal-wrap .dior-table-wrap > table,
+    .dior-doctor-wrap .dior-table-wrap > table,
+    .dior-patient-portal-wrap .table-wrapper > table,
+    .dior-doctor-wrap .table-wrapper > table {
+        min-width: 560px;
+    }
+
+    .dior-patient-portal-wrap .form-actions,
+    .dior-doctor-wrap .form-actions,
+    .dior-patient-portal-wrap .modal-footer,
+    .dior-doctor-wrap .modal-footer {
+        align-items: stretch;
+    }
+
+    .dior-patient-portal-wrap .form-actions .btn,
+    .dior-doctor-wrap .form-actions .btn,
+    .dior-patient-portal-wrap .modal-footer .btn,
+    .dior-doctor-wrap .modal-footer .btn {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dior-patient-portal-wrap .dior-side,
+    .dior-doctor-wrap .dior-side {
+        transition: none !important;
+    }
+}
