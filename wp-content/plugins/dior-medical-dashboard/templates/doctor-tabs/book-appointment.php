@@ -1,15 +1,16 @@
 <section class="dior-tab-panel appointment-form-wrapper" id="tab-doc-appointments-book" style="display: none;">
-    <!-- Breadcrumb & Header (100% Native Bootstrap 5) -->
-    <div class="row g-3 align-items-center justify-content-between mb-4">
-        <div class="col-12 col-lg-auto">
-            <div class="h6 mb-1 fw-bold text-dark">
-                <i class="fas fa-calendar-plus text-primary me-2"></i>Book Appointment
-            </div>
-            <div class="text-secondary small">Schedule new patient consultations and clinical appointments.</div>
-        </div>
-        <div class="col-12 col-lg-auto">
+    <!-- Standardized appointment page header -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h4 class="mb-1 text-dark fw-bold fs-5 d-flex align-items-center gap-2">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-circle p-2 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                    <i class="fas fa-calendar-plus fs-6"></i>
+                </span>
+                Book Appointment
+            </h4>
+            <div class="text-secondary small mb-1">Schedule new patient consultations and clinical appointments.</div>
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0 small text-muted">
+                <ol class="breadcrumb mb-0 small text-secondary">
                     <li class="breadcrumb-item"><i class="fas fa-house me-1"></i> Dashboard</li>
                     <li class="breadcrumb-item">Appointments</li>
                     <li class="breadcrumb-item active fw-semibold text-primary" aria-current="page">Book Appointment</li>
