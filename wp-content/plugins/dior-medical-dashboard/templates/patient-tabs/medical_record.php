@@ -140,21 +140,37 @@
                                     <?php
                                     $timeline_events = [];
                                     foreach (($encounters ?? []) as $encounter) {
+                                        $timeline_doctor_id = absint($encounter['doctor_id'] ?? 0);
+                                        $timeline_avatar = $timeline_doctor_id ? (
+                                            get_user_meta($timeline_doctor_id, 'dior_profile_image', true)
+                                            ?: get_user_meta($timeline_doctor_id, 'doctor_avatar', true)
+                                            ?: get_user_meta($timeline_doctor_id, 'profile_picture', true)
+                                            ?: get_avatar_url($timeline_doctor_id, ['size' => 80])
+                                        ) : '';
                                         $timeline_events[] = [
                                             'date' => $encounter['created_at'] ?? '',
                                             'type' => 'CONSULTATION',
                                             'title' => $encounter['encounter_type'] ?? 'Clinical Consultation',
                                             'doctor' => $encounter['attestation_author'] ?? 'Provider not recorded',
+                                            'avatar' => $timeline_avatar,
                                             'description' => $encounter['assessment'] ?? ($encounter['subjective'] ?? 'Clinical encounter recorded in the medical record.'),
                                             'icon' => 'fa-stethoscope',
                                         ];
                                     }
                                     foreach (($documents ?? []) as $document) {
+                                        $timeline_author_id = absint($document['author_id'] ?? $document['uploaded_by'] ?? $document['user_id'] ?? 0);
+                                        $timeline_avatar = !empty($document['author_avatar']) ? $document['author_avatar'] : '';
+                                        if (!$timeline_avatar && $timeline_author_id) {
+                                            $timeline_avatar = get_user_meta($timeline_author_id, 'dior_profile_image', true)
+                                                ?: get_user_meta($timeline_author_id, 'profile_picture', true)
+                                                ?: get_avatar_url($timeline_author_id, ['size' => 80]);
+                                        }
                                         $timeline_events[] = [
                                             'date' => $document['created_at'] ?? ($document['date'] ?? ''),
                                             'type' => 'DOCUMENT',
                                             'title' => $document['title'] ?? 'Medical Document',
                                             'doctor' => $document['author'] ?? 'Clinical Staff',
+                                            'avatar' => $timeline_avatar,
                                             'description' => $document['category'] ?? 'Medical document added to the secure record.',
                                             'icon' => 'fa-file-medical-alt',
                                         ];
@@ -165,16 +181,25 @@
                                             'type' => 'APPOINTMENT',
                                             'title' => $appointment['condition'] ?? ($appointment['condition_name'] ?? 'Telehealth Consultation'),
                                             'doctor' => $appointment['provider'] ?? ($appointment['doctor_name'] ?? 'Provider not recorded'),
+                                            'avatar' => $appointment['avatar'] ?? ($appointment['doctor_avatar'] ?? ''),
                                             'description' => 'Appointment status: ' . (!empty($appointment['status']) ? $appointment['status'] : 'Status unavailable') . '.',
                                             'icon' => 'fa-calendar-check',
                                         ];
                                     }
                                     foreach (($prescriptions ?? []) as $prescription) {
+                                        $timeline_doctor_id = absint($prescription['doctor_id'] ?? $prescription['prescriber_id'] ?? 0);
+                                        $timeline_avatar = !empty($prescription['prescriber_avatar']) ? $prescription['prescriber_avatar'] : '';
+                                        if (!$timeline_avatar && $timeline_doctor_id) {
+                                            $timeline_avatar = get_user_meta($timeline_doctor_id, 'dior_profile_image', true)
+                                                ?: get_user_meta($timeline_doctor_id, 'doctor_avatar', true)
+                                                ?: get_avatar_url($timeline_doctor_id, ['size' => 80]);
+                                        }
                                         $timeline_events[] = [
                                             'date' => $prescription['date_prescribed'] ?? ($prescription['date'] ?? ''),
                                             'type' => 'PRESCRIPTION',
                                             'title' => $prescription['name'] ?? ($prescription['medication'] ?? 'Prescription'),
                                             'doctor' => $prescription['prescribed_by'] ?? 'Provider not recorded',
+                                            'avatar' => $timeline_avatar,
                                             'description' => $prescription['condition'] ?? ($prescription['diagnosis'] ?? 'Prescription recorded in the medical record.'),
                                             'icon' => 'fa-pills',
                                         ];
@@ -185,6 +210,7 @@
                                             'type' => 'QUESTIONNAIRE',
                                             'title' => $questionnaire['title'] ?? 'Clinical Intake Form',
                                             'doctor' => 'Patient / Clinical Intake',
+                                            'avatar' => $record_patient_avatar,
                                             'description' => 'Status: ' . (!empty($questionnaire['status']) ? $questionnaire['status'] : 'Status unavailable') . '.',
                                             'icon' => 'fa-clipboard-check',
                                         ];
@@ -228,6 +254,9 @@
                                                     <h5 class="dior-ic-fceca4a64a"><?php echo esc_html($event['title']); ?></h5>
                                                 </div>
                                                 <div class="dior-ic-b1d844752a">
+                                                    <?php if (!empty($event['avatar'])): ?>
+                                                        <img class="dior-timeline-author-avatar" src="<?php echo esc_url($event['avatar']); ?>" alt="" width="40" height="40" loading="lazy" style="width:40px;height:40px;min-width:40px;border-radius:50%;object-fit:cover;">
+                                                    <?php endif; ?>
                                                     <div>
                                                         <span class="dior-ic-9bbdb950cc"><?php echo esc_html($event['doctor']); ?></span>
                                                         <small class="dior-ic-3a4133fe41">Clinical Record</small>
