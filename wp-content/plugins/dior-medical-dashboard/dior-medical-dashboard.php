@@ -6024,6 +6024,11 @@ function dior_sync_docbooker_appointment($booking_data)
     $appointments_table = $wpdb->prefix . 'dior_appointments';
     $booking_date = !empty($booking_data['booking_date']) ? sanitize_text_field($booking_data['booking_date']) : '';
     $booking_time = !empty($booking_data['time']) ? sanitize_text_field($booking_data['time']) : '';
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $booking_date) || $booking_time === '') {
+        error_log('[Dior Medical] DocBooker appointment sync skipped: booking date or time is missing/invalid for patient ' . (int) $user_id);
+        return;
+    }
+
     $existing_record = false;
     if ($booking_date && $booking_time) {
         $existing_record = $wpdb->get_var($wpdb->prepare(
