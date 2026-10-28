@@ -469,7 +469,7 @@
         
         <!-- Actions -->
         <div class="dior-invoice-actions">
-            <button class="dior-btn dior-btn-primary btn" onclick="window.print()"><i class="fas fa-print me-1"></i> Print</button>
+            <button class="dior-btn dior-btn-primary btn" id="print-invoice-pdf" type="button"><i class="fas fa-print me-1"></i> Print</button>
             <button class="dior-btn dior-btn-info btn" id="download-invoice-pdf"><i class="fas fa-file-pdf me-1"></i> Download PDF</button>
             <button class="dior-btn dior-btn-secondary btn"><i class="fas fa-envelope me-1"></i> Email Invoice</button>
         </div>
@@ -481,9 +481,9 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const downloadBtn = document.getElementById('download-invoice-pdf');
-    if (!downloadBtn) return;
+    const printBtn = document.getElementById('print-invoice-pdf');
 
-    downloadBtn.addEventListener('click', function() {
+    function openInvoicePdf(action) {
         const heading = document.querySelector('#invoice-pdf-content .dior-invoice-header h2');
         const match = heading ? heading.textContent.match(/INVOICE\\s*#?\\s*([A-Za-z0-9_-]+)/i) : null;
         if (!match || !match[1]) {
@@ -493,9 +493,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const pdfUrl = new URL(window.location.href);
         pdfUrl.hash = '';
-        pdfUrl.searchParams.set('dior_action', 'download_invoice_pdf');
+        pdfUrl.searchParams.set('dior_action', action);
         pdfUrl.searchParams.set('inv_id', match[1]);
         window.location.assign(pdfUrl.toString());
-    });
+    }
+
+    if (downloadBtn) downloadBtn.addEventListener('click', function() { openInvoicePdf('download_invoice_pdf'); });
+    if (printBtn) printBtn.addEventListener('click', function() { openInvoicePdf('view_invoice_pdf'); });
 });
 </script>
