@@ -114,9 +114,12 @@
                         </div>
 
                         <div class="card border-0 shadow-sm rounded-16 dior-ic-18f15f6b14">
-                            <div class="card-header bg-transparent py-3 px-4 d-flex align-items-center justify-content-between dior-ic-a6b4a26983">
+                            <div class="card-header bg-transparent py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-3 dior-ic-a6b4a26983">
                                 <h5 class="card-title-text mb-0 dior-ic-e6680bba01"><i class="fas fa-history me-2 text-primary dior-ic-9e5c8d5e64"></i>Patient Treatment &amp; Clinical Timeline Log</h5>
-                                <span class="patient-id-badge text-xs px-3 py-1 font-weight-bold dior-ic-90ce95a680">Patient: <?php echo esc_html($profile['full_name']); ?> (#<?php echo esc_html($profile['patient_id'] ?? ''); ?>)</span>
+                                <div class="patient-id-badge text-xs px-3 py-1 font-weight-bold d-flex align-items-center gap-2 dior-ic-90ce95a680">
+                                    <img class="dior-patient-avatar-sync rounded-circle object-fit-cover" src="<?php echo esc_url($record_patient_avatar); ?>" alt="<?php echo esc_attr($record_patient_name); ?>" width="32" height="32" style="width:32px;height:32px;object-fit:cover;">
+                                    <span>Patient: <?php echo esc_html($record_patient_name); ?> (#<?php echo esc_html($profile['patient_id'] ?? ''); ?>)</span>
+                                </div>
                             </div>
                             <div class="card-body p-4 p-md-5 dior-ic-4315250082">
                                 <div class="modern-treatment-timeline position-relative dior-ic-3bc278421b">
@@ -125,7 +128,7 @@
                                     $timeline_events = [];
                                     foreach (($encounters ?? []) as $encounter) {
                                         $timeline_events[] = [
-                                            'date' => $encounter['created_at'] ?? current_time('mysql'),
+                                            'date' => $encounter['created_at'] ?? '',
                                             'type' => 'CONSULTATION',
                                             'title' => $encounter['encounter_type'] ?? 'Clinical Consultation',
                                             'doctor' => $encounter['attestation_author'] ?? 'Attending Physician',
@@ -135,7 +138,7 @@
                                     }
                                     foreach (($documents ?? []) as $document) {
                                         $timeline_events[] = [
-                                            'date' => $document['created_at'] ?? ($document['date'] ?? current_time('mysql')),
+                                            'date' => $document['created_at'] ?? ($document['date'] ?? ''),
                                             'type' => 'DOCUMENT',
                                             'title' => $document['title'] ?? 'Medical Document',
                                             'doctor' => $document['author'] ?? 'Clinical Staff',
@@ -145,7 +148,7 @@
                                     }
                                     foreach (($appointments ?? []) as $appointment) {
                                         $timeline_events[] = [
-                                            'date' => $appointment['appt_date'] ?? ($appointment['date'] ?? current_time('mysql')),
+                                            'date' => $appointment['appt_date'] ?? ($appointment['date'] ?? ''),
                                             'type' => 'APPOINTMENT',
                                             'title' => $appointment['condition'] ?? ($appointment['condition_name'] ?? 'Telehealth Consultation'),
                                             'doctor' => $appointment['provider'] ?? ($appointment['doctor_name'] ?? 'Attending Physician'),
@@ -155,7 +158,7 @@
                                     }
                                     foreach (($prescriptions ?? []) as $prescription) {
                                         $timeline_events[] = [
-                                            'date' => $prescription['date_prescribed'] ?? ($prescription['date'] ?? current_time('mysql')),
+                                            'date' => $prescription['date_prescribed'] ?? ($prescription['date'] ?? ''),
                                             'type' => 'PRESCRIPTION',
                                             'title' => $prescription['name'] ?? ($prescription['medication'] ?? 'Prescription'),
                                             'doctor' => $prescription['prescribed_by'] ?? 'Attending Physician',
@@ -165,7 +168,7 @@
                                     }
                                     foreach (($questionnaires ?? []) as $questionnaire) {
                                         $timeline_events[] = [
-                                            'date' => $questionnaire['updated_at'] ?? current_time('mysql'),
+                                            'date' => $questionnaire['updated_at'] ?? ($questionnaire['submitted_at'] ?? ''),
                                             'type' => 'QUESTIONNAIRE',
                                             'title' => $questionnaire['title'] ?? 'Clinical Intake Form',
                                             'doctor' => 'Patient / Clinical Intake',
@@ -174,46 +177,23 @@
                                         ];
                                     }
                                     usort($timeline_events, static function ($a, $b) {
-                                        return strtotime((string)$b['date']) <=> strtotime((string)$a['date']);
+                                        return (strtotime((string)($b['date'] ?? '')) ?: 0) <=> (strtotime((string)($a['date'] ?? '')) ?: 0);
                                     });
-                                    if (!function_exists('dior_get_clinical_doctor_avatar')) {
-                                        function dior_get_clinical_doctor_avatar($doctor_name = '') {
-                                            static $avatar_cache = [];
-                                            $key = trim((string)$doctor_name);
-                                            if (isset($avatar_cache[$key])) {
-                                                return $avatar_cache[$key];
-                                            }
-                                            $default_avatar = home_url('/wp-content/uploads/2026/10/images-5.jpg');
-                                            if (empty($key)) {
-                                                return $default_avatar;
-                                            }
-                                            $clean_name = trim(preg_replace('/^(?:dr\.?\s*)+/i', '', $key));
-                                            $clean_name = trim(preg_replace('/,\s*(?:DO|MD|MBBS|PhD|FACP).*$/i', '', $clean_name));
-                                            $matched_users = get_users([
-                                                'role__in' => ['doctor', 'administrator'],
-                                                'search'   => '*' . $clean_name . '*',
-                                                'number'   => 1,
-                                            ]);
-                                            if (!empty($matched_users)) {
-                                                $user_id = $matched_users[0]->ID;
-                                                $saved = get_user_meta($user_id, 'dior_profile_image', true)
-                                                    ?: get_user_meta($user_id, 'doctor_avatar', true)
-                                                    ?: get_user_meta($user_id, 'profile_picture', true)
-                                                    ?: get_user_meta($user_id, 'profile_image', true);
-                                                if (!empty($saved)) {
-                                                    $avatar_cache[$key] = $saved;
-                                                    return $saved;
-                                                }
-                                            }
-                                            $avatar_cache[$key] = $default_avatar;
-                                            return $default_avatar;
-                                        }
+                                    $record_patient_user_id = !empty($user_id) ? absint($user_id) : get_current_user_id();
+                                    $record_patient_name = !empty($profile['full_name']) ? $profile['full_name'] : wp_get_current_user()->display_name;
+                                    $record_patient_avatar = !empty($profile['avatar_url']) ? $profile['avatar_url'] : '';
+                                    if (empty($record_patient_avatar) && $record_patient_user_id) {
+                                        $record_patient_avatar = get_user_meta($record_patient_user_id, 'dior_profile_image', true)
+                                            ?: get_user_meta($record_patient_user_id, 'profile_image', true)
+                                            ?: get_avatar_url($record_patient_user_id, ['size' => 96]);
+                                    }
+                                    if (empty($record_patient_avatar)) {
+                                        $record_patient_avatar = get_avatar_url($record_patient_user_id, ['size' => 96]);
                                     }
 
                                     foreach (array_slice($timeline_events, 0, 20) as $event):
-                                        $event_ts = strtotime((string)$event['date']) ?: current_time('timestamp');
+                                        $event_ts = !empty($event['date']) ? strtotime((string) $event['date']) : false;
                                         $event_type = strtoupper((string)($event['type'] ?? 'APPOINTMENT'));
-                                        $doc_avatar = dior_get_clinical_doctor_avatar($event['doctor'] ?? '');
 
                                         $node_class = 'node-appointment';
                                         $badge_style = 'background: #e0f2fe !important; color: #0284c7 !important;';
@@ -230,9 +210,9 @@
                                     ?>
                                     <div class="mr-timeline-item" data-record-type="<?php echo esc_attr($event['type']); ?>">
                                         <div class="mr-timeline-time-col">
-                                            <span class="dior-ic-14731f6c49"><?php echo esc_html(wp_date('d M Y', $event_ts)); ?></span>
-                                            <span class="dior-ic-07e1c2794e"><i class="far fa-clock me-1"></i><?php echo esc_html(wp_date('g:i A', $event_ts)); ?></span>
-                                            <span class="dior-ic-81a2aacd66"><?php echo esc_html(human_time_diff($event_ts, current_time('timestamp'))); ?> ago</span>
+                                            <span class="dior-ic-14731f6c49"><?php echo $event_ts ? esc_html(wp_date('d M Y', $event_ts)) : 'Date unavailable'; ?></span>
+                                            <span class="dior-ic-07e1c2794e"><i class="far fa-clock me-1"></i><?php echo $event_ts ? esc_html(wp_date('g:i A', $event_ts)) : '—'; ?></span>
+                                            <span class="dior-ic-81a2aacd66"><?php echo $event_ts ? esc_html(human_time_diff($event_ts, current_time('timestamp'))) . ' ago' : ' '; ?></span>
                                         </div>
                                         <div class="dior-ic-f69dfb2b50">
                                             <div class="mr-timeline-vertical-line"></div>
@@ -247,7 +227,6 @@
                                                     <h5 class="dior-ic-fceca4a64a"><?php echo esc_html($event['title']); ?></h5>
                                                 </div>
                                                 <div class="dior-ic-b1d844752a">
-                                                    <img src="<?php echo esc_url($doc_avatar); ?>" alt="<?php echo esc_attr($event['doctor']); ?>" class="dior-ic-2061ceb509 rounded-circle object-fit-cover shadow-sm" style="width: 32px; height: 32px; border: 1.5px solid #ffffff;">
                                                     <div>
                                                         <span class="dior-ic-9bbdb950cc"><?php echo esc_html($event['doctor']); ?></span>
                                                         <small class="dior-ic-3a4133fe41">Clinical Record</small>
