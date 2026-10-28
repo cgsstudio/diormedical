@@ -29,9 +29,7 @@
             <span class="dior-ic-a931cc6ff0">
                 <i class="fas fa-wifi dior-ic-9bf73c3191"></i> Signal: Strong (5G)
             </span>
-            <span class="dior-ic-9b5f085d48">
-                <div class="dior-ic-71cc54b832"></div> REC HD 1080p
-            </span>
+            <span class="dior-ic-9b5f085d48">Secure video: Not connected</span>
         </div>
     </div>
 
@@ -39,7 +37,7 @@
         
         <!-- Video Feed Section -->
         <div class="dior-ic-2b25452d99">
-            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=1200" alt="Doctor Video" class="dior-ic-000b842d7a">
+            <div class="dior-ic-000b842d7a dior-video-unavailable d-flex flex-column align-items-center justify-content-center text-white" role="status"><i class="fas fa-video-slash mb-2"></i><span>Waiting for secure video connection</span></div>
             
             <div class="dior-ic-4a1fefb9df">
                 <i class="far fa-clock dior-ic-8b19df99a6"></i> 01:19
@@ -47,7 +45,7 @@
 
             <!-- PIP Window -->
             <div class="dior-ic-a443391c4f">
-                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400" alt="Self View" class="dior-ic-000b842d7a">
+                <div class="dior-ic-000b842d7a dior-self-view-unavailable d-flex align-items-center justify-content-center" role="status" aria-label="Self view is unavailable"><i class="fas fa-user"></i></div>
             </div>
 
             <!-- Doctor Name Tag -->
@@ -94,49 +92,10 @@
             </div>
 
             <div id="dior-chat-messages-container" class="dior-ic-543b3f8fa1">
-                
-                <!-- Doctor Message -->
-                <div class="dior-ic-044f0b27b0">
-                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=100" class="dior-ic-2061ceb509">
-                    <div>
-                        <div class="dior-ic-2c31c3e1bf">
-                            <span class="dior-ic-a55dcb6086">Dr. Helen Miller</span>
-                            <span class="dior-ic-37f02fdd9f">09:30 AM</span>
-                        </div>
-                        <div class="dior-ic-accfff7f7f">
-                            Good morning Sarah! How are you feeling after taking the prescribed beta-blockers?
-                        </div>
-                    </div>
+                <div class="dior-consultation-empty-state text-center py-4" role="status">
+                    <i class="far fa-comments mb-2" aria-hidden="true"></i>
+                    <p class="mb-0">No saved messages are available for this consultation.</p>
                 </div>
-
-                <!-- Patient Message -->
-                <div class="dior-ic-68494619df">
-                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=100" class="dior-ic-2061ceb509">
-                    <div>
-                        <div class="dior-ic-af753e564d">
-                            <span class="dior-ic-a55dcb6086"><?php echo esc_html($profile['full_name'] ?? "Patient"); ?></span>
-                            <span class="dior-ic-37f02fdd9f">09:31 AM</span>
-                        </div>
-                        <div class="dior-ic-02827fb633">
-                            Hello Doctor! The chest tightness has reduced significantly, but I noticed mild dizziness in the morning.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Doctor Message -->
-                <div class="dior-ic-044f0b27b0">
-                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=100" class="dior-ic-2061ceb509">
-                    <div>
-                        <div class="dior-ic-2c31c3e1bf">
-                            <span class="dior-ic-a55dcb6086">Dr. Helen Miller</span>
-                            <span class="dior-ic-37f02fdd9f">09:32 AM</span>
-                        </div>
-                        <div class="dior-ic-accfff7f7f">
-                            That can happen initially. Let us review your daily blood pressure readings.
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
             <div class="dior-ic-c5c02ad633">
