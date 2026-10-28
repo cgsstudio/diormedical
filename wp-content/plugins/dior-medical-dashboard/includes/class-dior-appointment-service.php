@@ -97,16 +97,29 @@ class Dior_Appointment_Service
             return new WP_Error('incomplete_profile', 'Please complete your personal profile (' . implode(', ', $missing) . ') before booking an appointment.');
         }
 
-        $doctor_id = (int)($data['doctor_id'] ?? 1);
-        $condition = sanitize_text_field($data['condition'] ?? 'Urgent Care Telehealth');
-        $visit_type = sanitize_text_field($data['visit_type'] ?? 'Video Visit (HD)');
-        $appt_date = Dior_Auth_Service::validate_date($data['appt_date'] ?? date('Y-m-d'));
-        if (empty($appt_date)) {
-            $appt_date = date('Y-m-d');
+        $doctor_id = absint($data['doctor_id'] ?? 0);
+        if (!$doctor_id) {
+            return new WP_Error('invalid_doctor', 'A valid provider ID is required to book an appointment.');
         }
-        $appt_time = sanitize_text_field($data['appt_time'] ?? 'Today - ASAP');
-        $join_url = esc_url_raw($data['join_url'] ?? 'https://zoom.us/join');
-        $payment_status = Dior_Auth_Service::validate_enum($data['payment_status'] ?? 'Paid', ['Pending', 'Paid', 'Refunded', 'Failed'], 'Paid');
+
+        $condition = sanitize_text_field($data['condition'] ?? 'Telehealth Consultation');
+        $visit_type = sanitize_text_field($data['visit_type'] ?? '');
+        if ($visit_type === '') {
+            return new WP_Error('missing_visit_type', 'A visit type is required to book an appointment.');
+        }
+
+        $appt_date = Dior_Auth_Service::validate_date($data['appt_date'] ?? '');
+        if (empty($appt_date)) {
+            return new WP_Error('invalid_date', 'A valid appointment date is required.');
+        }
+
+        $appt_time = sanitize_text_field($data['appt_time'] ?? '');
+        if ($appt_time === '') {
+            return new WP_Error('missing_time', 'An appointment time is required.');
+        }
+
+        $join_url = !empty($data['join_url']) ? esc_url_raw($data['join_url']) : '';
+        $payment_status = Dior_Auth_Service::validate_enum($data['payment_status'] ?? 'Pending', ['Pending', 'Paid', 'Refunded', 'Failed'], 'Pending');
         $notes = sanitize_textarea_field($data['notes'] ?? '');
 
         // Enforce 15-minute advance slot booking rule
@@ -127,7 +140,7 @@ class Dior_Appointment_Service
         $appt_uid = 'APT-' . rand(1000, 9999);
         $now = current_time('mysql');
 
-        $booking_status = sanitize_text_field($data['status'] ?? 'Success');
+        $booking_status = sanitize_text_field($data['status'] ?? 'Pending');
 
         $inserted = $wpdb->insert($table, [
             'appt_uid'       => $appt_uid,
