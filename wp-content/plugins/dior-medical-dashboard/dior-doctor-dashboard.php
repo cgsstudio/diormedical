@@ -111,11 +111,17 @@ class Dior_Doctor_Dashboard
         if (current_user_can("administrator") || current_user_can("manage_options")) {
             return true;
         }
-        $user = wp_get_current_user();
-        if ($user && in_array('doctor', (array) $user->roles, true)) {
-            return true;
-        }
-        return current_user_can("doctor");
+
+        $current_user_id = (int) get_current_user_id();
+        $configured_doctor_id = class_exists('Dior_Doctor_Resolver')
+            ? (int) Dior_Doctor_Resolver::get_default_doctor_id()
+            : 0;
+
+        // Only the one configured doctor account can use this dashboard.
+        return $current_user_id > 0
+            && $configured_doctor_id > 0
+            && $current_user_id === $configured_doctor_id
+            && user_can($current_user_id, 'doctor');
     }
 
     public static function get_doctor_profile($user_id)
@@ -238,12 +244,19 @@ class Dior_Doctor_Dashboard
             return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'appointment_ids' => [], 'profile' => []];
         }
 
-        if (user_can($requested_id, 'doctor')) {
-            $doctor_user_id = $requested_id;
-        } elseif (self::is_user_admin($requested_id)) {
-            $doctor_user_id = class_exists('Dior_Doctor_Resolver')
-                ? (int) Dior_Doctor_Resolver::get_default_doctor_id()
-                : $requested_id;
+        $configured_doctor_id = class_exists('Dior_Doctor_Resolver')
+            ? (int) Dior_Doctor_Resolver::get_default_doctor_id()
+            : 0;
+
+        if (self::is_user_admin($requested_id)) {
+            $doctor_user_id = $configured_doctor_id ?: $requested_id;
+        } elseif (user_can($requested_id, 'doctor')) {
+            // A second doctor-role account is not a valid dashboard identity in a
+            // single-doctor deployment.
+            if ($configured_doctor_id && $requested_id !== $configured_doctor_id) {
+                return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'appointment_ids' => [], 'profile' => []];
+            }
+            $doctor_user_id = $configured_doctor_id ?: $requested_id;
         } else {
             return ['user_id' => 0, 'canonical_id' => 0, 'ids' => [], 'appointment_ids' => [], 'profile' => []];
         }
