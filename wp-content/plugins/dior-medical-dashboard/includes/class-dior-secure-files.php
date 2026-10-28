@@ -84,7 +84,7 @@ class Dior_Medical_Secure_Files
         foreach ($results as &$r) {
             $r['id'] = $r['doc_uid'];
             $r['date'] = date('M j, Y', strtotime($r['created_at']));
-            $r['size'] = $r['file_size_formatted'] ?: '150 KB';
+            $r['size'] = !empty($r['file_size_formatted']) ? $r['file_size_formatted'] : 'Size unavailable';
             $r['letter_meta'] = !empty($r['letter_meta']) ? json_decode($r['letter_meta'], true) : [];
             $author_user = get_userdata((int)$r['author_id']);
             $r['author'] = $author_user ? $author_user->display_name : 'Staff';
@@ -110,7 +110,7 @@ class Dior_Medical_Secure_Files
         $file_path = sanitize_text_field($data['file_path'] ?? '');
         $file_type = sanitize_text_field($data['file_type'] ?? 'PDF');
         $file_size = (int)($data['file_size'] ?? 0);
-        $file_size_formatted = sanitize_text_field($data['size'] ?? '150 KB');
+        $file_size_formatted = sanitize_text_field($data['size'] ?? 'Size unavailable');
         $content_html = !empty($data['content_html']) ? wp_kses_post($data['content_html']) : null;
         $is_letter = !empty($data['is_letter']) ? 1 : 0;
         $letter_meta = !empty($data['letter_meta']) ? json_encode($data['letter_meta']) : null;
