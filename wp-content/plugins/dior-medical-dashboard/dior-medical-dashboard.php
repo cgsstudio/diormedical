@@ -4192,7 +4192,7 @@ class Dior_Medical_Auth
     /**
      * Get doctor slots for given date, evaluating 15-minute advance booking and existing bookings
      */
-    public static function get_doctor_slots_for_date($doctor_id = 1957, $date = '')
+    public static function get_doctor_slots_for_date($doctor_id = 0, $date = '')
     {
         if (empty($date)) {
             $date = current_time('Y-m-d');
@@ -4500,7 +4500,7 @@ class Dior_Medical_Auth
             'appt_time' => $time,
             'status' => 'Pending',
             'join_url' => $join_url,
-            'payment_status' => 'Paid',
+            'payment_status' => 'Pending',
             'notes' => $notes
         ]);
 
@@ -5827,41 +5827,8 @@ class Dior_Medical_Auth
                 }
             }
 
-            // Create initial appointment from HIPAAtizer intake
-            $appointments = get_user_meta($user_id, 'dior_appointments', true);
-            if (!is_array($appointments)) {
-                $appointments = [];
-            }
-
-            // Check if HIPAAtizer appointment already exists
-            $has_hipaa_appt = false;
-            foreach ($appointments as $appt) {
-                if (isset($appt['from_hipaa']) && $appt['from_hipaa'] === true) {
-                    $has_hipaa_appt = true;
-                    break;
-                }
-            }
-
-            // Only create appointment if no HIPAAtizer appointment exists
-            if (!$has_hipaa_appt) {
-                $new_appt = [
-                    'id' => 'APT-HIPAA-' . time(),
-                    'date' => current_time('Y-m-d'),
-                    'time' => 'Pending',
-                    'condition' => $intake['symptoms'] ?: 'Medical Consultation',
-                    'provider' => 'Available Provider',
-                    'provider_spec' => 'Board Certified Physician',
-                    'type' => 'Video Visit (HD)',
-                    'status' => 'Scheduled',
-                    'join_url' => '',
-                    'payment_status' => 'Pending',
-                    'notes' => 'Appointment created from HIPAAtizer intake form.',
-                    'can_join' => false,
-                    'from_hipaa' => true
-                ];
-                $appointments[] = $new_appt;
-                update_user_meta($user_id, 'dior_appointments', $appointments);
-            }
+            // Intake submission is clinical history, not an appointment. Do not fabricate a
+            // scheduled visit from the intake timestamp; real appointments come from booking records.
 
             // Add a notification for Patient
             $notifications = get_user_meta($user_id, 'dior_notifications', true);
