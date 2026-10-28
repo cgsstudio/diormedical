@@ -721,8 +721,8 @@ class Dior_Patient_Portal_Data
                 $results = array_map(static function ($row) use ($user_id) {
                     $pid = !empty($row['patient_id']) ? (int) $row['patient_id'] : (int) $user_id;
                     $rx_uid = !empty($row['prescription_uid']) ? $row['prescription_uid'] : (!empty($row['prescription_id']) ? $row['prescription_id'] : ('RX-' . $row['id']));
-                    $title = !empty($row['title']) ? $row['title'] : 'General Medical Prescription';
-                    $med_name = !empty($row['medications']) ? $row['medications'] : ($row['medication'] ?? 'Prescription Medication');
+                    $title = !empty($row['title']) ? $row['title'] : '';
+                    $med_name = !empty($row['medications']) ? $row['medications'] : ($row['medication'] ?? '');
 
                     // Parse individual medications if multiple exist
                     $med_lines = preg_split('/;\s*(?:\r?\n)?|\r?\n/', trim((string) $med_name));
@@ -737,7 +737,7 @@ class Dior_Patient_Portal_Data
                         $m_clean = trim(preg_replace('/^\d+\.\s*/', '', trim($m_line)));
                         if ($m_clean === '')
                             continue;
-                        $d_clean = isset($dosage_parts[$idx]) ? trim(preg_replace('/^\d+\.\s*/', '', trim($dosage_parts[$idx]))) : ($row['dosage'] ?? 'As prescribed');
+                        $d_clean = isset($dosage_parts[$idx]) ? trim(preg_replace('/^\d+\.\s*/', '', trim($dosage_parts[$idx]))) : ($row['dosage'] ?? '');
                         $f_clean = isset($freq_parts[$idx]) ? trim(preg_replace('/^\d+\.\s*/', '', trim($freq_parts[$idx]))) : ($row['frequency'] ?? '');
                         $du_clean = isset($dur_parts[$idx]) ? trim(preg_replace('/^\d+\.\s*/', '', trim($dur_parts[$idx]))) : ($row['duration'] ?? '');
                         $in_clean = isset($inst_parts[$idx]) ? trim(preg_replace('/^\d+\.\s*/', '', trim($inst_parts[$idx]))) : ($row['instructions'] ?? '');
@@ -745,40 +745,51 @@ class Dior_Patient_Portal_Data
                         $items[] = [
                             'id' => $rx_uid . '-' . ($idx + 1),
                             'medication' => $m_clean,
-                            'dosage' => $d_clean ?: 'As prescribed',
+                            'dosage' => $d_clean,
                             'frequency' => $f_clean,
                             'duration' => $du_clean,
-                            'instructions' => $in_clean ?: 'Take as directed by physician.',
-                            'quantity' => $row['quantity'] ?? '1 Unit',
-                            'refills' => $row['refills'] ?? 0,
+                            'instructions' => $in_clean,
+                            'quantity' => $row['quantity'] ?? '—',
+                            'refills' => $row['refills'] ?? '—',
                         ];
                         $idx++;
                     }
 
-                    if (empty($items)) {
+                    if (empty($items) && !empty($row['medication'] ?? $med_name)) {
                         $items[] = [
                             'id' => $rx_uid,
                             'medication' => $row['medication'] ?? $med_name,
-                            'dosage' => $row['dosage'] ?? 'As prescribed',
+                            'dosage' => $row['dosage'] ?? '',
                             'frequency' => $row['frequency'] ?? '',
                             'duration' => $row['duration'] ?? '',
-                            'instructions' => $row['instructions'] ?? 'Take as directed by physician.',
+                            'instructions' => $row['instructions'] ?? '',
                             'quantity' => $row['quantity'] ?? '1 Unit',
                             'refills' => $row['refills'] ?? 0,
                         ];
                     }
 
-                    $date_prescribed = !empty($row['prescription_date']) ? $row['prescription_date'] : (!empty($row['created_at']) ? substr($row['created_at'], 0, 10) : date('Y-m-d'));
-                    $doctor_name = !empty($row['doctor_name']) ? $row['doctor_name'] : ('Dr. ' . ((get_userdata((int) ($row['doctor_id'] ?? 0))->display_name ?? 'Doctor')));
-
+                    $date_prescribed = !empty($row['prescription_date']) ? $row['prescription_date'] : (!empty($row['created_at']) ? substr($row['created_at'], 0, 10) : '—');
+                    $doctor_name = !empty($row['doctor_name']) ? sanitize_text_field($row['doctor_name']) : '';
+                    if ($doctor_name === '') {
+                        $prescriber_id = absint($row['doctor_id'] ?? 0);
+                        $prescriber_post = $prescriber_id ? get_post($prescriber_id) : null;
+                        $prescriber_user = $prescriber_id ? get_userdata($prescriber_id) : null;
+                        if ($prescriber_post && $prescriber_post->post_type === 'wpddb_doctor') {
+                            $doctor_name = get_the_title($prescriber_post);
+                        } elseif ($prescriber_user && (in_array('doctor', (array) $prescriber_user->roles, true) || in_array('administrator', (array) $prescriber_user->roles, true))) {
+                            $doctor_name = $prescriber_user->display_name;
+                        } else {
+                            $doctor_name = 'Provider not recorded';
+                        }
+                    }
                     return [
                         'id' => $rx_uid,
                         'order_id' => $rx_uid,
                         'group_id' => $rx_uid,
                         'prescription_uid' => $rx_uid,
                         'title' => $title,
-                        'condition' => $title,
-                        'diagnosis' => $title,
+                        'condition' => $title ?: 'Condition not recorded',
+                        'diagnosis' => $title ?: 'Diagnosis not recorded',
                         'name' => $med_name,
                         'medication' => $med_name,
                         'dosage' => $row['dosage'] ?? '',
@@ -788,12 +799,12 @@ class Dior_Patient_Portal_Data
                         'refills' => $row['refills'] ?? 0,
                         'instructions' => $row['instructions'] ?? '',
                         'notes' => $row['instructions'] ?? '',
-                        'status' => $row['status'] ?? 'Active',
-                        'is_active' => (strtolower($row['status'] ?? 'active') === 'active'),
+                        'status' => $row['status'] ?? 'Status unavailable',
+                        'is_active' => (strtolower($row['status'] ?? '') === 'active'),
                         'date_prescribed' => $date_prescribed,
                         'date' => $date_prescribed,
                         'prescribed_by' => $doctor_name,
-                        'pharmacy' => get_user_meta($pid, 'preferred_pharmacy_name', true) ?: 'Dior Partner Pharmacy',
+                        'pharmacy' => get_user_meta($pid, 'preferred_pharmacy_name', true) ?: 'Pharmacy not recorded',
                         'items' => $items,
                     ];
                 }, $rows);
