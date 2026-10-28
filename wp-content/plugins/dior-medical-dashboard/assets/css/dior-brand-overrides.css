@@ -167,3 +167,60 @@
 .dior-doctor-wrap .btn {
     line-height: 1.35;
 }
+
+
+/*
+ * Final portal consistency pass:
+ * - remove small explanatory subtitle lines beneath page headings
+ * - normalize Bootstrap font-size utility classes inside both portals
+ * - preserve larger stat numbers as a deliberate, consistent hierarchy
+ */
+.dior-patient-portal-wrap .content-head > div > p.small,
+.dior-doctor-wrap .content-head > div > p.small,
+.dior-patient-portal-wrap .content-head > div > p.text-secondary,
+.dior-doctor-wrap .content-head > div > p.text-secondary,
+.dior-patient-portal-wrap .dior-page-subtitle,
+.dior-doctor-wrap .dior-page-subtitle,
+.dior-patient-portal-wrap .page-subtitle,
+.dior-doctor-wrap .page-subtitle {
+    display: none !important;
+}
+
+.dior-patient-portal-wrap .fs-1,
+.dior-doctor-wrap .fs-1 { font-size: 30px !important; line-height: 1.2 !important; }
+.dior-patient-portal-wrap .fs-2,
+.dior-doctor-wrap .fs-2 { font-size: 26px !important; line-height: 1.25 !important; }
+.dior-patient-portal-wrap .fs-3,
+.dior-doctor-wrap .fs-3 { font-size: 22px !important; line-height: 1.3 !important; }
+.dior-patient-portal-wrap .fs-4,
+.dior-doctor-wrap .fs-4 { font-size: 20px !important; line-height: 1.35 !important; }
+.dior-patient-portal-wrap .fs-5,
+.dior-doctor-wrap .fs-5 { font-size: 18px !important; line-height: 1.4 !important; }
+.dior-patient-portal-wrap .fs-6,
+.dior-doctor-wrap .fs-6 { font-size: 16px !important; line-height: 1.4 !important; }
+
+.dior-patient-portal-wrap .small,
+.dior-doctor-wrap .small,
+.dior-patient-portal-wrap small,
+.dior-doctor-wrap small,
+.dior-patient-portal-wrap .form-text,
+.dior-doctor-wrap .form-text {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+}
+
+.dior-patient-portal-wrap .card-title,
+.dior-doctor-wrap .card-title,
+.dior-patient-portal-wrap .section-title,
+.dior-doctor-wrap .section-title {
+    font-size: 18px !important;
+    line-height: 1.4 !important;
+    font-weight: 700 !important;
+}
+
+.dior-patient-portal-wrap .btn,
+.dior-doctor-wrap .btn {
+    font-size: 13px;
+    line-height: 1.35 !important;
+    font-weight: 600;
+}
