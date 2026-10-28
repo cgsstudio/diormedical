@@ -11,7 +11,7 @@ $doctor_context = class_exists('Dior_Doctor_Dashboard')
     : ['user_id' => get_current_user_id(), 'canonical_id' => get_current_user_id(), 'ids' => [get_current_user_id()], 'profile' => []];
 $doctor_id = (int) ($doctor_context['user_id'] ?? 0);
 $canonical_doctor_id = (int) ($doctor_context['canonical_id'] ?? $doctor_id);
-$doctor_ids = array_values(array_unique(array_map('intval', (array) ($doctor_context['ids'] ?? []))));
+$doctor_ids = array_values(array_unique(array_map('intval', (array) ($doctor_context['appointment_ids'] ?? $doctor_context['ids'] ?? []))));
 $doctor_ids = array_values(array_filter($doctor_ids, static function ($id) { return $id >= 0; }));
 $doctor_profile = (array) ($doctor_context['profile'] ?? []);
 $doctor_name = $doctor_profile['full_name'] ?? 'Doctor';
