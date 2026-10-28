@@ -93,6 +93,56 @@ $doc_email = !empty($doctor['email']) ? $doctor['email'] : (!empty($overview_pro
 $doc_phone = !empty($doctor['phone']) ? $doctor['phone'] : (!empty($overview_profile['phone']) ? $overview_profile['phone'] : '');
 $doc_qual = !empty($doctor['qualifications']) ? $doctor['qualifications'] : (!empty($overview_profile['qualifications']) ? $overview_profile['qualifications'] : '');
 $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : (!empty($overview_profile['avatar_url']) ? $overview_profile['avatar_url'] : '');
+
+// Real lab/test documents authored by the configured doctor; no seeded demo rows.
+$lab_results = [];
+if ($overview_doctor_ids) {
+    $lab_sql = "SELECT d.*, p.patient_uid,
+        COALESCE(NULLIF(TRIM(CONCAT(COALESCE(p.first_name, ''), ' ', COALESCE(p.last_name, ''))), ''), u.display_name, 'Patient') AS patient_display_name
+        FROM {$wpdb->prefix}dior_documents d
+        LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = d.patient_id
+        LEFT JOIN {$wpdb->users} u ON u.ID = d.patient_id
+        WHERE d.is_deleted = 0 AND d.author_id IN ({$overview_doctor_placeholders})
+          AND (LOWER(d.category) LIKE '%lab%' OR LOWER(d.category) LIKE '%test%' OR LOWER(d.title) LIKE '%lab%' OR LOWER(d.title) LIKE '%test%')
+        ORDER BY d.created_at DESC LIMIT 10";
+    $lab_results = $wpdb->get_results($wpdb->prepare($lab_sql, $overview_doctor_ids), ARRAY_A);
+}
+if (!is_array($lab_results)) {
+    $lab_results = [];
+}
+
+// Pending tasks come only from real draft clinical notes.
+$pending_tasks = [];
+if ($overview_doctor_ids) {
+    $tasks_sql = "SELECT e.encounter_uid, e.patient_id, e.encounter_type, e.created_at,
+        COALESCE(NULLIF(TRIM(CONCAT(COALESCE(p.first_name, ''), ' ', COALESCE(p.last_name, ''))), ''), u.display_name, 'Patient') AS patient_display_name
+        FROM {$wpdb->prefix}dior_encounters e
+        LEFT JOIN {$wpdb->prefix}dior_patients p ON p.user_id = e.patient_id
+        LEFT JOIN {$wpdb->users} u ON u.ID = e.patient_id
+        WHERE e.is_deleted = 0 AND e.status = 'draft' AND e.doctor_id IN ({$overview_doctor_placeholders})
+        ORDER BY e.created_at DESC LIMIT 10";
+    $draft_notes = $wpdb->get_results($wpdb->prepare($tasks_sql, $overview_doctor_ids), ARRAY_A);
+    foreach ((array) $draft_notes as $draft_note) {
+        $pending_tasks[] = [
+            'title' => 'Finalize clinical note',
+            'description' => 'Draft note for ' . ($draft_note['patient_display_name'] ?? 'Patient'),
+            'date' => $draft_note['created_at'] ?? '',
+        ];
+    }
+}
+
+// Upcoming reminders are derived from this doctor's real appointment list.
+$followup_appointments = array_values(array_filter((array) $appointments, static function ($appointment) use ($today) {
+    $date = (string) ($appointment['appt_date'] ?? $appointment['date'] ?? '');
+    $status = strtolower((string) ($appointment['status'] ?? ''));
+    return $date !== '' && $date >= $today && !in_array($status, ['cancelled', 'canceled', 'completed', 'done', 'no show'], true);
+}));
+usort($followup_appointments, static function ($a, $b) {
+    $a_key = (string) ($a['appt_date'] ?? $a['date'] ?? '') . ' ' . (string) ($a['appt_time'] ?? $a['time'] ?? '');
+    $b_key = (string) ($b['appt_date'] ?? $b['date'] ?? '') . ' ' . (string) ($b['appt_time'] ?? $b['time'] ?? '');
+    return strcmp($a_key, $b_key);
+});
+$followup_appointments = array_slice($followup_appointments, 0, 8);
 ?>
 
 
@@ -299,51 +349,28 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : (!empty($o
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><span class="badge bg-light text-secondary border rounded-pill px-2 py-1 small">PAT00123</span></td>
-                                <td class="fw-semibold text-dark">Mia Song</td>
-                                <td class="text-secondary">Blood Work</td>
-                                <td class="text-secondary">Sep 10, 2026</td>
-                                <td><span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small">Ready</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0 me-1" style="width: 30px; height: 30px;"><i class="fas fa-info"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;"><i class="fas fa-download"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge bg-light text-secondary border rounded-pill px-2 py-1 small">PAT00111</span></td>
-                                <td class="fw-semibold text-dark">John Johnson</td>
-                                <td class="text-secondary">Renal Function Test</td>
-                                <td class="text-secondary">Sep 10, 2026</td>
-                                <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-1 small">Pending</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0 me-1" style="width: 30px; height: 30px;"><i class="fas fa-info"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;"><i class="fas fa-download"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge bg-light text-secondary border rounded-pill px-2 py-1 small">PAT00112</span></td>
-                                <td class="fw-semibold text-dark">Elizabeth Brown</td>
-                                <td class="text-secondary">Thyroid Function Test</td>
-                                <td class="text-secondary">Sep 10, 2026</td>
-                                <td><span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2 py-1 small">In Progress</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0 me-1" style="width: 30px; height: 30px;"><i class="fas fa-info"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;"><i class="fas fa-download"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge bg-light text-secondary border rounded-pill px-2 py-1 small">PAT00112</span></td>
-                                <td class="fw-semibold text-dark">Elizabeth Brown</td>
-                                <td class="text-secondary">Vitamin D Test</td>
-                                <td class="text-secondary">Sep 10, 2026</td>
-                                <td><span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small">Normal</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0 me-1" style="width: 30px; height: 30px;"><i class="fas fa-info"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;"><i class="fas fa-download"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
+                            <?php if (empty($lab_results)): ?>
+                                <tr><td colspan="6" class="text-center py-4 text-muted small">No lab or test reports found for this doctor.</td></tr>
+                            <?php else: foreach ($lab_results as $lab):
+                                $lab_patient_id = (int) ($lab['patient_id'] ?? 0);
+                                $lab_patient_code = (string) (($lab['patient_uid'] ?? '') ?: get_user_meta($lab_patient_id, 'patient_id', true) ?: ('DM-' . (10000 + $lab_patient_id)));
+                                $lab_patient_name = (string) ($lab['patient_display_name'] ?? 'Patient');
+                                $lab_title = (string) ($lab['title'] ?? $lab['category'] ?? 'Lab / Test Report');
+                                $lab_timestamp = !empty($lab['created_at']) ? strtotime($lab['created_at']) : false;
+                                $lab_date = $lab_timestamp ? wp_date('M j, Y', $lab_timestamp) : '—';
+                            ?>
+                                <tr>
+                                    <td><span class="badge bg-light text-secondary border rounded-pill px-2 py-1 small"><?php echo esc_html($lab_patient_code); ?></span></td>
+                                    <td class="fw-semibold text-dark"><?php echo esc_html($lab_patient_name); ?></td>
+                                    <td class="text-secondary"><?php echo esc_html($lab_title); ?></td>
+                                    <td class="text-secondary"><?php echo esc_html($lab_date); ?></td>
+                                    <td><span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small">Available</span></td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" title="Open documents" onclick="if(typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-documents-upload'); }"><i class="fas fa-folder-open"></i></button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; endif; ?>
+                        </tbody>                </tbody>
                     </table>
                 </div>
             </div>
@@ -385,40 +412,21 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : (!empty($o
                 <div class="col-12 col-md-6 col-xl-12">
                     <div class="card tasks border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 d-flex flex-column">
                         <h3 class="section-title mb-3 fs-5 fw-bold text-dark"><i class="fas fa-list-check text-primary me-2"></i>Pending Tasks</h3>
-                        <div class="tasks-body dior-card-scrollable d-flex flex-column gap-2 flex-grow-1" style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
-                            <div class="d-flex align-items-start gap-2 p-2 border-bottom">
-                                <i class="far fa-circle-check text-primary mt-1"></i>
-                                <div>
-                                    <b class="d-block small text-dark fw-bold">Review lab reports</b>
-                                    <p class="mb-1 text-secondary small" style="font-size: 11.5px;">Check blood test results for 3 patients</p>
-                                    <small class="text-muted" style="font-size: 11px;"><i class="far fa-calendar me-1"></i>Oct 2, 2026</small>
+                        <div class="tasks-body dior-card-scrollable d-flex flex-column gap-2 flex-grow-1" style="max-height: 280px; overflow-y: auto; padding-right: 4px;"><?php if (empty($pending_tasks)): ?>
+                            <div class="p-4 text-center text-secondary small">No pending clinical tasks.</div>
+                            <?php else: foreach ($pending_tasks as $task):
+                                $task_timestamp = !empty($task['date']) ? strtotime($task['date']) : false;
+                            ?>
+                                <div class="d-flex align-items-start gap-2 p-2 border-bottom">
+                                    <i class="far fa-circle-check text-primary mt-1"></i>
+                                    <div>
+                                        <b class="d-block small text-dark fw-bold"><?php echo esc_html($task['title']); ?></b>
+                                        <p class="mb-1 text-secondary small"><?php echo esc_html($task['description']); ?></p>
+                                        <small class="text-muted"><i class="far fa-calendar me-1"></i><?php echo esc_html($task_timestamp ? wp_date('M j, Y', $task_timestamp) : 'Date unavailable'); ?></small>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="d-flex align-items-start gap-2 p-2 border-bottom">
-                                <i class="far fa-circle-check text-primary mt-1"></i>
-                                <div>
-                                    <b class="d-block small text-dark fw-bold">Sign prescriptions</b>
-                                    <p class="mb-1 text-secondary small" style="font-size: 11.5px;">5 prescriptions pending signature</p>
-                                    <small class="text-muted" style="font-size: 11px;"><i class="far fa-calendar me-1"></i>Oct 2, 2026</small>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-start gap-2 p-2 border-bottom">
-                                <i class="far fa-circle-check text-primary mt-1"></i>
-                                <div>
-                                    <b class="d-block small text-dark fw-bold">Approve medical notes</b>
-                                    <p class="mb-1 text-secondary small" style="font-size: 11.5px;">Review and approve consultation notes</p>
-                                    <small class="text-muted" style="font-size: 11px;"><i class="far fa-calendar me-1"></i>Oct 2, 2026</small>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-start gap-2 p-2">
-                                <i class="far fa-circle-check text-primary mt-1"></i>
-                                <div>
-                                    <b class="d-block small text-dark fw-bold">Update patient records</b>
-                                    <p class="mb-1 text-secondary small" style="font-size: 11.5px;">Complete EMR updates for recent visits</p>
-                                    <small class="text-muted" style="font-size: 11px;"><i class="far fa-calendar me-1"></i>Oct 2, 2026</small>
-                                </div>
-                            </div>
-                        </div>
+                            <?php endforeach; endif; ?>
+                                                </div>
                     </div>
                 </div>
 
@@ -426,60 +434,41 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : (!empty($o
                 <div class="col-12 col-md-6 col-xl-12">
                     <div class="card follow border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 d-flex flex-column">
                         <h3 class="section-title mb-3 fs-5 fw-bold text-dark"><i class="fas fa-bell text-primary me-2"></i>Follow-up Reminders</h3>
-                        <div class="follow-body dior-card-scrollable d-flex flex-column gap-2 flex-grow-1" style="max-height: 320px; overflow-y: auto; padding-right: 4px;">
-                            <div class="d-flex align-items-center justify-content-between p-2 border-bottom">
-                                <div class="d-flex align-items-center gap-2 min-w-0">
-                                    <img class="rounded-circle flex-shrink-0" style="width: 38px; height: 38px;" src="https://ui-avatars.com/api/?name=Mia+Song&background=eef2ff&color=4f46e5" alt="Mia Song" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Mia+Song&background=eef2ff&color=4f46e5';">
-                                    <div class="min-w-0">
-                                        <b class="d-block small text-dark text-truncate">Mia Song | PAT00123</b>
-                                        <small class="text-muted d-block" style="font-size: 11px;">Routine Checkup &bull; Oct 2, 2026</small>
+                        <div class="follow-body dior-card-scrollable d-flex flex-column gap-2 flex-grow-1" style="max-height: 320px; overflow-y: auto; padding-right: 4px;"><?php if (empty($followup_appointments)): ?>
+                            <div class="p-4 text-center text-secondary small">No upcoming appointments require follow-up.</div>
+                            <?php else: foreach ($followup_appointments as $followup):
+                                $follow_patient_name = (string) ($followup['patient_name'] ?? 'Patient');
+                                $follow_patient_id = (int) ($followup['patient_id'] ?? $followup['patient_user_id'] ?? 0);
+                                $follow_patient_code = (string) ($followup['patient_id_meta'] ?? ($follow_patient_id ? ('DM-' . (10000 + $follow_patient_id)) : ''));
+                                $follow_date_raw = (string) ($followup['appt_date'] ?? $followup['date'] ?? '');
+                                $follow_timestamp = $follow_date_raw !== '' ? strtotime($follow_date_raw) : false;
+                                $follow_date = $follow_timestamp ? wp_date('M j, Y', $follow_timestamp) : 'Date unavailable';
+                                $follow_time = (string) ($followup['appt_time'] ?? $followup['time'] ?? '');
+                                $follow_condition = (string) ($followup['condition_name'] ?? $followup['condition'] ?? 'Appointment');
+                                $follow_email = sanitize_email((string) ($followup['patient_email'] ?? $followup['email'] ?? ''));
+                                $follow_phone = (string) ($followup['phone'] ?? $followup['patient_phone'] ?? '');
+                                $follow_phone_link = preg_replace('/[^0-9+]/', '', $follow_phone);
+                                $follow_avatar = 'https://ui-avatars.com/api/?name=' . rawurlencode($follow_patient_name) . '&background=eef2ff&color=4f46e5';
+                            ?>
+                                <div class="d-flex align-items-center justify-content-between p-2 border-bottom">
+                                    <div class="d-flex align-items-center gap-2 min-w-0">
+                                        <img class="rounded-circle flex-shrink-0" style="width: 38px; height: 38px;" src="<?php echo esc_url($follow_avatar); ?>" alt="<?php echo esc_attr($follow_patient_name); ?>" loading="lazy">
+                                        <div class="min-w-0">
+                                            <b class="d-block small text-dark text-truncate"><?php echo esc_html($follow_patient_name . ($follow_patient_code ? ' | ' . $follow_patient_code : '')); ?></b>
+                                            <small class="text-muted d-block"><?php echo esc_html($follow_condition . ' • ' . $follow_date . ($follow_time ? ' • ' . $follow_time : '')); ?></small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-1 flex-shrink-0">
+                                        <?php if ($follow_email): ?>
+                                            <a class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" href="<?php echo esc_url('mailto:' . $follow_email); ?>" aria-label="Email patient"><i class="far fa-envelope"></i></a>
+                                        <?php endif; ?>
+                                        <?php if ($follow_phone_link): ?>
+                                            <a class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" href="<?php echo esc_url('tel:' . $follow_phone_link); ?>" aria-label="Call patient"><i class="fas fa-phone"></i></a>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
-                                <div class="d-flex gap-1 flex-shrink-0">
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" type="button"><i class="far fa-envelope"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" type="button"><i class="fas fa-phone"></i></button>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between p-2 border-bottom">
-                                <div class="d-flex align-items-center gap-2 min-w-0">
-                                    <img class="rounded-circle flex-shrink-0" style="width: 38px; height: 38px;" src="https://ui-avatars.com/api/?name=John+Johnson&background=f0fdf4&color=166534" alt="John Johnson" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=John+Johnson&background=f0fdf4&color=166534';">
-                                    <div class="min-w-0">
-                                        <b class="d-block small text-dark text-truncate">John Johnson | PAT00111</b>
-                                        <small class="text-muted d-block" style="font-size: 11px;">Routine Checkup &bull; Oct 2, 2026</small>
-                                    </div>
-                                </div>
-                                <div class="d-flex gap-1 flex-shrink-0">
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" type="button"><i class="far fa-envelope"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" type="button"><i class="fas fa-phone"></i></button>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between p-2 border-bottom">
-                                <div class="d-flex align-items-center gap-2 min-w-0">
-                                    <img class="rounded-circle flex-shrink-0" style="width: 38px; height: 38px;" src="https://ui-avatars.com/api/?name=Richard+Davis&background=fff1f2&color=be123c" alt="Richard Davis" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Richard+Davis&background=fff1f2&color=be123c';">
-                                    <div class="min-w-0">
-                                        <b class="d-block small text-dark text-truncate">Richard Davis | PAT00238</b>
-                                        <small class="text-muted d-block" style="font-size: 11px;">Routine Checkup &bull; Oct 2, 2026</small>
-                                    </div>
-                                </div>
-                                <div class="d-flex gap-1 flex-shrink-0">
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" type="button"><i class="far fa-envelope"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" type="button"><i class="fas fa-phone"></i></button>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between p-2">
-                                <div class="d-flex align-items-center gap-2 min-w-0">
-                                    <img class="rounded-circle flex-shrink-0" style="width: 38px; height: 38px;" src="https://ui-avatars.com/api/?name=Elizabeth+Brown&background=fef3c7&color=b45309" alt="Elizabeth Brown" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Elizabeth+Brown&background=fef3c7&color=b45309';">
-                                    <div class="min-w-0">
-                                        <b class="d-block small text-dark text-truncate">Elizabeth Brown | PAT00112</b>
-                                        <small class="text-muted d-block" style="font-size: 11px;">Routine Checkup &bull; Oct 2, 2026</small>
-                                    </div>
-                                </div>
-                                <div class="d-flex gap-1 flex-shrink-0">
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" type="button"><i class="far fa-envelope"></i></button>
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0" style="width: 30px; height: 30px;" type="button"><i class="fas fa-phone"></i></button>
-                                </div>
-                            </div>
-                        </div>
+                            <?php endforeach; endif; ?>
+                                                </div>
                     </div>
                 </div>
 
@@ -492,7 +481,7 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : (!empty($o
                                 <div class="p-4 text-center text-secondary small">No patient reviews submitted yet.</div>
                             <?php else: foreach ($db_reviews as $rev):
                                 $r_name = (string)($rev['patient_display_name'] ?? 'Patient');
-                                $r_text = (string)($rev['comment'] ?: $rev['subject'] ?: 'Excellent doctor! Very professional and caring.');
+                                $r_text = (string)($rev['comment'] ?: $rev['subject'] ?: 'Review submitted.');
                                 $r_rating = (int)($rev['rating'] ?? 5);
                                 if ($r_rating < 1) $r_rating = 5;
                                 if ($r_rating > 5) $r_rating = 5;
