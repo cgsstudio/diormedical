@@ -713,3 +713,125 @@
         padding: 10px !important;
     }
 }
+
+/*
+ * Medical-record timeline: mobile-only readability correction.
+ * Keep desktop timeline unchanged; use a stacked event card on narrow screens
+ * so long labels and clinical descriptions never collapse into a thin column.
+ */
+@media (max-width: 575.98px) {
+    .dior-patient-portal-wrap #tab-medical_record .modern-treatment-timeline {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow: visible !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-item {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 0 14px !important;
+        padding: 0 !important;
+        align-items: start !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-time-col {
+        display: flex !important;
+        flex-flow: row wrap !important;
+        align-items: center !important;
+        gap: 6px 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        padding: 0 2px !important;
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-time-col > * {
+        display: inline-flex !important;
+        flex: 0 1 auto !important;
+        width: auto !important;
+        max-width: 100% !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .dior-ic-f69dfb2b50 {
+        display: none !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .mr-timeline-content-card {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 14px !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        overflow-wrap: break-word !important;
+        word-break: normal !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .dior-ic-eba8b27042 {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .dior-ic-33aac0e461 {
+        display: flex !important;
+        flex-flow: row wrap !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .dior-ic-fceca4a64a {
+        flex: 1 1 180px !important;
+        width: auto !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        font-size: 15px !important;
+        line-height: 1.4 !important;
+        overflow-wrap: break-word !important;
+        word-break: normal !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .dior-ic-b1d844752a {
+        display: flex !important;
+        flex-flow: row wrap !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .dior-ic-9bbdb950cc,
+    .dior-patient-portal-wrap #tab-medical_record .dior-ic-3a4133fe41,
+    .dior-patient-portal-wrap #tab-medical_record .dior-ic-972dc92ce3 {
+        max-width: 100% !important;
+        overflow-wrap: break-word !important;
+        word-break: normal !important;
+        white-space: normal !important;
+    }
+
+    .dior-patient-portal-wrap #tab-medical_record .dior-ic-972dc92ce3 {
+        margin: 12px 0 0 !important;
+        font-size: 14px !important;
+        line-height: 1.55 !important;
+    }
+}
+
