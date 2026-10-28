@@ -587,7 +587,7 @@ class Dior_Patient_Portal_Data
 
         $rows = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM {$table} WHERE patient_id = %d AND is_deleted = 0 ORDER BY created_at DESC LIMIT 500",
+                "SELECT * FROM {$table} WHERE patient_id = %d AND is_deleted = 0 AND status IN ('finalized', 'amended') ORDER BY created_at DESC LIMIT 500",
                 $user_id
             ),
             ARRAY_A
