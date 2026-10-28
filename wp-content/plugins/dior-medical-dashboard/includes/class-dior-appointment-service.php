@@ -666,7 +666,7 @@ class Dior_Appointment_Service
     /**
      * Get all appointments for doctor dashboard (Optimized indexed SQL query)
      */
-    public static function get_doctor_appointments($doctor_id = 0, $status = null, $date = null)
+    public static function get_doctor_appointments($doctor_id = 0, $status = null, $date = null, $force_doctor_scope = false)
     {
         global $wpdb;
         $table = $wpdb->prefix . 'dior_appointments';
@@ -674,7 +674,10 @@ class Dior_Appointment_Service
         $where = ['a.is_deleted = 0'];
         $params = [];
 
-        $is_admin = Dior_Auth_Service::is_admin($doctor_id);
+        // Dashboard views may run under an administrator account, but must still
+        // stay scoped to the single configured doctor. Other admin callers retain
+        // the previous clinic-wide behavior unless they explicitly request scoping.
+        $is_admin = Dior_Auth_Service::is_admin($doctor_id) && !$force_doctor_scope;
         $default_doc_id = class_exists('Dior_Doctor_Resolver') ? Dior_Doctor_Resolver::get_default_doctor_id() : 0;
 
         // Strict Doctor Filtering: Each doctor only sees their own appointments
