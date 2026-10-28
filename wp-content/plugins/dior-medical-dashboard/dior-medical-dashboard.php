@@ -568,6 +568,35 @@ class Dior_Patient_Portal_Data
     }
 
     /**
+     * Get the authenticated patient's clinical encounters from the relational records table.
+     * Results are always scoped to the supplied patient user ID and exclude deleted encounters.
+     */
+    public static function get_patient_encounters($user_id)
+    {
+        global $wpdb;
+
+        $user_id = absint($user_id);
+        if (!$user_id) {
+            return [];
+        }
+
+        $table = $wpdb->prefix . 'dior_encounters';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
+            return [];
+        }
+
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$table} WHERE patient_id = %d AND is_deleted = 0 ORDER BY created_at DESC LIMIT 500",
+                $user_id
+            ),
+            ARRAY_A
+        );
+
+        return is_array($rows) ? $rows : [];
+    }
+
+    /**
      * Get patient appointments
      */
     public static function get_patient_appointments($user_id)
@@ -2677,6 +2706,7 @@ class Dior_Medical_Auth
         $current_user = wp_get_current_user();
         $profile = Dior_Patient_Portal_Data::get_patient_profile($user_id);
         $appointments = Dior_Patient_Portal_Data::get_patient_appointments($user_id);
+        $encounters = Dior_Patient_Portal_Data::get_patient_encounters($user_id);
         $prescriptions = Dior_Patient_Portal_Data::get_patient_prescriptions($user_id);
         $payments = Dior_Patient_Portal_Data::get_patient_payments($user_id);
         $documents = Dior_Patient_Portal_Data::get_patient_documents($user_id);
@@ -2688,6 +2718,7 @@ class Dior_Medical_Auth
         // the dashboard must never present fabricated records as real patient data.
         $dior_demo_mode = false;
         $appointments = is_array($appointments) ? $appointments : [];
+        $encounters = is_array($encounters) ? $encounters : [];
         $prescriptions = is_array($prescriptions) ? $prescriptions : [];
         $payments = is_array($payments) ? $payments : [];
         $documents = is_array($documents) ? $documents : [];
