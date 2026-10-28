@@ -40,7 +40,6 @@ if (empty($patients)) {
             <h4 class="mb-1 text-dark fw-bold fs-5">
                 <i class="fas fa-user-pen text-primary me-2"></i>Edit Patient Profile
             </h4>
-            <p class="text-secondary small mb-0">Modify patient clinical profile, contact info, emergency contacts, pharmacy, and portal credentials.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
             <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold shadow-sm" onclick="if(typeof diorDocSwitchTab==='function'){diorDocSwitchTab('doc-patients-all');}else if(typeof diorSwitchDocTab==='function'){diorSwitchDocTab('doc-patients-all');}">
