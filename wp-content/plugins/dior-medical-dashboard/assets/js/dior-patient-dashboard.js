@@ -3638,5 +3638,81 @@ document.addEventListener('click', function (event) {
         doDelete();
       }
     });
+    // Live patient notification polling: update the Notification Center without a page reload.
+    (function startPatientNotificationPolling() {
+      var lastNotificationId = '';
+      var pollingInProgress = false;
+      function pollPatientNotifications() {
+        if (pollingInProgress || !document.visibilityState || document.visibilityState === 'hidden') return;
+        var vars = window.dior_patient_dashboard || window.dior_vars || {};
+        var ajaxUrl = vars.ajax_url || '';
+        var nonce = vars.portal_nonce || vars.nonce || '';
+        if (!ajaxUrl || !nonce) return;
+        pollingInProgress = true;
+        var body = new URLSearchParams({
+          action: 'dior_patient_get_live_notifications',
+          nonce: nonce,
+          last_notif_id: lastNotificationId
+        });
+        fetch(ajaxUrl, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+          body: body.toString()
+        }).then(function (response) {
+          if (!response.ok) throw new Error('Notification request failed');
+          return response.json();
+        }).then(function (response) {
+          if (!response || !response.success || !response.data) return;
+          var data = response.data;
+          var isFirstPoll = lastNotificationId === '';
+          if (data.latest_id) lastNotificationId = data.latest_id;
+
+          var dropdown = document.querySelector('#dior-notif-dropdown-list, .dior-notif-dropdown-list, .dior-notifications-dropdown-list');
+          if (dropdown && data.dropdown_html) dropdown.innerHTML = data.dropdown_html;
+
+          var tbody = document.getElementById('dior-notif-tbody');
+          if (tbody && data.full_html && !isFirstPoll) {
+            tbody.innerHTML = data.full_html;
+            if (typeof window.diorRenderNotifPagination === 'function') window.diorRenderNotifPagination();
+            if (typeof window.diorUpdateNotifSelectionCount === 'function') window.diorUpdateNotifSelectionCount();
+          }
+
+          if (!isFirstPoll && Array.isArray(data.new_alerts) && data.new_alerts.length) {
+            data.new_alerts.slice().reverse().forEach(function (notice) {
+              var joinUrl = notice.action_url || '';
+              var canJoin = /^https:\/\/(?:[a-z0-9-]+\.)?zoom\.us\//i.test(joinUrl);
+              if (typeof window.Swal !== 'undefined') {
+                window.Swal.fire({
+                  icon: 'info',
+                  title: notice.title || 'New notification',
+                  text: notice.message || 'You have a new patient notification.',
+                  showCancelButton: canJoin,
+                  confirmButtonText: canJoin ? 'Join Consultation' : 'View Notifications',
+                  cancelButtonText: 'Later',
+                  allowOutsideClick: true
+                }).then(function (result) {
+                  if (result.isConfirmed) {
+                    if (canJoin) window.open(joinUrl, '_blank', 'noopener,noreferrer');
+                    else if (typeof window.diorSwitchTab === 'function') window.diorSwitchTab('notifications');
+                  }
+                });
+              }
+            });
+          }
+          var badge = document.querySelector('#dior-notification-count, .dior-notification-count, [data-patient-notification-count]');
+          if (badge && typeof data.unread_count !== 'undefined') {
+            badge.textContent = data.unread_count;
+            badge.style.display = Number(data.unread_count) > 0 ? '' : 'none';
+          }
+        }).catch(function () {
+          // Keep polling failures silent; the dashboard remains usable.
+        }).finally(function () {
+          pollingInProgress = false;
+        });
+      }
+      pollPatientNotifications();
+      window.setInterval(pollPatientNotifications, 15000);
+    })();
   });
 })();
