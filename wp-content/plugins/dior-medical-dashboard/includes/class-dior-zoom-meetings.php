@@ -143,9 +143,9 @@ if (!class_exists('Dior_Zoom_Meetings')) {
 
             // Appointment rows may store a range such as "02:00 PM - 03:00 PM".
             // Zoom needs only the appointment's start time.
-            if (preg_match('/(\\d{1,2}:\\d{2}\\s*[AP]\\.?M\\.?)/i', $time_value, $time_match)) {
-                $time_value = strtoupper(preg_replace('/\\s+/', ' ', str_replace('.', '', trim($time_match[1]))));
-            } elseif (preg_match('/(\\d{1,2}:\\d{2})/', $time_value, $time_match)) {
+            if (preg_match('/(\d{1,2}:\d{2}\s*[AP]\\.?M\\.?)/i', $time_value, $time_match)) {
+                $time_value = strtoupper(preg_replace('/\s+/', ' ', str_replace('.', '', trim($time_match[1]))));
+            } elseif (preg_match('/(\d{1,2}:\d{2})/', $time_value, $time_match)) {
                 $time_value = $time_match[1];
             }
 
