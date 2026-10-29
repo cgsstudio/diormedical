@@ -525,9 +525,164 @@
         #tab-appointments #dior-past-appointments-table:has(tr.dior-empty-state) {
             min-width: 100% !important;
         }
+
         #tab-appointments tr.dior-empty-state td {
             white-space: normal !important;
             text-align: center !important;
+        }
+
+        /* Mobile Today Appointments: convert the existing table rows into compact cards.
+           This block only runs on small screens; desktop table remains unchanged. */
+        #tab-appointments #dior-subtab-today > .card {
+            padding: 14px !important;
+            border: 1px solid #d6e5f6 !important;
+            border-radius: 18px !important;
+            box-shadow: 0 5px 18px rgba(20, 55, 100, .06) !important;
+        }
+        #tab-appointments #dior-subtab-today .table-responsive {
+            overflow: visible !important;
+            border: 0 !important;
+        }
+        #tab-appointments #dior-today-appointments-table,
+        #tab-appointments #dior-today-appointments-table tbody {
+            display: block !important;
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+        #tab-appointments #dior-today-appointments-table thead {
+            display: none !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody tr:not(.dior-empty-state) {
+            position: relative;
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 12px 10px;
+            width: 100%;
+            min-width: 0 !important;
+            margin: 0 0 13px !important;
+            padding: 14px !important;
+            border: 1px solid #d8e6f6 !important;
+            border-radius: 15px !important;
+            background: #fff !important;
+            box-shadow: 0 3px 12px rgba(12, 36, 78, .045);
+        }
+        #tab-appointments #dior-today-appointments-table tbody tr:not(.dior-empty-state):last-child {
+            margin-bottom: 0 !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td {
+            display: block !important;
+            width: auto !important;
+            min-width: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            text-align: left !important;
+            white-space: normal !important;
+            overflow-wrap: anywhere;
+            font-size: 12px !important;
+            line-height: 1.45;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:first-child {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 2;
+            width: 24px !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(2) {
+            grid-column: 1 / -1;
+            padding-right: 28px !important;
+            color: #10264b;
+            font-size: 15px !important;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(2)::before {
+            content: "DOCTOR";
+            display: block;
+            margin-bottom: 5px;
+            color: #7a8ba4;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .55px;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(3)::before,
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(4)::before,
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(5)::before,
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(6)::before,
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(7)::before,
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(8)::before {
+            display: block;
+            margin-bottom: 4px;
+            color: #7a8ba4;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: .45px;
+            text-transform: uppercase;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(3)::before { content: "Specialization"; }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(4)::before { content: "Date"; }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(5)::before { content: "Time"; }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(6)::before { content: "Treatment"; }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(7)::before { content: "Contact"; }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(8)::before { content: "Status"; }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(6) .badge,
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(8) .badge {
+            display: inline-flex;
+            max-width: 100%;
+            white-space: normal !important;
+            line-height: 1.35;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(9) {
+            grid-column: 1 / -1;
+            padding-top: 11px !important;
+            border-top: 1px solid #e7eef8 !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(9) .cell-actions {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px !important;
+            width: 100%;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(9) .action-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 40px;
+            padding: 8px !important;
+            border: 1px solid #dce7f5 !important;
+            border-radius: 10px !important;
+            background: #f8fbff !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(9) .action-icon-btn .fas {
+            font-size: 15px;
+        }
+        #tab-appointments #dior-subtab-today #dior-today-page-count {
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        #tab-appointments #dior-subtab-today #dior-today-pagination .dior-page-btn {
+            min-width: 34px;
+            min-height: 34px;
+            border-radius: 9px;
+        }
+    }
+
+    @media (max-width: 420px) {
+        #tab-appointments #dior-subtab-today > .card {
+            padding: 10px !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody tr:not(.dior-empty-state) {
+            padding: 12px !important;
+            gap: 10px 8px;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td {
+            font-size: 11px !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody td:nth-child(2) {
+            font-size: 14px !important;
         }
     }
 
