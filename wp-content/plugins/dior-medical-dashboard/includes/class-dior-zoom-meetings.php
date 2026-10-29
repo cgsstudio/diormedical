@@ -138,9 +138,23 @@ if (!class_exists('Dior_Zoom_Meetings')) {
             }
 
             $timezone = wp_timezone();
-            $start = date_create_from_format('!Y-m-d g:i A', trim((string) $date . ' ' . (string) $time), $timezone);
+            $date_value = trim((string) $date);
+            $time_value = trim((string) $time);
+
+            // Appointment rows may store a range such as "02:00 PM - 03:00 PM".
+            // Zoom needs only the appointment's start time.
+            if (preg_match('/(\\d{1,2}:\\d{2}\\s*[AP]\\.?M\\.?)/i', $time_value, $time_match)) {
+                $time_value = strtoupper(preg_replace('/\\s+/', ' ', str_replace('.', '', trim($time_match[1]))));
+            } elseif (preg_match('/(\\d{1,2}:\\d{2})/', $time_value, $time_match)) {
+                $time_value = $time_match[1];
+            }
+
+            $start = date_create_from_format('!Y-m-d g:i A', $date_value . ' ' . $time_value, $timezone);
             if (!$start) {
-                $start = date_create((string) $date . ' ' . (string) $time, $timezone);
+                $start = date_create_from_format('!Y-m-d H:i', $date_value . ' ' . $time_value, $timezone);
+            }
+            if (!$start) {
+                $start = date_create($date_value . ' ' . $time_value, $timezone);
             }
             if (!$start) {
                 error_log('[Dior Zoom] Invalid appointment date/time; meeting was not created.');
