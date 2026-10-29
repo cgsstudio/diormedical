@@ -842,6 +842,7 @@ $status_badges = [
 
         var statusBadgeMap = {
             'success': 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold',
+            'confirmed': 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold',
             'in progress': 'badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2.5 py-1 small fw-semibold',
             'completed': 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold',
             'cancelled': 'badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small fw-semibold',
@@ -1487,24 +1488,24 @@ $status_badges = [
             data.append('action', 'dior_doc_appointment_update');
             data.append('nonce', nonce);
             data.append('appt_uid', uid);
-            data.append('status', 'Success');
+            data.append('status', 'Confirmed');
 
             fetch(ajaxUrl, { method: 'POST', body: data })
                 .then(function (r) { return r.json(); })
                 .then(function (res) {
                     if (res.success) {
                         if (row) {
-                            row.dataset.status = 'Success';
+                            row.dataset.status = 'Confirmed';
                             var badge = row.querySelector('.va-badge');
                             if (badge) {
-                                badge.className = 'va-badge ' + (statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
-                                badge.textContent = 'Success';
+                                badge.className = 'va-badge ' + (statusBadgeMap['confirmed'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
+                                badge.textContent = 'Confirmed';
                             }
                         }
                         var dtlBadge = document.getElementById('dtl-status-badge');
                         if (dtlBadge) {
-                            dtlBadge.className = statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
-                            dtlBadge.textContent = 'Success';
+                            dtlBadge.className = statusBadgeMap['confirmed'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
+                            dtlBadge.textContent = 'Confirmed';
                         }
                         var dtlConfirmBtn = document.getElementById('dtl-action-confirm-btn');
                         if (dtlConfirmBtn) {
@@ -1517,7 +1518,7 @@ $status_badges = [
                         Swal.fire({
                             icon: 'success',
                             title: 'Confirmed',
-                            text: 'Appointment for ' + (patientName || 'patient') + ' is now Confirmed.',
+                            text: 'Appointment for ' + (patientName || 'patient') + ' is now confirmed.',
                             toast: true,
                             position: 'top-end',
                             timer: 2500,
@@ -1727,7 +1728,7 @@ $status_badges = [
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Rescheduled',
-                                text: 'Appointment rescheduled to ' + date + ' at ' + formattedTime + ' and set to Confirmed.',
+                                text: 'Appointment rescheduled to ' + date + ' at ' + formattedTime + '.',
                                 toast: true,
                                 position: 'top-end',
                                 timer: 3000,
