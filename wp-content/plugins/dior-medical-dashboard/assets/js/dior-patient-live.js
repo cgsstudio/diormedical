@@ -246,9 +246,82 @@
         });
     }
 
+    function bootConsultationAlerts() {
+        var cfg = window.dior_patient_dashboard || {};
+        var ajaxUrl = cfg.ajax_url || '';
+        if (!ajaxUrl || window.__diorConsultationAlertPolling) return;
+        window.__diorConsultationAlertPolling = true;
+
+        var lastId = '';
+        var firstItem = document.querySelector('#dior-notification-dropdown .dior-notif-item[data-notif-id], .dior-notif-dropdown .dior-notif-item[data-notif-id]');
+        if (firstItem) lastId = firstItem.getAttribute('data-notif-id') || '';
+
+        function poll() {
+            var data = new FormData();
+            data.append('action', 'dior_patient_get_live_notifications');
+            data.append('last_notif_id', lastId);
+
+            fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
+                .then(function (response) {
+                    if (!response.ok) throw new Error('Notification refresh failed');
+                    return response.json();
+                })
+                .then(function (result) {
+                    if (!result || !result.success || !result.data) return;
+                    var payload = result.data;
+                    if (payload.dropdown_html) {
+                        var dropdown = document.querySelector('#dior-notification-dropdown, #dior-notification-list, .dior-notification-dropdown-list');
+                        if (dropdown) dropdown.innerHTML = payload.dropdown_html;
+                    }
+                    var badge = document.querySelector('#dior-notification-count, .dior-notification-badge, [data-notification-count]');
+                    if (badge && typeof payload.unread_count !== 'undefined') {
+                        badge.textContent = payload.unread_count;
+                        badge.style.display = Number(payload.unread_count) > 0 ? '' : 'none';
+                    }
+                    if (payload.latest_id) lastId = payload.latest_id;
+
+                    (payload.new_alerts || []).forEach(function (alert) {
+                        var url = alert.action_url || '';
+                        var isMeetingReady = /consultation is ready to join|video consultation/i.test((alert.title || '') + ' ' + (alert.message || ''));
+                        if (isMeetingReady && /^https:\/\//i.test(url) && window.Swal && typeof window.Swal.fire === 'function') {
+                            window.Swal.fire({
+                                icon: 'info',
+                                title: alert.title || 'Consultation is ready',
+                                text: alert.message || 'Your doctor has started the consultation.',
+                                showCancelButton: true,
+                                confirmButtonText: 'Join Consultation',
+                                cancelButtonText: 'Later',
+                                confirmButtonColor: '#0d6efd'
+                            }).then(function (choice) {
+                                if (choice.isConfirmed) window.open(url, '_blank', 'noopener,noreferrer');
+                            });
+                        } else if (window.Swal && typeof window.Swal.fire === 'function') {
+                            window.Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'info',
+                                title: alert.title || 'New notification',
+                                text: alert.message || '',
+                                timer: 5000,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+                })
+                .catch(function () {
+                    // Keep polling silently; transient network failures should not break the dashboard.
+                });
+        }
+
+        // Fetch immediately to establish the current latest notification, then poll for updates.
+        poll();
+        window.setInterval(poll, 15000);
+    }
+
     function boot() {
         bindNavigation();
         bindProfileSave();
+        bootConsultationAlerts();
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
