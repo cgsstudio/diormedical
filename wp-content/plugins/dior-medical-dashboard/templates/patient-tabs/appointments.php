@@ -1280,6 +1280,24 @@
             $status = sanitize_text_field($apt_row['status'] ?? '');
             if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true))
                 continue;
+            // Prefer the appointment-specific meeting URL; fall back to the linked doctor's configured Zoom link.
+            $today_join_url = trim((string) ($apt_row['join_url'] ?? ''));
+            if ($today_join_url === '') {
+                $today_doctor_user_id = absint($apt_row['doctor_user_id'] ?? 0);
+                if (!$today_doctor_user_id && !empty($apt_row['doctor_id']) && function_exists('dior_find_doctor_user_id')) {
+                    $today_doctor_user_id = absint(dior_find_doctor_user_id(
+                        absint($apt_row['doctor_id']),
+                        (string) ($apt_row['provider'] ?? ($apt_row['doctor_name'] ?? ''))
+                    ));
+                }
+                if ($today_doctor_user_id) {
+                    $configured_zoom_url = trim((string) get_user_meta($today_doctor_user_id, 'doctor_zoom_link', true));
+                    if ($configured_zoom_url !== '' && wp_http_validate_url($configured_zoom_url)) {
+                        $today_join_url = $configured_zoom_url;
+                    }
+                }
+            }
+
             $today_mock[] = [
                 $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                 $apt_row['provider_spec'] ?? '—',
@@ -1290,7 +1308,7 @@
                 $status ?: '—',
                 $apt_row['avatar'] ?? '',
                 $apt_row['id'] ?? ($apt_row['appt_uid'] ?? ''),
-                $apt_row['join_url'] ?? '',
+                $today_join_url,
                 $apt_row['status'] ?? '',
                 $apt_row['type'] ?? ($apt_row['visit_type'] ?? 'Video Visit')
             ];
