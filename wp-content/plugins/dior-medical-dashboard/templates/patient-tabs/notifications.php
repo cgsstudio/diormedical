@@ -64,7 +64,34 @@ foreach ($patient_notif_rows as $row) {
         #tab-notifications .dior-big-title {
             display: none !important;
         }
-    </style>
+    
+        /* Step 5: responsive Bootstrap-inspired notification center polish. */
+        #tab-notifications { color:#334155; border-radius:18px; }
+        #tab-notifications h4 { color:#142b4a!important; font-size:22px!important; font-weight:700!important; letter-spacing:-.025em; }
+        #tab-notifications .section-body { min-width:0; }
+        #tab-notifications .stat-card { border:1px solid #e7edf5!important; border-radius:16px!important; background:#fff!important; box-shadow:0 6px 22px rgba(22,52,91,.05)!important; transition:box-shadow .18s ease,transform .18s ease; }
+        #tab-notifications .stat-card:hover { box-shadow:0 10px 26px rgba(22,52,91,.09)!important; transform:translateY(-2px); }
+        #tab-notifications .stat-label { color:#64748b!important; font-weight:600; }
+        #tab-notifications .stat-value { font-weight:750!important; letter-spacing:-.03em; }
+        #tab-notifications .dior-notif-stats-row { gap:14px!important; }
+        #tab-notifications .dior-notif-stat-col { min-width:190px; }
+        #tab-notifications .dior-notif-stat-col .stat-card { height:100%; }
+        #tab-notifications #dior-emerg-search-input { min-height:40px; border:1px solid #e2e8f0!important; border-radius:10px!important; background:#fff!important; box-shadow:none!important; }
+        #tab-notifications .dior-notif-filter, #tab-notifications .btn { border-radius:9px!important; font-weight:600; }
+        #tab-notifications #dior-system-notif-list { display:flex; flex-direction:column; gap:12px; }
+        #tab-notifications #dior-system-notif-list > * { border-radius:13px; }
+        #tab-notifications #dior-empty-notif-box { border:1px dashed #d7e1ed!important; border-radius:14px!important; background:#fff!important; }
+        @media(max-width:767.98px) {
+            #tab-notifications { padding:14px!important; border-radius:14px; }
+            #tab-notifications h4 { font-size:19px!important; }
+            #tab-notifications .dior-notif-stat-col { min-width:calc(50% - 8px); flex:1 1 calc(50% - 8px); }
+            #tab-notifications .dior-notif-stats-row { gap:10px!important; }
+        }
+        @media(max-width:479.98px) {
+            #tab-notifications { padding:10px!important; }
+            #tab-notifications .dior-notif-stat-col { min-width:100%; flex-basis:100%; }
+        }
+</style>
 
     <!-- Header & Breadcrumb -->
     <div class="mb-4"
