@@ -1669,7 +1669,7 @@ $status_badges = [
                 data.append('appt_uid', uid);
                 data.append('date', date);
                 data.append('time', formattedTime);
-                data.append('status', 'Success');
+                data.append('status', 'Confirmed');
                 if (reason) {
                     data.append('notes', reason);
                 }
