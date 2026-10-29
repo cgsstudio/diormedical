@@ -1333,7 +1333,7 @@
                 </div>
 
                 <!-- Responsive Table Wrapper -->
-                <div class="table-responsive mb-0">
+                <div class="table-responsive mb-0 dior-today-desktop-view">
                     <table class="table table-hover align-middle mb-0 dior-appointment-list-table" id="dior-today-appointments-table">
                         <thead class="table-light border-bottom text-uppercase small text-secondary fw-semibold">
                             <tr>
@@ -1419,6 +1419,117 @@
                             <?php endif; ?>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Dedicated mobile UI: rendered from the same live appointment records as the desktop table. -->
+                <div class="d-md-none dior-today-mobile-view" id="dior-today-mobile-view">
+                    <div class="dior-today-mobile-toolbar mb-3">
+                        <label class="visually-hidden" for="dior-today-mobile-search">Search today's appointments</label>
+                        <div class="input-group dior-today-mobile-search">
+                            <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
+                            <input type="search" id="dior-today-mobile-search" class="form-control"
+                                placeholder="Search appointments..." oninput="diorFilterTodayMobileAppointments()"
+                                autocomplete="off">
+                        </div>
+                        <button type="button" class="btn btn-primary dior-today-mobile-book"
+                            onclick="diorSwitchApptSubTab('book')">
+                            <i class="fas fa-plus me-2" aria-hidden="true"></i>Book appointment
+                        </button>
+                    </div>
+
+                    <div class="dior-today-mobile-list" id="dior-today-mobile-list" aria-live="polite">
+                        <?php foreach ($today_mock as $tm):
+                            $mobile_status = strtolower(trim((string) ($tm[6] ?? '')));
+                            $mobile_status_class = 'is-scheduled';
+                            if (in_array($mobile_status, ['confirmed', 'success', 'in progress', 'in-queue'], true)) {
+                                $mobile_status_class = 'is-confirmed';
+                            } elseif (in_array($mobile_status, ['pending', 'requested'], true)) {
+                                $mobile_status_class = 'is-pending';
+                            } elseif (in_array($mobile_status, ['cancelled', 'canceled'], true)) {
+                                $mobile_status_class = 'is-cancelled';
+                            } elseif (in_array($mobile_status, ['completed', 'done', 'past'], true)) {
+                                $mobile_status_class = 'is-completed';
+                            }
+                            $mobile_join_url = trim((string) ($tm[9] ?? ''));
+                            $mobile_can_join = in_array($mobile_status, ['confirmed', 'scheduled', 'success', 'in progress', 'in-queue'], true);
+                            $mobile_visit_type = strtolower(trim((string) ($tm[11] ?? 'video visit')));
+                            $mobile_is_video = strpos($mobile_visit_type, 'video') !== false || strpos($mobile_visit_type, 'tele') !== false || strpos($mobile_visit_type, 'zoom') !== false || strpos($mobile_visit_type, 'virtual') !== false;
+                            $mobile_has_join_url = $mobile_join_url !== '' && wp_http_validate_url($mobile_join_url) && rtrim($mobile_join_url, '/') !== 'https://zoom.us/join';
+                            $mobile_search_text = implode(' ', array_map('strval', [$tm[0] ?? '', $tm[1] ?? '', $tm[2] ?? '', $tm[3] ?? '', $tm[4] ?? '', $tm[5] ?? '', $tm[6] ?? '']));
+                        ?>
+                            <article class="card dior-today-mobile-card mb-3"
+                                data-search="<?php echo esc_attr(mb_strtolower($mobile_search_text)); ?>"
+                                data-appointment-id="<?php echo esc_attr($tm[8] ?? ''); ?>">
+                                <div class="card-body">
+                                    <div class="dior-today-mobile-card-head">
+                                        <div class="dior-today-mobile-doctor">
+                                            <span class="dior-today-mobile-avatar" aria-hidden="true"><i class="fas fa-user-doctor"></i></span>
+                                            <div class="min-w-0">
+                                                <h6 class="mb-1"><?php echo esc_html($tm[0] ?: 'Provider not recorded'); ?></h6>
+                                                <p class="mb-0"><?php echo esc_html($tm[1] ?: 'Specialization not recorded'); ?></p>
+                                            </div>
+                                        </div>
+                                        <span class="dior-today-mobile-status <?php echo esc_attr($mobile_status_class); ?>">
+                                            <?php echo esc_html($tm[6] ?: 'Status unavailable'); ?>
+                                        </span>
+                                    </div>
+
+                                    <div class="dior-today-mobile-details">
+                                        <div class="dior-today-mobile-detail">
+                                            <span class="dior-today-mobile-detail-label"><i class="far fa-calendar me-1" aria-hidden="true"></i>Date</span>
+                                            <span><?php echo esc_html($tm[2] ?: '—'); ?></span>
+                                        </div>
+                                        <div class="dior-today-mobile-detail">
+                                            <span class="dior-today-mobile-detail-label"><i class="far fa-clock me-1" aria-hidden="true"></i>Time</span>
+                                            <span><?php echo esc_html($tm[3] ?: '—'); ?></span>
+                                        </div>
+                                        <div class="dior-today-mobile-detail">
+                                            <span class="dior-today-mobile-detail-label"><i class="fas fa-stethoscope me-1" aria-hidden="true"></i>Treatment</span>
+                                            <span><?php echo esc_html($tm[4] ?: '—'); ?></span>
+                                        </div>
+                                        <div class="dior-today-mobile-detail">
+                                            <span class="dior-today-mobile-detail-label"><i class="fas fa-phone me-1" aria-hidden="true"></i>Contact</span>
+                                            <span><?php echo esc_html($tm[5] ?: '—'); ?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="dior-today-mobile-actions">
+                                        <?php if ($mobile_can_join && $mobile_is_video && $mobile_has_join_url): ?>
+                                            <a class="btn btn-outline-success"
+                                                href="<?php echo esc_url($mobile_join_url); ?>" target="_blank"
+                                                rel="noopener noreferrer" aria-label="Join consultation with <?php echo esc_attr($tm[0] ?? 'provider'); ?>">
+                                                <i class="fas fa-video me-1" aria-hidden="true"></i>Join
+                                            </a>
+                                        <?php else: ?>
+                                            <button type="button" class="btn btn-outline-secondary" disabled
+                                                aria-label="Consultation link not available">
+                                                <i class="fas fa-video me-1" aria-hidden="true"></i>Join
+                                            </button>
+                                        <?php endif; ?>
+                                        <button type="button" class="btn btn-primary"
+                                            onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('<?php echo esc_js($tm[8] ?? ''); ?>');">
+                                            <i class="fas fa-eye me-1" aria-hidden="true"></i>View details
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger"
+                                            onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('<?php echo esc_js($tm[8] ?? ''); ?>', this);">
+                                            <i class="fas fa-times me-1" aria-hidden="true"></i>Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                        <?php if (empty($today_mock)): ?>
+                            <div class="dior-today-mobile-empty text-center p-4">
+                                <span class="dior-today-mobile-empty-icon"><i class="far fa-calendar-check" aria-hidden="true"></i></span>
+                                <h6 class="mt-3 mb-2">No appointments today</h6>
+                                <p class="text-secondary small mb-3">Your appointments scheduled for today will appear here.</p>
+                                <button type="button" class="btn btn-primary" onclick="diorSwitchApptSubTab('book')">
+                                    <i class="fas fa-plus me-2" aria-hidden="true"></i>Book an appointment
+                                </button>
+                            </div>
+                        <?php endif; ?>
+                        <p id="dior-today-mobile-no-results" class="small text-secondary text-center py-3" hidden>No appointments match your search.</p>
+                    </div>
                 </div>
 
                 <!-- Footer Summary with Pagination -->
