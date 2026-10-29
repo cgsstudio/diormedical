@@ -168,9 +168,9 @@
                                     <?php foreach (array_slice($notifications, 0, 5) as $n):
                                         $target_tab = !empty($n['action_url']) && strpos($n['action_url'], '#tab=') === 0 ? str_replace('#tab=', '', $n['action_url']) : 'notifications';
                                         ?>
-                                        <div class="dior-notif-item <?php echo empty($n['is_read']) ? 'unread' : ''; ?>"
+                                        <div class="dior-notif-item <?php echo empty($n['is_read']) ? 'unread' : ''; ?> dior-ic-7f6191e48d"
                                             data-notif-id="<?php echo esc_attr($n['id']); ?>"
-                                            data-switch-tab="<?php echo esc_attr($target_tab); ?>" class="dior-ic-7f6191e48d">
+                                            data-switch-tab="<?php echo esc_attr($target_tab); ?>">
                                             <div class="notif-icon"><i
                                                     class="fas <?php echo esc_attr($n['icon'] ?? 'fa-bell'); ?>"></i></div>
                                             <div class="notif-body">
@@ -1207,22 +1207,31 @@
 /* Bootstrap-first mobile overview layout matching the approved reference. */
 .dior-mobile-bottom-nav{display:none}
 @media (max-width:767.98px){
+  #dior-patient-portal-app .stat-card,
+  #dior-patient-portal-app .dior-stat-card{min-width:0}
+  #dior-patient-portal-app .dior-profile-incomplete-alert{padding:12px 14px!important;margin-bottom:14px!important;gap:10px!important;border-radius:12px!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-29bdac4ec4{align-items:flex-start!important;gap:10px!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-3fb01cc77f{width:34px!important;height:34px!important;font-size:14px!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-11190ca3a8{font-size:13px!important;line-height:1.3!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-acb9b5ec47{font-size:11.5px!important;line-height:1.4!important;display:block!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-4ee0445c2a{width:100%!important;justify-content:center!important;min-height:38px!important;font-size:12.5px!important}
   #dior-patient-portal-app{background:#f3f7fc}
   #dior-patient-portal-app .dior-main-content{min-width:0}
   #dior-patient-portal-app .dior-tab-container{padding:10px 12px 100px!important}
-  #tab-overview.custom-patient-overview{width:100%;max-width:100%;overflow:visible}
+  #tab-overview.custom-patient-overview{width:100%;max-width:100%;overflow:visible;padding:4px 2px 16px!important}
   #tab-overview.custom-patient-overview .content-head{gap:10px!important;margin-bottom:14px!important}
-  #tab-overview.custom-patient-overview .content-head h1{font-size:18px!important;line-height:1.25;letter-spacing:-.25px}
-  #tab-overview.custom-patient-overview .content-head p{font-size:11px!important;line-height:1.45;max-width:290px}
-  #tab-overview.custom-patient-overview .content-head>.btn{width:100%;justify-content:center;border-radius:7px!important;padding:9px 12px!important;font-size:12px;min-height:36px}
+  #tab-overview.custom-patient-overview .content-head h1{font-size:20px!important;line-height:1.25!important;letter-spacing:-.25px}
+  #tab-overview.custom-patient-overview .content-head p,
+  .dior-patient-portal-wrap #tab-overview.custom-patient-overview .content-head p{font-size:12.5px!important;line-height:1.45!important;max-width:100%!important}
+  #tab-overview.custom-patient-overview .content-head>.btn{width:100%;justify-content:center;border-radius:10px!important;padding:10px 14px!important;font-size:13px!important;min-height:42px!important}
   #tab-overview.custom-patient-overview>.row.align-items-start{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px!important;margin:0!important;align-items:stretch!important}
   #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-7,
   #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-5{display:contents!important}
   #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-7>.row,
   #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-5>.row{display:contents!important}
-  #tab-overview.custom-patient-overview .stat-card{min-height:76px;padding:10px 9px!important;border:1px solid #dbe7f5!important;border-radius:10px!important;box-shadow:0 2px 7px rgba(29,72,120,.04)!important;background:#fff}
-  #tab-overview.custom-patient-overview .stat-card .stat-num{font-size:20px!important;line-height:1.1;margin-bottom:5px!important}
-  #tab-overview.custom-patient-overview .stat-card .stat-label{font-size:9px!important;line-height:1.25;font-weight:600!important}
+  #tab-overview.custom-patient-overview .stat-card{height:auto!important;min-height:84px!important;padding:12px 8px!important;border:1px solid #dbe7f5!important;border-radius:12px!important;box-shadow:0 2px 7px rgba(29,72,120,.04)!important;background:#fff;text-align:center;align-items:center;justify-content:center}
+  #tab-overview.custom-patient-overview .stat-card .stat-num{font-size:22px!important;line-height:1.1!important;margin-bottom:4px!important}
+  #tab-overview.custom-patient-overview .stat-card .stat-label{font-size:10px!important;line-height:1.25!important;font-weight:600!important;margin-top:0!important;letter-spacing:0!important;text-transform:capitalize!important}
   #tab-overview.custom-patient-overview .stat-card:before{display:none}
   #tab-overview.custom-patient-overview .row>.col-12.col-sm-4{grid-column:span 1!important;min-width:0;padding:0!important;order:1}
   #tab-overview.custom-patient-overview .patient-card,
@@ -1231,7 +1240,7 @@
   #tab-overview.custom-patient-overview .upcoming,
   #tab-overview.custom-patient-overview .table-card,
   #tab-overview.custom-patient-overview .lab-card,
-  #tab-overview.custom-patient-overview .prescriptions{border:1px solid #dbe7f5!important;border-radius:10px!important;padding:12px!important;background:#fff;box-shadow:0 2px 7px rgba(29,72,120,.035)!important;margin:0!important;min-width:0}
+  #tab-overview.custom-patient-overview .prescriptions{border:1px solid #dbe7f5!important;border-radius:14px!important;padding:14px!important;background:#fff;box-shadow:0 2px 8px rgba(29,72,120,.04)!important;margin:0!important;min-width:0;height:auto!important;min-height:0!important}
   #tab-overview.custom-patient-overview .patient-card{order:2;grid-column:1/-1!important}
   #tab-overview.custom-patient-overview .goals-card{order:3;grid-column:1/-1!important;min-height:94px}
   #tab-overview.custom-patient-overview #dior-overview-doctor-card{order:4;grid-column:1/-1!important}
@@ -1239,41 +1248,60 @@
   #tab-overview.custom-patient-overview .table-card{order:6;grid-column:1/-1!important}
   #tab-overview.custom-patient-overview .lab-card{order:7;grid-column:1/-1!important}
   #tab-overview.custom-patient-overview #dior-overview-prescriptions-card{order:8;grid-column:1/-1!important}
-  #tab-overview.custom-patient-overview .patient-card .patient-photo{width:58px!important;height:58px!important;border-radius:9px!important}
-  #tab-overview.custom-patient-overview .patient-card h2{font-size:14px!important;max-width:100%}
-  #tab-overview.custom-patient-overview .patient-card .text-secondary.small{font-size:10px!important}
-  #tab-overview.custom-patient-overview .patient-card strong{font-size:12px!important}
-  #tab-overview.custom-patient-overview .patient-card .border-start{padding-left:10px!important}
-  #tab-overview.custom-patient-overview .patient-card .btn{font-size:11px!important;padding:7px 10px!important}
-  #tab-overview.custom-patient-overview .section-title{font-size:12px!important;line-height:1.3}
-  #tab-overview.custom-patient-overview .section-title i{font-size:12px!important;margin-right:5px!important}
-  #tab-overview.custom-patient-overview .view-all{font-size:10px!important;white-space:nowrap}
-  #tab-overview.custom-patient-overview .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  #tab-overview.custom-patient-overview .table{font-size:10px!important}
-  #tab-overview.custom-patient-overview .table th,
-  #tab-overview.custom-patient-overview .table td{padding:7px 6px!important}
+  #tab-overview.custom-patient-overview .patient-card .patient-photo{width:60px!important;height:60px!important;border-radius:12px!important}
+  #tab-overview.custom-patient-overview .patient-card h2{font-size:15px!important;line-height:1.25!important;max-width:100%}
+  #tab-overview.custom-patient-overview .patient-card .text-secondary.small{font-size:11.5px!important}
+  #tab-overview.custom-patient-overview .patient-card strong{font-size:13px!important}
+  #tab-overview.custom-patient-overview .patient-card .border-start{padding-left:12px!important}
+  #tab-overview.custom-patient-overview .patient-card .btn{font-size:12.5px!important;padding:9px 12px!important;min-height:40px!important;border-radius:10px!important}
+  #tab-overview.custom-patient-overview .section-title{font-size:14px!important;line-height:1.3!important}
+  #tab-overview.custom-patient-overview .section-title i{font-size:13px!important;margin-right:6px!important}
+  #tab-overview.custom-patient-overview .view-all{font-size:11.5px!important;white-space:nowrap}
+  /* Stacked mobile cards for Overview tables (Previous Consultation & Latest Lab Results) */
+  #tab-overview.custom-patient-overview .table-card .table-responsive,
+  #tab-overview.custom-patient-overview .lab-card .table-responsive,
   #tab-overview.custom-patient-overview .table-card .dior-card-scrollable,
-  #tab-overview.custom-patient-overview .lab-card .dior-card-scrollable{max-height:none!important;overflow-x:auto!important;overflow-y:hidden!important}
+  #tab-overview.custom-patient-overview .lab-card .dior-card-scrollable{max-height:none!important;overflow:visible!important}
+  #tab-overview.custom-patient-overview .table-card table,
+  #tab-overview.custom-patient-overview .lab-card table{min-width:0!important;width:100%!important;display:block!important}
+  #tab-overview.custom-patient-overview .table-card thead,
+  #tab-overview.custom-patient-overview .lab-card thead{display:none!important}
+  #tab-overview.custom-patient-overview .table-card tbody,
+  #tab-overview.custom-patient-overview .lab-card tbody{display:flex!important;flex-direction:column!important;gap:10px!important;width:100%!important}
+  #tab-overview.custom-patient-overview .table-card tbody tr,
+  #tab-overview.custom-patient-overview .lab-card tbody tr{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;padding:12px!important;border:1px solid #e2ecf6!important;border-radius:12px!important;background:#f8fbff!important;width:100%!important}
+  #tab-overview.custom-patient-overview .table-card tbody td,
+  #tab-overview.custom-patient-overview .lab-card tbody td{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;padding:2px 0!important;border:none!important;background:transparent!important;white-space:normal!important;font-size:12.5px!important;text-align:right!important}
+  #tab-overview.custom-patient-overview .table-card tbody td::before,
+  #tab-overview.custom-patient-overview .lab-card tbody td::before{content:attr(data-label);font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.03em;text-align:left;flex-shrink:0}
+  #tab-overview.custom-patient-overview .table-card tbody td[colspan],
+  #tab-overview.custom-patient-overview .lab-card tbody td[colspan]{flex-direction:column!important;justify-content:center!important;text-align:center!important;padding:14px 8px!important;color:#64748b!important}
+  #tab-overview.custom-patient-overview .table-card tbody td[colspan]::before,
+  #tab-overview.custom-patient-overview .lab-card tbody td[colspan]::before{display:none!important}
+  #tab-overview.custom-patient-overview .doctor-card p,
+  .dior-patient-portal-wrap #tab-overview.custom-patient-overview .doctor-card p{font-size:12.5px!important;line-height:1.45!important}
   #tab-overview.custom-patient-overview .doctor-card .btn,
   #tab-overview.custom-patient-overview .upcoming .btn,
-  #tab-overview.custom-patient-overview .prescriptions .btn{font-size:11px!important}
+  #tab-overview.custom-patient-overview .prescriptions .btn{font-size:12.5px!important;min-height:38px!important}
   #tab-overview.custom-patient-overview .consult-list-wrap,
-  #tab-overview.custom-patient-overview .rx-list-wrap{max-height:none!important;overflow:visible!important}
-  #tab-overview.custom-patient-overview .consult{gap:9px!important}
-  #tab-overview.custom-patient-overview .dior-fs-13{font-size:11px!important}
-  #tab-overview.custom-patient-overview .dior-fs-12{font-size:10px!important}
-  #tab-overview.custom-patient-overview .dior-fs-11{font-size:9px!important}
-  .dior-mobile-bottom-nav{position:fixed;z-index:99990;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;padding:7px 5px max(7px,env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border:1px solid #dce7f5;border-bottom:0;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(22,58,99,.09);backdrop-filter:blur(12px)}
-  .dior-mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:37px;padding:3px 1px;border:0;background:transparent;color:#69778b;font:inherit;font-size:9px;line-height:1.2;font-weight:600;white-space:nowrap}
+  #tab-overview.custom-patient-overview .rx-list-wrap,
+  #tab-overview.custom-patient-overview .goals-list-wrap{max-height:none!important;overflow:visible!important}
+  #tab-overview.custom-patient-overview .consult{display:flex!important;flex-direction:row!important;flex-wrap: nowrap!important;align-items:center!important;gap:10px!important;padding:10px!important}
+  #tab-overview.custom-patient-overview .consult > .btn{min-height:34px!important;width:34px!important;height:34px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+  #tab-overview.custom-patient-overview .dior-fs-13{font-size:12px!important}
+  #tab-overview.custom-patient-overview .dior-fs-12{font-size:11.5px!important}
+  #tab-overview.custom-patient-overview .dior-fs-11{font-size:10.5px!important}
+  .dior-mobile-bottom-nav{position:fixed;z-index:99985;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;padding:7px 5px max(7px,env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border:1px solid #dce7f5;border-bottom:0;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(22,58,99,.09);backdrop-filter:blur(12px)}
+  .dior-mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:40px;padding:3px 1px;border:0;background:transparent;color:#69778b;font:inherit;font-size:9.5px;line-height:1.2;font-weight:600;white-space:nowrap}
   .dior-mobile-nav-item i{font-size:15px;line-height:1.1}
   .dior-mobile-nav-item.is-active{color:#1267c5}
   .dior-mobile-nav-item:focus-visible{outline:2px solid #1267c5;outline-offset:-2px;border-radius:7px}
   #dior-patient-portal-app .dior-top-emergency-banner{font-size:10px;padding:5px 8px;text-align:center}
 }
 @media (max-width:360px){
-  #tab-overview.custom-patient-overview .stat-card{padding:9px 6px!important}
-  #tab-overview.custom-patient-overview .stat-card .stat-label{font-size:8px!important}
-  .dior-mobile-nav-item{font-size:8px}
+  #tab-overview.custom-patient-overview .stat-card{padding:10px 6px!important}
+  #tab-overview.custom-patient-overview .stat-card .stat-label{font-size:9px!important}
+  .dior-mobile-nav-item{font-size:8.5px}
 }
 @media (min-width:768px){.dior-mobile-bottom-nav{display:none!important}}
 </style>
@@ -1343,17 +1371,17 @@
   #dior-patient-portal-app .btn,
   #dior-patient-portal-app button,
   #dior-patient-portal-app .action-icon-btn { max-width:100%; white-space:normal; }
-  #dior-patient-portal-app .btn-group,
-  #dior-patient-portal-app .d-flex.gap-2,
-  #dior-patient-portal-app .d-flex.gap-3 { flex-wrap:wrap; }
+  #dior-patient-portal-app .btn-group { flex-wrap:wrap; }
   #dior-patient-portal-app input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
   #dior-patient-portal-app select,
   #dior-patient-portal-app textarea,
   #dior-patient-portal-app .form-control,
   #dior-patient-portal-app .form-select { width:100%; max-width:100%; min-width:0; font-size:16px; }
-  #dior-patient-portal-app .input-group { flex-wrap:wrap; }
+  #dior-patient-portal-app .input-group { display:flex!important; flex-wrap:nowrap!important; align-items:center!important; }
+  #dior-patient-portal-app .input-group > .input-group-text { flex:0 0 auto!important; width:auto!important; }
+  #dior-patient-portal-app .input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
   #dior-patient-portal-app .input-group > .form-control,
-  #dior-patient-portal-app .input-group > .form-select { flex:1 1 70%; width:1%; }
+  #dior-patient-portal-app .input-group > .form-select { flex:1 1 auto!important; width:1%!important; min-width:0!important; }
   #dior-patient-portal-app .table-responsive,
   #dior-patient-portal-app .dior-card-scrollable,
   #dior-patient-portal-app .table-wrap,

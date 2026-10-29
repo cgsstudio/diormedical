@@ -963,7 +963,10 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
                 return;
             }
 
-            if (sb) sb.classList.add('mobile-open');
+            if (sb) {
+                sb.classList.add('mobile-open');
+                sb.classList.add('open');
+            }
             if (bg) bg.classList.add('active');
             document.body.style.overflow = 'hidden';
         };
@@ -971,7 +974,10 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         window.diorCloseMobileDrawer = function() {
             const sb = document.getElementById('dior-sidebar');
             const bg = document.getElementById('dior-drawer-backdrop');
-            if (sb) sb.classList.remove('mobile-open');
+            if (sb) {
+                sb.classList.remove('mobile-open');
+                sb.classList.remove('open');
+            }
             if (bg) bg.classList.remove('active');
             document.body.style.overflow = '';
         };

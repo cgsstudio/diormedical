@@ -261,11 +261,11 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                     $s_badge = 'bg-warning-subtle text-warning border border-warning-subtle';
                   ?>
                   <tr>
-                    <td class="fw-semibold text-dark"><?php echo esc_html($pa_cond); ?></td>
-                    <td class="text-secondary"><?php echo esc_html($pa_doc); ?></td>
-                    <td class="text-secondary"><?php echo esc_html($pa_date); ?></td>
-                    <td class="text-secondary"><?php echo esc_html($pa_time); ?></td>
-                    <td class="text-end"><span
+                    <td class="fw-semibold text-dark" data-label="Consultation"><?php echo esc_html($pa_cond); ?></td>
+                    <td class="text-secondary" data-label="Doctor"><?php echo esc_html($pa_doc); ?></td>
+                    <td class="text-secondary" data-label="Date"><?php echo esc_html($pa_date); ?></td>
+                    <td class="text-secondary" data-label="Time"><?php echo esc_html($pa_time); ?></td>
+                    <td class="text-end" data-label="Status"><span
                         class="badge <?php echo esc_attr($s_badge); ?> rounded-pill px-2 py-1 small"><?php echo esc_html(ucfirst($pa_status)); ?></span>
                     </td>
                   </tr>
@@ -324,13 +324,13 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                   $s_badge = (strtolower($lab_status) === 'abnormal') ? 'bg-danger-subtle text-danger border border-danger-subtle' : 'bg-success-subtle text-success border border-success-subtle';
                   ?>
                   <tr>
-                    <td class="fw-semibold text-dark"><?php echo esc_html($lab_name); ?></td>
-                    <td class="text-secondary"><?php echo esc_html($lab_date); ?></td>
-                    <td><span
+                    <td class="fw-semibold text-dark" data-label="Test Name"><?php echo esc_html($lab_name); ?></td>
+                    <td class="text-secondary" data-label="Date"><?php echo esc_html($lab_date); ?></td>
+                    <td data-label="Status"><span
                         class="badge <?php echo esc_attr($s_badge); ?> rounded-pill px-2 py-1 small"><?php echo esc_html($lab_status); ?></span>
                     </td>
-                    <td class="text-secondary"><?php echo esc_html($lab_by); ?></td>
-                    <td class="text-end">
+                    <td class="text-secondary" data-label="Ordered By"><?php echo esc_html($lab_by); ?></td>
+                    <td class="text-end" data-label="Action">
                       <a href="<?php echo esc_url($lab_url); ?>"
                         class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0 dior-icon-btn-30" title="Download Lab Report">
                         <i class="fas fa-download"></i>
