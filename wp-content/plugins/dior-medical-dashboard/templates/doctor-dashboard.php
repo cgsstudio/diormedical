@@ -81,8 +81,6 @@
                         </div>
                     </div>
                     
-                    <button type="button" class="dior-nav-btn btn" data-tab="doc-analytics"><i
-                            class="fas fa-chart-line"></i><span class="nav-label">Analytics</span></button>
                     <div class="dior-nav-item has-submenu" id="accounts-menu-item">
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'accounts-menu-item')">
@@ -322,7 +320,6 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/edit-patient.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-records.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-profile.php'; ?>
-                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/analytics.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/bill-list.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/add-bill.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/income.php'; ?>
