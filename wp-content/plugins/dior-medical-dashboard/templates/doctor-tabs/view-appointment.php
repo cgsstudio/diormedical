@@ -1819,20 +1819,27 @@ $status_badges = [
 
             Swal.fire({
                 title: 'Start consultation?',
-                text: 'This will mark the appointment as In Progress.',
+                text: 'A Zoom meeting will be created if one is not already saved, and the appointment will be marked In Progress.',
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Start consultation',
+                confirmButtonText: 'Start & Join Zoom',
                 cancelButtonText: 'Not yet',
                 confirmButtonColor: '#0d6efd'
             }).then(function (choice) {
                 if (!choice.isConfirmed) return;
 
+                // Open a blank tab during the click gesture so the browser does not block
+                // the meeting tab after the asynchronous AJAX response.
+                var meetingWindow = window.open('about:blank', '_blank');
+                if (meetingWindow) {
+                    meetingWindow.document.title = 'Connecting to consultation…';
+                    meetingWindow.document.body.innerHTML = '<p style="font-family:Arial,sans-serif;padding:24px">Connecting to your secure consultation…</p>';
+                }
+
                 var data = new FormData();
-                data.append('action', 'dior_doc_appointment_update');
+                data.append('action', 'dior_doctor_start_consultation');
                 data.append('nonce', nonce);
                 data.append('appt_uid', uid);
-                data.append('status', 'In Progress');
 
                 if (button) {
                     button.disabled = true;
@@ -1840,14 +1847,22 @@ $status_badges = [
                     button.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Starting...';
                 }
 
-                fetch(ajaxUrl, { method: 'POST', body: data })
+                fetch(ajaxUrl, { method: 'POST', body: data, credentials: 'same-origin' })
                     .then(function (response) {
-                        if (!response.ok) throw new Error('Request failed');
-                        return response.json();
+                        return response.json().catch(function () {
+                            throw new Error('The server returned an invalid response. Check the WordPress PHP error log.');
+                        }).then(function (res) {
+                            if (!response.ok || !res.success) {
+                                throw new Error(res.data && res.data.message ? res.data.message : 'Could not create or start the Zoom consultation.');
+                            }
+                            return res;
+                        });
                     })
                     .then(function (res) {
-                        if (!res.success) {
-                            throw new Error(res.data && res.data.message ? res.data.message : 'Could not start the consultation.');
+                        var payload = res.data || {};
+                        var joinUrl = payload.join_url || '';
+                        if (!joinUrl || !/^https:\/\//i.test(joinUrl)) {
+                            throw new Error('The server did not return a valid Zoom meeting URL.');
                         }
 
                         var row = document.querySelector('#va-appointments-tbody tr[data-appt-uid="' + uid.replace(/"/g, '\\"') + '"]');
@@ -1860,12 +1875,18 @@ $status_badges = [
                             }
                         }
 
+                        if (meetingWindow && !meetingWindow.closed) {
+                            meetingWindow.location.href = joinUrl;
+                        } else {
+                            window.location.href = joinUrl;
+                        }
+
                         updateKpiCounters();
                         renderPage(currentPage);
                         Swal.fire({
                             icon: 'success',
                             title: 'Consultation started',
-                            text: 'Appointment for ' + (patientName || 'the patient') + ' is now In Progress.',
+                            text: 'Opening the Zoom meeting for ' + (patientName || 'the patient') + '.',
                             toast: true,
                             position: 'top-end',
                             timer: 2500,
@@ -1873,7 +1894,8 @@ $status_badges = [
                         });
                     })
                     .catch(function (error) {
-                        Swal.fire({ icon: 'error', title: 'Could not start consultation', text: error.message || 'Please try again.' });
+                        if (meetingWindow && !meetingWindow.closed) meetingWindow.close();
+                        Swal.fire({ icon: 'error', title: 'Could not start Zoom meeting', text: error.message || 'Please try again.' });
                         if (button) {
                             button.disabled = false;
                             button.innerHTML = button.dataset.originalText || '<i class="fas fa-play me-1"></i>Start';
