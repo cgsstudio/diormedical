@@ -253,7 +253,7 @@
         window.__diorConsultationAlertPolling = true;
 
         var lastId = '';
-        var firstItem = document.querySelector('#dior-notification-dropdown .dior-notif-item[data-notif-id], .dior-notif-dropdown .dior-notif-item[data-notif-id]');
+        var firstItem = document.querySelector('#dior-notif-dropdown .dior-notif-item[data-notif-id]');
         if (firstItem) lastId = firstItem.getAttribute('data-notif-id') || '';
 
         function poll() {
@@ -270,10 +270,10 @@
                     if (!result || !result.success || !result.data) return;
                     var payload = result.data;
                     if (payload.dropdown_html) {
-                        var dropdown = document.querySelector('#dior-notification-dropdown, #dior-notification-list, .dior-notification-dropdown-list');
+                        var dropdown = document.querySelector('#dior-notif-dropdown .dior-notif-list');
                         if (dropdown) dropdown.innerHTML = payload.dropdown_html;
                     }
-                    var badge = document.querySelector('#dior-notification-count, .dior-notification-badge, [data-notification-count]');
+                    var badge = document.querySelector('#dior-notif-dropdown-wrap .unread-badge-count, #dior-notif-dropdown-wrap [data-notification-count]');
                     if (badge && typeof payload.unread_count !== 'undefined') {
                         badge.textContent = payload.unread_count;
                         badge.style.display = Number(payload.unread_count) > 0 ? '' : 'none';
