@@ -441,11 +441,22 @@ class Dior_Notification_Service
         $pid = (int)$appt['patient_id'];
         $did = (int)$appt['doctor_id'];
 
-        $patient = get_userdata($pid);
-        $doctor  = $did ? get_userdata($did) : null;
+        $patient = $pid ? get_userdata($pid) : false;
 
-        $pname = $patient ? trim($patient->first_name . ' ' . $patient->last_name) ?: $patient->display_name : 'Patient';
-        $dname = $doctor ? 'Dr. ' . (trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician';
+        $doctor_uid = !empty($appt['doctor_user_id']) ? (int) $appt['doctor_user_id'] : 0;
+        if (!$doctor_uid && $did) {
+            $doctor_uid = class_exists('Dior_Doctor_Resolver')
+                ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($did)
+                : $did;
+        }
+        $doctor = $doctor_uid ? get_userdata($doctor_uid) : false;
+
+        $pname = $patient ? (trim((string) $patient->first_name . ' ' . (string) $patient->last_name) ?: $patient->display_name) : 'Patient';
+        $dname = !empty($appt['provider'])
+            ? sanitize_text_field($appt['provider'])
+            : (!empty($appt['doctor_name'])
+                ? sanitize_text_field($appt['doctor_name'])
+                : ($doctor ? 'Dr. ' . (trim((string) $doctor->first_name . ' ' . (string) $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician'));
 
         // Patient Dashboard Notification
         self::add_dashboard_notification(
@@ -854,6 +865,10 @@ class Dior_Notification_Service
                 ? 'Please sign in a few minutes early, choose a private and quiet space, and check your internet connection, camera, and microphone before your consultation.'
                 : 'Please review your appointment details in the patient portal and arrive at the scheduled time. Contact the practice through your portal if you need assistance.';
 
+            // The email template uses explicit patient/doctor variable names.
+            $patient_name = $pname;
+            $doctor_name = $dname;
+
             $template_path = defined('DIOR_PORTAL_PATH')
                 ? DIOR_PORTAL_PATH . 'templates/emails/appointment-reminder.php'
                 : dirname(__DIR__) . '/templates/emails/appointment-reminder.php';
@@ -1008,6 +1023,10 @@ class Dior_Notification_Service
             $appt_uid = sanitize_text_field($apt['appt_uid'] ?? '');
             $appt_date = sanitize_text_field($apt['appt_date'] ?? '');
             $appt_time = sanitize_text_field($apt['appt_time'] ?? '');
+            // Respect legacy markers so deploying this fix does not resend reminders already sent.
+            if (strpos((string) ($apt['notes'] ?? ''), '[Auto-Reminder sent') !== false) {
+                continue;
+            }
             if ($appt_uid === '' || $appt_date === '' || $appt_time === '') {
                 continue;
             }
