@@ -982,30 +982,78 @@ class Dior_Notification_Service
     {
         global $wpdb;
         $table = $wpdb->prefix . 'dior_appointments';
+
+        // Only inspect appointments scheduled for today or tomorrow in the WordPress site timezone.
         $today = current_time('Y-m-d');
-        $tomorrow = date('Y-m-d', strtotime('+1 day', current_time('timestamp')));
+        $tomorrow = wp_date('Y-m-d', current_datetime()->modify('+1 day')->getTimestamp());
 
         $upcoming = $wpdb->get_results($wpdb->prepare(
-            "SELECT * FROM $table 
-             WHERE (appt_date = %s OR appt_date = %s) 
-             AND status IN ('Confirmed', 'Scheduled', 'In-Queue') 
-             AND (notes NOT LIKE '%[Auto-Reminder sent%') 
+            "SELECT * FROM $table
+             WHERE appt_date IN (%s, %s)
+             AND status IN ('Confirmed', 'Scheduled', 'In-Queue', 'Success')
              AND is_deleted = 0",
-            $today, $tomorrow
+            $today,
+            $tomorrow
         ), ARRAY_A);
 
         if (empty($upcoming)) {
             return 0;
         }
 
+        $now = current_datetime();
+        $window_end = $now->modify('+24 hours');
         $count = 0;
-        foreach ($upcoming as $apt) {
-            self::send_appointment_reminder($apt['appt_uid'], 'system');
 
-            $tag = " [Auto-Reminder sent on " . current_time('Y-m-d H:i:s') . "]";
-            $new_notes = trim(($apt['notes'] ?? '') . $tag);
-            $wpdb->update($table, ['notes' => $new_notes], ['appt_uid' => $apt['appt_uid']]);
-            $count++;
+        foreach ($upcoming as $apt) {
+            $appt_uid = sanitize_text_field($apt['appt_uid'] ?? '');
+            $appt_date = sanitize_text_field($apt['appt_date'] ?? '');
+            $appt_time = sanitize_text_field($apt['appt_time'] ?? '');
+            if ($appt_uid === '' || $appt_date === '' || $appt_time === '') {
+                continue;
+            }
+
+            try {
+                $appointment_start = new DateTimeImmutable($appt_date . ' ' . $appt_time, wp_timezone());
+            } catch (\Throwable $e) {
+                error_log('[Dior Medical] Skipping reminder for invalid appointment date/time: ' . $appt_uid);
+                continue;
+            }
+
+            // Send reminders only for future appointments within the next 24 hours.
+            if ($appointment_start <= $now || $appointment_start > $window_end) {
+                continue;
+            }
+
+            // Include the scheduled slot in the key: a rescheduled appointment can receive a
+            // reminder for its new date/time, while repeated hourly cron runs cannot resend it.
+            $reminder_key = 'dior_appt_reminder_sent_' . md5($appt_uid . '|' . $appt_date . '|' . $appt_time);
+            if (get_option($reminder_key, false)) {
+                continue;
+            }
+
+            // Atomic short lock prevents overlapping cron requests from sending duplicates.
+            $lock_key = $reminder_key . '_lock';
+            if (!add_option($lock_key, time(), '', false)) {
+                $lock_time = (int) get_option($lock_key, 0);
+                if ($lock_time > 0 && (time() - $lock_time) < 10 * MINUTE_IN_SECONDS) {
+                    continue;
+                }
+                delete_option($lock_key);
+                if (!add_option($lock_key, time(), '', false)) {
+                    continue;
+                }
+            }
+
+            try {
+                self::send_appointment_reminder($appt_uid, 'system');
+                // Keep a permanent idempotency marker for this exact appointment slot.
+                update_option($reminder_key, current_time('mysql'), false);
+                $count++;
+            } catch (\Throwable $e) {
+                error_log('[Dior Medical] Appointment reminder failed for ' . $appt_uid . ': ' . $e->getMessage());
+            } finally {
+                delete_option($lock_key);
+            }
         }
 
         return $count;
