@@ -409,6 +409,28 @@ function diorDownloadTodayAppointmentsCSV() {
                                 }
                             }
 
+/* Filter the dedicated mobile appointment cards without changing the desktop table/search. */
+window.diorFilterTodayMobileAppointments = function () {
+    var input = document.getElementById('dior-today-mobile-search');
+    var list = document.getElementById('dior-today-mobile-list');
+    if (!input || !list) return;
+
+    var query = String(input.value || '').trim().toLocaleLowerCase();
+    var cards = list.querySelectorAll('.dior-today-mobile-card');
+    var visible = 0;
+
+    cards.forEach(function (card) {
+        var haystack = String(card.getAttribute('data-search') || card.textContent || '').toLocaleLowerCase();
+        var match = !query || haystack.indexOf(query) !== -1;
+        card.hidden = !match;
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
+    });
+
+    var noResults = document.getElementById('dior-today-mobile-no-results');
+    if (noResults) noResults.hidden = visible > 0 || cards.length === 0;
+};
+
 // --- Extracted dashboard script 3 ---
 let diorUpcomingCurrentPage = 1;
                             const diorUpcomingRowsPerPage = 5;
