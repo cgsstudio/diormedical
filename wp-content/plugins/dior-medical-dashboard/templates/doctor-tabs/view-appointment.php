@@ -134,11 +134,14 @@ if (!empty($appointments) && is_array($appointments)) {
         }
 
         $generated_uid = 'APT-' . strtoupper(wp_generate_password(8, false, false));
-        $updated_uid = $wpdb->update(
-            $wpdb->prefix . 'dior_appointments',
-            ['appt_uid' => $generated_uid, 'updated_at' => current_time('mysql')],
-            ['id' => $legacy_id, 'appt_uid' => '']
-        );
+        $updated_uid = $wpdb->query($wpdb->prepare(
+            "UPDATE {$wpdb->prefix}dior_appointments
+             SET appt_uid = %s, updated_at = %s
+             WHERE id = %d AND (appt_uid IS NULL OR appt_uid = '')",
+            $generated_uid,
+            current_time('mysql'),
+            $legacy_id
+        ));
 
         // Re-read the saved value if another request updated the same row concurrently.
         if ($updated_uid === false || $updated_uid === 0) {
