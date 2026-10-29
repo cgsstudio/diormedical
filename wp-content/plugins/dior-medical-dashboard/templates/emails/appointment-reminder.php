@@ -14,6 +14,7 @@ $appointment_date         = isset( $appointment_date ) ? (string) $appointment_d
 $appointment_time         = isset( $appointment_time ) ? (string) $appointment_time : 'To be confirmed';
 $appointment_timezone     = isset( $appointment_timezone ) ? (string) $appointment_timezone : wp_timezone_string();
 $appointment_type         = isset( $appointment_type ) ? (string) $appointment_type : 'Consultation';
+$appointment_location      = isset( $appointment_location ) ? (string) $appointment_location : '';
 $appointment_reference    = isset( $appointment_reference ) ? (string) $appointment_reference : '';
 $appointment_status       = isset( $appointment_status ) ? (string) $appointment_status : 'Scheduled';
 $appointment_url          = ! empty( $appointment_url ) ? $appointment_url : home_url( '/patient-dashboard/#tab=appointments' );
@@ -75,6 +76,12 @@ Reminder: your appointment with <?php echo esc_html( $doctor_name ); ?> is sched
 <p style="margin:0 0 5px;font-size:10px;line-height:1.4;letter-spacing:1.2px;font-weight:bold;color:#527095;">APPOINTMENT TYPE</p>
 <p style="margin:0;font-size:14px;line-height:1.6;color:#263b59;"><?php echo esc_html( $appointment_type ); ?></p>
 </td></tr>
+<?php if ( $appointment_location !== '' ) : ?>
+<tr><td style="padding:13px 15px;border-bottom:1px solid #dce7f4;">
+<p style="margin:0 0 5px;font-size:10px;line-height:1.4;letter-spacing:1.2px;font-weight:bold;color:#527095;">LOCATION</p>
+<p style="margin:0;font-size:14px;line-height:1.6;color:#263b59;"><?php echo esc_html( $appointment_location ); ?></p>
+</td></tr>
+<?php endif; ?>
 <?php if ( $appointment_reference !== '' ) : ?>
 <tr><td style="padding:13px 15px;border-bottom:1px solid #dce7f4;">
 <p style="margin:0 0 5px;font-size:10px;line-height:1.4;letter-spacing:1.2px;font-weight:bold;color:#527095;">REFERENCE ID</p>
