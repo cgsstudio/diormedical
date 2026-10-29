@@ -865,7 +865,7 @@ class Dior_Doctor_Dashboard
             $wpdb->insert($table_appts, [
                 'appt_uid' => $appt_uid,
                 'patient_id' => $patient_id,
-                'doctor_id' => (int) ($_POST['doctor_id'] ?? get_current_user_id()),
+                'doctor_id' => (current_user_can('administrator') || current_user_can('manage_options')) ? (int) ($_POST['doctor_id'] ?? get_current_user_id()) : get_current_user_id(),
                 'appt_date' => sanitize_text_field($_POST['appt_date'] ?? ($_POST['date'] ?? current_time('Y-m-d'))),
                 'appt_time' => sanitize_text_field($_POST['appt_time'] ?? ($_POST['time'] ?? '10:00 AM')),
                 'status' => sanitize_text_field($_POST['status'] ?? 'Confirmed'),
