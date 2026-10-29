@@ -139,10 +139,10 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : ('https://
 
                     <button type="button"
                         class="btn text-start rounded-3 py-2 px-3 d-flex align-items-center gap-3 fw-semibold shadow-none border bg-light text-dark dior-settings-nav-btn"
-                        data-pane="doc-tab-google-meet" onclick="diorSelectSettingsTab(this, 'doc-tab-google-meet')">
-                        <i class="fab fa-google text-primary fs-5"></i>
+                        data-pane="doc-tab-zoom" onclick="diorSelectSettingsTab(this, 'doc-tab-zoom')">
+                        <i class="fas fa-video text-primary fs-5"></i>
                         <div class="flex-grow-1">
-                            <div>OAuth / Google Meet</div>
+                            <div>Zoom Meetings</div>
                             <small class="text-secondary fw-normal d-block">API credentials &amp; connection</small>
                         </div>
                     </button>
@@ -586,19 +586,19 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : ('https://
         </div>
     </div>
 
-    <!-- Google Meet configuration status. OAuth secrets are managed securely by a site administrator. -->
-    <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white dior-settings-pane" id="doc-tab-google-meet" hidden>
+    <!-- Zoom Meetings integration status -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white dior-settings-pane" id="doc-tab-zoom" hidden>
         <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-3 gap-3">
             <div>
-                <div class="fs-6 fw-bold text-dark mb-1"><i class="fab fa-google text-primary me-2"></i>Google Meet API &amp; OAuth</div>
-                <div class="small text-secondary">Connect a Google account to generate consultation meeting links.</div>
+                <div class="fs-6 fw-bold text-dark mb-1"><i class="fas fa-video text-primary me-2"></i>Zoom Meetings API</div>
+                <div class="small text-secondary">Generate Zoom links for video consultations when API credentials are configured.</div>
             </div>
-            <span class="badge rounded-pill <?php echo (class_exists('Dior_Google_Meet') && Dior_Google_Meet::is_connected()) ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'; ?>">
-                <?php echo (class_exists('Dior_Google_Meet') && Dior_Google_Meet::is_connected()) ? 'Connected' : 'Not Connected'; ?>
+            <span class="badge rounded-pill <?php echo (class_exists('Dior_Zoom_Meetings') && Dior_Zoom_Meetings::is_configured()) ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'; ?>">
+                <?php echo (class_exists('Dior_Zoom_Meetings') && Dior_Zoom_Meetings::is_configured()) ? 'Credentials Saved' : 'Setup Required'; ?>
             </span>
         </div>
         <div class="alert alert-info mb-0" role="status">
-            Google Meet OAuth credentials are managed by a site administrator. Open <strong>WordPress Admin &rarr; Settings &rarr; Google Meet OAuth</strong> to enter the Client ID and Client Secret and connect the Google account.
+            A site administrator can configure the Zoom Account ID, Client ID, and Client Secret under <strong>WordPress Admin &rarr; Settings &rarr; Dior Zoom Meetings</strong>. Until valid credentials are saved, video bookings will not receive a generated meeting URL.
         </div>
     </div>
 
