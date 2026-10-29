@@ -64,6 +64,10 @@ if (!class_exists('Dior_Questionnaire_Service')) {
 if (!class_exists('Dior_Doctor_Dynamic')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-doctor-dynamic.php');
 }
+if (!class_exists('Dior_Zoom_Meetings')) {
+    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-zoom-meetings.php');
+}
+Dior_Zoom_Meetings::init();
 if (!class_exists('Dior_Google_Meet')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-google-meet.php');
 }
