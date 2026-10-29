@@ -890,6 +890,13 @@ class Dior_Doctor_Dashboard
             }
         }
 
+        // Doctors may only edit appointments assigned to themselves.
+        // Administrators can manage appointments across doctors.
+        $is_admin_user = current_user_can("administrator") || current_user_can("manage_options");
+        if (!$is_admin_user && !empty($appt['doctor_id']) && (int) $appt['doctor_id'] !== get_current_user_id()) {
+            wp_send_json_error(["message" => "You are not allowed to modify this appointment."], 403);
+        }
+
         if (!$patient_id && !empty($appt['patient_id'])) {
             $patient_id = (int) $appt['patient_id'];
         }
@@ -903,7 +910,9 @@ class Dior_Doctor_Dashboard
         $new_join_url = esc_url_raw($_POST['join_url'] ?? $appt['join_url']);
         $new_payment = sanitize_text_field($_POST['payment_status'] ?? $appt['payment_status']);
         $new_notes = sanitize_textarea_field($_POST['notes'] ?? $appt['notes']);
-        $new_doctor_id = (int) ($_POST['doctor_id'] ?? $appt['doctor_id']);
+        $new_doctor_id = $is_admin_user
+            ? (int) ($_POST['doctor_id'] ?? $appt['doctor_id'])
+            : get_current_user_id();
 
         $allowed_statuses = ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show'];
         if (!in_array($new_status, $allowed_statuses, true)) {
