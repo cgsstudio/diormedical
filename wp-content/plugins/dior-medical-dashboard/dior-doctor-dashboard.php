@@ -18,6 +18,7 @@ class Dior_Doctor_Dashboard
         add_action("wp_ajax_dior_doctor_reschedule_appt", [__CLASS__, "ajax_reschedule_appt"]);
         add_action("wp_ajax_dior_doctor_edit_appointment", [__CLASS__, "ajax_edit_appointment"]);
         add_action("wp_ajax_dior_doc_appointment_update", [__CLASS__, "ajax_edit_appointment"]);
+        add_action("wp_ajax_dior_doctor_start_consultation", [__CLASS__, "ajax_start_consultation"]);
         add_action("wp_ajax_dior_doc_appointment_delete", [__CLASS__, "ajax_delete_appointment"]);
         add_action("wp_ajax_dior_doctor_get_patient_appointment_details", [__CLASS__, "ajax_get_patient_appointment_details"]);
         add_action("wp_ajax_dior_doctor_add_prescription", [__CLASS__, "ajax_add_prescription"]);
@@ -805,6 +806,94 @@ class Dior_Doctor_Dashboard
             wp_send_json_error(["message" => $res->get_error_message()]);
         }
         wp_send_json_success(["message" => "Status updated to " . $status]);
+    }
+
+    /**
+     * Create/reuse the Zoom link and start a doctor's consultation.
+     */
+    public static function ajax_start_consultation()
+    {
+        Dior_Auth_Service::verify_ajax_nonce(["dior_doctor_nonce", "dior_auth_nonce", "dior_portal_nonce", "dior_admin_nonce"]);
+        if (!self::can_access()) {
+            wp_send_json_error(["message" => "Unauthorized access."], 403);
+        }
+
+        $appt_uid = sanitize_text_field(wp_unslash($_POST["appt_uid"] ?? ""));
+        if ($appt_uid === "") {
+            wp_send_json_error(["message" => "Appointment ID is required."], 400);
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . "dior_appointments";
+        $appt = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$table} WHERE appt_uid = %s AND is_deleted = 0 LIMIT 1",
+            $appt_uid
+        ), ARRAY_A);
+
+        if (!$appt) {
+            wp_send_json_error(["message" => "Appointment not found."], 404);
+        }
+
+        $user_id = get_current_user_id();
+        $is_admin = current_user_can("administrator") || current_user_can("manage_options");
+        if (!$is_admin && (int) ($appt["doctor_id"] ?? 0) !== $user_id) {
+            wp_send_json_error(["message" => "You are not allowed to start this consultation."], 403);
+        }
+
+        $status = strtolower(trim((string) ($appt["status"] ?? "")));
+        if (!in_array($status, ["confirmed", "scheduled", "success", "in progress"], true)) {
+            wp_send_json_error(["message" => "Confirm or schedule this appointment before starting the consultation."], 409);
+        }
+
+        $visit_type = strtolower((string) ($appt["visit_type"] ?? ""));
+        if (strpos($visit_type, "video") === false && strpos($visit_type, "tele") === false && strpos($visit_type, "zoom") === false && strpos($visit_type, "virtual") === false) {
+            wp_send_json_error(["message" => "This appointment is not marked as a video or telehealth visit."], 400);
+        }
+
+        $join_url = trim((string) ($appt["join_url"] ?? ""));
+        if ($join_url === "" || rtrim($join_url, "/") === "https://zoom.us/join") {
+            $doctor = get_userdata((int) ($appt["doctor_id"] ?? 0));
+            $doctor_name = $doctor ? ($doctor->display_name ?: trim($doctor->first_name . " " . $doctor->last_name)) : "";
+            $created_url = class_exists("Dior_Zoom_Meetings")
+                ? Dior_Zoom_Meetings::create_meeting_link((string) ($appt["appt_date"] ?? ""), (string) ($appt["appt_time"] ?? ""), $doctor_name)
+                : false;
+
+            if (!is_string($created_url) || !wp_http_validate_url($created_url) || strpos($created_url, "zoom.us/") === false) {
+                wp_send_json_error([
+                    "message" => "Zoom meeting could not be created. Check WordPress Admin > Settings > Dior Zoom Meetings, save the Account ID, Client ID and Client Secret, then run Test Connection. Also confirm the Zoom app has permission to create meetings."
+                ], 502);
+            }
+            $join_url = esc_url_raw($created_url);
+        } elseif (!wp_http_validate_url($join_url)) {
+            wp_send_json_error(["message" => "The saved meeting URL is invalid. Update the doctor's Zoom meeting URL in dashboard settings."], 400);
+        }
+
+        if ($status !== "in progress") {
+            $updated_status = Dior_Appointment_Service::update_status($appt_uid, "In Progress");
+            if (is_wp_error($updated_status)) {
+                wp_send_json_error(["message" => $updated_status->get_error_message()], 409);
+            }
+            if ($updated_status !== true) {
+                wp_send_json_error(["message" => "Appointment status could not be updated. Please refresh and retry."], 500);
+            }
+        }
+
+        $updated = $wpdb->update(
+            $table,
+            ["join_url" => $join_url, "updated_at" => current_time("mysql")],
+            ["appt_uid" => $appt_uid, "is_deleted" => 0],
+            ["%s", "%s"],
+            ["%s", "%d"]
+        );
+        if ($updated === false) {
+            wp_send_json_error(["message" => "The meeting was created but could not be saved to the appointment. Please contact the site administrator."], 500);
+        }
+
+        wp_send_json_success([
+            "message" => "Consultation started.",
+            "status" => "In Progress",
+            "join_url" => $join_url,
+        ]);
     }
 
     public static function ajax_send_reminder()
