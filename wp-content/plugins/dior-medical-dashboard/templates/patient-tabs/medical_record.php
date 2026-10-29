@@ -13,6 +13,51 @@
 #tab-medical_record .dior-medical-record-filter{padding:7px 13px!important}
 #tab-medical_record .mr-timeline-content-card{border:1px solid #e7edf5!important;border-radius:12px!important;background:#fff}
 @media(max-width:767.98px){#tab-medical_record h4{font-size:19px!important}#tab-medical_record .section-body{padding:0 10px 20px}#tab-medical_record .card-body,#tab-medical_record .card-body.p-4{padding:15px!important}#tab-medical_record .card-header{padding:14px!important}#tab-medical_record .dior-medical-record-filter{padding:7px 10px!important;font-size:12px}}
+
+/* Mobile Medical Record layout: Bootstrap-friendly, scoped to this tab only. */
+@media (max-width: 767.98px) {
+  #tab-medical_record { width: 100% !important; max-width: 100% !important; min-width: 0 !important; overflow-x: clip !important; }
+  #tab-medical_record > .mb-4[style] { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; padding: 0 12px !important; margin-bottom: 16px !important; }
+  #tab-medical_record .va-breadcrumb-list { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; padding: 0 !important; margin: 0 !important; }
+  #tab-medical_record .dior-subtab-nav-bar { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; padding: 0 12px !important; margin-bottom: 16px !important; }
+  #tab-medical_record .dior-subtab-pill { display: flex !important; align-items: center !important; justify-content: flex-start !important; gap: 7px !important; width: 100% !important; min-width: 0 !important; min-height: 44px !important; padding: 9px 10px !important; font-size: 12px !important; line-height: 1.25 !important; white-space: normal !important; text-align: left !important; }
+  #tab-medical_record .dior-subtab-pill i { flex: 0 0 auto !important; }
+  #tab-medical_record .dior-subtab-pill span { min-width: 0 !important; overflow-wrap: normal !important; word-break: normal !important; }
+  #tab-medical_record .section-body { width: 100% !important; max-width: 100% !important; min-width: 0 !important; padding: 0 12px 24px !important; }
+  #tab-medical_record .section-body .row { --bs-gutter-x: 10px; --bs-gutter-y: 10px; margin-right: 0 !important; margin-left: 0 !important; }
+  #tab-medical_record .section-body .row > [class*="col-"] { min-width: 0 !important; padding-right: 5px !important; padding-left: 5px !important; }
+  #tab-medical_record .kpi-mini-card { min-width: 0 !important; padding: 12px !important; }
+  #tab_medical_record .kpi-mini-card h5 { font-size: 13px !important; line-height: 1.35 !important; white-space: normal !important; overflow-wrap: anywhere !important; }
+  #tab_medical_record .card { width: 100% !important; max-width: 100% !important; min-width: 0 !important; }
+  #tab-medical_record .card-body, #tab-medical_record .card-body.p-4, #tab-medical_record .card-body.p-md-5 { padding: 13px !important; }
+  #tab_medical_record .card-header { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; padding: 13px !important; }
+  #tab-medical_record .card-title-text { max-width: 100% !important; font-size: 15px !important; line-height: 1.4 !important; overflow-wrap: normal !important; word-break: normal !important; }
+  #tab-medical_record .patient-id-badge { max-width: 100% !important; flex-wrap: wrap !important; padding: 6px 9px !important; font-size: 11px !important; }
+  #tab-medical_record .card-body > .d-flex.flex-wrap { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 12px !important; min-width: 0 !important; }
+  #tab-medical_record .card-body > .d-flex.flex-wrap > .d-flex { display: flex !important; flex-wrap: wrap !important; width: 100% !important; min-width: 0 !important; gap: 7px !important; }
+  #tab-medical_record .dior-medical-record-filter { max-width: 100% !important; min-height: 36px !important; padding: 8px 10px !important; font-size: 11px !important; white-space: normal !important; line-height: 1.25 !important; }
+  #tab-medical_record .search-input-group { width: 100% !important; max-width: 100% !important; min-width: 0 !important; }
+  #tab-medical_record .search-input-group input { width: 100% !important; min-width: 0 !important; font-size: 16px !important; }
+  #tab-medical_record .modern-treatment-timeline { display: flex !important; flex-direction: column !important; gap: 12px !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; padding: 0 !important; margin: 0 !important; }
+  #tab-medical_record .mr-timeline-item { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; align-items: stretch !important; gap: 8px !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; margin: 0 !important; padding: 12px !important; border: 1px solid #e1eaf5 !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 3px 12px rgba(22, 52, 91, .045) !important; }
+  #tab-medical_record .mr-timeline-time-col { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; gap: 6px 10px !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; padding: 0 !important; margin: 0 !important; }
+  #tab-medical_record .mr-timeline-time-col > span { display: inline-flex !important; align-items: center !important; width: auto !important; max-width: 100% !important; min-width: 0 !important; font-size: 11px !important; line-height: 1.4 !important; white-space: normal !important; word-break: normal !important; overflow-wrap: anywhere !important; }
+  #tab-medical_record .mr-timeline-item > .dior-ic-f69dfb2b50 { display: none !important; }
+  #tab-medical_record .mr-timeline-content-card { display: block !important; width: 100% !important; max-width: 100% !important; min-width: 0 !important; padding: 12px !important; margin: 0 !important; border: 1px solid #e7edf5 !important; border-radius: 12px !important; background: #fdfefe !important; overflow: visible !important; }
+  #tab-medical_record .mr-timeline-content-card * { min-width: 0 !important; max-width: 100% !important; word-break: normal !important; overflow-wrap: anywhere !important; writing-mode: horizontal-tb !important; }
+  #tab_medical_record .mr-timeline-content-card > div { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 10px !important; width: 100% !important; }
+  #tab_medical_record .mr-timeline-content-card h5 { margin: 7px 0 !important; font-size: 14px !important; line-height: 1.4 !important; white-space: normal !important; }
+  #tab_medical_record .mr-timeline-content-card p { margin: 8px 0 0 !important; font-size: 12px !important; line-height: 1.55 !important; white-space: normal !important; }
+  #tab_medical_record .mr-timeline-content-card .dior-ic-b382a6228c { display: inline-flex !important; align-self: flex-start !important; width: auto !important; padding: 4px 8px !important; border-radius: 20px !important; font-size: 10px !important; line-height: 1.3 !important; }
+  #tab_medical_record .mr-timeline-content-card .dior-ic-9bbdb950cc { display: block !important; font-size: 12px !important; line-height: 1.4 !important; white-space: normal !important; }
+}
+@media (max-width: 380px) {
+  #tab_medical_record .section-body { padding-right: 8px !important; padding-left: 8px !important; }
+  #tab_medical_record .dior-subtab-nav-bar { grid-template-columns: minmax(0, 1fr) !important; }
+  #tab-medical_record .mr-timeline-item { padding: 9px !important; }
+  #tab-medical_record .mr-timeline-content-card { padding: 10px !important; }
+}
+
 </style>
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
