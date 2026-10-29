@@ -57,20 +57,17 @@ if (!function_exists('dior_fallback_save_hipaa_intake')) {
     }
 }
 
-// Validate the same secret used by the existing REST webhook.
-$default_secret = 'DiorHipaa2026X9K7M4P8';
+// Require an explicitly configured secret. Never fall back to a source-controlled token.
+// Add define('DIOR_HIPAATIZER_WEBHOOK_SECRET', 'a-long-random-secret'); to wp-config.php,
+// or store the same secret in the dior_hipaatizer_webhook_secret option.
 $configured_secret = defined('DIOR_HIPAATIZER_WEBHOOK_SECRET')
-    ? (string) DIOR_HIPAATIZER_WEBHOOK_SECRET
-    : (string) get_option('dior_hipaatizer_webhook_secret', $default_secret);
-
-if (empty($configured_secret)) {
-    $configured_secret = $default_secret;
-}
+    ? trim((string) DIOR_HIPAATIZER_WEBHOOK_SECRET)
+    : trim((string) get_option('dior_hipaatizer_webhook_secret', ''));
 
 $received_token = isset($_GET['token']) ? (string) wp_unslash($_GET['token']) : '';
 
-// Accept if matching configured secret or default Dior production token
-$token_matches = ($received_token !== '' && (hash_equals($configured_secret, $received_token) || hash_equals($default_secret, $received_token)));
+// Fail closed when no secret is configured; compare only against the configured secret.
+$token_matches = ($configured_secret !== '' && $received_token !== '' && hash_equals($configured_secret, $received_token));
 
 if (!$token_matches) {
     http_response_code(401);
@@ -111,16 +108,27 @@ try {
         $current_host = strtolower($_SERVER['HTTP_HOST'] ?? '');
         $mirror_target = '';
 
-        if (strpos($current_host, 'bagheeraventures.com') !== false) {
-            // Received on Staging -> Mirror to Live
-            $mirror_target = 'https://diormedical.com/wp-content/plugins/dior-medical-dashboard/rest_api/hipaatizer_direct_webhook.php?token=DiorHipaa2026X9K7M4P8';
-        } elseif (strpos($current_host, 'diormedical.com') !== false) {
-            // Received on Live -> Mirror to Staging
-            $mirror_target = 'https://bagheeraventures.com/diormedical/wp-content/plugins/dior-medical-dashboard/rest_api/hipaatizer_direct_webhook.php?token=DiorHipaa2026X9K7M4P8';
+        // Forward only when the destination host and a separate destination secret are configured.
+        // This avoids embedding credentials in source control or URLs.
+        $live_secret = defined('DIOR_HIPAATIZER_LIVE_WEBHOOK_SECRET')
+            ? trim((string) DIOR_HIPAATIZER_LIVE_WEBHOOK_SECRET)
+            : '';
+        $staging_secret = defined('DIOR_HIPAATIZER_STAGING_WEBHOOK_SECRET')
+            ? trim((string) DIOR_HIPAATIZER_STAGING_WEBHOOK_SECRET)
+            : '';
+
+        if (strpos($current_host, 'bagheeraventures.com') !== false && $live_secret !== '') {
+            // Received on Staging -> Mirror to Live.
+            $mirror_target = 'https://diormedical.com/wp-content/plugins/dior-medical-dashboard/rest_api/hipaatizer_direct_webhook.php';
+            $forward_secret = $live_secret;
+        } elseif (strpos($current_host, 'diormedical.com') !== false && $staging_secret !== '') {
+            // Received on Live -> Mirror to Staging.
+            $mirror_target = 'https://bagheeraventures.com/diormedical/wp-content/plugins/dior-medical-dashboard/rest_api/hipaatizer_direct_webhook.php';
+            $forward_secret = $staging_secret;
         }
 
-        if (!empty($mirror_target)) {
-            wp_remote_post($mirror_target, [
+        if (!empty($mirror_target) && !empty($forward_secret)) {
+            wp_remote_post(add_query_arg('token', rawurlencode($forward_secret), $mirror_target), [
                 'method'    => 'POST',
                 'timeout'   => 4,
                 'blocking'  => false, // Non-blocking asynchronous forward
@@ -129,7 +137,7 @@ try {
                     'X-Dior-Forwarded' => '1',
                 ],
                 'body'      => $raw_body,
-                'sslverify' => false,
+                'sslverify' => true,
             ]);
         }
     }
