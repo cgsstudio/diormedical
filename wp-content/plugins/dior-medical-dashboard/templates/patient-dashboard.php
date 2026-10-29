@@ -302,6 +302,25 @@
         </main>
     </div> <!-- /.dior-app -->
 
+    <!-- Mobile bottom navigation: keeps existing patient dashboard tabs and actions. -->
+    <nav class="dior-mobile-bottom-nav" aria-label="Patient dashboard navigation">
+        <button type="button" class="dior-mobile-nav-item is-active" data-switch-tab="overview" aria-current="page">
+            <i class="fas fa-house" aria-hidden="true"></i><span>Home</span>
+        </button>
+        <button type="button" class="dior-mobile-nav-item" data-switch-tab="appointments">
+            <i class="far fa-calendar-check" aria-hidden="true"></i><span>Appointments</span>
+        </button>
+        <button type="button" class="dior-mobile-nav-item" data-switch-tab="docs_meds">
+            <i class="fas fa-prescription-bottle-medical" aria-hidden="true"></i><span>Prescriptions</span>
+        </button>
+        <button type="button" class="dior-mobile-nav-item" data-switch-tab="medical_record">
+            <i class="far fa-file-lines" aria-hidden="true"></i><span>Records</span>
+        </button>
+        <button type="button" class="dior-mobile-nav-item" data-switch-tab="settings">
+            <i class="fas fa-bars" aria-hidden="true"></i><span>More</span>
+        </button>
+    </nav>
+
 
     <!-- ============================================================== -->
     <!-- MODALS -->
@@ -1182,4 +1201,79 @@
     </div>
 </div>
 <!-- Hidden Intake Form Content for Dashboard Popup -->
-<?php Dior_Medical_Auth::render_docbooker_booking_modal(); ?>
+<?php Dior_Medical_Auth::render_docbooker_booking_modal(); ?> 
+
+<style id="dior-patient-mobile-dashboard-v1">
+/* Bootstrap-first mobile overview layout matching the approved reference. */
+.dior-mobile-bottom-nav{display:none}
+@media (max-width:767.98px){
+  #dior-patient-portal-app{background:#f3f7fc}
+  #dior-patient-portal-app .dior-main-content{min-width:0}
+  #dior-patient-portal-app .dior-tab-container{padding:10px 12px 100px!important}
+  #tab-overview.custom-patient-overview{width:100%;max-width:100%;overflow:visible}
+  #tab-overview.custom-patient-overview .content-head{gap:10px!important;margin-bottom:14px!important}
+  #tab-overview.custom-patient-overview .content-head h1{font-size:18px!important;line-height:1.25;letter-spacing:-.25px}
+  #tab-overview.custom-patient-overview .content-head p{font-size:11px!important;line-height:1.45;max-width:290px}
+  #tab-overview.custom-patient-overview .content-head>.btn{width:100%;justify-content:center;border-radius:7px!important;padding:9px 12px!important;font-size:12px;min-height:36px}
+  #tab-overview.custom-patient-overview>.row.align-items-start{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px!important;margin:0!important;align-items:stretch!important}
+  #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-7,
+  #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-5{display:contents!important}
+  #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-7>.row,
+  #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-5>.row{display:contents!important}
+  #tab-overview.custom-patient-overview .stat-card{min-height:76px;padding:10px 9px!important;border:1px solid #dbe7f5!important;border-radius:10px!important;box-shadow:0 2px 7px rgba(29,72,120,.04)!important;background:#fff}
+  #tab-overview.custom-patient-overview .stat-card .stat-num{font-size:20px!important;line-height:1.1;margin-bottom:5px!important}
+  #tab-overview.custom-patient-overview .stat-card .stat-label{font-size:9px!important;line-height:1.25;font-weight:600!important}
+  #tab-overview.custom-patient-overview .stat-card:before{display:none}
+  #tab-overview.custom-patient-overview .row>.col-12.col-sm-4{grid-column:span 1!important;min-width:0;padding:0!important;order:1}
+  #tab-overview.custom-patient-overview .patient-card,
+  #tab-overview.custom-patient-overview .goals-card,
+  #tab-overview.custom-patient-overview .doctor-card,
+  #tab-overview.custom-patient-overview .upcoming,
+  #tab-overview.custom-patient-overview .table-card,
+  #tab-overview.custom-patient-overview .lab-card,
+  #tab-overview.custom-patient-overview .prescriptions{border:1px solid #dbe7f5!important;border-radius:10px!important;padding:12px!important;background:#fff;box-shadow:0 2px 7px rgba(29,72,120,.035)!important;margin:0!important;min-width:0}
+  #tab-overview.custom-patient-overview .patient-card{order:2;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .goals-card{order:3;grid-column:1/-1!important;min-height:94px}
+  #tab-overview.custom-patient-overview #dior-overview-doctor-card{order:4;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview #dior-overview-upcoming-card{order:5;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .table-card{order:6;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .lab-card{order:7;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview #dior-overview-prescriptions-card{order:8;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .patient-card .patient-photo{width:58px!important;height:58px!important;border-radius:9px!important}
+  #tab-overview.custom-patient-overview .patient-card h2{font-size:14px!important;max-width:100%}
+  #tab-overview.custom-patient-overview .patient-card .text-secondary.small{font-size:10px!important}
+  #tab-overview.custom-patient-overview .patient-card strong{font-size:12px!important}
+  #tab-overview.custom-patient-overview .patient-card .border-start{padding-left:10px!important}
+  #tab-overview.custom-patient-overview .patient-card .btn{font-size:11px!important;padding:7px 10px!important}
+  #tab-overview.custom-patient-overview .section-title{font-size:12px!important;line-height:1.3}
+  #tab-overview.custom-patient-overview .section-title i{font-size:12px!important;margin-right:5px!important}
+  #tab-overview.custom-patient-overview .view-all{font-size:10px!important;white-space:nowrap}
+  #tab-overview.custom-patient-overview .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  #tab-overview.custom-patient-overview .table{font-size:10px!important}
+  #tab-overview.custom-patient-overview .table th,
+  #tab-overview.custom-patient-overview .table td{padding:7px 6px!important}
+  #tab-overview.custom-patient-overview .table-card .dior-card-scrollable,
+  #tab-overview.custom-patient-overview .lab-card .dior-card-scrollable{max-height:none!important;overflow-x:auto!important;overflow-y:hidden!important}
+  #tab-overview.custom-patient-overview .doctor-card .btn,
+  #tab-overview.custom-patient-overview .upcoming .btn,
+  #tab-overview.custom-patient-overview .prescriptions .btn{font-size:11px!important}
+  #tab-overview.custom-patient-overview .consult-list-wrap,
+  #tab-overview.custom-patient-overview .rx-list-wrap{max-height:none!important;overflow:visible!important}
+  #tab-overview.custom-patient-overview .consult{gap:9px!important}
+  #tab-overview.custom-patient-overview .dior-fs-13{font-size:11px!important}
+  #tab-overview.custom-patient-overview .dior-fs-12{font-size:10px!important}
+  #tab-overview.custom-patient-overview .dior-fs-11{font-size:9px!important}
+  .dior-mobile-bottom-nav{position:fixed;z-index:99990;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;padding:7px 5px max(7px,env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border:1px solid #dce7f5;border-bottom:0;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(22,58,99,.09);backdrop-filter:blur(12px)}
+  .dior-mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:37px;padding:3px 1px;border:0;background:transparent;color:#69778b;font:inherit;font-size:9px;line-height:1.2;font-weight:600;white-space:nowrap}
+  .dior-mobile-nav-item i{font-size:15px;line-height:1.1}
+  .dior-mobile-nav-item.is-active{color:#1267c5}
+  .dior-mobile-nav-item:focus-visible{outline:2px solid #1267c5;outline-offset:-2px;border-radius:7px}
+  #dior-patient-portal-app .dior-top-emergency-banner{font-size:10px;padding:5px 8px;text-align:center}
+}
+@media (max-width:360px){
+  #tab-overview.custom-patient-overview .stat-card{padding:9px 6px!important}
+  #tab-overview.custom-patient-overview .stat-card .stat-label{font-size:8px!important}
+  .dior-mobile-nav-item{font-size:8px}
+}
+@media (min-width:768px){.dior-mobile-bottom-nav{display:none!important}}
+</style>
