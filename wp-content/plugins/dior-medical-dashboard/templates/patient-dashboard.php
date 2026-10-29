@@ -1277,3 +1277,30 @@
 }
 @media (min-width:768px){.dior-mobile-bottom-nav{display:none!important}}
 </style>
+ 
+<style id="dior-patient-mobile-order-fix">
+@media (max-width:767.98px){
+  #tab-overview.custom-patient-overview .col-12.col-xxl-6:has(> .patient-card){order:2;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .col-12.col-xxl-6:has(> .goals-card){order:3;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .col-12.col-md-6.col-xl-12:has(> #dior-overview-doctor-card){order:4;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .col-12.col-md-6.col-xl-12:has(> #dior-overview-upcoming-card){order:5;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .col-12.col-md-12.col-xl-12:has(> #dior-overview-prescriptions-card){order:8;grid-column:1/-1!important}
+}
+</style>
+<script id="dior-patient-mobile-nav-state">
+(function(){
+  var nav=document.querySelector('.dior-mobile-bottom-nav');
+  if(!nav||nav.dataset.bound==='1')return;
+  nav.dataset.bound='1';
+  nav.addEventListener('click',function(event){
+    var button=event.target.closest('.dior-mobile-nav-item');
+    if(!button)return;
+    nav.querySelectorAll('.dior-mobile-nav-item').forEach(function(item){
+      item.classList.remove('is-active');
+      item.removeAttribute('aria-current');
+    });
+    button.classList.add('is-active');
+    button.setAttribute('aria-current','page');
+  });
+})();
+</script>
