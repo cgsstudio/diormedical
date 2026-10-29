@@ -911,16 +911,17 @@ class Dior_Doctor_Dashboard
             wp_send_json_error(["message" => "The meeting was created but could not be saved to the appointment. Please contact the site administrator."], 500);
         }
 
-        // Notify the patient as soon as the meeting is ready. The notification action
-        // points directly to the same saved meeting URL, so patients can join from it.
+        // Notify the patient when the meeting is first made ready. Store a patient-portal
+        // action target as the notification destination; the notification UI renders the
+        // saved Zoom URL as a dedicated Join Consultation link.
         $patient_id = (int) ($appt["patient_id"] ?? 0);
         $meeting_became_ready = ($status !== "in progress") || !$had_real_join_url;
         if ($patient_id && $meeting_became_ready && class_exists("Dior_Notification_Service")) {
             Dior_Notification_Service::add_dashboard_notification(
                 $patient_id,
                 "Your consultation is ready to join",
-                "Your doctor has started your video consultation. Select Join Consultation to enter the meeting.",
-                $join_url,
+                "Your doctor has started your video consultation. Open this notification and select Join Consultation to enter the meeting.",
+                "#tab=notifications",
                 "fa-video",
                 false
             );
