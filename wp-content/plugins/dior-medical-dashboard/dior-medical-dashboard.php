@@ -1168,6 +1168,16 @@ class Dior_Medical_Auth
                 filemtime($patient_mobile_css_path)
             );
         }
+        // Today Appointments card layout is limited to mobile screens; desktop table is preserved.
+        $today_appt_mobile_css_path = DIOR_PORTAL_PATH . 'assets/css/dior-today-appointments-mobile.css';
+        if (file_exists($today_appt_mobile_css_path)) {
+            wp_enqueue_style(
+                'dior-today-appointments-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-today-appointments-mobile.css',
+                ['dior-custom-css', 'dior-patient-mobile-css'],
+                filemtime($today_appt_mobile_css_path)
+            );
+        }
 
         // Alias handles to dior-custom-css to prevent any extra duplicate CSS downloads
         wp_register_style('dior-auth-css', false, ['dior-custom-css']);
