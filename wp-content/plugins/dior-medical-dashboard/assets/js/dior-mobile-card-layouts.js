@@ -149,6 +149,21 @@
         empty.className = 'dior-mobile-record-empty';
         empty.textContent = textOf(cells[0]) || 'No records available.';
         empty.hidden = row.style.display === 'none';
+
+        // Preserve existing empty-state actions such as Book, Add, or Retry.
+        var emptyControls = [];
+        cells.forEach(function (cell) {
+          emptyControls = emptyControls.concat(Array.prototype.slice.call(cell.querySelectorAll('button, a')));
+        });
+        if (emptyControls.length) {
+          var emptyActions = document.createElement('div');
+          emptyActions.className = 'dior-mobile-record-actions';
+          emptyControls.forEach(function (control) {
+            emptyActions.appendChild(makeActionProxy(control));
+          });
+          empty.appendChild(emptyActions);
+        }
+
         fragment.appendChild(empty);
         return;
       }
