@@ -329,3 +329,56 @@
   .dior-tab-panel .dior-mobile-record-actions { gap: 6px !important; }
   .dior-tab-panel .dior-mobile-record-actions .btn,.dior-tab-panel .dior-mobile-record-actions .dior-mobile-action-proxy { padding: 7px 8px !important; font-size: 11px !important; }
 }
+
+/* Remaining Doctor Dashboard toolbars and filters. */
+@media (max-width: 767.98px) {
+  .dior-tab-panel .va-actions-box,
+  .dior-tab-panel .va-header-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .dior-tab-panel .va-actions-box .input-group,
+  .dior-tab-panel .va-header-actions .input-group,
+  .dior-tab-panel .va-actions-box .form-control,
+  .dior-tab-panel .va-header-actions .form-control,
+  .dior-tab-panel .va-actions-box select,
+  .dior-tab-panel .va-header-actions select,
+  .dior-tab-panel .va-actions-box input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .dior-tab-panel .va-actions-box .va-icon-btn,
+  .dior-tab-panel .va-header-actions .va-icon-btn {
+    min-width: 40px !important;
+    min-height: 40px !important;
+  }
+  .dior-tab-panel .va-header-container {
+    gap: 12px !important;
+  }
+  .dior-tab-panel .va-title-container,
+  .dior-tab-panel .va-card-title {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+  }
+  .dior-tab-panel .va-footer {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .dior-tab-panel .va-pagination-text {
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    font-size: 11px !important;
+  }
+}
