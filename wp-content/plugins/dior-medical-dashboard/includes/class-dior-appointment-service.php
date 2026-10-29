@@ -65,7 +65,11 @@ class Dior_Appointment_Service
      * Valid state transitions map
      */
     private static $valid_transitions = [
-        'Success'     => ['In Progress', 'Completed', 'Cancelled', 'No Show'],
+        // Appointment statuses used by current and legacy booking flows.
+        'Pending'     => ['Confirmed', 'Scheduled', 'Cancelled'],
+        'Scheduled'   => ['Confirmed', 'In Progress', 'Cancelled', 'No Show'],
+        'Confirmed'   => ['In Progress', 'Completed', 'Cancelled', 'No Show'],
+        'Success'     => ['Confirmed', 'Scheduled', 'In Progress', 'Completed', 'Cancelled', 'No Show'],
         'In Progress' => ['Completed', 'Cancelled'],
         'Completed'   => [],
         'Cancelled'   => [],
