@@ -1,5 +1,25 @@
 <section class="dior-tab-panel" id="tab-docs_meds">
 
+<style>
+/* Step 3A: Responsive Bootstrap-inspired prescription page styling. */
+#tab-docs_meds{color:#334155}
+#tab-docs_meds h4{color:#142b4a!important;font-size:22px!important;font-weight:700!important;letter-spacing:-.025em}
+#tab-docs_meds .va-table-wrapper{width:100%;min-width:0}
+#tab-docs_meds .docs-card{border:1px solid #e7edf5!important;border-radius:18px!important;background:#fff!important;box-shadow:0 8px 28px rgba(22,52,91,.06)!important;overflow:hidden}
+#tab-docs_meds .docs-header-container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:20px 22px!important;border-bottom:1px solid #edf1f7}
+#tab-docs_meds .docs-title-box,#tab-docs_meds .docs-actions-wrapper,#tab-docs_meds .docs-actions-group{display:flex;align-items:center;flex-wrap:wrap;gap:9px}
+#tab-docs_meds .docs-table-wrapper{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+#tab-docs_meds #dior-rx-table{min-width:720px;border-collapse:separate!important;border-spacing:0;margin-bottom:0}
+#tab-docs_meds #dior-rx-table thead th{background:#f6f9fd!important;color:#63748b!important;border-top:1px solid #e7edf5!important;border-bottom:1px solid #e7edf5!important;padding:14px 13px!important;font-size:10px!important;font-weight:700!important;letter-spacing:.05em;text-transform:uppercase}
+#tab-docs_meds #dior-rx-table tbody td{padding:14px 13px!important;border-bottom:1px solid #edf1f6!important;color:#4a5c73!important;vertical-align:middle!important;font-size:12px!important;background:#fff!important}
+#tab-docs_meds #dior-rx-table tbody tr:hover td{background:#f8fbff!important}
+#tab-docs_meds #dior-rx-search-input{min-height:38px;border:1px solid #e2e8f0!important;border-radius:10px!important;background:#f8fafc!important;box-shadow:none!important;font-size:13px}
+#tab-docs_meds .btn{border-radius:9px!important;font-weight:600}
+#tab-docs_meds .docs-icon-btn{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:34px}
+#tab-docs_meds .status-cell-text{display:inline-flex;align-items:center;border-radius:7px;padding:5px 9px;font-weight:600}
+@media(max-width:767.98px){#tab-docs_meds h4{font-size:19px!important}#tab-docs_meds .docs-card{border-radius:14px!important}#tab-docs_meds .docs-header-container{padding:15px!important;align-items:stretch}#tab-docs_meds .docs-title-box,#tab-docs_meds .docs-actions-wrapper{width:100%}#tab-docs_meds .docs-actions-wrapper{justify-content:flex-start}#tab-docs_meds .docs-actions-group{gap:7px}#tab-docs_meds #dior-rx-search-input{width:100%;max-width:100%}}
+</style>
+
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
         <div>
