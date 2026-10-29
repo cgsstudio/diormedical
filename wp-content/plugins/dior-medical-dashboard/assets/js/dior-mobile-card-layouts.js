@@ -34,7 +34,7 @@
   }
 
   function makeActionProxy(source) {
-    if (source.tagName === 'A' && source.href) {
+    if (source.tagName === 'A' && source.href && !source.hasAttribute('onclick')) {
       var link = document.createElement('a');
       link.className = source.className + ' dior-mobile-action-proxy';
       link.href = source.href;
