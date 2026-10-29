@@ -815,3 +815,42 @@
     font-size: 10px !important;
   }
 }
+
+
+/* Fix mobile duplicate rendering: when JS creates mobile cards, hide the source table wrapper only. */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app .dior-tab-panel .dior-mobile-source-wrapper {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+  }
+
+  #dior-patient-portal-app .dior-tab-panel .dior-mobile-source-wrapper + .dior-mobile-cards {
+    display: flex !important;
+    visibility: visible !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin-top: 10px !important;
+  }
+
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming .dior-mobile-cards,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .dior-mobile-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming .dior-mobile-cards .dior-mobile-record-card,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .dior-mobile-cards .dior-mobile-record-card {
+    width: 100% !important;
+    border: 1px solid #dce6f2 !important;
+    border-radius: 15px !important;
+    background: #fff !important;
+    box-shadow: 0 3px 12px rgba(24,49,82,.045) !important;
+  }
+}
