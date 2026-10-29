@@ -84,7 +84,7 @@
                         <td>HGYU89</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">SS</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">SS</span>
                                 <span class="va-user-name">Sarah Smith</span>
                             </div>
                         </td>
@@ -108,7 +108,7 @@
                         <td>HGYU99</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">VK</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">VK</span>
                                 <span class="va-user-name">Vishal Kumar</span>
                             </div>
                         </td>
@@ -132,7 +132,7 @@
                         <td>HGYU29</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">RM</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">RM</span>
                                 <span class="va-user-name">Rahul Malhotra</span>
                             </div>
                         </td>
@@ -156,7 +156,7 @@
                         <td>HGYU36</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">PJ</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">PJ</span>
                                 <span class="va-user-name">Priya Jain</span>
                             </div>
                         </td>
@@ -180,7 +180,7 @@
                         <td>HGYU27</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">RP</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">RP</span>
                                 <span class="va-user-name">Radhika Patel</span>
                             </div>
                         </td>
@@ -204,7 +204,7 @@
                         <td>HGYU12</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">MS</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">MS</span>
                                 <span class="va-user-name">Sarah Smith</span>
                             </div>
                         </td>
@@ -228,7 +228,7 @@
                         <td>HGYU14</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">AD</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">AD</span>
                                 <span class="va-user-name">Vishal Kumar</span>
                             </div>
                         </td>
@@ -252,7 +252,7 @@
                         <td>HGYU09</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">NK</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">NK</span>
                                 <span class="va-user-name">Rahul Malhotra</span>
                             </div>
                         </td>
@@ -276,7 +276,7 @@
                         <td>HGYU80</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">RJ</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">RJ</span>
                                 <span class="va-user-name">Priya Jain</span>
                             </div>
                         </td>
@@ -300,7 +300,7 @@
                         <td>HGYU38</td>
                         <td>
                             <div class="va-user-profile">
-                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">SS</span>
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#e8f0ff;color:#245ea8;font-weight:700;font-size:12px;width:36px;height:36px;flex:0 0 36px;">SS</span>
                                 <span class="va-user-name">Radhika Patel</span>
                             </div>
                         </td>
