@@ -919,7 +919,7 @@ class Dior_Doctor_Dashboard
             Dior_Notification_Service::add_dashboard_notification(
                 $patient_id,
                 "Your consultation is ready to join",
-                "Dr. " . sanitize_text_field($doctor_name ?? "") . " has started your video consultation. Select Join Consultation to enter the meeting.",
+                "Your doctor has started your video consultation. Select Join Consultation to enter the meeting.",
                 $join_url,
                 "fa-video",
                 false
