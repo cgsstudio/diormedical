@@ -30,15 +30,30 @@ if (!class_exists('Dior_Questionnaire_Service')) {
     }
 }
 
-// Set JSON headers and allow CORS
+// Set JSON headers. This is a server-to-server webhook; do not enable wildcard CORS.
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Cache-Control: no-store, private');
 
-// Handle CORS preflight
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
+// Require a configured shared secret before accepting questionnaire/PHI data.
+// Configure the secret in wp-config.php and use the same value in the HIPAAtizer webhook URL.
+$configured_secret = defined('DIOR_HIPAATIZER_QUESTIONNAIRE_SECRET')
+    ? trim((string) DIOR_HIPAATIZER_QUESTIONNAIRE_SECRET)
+    : trim((string) get_option('dior_hipaatizer_questionnaire_secret', ''));
+$provided_secret = '';
+if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    $provided_secret = trim((string) $_SERVER['HTTP_AUTHORIZATION']);
+} elseif (function_exists('getallheaders')) {
+    $request_headers = getallheaders();
+    if (is_array($request_headers) && isset($request_headers['Authorization'])) {
+        $provided_secret = trim((string) $request_headers['Authorization']);
+    }
+}
+if (stripos($provided_secret, 'Bearer ') === 0) {
+    $provided_secret = trim(substr($provided_secret, 7));
+}
+if ($configured_secret === '' || $provided_secret === '' || !hash_equals($configured_secret, $provided_secret)) {
+    http_response_code(401);
+    echo wp_json_encode(['success' => false, 'code' => 'invalid_webhook_token', 'message' => 'Invalid questionnaire webhook credentials.']);
     exit;
 }
 
@@ -92,7 +107,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Error processing questionnaire: ' . $e->getMessage()
+        'message' => 'Error processing questionnaire submission.'
     ]);
 }
 
