@@ -382,3 +382,17 @@
     font-size: 11px !important;
   }
 }
+
+/* Keep the four existing appointment subtabs in a compact 2×2 mobile grid. */
+@media (max-width: 767.98px) {
+  #tab-appointments .dior-subtab-nav-bar {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+  #tab-appointments .dior-subtab-pill {
+    min-height: 44px !important;
+    padding: 9px 10px !important;
+    font-size: 11px !important;
+  }
+}
