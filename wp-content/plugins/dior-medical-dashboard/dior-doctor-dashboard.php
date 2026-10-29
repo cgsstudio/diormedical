@@ -921,7 +921,7 @@ class Dior_Doctor_Dashboard
                 $patient_id,
                 "Your consultation is ready to join",
                 "Your doctor has started your video consultation. Open this notification and select Join Consultation to enter the meeting.",
-                "#tab=notifications",
+                $join_url,
                 "fa-video",
                 false
             );
