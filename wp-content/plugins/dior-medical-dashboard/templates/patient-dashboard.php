@@ -166,7 +166,7 @@
                                     </div>
                                 <?php else: ?>
                                     <?php foreach (array_slice($notifications, 0, 5) as $n):
-                                        $target_tab = !empty($n['action_url']) ? str_replace('#tab=', '', $n['action_url']) : 'notifications';
+                                        $target_tab = !empty($n['action_url']) && strpos($n['action_url'], '#tab=') === 0 ? str_replace('#tab=', '', $n['action_url']) : 'notifications';
                                         ?>
                                         <div class="dior-notif-item <?php echo empty($n['is_read']) ? 'unread' : ''; ?>"
                                             data-notif-id="<?php echo esc_attr($n['id']); ?>"
