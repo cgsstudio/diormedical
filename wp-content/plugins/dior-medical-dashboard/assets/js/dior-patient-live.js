@@ -274,10 +274,20 @@
                         if (dropdown) dropdown.innerHTML = payload.dropdown_html;
                     }
                     var badge = document.querySelector('#dior-notif-dropdown-wrap .unread-badge-count, #dior-notif-dropdown-wrap [data-notification-count]');
-                    if (badge && typeof payload.unread_count !== 'undefined') {
-                        badge.textContent = payload.unread_count;
-                        badge.style.display = Number(payload.unread_count) > 0 ? '' : 'none';
+                    if (typeof payload.unread_count !== 'undefined') {
+                        var badgeHost = document.querySelector('#dior-notif-dropdown-wrap .dior-notif-btn');
+                        if (!badge && badgeHost && Number(payload.unread_count) > 0) {
+                            badge = document.createElement('span');
+                            badge.className = 'dior-notif-indicator unread-badge-count';
+                            badgeHost.appendChild(badge);
+                        }
+                        if (badge) {
+                            badge.textContent = payload.unread_count;
+                            badge.style.display = Number(payload.unread_count) > 0 ? '' : 'none';
+                        }
                     }
+                    var notifTbody = document.querySelector('#tab-notifications #dior-notif-tbody');
+                    if (notifTbody && payload.full_html) notifTbody.innerHTML = payload.full_html;
                     if (payload.latest_id) lastId = payload.latest_id;
 
                     (payload.new_alerts || []).forEach(function (alert) {
