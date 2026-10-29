@@ -568,77 +568,135 @@ class Dior_Notification_Service
     public static function send_appointment_cancelled($appt_uid, $reason = '', $cancelled_by = 'patient')
     {
         $appt = Dior_Appointment_Service::get_appointment($appt_uid);
-        if (!$appt) return false;
-
-        $pid = (int)$appt['patient_id'];
-        $did = (int)$appt['doctor_id'];
-
-        $patient = get_userdata($pid);
-        $doctor  = $did ? get_userdata($did) : null;
-
-        $pname = $patient ? trim($patient->first_name . ' ' . $patient->last_name) ?: $patient->display_name : 'Patient';
-        $dname = $doctor ? 'Dr. ' . (trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician';
-
-        $date = $appt['appt_date'];
-        $time = $appt['appt_time'];
-        $reason_text = $reason ?: 'Not specified';
-
-        // Patient In-App
-        self::add_dashboard_notification(
-            $pid,
-            'Consultation Cancelled: #' . $appt['appt_uid'],
-            'Your appointment scheduled for ' . $date . ' at ' . $time . ' has been cancelled (' . $reason_text . ').',
-            '#tab=appointments',
-            'fa-calendar-xmark'
-        );
-
-        // Patient Email
-        if ($patient && $patient->user_email) {
-            $p_content = '
-            <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
-            <p>This email confirms that your telehealth consultation scheduled for <strong>' . esc_html($date . ' at ' . $time) . '</strong> with <strong>' . esc_html($dname) . '</strong> has been cancelled.</p>
-            <div style="background-color: #FEF2F2; border-left: 4px solid #EF4444; border-radius: 4px; padding: 14px 18px; margin: 18px 0; color: #991B1B;">
-                <strong>Reason:</strong> ' . esc_html($reason_text) . '
-            </div>
-            <p>If you still require medical attention, you are welcome to schedule a new consultation at your convenience.</p>';
-
-            $p_html = self::render_email_template(
-                'Appointment Cancelled',
-                'Your consultation on ' . $date . ' has been cancelled.',
-                $p_content,
-                ['label' => 'Book Another Visit', 'url' => home_url('/patient-dashboard/#tab=questionnaire')]
-            );
-            self::send_email_safe($patient->user_email, 'Appointment Cancelled: #' . $appt['appt_uid'], $p_html);
+        if (!$appt) {
+            return false;
         }
 
-        // Doctor In-App
+        $pid = (int) ($appt['patient_id'] ?? 0);
+        $did = (int) ($appt['doctor_id'] ?? 0);
+        $patient = $pid ? get_userdata($pid) : false;
+        $doctor = $did ? get_userdata($did) : false;
+
+        $patient_full_name = $patient ? trim((string) $patient->first_name . ' ' . (string) $patient->last_name) : '';
+        $patient_name = $patient_full_name !== '' ? $patient_full_name : ($patient ? $patient->display_name : 'Patient');
+        $doctor_full_name = $doctor ? trim((string) $doctor->first_name . ' ' . (string) $doctor->last_name) : '';
+        $fallback_doctor_name = $doctor_full_name !== '' ? 'Dr. ' . $doctor_full_name : ($doctor ? $doctor->display_name : 'Attending Physician');
+
+        $doctor_uid = !empty($appt['doctor_user_id']) ? (int) $appt['doctor_user_id'] : 0;
+        if (!$doctor_uid && $did) {
+            $doctor_uid = class_exists('Dior_Doctor_Resolver')
+                ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($did)
+                : $did;
+        }
+        $doctor_user = $doctor_uid ? get_userdata($doctor_uid) : false;
+        $resolved_doctor_name = $doctor_user
+            ? trim((string) $doctor_user->first_name . ' ' . (string) $doctor_user->last_name)
+            : '';
+        $doctor_name = !empty($appt['provider'])
+            ? sanitize_text_field($appt['provider'])
+            : (!empty($appt['doctor_name'])
+                ? sanitize_text_field($appt['doctor_name'])
+                : ($resolved_doctor_name !== '' ? 'Dr. ' . $resolved_doctor_name : $fallback_doctor_name));
+
+        $raw_date = (string) ($appt['appt_date'] ?? $appt['date'] ?? '');
+        $raw_time = (string) ($appt['appt_time'] ?? $appt['time'] ?? '');
+        $format_date = static function ($value) {
+            $value = (string) $value;
+            $timestamp = $value !== '' ? strtotime($value) : false;
+            return $timestamp ? wp_date(get_option('date_format') ?: 'F j, Y', $timestamp) : $value;
+        };
+        $format_time = static function ($value) {
+            $value = (string) $value;
+            $timestamp = $value !== '' ? strtotime($value) : false;
+            return $timestamp ? wp_date(get_option('time_format') ?: 'g:i a', $timestamp) : $value;
+        };
+
+        $appointment_date = $format_date($raw_date);
+        $appointment_time = $format_time($raw_time);
+        $appointment_type = !empty($appt['visit_type'])
+            ? sanitize_text_field($appt['visit_type'])
+            : (!empty($appt['type']) ? sanitize_text_field($appt['type']) : 'Consultation');
+        $doctor_specialty = !empty($appt['doctor_specialty'])
+            ? sanitize_text_field($appt['doctor_specialty'])
+            : (!empty($appt['specialty'])
+                ? sanitize_text_field($appt['specialty'])
+                : (!empty($appt['provider_spec']) ? sanitize_text_field($appt['provider_spec']) : ''));
+        $appointment_reference = !empty($appt['appt_uid'])
+            ? sanitize_text_field($appt['appt_uid'])
+            : sanitize_text_field($appt_uid);
+        // The cancellation event is authoritative even if a caller invokes this
+        // notification before the appointment row's status has finished updating.
+        $appointment_status = 'Cancelled';
+        $cancellation_reason = sanitize_textarea_field((string) $reason);
+        $appointment_timezone = wp_timezone_string();
+        $site_name = get_bloginfo('name') ?: 'DIOR MEDICAL';
+        $site_url = home_url('/');
+        $book_appointment_url = home_url('/patient-dashboard/#tab=appointments');
+
+        // Patient in-app notification.
+        if ($pid) {
+            self::add_dashboard_notification(
+                $pid,
+                'Appointment Cancelled: #' . $appointment_reference,
+                'Your appointment scheduled for ' . ($appointment_date ?: 'the scheduled date') . ($appointment_time ? ' at ' . $appointment_time : '') . ' has been cancelled.',
+                '#tab=appointments',
+                'fa-calendar-xmark'
+            );
+        }
+
+        // Patient email: use the dedicated branded, data-driven cancellation template.
+        if ($patient && !empty($patient->user_email)) {
+            $template_path = defined('DIOR_PORTAL_PATH')
+                ? DIOR_PORTAL_PATH . 'templates/emails/appointment-cancelled.php'
+                : dirname(__DIR__) . '/templates/emails/appointment-cancelled.php';
+
+            if (is_readable($template_path)) {
+                ob_start();
+                include $template_path;
+                $patient_html = ob_get_clean();
+
+                self::send_email_safe(
+                    $patient->user_email,
+                    'Appointment Cancelled: ' . ($appointment_date ?: $appointment_reference),
+                    $patient_html
+                );
+            } else {
+                error_log('Dior Medical: appointment cancelled email template is missing: ' . $template_path);
+            }
+        }
+
+        // Preserve the existing doctor dashboard notification and email workflow.
         if ($did && $doctor) {
             self::add_dashboard_notification(
                 $did,
-                'Appointment Cancelled (' . $pname . ')',
-                $pname . ' cancelled their appointment for ' . $date . ' at ' . $time . ' (Reason: ' . $reason_text . ').',
+                'Appointment Cancelled (' . $patient_name . ')',
+                $patient_name . ' has an appointment cancelled for ' . ($appointment_date ?: 'the scheduled date') . ($appointment_time ? ' at ' . $appointment_time : '') . '.',
                 '#tab=doc-appointments',
                 'fa-calendar-xmark',
                 true
             );
 
-            // Doctor Email
-            if ($doctor->user_email) {
-                $d_content = '
-                <p>Hello <strong>' . esc_html($dname) . '</strong>,</p>
-                <p>The appointment with patient <strong>' . esc_html($pname) . '</strong> scheduled for <strong>' . esc_html($date . ' at ' . $time) . '</strong> has been cancelled.</p>
-                <div style="background-color: #FEF2F2; border-left: 4px solid #EF4444; border-radius: 4px; padding: 14px 18px; margin: 18px 0; color: #991B1B;">
-                    <strong>Reason:</strong> ' . esc_html($reason_text) . '
-                </div>
-                <p>This time slot has been freed up on your calendar.</p>';
+            if (!empty($doctor->user_email)) {
+                $reason_for_doctor = $cancellation_reason !== '' ? $cancellation_reason : 'Not specified';
+                $doctor_content = '
+                    <p>Hello <strong>' . esc_html($fallback_doctor_name) . '</strong>,</p>
+                    <p>The appointment with patient <strong>' . esc_html($patient_name) . '</strong> scheduled for <strong>' . esc_html(trim($appointment_date . ' ' . $appointment_time)) . '</strong> has been cancelled.</p>
+                    <div style="background:#F1F5F9;border-left:4px solid #64748B;border-radius:4px;padding:14px 18px;margin:18px 0;color:#334155;">
+                        <strong>Reason:</strong> ' . esc_html($reason_for_doctor) . '
+                    </div>
+                    <p>This time slot has been freed up on your calendar.</p>';
 
-                $d_html = self::render_email_template(
+                $doctor_html = self::render_email_template(
                     'Appointment Cancelled',
-                    'Appointment with ' . $pname . ' on ' . $date . ' has been cancelled.',
-                    $d_content,
-                    ['label' => 'View Doctor Dashboard', 'url' => home_url('/doctor-dashboard/#tab=doc-appointments')]
+                    'Appointment with ' . $patient_name . ' on ' . $appointment_date . ' has been cancelled.',
+                    $doctor_content,
+                    ['label' => 'View Doctor Schedule', 'url' => home_url('/doctor-dashboard/#tab=doc-appointments')]
                 );
-                self::send_email_safe($doctor->user_email, 'Cancellation Notice: ' . $pname . ' (' . $date . ')', $d_html);
+                self::send_email_safe(
+                    $doctor->user_email,
+                    'Cancellation Notice: ' . $patient_name . ' (' . $appointment_date . ')',
+                    $doctor_html
+                );
             }
         }
 
