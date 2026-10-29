@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.45
+ * Version: 17.2.46
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.45');
+define('DIOR_PORTAL_VERSION', '17.2.46');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -1237,6 +1237,27 @@ class Dior_Medical_Auth
             ['dior-bootstrap-css', 'dior-google-fonts'],
             $custom_css_ver
         );
+        // Patient portal mobile refinements. Scoped to mobile breakpoints and the patient app.
+        $patient_mobile_css_path = DIOR_PORTAL_PATH . 'assets/css/dior-patient-mobile.css';
+        if (file_exists($patient_mobile_css_path)) {
+            wp_enqueue_style(
+                'dior-patient-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-patient-mobile.css',
+                ['dior-custom-css'],
+                filemtime($patient_mobile_css_path)
+            );
+        }
+
+        // Today Appointments mobile cards. Desktop table styles are preserved.
+        $today_appt_mobile_css_path = DIOR_PORTAL_PATH . 'assets/css/dior-today-appointments-mobile.css';
+        if (file_exists($today_appt_mobile_css_path)) {
+            wp_enqueue_style(
+                'dior-today-appointments-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-today-appointments-mobile.css',
+                ['dior-custom-css', 'dior-patient-mobile-css'],
+                filemtime($today_appt_mobile_css_path)
+            );
+        }
 
         // Load brand color overrides after the consolidated stylesheet.
         $brand_css_path = DIOR_PORTAL_PATH . 'assets/css/dior-brand-overrides.css';
