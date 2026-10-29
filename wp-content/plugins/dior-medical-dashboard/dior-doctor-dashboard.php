@@ -18,6 +18,7 @@ class Dior_Doctor_Dashboard
         add_action("wp_ajax_dior_doctor_reschedule_appt", [__CLASS__, "ajax_reschedule_appt"]);
         add_action("wp_ajax_dior_doctor_edit_appointment", [__CLASS__, "ajax_edit_appointment"]);
         add_action("wp_ajax_dior_doc_appointment_update", [__CLASS__, "ajax_edit_appointment"]);
+        add_action("wp_ajax_dior_doc_appointment_delete", [__CLASS__, "ajax_delete_appointment"]);
         add_action("wp_ajax_dior_doctor_get_patient_appointment_details", [__CLASS__, "ajax_get_patient_appointment_details"]);
         add_action("wp_ajax_dior_doctor_add_prescription", [__CLASS__, "ajax_add_prescription"]);
         add_action("wp_ajax_dior_doctor_add_note", [__CLASS__, "ajax_add_note"]);
@@ -722,6 +723,71 @@ class Dior_Doctor_Dashboard
     }
 
     // AJAX HANDLERS
+    /**
+     * Soft-delete an appointment from the doctor registry.
+     * Requires an authenticated dashboard user, valid nonce, and doctor/admin ownership.
+     */
+    public static function ajax_delete_appointment()
+    {
+        Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
+        if (!self::can_access()) {
+            wp_send_json_error(["message" => "Unauthorized access."], 403);
+        }
+
+        $appt_uid = sanitize_text_field(wp_unslash($_POST["appt_uid"] ?? ""));
+        if ($appt_uid === "") {
+            wp_send_json_error(["message" => "Missing appointment ID."], 400);
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . "dior_appointments";
+        $appointment = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT id, appt_uid, doctor_id FROM {$table} WHERE appt_uid = %s AND is_deleted = 0 LIMIT 1",
+                $appt_uid
+            ),
+            ARRAY_A
+        );
+
+        if (!$appointment) {
+            wp_send_json_error(["message" => "Appointment not found or already deleted."], 404);
+        }
+
+        $current_user_id = get_current_user_id();
+        $is_admin = current_user_can("administrator") || current_user_can("manage_options");
+        if (!$is_admin && (int) $appointment["doctor_id"] !== $current_user_id) {
+            wp_send_json_error(["message" => "You are not allowed to delete this appointment."], 403);
+        }
+
+        $updated = $wpdb->update(
+            $table,
+            ["is_deleted" => 1, "updated_at" => current_time("mysql")],
+            ["id" => (int) $appointment["id"], "appt_uid" => $appt_uid, "is_deleted" => 0],
+            ["%d", "%s"],
+            ["%d", "%s", "%d"]
+        );
+
+        if ($updated === false) {
+            wp_send_json_error(["message" => "Database error while deleting appointment."], 500);
+        }
+        if ($updated === 0) {
+            wp_send_json_error(["message" => "Appointment was already changed. Refresh and try again."], 409);
+        }
+
+        if (class_exists("Dior_Audit_Service")) {
+            Dior_Audit_Service::log(
+                "appointment_deleted",
+                "appointment",
+                $appt_uid,
+                0,
+                "success",
+                ["deleted_by" => $current_user_id, "soft_delete" => true]
+            );
+        }
+
+        wp_send_json_success(["message" => "Appointment deleted successfully."]);
+    }
+
     public static function ajax_update_appt_status()
     {
         Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
