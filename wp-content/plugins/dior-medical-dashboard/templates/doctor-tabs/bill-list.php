@@ -84,8 +84,7 @@
                         <td>HGYU89</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-1.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">SS</span>
                                 <span class="va-user-name">Sarah Smith</span>
                             </div>
                         </td>
@@ -109,8 +108,7 @@
                         <td>HGYU99</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-2.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">VK</span>
                                 <span class="va-user-name">Vishal Kumar</span>
                             </div>
                         </td>
@@ -134,8 +132,7 @@
                         <td>HGYU29</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-3.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">RM</span>
                                 <span class="va-user-name">Rahul Malhotra</span>
                             </div>
                         </td>
@@ -159,8 +156,7 @@
                         <td>HGYU36</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-4.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">PJ</span>
                                 <span class="va-user-name">Priya Jain</span>
                             </div>
                         </td>
@@ -184,8 +180,7 @@
                         <td>HGYU27</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-5.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">RP</span>
                                 <span class="va-user-name">Radhika Patel</span>
                             </div>
                         </td>
@@ -209,8 +204,7 @@
                         <td>HGYU12</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-6.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">MS</span>
                                 <span class="va-user-name">Sarah Smith</span>
                             </div>
                         </td>
@@ -234,8 +228,7 @@
                         <td>HGYU14</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-7.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">AD</span>
                                 <span class="va-user-name">Vishal Kumar</span>
                             </div>
                         </td>
@@ -259,8 +252,7 @@
                         <td>HGYU09</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-8.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">NK</span>
                                 <span class="va-user-name">Rahul Malhotra</span>
                             </div>
                         </td>
@@ -284,8 +276,7 @@
                         <td>HGYU80</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-9.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">RJ</span>
                                 <span class="va-user-name">Priya Jain</span>
                             </div>
                         </td>
@@ -309,8 +300,7 @@
                         <td>HGYU38</td>
                         <td>
                             <div class="va-user-profile">
-                                <img src="<?php echo esc_url(DIOR_PORTAL_URL . 'assets/images/users/user-1.png'); ?>"
-                                    alt="User" class="va-user-avatar">
+                                <span class="va-user-avatar va-user-avatar-fallback" aria-hidden="true">SS</span>
                                 <span class="va-user-name">Radhika Patel</span>
                             </div>
                         </td>
