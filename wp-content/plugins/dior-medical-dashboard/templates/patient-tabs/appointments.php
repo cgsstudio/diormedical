@@ -686,6 +686,87 @@
         }
     }
 
+
+    /* Final mobile correction: toolbar controls and empty-state row must never collapse vertically. */
+    @media (max-width: 767.98px) {
+        #tab-appointments #dior-subtab-today > .card > .d-flex:first-child > div:last-child {
+            display: grid !important;
+            grid-template-columns: 42px minmax(64px, 1fr) 42px 42px !important;
+            grid-auto-flow: row;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+        #tab-appointments #dior-subtab-today > .card > .d-flex:first-child > div:last-child > .input-group {
+            grid-column: 1 / -1 !important;
+            grid-row: 1 !important;
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+        #tab-appointments #dior-subtab-today > .card > .d-flex:first-child > div:last-child > button {
+            grid-row: 2 !important;
+            grid-column: auto !important;
+            justify-self: stretch !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 42px !important;
+            padding: 8px 5px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            overflow: visible !important;
+            line-height: 1.2 !important;
+        }
+        #tab-appointments #dior-subtab-today > .card > .d-flex:first-child > div:last-child > button[title="Book Appointment"] {
+            min-width: 64px !important;
+            gap: 5px !important;
+            font-size: 12px !important;
+        }
+        #tab-appointments #dior-today-appointments-table {
+            min-width: 0 !important;
+            width: 100% !important;
+            table-layout: fixed !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody tr.dior-empty-state {
+            display: block !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            background: transparent !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody tr.dior-empty-state td {
+            display: block !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            padding: 22px 12px !important;
+            border: 1px solid #d8e6f6 !important;
+            border-radius: 14px !important;
+            background: #f8fbff !important;
+            color: #64748b !important;
+            text-align: center !important;
+            white-space: normal !important;
+            word-break: normal !important;
+            overflow-wrap: anywhere !important;
+            writing-mode: horizontal-tb !important;
+            text-orientation: mixed !important;
+            line-height: 1.5 !important;
+            box-sizing: border-box !important;
+        }
+        #tab-appointments #dior-subtab-today .table-responsive > .small,
+        #tab-appointments #dior-subtab-today .table-responsive > p {
+            display: none !important;
+        }
+        #tab-appointments #dior-today-appointments-table tbody tr:not(.dior-empty-state) td:nth-child(2) .dior-appointment-doctor-name {
+            white-space: normal !important;
+            overflow-wrap: anywhere !important;
+        }
+    }
+
 </style>
 
 
