@@ -1158,6 +1158,16 @@ class Dior_Medical_Auth
             ['dior-bootstrap-css', 'dior-google-fonts'],
             $custom_css_ver
         );
+        // Patient portal responsive layout refinements (mobile only; existing desktop styles remain intact).
+        $patient_mobile_css_path = DIOR_PORTAL_PATH . 'assets/css/dior-patient-mobile.css';
+        if (file_exists($patient_mobile_css_path)) {
+            wp_enqueue_style(
+                'dior-patient-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-patient-mobile.css',
+                ['dior-custom-css'],
+                filemtime($patient_mobile_css_path)
+            );
+        }
 
         // Alias handles to dior-custom-css to prevent any extra duplicate CSS downloads
         wp_register_style('dior-auth-css', false, ['dior-custom-css']);
