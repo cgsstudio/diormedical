@@ -16,6 +16,7 @@ if (!class_exists('Dior_Zoom_Meetings')) {
         public static function init() {
             add_action('admin_menu', [__CLASS__, 'admin_menu']);
             add_action('admin_post_dior_zoom_save_settings', [__CLASS__, 'save_settings']);
+            add_action('admin_post_dior_zoom_test_connection', [__CLASS__, 'test_connection']);
         }
 
         public static function is_configured() {
@@ -63,6 +64,25 @@ if (!class_exists('Dior_Zoom_Meetings')) {
 
             wp_safe_redirect(add_query_arg(
                 ['page' => self::PAGE_SLUG, 'saved' => '1'],
+                admin_url('options-general.php')
+            ));
+            exit;
+        }
+
+        public static function test_connection() {
+            if (!current_user_can('manage_options')) {
+                wp_die(esc_html__('You are not allowed to test Zoom settings.', 'dior-medical-dashboard'), 403);
+            }
+            check_admin_referer('dior_zoom_test_connection');
+            $token = self::get_access_token();
+            $status = is_wp_error($token) ? 'failed' : 'success';
+            $message = is_wp_error($token) ? $token->get_error_message() : 'Zoom OAuth connection successful.';
+            set_transient('dior_zoom_connection_test_result', [
+                'status' => $status,
+                'message' => sanitize_text_field($message),
+            ], 90);
+            wp_safe_redirect(add_query_arg(
+                ['page' => self::PAGE_SLUG, 'tested' => $status],
                 admin_url('options-general.php')
             ));
             exit;
@@ -179,9 +199,14 @@ if (!class_exists('Dior_Zoom_Meetings')) {
                 $settings = [];
             }
             $saved = isset($_GET['saved']) && sanitize_text_field(wp_unslash($_GET['saved'])) === '1';
+            $test_result = get_transient('dior_zoom_connection_test_result');
+            delete_transient('dior_zoom_connection_test_result');
             ?>
             <div class="wrap">
                 <h1><?php echo esc_html__('Dior Zoom Meetings', 'dior-medical-dashboard'); ?></h1>
+                <?php if (is_array($test_result) && !empty($test_result['message'])) : ?>
+                    <div class="notice <?php echo ($test_result['status'] ?? '') === 'success' ? 'notice-success' : 'notice-error'; ?> is-dismissible"><p><?php echo esc_html($test_result['message']); ?></p></div>
+                <?php endif; ?>
                 <?php if ($saved) : ?>
                     <div class="notice notice-success is-dismissible"><p><?php echo esc_html__('Zoom settings saved. Use the Test Connection button to verify your credentials.', 'dior-medical-dashboard'); ?></p></div>
                 <?php endif; ?>
