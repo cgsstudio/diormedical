@@ -1304,3 +1304,84 @@
   });
 })();
 </script>
+
+<style id="dior-patient-bootstrap-mobile-v2">
+/* Bootstrap-style responsive foundation for every Patient Dashboard tab.
+   Scoped to this plugin so the rules do not leak into the WordPress theme. */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app,
+  #dior-patient-portal-app * { box-sizing: border-box; }
+  #dior-patient-portal-app { width:100%; max-width:100%; overflow-x:clip; }
+  #dior-patient-portal-app .dior-main-content,
+  #dior-patient-portal-app .dior-tab-container,
+  #dior-patient-portal-app .dior-tab-container > *,
+  #dior-patient-portal-app .tab-pane,
+  #dior-patient-portal-app [id^="tab-"] { min-width:0; max-width:100%; }
+  #dior-patient-portal-app .dior-tab-container { padding-left:12px!important; padding-right:12px!important; }
+  #dior-patient-portal-app .dior-content-header,
+  #dior-patient-portal-app .content-head,
+  #dior-patient-portal-app .page-header,
+  #dior-patient-portal-app .tab-header {
+    display:flex; flex-wrap:wrap; align-items:flex-start; gap:10px;
+  }
+  #dior-patient-portal-app .dior-content-header > *,
+  #dior-patient-portal-app .content-head > *,
+  #dior-patient-portal-app .page-header > *,
+  #dior-patient-portal-app .tab-header > * { min-width:0; max-width:100%; }
+  #dior-patient-portal-app h1 { font-size:clamp(1.15rem, 4.5vw, 1.45rem); line-height:1.25; overflow-wrap:anywhere; }
+  #dior-patient-portal-app h2 { font-size:clamp(1rem, 4vw, 1.2rem); line-height:1.3; overflow-wrap:anywhere; }
+  #dior-patient-portal-app h3 { font-size:1rem; line-height:1.35; overflow-wrap:anywhere; }
+  #dior-patient-portal-app p,
+  #dior-patient-portal-app label,
+  #dior-patient-portal-app .form-text { overflow-wrap:anywhere; }
+  #dior-patient-portal-app .row { --bs-gutter-x: .75rem; --bs-gutter-y: .75rem; }
+  #dior-patient-portal-app .card,
+  #dior-patient-portal-app .modal-content,
+  #dior-patient-portal-app .list-group,
+  #dior-patient-portal-app .alert { min-width:0; max-width:100%; }
+  #dior-patient-portal-app .card-body { padding: .875rem!important; min-width:0; }
+  #dior-patient-portal-app .btn,
+  #dior-patient-portal-app button,
+  #dior-patient-portal-app .action-icon-btn { max-width:100%; white-space:normal; }
+  #dior-patient-portal-app .btn-group,
+  #dior-patient-portal-app .d-flex.gap-2,
+  #dior-patient-portal-app .d-flex.gap-3 { flex-wrap:wrap; }
+  #dior-patient-portal-app input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
+  #dior-patient-portal-app select,
+  #dior-patient-portal-app textarea,
+  #dior-patient-portal-app .form-control,
+  #dior-patient-portal-app .form-select { width:100%; max-width:100%; min-width:0; font-size:16px; }
+  #dior-patient-portal-app .input-group { flex-wrap:wrap; }
+  #dior-patient-portal-app .input-group > .form-control,
+  #dior-patient-portal-app .input-group > .form-select { flex:1 1 70%; width:1%; }
+  #dior-patient-portal-app .table-responsive,
+  #dior-patient-portal-app .dior-card-scrollable,
+  #dior-patient-portal-app .table-wrap,
+  #dior-patient-portal-app .appointments-table-wrap {
+    display:block; width:100%; max-width:100%; overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain;
+  }
+  #dior-patient-portal-app table { max-width:100%; }
+  #dior-patient-portal-app .table { font-size:.8125rem; }
+  #dior-patient-portal-app .table th,
+  #dior-patient-portal-app .table td { padding:.55rem .6rem; vertical-align:middle; }
+  #dior-patient-portal-app .modal-dialog { width:auto; max-width:calc(100% - 1rem); margin:.5rem auto; }
+  #dior-patient-portal-app .modal-body { max-height:calc(100dvh - 150px); overflow-y:auto; }
+  #dior-patient-portal-app img,
+  #dior-patient-portal-app video,
+  #dior-patient-portal-app iframe { max-width:100%; }
+  #dior-patient-portal-app iframe { width:100%; }
+  #dior-patient-portal-app .badge { white-space:normal; text-align:center; }
+  #dior-patient-portal-app .dropdown-menu { max-width:calc(100vw - 24px); }
+  #dior-patient-portal-app .dior-side { max-width:min(86vw, 320px); }
+}
+@media (max-width: 479.98px) {
+  #dior-patient-portal-app .dior-tab-container { padding:9px 10px 94px!important; }
+  #dior-patient-portal-app .card-body { padding:.75rem!important; }
+  #dior-patient-portal-app .btn { min-height:36px; }
+  #dior-patient-portal-app .btn-sm { min-height:32px; }
+  #dior-patient-portal-app .table { font-size:.75rem; }
+  #dior-patient-portal-app .table th,
+  #dior-patient-portal-app .table td { padding:.45rem .5rem; }
+}
+</style>
