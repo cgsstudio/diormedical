@@ -1093,50 +1093,92 @@
      */
     window.diorInjectAppointmentIntoDashboards = function(appt) {
         try {
-            // 1. Update Today's table if date is today
-            var todayYmd = new Date().toISOString().split('T')[0];
-            var isToday = (appt.date === todayYmd);
+            // 1. Update the appointment tables with the correct column structure.
+            // Use the browser's local calendar date (toISOString() can shift the day by timezone).
+            var now = new Date();
+            var todayYmd = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+            var apptYmd = String(appt.date || '').slice(0, 10);
+            var isToday = (apptYmd === todayYmd);
+            var isUpcoming = (apptYmd > todayYmd);
             var tbodyToday = document.getElementById('dior-today-appointments-tbody');
             var tbodyUpcoming = document.getElementById('dior-upcoming-appointments-tbody');
+            var apptId = String(appt.uid || appt.appt_uid || appt.id || '');
+            var escapeHtml = function(value) {
+                return String(value == null ? '' : value).replace(/[&<>"']/g, function(char) {
+                    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[char];
+                });
+            };
+            var doctor = escapeHtml(appt.doctor || '—');
+            var spec = escapeHtml(appt.spec || '—');
+            var dateLabel = escapeHtml(appt.date || '—');
+            var time = escapeHtml(appt.time || '—');
+            var type = escapeHtml(appt.type || 'Consultation');
+            var phone = escapeHtml(appt.phone || 'On file');
+            var safeId = escapeHtml(apptId);
 
-            var rowHtml = `
-                <tr class="dior-newly-added-row" style="background: #f0fdf4; transition: background 1.5s ease;">
-                    <td>
-                        <div class="cell-content cell-image-name">
-                            <span class="cell-text doctor-name" style="font-weight:700;">${appt.doctor}</span>
+            var rowHtmlToday = `
+                <tr class="dior-newly-added-row">
+                    <td class="ps-3 py-3"><input type="checkbox" class="form-check-input" aria-label="Select appointment"></td>
+                    <td class="py-3"><span class="dior-appointment-doctor-name">${doctor}</span></td>
+                    <td class="py-3"><span class="text-secondary small fw-medium">${spec}</span></td>
+                    <td class="py-3"><div class="d-flex align-items-center gap-1 text-secondary"><i class="far fa-calendar text-primary"></i><span>${dateLabel}</span></div></td>
+                    <td class="py-3"><span class="fw-semibold">${time}</span></td>
+                    <td class="py-3"><span>${type}</span></td>
+                    <td class="py-3"><span>${phone}</span></td>
+                    <td class="py-3"><span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle">Confirmed</span></td>
+                    <td class="text-end pe-3 py-3">
+                        <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1 flex-nowrap">
+                            <button type="button" class="action-icon-btn btn" title="Join Video Consultation" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('consultation');"><i class="fas fa-video text-primary"></i></button>
+                            <button type="button" class="action-icon-btn btn" title="View Details" onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('${safeId}');"><i class="fas fa-eye text-secondary"></i></button>
+                            <button type="button" class="action-icon-btn btn" title="Cancel Appointment" onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('${safeId}', this);"><i class="fas fa-trash text-danger"></i></button>
                         </div>
                     </td>
-                    <td><span class="cell-text">${appt.spec}</span></td>
-                    <td>
-                        <div class="cell-content cell-icon-text">
-                            <i class="far fa-calendar cell-icon"></i>
-                            <span class="cell-text">${appt.date}</span>
+                </tr>`;
+            var rowHtmlUpcoming = `
+                <tr class="dior-newly-added-row">
+                    <td class="ps-3 py-3"><input type="checkbox" class="form-check-input" aria-label="Select appointment"></td>
+                    <td class="py-3"><span class="dior-appointment-doctor-name">${doctor}</span></td>
+                    <td class="py-3"><span>${dateLabel}</span></td>
+                    <td class="py-3"><span class="fw-semibold">${time}</span></td>
+                    <td class="py-3"><span>${type}</span></td>
+                    <td class="py-3"><span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle">Confirmed</span></td>
+                    <td class="py-3"><span>—</span></td>
+                    <td class="text-end pe-3 py-3">
+                        <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1 flex-nowrap">
+                            <button type="button" class="action-icon-btn btn" title="View Details" onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('${safeId}');"><i class="fas fa-eye text-secondary"></i></button>
+                            <button type="button" class="action-icon-btn btn" title="Cancel Appointment" onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('${safeId}', this);"><i class="fas fa-trash text-danger"></i></button>
                         </div>
                     </td>
-                    <td><span class="cell-text" style="font-weight:600;">${appt.time}</span></td>
-                    <td><span class="cell-text" style="color:#d4af37; font-weight:600;">${appt.type}</span></td>
-                    <td><span class="cell-text">${appt.phone || 'On file'}</span></td>
-                    <td>
-                        <span class="status-cell-text status-confirm" style="background:#d1fae5; color:#047857; font-weight:700; padding:4px 8px; border-radius:6px;">Confirmed</span>
-                    </td>
-                </tr>
-            `;
+                </tr>`;
 
             if (isToday && tbodyToday) {
-                tbodyToday.insertAdjacentHTML('afterbegin', rowHtml);
+                var emptyToday = tbodyToday.querySelector('.dior-empty-state');
+                if (emptyToday) emptyToday.remove();
+                if (!tbodyToday.querySelector('[data-appointment-id="' + safeId + '"]')) {
+                    // Tag the row so a refresh/live callback cannot duplicate it.
+                    var taggedTodayRow = rowHtmlToday.replace('class="dior-newly-added-row"', 'class="dior-newly-added-row" data-appointment-id="' + safeId + '"');
+                    tbodyToday.insertAdjacentHTML('afterbegin', taggedTodayRow);
+                }
                 var countToday = document.getElementById('dior-today-page-count');
                 if (countToday) {
-                    var currentTotal = parseInt(countToday.textContent.replace(/[^0-9]/g, ''), 10) || 0;
-                    countToday.textContent = '0 selected / ' + (currentTotal + 1) + ' total';
+                    var matchToday = countToday.textContent.match(/\/\s*(\d+)\s*total/i);
+                    var currentTotal = matchToday ? parseInt(matchToday[1], 10) : tbodyToday.querySelectorAll('tr:not(.dior-empty-state)').length - 1;
+                    countToday.textContent = '0 selected / ' + Math.max(1, currentTotal + 1) + ' total';
                 }
             }
 
-            if (tbodyUpcoming) {
-                tbodyUpcoming.insertAdjacentHTML('afterbegin', rowHtml);
+            if ((isUpcoming || isToday) && tbodyUpcoming) {
+                var emptyUpcoming = tbodyUpcoming.querySelector('.dior-empty-state');
+                if (emptyUpcoming) emptyUpcoming.remove();
+                if (!tbodyUpcoming.querySelector('[data-appointment-id="' + safeId + '"]')) {
+                    var taggedUpcomingRow = rowHtmlUpcoming.replace('class="dior-newly-added-row"', 'class="dior-newly-added-row" data-appointment-id="' + safeId + '"');
+                    tbodyUpcoming.insertAdjacentHTML('afterbegin', taggedUpcomingRow);
+                }
                 var countUpcoming = document.getElementById('dior-upcoming-page-count');
                 if (countUpcoming) {
-                    var currentUpTotal = parseInt(countUpcoming.textContent.replace(/[^0-9]/g, ''), 10) || 0;
-                    countUpcoming.textContent = '0 selected / ' + (currentUpTotal + 1) + ' total';
+                    var matchUpcoming = countUpcoming.textContent.match(/\/\s*(\d+)\s*total/i);
+                    var currentUpTotal = matchUpcoming ? parseInt(matchUpcoming[1], 10) : tbodyUpcoming.querySelectorAll('tr:not(.dior-empty-state)').length - 1;
+                    countUpcoming.textContent = '0 selected / ' + Math.max(1, currentUpTotal + 1) + ' total';
                 }
             }
 
