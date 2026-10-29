@@ -1458,7 +1458,7 @@
                             $mobile_search_text = implode(' ', array_map('strval', [$tm[0] ?? '', $tm[1] ?? '', $tm[2] ?? '', $tm[3] ?? '', $tm[4] ?? '', $tm[5] ?? '', $tm[6] ?? '']));
                         ?>
                             <article class="card dior-today-mobile-card mb-3"
-                                data-search="<?php echo esc_attr(mb_strtolower($mobile_search_text)); ?>"
+                                data-search="<?php echo esc_attr(strtolower($mobile_search_text)); ?>"
                                 data-appointment-id="<?php echo esc_attr($tm[8] ?? ''); ?>">
                                 <div class="card-body">
                                     <div class="dior-today-mobile-card-head">
