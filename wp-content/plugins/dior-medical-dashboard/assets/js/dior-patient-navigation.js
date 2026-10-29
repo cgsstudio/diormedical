@@ -9,15 +9,23 @@
     window.diorCloseMobileDrawer = window.diorCloseMobileDrawer || function () {
         var sidebar = document.getElementById('dior-sidebar');
         var backdrop = document.getElementById('dior-drawer-backdrop');
-        if (sidebar) sidebar.classList.remove('open');
+        if (sidebar) {
+            sidebar.classList.remove('open');
+            sidebar.classList.remove('mobile-open');
+        }
         if (backdrop) backdrop.classList.remove('active');
+        document.body.style.overflow = '';
     };
 
     window.diorOpenMobileDrawer = window.diorOpenMobileDrawer || function () {
         var sidebar = document.getElementById('dior-sidebar');
         var backdrop = document.getElementById('dior-drawer-backdrop');
-        if (sidebar) sidebar.classList.add('open');
+        if (sidebar) {
+            sidebar.classList.add('open');
+            sidebar.classList.add('mobile-open');
+        }
         if (backdrop) backdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
     };
 
     function boot() {
@@ -93,6 +101,27 @@
                 var pTab = normalizeTabId(pill.getAttribute('data-patient-tab'));
                 pill.classList.toggle('active', pTab === tabId);
             });
+
+            // Sync mobile bottom navigation active state
+            app.querySelectorAll('.dior-mobile-bottom-nav .dior-mobile-nav-item[data-switch-tab]').forEach(function (item) {
+                var mTab = normalizeTabId(item.getAttribute('data-switch-tab'));
+                var isMatch = (mTab === tabId);
+                item.classList.toggle('is-active', isMatch);
+                if (isMatch) {
+                    item.setAttribute('aria-current', 'page');
+                } else {
+                    item.removeAttribute('aria-current');
+                }
+            });
+
+            // Close mobile drawer and any open topbar dropdowns on tab switch
+            if (typeof window.diorCloseMobileDrawer === 'function') {
+                window.diorCloseMobileDrawer();
+            }
+            var notifDropdown = document.getElementById('dior-notif-dropdown');
+            if (notifDropdown) notifDropdown.classList.remove('open');
+            var profileDropdown = document.getElementById('dior-profile-dropdown');
+            if (profileDropdown) profileDropdown.classList.remove('open');
 
             var title = document.getElementById('dior-current-page-title');
             if (title && titles[tabId]) title.textContent = titles[tabId];

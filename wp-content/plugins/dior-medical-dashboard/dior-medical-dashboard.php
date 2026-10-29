@@ -2169,6 +2169,12 @@ class Dior_Medical_Auth
 
             <?php else: ?>
 
+            <div class="dior-login-mobile-brand">
+                <span class="dior-login-mobile-badge">
+                    <i class="fas fa-shield-halved"></i> HIPAA-Compliant Patient Portal
+                </span>
+            </div>
+
             <div class="dior-login-header">
                 <h3 class="dior-login-title">Log In</h3>
                 <p class="dior-login-subtitle">Access your appointments, prescriptions, intake forms, and records.</p>
@@ -2205,7 +2211,7 @@ class Dior_Medical_Auth
                     </div>
                 </div>
 
-                <div class="dior-form-check-row" style="justify-content: space-between;">
+                <div class="dior-form-check-row" style="justify-content: space-between; flex-wrap: wrap; gap: 8px;">
                     <label class="dior-custom-checkbox">
                         <input type="checkbox" name="rememberme" value="forever">
                         <span class="dior-checkmark"></span>

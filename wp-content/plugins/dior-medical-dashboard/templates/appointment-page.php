@@ -78,7 +78,7 @@ $current_patient = wp_get_current_user();
     <div class="container" style="max-width: 900px;">
 
         <!-- Top Navigation / Back Bar -->
-        <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
             <a href="<?php echo esc_url($dashboard_url); ?>" class="btn btn-outline-secondary rounded-3 fw-semibold py-2 px-3 shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 14px !important; text-decoration: none;">
                 <i class="fas fa-arrow-left"></i>
                 <span>Back to Dashboard</span>
@@ -91,7 +91,7 @@ $current_patient = wp_get_current_user();
         </div>
 
         <!-- Main Booking Card -->
-        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+        <div class="card border-0 shadow-sm rounded-4 p-3 p-sm-4 p-md-5 bg-white">
             
             <!-- Header Section -->
             <div class="border-bottom pb-4 mb-4">
@@ -212,7 +212,7 @@ $current_patient = wp_get_current_user();
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3 border-top">
                     <button type="button" class="btn btn-outline-secondary rounded-3 fw-semibold py-2 px-4" onclick="diorGoBackToStep1()">
                         &larr; Back
                     </button>
@@ -226,7 +226,7 @@ $current_patient = wp_get_current_user();
             <div id="dior-step-3" style="display: none;">
                 <h4 class="h5 fw-bold text-dark mb-3"><i class="far fa-circle-check text-primary me-2"></i>Review Appointment Details</h4>
                 
-                <div class="card bg-light-subtle border rounded-4 p-4 mb-4">
+                <div class="card bg-light-subtle border rounded-4 p-3 p-sm-4 mb-4">
                     <div class="row g-3">
                         <div class="col-12 col-sm-6">
                             <span class="small text-uppercase text-secondary fw-semibold d-block mb-1">Attending Physician</span>
@@ -252,11 +252,11 @@ $current_patient = wp_get_current_user();
                     <textarea id="dior_appointment_reason" class="form-control rounded-3 p-3" rows="3" placeholder="Briefly describe any symptoms, medication refill requests, or concerns..."></textarea>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3 border-top">
                     <button type="button" class="btn btn-outline-secondary rounded-3 fw-semibold py-2 px-4" onclick="diorGoBackToStep2()">
                         &larr; Back
                     </button>
-                    <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm d-inline-flex align-items-center gap-2" id="btn-confirm-booking" onclick="diorSubmitBooking()">
+                    <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" id="btn-confirm-booking" onclick="diorSubmitBooking()">
                         <i class="fas fa-check"></i>
                         <span>Confirm &amp; Book Appointment</span>
                     </button>

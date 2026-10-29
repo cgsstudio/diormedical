@@ -81,15 +81,209 @@ foreach ($patient_notif_rows as $row) {
         #tab-notifications #dior-system-notif-list { display:flex; flex-direction:column; gap:12px; }
         #tab-notifications #dior-system-notif-list > * { border-radius:13px; }
         #tab-notifications #dior-empty-notif-box { border:1px dashed #d7e1ed!important; border-radius:14px!important; background:#fff!important; }
-        @media(max-width:767.98px) {
-            #tab-notifications { padding:14px!important; border-radius:14px; }
-            #tab-notifications h4 { font-size:19px!important; }
-            #tab-notifications .dior-notif-stat-col { min-width:calc(50% - 8px); flex:1 1 calc(50% - 8px); }
-            #tab-notifications .dior-notif-stats-row { gap:10px!important; }
+        #tab-notifications .notification-text,
+        .dior-patient-portal-wrap #tab-notifications .notification-text {
+            font-size: 13.5px !important;
+            line-height: 1.5 !important;
+            color: #475569 !important;
         }
-        @media(max-width:479.98px) {
-            #tab-notifications { padding:10px!important; }
-            #tab-notifications .dior-notif-stat-col { min-width:100%; flex-basis:100%; }
+        #tab-notifications #dior-empty-notif-box p,
+        .dior-patient-portal-wrap #tab-notifications #dior-empty-notif-box p {
+            font-size: 13.5px !important;
+            line-height: 1.5 !important;
+        }
+        @media(max-width:767.98px) {
+            #tab-notifications { padding:12px!important; border-radius:14px; }
+            #tab-notifications h4 { font-size:18px!important; }
+            #tab-notifications .va-breadcrumb-list { display:none!important; }
+
+            /* 2x2 KPI Stat Grid on Mobile */
+            #tab-notifications .dior-notif-stats-row {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 10px !important;
+                margin-bottom: 16px !important;
+            }
+            #tab-notifications .dior-notif-stat-col {
+                min-width: 0 !important;
+                width: 100% !important;
+                flex: none !important;
+            }
+            #tab-notifications .stat-card .stat-inner {
+                padding: 14px 12px !important;
+            }
+            #tab-notifications .stat-card .stat-label {
+                font-size: 11px !important;
+                line-height: 1.25 !important;
+            }
+            #tab-notifications .stat-card .stat-value {
+                font-size: 22px !important;
+                line-height: 1.15 !important;
+            }
+            #tab-notifications .stat-card .stat-icon-wrapper {
+                width: 34px !important;
+                height: 34px !important;
+                min-width: 34px !important;
+                font-size: 14px !important;
+                border-radius: 9px !important;
+            }
+            #tab-notifications .stat-card .stat-footer {
+                padding-top: 8px !important;
+                flex-wrap: wrap !important;
+                gap: 4px !important;
+            }
+            #tab-notifications .stat-card .stat-subtext {
+                display: none !important;
+            }
+
+            /* Main Feed Card Header & Toolbar on Mobile */
+            #tab-notifications .main-feed-card > .card-header {
+                padding: 14px !important;
+                gap: 10px !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+            }
+            #tab-notifications .main-feed-card > .card-header > div:first-child {
+                justify-content: space-between !important;
+                width: 100% !important;
+            }
+            #tab-notifications .main-feed-card > .card-header > div:last-child {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            #tab-notifications .main-feed-card > .card-header > div:last-child > .btn {
+                width: 100% !important;
+                min-height: 38px !important;
+                padding: 7px 10px !important;
+                font-size: 12px !important;
+                justify-content: center !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+
+            /* Filters & Search Bar on Mobile */
+            #tab-notifications .filters-bar {
+                padding: 12px 14px !important;
+            }
+            #tab-notifications .filters-bar .dior-notif-filter-bar-inner {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+                width: 100% !important;
+            }
+            #tab-notifications .segmented-nav {
+                display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 6px !important;
+                width: 100% !important;
+                padding: 4px !important;
+            }
+            #tab-notifications .segmented-nav .segmented-tab {
+                width: 100% !important;
+                min-height: 36px !important;
+                padding: 6px 8px !important;
+                font-size: 12px !important;
+                justify-content: center !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 5px !important;
+            }
+            #tab-notifications .dior-bs-search-group {
+                width: 100% !important;
+                max-width: 100% !important;
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+            }
+            #tab-notifications .dior-bs-search-group > .input-group-text {
+                flex: 0 0 auto !important;
+                width: auto !important;
+                min-height: 40px !important;
+                height: 40px !important;
+                background: #fff !important;
+                border: 1px solid #e2e8f0 !important;
+                border-right: 0 !important;
+                border-radius: 10px 0 0 10px !important;
+            }
+            #tab-notifications .dior-bs-search-group > #dior-emerg-search-input {
+                flex: 1 1 auto !important;
+                width: 1% !important;
+                min-width: 0 !important;
+                min-height: 40px !important;
+                height: 40px !important;
+                font-size: 14px !important;
+                border-radius: 0 10px 10px 0 !important;
+                border-left: 0 !important;
+            }
+
+            /* Notification Feed Items on Mobile */
+            #tab-notifications #dior-system-notif-list {
+                gap: 0 !important;
+            }
+            #tab-notifications .notification-item-row {
+                padding: 14px !important;
+                gap: 10px !important;
+                flex-wrap: wrap !important;
+                align-items: flex-start !important;
+                border-radius: 0 !important;
+            }
+            #tab-notifications .notification-item-row .type-icon-wrapper {
+                width: 38px !important;
+                height: 38px !important;
+                min-width: 38px !important;
+                border-radius: 10px !important;
+                font-size: 15px !important;
+            }
+            #tab-notifications .notification-item-row .notification-body {
+                flex: 1 1 calc(100% - 52px) !important;
+                min-width: 0 !important;
+                margin-right: 0 !important;
+            }
+            #tab-notifications .notification-item-row .notification-title {
+                font-size: 14px !important;
+                line-height: 1.35 !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+            }
+            #tab-notifications .notification-item-row .timestamp-tag {
+                font-size: 11px !important;
+            }
+            #tab-notifications .notification-item-row .notification-text {
+                font-size: 13px !important;
+                line-height: 1.48 !important;
+                margin-top: 4px !important;
+                margin-bottom: 8px !important;
+            }
+            #tab-notifications .notification-item-row .btn-inline-action {
+                min-height: 32px !important;
+                padding: 5px 12px !important;
+                font-size: 12px !important;
+            }
+            #tab-notifications .notification-item-row .notification-controls {
+                margin-left: auto !important;
+                padding-top: 2px !important;
+            }
+            #tab-notifications .notification-item-row .btn-icon-action {
+                width: 34px !important;
+                height: 34px !important;
+                min-width: 34px !important;
+                min-height: 34px !important;
+                padding: 0 !important;
+                border-radius: 8px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+        }
+        @media(max-width:380px) {
+            #tab-notifications { padding:8px!important; }
+            #tab-notifications .dior-notif-stats-row {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+            }
         }
 </style>
 
@@ -271,7 +465,7 @@ foreach ($patient_notif_rows as $row) {
                     <div class="filters-bar px-4 py-3 border-top"
                         style="padding: 14px 24px; background: #f8fafc; border-bottom: 1px solid #edf1f5;">
                         <div class="row align-items-center g-3">
-                            <div style="flex: 0 0 auto; display: flex; justify-content: space-between;">
+                            <div class="dior-notif-filter-bar-inner" style="flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;">
                                 <div class="segmented-nav">
                                     <button type="button" class="segmented-tab active btn"
                                         onclick="diorFilterSystemNotif(this, 'all')">
@@ -290,9 +484,10 @@ foreach ($patient_notif_rows as $row) {
                                     </button>
                                 </div>
                                 <div class="input-group input-group-sm dior-bs-search-group" style="width: 240px;">
+                                    <span class="input-group-text bg-white border-end-0 text-muted ps-2.5"><i class="fas fa-search"></i></span>
                                     <input type="text" id="dior-emerg-search-input"
-                                        class="form-control border-start-0 ps-0" placeholder="Search records..."
-                                        aria-label="Search box" onkeyup="diorFilterEmerg()">
+                                        class="form-control border-start-0 ps-1" placeholder="Search notifications..."
+                                        aria-label="Search notifications" oninput="diorSearchSystemNotifications()" onkeyup="diorSearchSystemNotifications()">
                                 </div>
 
                             </div>
@@ -478,7 +673,7 @@ foreach ($patient_notif_rows as $row) {
     }
 
     function diorSearchSystemNotifications() {
-        const input = document.getElementById('dior-sys-notif-search');
+        const input = document.getElementById('dior-sys-notif-search') || document.querySelector('#tab-notifications #dior-emerg-search-input');
         const val = input ? input.value.toLowerCase().trim() : '';
         const rows = document.querySelectorAll('#dior-system-notif-list .notification-item-row');
         rows.forEach(row => {

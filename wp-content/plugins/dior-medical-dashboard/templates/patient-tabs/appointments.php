@@ -1,9 +1,14 @@
 <section class="dior-tab-panel py-3 py-md-4 px-2 px-md-3 pb-5" id="tab-appointments">
     <style>
-    /* Keep appointment tab labels consistently bold and black. */
+    /* Keep appointment tab labels consistently bold and black when inactive, and crisp white when active. */
     #tab-appointments .dior-subtab-pill .dior-subtab-label {
         color: #000000 !important;
         font-weight: 600 !important;
+    }
+    #tab-appointments .dior-subtab-pill.active,
+    #tab-appointments .dior-subtab-pill.active .dior-subtab-label,
+    #tab-appointments .dior-subtab-pill.active i {
+        color: #FFFFFF !important;
     }
 
     /* Shared typography and spacing for Today, Upcoming and Past appointment tables. */
@@ -394,6 +399,135 @@
         #tab-appointments #dior-past-appointments-table thead th,
         #tab-appointments #dior-past-appointments-table tbody td {
             padding: 12px 10px !important;
+        }
+
+        /* Mobile Subtab Pill Bar: clean 2x2 grid without clipping icons or labels */
+        #tab-appointments .dior-subtab-nav-bar {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 8px !important;
+            padding: 6px !important;
+            margin-left: 8px !important;
+            margin-right: 8px !important;
+            width: calc(100% - 16px) !important;
+            overflow: visible !important;
+        }
+        #tab-appointments .dior-subtab-pill {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 42px !important;
+            padding: 8px 10px !important;
+            gap: 6px !important;
+            font-size: 11.5px !important;
+            line-height: 1.2 !important;
+            justify-content: flex-start !important;
+            text-align: left !important;
+            white-space: normal !important;
+            border-radius: 10px !important;
+        }
+        #tab-appointments .dior-subtab-pill i {
+            flex-shrink: 0 !important;
+            font-size: 12px !important;
+        }
+        #tab-appointments .dior-subtab-pill .dior-subtab-label {
+            min-width: 0 !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            line-height: 1.2 !important;
+        }
+
+        /* Mobile Booking Stepper Card: remove stray left border when stacked */
+        #tab-appointments #dior-booking-stepper-card {
+            padding: 12px 14px !important;
+            margin-bottom: 16px !important;
+            border-radius: 14px !important;
+        }
+        #tab-appointments #dior-stepper-steps-row > [class*="col-"] {
+            border-left: none !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        #tab-appointments #dior-stepper-steps-row > [class*="col-"] + [class*="col-"] {
+            border-top: 1px solid #edf2f7 !important;
+            margin-top: 6px !important;
+            padding-top: 6px !important;
+        }
+        #tab-appointments #dior-step-item-1,
+        #tab-appointments #dior-step-item-2,
+        #tab-appointments #dior-step-item-3 {
+            padding: 6px 8px !important;
+            gap: 10px !important;
+        }
+        #tab-appointments #dior-step-icon-1,
+        #tab-appointments #dior-step-icon-2,
+        #tab-appointments #dior-step-icon-3 {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 13px !important;
+        }
+
+        /* Mobile Step 2 Time Slots & Action Buttons */
+        #tab-appointments #dior-step2-slots-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 8px !important;
+        }
+        #tab-appointments #dior-step2-slots-grid .dior-step2-slot-btn {
+            width: 100% !important;
+            font-size: 12px !important;
+            padding: 8px 6px !important;
+            text-align: center !important;
+            justify-content: center !important;
+        }
+        #tab-appointments #dior-step2-docbooker-form > .d-flex.border-top,
+        #tab-appointments #dior-step-pane-3 .d-flex.justify-content-center {
+            flex-direction: column !important;
+            align-items: stretch !important;
+        }
+        #tab-appointments #dior-step2-docbooker-form > .d-flex.border-top > .btn,
+        #tab-appointments #dior-step-pane-3 .d-flex.justify-content-center > .btn {
+            width: 100% !important;
+            justify-content: center !important;
+        }
+
+        /* Keep input-group icon and search input on a single row on mobile */
+        #tab-appointments .input-group {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            width: 100% !important;
+        }
+        #tab-appointments .input-group > .input-group-text {
+            flex: 0 0 auto !important;
+            width: auto !important;
+            min-height: 38px !important;
+        }
+        #tab-appointments .input-group > .form-control {
+            flex: 1 1 auto !important;
+            width: 1% !important;
+            min-width: 0 !important;
+            min-height: 38px !important;
+            height: 38px !important;
+            font-size: 14px !important;
+        }
+
+        /* Center empty state rows inside mobile viewport without horizontal scroll */
+        #tab-appointments #dior-today-appointments-table,
+        #tab-appointments #dior-upcoming-appointments-table,
+        #tab-appointments #dior-past-appointments-table {
+            min-width: 640px;
+        }
+        #tab-appointments #dior-today-appointments-table:has(tr.dior-empty-state),
+        #tab-appointments #dior-upcoming-appointments-table:has(tr.dior-empty-state),
+        #tab-appointments #dior-past-appointments-table:has(tr.dior-empty-state) {
+            min-width: 100% !important;
+        }
+        #tab-appointments tr.dior-empty-state td {
+            white-space: normal !important;
+            text-align: center !important;
         }
     }
 
@@ -901,6 +1035,31 @@
         </div>
 
         <!-- 2. Today Appointments -->
+        <?php
+        $today_mock = [];
+        $today_ymd = current_time('Y-m-d');
+        foreach ((array) $appointments as $apt_row) {
+            $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
+            $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
+            $status = sanitize_text_field($apt_row['status'] ?? '');
+            if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true))
+                continue;
+            $today_mock[] = [
+                $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
+                $apt_row['provider_spec'] ?? '—',
+                $date_ymd ? wp_date('M j, Y', strtotime($date_ymd)) : '—',
+                $apt_row['time'] ?? ($apt_row['appt_time'] ?? '—'),
+                $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
+                $apt_row['phone'] ?? ($apt_row['contact'] ?? '—'),
+                $status ?: '—',
+                $apt_row['avatar'] ?? '',
+                $apt_row['id'] ?? ($apt_row['appt_uid'] ?? ''),
+                $apt_row['join_url'] ?? '',
+                $apt_row['status'] ?? '',
+                $apt_row['type'] ?? ($apt_row['visit_type'] ?? 'Video Visit')
+            ];
+        }
+        ?>
         <div class="dior-subtab-panel" id="dior-subtab-today" style="display: block;">
             <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white mb-5">
                 <!-- Header & Actions -->
@@ -908,7 +1067,7 @@
                     <div class="d-flex align-items-center gap-2">
                         <h5 class="fw-bold text-dark mb-0">Today's Appointments</h5>
                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold">
-                            <?php echo count($today_mock ?? []); ?> Total
+                            <?php echo count($today_mock); ?> Total
                         </span>
                     </div>
                     <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -954,31 +1113,6 @@
                             </tr>
                         </thead>
                         <tbody id="dior-today-appointments-tbody" class="border-top-0">
-                            <?php
-                            $today_mock = [];
-                            $today_ymd = current_time('Y-m-d');
-                            foreach ((array) $appointments as $apt_row) {
-                                $date_raw = $apt_row['date'] ?? ($apt_row['appt_date'] ?? '');
-                                $date_ymd = function_exists('dior_normalize_date') ? dior_normalize_date($date_raw) : $date_raw;
-                                $status = sanitize_text_field($apt_row['status'] ?? '');
-                                if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true))
-                                    continue;
-                                $today_mock[] = [
-                                    $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
-                                    $apt_row['provider_spec'] ?? '—',
-                                    $date_ymd ? wp_date('M j, Y', strtotime($date_ymd)) : '—',
-                                    $apt_row['time'] ?? ($apt_row['appt_time'] ?? '—'),
-                                    $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
-                                    $apt_row['phone'] ?? ($apt_row['contact'] ?? '—'),
-                                    $status ?: '—',
-                                    $apt_row['avatar'] ?? '',
-                                    $apt_row['id'] ?? ($apt_row['appt_uid'] ?? ''),
-                                    $apt_row['join_url'] ?? '',
-                                    $apt_row['status'] ?? '',
-                                    $apt_row['type'] ?? ($apt_row['visit_type'] ?? 'Video Visit')
-                                ];
-                            }
-                            ?>
                             <?php foreach ($today_mock as $tm): ?>
                             <tr>
                                 <td class="ps-3 py-3"><input type="checkbox" class="form-check-input"></td>
@@ -1348,7 +1482,7 @@
                                         <button type="button" class="action-icon-btn edit-btn btn" title="View Consultation Summary" onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('<?php echo esc_js($pm[9] ?? ''); ?>');">
                                             <i class="fas fa-file-medical text-secondary"></i>
                                         </button>
-                                        <button type="button" class="action-icon-btn edit-btn btn" title="Book Again" onclick="if(typeof diorSwitchSubtab==='function') diorSwitchSubtab('book');">
+                                        <button type="button" class="action-icon-btn edit-btn btn" title="Book Again" onclick="if(typeof diorSwitchApptSubTab==='function') diorSwitchApptSubTab('book');">
                                             <i class="fas fa-calendar-plus text-primary"></i>
                                         </button>
                                     </div>
