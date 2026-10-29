@@ -1119,7 +1119,9 @@
                                     $apt_row['notes'] ?? '—',
                                     $apt_row['avatar'] ?? '',
                                     $apt_row['id'] ?? ($apt_row['appt_uid'] ?? ''),
-                                    $date_raw
+                                    $date_raw,
+                                    $apt_row['join_url'] ?? '',
+                                    $apt_row['type'] ?? ($apt_row['visit_type'] ?? 'Video Visit')
                                 ];
                             }
                             ?>
@@ -1161,10 +1163,28 @@
                                 <td><span class="text-secondary small text-truncate d-inline-block" style="max-width: 250px;"><?php echo esc_html($um[5]); ?></span></td>
                                 <td class="text-end pe-3">
                                     <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
-                                        <button type="button" class="action-icon-btn edit-btn btn"
-                                            title="Join Video Consultation" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('consultation');">
-                                            <i class="fas fa-video text-primary"></i>
-                                        </button>
+                                        <?php
+                                        $patient_join_url = trim((string) ($um[9] ?? ''));
+                                        $patient_appt_status = strtolower(trim((string) ($um[4] ?? '')));
+                                        $patient_visit_type = strtolower(trim((string) ($um[10] ?? 'video visit')));
+                                        $patient_can_join_status = in_array($patient_appt_status, ['confirmed', 'scheduled', 'success', 'in progress', 'in-queue'], true);
+                                        $patient_is_video_visit = (strpos($patient_visit_type, 'video') !== false || strpos($patient_visit_type, 'tele') !== false || strpos($patient_visit_type, 'zoom') !== false || strpos($patient_visit_type, 'virtual') !== false);
+                                        $patient_has_real_join_url = $patient_join_url !== ''
+                                            && wp_http_validate_url($patient_join_url)
+                                            && rtrim($patient_join_url, '/') !== 'https://zoom.us/join';
+                                        ?>
+                                        <?php if ($patient_can_join_status && $patient_is_video_visit && $patient_has_real_join_url): ?>
+                                            <a class="action-icon-btn edit-btn btn" href="<?php echo esc_url($patient_join_url); ?>"
+                                                target="_blank" rel="noopener noreferrer" title="Join Video Consultation">
+                                                <i class="fas fa-video text-success"></i>
+                                            </a>
+                                        <?php else: ?>
+                                            <button type="button" class="action-icon-btn edit-btn btn" disabled
+                                                title="<?php echo esc_attr(!$patient_can_join_status ? 'Available after the appointment is confirmed' : 'Waiting for the doctor to start the meeting'); ?>"
+                                                aria-label="Consultation link not ready">
+                                                <i class="fas fa-video text-secondary"></i>
+                                            </button>
+                                        <?php endif; ?>
                                         <button type="button" class="action-icon-btn edit-btn btn"
                                             title="Reschedule Appointment" onclick="if(typeof diorOpenRescheduleModal==='function') diorOpenRescheduleModal('<?php echo esc_js($um[7] ?? ''); ?>', '<?php echo esc_js($um[8] ?? ''); ?>');">
                                             <i class="fas fa-calendar-days text-info"></i>
