@@ -5233,7 +5233,9 @@ class Dior_Medical_Auth
                   </div>';
         } else {
             foreach (array_slice($notifications, 0, 5) as $n) {
-                $target_tab = !empty($n['action_url']) ? str_replace('#tab=', '', $n['action_url']) : 'notifications';
+                $notification_action = trim((string) ($n['action_url'] ?? ''));
+                $notification_is_join_url = $notification_action !== '' && wp_http_validate_url($notification_action) && preg_match('~^https://(?:[a-z0-9-]+\\.)?zoom\\.us/~i', $notification_action);
+                $target_tab = $notification_is_join_url ? 'notifications' : (!empty($n['action_url']) ? str_replace('#tab=', '', $n['action_url']) : 'notifications');
                 ?>
 <div class="dior-notif-item <?php echo empty($n['is_read']) ? 'unread' : ''; ?>"
     data-notif-id="<?php echo esc_attr($n['id']); ?>" data-switch-tab="<?php echo esc_attr($target_tab); ?>"
@@ -5242,6 +5244,9 @@ class Dior_Medical_Auth
     <div class="notif-body">
         <strong><?php echo esc_html($n['title']); ?></strong>
         <p><?php echo esc_html(mb_substr($n['message'], 0, 45) . (mb_strlen($n['message']) > 45 ? '...' : '')); ?></p>
+        <?php if ($notification_is_join_url): ?>
+        <a class="btn btn-sm btn-success mt-1" href="<?php echo esc_url($notification_action); ?>" target="_blank" rel="noopener noreferrer">Join Consultation</a>
+        <?php endif; ?>
         <span class="notif-time"><?php echo esc_html(dior_format_notification_time($n)); ?></span>
     </div>
 </div>
@@ -5266,6 +5271,8 @@ class Dior_Medical_Auth
                 $n_type_bg = $n_status === 'Unread' ? 'FEF3C7' : 'DBEAFE';
                 $n_status_color = $n_status === 'Unread' ? 'EF4444' : '10B981';
                 $n_status_bg = $n_status === 'Unread' ? 'FEE2E2' : 'D1FAE5';
+                $n_action_url = trim((string) ($n['action_url'] ?? ''));
+                $n_is_join_url = $n_action_url !== '' && wp_http_validate_url($n_action_url) && preg_match('~^https://(?:[a-z0-9-]+\\.)?zoom\\.us/~i', $n_action_url);
                 ?>
 <tr data-notif-id="<?php echo esc_attr($n['id'] ?? ''); ?>">
     <td><input type="checkbox" class="dior-ic-52ff4d551f dior-notif-row-cb" onchange="diorUpdateNotifSelectionCount()">
@@ -5297,6 +5304,9 @@ class Dior_Medical_Auth
     </td>
     <td>
         <div class="cell-actions">
+            <?php if ($n_is_join_url): ?>
+            <a class="action-icon-btn edit-btn" href="<?php echo esc_url($n_action_url); ?>" target="_blank" rel="noopener noreferrer" title="Join Consultation" aria-label="Join Consultation"><i class="fas fa-video text-success"></i></a>
+            <?php endif; ?>
             <button type="button" class="action-icon-btn view-btn dior-view-notif-btn" title="View Details"
                 data-notif-id="<?php echo esc_attr($n['id'] ?? ''); ?>"
                 data-notif-title="<?php echo esc_attr($n_title); ?>"
