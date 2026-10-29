@@ -1408,7 +1408,7 @@
                                         $today_visit_type = strtolower(trim((string) ($tm[11] ?? 'video visit')));
                                         $today_can_join = in_array($today_status, ['confirmed', 'scheduled', 'success', 'in progress', 'in-queue'], true);
                                         $today_is_video = strpos($today_visit_type, 'video') !== false || strpos($today_visit_type, 'tele') !== false || strpos($today_visit_type, 'zoom') !== false || strpos($today_visit_type, 'virtual') !== false;
-                                        $today_has_join_url = $today_join_url !== '' && wp_http_validate_url($today_join_url) && rtrim($today_join_url, '/') !== 'https://zoom.us/join';
+                                        $today_has_join_url = $today_join_url !== '' && wp_http_validate_url($today_join_url);
                                         ?>
                                         <?php if ($today_can_join && $today_is_video && $today_has_join_url): ?>
                                             <a class="action-icon-btn edit-btn btn dior-patient-join-consultation" href="<?php echo esc_url($today_join_url); ?>"
@@ -1440,112 +1440,148 @@
                 </div>
 
                 <!-- Dedicated mobile UI: rendered from the same live appointment records as the desktop table. -->
-                <div class="d-md-none dior-today-mobile-view" id="dior-today-mobile-view">
-                    <div class="dior-today-mobile-toolbar mb-3">
+                <!-- Mobile Cards View (< 768px) — Improved Bootstrap 5 UI -->
+                <div class="d-md-none" id="dior-today-mobile-view">
+                    <!-- Mobile Toolbar -->
+                    <div class="d-flex flex-column gap-2 mb-3">
                         <label class="visually-hidden" for="dior-today-mobile-search">Search today's appointments</label>
-                        <div class="input-group dior-today-mobile-search">
-                            <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
-                            <input type="search" id="dior-today-mobile-search" class="form-control"
+                        <div class="input-group rounded-3 overflow-hidden border shadow-sm">
+                            <span class="input-group-text bg-white border-0 text-muted"><i class="fas fa-search fa-sm" aria-hidden="true"></i></span>
+                            <input type="search" id="dior-today-mobile-search" class="form-control bg-white border-0 shadow-none"
                                 placeholder="Search appointments..." oninput="diorFilterTodayMobileAppointments()"
                                 autocomplete="off">
                         </div>
-                        <button type="button" class="btn btn-primary dior-today-mobile-book"
+                        <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 shadow-sm w-100"
                             onclick="diorSwitchApptSubTab('book')">
-                            <i class="fas fa-plus me-2" aria-hidden="true"></i>Book appointment
+                            <i class="fas fa-plus me-2" aria-hidden="true"></i>Book Appointment
                         </button>
                     </div>
 
-                    <div class="dior-today-mobile-list" id="dior-today-mobile-list" aria-live="polite">
+                    <!-- Mobile Appointment Cards -->
+                    <div id="dior-today-mobile-list" aria-live="polite">
                         <?php foreach ($today_mock as $tm):
-                            $mobile_status = strtolower(trim((string) ($tm[6] ?? '')));
-                            $mobile_status_class = 'is-scheduled';
-                            if (in_array($mobile_status, ['confirmed', 'success', 'in progress', 'in-queue'], true)) {
-                                $mobile_status_class = 'is-confirmed';
-                            } elseif (in_array($mobile_status, ['pending', 'requested'], true)) {
-                                $mobile_status_class = 'is-pending';
-                            } elseif (in_array($mobile_status, ['cancelled', 'canceled'], true)) {
-                                $mobile_status_class = 'is-cancelled';
-                            } elseif (in_array($mobile_status, ['completed', 'done', 'past'], true)) {
-                                $mobile_status_class = 'is-completed';
-                            }
-                            $mobile_join_url = trim((string) ($tm[9] ?? ''));
-                            $mobile_can_join = in_array($mobile_status, ['confirmed', 'scheduled', 'success', 'in progress', 'in-queue'], true);
+                            $mobile_status    = strtolower(trim((string) ($tm[6] ?? '')));
+                            $mobile_join_url  = trim((string) ($tm[9] ?? ''));
+                            $mobile_can_join  = in_array($mobile_status, ['confirmed', 'scheduled', 'success', 'in progress', 'in-queue'], true);
                             $mobile_visit_type = strtolower(trim((string) ($tm[11] ?? 'video visit')));
-                            $mobile_is_video = strpos($mobile_visit_type, 'video') !== false || strpos($mobile_visit_type, 'tele') !== false || strpos($mobile_visit_type, 'zoom') !== false || strpos($mobile_visit_type, 'virtual') !== false;
-                            $mobile_has_join_url = $mobile_join_url !== '' && wp_http_validate_url($mobile_join_url) && rtrim($mobile_join_url, '/') !== 'https://zoom.us/join';
-                            $mobile_search_text = implode(' ', array_map('strval', [$tm[0] ?? '', $tm[1] ?? '', $tm[2] ?? '', $tm[3] ?? '', $tm[4] ?? '', $tm[5] ?? '', $tm[6] ?? '']));
+                            $mobile_is_video  = strpos($mobile_visit_type, 'video') !== false || strpos($mobile_visit_type, 'tele') !== false || strpos($mobile_visit_type, 'zoom') !== false || strpos($mobile_visit_type, 'virtual') !== false;
+                            $mobile_has_join_url = $mobile_join_url !== '' && wp_http_validate_url($mobile_join_url);
+                            $mobile_search_text  = implode(' ', array_map('strval', [$tm[0] ?? '', $tm[1] ?? '', $tm[2] ?? '', $tm[3] ?? '', $tm[4] ?? '', $tm[5] ?? '', $tm[6] ?? '']));
+
+                            // Status badge classes
+                            $mb_badge = 'badge bg-success-subtle text-success border border-success-subtle';
+                            if (in_array($mobile_status, ['pending', 'requested'], true))
+                                $mb_badge = 'badge bg-warning-subtle text-warning border border-warning-subtle';
+                            elseif (in_array($mobile_status, ['cancelled', 'canceled'], true))
+                                $mb_badge = 'badge bg-danger-subtle text-danger border border-danger-subtle';
+                            elseif ($mobile_status === 'in progress')
+                                $mb_badge = 'badge bg-info-subtle text-info border border-info-subtle';
+                            elseif (in_array($mobile_status, ['completed', 'done'], true))
+                                $mb_badge = 'badge bg-primary-subtle text-primary border border-primary-subtle';
                         ?>
-                            <article class="card dior-today-mobile-card mb-3"
-                                data-search="<?php echo esc_attr(strtolower($mobile_search_text)); ?>"
-                                data-appointment-id="<?php echo esc_attr($tm[8] ?? ''); ?>">
-                                <div class="card-body">
-                                    <div class="dior-today-mobile-card-head">
-                                        <div class="dior-today-mobile-doctor">
-                                            <span class="dior-today-mobile-avatar" aria-hidden="true"><i class="fas fa-user-doctor"></i></span>
-                                            <div class="min-w-0">
-                                                <h6 class="mb-1"><?php echo esc_html($tm[0] ?: 'Provider not recorded'); ?></h6>
-                                                <p class="mb-0"><?php echo esc_html($tm[1] ?: 'Specialization not recorded'); ?></p>
-                                            </div>
-                                        </div>
-                                        <span class="dior-today-mobile-status <?php echo esc_attr($mobile_status_class); ?>">
-                                            <?php echo esc_html($tm[6] ?: 'Status unavailable'); ?>
-                                        </span>
-                                    </div>
+                        <article class="card border-0 shadow-sm rounded-4 mb-3"
+                            data-search="<?php echo esc_attr(strtolower($mobile_search_text)); ?>"
+                            data-appointment-id="<?php echo esc_attr($tm[8] ?? ''); ?>">
+                            <div class="card-body p-3">
 
-                                    <div class="dior-today-mobile-details">
-                                        <div class="dior-today-mobile-detail">
-                                            <span class="dior-today-mobile-detail-label"><i class="far fa-calendar me-1" aria-hidden="true"></i>Date</span>
-                                            <span><?php echo esc_html($tm[2] ?: '—'); ?></span>
-                                        </div>
-                                        <div class="dior-today-mobile-detail">
-                                            <span class="dior-today-mobile-detail-label"><i class="far fa-clock me-1" aria-hidden="true"></i>Time</span>
-                                            <span><?php echo esc_html($tm[3] ?: '—'); ?></span>
-                                        </div>
-                                        <div class="dior-today-mobile-detail">
-                                            <span class="dior-today-mobile-detail-label"><i class="fas fa-stethoscope me-1" aria-hidden="true"></i>Treatment</span>
-                                            <span><?php echo esc_html($tm[4] ?: '—'); ?></span>
-                                        </div>
-                                        <div class="dior-today-mobile-detail">
-                                            <span class="dior-today-mobile-detail-label"><i class="fas fa-phone me-1" aria-hidden="true"></i>Contact</span>
-                                            <span><?php echo esc_html($tm[5] ?: '—'); ?></span>
+                                <!-- Doctor Info Row -->
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="rounded-circle bg-primary-subtle d-flex align-items-center justify-content-center flex-shrink-0" style="width:46px;height:46px;">
+                                        <i class="fas fa-user-doctor text-primary fs-5"></i>
+                                    </div>
+                                    <div class="flex-grow-1 min-w-0">
+                                        <div class="fw-bold text-dark small text-truncate"><?php echo esc_html($tm[0] ?: 'Provider not recorded'); ?></div>
+                                        <div class="text-secondary" style="font-size:11px;"><?php echo esc_html($tm[1] ?: 'General Practice'); ?></div>
+                                    </div>
+                                    <span class="<?php echo $mb_badge; ?> rounded-pill px-2 py-1 flex-shrink-0" style="font-size:10px;font-weight:700;letter-spacing:.02em;">
+                                        <?php echo esc_html(ucfirst($tm[6] ?: '—')); ?>
+                                    </span>
+                                </div>
+
+                                <!-- Details Grid -->
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <div class="bg-light rounded-3 p-2">
+                                            <div class="text-secondary mb-1" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;"><i class="far fa-calendar me-1 text-primary"></i>Date</div>
+                                            <div class="fw-semibold text-dark" style="font-size:12px;"><?php echo esc_html($tm[2] ?: '—'); ?></div>
                                         </div>
                                     </div>
-
-                                    <div class="dior-today-mobile-actions">
-                                        <?php if ($mobile_can_join && $mobile_is_video && $mobile_has_join_url): ?>
-                                            <a class="btn btn-outline-success"
-                                                href="<?php echo esc_url($mobile_join_url); ?>" target="_blank"
-                                                rel="noopener noreferrer" aria-label="Join consultation with <?php echo esc_attr($tm[0] ?? 'provider'); ?>">
-                                                <i class="fas fa-video me-1" aria-hidden="true"></i>Join
-                                            </a>
-                                        <?php else: ?>
-                                            <button type="button" class="btn btn-outline-secondary" disabled
-                                                aria-label="Consultation link not available">
-                                                <i class="fas fa-video me-1" aria-hidden="true"></i>Join
-                                            </button>
-                                        <?php endif; ?>
-                                        <button type="button" class="btn btn-primary"
-                                            onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('<?php echo esc_js($tm[8] ?? ''); ?>');">
-                                            <i class="fas fa-eye me-1" aria-hidden="true"></i>View details
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger"
-                                            onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('<?php echo esc_js($tm[8] ?? ''); ?>', this);">
-                                            <i class="fas fa-times me-1" aria-hidden="true"></i>Cancel
-                                        </button>
+                                    <div class="col-6">
+                                        <div class="bg-light rounded-3 p-2">
+                                            <div class="text-secondary mb-1" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;"><i class="far fa-clock me-1 text-primary"></i>Time</div>
+                                            <div class="fw-semibold text-dark" style="font-size:12px;"><?php echo esc_html($tm[3] ?: '—'); ?></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-7">
+                                        <div class="bg-light rounded-3 p-2">
+                                            <div class="text-secondary mb-1" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;"><i class="fas fa-stethoscope me-1 text-primary"></i>Treatment</div>
+                                            <div class="fw-semibold text-dark" style="font-size:12px;"><?php echo esc_html($tm[4] ?: '—'); ?></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <div class="bg-light rounded-3 p-2">
+                                            <div class="text-secondary mb-1" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;"><i class="fas fa-phone me-1 text-primary"></i>Contact</div>
+                                            <div class="fw-semibold text-dark" style="font-size:12px;"><?php echo esc_html($tm[5] ?: '—'); ?></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </article>
-                        <?php endforeach; ?>
-                        <?php if (empty($today_mock)): ?>
-                            <div class="dior-today-mobile-empty text-center p-4">
-                                <span class="dior-today-mobile-empty-icon"><i class="far fa-calendar-check" aria-hidden="true"></i></span>
-                                <h6 class="mt-3 mb-2">No appointments today</h6>
-                                <p class="text-secondary small mb-3">Your appointments scheduled for today will appear here.</p>
-                                <button type="button" class="btn btn-primary" onclick="diorSwitchApptSubTab('book')">
-                                    <i class="fas fa-plus me-2" aria-hidden="true"></i>Book an appointment
-                                </button>
+
+                                <!-- Action Buttons -->
+                                <div class="d-flex gap-2">
+                                    <?php if ($mobile_can_join && $mobile_is_video && $mobile_has_join_url): ?>
+                                        <a class="btn btn-success rounded-3 fw-semibold flex-shrink-0 d-inline-flex align-items-center gap-1 shadow-sm"
+                                            href="<?php echo esc_url($mobile_join_url); ?>" target="_blank"
+                                            rel="noopener noreferrer"
+                                            style="font-size:13px;padding:8px 14px;"
+                                            aria-label="Join video consultation">
+                                            <i class="fas fa-video" aria-hidden="true"></i>
+                                            <span>Join</span>
+                                        </a>
+                                    <?php else: ?>
+                                        <button type="button"
+                                            class="btn btn-outline-secondary rounded-3 fw-semibold flex-shrink-0 d-inline-flex align-items-center gap-1"
+                                            style="font-size:13px;padding:8px 14px;"
+                                            disabled
+                                            title="<?php echo esc_attr($mobile_can_join ? 'Waiting for doctor to start the meeting' : 'Available after confirmation'); ?>"
+                                            aria-label="Video call not ready">
+                                            <i class="fas fa-video" aria-hidden="true"></i>
+                                            <span>Join</span>
+                                        </button>
+                                    <?php endif; ?>
+                                    <button type="button"
+                                        class="btn btn-primary rounded-3 fw-semibold flex-grow-1 d-inline-flex align-items-center justify-content-center gap-1 shadow-sm"
+                                        style="font-size:13px;padding:8px 14px;"
+                                        onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('<?php echo esc_js($tm[8] ?? ''); ?>');">
+                                        <i class="fas fa-circle-info" aria-hidden="true"></i>
+                                        <span>View details</span>
+                                    </button>
+                                    <button type="button"
+                                        class="btn btn-outline-danger rounded-3 fw-semibold flex-shrink-0 d-inline-flex align-items-center gap-1"
+                                        style="font-size:13px;padding:8px 12px;"
+                                        onclick="if(typeof diorCancelPatientAppointment==='function') diorCancelPatientAppointment('<?php echo esc_js($tm[8] ?? ''); ?>', this);"
+                                        title="Cancel Appointment">
+                                        <i class="fas fa-xmark" aria-hidden="true"></i>
+                                        <span class="d-none">Cancel</span>
+                                    </button>
+                                </div>
+
                             </div>
+                        </article>
+                        <?php endforeach; ?>
+
+                        <?php if (empty($today_mock)): ?>
+                        <div class="text-center p-4">
+                            <div class="rounded-circle bg-primary-subtle d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;">
+                                <i class="far fa-calendar-check text-primary fs-3"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-1">No appointments today</h6>
+                            <p class="text-secondary small mb-3">Your today's appointments will appear here.</p>
+                            <button type="button" class="btn btn-primary rounded-3 fw-semibold px-4 shadow-sm" onclick="diorSwitchApptSubTab('book')">
+                                <i class="fas fa-plus me-2" aria-hidden="true"></i>Book an appointment
+                            </button>
+                        </div>
                         <?php endif; ?>
+
                         <p id="dior-today-mobile-no-results" class="small text-secondary text-center py-3" hidden>No appointments match your search.</p>
                     </div>
                 </div>
