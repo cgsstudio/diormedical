@@ -120,6 +120,42 @@ if (empty($appointments)) {
     }
 }
 
+// Repair legacy appointment rows that have a database ID but no public appointment UID.
+// Action handlers consistently identify appointments by appt_uid, so backfill a stable UID
+// once and use it for all buttons instead of sending an empty ID.
+if (!empty($appointments) && is_array($appointments)) {
+    foreach ($appointments as $index => $appointment_row) {
+        if (!empty($appointment_row['appt_uid'])) {
+            continue;
+        }
+        $legacy_id = isset($appointment_row['id']) ? absint($appointment_row['id']) : 0;
+        if (!$legacy_id) {
+            continue;
+        }
+
+        $generated_uid = 'APT-' . strtoupper(wp_generate_password(8, false, false));
+        $updated_uid = $wpdb->update(
+            $wpdb->prefix . 'dior_appointments',
+            ['appt_uid' => $generated_uid, 'updated_at' => current_time('mysql')],
+            ['id' => $legacy_id, 'appt_uid' => '']
+        );
+
+        // Re-read the saved value if another request updated the same row concurrently.
+        if ($updated_uid === false || $updated_uid === 0) {
+            $saved_uid = $wpdb->get_var($wpdb->prepare(
+                "SELECT appt_uid FROM {$wpdb->prefix}dior_appointments WHERE id = %d",
+                $legacy_id
+            ));
+            if (!empty($saved_uid)) {
+                $generated_uid = $saved_uid;
+            } else {
+                continue;
+            }
+        }
+        $appointments[$index]['appt_uid'] = $generated_uid;
+    }
+}
+
 // Compute KPI Stats dynamically
 $total_appts = count($appointments);
 $upcoming_appts = 0;
