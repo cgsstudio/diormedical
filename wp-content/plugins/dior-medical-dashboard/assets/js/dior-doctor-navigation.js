@@ -119,12 +119,13 @@
         }
 
         // Update nav buttons
-        var buttons = document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn');
+        var sidebar = app ? app.querySelector('#dior-doc-sidebar') : document.getElementById('dior-doc-sidebar');
+        var buttons = sidebar ? sidebar.querySelectorAll('.dior-nav-btn') : [];
         buttons.forEach(function (b) {
             b.classList.remove('active');
         });
 
-        var activeBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + normalizedId + '"]');
+        var activeBtn = sidebar ? sidebar.querySelector('.dior-nav-btn[data-tab="' + normalizedId + '"]') : null;
         if (activeBtn) {
             activeBtn.classList.add('active');
 
@@ -161,7 +162,7 @@
         }
 
         // Update tab panels
-        var panels = document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
+        var panels = contentRoot ? contentRoot.querySelectorAll(':scope > .dior-tab-panel') : [];
         panels.forEach(function (panel) {
             if (panel === activePanel) {
                 panel.classList.add('active');
@@ -212,24 +213,23 @@
         // Capture-phase event delegation for rock-solid click response
         app.addEventListener('click', function (event) {
             // Check if clicking a tab switch button
-            var tabBtn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
+            var tabBtn = event.target.closest('#dior-doctor-app #dior-doc-sidebar .dior-nav-btn[data-tab]');
             if (tabBtn) {
                 var tab = tabBtn.getAttribute('data-tab');
                 if (tab) {
+                    // Do not stop propagation here: existing tab handlers may load dynamic data.
                     event.preventDefault();
-                    event.stopPropagation();
                     window.diorDocSwitchTab(tab, true);
                     return;
                 }
             }
 
             // Check if clicking a parent submenu toggle button
-            var parentMenuBtn = event.target.closest('#dior-doc-sidebar .dior-nav-item.has-submenu > .dior-nav-btn');
+            var parentMenuBtn = event.target.closest('#dior-doctor-app #dior-doc-sidebar .dior-nav-item.has-submenu > .dior-nav-btn');
             if (parentMenuBtn && !parentMenuBtn.getAttribute('data-tab')) {
                 var parentItem = parentMenuBtn.closest('.dior-nav-item.has-submenu');
                 if (parentItem && parentItem.id) {
                     event.preventDefault();
-                    event.stopPropagation();
                     window.diorToggleSubmenu(event, parentItem.id);
                     return;
                 }
