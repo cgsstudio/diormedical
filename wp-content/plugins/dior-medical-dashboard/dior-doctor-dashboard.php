@@ -836,8 +836,21 @@ class Dior_Doctor_Dashboard
 
         $user_id = get_current_user_id();
         $is_admin = current_user_can("administrator") || current_user_can("manage_options");
-        if (!$is_admin && (int) ($appt["doctor_id"] ?? 0) !== $user_id) {
-            wp_send_json_error(["message" => "You are not allowed to start this consultation."], 403);
+        $appointment_doctor_id = (int) ($appt["doctor_id"] ?? 0);
+
+        // Appointment records can store either a WordPress doctor user ID or a
+        // linked doctor-post ID. Resolve both forms before enforcing ownership.
+        $accessible_doctor_ids = class_exists("Dior_Doctor_Resolver")
+            ? array_map("intval", (array) Dior_Doctor_Resolver::get_accessible_doctor_ids($user_id))
+            : [$user_id];
+        $resolved_appointment_doctor_id = class_exists("Dior_Doctor_Resolver") && $appointment_doctor_id
+            ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($appointment_doctor_id)
+            : $appointment_doctor_id;
+        $doctor_owns_appointment = in_array($appointment_doctor_id, $accessible_doctor_ids, true)
+            || $resolved_appointment_doctor_id === $user_id;
+
+        if (!$is_admin && (!$doctor_owns_appointment || !Dior_Auth_Service::is_doctor($user_id))) {
+            wp_send_json_error(["message" => "You are not allowed to start this consultation. Please sign in with the doctor account assigned to this appointment."], 403);
         }
 
         $status = strtolower(trim((string) ($appt["status"] ?? "")));
