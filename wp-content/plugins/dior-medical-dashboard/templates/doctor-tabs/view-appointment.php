@@ -94,27 +94,63 @@ if ($_va_is_admin) {
     ), ARRAY_A);
 }
 
-// Fallback: build from usermeta if table is empty
+// Fallback: build from usermeta if table is empty, and migrate entries into DB so appt_uid is always set.
 if (empty($appointments)) {
     $patients = get_users(['role__in' => ['patient', 'subscriber', 'customer'], 'number' => 50]);
     $appointments = [];
+    $_va_appt_table = $wpdb->prefix . 'dior_appointments';
     foreach ($patients as $u) {
         $raw = get_user_meta($u->ID, 'dior_appointments', true);
         $list = is_array($raw) ? $raw : (is_string($raw) ? maybe_unserialize($raw) : []);
         if (!is_array($list)) continue;
         foreach ($list as $a) {
+            // Build a stable UID from usermeta entry: migrate into DB if not yet there.
+            $_meta_uid = !empty($a['id']) ? (string)$a['id'] : (!empty($a['appt_uid']) ? $a['appt_uid'] : '');
+            $_db_uid   = '';
+            if (!empty($_meta_uid)) {
+                $_db_uid = $wpdb->get_var($wpdb->prepare(
+                    "SELECT appt_uid FROM {$_va_appt_table} WHERE appt_uid = %s AND is_deleted = 0 LIMIT 1",
+                    $_meta_uid
+                ));
+            }
+            if (empty($_db_uid)) {
+                // Insert into DB so actions (confirm/cancel) can find the row by appt_uid.
+                $_new_uid  = 'APT-' . strtoupper(wp_generate_password(8, false, false));
+                $_date_val = !empty($a['date']) ? $a['date'] : (!empty($a['appt_date']) ? $a['appt_date'] : current_time('Y-m-d'));
+                $_time_val = !empty($a['time']) ? $a['time'] : (!empty($a['appt_time']) ? $a['appt_time'] : '10:00 AM');
+                $_status_val = !empty($a['status']) ? $a['status'] : 'Pending';
+                $wpdb->insert($_va_appt_table, [
+                    'appt_uid'       => $_new_uid,
+                    'patient_id'     => $u->ID,
+                    'doctor_id'      => get_current_user_id(),
+                    'condition_name' => !empty($a['condition']) ? $a['condition'] : 'General Consultation',
+                    'visit_type'     => !empty($a['type']) ? $a['type'] : 'Video Visit (HD)',
+                    'status'         => in_array($_status_val, ['Pending','Confirmed','In Progress','Completed','Cancelled','No Show'], true) ? $_status_val : 'Pending',
+                    'appt_date'      => $_date_val,
+                    'appt_time'      => $_time_val,
+                    'join_url'       => !empty($a['join_url']) ? $a['join_url'] : '',
+                    'payment_status' => !empty($a['payment_status']) ? $a['payment_status'] : 'Paid',
+                    'notes'          => !empty($a['notes']) ? $a['notes'] : '',
+                    'is_deleted'     => 0,
+                    'created_at'     => current_time('mysql'),
+                    'updated_at'     => current_time('mysql'),
+                ]);
+                $_db_uid = $_new_uid;
+            }
+            $a['appt_uid'] = $_db_uid;
             $appointments[] = array_merge($a, [
-                'first_name' => $u->first_name ?: $u->display_name,
-                'last_name' => $u->last_name,
-                'phone' => get_user_meta($u->ID, 'phone', true),
-                'gender' => get_user_meta($u->ID, 'gender', true),
-                'avatar_url' => get_user_meta($u->ID, 'dior_profile_image', true),
-                'patient_uid' => get_user_meta($u->ID, 'patient_id', true) ?: 'DM-' . (10000 + $u->ID),
-                'patient_user_id' => $u->ID,
-                'patient_id' => $u->ID,
-                'doctor_id' => 35,
-                'doctor_name' => 'Dr. Marcus Sterling',
-                'doctor_email' => 'marcus.sterling@diormedical.com'
+                'appt_uid'       => $_db_uid,
+                'first_name'     => $u->first_name ?: $u->display_name,
+                'last_name'      => $u->last_name,
+                'phone'          => get_user_meta($u->ID, 'phone', true),
+                'gender'         => get_user_meta($u->ID, 'gender', true),
+                'avatar_url'     => get_user_meta($u->ID, 'dior_profile_image', true),
+                'patient_uid'    => get_user_meta($u->ID, 'patient_id', true) ?: 'DM-' . (10000 + $u->ID),
+                'patient_user_id'=> $u->ID,
+                'patient_id'     => $u->ID,
+                'doctor_id'      => get_current_user_id(),
+                'doctor_name'    => 'Dr. Evelyn Vance, MD',
+                'doctor_email'   => 'doctor@gmail.com',
             ]);
         }
     }
