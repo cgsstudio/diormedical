@@ -801,31 +801,76 @@ class Dior_Notification_Service
             );
         }
 
-        // 2. Patient Email Reminder
+        // 2. Patient Email Reminder (dedicated dynamic branded template)
         if ($p_send_email && $patient && $patient->user_email) {
-            $p_content = '
-            <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
-            <p>This is a friendly reminder for your upcoming telehealth consultation with <strong>' . esc_html($dname) . '</strong>.</p>
-            <div style="background-color: #FEF3C7; border-left: 4px solid #D97706; border-radius: 4px; padding: 16px 20px; margin: 20px 0; color: #92400E;">
-                <p style="margin: 0 0 6px 0; font-size: 15px; font-weight: 700;">Scheduled Consultation:</p>
-                <p style="margin: 0; font-size: 16px; font-weight: 700; color: #78350F;">' . esc_html($date . ' at ' . $time) . '</p>
-                <p style="margin: 6px 0 0 0; font-size: 13px;">Reason: ' . esc_html($cond) . '</p>
-            </div>
-            <p><strong>Preparation Checklist:</strong></p>
-            <ul style="padding-left: 20px; margin: 10px 0; color: #475569;">
-                <li>Ensure you are in a quiet, well-lit private space</li>
-                <li>Verify your internet, camera, and microphone before the visit</li>
-                <li>Have a list of your current medications and symptoms ready</li>
-            </ul>
-            <p>Click below to join the video room when your consultation time arrives:</p>';
+            $raw_date = !empty($appt['appt_date']) ? (string) $appt['appt_date'] : (string) $date;
+            $raw_time = !empty($appt['appt_time']) ? (string) $appt['appt_time'] : (string) $time;
+            $date_timestamp = $raw_date !== '' ? strtotime($raw_date) : false;
 
-            $p_html = self::render_email_template(
-                'Upcoming Consultation Reminder',
-                'Reminder: Your appointment is on ' . $date . ' at ' . $time,
-                $p_content,
-                ['label' => 'Join Video Room', 'url' => $join_url]
-            );
-            self::send_email_safe($patient->user_email, 'Appointment Reminder: ' . $date . ' at ' . $time . ' with ' . $dname, $p_html);
+            $appointment_date = ($date_timestamp !== false)
+                ? wp_date(get_option('date_format') ?: 'F j, Y', $date_timestamp)
+                : $raw_date;
+            $time_timestamp = ($raw_date !== '' && $raw_time !== '')
+                ? strtotime($raw_date . ' ' . $raw_time)
+                : false;
+            $appointment_time = ($time_timestamp !== false)
+                ? wp_date(get_option('time_format') ?: 'g:i a', $time_timestamp)
+                : $raw_time;
+
+            $doctor_specialty = !empty($appt['provider_spec'])
+                ? sanitize_text_field($appt['provider_spec'])
+                : (!empty($appt['doctor_specialty'])
+                    ? sanitize_text_field($appt['doctor_specialty'])
+                    : (!empty($appt['specialty']) ? sanitize_text_field($appt['specialty']) : ''));
+
+            $appointment_timezone = wp_timezone_string();
+            $appointment_type = !empty($appt['visit_type'])
+                ? sanitize_text_field($appt['visit_type'])
+                : (!empty($appt['type']) ? sanitize_text_field($appt['type']) : 'Telehealth Consultation');
+            $appointment_reference = !empty($appt['appt_uid'])
+                ? sanitize_text_field($appt['appt_uid'])
+                : sanitize_text_field($appt_uid);
+            $appointment_status = !empty($appt['status'])
+                ? sanitize_text_field($appt['status'])
+                : 'Scheduled';
+
+            $appointment_url = !empty($appt['join_url'])
+                ? esc_url_raw($appt['join_url'])
+                : home_url('/patient-dashboard/#tab=appointments');
+            $manage_appointment_url = home_url('/patient-dashboard/#tab=appointments');
+            $site_url = home_url('/');
+            $site_name = get_bloginfo('name') ?: 'DIOR MEDICAL';
+
+            $normalized_type = strtolower(str_replace(array('-', '_'), ' ', $appointment_type));
+            $is_telehealth = (strpos($normalized_type, 'tele') !== false)
+                || (strpos($normalized_type, 'video') !== false)
+                || (strpos($normalized_type, 'virtual') !== false)
+                || (strpos($normalized_type, 'online') !== false);
+
+            $instruction_heading = $is_telehealth
+                ? 'Prepare for Your Telehealth Visit'
+                : 'Prepare for Your Appointment';
+            $appointment_instructions = $is_telehealth
+                ? 'Please sign in a few minutes early, choose a private and quiet space, and check your internet connection, camera, and microphone before your consultation.'
+                : 'Please review your appointment details in the patient portal and arrive at the scheduled time. Contact the practice through your portal if you need assistance.';
+
+            $template_path = defined('DIOR_PORTAL_PATH')
+                ? DIOR_PORTAL_PATH . 'templates/emails/appointment-reminder.php'
+                : dirname(__DIR__) . '/templates/emails/appointment-reminder.php';
+
+            if (is_readable($template_path)) {
+                ob_start();
+                include $template_path;
+                $patient_html = ob_get_clean();
+
+                self::send_email_safe(
+                    $patient->user_email,
+                    'Appointment Reminder: ' . ($appointment_date ?: 'Upcoming Visit') . ' with ' . $dname,
+                    $patient_html
+                );
+            } else {
+                error_log('Dior Medical: appointment reminder email template is missing: ' . $template_path);
+            }
         }
 
         // 3. Doctor In-App Dashboard Reminder
