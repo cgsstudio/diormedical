@@ -158,3 +158,93 @@
     grid-column: 1 / -1 !important;
   }
 }
+
+/* Explicit overrides for the legacy Today toolbar and row checkbox positioning. */
+@media (max-width: 767.98px) {
+  #tab-appointments #dior-subtab-today > .card > .d-flex:first-child {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  #tab-appointments #dior-subtab-today > .card > .d-flex:first-child > div:last-child {
+    display: grid !important;
+    grid-template-columns: 42px minmax(78px, 1fr) 42px 42px !important;
+    align-items: center !important;
+    gap: 7px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  #tab-appointments #dior-subtab-today > .card > .d-flex:first-child > div:last-child > .input-group {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  #tab-appointments #dior-subtab-today > .card > .d-flex:first-child > div:last-child > button {
+    grid-row: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 42px !important;
+    height: auto !important;
+    padding: 8px 5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    line-height: 1.2 !important;
+  }
+  #tab-appointments #dior-today-appointments-table.dior-mobile-card-table > tbody > tr:not(.dior-mobile-empty-row) > td:first-child {
+    position: static !important;
+    inset: auto !important;
+    grid-column: 1 / -1 !important;
+    display: flex !important;
+    align-items: center !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 20px !important;
+    padding: 0 !important;
+    z-index: auto !important;
+  }
+  #tab-appointments #dior-today-appointments-table.dior-mobile-card-table > tbody > tr:not(.dior-mobile-empty-row) > td:first-child::before {
+    content: "Select appointment" !important;
+    display: inline-block !important;
+    margin: 0 8px 0 0 !important;
+  }
+  #tab-appointments #dior-today-appointments-table.dior-mobile-card-table > tbody > tr:not(.dior-mobile-empty-row) > td:nth-child(2) {
+    grid-column: 1 / -1 !important;
+    padding: 0 !important;
+  }
+  #tab-appointments #dior-today-appointments-table.dior-mobile-card-table > tbody > tr.dior-empty-state,
+  #tab-appointments #dior-today-appointments-table.dior-mobile-card-table > tbody > tr.dior-mobile-empty-row {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+  #tab-appointments #dior-today-appointments-table.dior-mobile-card-table > tbody > tr.dior-empty-state > td,
+  #tab-appointments #dior-today-appointments-table.dior-mobile-card-table > tbody > tr.dior-mobile-empty-row > td {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 22px 12px !important;
+    border: 1px dashed #d8e4f3 !important;
+    border-radius: 12px !important;
+    background: #f8fbff !important;
+    text-align: center !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: anywhere !important;
+    writing-mode: horizontal-tb !important;
+  }
+  #tab-appointments #dior-today-appointments-table.dior-mobile-card-table > tbody > tr.dior-empty-state > td::before,
+  #tab-appointments #dior-today-appointments-table.dior-mobile-card-table > tbody > tr.dior-mobile-empty-row > td::before {
+    content: none !important;
+  }
+}
