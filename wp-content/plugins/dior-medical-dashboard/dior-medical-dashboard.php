@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.41
+ * Version: 17.2.42
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.41');
+define('DIOR_PORTAL_VERSION', '17.2.42');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -55,9 +55,6 @@ require_once(DIOR_PORTAL_PATH . 'rest_api/hipaatizer_api_sync.php');
 if (!class_exists('Dior_Medical_Secure_Files')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-secure-files.php');
 }
-if (!class_exists('Dior_Demo_Data')) {
-    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-demo-data.php');
-}
 if (!class_exists('Dior_Questionnaire_Service')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-questionnaire-service.php');
 }
@@ -68,10 +65,6 @@ if (!class_exists('Dior_Zoom_Meetings')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-zoom-meetings.php');
 }
 Dior_Zoom_Meetings::init();
-if (!class_exists('Dior_Google_Meet')) {
-    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-google-meet.php');
-}
-Dior_Google_Meet::init();
 
 if (!class_exists('Dior_Prescription_Pdf_Service')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-prescription-pdf.php');
@@ -159,9 +152,6 @@ add_action('plugins_loaded', function () {
     }
     if (class_exists('Dior_Medical_Secure_Files')) {
         Dior_Medical_Secure_Files::init();
-    }
-    if (class_exists('Dior_Demo_Data')) {
-        Dior_Demo_Data::init();
     }
 });
 
@@ -4571,9 +4561,9 @@ class Dior_Medical_Auth
             }
             $join_url = 'tel:' . $normalized_patient_phone;
         } else {
-            // Only save a meeting URL when the configured integration returns a real link.
-            $google_meet_url = class_exists('Dior_Google_Meet') ? Dior_Google_Meet::create_meeting_link() : false;
-            $join_url = is_string($google_meet_url) ? esc_url_raw($google_meet_url) : '';
+            // Create a real Zoom meeting for the selected appointment date and time.
+            $zoom_meeting = class_exists('Dior_Zoom_Meetings') ? Dior_Zoom_Meetings::create_meeting_link($date, $time, $doctor_name) : false;
+            $join_url = is_string($zoom_meeting) ? esc_url_raw($zoom_meeting) : '';
         }
 
         $new_apt = Dior_Appointment_Service::book_appointment([
