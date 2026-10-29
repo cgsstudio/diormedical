@@ -96,11 +96,16 @@
         if (!tabId) return false;
         var normalizedId = normalizeTabId(tabId);
 
-        // Find matching section panel
-        var activePanel = document.getElementById('tab-' + normalizedId);
-        if (!activePanel && app) {
-            // Check if standard tab without prefix exists
-            activePanel = document.getElementById(normalizedId);
+        // Find the matching panel inside Doctor Dashboard only; avoid collisions with other dashboard markup.
+        var contentRoot = app ? app.querySelector('#dior-doc-content') : document.getElementById('dior-doc-content');
+        var activePanel = contentRoot ? contentRoot.querySelector('#tab-' + normalizedId) : null;
+        if (!activePanel && contentRoot) {
+            activePanel = contentRoot.querySelector('#' + normalizedId);
+        }
+        if (!activePanel && contentRoot && normalizedId !== 'doc-overview') {
+            // Keep the desktop dashboard usable if a requested panel is missing.
+            activePanel = contentRoot.querySelector('#tab-doc-overview');
+            normalizedId = 'doc-overview';
         }
         if (!activePanel) {
             console.warn('[Dior Navigation] Panel not found for tab:', tabId, '(normalized: ' + normalizedId + ')');
@@ -234,10 +239,20 @@
         // Sync tab from URL hash on load
         function syncTabFromUrl(updateUrl) {
             var hashMatch = window.location.hash.match(/^#tab=([^&]+)/);
-            var requestedTab = hashMatch ? decodeURIComponent(hashMatch[1]) : 'doc-overview';
+            var requestedTab = 'doc-overview';
+            // Malformed percent-encoding in the URL must not stop initial dashboard rendering.
+            if (hashMatch) {
+                try {
+                    requestedTab = decodeURIComponent(hashMatch[1]);
+                } catch (error) {
+                    requestedTab = 'doc-overview';
+                }
+            }
             requestedTab = normalizeTabId(requestedTab);
 
-            var panel = document.getElementById('tab-' + requestedTab);
+            var app = document.getElementById('dior-doctor-app');
+            var contentRoot = app ? app.querySelector('#dior-doc-content') : document.getElementById('dior-doc-content');
+            var panel = contentRoot ? contentRoot.querySelector('#tab-' + requestedTab) : null;
             var tabToLoad = panel ? requestedTab : 'doc-overview';
             window.diorDocSwitchTab(tabToLoad, updateUrl);
         }
