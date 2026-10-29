@@ -456,26 +456,75 @@ class Dior_Notification_Service
             'fa-calendar-days'
         );
 
-        // Patient Email
+        // Patient Email: render the dedicated dynamic reschedule design.
         if ($patient && $patient->user_email) {
-            $p_content = '
-            <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
-            <p>Your appointment has been updated to a new time slot.</p>
-            <div style="background-color: #EFF6FF; border-left: 4px solid #2C6CB1; border-radius: 4px; padding: 16px 20px; margin: 20px 0;">
-                <p style="margin: 0 0 6px 0; color: #1E40AF; font-weight: 600;">NEW Schedule:</p>
-                <p style="margin: 0; font-size: 16px; font-weight: 700; color: #1E3A8A;">' . esc_html($new_date . ' at ' . $new_time) . '</p>
-                <p style="margin: 10px 0 0 0; font-size: 13px; color: #64748B;">Previous Time: <strike>' . esc_html($old_date . ' ' . $old_time) . '</strike></p>
-            </div>
-            <p>Provider: <strong>' . esc_html($dname) . '</strong> &bull; Reason: <strong>' . esc_html($appt['condition_name'] ?: 'Urgent Care') . '</strong></p>
-            <p>If this new time does not work for you, you may adjust it at any time in your patient portal.</p>';
+            $format_date = static function ($value) {
+                $value = (string) $value;
+                $timestamp = $value !== '' ? strtotime($value) : false;
+                return $timestamp ? wp_date(get_option('date_format') ?: 'F j, Y', $timestamp) : $value;
+            };
+            $format_time = static function ($value) {
+                $value = (string) $value;
+                $timestamp = $value !== '' ? strtotime($value) : false;
+                return $timestamp ? wp_date(get_option('time_format') ?: 'g:i a', $timestamp) : $value;
+            };
 
-            $p_html = self::render_email_template(
-                'Appointment Schedule Changed',
-                'Your visit has been rescheduled to ' . $new_date . ' at ' . $new_time,
-                $p_content,
-                ['label' => 'View Updated Appointment', 'url' => home_url('/patient-dashboard/#tab=appointments')]
-            );
-            self::send_email_safe($patient->user_email, 'Appointment Rescheduled: ' . $new_date . ' at ' . $new_time, $p_html);
+            $patient_full_name = trim((string) $patient->first_name . ' ' . (string) $patient->last_name);
+            $patient_name = $patient_full_name !== '' ? $patient_full_name : $patient->display_name;
+            $doctor_uid = !empty($appt['doctor_user_id']) ? (int) $appt['doctor_user_id'] : 0;
+            if (!$doctor_uid && $did) {
+                $doctor_uid = class_exists('Dior_Doctor_Resolver')
+                    ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($did)
+                    : $did;
+            }
+            $doctor_user = $doctor_uid ? get_userdata($doctor_uid) : false;
+            $doctor_full_name = $doctor_user
+                ? trim((string) $doctor_user->first_name . ' ' . (string) $doctor_user->last_name)
+                : '';
+            $doctor_name = !empty($appt['provider'])
+                ? sanitize_text_field($appt['provider'])
+                : (!empty($appt['doctor_name'])
+                    ? sanitize_text_field($appt['doctor_name'])
+                    : ($doctor_full_name !== '' ? 'Dr. ' . $doctor_full_name : $dname));
+
+            $doctor_specialty = !empty($appt['doctor_specialty'])
+                ? sanitize_text_field($appt['doctor_specialty'])
+                : (!empty($appt['specialty']) ? sanitize_text_field($appt['specialty']) : '');
+            $appointment_type = !empty($appt['visit_type'])
+                ? sanitize_text_field($appt['visit_type'])
+                : (!empty($appt['type']) ? sanitize_text_field($appt['type']) : 'Consultation');
+            $appointment_reference = !empty($appt['appt_uid'])
+                ? sanitize_text_field($appt['appt_uid'])
+                : sanitize_text_field($appt_uid);
+            $appointment_status = !empty($appt['status'])
+                ? sanitize_text_field($appt['status'])
+                : 'Rescheduled';
+            $appointment_timezone = wp_timezone_string();
+            $old_appointment_date = $format_date($old_date);
+            $old_appointment_time = $format_time($old_time);
+            $new_appointment_date = $format_date($new_date);
+            $new_appointment_time = $format_time($new_time);
+            $updated_appointment_url = home_url('/patient-dashboard/#tab=appointments');
+            $site_url = home_url('/');
+            $site_name = get_bloginfo('name') ?: 'DIOR MEDICAL';
+
+            $template_path = defined('DIOR_PORTAL_PATH')
+                ? DIOR_PORTAL_PATH . 'templates/emails/appointment-rescheduled.php'
+                : dirname(__DIR__) . '/templates/emails/appointment-rescheduled.php';
+
+            if (is_readable($template_path)) {
+                ob_start();
+                include $template_path;
+                $patient_html = ob_get_clean();
+
+                self::send_email_safe(
+                    $patient->user_email,
+                    'Appointment Rescheduled: ' . ($new_appointment_date ?: 'Updated Schedule') . ($new_appointment_time ? ' at ' . $new_appointment_time : ''),
+                    $patient_html
+                );
+            } else {
+                error_log('Dior Medical: appointment rescheduled email template is missing: ' . $template_path);
+            }
         }
 
         // Doctor Dashboard Notification
