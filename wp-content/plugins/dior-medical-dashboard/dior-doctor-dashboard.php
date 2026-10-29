@@ -793,8 +793,12 @@ class Dior_Doctor_Dashboard
         Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
         if (!self::can_access())
             wp_send_json_error(["message" => "Unauthorized"], 403);
-        $aid = sanitize_text_field($_POST["appt_id"] ?? "");
+        $aid = sanitize_text_field($_POST["appt_uid"] ?? ($_POST["appt_id"] ?? ""));
         $status = sanitize_text_field($_POST["status"] ?? "");
+
+        if ($aid === "" || $status === "") {
+            wp_send_json_error(["message" => "Appointment ID and status are required."], 400);
+        }
 
         $res = Dior_Appointment_Service::update_status($aid, $status);
         if (is_wp_error($res)) {
