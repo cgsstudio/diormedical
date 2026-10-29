@@ -1,4 +1,19 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-medical_record">
+
+<style>
+/* Step 3B: Responsive Bootstrap-inspired medical record styling. */
+#tab-medical_record{color:#334155}
+#tab-medical_record h4{color:#142b4a!important;font-size:22px!important;font-weight:700!important;letter-spacing:-.025em}
+#tab-medical_record .section-body{padding:0 18px 24px}
+#tab-medical_record .kpi-mini-card,#tab-medical_record .card{border:1px solid #e7edf5!important;border-radius:16px!important;box-shadow:0 6px 22px rgba(22,52,91,.05)!important;background:#fff}
+#tab-medical_record .card-header{border-bottom:1px solid #edf1f7!important}
+#tab-medical_record .card-title-text{color:#183657!important;font-weight:700!important}
+#tab-medical_record .btn{border-radius:9px!important;font-weight:600;transition:box-shadow .18s ease,transform .18s ease}
+#tab-medical_record .btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(22,52,91,.1)}
+#tab-medical_record .dior-medical-record-filter{padding:7px 13px!important}
+#tab-medical_record .mr-timeline-content-card{border:1px solid #e7edf5!important;border-radius:12px!important;background:#fff}
+@media(max-width:767.98px){#tab-medical_record h4{font-size:19px!important}#tab-medical_record .section-body{padding:0 10px 20px}#tab-medical_record .card-body,#tab-medical_record .card-body.p-4{padding:15px!important}#tab-medical_record .card-header{padding:14px!important}#tab-medical_record .dior-medical-record-filter{padding:7px 10px!important;font-size:12px}}
+</style>
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
         <div>
