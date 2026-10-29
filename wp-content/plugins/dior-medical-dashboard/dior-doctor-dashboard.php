@@ -870,6 +870,9 @@ class Dior_Doctor_Dashboard
         }
 
         $join_url = trim((string) ($appt["join_url"] ?? ""));
+        $had_real_join_url = $join_url !== ""
+            && wp_http_validate_url($join_url)
+            && rtrim($join_url, "/") !== "https://zoom.us/join";
         if ($join_url === "" || rtrim($join_url, "/") === "https://zoom.us/join") {
             $doctor = get_userdata((int) ($appt["doctor_id"] ?? 0));
             $doctor_name = $doctor ? ($doctor->display_name ?: trim($doctor->first_name . " " . $doctor->last_name)) : "";
@@ -906,6 +909,21 @@ class Dior_Doctor_Dashboard
         );
         if ($updated === false) {
             wp_send_json_error(["message" => "The meeting was created but could not be saved to the appointment. Please contact the site administrator."], 500);
+        }
+
+        // Notify the patient as soon as the meeting is ready. The notification action
+        // points directly to the same saved meeting URL, so patients can join from it.
+        $patient_id = (int) ($appt["patient_id"] ?? 0);
+        $meeting_became_ready = ($status !== "in progress") || !$had_real_join_url;
+        if ($patient_id && $meeting_became_ready && class_exists("Dior_Notification_Service")) {
+            Dior_Notification_Service::add_dashboard_notification(
+                $patient_id,
+                "Your consultation is ready to join",
+                "Dr. " . sanitize_text_field($doctor_name ?? "") . " has started your video consultation. Select Join Consultation to enter the meeting.",
+                $join_url,
+                "fa-video",
+                false
+            );
         }
 
         wp_send_json_success([
