@@ -120,9 +120,7 @@
   }
 
   function makeActions(cell, card) {
-    var controls = Array.prototype.slice.call(cell.querySelectorAll('button, a')).filter(function (control) {
-      return !control.disabled || control.tagName === 'A';
-    });
+    var controls = Array.prototype.slice.call(cell.querySelectorAll('button, a'));
     if (!controls.length) return null;
     var actions = document.createElement('div');
     actions.className = 'dior-mobile-record-actions';
