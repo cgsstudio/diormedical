@@ -835,6 +835,11 @@ class Dior_Notification_Service
                     : (!empty($appt['specialty']) ? sanitize_text_field($appt['specialty']) : ''));
 
             $appointment_timezone = wp_timezone_string();
+            $appointment_location = !empty($appt['location'])
+                ? sanitize_text_field($appt['location'])
+                : (!empty($appt['clinic_name'])
+                    ? sanitize_text_field($appt['clinic_name'])
+                    : (!empty($appt['address']) ? sanitize_text_field($appt['address']) : ''));
             $appointment_type = !empty($appt['visit_type'])
                 ? sanitize_text_field($appt['visit_type'])
                 : (!empty($appt['type']) ? sanitize_text_field($appt['type']) : 'Telehealth Consultation');
