@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.46
+ * Version: 17.2.47
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.46');
+define('DIOR_PORTAL_VERSION', '17.2.47');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -1259,6 +1259,17 @@ class Dior_Medical_Auth
             );
         }
 
+        // Shared Bootstrap-based mobile layouts for all patient and doctor dashboard pages.
+        $mobile_layout_css_path = DIOR_PORTAL_PATH . 'assets/css/dior-mobile-layouts.css';
+        if (file_exists($mobile_layout_css_path)) {
+            wp_enqueue_style(
+                'dior-mobile-layouts-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-mobile-layouts.css',
+                ['dior-custom-css', 'dior-patient-mobile-css', 'dior-today-appointments-mobile-css'],
+                filemtime($mobile_layout_css_path)
+            );
+        }
+
         // Load brand color overrides after the consolidated stylesheet.
         $brand_css_path = DIOR_PORTAL_PATH . 'assets/css/dior-brand-overrides.css';
         if (file_exists($brand_css_path)) {
@@ -1430,6 +1441,18 @@ class Dior_Medical_Auth
             filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-responsive-dashboard.js'),
             true
         );
+
+        // Mobile card layouts for data tables across both dashboard roles.
+        $mobile_card_js_path = DIOR_PORTAL_PATH . 'assets/js/dior-mobile-card-layouts.js';
+        if (file_exists($mobile_card_js_path)) {
+            wp_enqueue_script(
+                'dior-mobile-card-layouts',
+                DIOR_PORTAL_URL . 'assets/js/dior-mobile-card-layouts.js',
+                ['dior-responsive-dashboard'],
+                filemtime($mobile_card_js_path),
+                true
+            );
+        }
 
         // ── DocBooker Booking Modal Controller ─────────────────────────────
         $db_modal_js_ver = file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-docbooker-modal.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-docbooker-modal.js') : DIOR_PORTAL_VERSION;
