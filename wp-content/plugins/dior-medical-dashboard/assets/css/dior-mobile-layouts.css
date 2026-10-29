@@ -854,3 +854,174 @@
     box-shadow: 0 3px 12px rgba(24,49,82,.045) !important;
   }
 }
+
+
+/* Doctor Dashboard mobile layout: hide desktop table only when its mobile cards exist. */
+@media (max-width: 767.98px) {
+  #dior-doctor-app .dior-tab-panel {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 16px 8px calc(88px + env(safe-area-inset-bottom, 0px)) !important;
+    overflow-x: clip !important;
+  }
+
+  #dior-doctor-app .dior-tab-panel .dior-mobile-source-wrapper {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+  }
+
+  #dior-doctor-app .dior-tab-panel .dior-mobile-source-wrapper + .dior-mobile-cards {
+    display: flex !important;
+    visibility: visible !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 10px 0 0 !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-card {
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    border: 1px solid #dce6f2 !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+    box-shadow: 0 3px 12px rgba(24,49,82,.045) !important;
+    overflow: hidden !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-card .card-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    min-width: 0 !important;
+    padding: 13px !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-fields {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px 10px !important;
+    min-width: 0 !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-field {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-label {
+    display: block !important;
+    margin-bottom: 4px !important;
+    color: #718198 !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    line-height: 1.35 !important;
+    letter-spacing: .04em !important;
+    text-transform: uppercase !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-value {
+    min-width: 0 !important;
+    color: #24364b !important;
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-value img,
+  #dior-doctor-app .dior-mobile-record-value table {
+    max-width: 100% !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 7px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding-top: 11px !important;
+    border-top: 1px solid #e8eef6 !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-actions > .btn,
+  #dior-doctor-app .dior-mobile-record-actions > button,
+  #dior-doctor-app .dior-mobile-record-actions > a {
+    display: inline-flex !important;
+    flex: 1 1 40px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 40px !important;
+    max-width: 100% !important;
+    min-height: 40px !important;
+    padding: 8px 9px !important;
+    border-radius: 9px !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-empty {
+    padding: 16px 12px !important;
+    border: 1px dashed #d7e3f1 !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    color: #718198 !important;
+    font-size: 12px !important;
+    text-align: center !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  #dior-doctor-app .dior-tab-panel .table-responsive,
+  #dior-doctor-app .dior-tab-panel .overflow-auto {
+    max-width: 100% !important;
+  }
+
+  #dior-doctor-app .dior-tab-panel h1,
+  #dior-doctor-app .dior-tab-panel h2,
+  #dior-doctor-app .dior-tab-panel h3,
+  #dior-doctor-app .dior-tab-panel h4 {
+    max-width: 100% !important;
+    line-height: 1.35 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  #dior-doctor-app .dior-tab-panel input:not([type="checkbox"]):not([type="radio"]),
+  #dior-doctor-app .dior-tab-panel select,
+  #dior-doctor-app .dior-tab-panel textarea {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #dior-doctor-app .dior-tab-panel .row {
+    --bs-gutter-x: 12px;
+    --bs-gutter-y: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  #dior-doctor-app .dior-tab-panel {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-card .card-body {
+    padding: 11px !important;
+  }
+
+  #dior-doctor-app .dior-mobile-record-fields {
+    gap: 10px 8px !important;
+  }
+}
