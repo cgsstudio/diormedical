@@ -816,10 +816,8 @@ $status_badges = [
             setupSelectAll();
             setupRowCheckboxes();
             setupBulkActions();
-            setupViewDetailsBtns();
-            setupConfirmBtns();
-            setupCancelBtns();
-            setupReschedBtns();
+            setupAppointmentActionDelegation();
+
             setupRescheduleForm();
             setupEditBtns();
             setupDeleteBtns();
@@ -1708,6 +1706,41 @@ $status_badges = [
                         btn.innerHTML = '<i class="fas fa-check me-1"></i>Confirm Reschedule';
                     });
             });
+        }
+
+        // Use one delegated handler for row actions. Rows are re-rendered by search,
+        // filters and pagination, so document-level delegation keeps actions reliable.
+        function setupAppointmentActionDelegation() {
+            if (document.documentElement.dataset.diorAppointmentActionsBound === '1') return;
+            document.documentElement.dataset.diorAppointmentActionsBound = '1';
+
+            document.addEventListener('click', function (e) {
+                var btn = e.target.closest('#va-appointments-tbody .va-view-details-btn, #va-appointments-tbody .va-confirm-appt-btn, #va-appointments-tbody .va-cancel-appt-btn, #va-appointments-tbody .va-resched-appt-btn');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (btn.classList.contains('va-view-details-btn')) {
+                    var viewUid = btn.dataset.uid || (btn.closest('tr') && btn.closest('tr').dataset.apptUid);
+                    if (viewUid) openAppointmentDetailsModal(viewUid);
+                    return;
+                }
+
+                var uid = btn.dataset.uid || '';
+                var name = btn.dataset.name || 'Patient';
+                if (!uid) {
+                    if (window.Swal) Swal.fire({icon:'error', title:'Missing appointment ID', text:'Please refresh the page and try again.'});
+                    return;
+                }
+
+                if (btn.classList.contains('va-confirm-appt-btn')) {
+                    confirmAppointment(uid, name);
+                } else if (btn.classList.contains('va-cancel-appt-btn')) {
+                    cancelAppointment(uid, name);
+                } else if (btn.classList.contains('va-resched-appt-btn')) {
+                    openRescheduleModal(uid, name, btn.dataset.date || '', btn.dataset.time || '');
+                }
+            }, true);
         }
 
         function setupConfirmBtns() {
