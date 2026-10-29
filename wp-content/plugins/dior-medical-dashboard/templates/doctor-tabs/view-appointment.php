@@ -1548,7 +1548,7 @@ $status_badges = [
             if (!uid) return;
             var row = document.querySelector('tr[data-appt-uid="' + uid + '"]');
             var data = new FormData();
-            data.append('action', 'dior_doc_appointment_update');
+            data.append('action', 'dior_doctor_update_appt_status');
             data.append('nonce', nonce);
             data.append('appt_uid', uid);
             data.append('status', 'Confirmed');
