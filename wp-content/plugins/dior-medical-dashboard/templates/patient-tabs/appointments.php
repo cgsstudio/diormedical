@@ -240,6 +240,163 @@
         }
     }
 
+
+    /* Step 2: Match Upcoming and Past appointment screens to the refreshed Today UI. */
+    #tab-appointments #dior-subtab-upcoming > .card,
+    #tab-appointments #dior-subtab-past > .card {
+        border: 1px solid #e7edf5 !important;
+        border-radius: 18px !important;
+        padding: 22px !important;
+        box-shadow: 0 8px 28px rgba(22, 52, 91, .06) !important;
+        background: #fff !important;
+    }
+    #tab-appointments #dior-subtab-upcoming > .card > .d-flex:first-child,
+    #tab-appointments #dior-subtab-past > .card > .d-flex:first-child {
+        align-items: center !important;
+        gap: 14px !important;
+        padding-bottom: 18px !important;
+        margin-bottom: 18px !important;
+        border-bottom: 1px solid #edf1f7 !important;
+    }
+    #tab-appointments #dior-subtab-upcoming h5,
+    #tab-appointments #dior-subtab-past h5 {
+        color: #142b4a !important;
+        font-size: 20px !important;
+        line-height: 1.35 !important;
+        letter-spacing: -.025em;
+    }
+    #tab-appointments #dior-subtab-upcoming .input-group,
+    #tab-appointments #dior-subtab-past .input-group {
+        min-height: 38px;
+        width: min(100%, 260px) !important;
+        background: #f8fafc;
+        border-color: #e2e8f0 !important;
+        border-radius: 10px !important;
+    }
+    #tab-appointments #dior-subtab-upcoming .input-group-text,
+    #tab-appointments #dior-subtab-upcoming .input-group .form-control,
+    #tab-appointments #dior-subtab-past .input-group-text,
+    #tab-appointments #dior-subtab-past .input-group .form-control {
+        background: transparent !important;
+        font-size: 13px;
+    }
+    #tab-appointments #dior-subtab-upcoming .btn,
+    #tab-appointments #dior-subtab-past .btn {
+        border-radius: 9px !important;
+        font-weight: 600;
+        transition: box-shadow .18s ease, transform .18s ease;
+    }
+    #tab-appointments #dior-subtab-upcoming .btn:hover,
+    #tab-appointments #dior-subtab-past .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(22, 52, 91, .10);
+    }
+    #tab-appointments #dior-upcoming-appointments-table,
+    #tab-appointments #dior-past-appointments-table {
+        border-collapse: separate !important;
+        border-spacing: 0;
+        min-width: 900px;
+        font-size: 13px !important;
+    }
+    #tab-appointments #dior-upcoming-appointments-table thead th,
+    #tab-appointments #dior-past-appointments-table thead th {
+        background: #f6f9fd !important;
+        color: #63748b !important;
+        border-top: 1px solid #e7edf5 !important;
+        border-bottom: 1px solid #e7edf5 !important;
+        padding: 14px 13px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        letter-spacing: .055em;
+        text-transform: uppercase;
+    }
+    #tab-appointments #dior-upcoming-appointments-table tbody td,
+    #tab-appointments #dior-past-appointments-table tbody td {
+        padding: 15px 13px !important;
+        border-bottom: 1px solid #edf1f6 !important;
+        color: #4a5c73 !important;
+        vertical-align: middle !important;
+        background: #fff !important;
+        font-size: 12px !important;
+    }
+    #tab-appointments #dior-upcoming-appointments-table tbody tr:hover td,
+    #tab-appointments #dior-past-appointments-table tbody tr:hover td {
+        background: #f8fbff !important;
+    }
+    #tab-appointments #dior-upcoming-appointments-table .dior-appointment-doctor-name,
+    #tab-appointments #dior-past-appointments-table .dior-appointment-doctor-name {
+        color: #183657 !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+    }
+    #tab-appointments #dior-upcoming-appointments-table .badge,
+    #tab-appointments #dior-past-appointments-table .badge {
+        display: inline-flex;
+        align-items: center;
+        max-width: 180px;
+        padding: 6px 9px !important;
+        border-radius: 7px !important;
+        white-space: normal;
+    }
+    #tab-appointments #dior-upcoming-appointments-table .cell-actions,
+    #tab-appointments #dior-past-appointments-table .cell-actions {
+        gap: 6px !important;
+    }
+    #tab-appointments #dior-upcoming-appointments-table .action-icon-btn,
+    #tab-appointments #dior-past-appointments-table .action-icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0 !important;
+        border: 1px solid #e3eaf3 !important;
+        border-radius: 8px !important;
+        background: #fff !important;
+    }
+    #tab-appointments #dior-subtab-upcoming .table-responsive,
+    #tab-appointments #dior-subtab-past .table-responsive {
+        border-radius: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 767.98px) {
+        #tab-appointments #dior-subtab-upcoming > .card,
+        #tab-appointments #dior-subtab-past > .card {
+            padding: 14px !important;
+            margin-bottom: 22px !important;
+            border-radius: 14px !important;
+        }
+        #tab-appointments #dior-subtab-upcoming > .card > .d-flex:first-child,
+        #tab-appointments #dior-subtab-past > .card > .d-flex:first-child {
+            align-items: stretch !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            padding-bottom: 14px !important;
+        }
+        #tab-appointments #dior-subtab-upcoming h5,
+        #tab-appointments #dior-subtab-past h5 {
+            font-size: 18px !important;
+        }
+        #tab-appointments #dior-subtab-upcoming > .card > .d-flex:first-child > div:last-child,
+        #tab-appointments #dior-subtab-past > .card > .d-flex:first-child > div:last-child {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            width: 100%;
+            gap: 7px !important;
+        }
+        #tab-appointments #dior-subtab-upcoming .input-group,
+        #tab-appointments #dior-subtab-past .input-group {
+            width: 100% !important;
+            flex: 1 1 100%;
+        }
+        #tab-appointments #dior-upcoming-appointments-table thead th,
+        #tab-appointments #dior-upcoming-appointments-table tbody td,
+        #tab-appointments #dior-past-appointments-table thead th,
+        #tab-appointments #dior-past-appointments-table tbody td {
+            padding: 12px 10px !important;
+        }
+    }
+
 </style>
 
 
