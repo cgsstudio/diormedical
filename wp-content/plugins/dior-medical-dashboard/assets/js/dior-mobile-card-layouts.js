@@ -227,9 +227,64 @@
     table._diorMobileCardObserver = observer;
   }
 
+  function installDoctorMobileNavigation(root) {
+    if (!root || root.id !== 'dior-doctor-app' || root.querySelector('.dior-doctor-mobile-bottom-nav')) return;
+
+    var nav = document.createElement('nav');
+    nav.className = 'dior-doctor-mobile-bottom-nav';
+    nav.setAttribute('aria-label', 'Doctor dashboard mobile navigation');
+    nav.innerHTML =
+      '<button type="button" class="dior-doctor-mobile-nav-item" data-tab="doc-overview" aria-label="Dashboard">' +
+        '<i class="fas fa-house" aria-hidden="true"></i><span>Dashboard</span></button>' +
+      '<button type="button" class="dior-doctor-mobile-nav-item" data-tab="doc-appointments" aria-label="Appointments">' +
+        '<i class="fas fa-calendar-days" aria-hidden="true"></i><span>Appointments</span></button>' +
+      '<button type="button" class="dior-doctor-mobile-nav-item" data-tab="doc-patients-all" aria-label="Patients">' +
+        '<i class="fas fa-user-group" aria-hidden="true"></i><span>Patients</span></button>' +
+      '<button type="button" class="dior-doctor-mobile-nav-item" data-tab="doc-e-prescriptions" aria-label="Prescriptions">' +
+        '<i class="fas fa-prescription-bottle-medical" aria-hidden="true"></i><span>Prescriptions</span></button>' +
+      '<button type="button" class="dior-doctor-mobile-nav-item dior-doctor-mobile-more" aria-label="More navigation options">' +
+        '<i class="fas fa-ellipsis" aria-hidden="true"></i><span>More</span></button>';
+
+    nav.addEventListener('click', function (event) {
+      var item = event.target.closest('.dior-doctor-mobile-nav-item');
+      if (!item) return;
+      var tabId = item.getAttribute('data-tab');
+      if (tabId) {
+        var original = root.querySelector('.dior-nav-btn[data-tab="' + tabId + '"]');
+        if (original) original.click();
+        return;
+      }
+      if (typeof window.diorDocOpenMobile === 'function') {
+        window.diorDocOpenMobile();
+      } else {
+        var menuToggle = root.querySelector('.dior-mobile-menu-toggle');
+        if (menuToggle) menuToggle.click();
+      }
+    });
+
+    root.appendChild(nav);
+
+    var syncActive = function () {
+      var activeTab = root.querySelector('.dior-nav-btn.active[data-tab], .dior-nav-btn[aria-current="page"][data-tab]');
+      var activeId = activeTab ? activeTab.getAttribute('data-tab') : '';
+      nav.querySelectorAll('.dior-doctor-mobile-nav-item[data-tab]').forEach(function (item) {
+        var isActive = item.getAttribute('data-tab') === activeId ||
+          (item.getAttribute('data-tab') === 'doc-appointments' && activeId.indexOf('doc-appointments') === 0) ||
+          (item.getAttribute('data-tab') === 'doc-patients-all' && activeId.indexOf('doc-patients-') === 0);
+        item.classList.toggle('is-active', !!isActive);
+        if (isActive) item.setAttribute('aria-current', 'page');
+        else item.removeAttribute('aria-current');
+      });
+    };
+    syncActive();
+    var navObserver = new MutationObserver(syncActive);
+    navObserver.observe(root, { subtree: true, attributes: true, attributeFilter: ['class', 'aria-current'] });
+  }
+
   function init() {
     document.querySelectorAll(rootSelector).forEach(function (root) {
       root.querySelectorAll(tableSelector).forEach(prepareTable);
+      installDoctorMobileNavigation(root);
     });
   }
 
