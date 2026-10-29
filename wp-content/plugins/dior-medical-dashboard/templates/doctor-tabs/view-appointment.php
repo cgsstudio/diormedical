@@ -422,6 +422,14 @@ $status_badges = [
 
                             // Doctor data resolution
                             $doc_id = (int)($a['doctor_id'] ?? 0);
+                            // Prefer the appointment's own Zoom invite. If it is still the generic
+                            // Zoom landing page, fall back to the assigned doctor's saved Zoom link.
+                            if (rtrim($join_url, '/') === 'https://zoom.us/join') {
+                                $doctor_saved_zoom = trim((string) get_user_meta($doc_id, 'doctor_zoom_link', true));
+                                if (!empty($doctor_saved_zoom) && wp_http_validate_url($doctor_saved_zoom)) {
+                                    $join_url = esc_url($doctor_saved_zoom);
+                                }
+                            }
                             $doc_info = $doctor_list[$doc_id] ?? null;
                             $doc_name = $doc_info['name'] ?? (!empty($a['doctor_name']) ? $a['doctor_name'] : 'Dr. Marcus Sterling');
                             if (stripos($doc_name, 'Dr.') !== 0 && stripos($doc_name, 'Dr ') !== 0) {
@@ -517,13 +525,32 @@ $status_badges = [
                                         </button>
                                         <?php if (strtolower($status) === 'pending'): ?>
                                             <button type="button" class="btn btn-success btn-sm rounded-pill text-white va-confirm-appt-btn shadow-none"
-                                                data-uid="<?php echo $uid; ?>" 
+                                                data-uid="<?php echo $uid; ?>"
                                                 data-name="<?php echo esc_attr($fname); ?>"
                                                 title="Confirm Appointment"
                                                 style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
                                                 <i class="fas fa-check me-1"></i>Confirm
                                             </button>
                                         <?php endif; ?>
+
+                                        <?php if ($is_video && in_array(strtolower($status), ['confirmed', 'success', 'scheduled', 'in progress', 'in-queue'], true)): ?>
+                                            <button type="button" class="btn btn-primary btn-sm rounded-pill text-white va-start-appt-btn shadow-none"
+                                                data-uid="<?php echo esc_attr($uid); ?>"
+                                                data-name="<?php echo esc_attr($fname); ?>"
+                                                title="<?php echo strtolower($status) === 'in progress' ? 'Consultation is already in progress' : 'Start Consultation'; ?>"
+                                                <?php echo strtolower($status) === 'in progress' ? 'disabled' : ''; ?>
+                                                style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
+                                                <i class="fas fa-play me-1"></i><?php echo strtolower($status) === 'in progress' ? 'In Progress' : 'Start'; ?>
+                                            </button>
+                                            <a href="<?php echo esc_url($join_url); ?>" target="_blank" rel="noopener noreferrer"
+                                                class="btn btn-outline-success btn-sm rounded-pill va-join-zoom-btn shadow-none"
+                                                data-uid="<?php echo esc_attr($uid); ?>"
+                                                title="Open the saved Zoom/telehealth meeting link"
+                                                style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
+                                                <i class="fas fa-video me-1"></i>Join Zoom
+                                            </a>
+                                        <?php endif; ?>
+
                                         <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-resched-appt-btn shadow-none"
                                             data-uid="<?php echo $uid; ?>" 
                                             data-name="<?php echo esc_attr($fname); ?>" 
@@ -1748,6 +1775,77 @@ $status_badges = [
             });
         }
 
+        function startAppointment(uid, patientName, button) {
+            if (!uid) {
+                Swal.fire({ icon: 'error', title: 'Missing appointment ID', text: 'Refresh the page and try again.' });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Start consultation?',
+                text: 'This will mark the appointment as In Progress.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Start consultation',
+                cancelButtonText: 'Not yet',
+                confirmButtonColor: '#0d6efd'
+            }).then(function (choice) {
+                if (!choice.isConfirmed) return;
+
+                var data = new FormData();
+                data.append('action', 'dior_doc_appointment_update');
+                data.append('nonce', nonce);
+                data.append('appt_uid', uid);
+                data.append('status', 'In Progress');
+
+                if (button) {
+                    button.disabled = true;
+                    button.dataset.originalText = button.innerHTML;
+                    button.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Starting...';
+                }
+
+                fetch(ajaxUrl, { method: 'POST', body: data })
+                    .then(function (response) {
+                        if (!response.ok) throw new Error('Request failed');
+                        return response.json();
+                    })
+                    .then(function (res) {
+                        if (!res.success) {
+                            throw new Error(res.data && res.data.message ? res.data.message : 'Could not start the consultation.');
+                        }
+
+                        var row = document.querySelector('#va-appointments-tbody tr[data-appt-uid="' + uid.replace(/"/g, '\\"') + '"]');
+                        if (row) {
+                            row.dataset.status = 'In Progress';
+                            var badge = row.querySelector('.va-badge');
+                            if (badge) {
+                                badge.textContent = 'In Progress';
+                                badge.className = 'va-badge ' + (statusBadgeMap['in progress'] || 'badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2.5 py-1 small fw-semibold');
+                            }
+                        }
+
+                        updateKpiCounters();
+                        renderPage(currentPage);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Consultation started',
+                            text: 'Appointment for ' + (patientName || 'the patient') + ' is now In Progress.',
+                            toast: true,
+                            position: 'top-end',
+                            timer: 2500,
+                            showConfirmButton: false
+                        });
+                    })
+                    .catch(function (error) {
+                        Swal.fire({ icon: 'error', title: 'Could not start consultation', text: error.message || 'Please try again.' });
+                        if (button) {
+                            button.disabled = false;
+                            button.innerHTML = button.dataset.originalText || '<i class="fas fa-play me-1"></i>Start';
+                        }
+                    });
+            });
+        }
+
         // Use one delegated handler for row actions. Rows are re-rendered by search,
         // filters and pagination, so document-level delegation keeps actions reliable.
         function setupAppointmentActionDelegation() {
@@ -1755,7 +1853,7 @@ $status_badges = [
             document.documentElement.dataset.diorAppointmentActionsBound = '1';
 
             document.addEventListener('click', function (e) {
-                var btn = e.target.closest('#va-appointments-tbody .va-view-details-btn, #va-appointments-tbody .va-confirm-appt-btn, #va-appointments-tbody .va-cancel-appt-btn, #va-appointments-tbody .va-resched-appt-btn');
+                var btn = e.target.closest('#va-appointments-tbody .va-view-details-btn, #va-appointments-tbody .va-confirm-appt-btn, #va-appointments-tbody .va-cancel-appt-btn, #va-appointments-tbody .va-resched-appt-btn, #va-appointments-tbody .va-start-appt-btn');
                 if (!btn) return;
                 e.preventDefault();
                 e.stopPropagation();
@@ -1773,7 +1871,9 @@ $status_badges = [
                     return;
                 }
 
-                if (btn.classList.contains('va-confirm-appt-btn')) {
+                if (btn.classList.contains('va-start-appt-btn')) {
+                    startAppointment(uid, name, btn);
+                } else if (btn.classList.contains('va-confirm-appt-btn')) {
                     confirmAppointment(uid, name);
                 } else if (btn.classList.contains('va-cancel-appt-btn')) {
                     cancelAppointment(uid, name);
