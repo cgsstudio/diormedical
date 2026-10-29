@@ -972,7 +972,10 @@
                                     $apt_row['phone'] ?? ($apt_row['contact'] ?? '—'),
                                     $status ?: '—',
                                     $apt_row['avatar'] ?? '',
-                                    $apt_row['id'] ?? ($apt_row['appt_uid'] ?? '')
+                                    $apt_row['id'] ?? ($apt_row['appt_uid'] ?? ''),
+                                    $apt_row['join_url'] ?? '',
+                                    $apt_row['status'] ?? '',
+                                    $apt_row['type'] ?? ($apt_row['visit_type'] ?? 'Video Visit')
                                 ];
                             }
                             ?>
@@ -1011,9 +1014,26 @@
                                 </td>
                                 <td class="text-end pe-3 py-3">
                                     <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
-                                        <button type="button" class="action-icon-btn edit-btn btn" title="Join Video Consultation" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('consultation');">
-                                            <i class="fas fa-video text-primary"></i>
-                                        </button>
+                                        <?php
+                                        $today_join_url = trim((string) ($tm[9] ?? ''));
+                                        $today_status = strtolower(trim((string) ($tm[10] ?? '')));
+                                        $today_visit_type = strtolower(trim((string) ($tm[11] ?? 'video visit')));
+                                        $today_can_join = in_array($today_status, ['confirmed', 'scheduled', 'success', 'in progress', 'in-queue'], true);
+                                        $today_is_video = strpos($today_visit_type, 'video') !== false || strpos($today_visit_type, 'tele') !== false || strpos($today_visit_type, 'zoom') !== false || strpos($today_visit_type, 'virtual') !== false;
+                                        $today_has_join_url = $today_join_url !== '' && wp_http_validate_url($today_join_url) && rtrim($today_join_url, '/') !== 'https://zoom.us/join';
+                                        ?>
+                                        <?php if ($today_can_join && $today_is_video && $today_has_join_url): ?>
+                                            <a class="action-icon-btn edit-btn btn dior-patient-join-consultation" href="<?php echo esc_url($today_join_url); ?>"
+                                                target="_blank" rel="noopener noreferrer" title="Join Zoom Consultation" aria-label="Join Zoom Consultation">
+                                                <i class="fas fa-video text-success"></i>
+                                            </a>
+                                        <?php else: ?>
+                                            <button type="button" class="action-icon-btn edit-btn btn" disabled
+                                                title="<?php echo esc_attr(!$today_can_join ? 'Available after appointment confirmation' : 'Waiting for your doctor to start the Zoom meeting'); ?>"
+                                                aria-label="Zoom meeting not ready">
+                                                <i class="fas fa-video text-secondary"></i>
+                                            </button>
+                                        <?php endif; ?>
                                         <button type="button" class="action-icon-btn edit-btn btn" title="View Details" onclick="if(typeof diorViewAppointmentDetails==='function') diorViewAppointmentDetails('<?php echo esc_js($tm[8] ?? ''); ?>');">
                                             <i class="fas fa-eye text-secondary"></i>
                                         </button>
