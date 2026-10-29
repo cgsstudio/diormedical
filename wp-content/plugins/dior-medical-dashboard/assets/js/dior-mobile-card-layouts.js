@@ -3,7 +3,7 @@
   'use strict';
   function clean(text) { return (text || '').replace(/\s+/g, ' ').replace(/[↕↑↓⇅]/g, '').trim(); }
   function prepare(table) {
-    if (!table || table.dataset.diorMobileCards === '1' || table.closest('.modal')) return;
+    if (!table || table.closest('.modal')) return;
     if (table.id === 'dior-doc-cal-grid-table' || table.querySelector('#dior-doc-cal-grid-body')) return;
     var headerRow = table.querySelector('thead tr:last-child');
     if (!headerRow) return;
