@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.40
+ * Version: 17.2.41
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.40');
+define('DIOR_PORTAL_VERSION', '17.2.41');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -46,9 +46,6 @@ if (!class_exists('Dior_Appointment_Service')) {
 }
 if (!class_exists('Dior_Notification_Service')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-notification-service.php');
-}
-if (!class_exists('Dior_Medical_Analytics')) {
-    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-analytics.php');
 }
 if (!class_exists('Dior_Medical_REST_API')) {
     require_once(DIOR_PORTAL_PATH . 'includes/class-dior-rest-api.php');
@@ -152,9 +149,6 @@ if (!function_exists('dior_format_notification_time')) {
 add_action('plugins_loaded', function () {
     if (class_exists('Dior_DB')) {
         Dior_DB::init();
-    }
-    if (class_exists('Dior_Medical_Analytics')) {
-        Dior_Medical_Analytics::init();
     }
     if (class_exists('Dior_Medical_REST_API')) {
         Dior_Medical_REST_API::init();
