@@ -37,3 +37,40 @@
 #dior-patient-portal-app #tab-telemedicine .dior-tele-mobile-pagination span{color:#64748b;font-size:11px;font-weight:600}
 }
 @media(min-width:768px){#dior-patient-portal-app #tab-telemedicine .dior-tele-mobile-layout{display:none!important}}
+
+
+/* Prevent the shared responsive-table engine from rendering a second set of
+   Telemedicine cards. The dedicated mobile renderer above is the only mobile UI. */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-table,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-table thead,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-table tbody,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-table tr,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-table td,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-table th,
+  #dior-patient-portal-app #tab-telemedicine .docs-table-wrapper {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  #dior-patient-portal-app #tab-telemedicine .dior-tele-mobile-layout,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-mobile-list,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-mobile-pagination {
+    display: flex !important;
+    visibility: visible !important;
+  }
+
+  #dior-patient-portal-app #tab-telemedicine .dior-tele-mobile-layout {
+    display: block !important;
+  }
+}
+@media (min-width: 768px) {
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-table {
+    display: table !important;
+    visibility: visible !important;
+  }
+  #dior-patient-portal-app #tab-telemedicine .docs-table-wrapper {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
