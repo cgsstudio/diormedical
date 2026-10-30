@@ -1763,6 +1763,7 @@
                         </tbody>
                     </table>
                 </div>
+                <div id="dior-upcoming-mobile-empty" class="dior-appt-list-empty" role="status">No upcoming appointments found.</div>
 
                 <!-- Footer Summary with Pagination -->
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 px-1 border-top mt-2">
