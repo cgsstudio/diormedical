@@ -727,4 +727,5 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
     </div>
   </div>
 
+  <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/overview-mobile.php'; ?>
 </section>
