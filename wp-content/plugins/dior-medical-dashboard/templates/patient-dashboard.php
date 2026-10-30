@@ -31,12 +31,12 @@
                         <span class="nav-label">Dashboard</span>
                     </button>
                     <div class="dior-nav-item-has-children" id="dior-appt-dropdown-wrap">
-                        <button type="button" class="dior-nav-btn btn" data-tab="appointments">
+                        <button type="button" class="dior-nav-btn btn" data-tab="appointments" aria-expanded="false" aria-controls="dior-appt-nav-dropdown">
                             <i class="far fa-calendar-check"></i>
                             <span class="nav-label">Appointments</span>
                             <i class="fas fa-chevron-down ms-auto dior-ic-fdf55d6c0a"></i>
                         </button>
-                        <div class="dior-nav-dropdown">
+                        <div class="dior-nav-dropdown" id="dior-appt-nav-dropdown">
                             <a href="#tab=appointments&subtab=book" class="dior-nav-dropdown-item"
                                 data-appt-subtab="book"><i class="fas fa-angle-right"></i> Book Appointment</a>
                             <a href="#tab=appointments&subtab=today" class="dior-nav-dropdown-item"
