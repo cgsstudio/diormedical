@@ -14,37 +14,65 @@ function diorPagerChevron(direction) {
 }
 
 function diorBuildPagerHtml(currentPage, totalPages, goFunctionName) {
-    totalPages = Math.max(1, totalPages || 1);
-    currentPage = Math.max(1, Math.min(currentPage || 1, totalPages));
+    totalPages = Math.max(1, parseInt(totalPages, 10) || 1);
+    currentPage = Math.max(1, Math.min(parseInt(currentPage, 10) || 1, totalPages));
 
+    var isMobile = window.matchMedia
+        ? window.matchMedia('(max-width: 767.98px)').matches
+        : window.innerWidth <= 767;
+
+    var previousDisabled = currentPage <= 1 ? ' disabled aria-disabled="true"' : '';
+    var nextDisabled = currentPage >= totalPages ? ' disabled aria-disabled="true"' : '';
     var html = '';
 
-    html += '<button type="button" class="dior-page-btn" ' + (currentPage <= 1 ? 'disabled' : '') +
-        ' onclick="' + goFunctionName + '(' + (currentPage - 1) + ')" title="Previous Page" aria-label="Previous Page">' +
-        diorPagerChevron('left') + '</button>';
+    // Mobile gets a true compact pager: Previous | Page X of Y | Next.
+    // No desktop page-number buttons are generated or hidden with CSS.
+    if (isMobile) {
+        html += '<button type="button" class="dior-page-btn dior-page-prev"'
+            + previousDisabled
+            + ' onclick="' + goFunctionName + '(' + (currentPage - 1) + ')"'
+            + ' title="Previous page" aria-label="Previous page">'
+            + diorPagerChevron('left') + '</button>';
+        html += '<span class="dior-pager-mobile-status" aria-live="polite">Page '
+            + currentPage + ' of ' + totalPages + '</span>';
+        html += '<button type="button" class="dior-page-btn dior-page-next"'
+            + nextDisabled
+            + ' onclick="' + goFunctionName + '(' + (currentPage + 1) + ')"'
+            + ' title="Next page" aria-label="Next page">'
+            + diorPagerChevron('right') + '</button>';
+        return html;
+    }
+
+    // Desktop keeps the full numbered pagination.
+    html += '<button type="button" class="dior-page-btn dior-page-prev"'
+        + previousDisabled
+        + ' onclick="' + goFunctionName + '(' + (currentPage - 1) + ')"'
+        + ' title="Previous Page" aria-label="Previous Page">'
+        + diorPagerChevron('left') + '</button>';
 
     if (totalPages <= 7) {
         for (var i = 1; i <= totalPages; i++) {
-            html += '<button type="button" class="dior-page-btn' + (i === currentPage ? ' active' : '') +
-                '"' + (i === currentPage ? ' aria-current="page"' : '') +
-                ' onclick="' + goFunctionName + '(' + i + ')">' + i + '</button>';
+            html += '<button type="button" class="dior-page-btn' + (i === currentPage ? ' active' : '')
+                + '"' + (i === currentPage ? ' aria-current="page"' : '')
+                + ' onclick="' + goFunctionName + '(' + i + ')">' + i + '</button>';
         }
     } else {
         for (var j = 1; j <= totalPages; j++) {
             if (j === 1 || j === totalPages || (j >= currentPage - 1 && j <= currentPage + 1)) {
-                html += '<button type="button" class="dior-page-btn' + (j === currentPage ? ' active' : '') +
-                    '"' + (j === currentPage ? ' aria-current="page"' : '') +
-                    ' onclick="' + goFunctionName + '(' + j + ')">' + j + '</button>';
+                html += '<button type="button" class="dior-page-btn' + (j === currentPage ? ' active' : '')
+                    + '"' + (j === currentPage ? ' aria-current="page"' : '')
+                    + ' onclick="' + goFunctionName + '(' + j + ')">' + j + '</button>';
             } else if (j === currentPage - 2 || j === currentPage + 2) {
-                html += '<span class="dior-pager-gap">...</span>';
+                html += '<span class="dior-pager-gap" aria-hidden="true">…</span>';
             }
         }
     }
 
-    html += '<span class="dior-pager-mobile-status" aria-live="polite">Page ' + currentPage + ' of ' + totalPages + '</span>';
-    html += '<button type="button" class="dior-page-btn" ' + (currentPage >= totalPages ? 'disabled' : '') +
-        ' onclick="' + goFunctionName + '(' + (currentPage + 1) + ')" title="Next Page" aria-label="Next Page">' +
-        diorPagerChevron('right') + '</button>';
+    html += '<button type="button" class="dior-page-btn dior-page-next"'
+        + nextDisabled
+        + ' onclick="' + goFunctionName + '(' + (currentPage + 1) + ')"'
+        + ' title="Next Page" aria-label="Next Page">'
+        + diorPagerChevron('right') + '</button>';
 
     return html;
 }
