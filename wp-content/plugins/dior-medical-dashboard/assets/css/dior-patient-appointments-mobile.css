@@ -605,3 +605,41 @@
     justify-content:flex-end !important;
   }
 }
+
+
+/* Past appointments: remove unused fourth grid track and stretch toolbar to card width. */
+@media (max-width:767.98px) {
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .dior-appt-list-header {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    width:100% !important;
+    gap:10px !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .dior-appt-list-header > .dior-appt-list-toolbar {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    flex:0 0 100% !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    align-self:stretch !important;
+    justify-content:stretch !important;
+    gap:8px !important;
+    margin:0 !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .dior-appt-list-toolbar > .dior-appt-list-search {
+    grid-column:1 / -1 !important;
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .dior-appt-list-toolbar > .btn {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:40px !important;
+    min-height:40px !important;
+    justify-self:stretch !important;
+  }
+}
