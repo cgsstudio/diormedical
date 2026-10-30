@@ -374,3 +374,11 @@
     line-height: 1 !important;
   }
 }
+
+
+/* Avoid duplicate search fields: retain the dedicated mobile appointments search only. */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app #tab-appointments #dior-subtab-today > .card > .d-flex:first-child > div:last-child > .input-group {
+    display: none !important;
+  }
+}
