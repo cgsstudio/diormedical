@@ -1,0 +1,110 @@
+/* Shared mobile pagination system — aligned with Past Appointments design.
+   Styling only; existing page-size, filtering and navigation handlers stay intact. */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app #tab-appointments #dior-today-mobile-pagination,
+  #dior-patient-portal-app #tab-appointments #dior-today-pagination,
+  #dior-patient-portal-app #tab-appointments #dior-upcoming-pagination,
+  #dior-patient-portal-app #tab-appointments #dior-past-pagination,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-mobile-pagination,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-pagination,
+  #dior-patient-portal-app #tab-docs-meds #dior-rx-pagination,
+  #dior-patient-portal-app #tab-prescriptions #dior-rx-pagination,
+  #dior-patient-portal-app #tab-telemedicine .dior-mobile-card-pagination {
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    flex-wrap:wrap !important;
+    gap:10px !important;
+    width:100% !important;
+    min-width:0 !important;
+    margin:12px 0 0 !important;
+    padding:12px 0 0 !important;
+    border-top:1px solid #e7edf5 !important;
+    background:transparent !important;
+  }
+
+  #dior-patient-portal-app #tab-appointments #dior-today-mobile-pagination:empty,
+  #dior-patient-portal-app #tab-appointments #dior-today-pagination:empty,
+  #dior-patient-portal-app #tab-appointments #dior-upcoming-pagination:empty,
+  #dior-patient-portal-app #tab-appointments #dior-past-pagination:empty,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-mobile-pagination:empty,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-pagination:empty,
+  #dior-patient-portal-app #dior-rx-pagination:empty {
+    display:none !important;
+  }
+
+  #dior-patient-portal-app #tab-appointments #dior-today-pagination,
+  #dior-patient-portal-app #tab-appointments #dior-upcoming-pagination,
+  #dior-patient-portal-app #tab-appointments #dior-past-pagination,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-pagination,
+  #dior-patient-portal-app #dior-rx-pagination {
+    justify-content:flex-end !important;
+    gap:8px !important;
+  }
+
+  #dior-patient-portal-app .dior-mobile-card-pagination button,
+  #dior-patient-portal-app .dior-tele-mobile-pagination button,
+  #dior-patient-portal-app .dior-page-btn,
+  #dior-patient-portal-app .va-page-btn {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:0 0 36px !important;
+    width:36px !important;
+    min-width:36px !important;
+    height:36px !important;
+    min-height:36px !important;
+    padding:0 !important;
+    border:1px solid #dbe5f0 !important;
+    border-radius:9px !important;
+    background:#fff !important;
+    color:#2865a5 !important;
+    box-shadow:none !important;
+    font-size:12px !important;
+    font-weight:700 !important;
+    line-height:1 !important;
+  }
+
+  #dior-patient-portal-app .dior-page-btn.active,
+  #dior-patient-portal-app .va-page-btn.active {
+    border-color:#00346c !important;
+    background:#00346c !important;
+    color:#fff !important;
+    box-shadow:0 3px 8px rgba(0,52,108,.16) !important;
+  }
+
+  #dior-patient-portal-app .dior-page-btn:disabled,
+  #dior-patient-portal-app .va-page-btn:disabled,
+  #dior-patient-portal-app .dior-mobile-card-pagination button:disabled,
+  #dior-patient-portal-app .dior-tele-mobile-pagination button:disabled {
+    opacity:.4 !important;
+    cursor:not-allowed !important;
+  }
+
+  #dior-patient-portal-app .dior-pager-mobile-status,
+  #dior-patient-portal-app .dior-mobile-page-count,
+  #dior-patient-portal-app .dior-tele-mobile-pagination span,
+  #dior-patient-portal-app .dior-pagination-count,
+  #dior-patient-portal-app #tab-appointments #dior-today-page-count,
+  #dior-patient-portal-app #tab-appointments #dior-upcoming-page-count,
+  #dior-patient-portal-app #tab-appointments #dior-past-page-count,
+  #dior-patient-portal-app #tab-telemedicine #dior-tele-page-count,
+  #dior-patient-portal-app #dior-rx-page-count {
+    color:#64748b !important;
+    font-size:11px !important;
+    font-weight:600 !important;
+    line-height:1.5 !important;
+  }
+
+  #dior-patient-portal-app .dior-table-pagination-pages,
+  #dior-patient-portal-app .va-pagination-nav {
+    display:flex !important;
+    align-items:center !important;
+    gap:8px !important;
+  }
+
+  #dior-patient-portal-app .dior-pagination-count strong {
+    color:#334155 !important;
+    font-weight:700 !important;
+  }
+}
