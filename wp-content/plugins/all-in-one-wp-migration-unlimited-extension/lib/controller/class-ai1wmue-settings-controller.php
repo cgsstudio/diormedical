@@ -31,126 +31,66 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Ai1wmue_Settings_Controller {
 
-	public static function index() {
-		$model = new Ai1wmue_Settings();
+	/**
+	 * Enqueue scripts and styles for Settings Controller
+	 *
+	 * @param  string $hook Hook suffix
+	 * @return void
+	 */
+	public static function enqueue_scripts_and_styles( $hook ) {
+		if ( stripos( 'all-in-one-wp-migration_page_ai1wmue_settings', $hook ) === false ) {
+			return;
+		}
 
-		Ai1wm_Template::render(
-			'settings/index',
-			array(
-				'backups'     => $model->get_backups(),
-				'total'       => $model->get_total(),
-				'days'        => $model->get_days(),
-				'destination' => $model->get_backups_path(),
-			),
-			AI1WMUE_TEMPLATES_PATH
+		if ( is_rtl() ) {
+			wp_enqueue_style(
+				'ai1wmue_settings',
+				Ai1wm_Template::asset_link( 'css/settings.min.rtl.css', 'AI1WMUE' ),
+				array( 'ai1wm_servmask' )
+			);
+		} else {
+			wp_enqueue_style(
+				'ai1wmue_settings',
+				Ai1wm_Template::asset_link( 'css/settings.min.css', 'AI1WMUE' ),
+				array( 'ai1wm_servmask' )
+			);
+		}
+
+		wp_enqueue_script(
+			'ai1wmue_settings',
+			Ai1wm_Template::asset_link( 'javascript/settings.min.js', 'AI1WMUE' ),
+			array( 'ai1wm_settings' )
 		);
-	}
 
-	public static function settings( $params = array() ) {
-		check_admin_referer( 'ai1wmue_settings_save' );
-		if ( ! current_user_can( 'ai1wm_export_site' ) ) {
-			wp_die( esc_html__( 'You are not allowed to perform this action.', AI1WMUE_PLUGIN_NAME ) );
-		}
+		wp_localize_script(
+			'ai1wmue_settings',
+			'ai1wmue_settings',
+			array(
+				'ajax'       => array(
+					'url' => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wmue_list_folders' ) ) ),
+				),
+				'secret_key' => get_option( AI1WM_SECRET_KEY ),
+			)
+		);
 
-		ai1wm_setup_environment();
+		wp_localize_script(
+			'ai1wmue_settings',
+			'ai1wmue_locale',
+			array(
+				'folder_browser_change' => __( 'Change', AI1WMUE_PLUGIN_NAME ),
+				'title_name'            => __( 'Name', AI1WMUE_PLUGIN_NAME ),
+				'title_date'            => __( 'Date', AI1WMUE_PLUGIN_NAME ),
+				'empty_list_message'    => __( 'No folders to list. Click on the navbar to go back.', AI1WMUE_PLUGIN_NAME ),
+				'legend_select_info'    => __( 'Select with a click', AI1WMUE_PLUGIN_NAME ),
+				'legend_open_info'      => __( 'Open with two clicks', AI1WMUE_PLUGIN_NAME ),
+				'button_close'          => __( 'Close', AI1WMUE_PLUGIN_NAME ),
+				'button_select'         => __( 'Select folder &gt;', AI1WMUE_PLUGIN_NAME ),
+				'show_more'             => __( 'more', AI1WMUE_PLUGIN_NAME ),
+				'show_less'             => __( 'less', AI1WMUE_PLUGIN_NAME ),
+			)
+		);
 
-		// Set params
-		if ( empty( $params ) ) {
-			$params = stripslashes_deep( $_POST );
-		}
-
-		// Settings update
-		if ( isset( $params['ai1wmue_update'] ) ) {
-			$model = new Ai1wmue_Settings();
-
-			// Set number of backups
-			if ( ! empty( $params['ai1wmue_backups'] ) ) {
-				$model->set_backups( (int) $params['ai1wmue_backups'] );
-			} else {
-				$model->set_backups( 0 );
-			}
-
-			// Set size of backups
-			if ( ! empty( $params['ai1wmue_total'] ) && ! empty( $params['ai1wmue_total_unit'] ) ) {
-				$model->set_total( (int) $params['ai1wmue_total'] . trim( $params['ai1wmue_total_unit'] ) );
-			} else {
-				$model->set_total( 0 );
-			}
-
-			// Set number of days
-			if ( ! empty( $params['ai1wmue_days'] ) ) {
-				$model->set_days( (int) $params['ai1wmue_days'] );
-			} else {
-				$model->set_days( 0 );
-			}
-
-			// Set backups path
-			if ( ! empty( $params[ AI1WM_BACKUPS_PATH_OPTION ] ) ) {
-				$model->set_backups_path( $params[ AI1WM_BACKUPS_PATH_OPTION ] );
-			} else {
-				$model->reset_backups_path();
-			}
-
-			// Set message
-			Ai1wm_Message::flash( 'settings', __( 'Your changes have been saved.', AI1WMUE_PLUGIN_NAME ) );
-		}
-
-		// Redirect to settings page
-		wp_redirect( network_admin_url( 'admin.php?page=ai1wmue_settings' ) );
-		exit;
-	}
-
-	public static function list_folders( $params = array() ) {
-		ai1wm_setup_environment();
-
-		// Set params
-		if ( empty( $params ) ) {
-			$params = stripslashes_deep( $_POST );
-		}
-
-		// Set secret key
-		$secret_key = null;
-		if ( isset( $params['secret_key'] ) ) {
-			$secret_key = trim( $params['secret_key'] );
-		}
-
-		try {
-			// Ensure that unauthorized people cannot access backups list action
-			ai1wm_verify_secret_key( $secret_key );
-		} catch ( Ai1wm_Not_Valid_Secret_Key_Exception $e ) {
-			exit;
-		}
-
-		// Set directory
-		$directory = '/';
-		if ( isset( $params['directory'] ) ) {
-			$directory = $params['directory'];
-		}
-
-		// Iterate over content directory
-		$iterator = new Ai1wm_Recursive_Directory_Iterator( $directory );
-
-		$abs_path = realpath( ABSPATH );
-
-		// Loop over content directory
-		$names = $files = array();
-		foreach ( $iterator as $item ) {
-			if ( $item->isDir() && ! $item->isLink() && $item->isReadable() ) {
-				try {
-					$files[] = array(
-						'name'     => $name = $item->getRealPath(),
-						'writable' => $item->isWritable() && realpath( $name ) !== $abs_path,
-						'date'     => human_time_diff( $item->getMTime() ),
-					);
-					$names[] = strtolower( $item->getRealPath() );
-				} catch ( Exception $e ) {
-				}
-			}
-		}
-
-		array_multisort( $names, $files );
-
-		echo json_encode( $files );
-		exit;
+		// Add Google Tag Manager
+		add_action( 'admin_print_scripts', 'Ai1wmue_GTM_Controller::print_scripts', 60 );
 	}
 }

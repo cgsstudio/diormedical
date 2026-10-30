@@ -67,9 +67,28 @@ class Ai1wm_Export_Enumerate_Content {
 			$exclude_filters[] = 'blogs.dir';
 		}
 
-		// Exclude SQLite file
-		if ( defined( 'FQDB' ) ) {
+		// Exclude SQLite database and its journal files
+		if ( defined( 'DB_PATH' ) ) {
+			$exclude_filters[] = DB_PATH;
+			$exclude_filters[] = DB_PATH . '-wal';
+			$exclude_filters[] = DB_PATH . '-shm';
+			$exclude_filters[] = DB_PATH . '-journal';
+		} elseif ( defined( 'FQDB' ) ) {
 			$exclude_filters[] = FQDB;
+			$exclude_filters[] = FQDB . '-wal';
+			$exclude_filters[] = FQDB . '-shm';
+			$exclude_filters[] = FQDB . '-journal';
+		}
+
+		// Exclude SQLite storage files
+		if ( defined( 'FQDBDIR' ) ) {
+			if ( ( $sqlite_randomized_files = glob( FQDBDIR . '.ht.*' ) ) ) {
+				foreach ( $sqlite_randomized_files as $sqlite_randomized_file ) {
+					$exclude_filters[] = $sqlite_randomized_file;
+				}
+			}
+
+			$exclude_filters[] = FQDBDIR . 'db-path.php';
 		}
 
 		// Exclude selected files

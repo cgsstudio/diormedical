@@ -1,3 +1,6 @@
+= 2.89 =
+* Fixed export buttons not responding on sites using legacy jQuery
+
 = 2.88 =
 * Fixed file upload imports not being recognized as manual imports
 * Improved compatibility with the export capability of All-in-One WP Migration

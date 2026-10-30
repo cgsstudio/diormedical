@@ -37,7 +37,7 @@ define( 'AI1WM_DEBUG', false );
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WM_VERSION', '7.112' );
+define( 'AI1WM_VERSION', '7.113' );
 
 // ===============
 // = Plugin Name =
@@ -208,6 +208,11 @@ define( 'AI1WM_LESS_CACHE_EXTENSION', '.less.cache' );
 // = SQLite Database Extension =
 // =============================
 define( 'AI1WM_SQLITE_DATABASE_EXTENSION', '.sqlite' );
+
+// =============================
+// = SQLite Database Path Name =
+// =============================
+define( 'AI1WM_SQLITE_DATABASE_PATH_NAME', 'database' . DIRECTORY_SEPARATOR . 'db-path.php' );
 
 // ============================
 // = Elementor CSS Cache Name =

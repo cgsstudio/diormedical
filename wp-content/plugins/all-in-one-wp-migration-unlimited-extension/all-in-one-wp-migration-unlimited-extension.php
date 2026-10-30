@@ -5,7 +5,7 @@
  * Description: Extension for All-in-One WP Migration that enables unlimited size exports and imports
  * Author: ServMask
  * Author URI: https://servmask.com/
- * Version: 2.88
+ * Version: 2.89
  * Text Domain: all-in-one-wp-migration-unlimited-extension
  * Domain Path: /languages
  * Network: True
@@ -65,6 +65,9 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'constants.php';
 // Include functions
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'functions.php';
 
+// Include exceptions
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'exceptions.php';
+
 // Include loader
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'loader.php';
 
@@ -90,60 +93,5 @@ AIJS
 	. '</script>';
 }, 10, 2);
 
-// Register activation hook to install and activate base plugin if needed
-register_activation_hook( __FILE__, 'ai1wmue_activate_plugin' );
-
-/**
- * Plugin activation hook
- *
- * @return void
- */
-function ai1wmue_activate_plugin() {
-	// Check if the base plugin is installed
-	if ( ! ai1wmue_is_base_plugin_installed() ) {
-		// Install the base plugin
-		$install_result = ai1wmue_install_base_plugin();
-
-		if ( is_wp_error( $install_result ) ) {
-			// Installation failed, deactivate this plugin
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die(
-				wp_kses(
-					sprintf(
-						__( 'The All-in-One WP Migration plugin could not be installed automatically. Please <a href="%s" target="_blank">download and install it manually</a> before activating this extension.', AI1WMUE_PLUGIN_NAME ),
-						esc_url( 'https://wordpress.org/plugins/all-in-one-wp-migration/' )
-					),
-					ai1wmue_allowed_html_tags()
-				)
-			);
-		}
-	}
-
-	// Activate the base plugin if it's not already active
-	if ( ! ai1wmue_is_base_plugin_active() ) {
-		if ( ! function_exists( 'activate_plugin' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$activate_result = activate_plugin( 'all-in-one-wp-migration/all-in-one-wp-migration.php' );
-
-		if ( is_wp_error( $activate_result ) ) {
-			// Activation failed, deactivate this plugin
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die(
-				wp_kses(
-					sprintf(
-						__( 'The All-in-One WP Migration plugin could not be activated automatically. Please <a href="%s">activate it manually</a> before activating this extension.', AI1WMUE_PLUGIN_NAME ),
-						esc_url( admin_url( 'plugins.php' ) )
-					),
-					ai1wmue_allowed_html_tags()
-				)
-			);
-		}
-	}
-}
-
-// ===========================================================================
-// = All app initialization is done in Ai1wmue_Main_Controller __constructor =
-// ===========================================================================
-$main_controller = new Ai1wmue_Main_Controller( 'AI1WMUE', 'file' );
+// Plugin initialization
+$main_controller = new Ai1wmue_Main_Controller();

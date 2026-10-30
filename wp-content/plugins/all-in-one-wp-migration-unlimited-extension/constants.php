@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WMUE_VERSION', '2.88' );
+define( 'AI1WMUE_VERSION', '2.89' );
 
 // ===============
 // = Plugin Name =
@@ -64,22 +64,52 @@ define( 'AI1WMUE_TEMPLATES_PATH', AI1WMUE_LIB_PATH . DIRECTORY_SEPARATOR . 'view
 // ===============
 define( 'AI1WMUE_VENDOR_PATH', AI1WMUE_LIB_PATH . DIRECTORY_SEPARATOR . 'vendor' );
 
+// ==================
+// = Activation URL =
+// ==================
+define( 'AI1WMUE_ACTIVATION_URL', 'https://servmask.com/purchase/activations' );
+
 // ===============
 // = Service URL =
 // ===============
 define( 'AI1WMUE_SERVICE_URL', 'https://plugin-assets.wp-migration.com/v4/unlimited-extension/service.wasm' );
 
-// ==================
-// = Retention Path =
-// ==================
-define( 'AI1WMUE_RETENTION_NAME', 'retention.json' );
+// ==============
+// = Report URL =
+// ==============
+define( 'AI1WMUE_REPORT_URL', 'https://servmask.com/api/stats' );
 
 // ===============================
 // = Minimal Base Plugin Version =
 // ===============================
-define( 'AI1WMUE_MIN_AI1WM_VERSION', '7.111' );
+define( 'AI1WMUE_MIN_AI1WM_VERSION', '7.113' );
 
 // ===============
 // = Purchase ID =
 // ===============
 define( 'AI1WMUE_PURCHASE_ID', 'ZIMEEK00-0000-0000-0000-51A9E6E1A930' );
+
+// ============================
+// = Schedules Events Options =
+// ============================
+define( 'AI1WMUE_SCHEDULES_OPTIONS', 'ai1wmue_schedule_events' );
+
+// ====================
+// = Reset Theme Name =
+// ====================
+define( 'AI1WMUE_RESET_THEME_NAME', 'servmask' );
+
+// ==========================
+// = Reset Theme Style Name =
+// ==========================
+define( 'AI1WMUE_RESET_THEME_STYLE_NAME', AI1WMUE_RESET_THEME_NAME . DIRECTORY_SEPARATOR . 'style.css' );
+
+// ==========================
+// = Reset Theme Index Name =
+// ==========================
+define( 'AI1WMUE_RESET_THEME_INDEX_NAME', AI1WMUE_RESET_THEME_NAME . DIRECTORY_SEPARATOR . 'index.php' );
+
+// ========================
+// = Reset DB Backup File =
+// ========================
+define( 'AI1WMUE_RESET_DB_BACKUP', 'reset-db-backup.json' );

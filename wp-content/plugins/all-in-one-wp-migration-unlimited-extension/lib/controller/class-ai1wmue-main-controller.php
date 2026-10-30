@@ -29,120 +29,66 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Kangaroos cannot jump here' );
 }
 
-class Ai1wmue_Main_Controller extends Ai1wmve_Main_Controller {
+class Ai1wmue_Main_Controller {
 
 	/**
-	 * Register plugin menus
+	 * Main Application Controller
 	 *
-	 * @return void
+	 * @return object
 	 */
-	public function admin_menu() {
-		// Sub-level Settings menu
-		add_submenu_page(
-			'ai1wm_export',
-			__( 'Settings', AI1WMUE_PLUGIN_NAME ),
-			__( 'Settings', AI1WMUE_PLUGIN_NAME ),
-			'ai1wm_export_site',
-			'ai1wmue_settings',
-			'Ai1wmue_Settings_Controller::index'
-		);
+	public function __construct() {
+		register_activation_hook( AI1WMUE_PLUGIN_BASENAME, 'Ai1wmue_Upgrader::sync_options' );
+		register_activation_hook( AI1WMUE_PLUGIN_BASENAME, 'Ai1wmue_Report_Controller::on_activate' );
+		register_activation_hook( AI1WMUE_PLUGIN_BASENAME, 'Ai1wmue_Install_Controller::on_activate' );
+
+		// Activate hooks
+		$this->activate_actions();
+		$this->activate_filters();
+
+		// Load plugin defaults
+		$this->enqueue_scripts_and_styles();
+		$this->maybe_sync_options();
 	}
 
 	/**
-	 * Register listeners for actions
+	 * Outputs menu icon between head tags (do not use template to render the code)
 	 *
 	 * @return void
 	 */
-	protected function activate_actions() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_export_scripts_and_styles' ), 20 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_import_scripts_and_styles' ), 20 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_backups_scripts_and_styles' ), 20 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_reset_scripts_and_styles' ), 20 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_settings_scripts_and_styles' ), 20 );
+	public function admin_head() {
+		?>
+		<style type="text/css" media="all">
+			.ai1wm-label {
+				border: 1px solid #5cb85c;
+				background-color: transparent;
+				color: #5cb85c;
+				cursor: pointer;
+				text-transform: uppercase;
+				font-weight: 600;
+				outline: none;
+				transition: background-color 0.2s ease-out;
+				padding: .2em .6em;
+				font-size: 0.8em;
+				border-radius: 5px;
+				text-decoration: none !important;
+			}
+
+			.ai1wm-label:hover {
+				background-color: #5cb85c;
+				color: #fff;
+			}
+		</style>
+		<?php
 	}
 
 	/**
-	 * Export and import commands
+	 * Display admin notices (do not use template to render the code)
 	 *
 	 * @return void
 	 */
-	public function ai1wm_commands() {
-		if ( ai1wmue_is_running() ) {
-			remove_all_filters( 'ai1wm_export', 280 );
-			remove_all_filters( 'ai1wm_import', 5 );
-
-			add_filter( 'ai1wm_export', 'Ai1wmue_Export_Retention::execute', 280 );
-			add_filter( 'ai1wm_import', 'Ai1wmue_Import_Upload::execute', 5 );
-			add_filter( 'ai1wm_import', 'Ai1wmue_Import_Settings::execute', 290 );
-			add_filter( 'ai1wm_import', 'Ai1wmue_Import_Database::execute', 310 );
-		}
-	}
-
-	/**
-	 * Check whether All-in-One WP Migration is loaded
-	 *
-	 * @return void
-	 */
-	public function ai1wm_loaded() {
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
-
-		// Settings
-		add_action( 'admin_post_ai1wmue_settings', 'Ai1wmue_Settings_Controller::settings' );
-	}
-
-	/**
-	 * WP CLI commands
-	 *
-	 * @return void
-	 */
-	public function ai1wmve_wp_cli() {
-		if ( defined( 'WP_CLI' ) ) {
-			WP_CLI::add_command(
-				'ai1wm',
-				'Ai1wm_Backup_WP_CLI_Command',
-				array(
-					'shortdesc'     => __( 'All-in-One WP Migration Command', AI1WMUE_PLUGIN_NAME ),
-					'before_invoke' => array( $this, 'activate_extension_commands' ),
-				)
-			);
-		}
-	}
-
-	/**
-	 * Activates extension specific commands
-	 *
-	 * @return void
-	 */
-	public function activate_extension_commands() {
-		$_GET['file'] = 1;
-		$this->ai1wm_commands();
-	}
-
-	/**
-	 * Display All-in-One WP Migration notice
-	 *
-	 * @return void
-	 */
-	public function ai1wm_notice() {
-		// Check if the base plugin is installed but not activated
-		if ( ai1wmue_is_base_plugin_installed() && ! ai1wmue_is_base_plugin_active() ) {
-			?>
-			<div class="error">
-				<p>
-					<?php
-					echo wp_kses(
-						sprintf(
-							__( 'Unlimited Extension requires All-in-One WP Migration plugin to be activated. <a href="%s">Activate Now</a>', AI1WMUE_PLUGIN_NAME ),
-							esc_url( wp_nonce_url( 'plugins.php?action=activate&plugin=all-in-one-wp-migration/all-in-one-wp-migration.php', 'activate-plugin_all-in-one-wp-migration/all-in-one-wp-migration.php' ) )
-						),
-						ai1wmue_allowed_html_tags()
-					);
-					?>
-				</p>
-			</div>
-			<?php
-		} elseif ( ! ai1wmue_is_base_plugin_installed() ) {
-			// Base plugin is not installed
+	public function admin_notices() {
+		// Check if the base plugin is not installed or activated
+		if ( is_wp_error( validate_plugin( 'all-in-one-wp-migration/all-in-one-wp-migration.php' ) ) ) {
 			?>
 			<div class="error">
 				<p>
@@ -159,365 +105,240 @@ class Ai1wmue_Main_Controller extends Ai1wmve_Main_Controller {
 				</p>
 			</div>
 			<?php
+		} elseif ( is_plugin_inactive( 'all-in-one-wp-migration/all-in-one-wp-migration.php' ) ) {
+			?>
+			<div class="error">
+				<p>
+					<?php
+					echo wp_kses(
+						sprintf(
+							__( 'Unlimited Extension requires All-in-One WP Migration plugin to be activated. <a href="%s">Activate Now</a>', AI1WMUE_PLUGIN_NAME ),
+							esc_url( wp_nonce_url( 'plugins.php?action=activate&plugin=all-in-one-wp-migration/all-in-one-wp-migration.php', 'activate-plugin_all-in-one-wp-migration/all-in-one-wp-migration.php' ) )
+						),
+						ai1wmue_allowed_html_tags()
+					);
+					?>
+				</p>
+			</div>
+			<?php
 		}
 	}
 
 	/**
-	 * Enqueue scripts and styles for Export Controller
+	 * Enqueue admin scripts and styles
 	 *
-	 * @param  string $hook Hook suffix
 	 * @return void
 	 */
-	public function enqueue_export_scripts_and_styles( $hook ) {
-		if ( stripos( 'toplevel_page_ai1wm_export', $hook ) === false ) {
-			return;
-		}
-
-		add_action( 'admin_print_scripts', array( $this, 'google_tag_manager' ) );
+	public function enqueue_scripts_and_styles() {
+		add_action( 'admin_enqueue_scripts', 'Ai1wmue_Backups_Controller::enqueue_scripts_and_styles', 60 );
+		add_action( 'admin_enqueue_scripts', 'Ai1wmue_Export_Controller::enqueue_scripts_and_styles', 60 );
+		add_action( 'admin_enqueue_scripts', 'Ai1wmue_Import_Controller::enqueue_scripts_and_styles', 60 );
+		add_action( 'admin_enqueue_scripts', 'Ai1wmue_Reset_Controller::enqueue_scripts_and_styles', 60 );
+		add_action( 'admin_enqueue_scripts', 'Ai1wmue_Schedules_Controller::enqueue_scripts_and_styles', 60 );
+		add_action( 'admin_enqueue_scripts', 'Ai1wmue_Settings_Controller::enqueue_scripts_and_styles', 60 );
 	}
 
 	/**
-	 * Enqueue scripts and styles for Import Controller
+	 * Run the upgrader once after any update, including background updates
 	 *
-	 * @param  string $hook Hook suffix
 	 * @return void
 	 */
-	public function enqueue_import_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_ai1wm_import', $hook ) === false ) {
-			return;
-		}
-
-		wp_enqueue_script(
-			'ai1wmue_import',
-			Ai1wm_Template::asset_link( 'javascript/import.min.js', 'AI1WMUE' ),
-			array( 'ai1wm_import' )
-		);
-
-		wp_enqueue_script(
-			'ai1wmue_wasm_exec',
-			Ai1wm_Template::asset_link( 'javascript/vendor/wasm_exec.js', 'AI1WMUE' ),
-			array( 'ai1wmue_import' )
-		);
-
-		// Base service
-		wp_localize_script(
-			'ai1wmue_import',
-			'ai1wmue_base_service',
-			array(
-				'url' => AI1WMUE_SERVICE_URL,
-				'key' => AI1WMUE_PURCHASE_ID,
-			)
-		);
-
-		// Site details
-		wp_localize_script(
-			'ai1wmue_import',
-			'ai1wmue_site_details',
-			array(
-				'site_url'    => site_url(),
-				'admin_email' => get_option( 'admin_email' ),
-			)
-		);
-
-		// File uploader
-		wp_localize_script(
-			'ai1wmue_import',
-			'ai1wmue_file_uploader',
-			array(
-				'config'  => array(
-					'chunk_size'  => (int) apply_filters( 'ai1wm_max_chunk_size', AI1WM_MAX_CHUNK_SIZE ),
-					'max_retries' => (int) apply_filters( 'ai1wm_max_chunk_retries', AI1WM_MAX_CHUNK_RETRIES ),
-				),
-				'url'     => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1, 'ai1wm_manual_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wm_import' ) ) ),
-				'params'  => array(
-					'priority'   => 5,
-					'secret_key' => get_option( AI1WM_SECRET_KEY ),
-				),
-				'filters' => array(
-					'ai1wm_archive_extension' => array( 'wpress' ),
-				),
-			)
-		);
-
-		add_action( 'admin_print_scripts', array( $this, 'google_tag_manager' ) );
+	public function maybe_sync_options() {
+		add_action( 'init', 'Ai1wmue_Upgrader::sync_options', 60 );
 	}
 
 	/**
-	 * Enqueue scripts and styles for Backups Controller
-	 *
-	 * @param  string $hook Hook suffix
-	 * @return void
-	 */
-	public function enqueue_backups_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_ai1wm_backups', $hook ) === false ) {
-			return;
-		}
-
-		wp_enqueue_script(
-			'ai1wmue_backups',
-			Ai1wm_Template::asset_link( 'javascript/backups.min.js', 'AI1WMUE' ),
-			array( 'ai1wm_backups' )
-		);
-
-		wp_enqueue_script(
-			'ai1wmue_wasm_exec',
-			Ai1wm_Template::asset_link( 'javascript/vendor/wasm_exec.js', 'AI1WMUE' ),
-			array( 'ai1wmue_backups' )
-		);
-
-		// Base service
-		wp_localize_script(
-			'ai1wmue_backups',
-			'ai1wmue_base_service',
-			array(
-				'url' => AI1WMUE_SERVICE_URL,
-				'key' => AI1WMUE_PURCHASE_ID,
-			)
-		);
-
-		// Site details
-		wp_localize_script(
-			'ai1wmue_backups',
-			'ai1wmue_site_details',
-			array(
-				'site_url'    => site_url(),
-				'admin_email' => get_option( 'admin_email' ),
-			)
-		);
-
-		add_action( 'admin_print_scripts', array( $this, 'google_tag_manager' ) );
-	}
-
-	/**
-	 * Enqueue scripts and styles for Reset Controller
-	 *
-	 * @param  string $hook Hook suffix
-	 * @return void
-	 */
-	public function enqueue_reset_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_ai1wmve_reset', $hook ) === false ) {
-			return;
-		}
-
-		if ( is_rtl() ) {
-			wp_enqueue_style(
-				'ai1wmue_reset',
-				Ai1wm_Template::asset_link( 'css/reset-tools.min.rtl.css', 'AI1WMUE' ),
-				array( 'ai1wm_backups' )
-			);
-		} else {
-			wp_enqueue_style(
-				'ai1wmue_reset',
-				Ai1wm_Template::asset_link( 'css/reset-tools.min.css', 'AI1WMUE' ),
-				array( 'ai1wm_backups' )
-			);
-		}
-
-		wp_enqueue_script(
-			'ai1wmue_backups',
-			Ai1wm_Template::asset_link( 'javascript/backups.min.js', 'AI1WMUE' ),
-			array( 'ai1wm_backups' )
-		);
-
-		wp_enqueue_script(
-			'ai1wmue_reset',
-			Ai1wm_Template::asset_link( 'javascript/reset-tools.min.js', 'AI1WMUE' ),
-			array( 'ai1wmue_backups' )
-		);
-
-		wp_enqueue_script(
-			'ai1wmue_wasm_exec',
-			Ai1wm_Template::asset_link( 'javascript/vendor/wasm_exec.js', 'AI1WMUE' ),
-			array( 'ai1wmue_reset' )
-		);
-
-		// Base service
-		wp_localize_script(
-			'ai1wmue_reset',
-			'ai1wmue_base_service',
-			array(
-				'url' => AI1WMUE_SERVICE_URL,
-				'key' => AI1WMUE_PURCHASE_ID,
-			)
-		);
-
-		// Site details
-		wp_localize_script(
-			'ai1wmue_reset',
-			'ai1wmue_site_details',
-			array(
-				'site_url'    => site_url(),
-				'admin_email' => get_option( 'admin_email' ),
-			)
-		);
-
-		wp_localize_script(
-			'ai1wmue_reset',
-			'ai1wmve_reset',
-			array(
-				'ajax'       => array(
-					'url' => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wm_reset' ) ) ),
-				),
-				'status'     => array(
-					'url' => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1, 'secret_key' => get_option( AI1WM_SECRET_KEY ) ), admin_url( 'admin-ajax.php?action=ai1wm_status' ) ) ),
-				),
-				'secret_key' => get_option( AI1WM_SECRET_KEY ),
-			)
-		);
-
-		wp_localize_script(
-			'ai1wmue_reset',
-			'ai1wmve_locale',
-			array(
-				// Reset type agnostic translations
-				'reset_in_progress'           => __( 'Reset In Progress', AI1WMUE_PLUGIN_NAME ),
-				'reset_in_progress_info'      => __( 'Your request is being processed. This may take a few moments. Please do not close this window or navigate away from this page while the reset is in progress.', AI1WMUE_PLUGIN_NAME ),
-				'stop_resetting_your_website' => __( 'You are about to stop resetting your website, are you sure?', AI1WMUE_PLUGIN_NAME ),
-				'unable_to_stop_the_reset'    => __( 'Unable to stop the reset. Refresh the page and try again', AI1WMUE_PLUGIN_NAME ),
-				'unable_to_start_the_reset'   => __( 'Unable to start the reset. Refresh the page and try again', AI1WMUE_PLUGIN_NAME ),
-				'unable_to_reset'             => __( 'Unable to reset', AI1WMUE_PLUGIN_NAME ),
-				'create_snapshot_title'       => __( 'Create a new snapshot', AI1WMUE_PLUGIN_NAME ),
-				'create_snapshot_btn'         => __( 'Create snapshot', AI1WMUE_PLUGIN_NAME ),
-				'cancel'                      => __( 'Cancel', AI1WMUE_PLUGIN_NAME ),
-				'done'                        => __( 'Done', AI1WMUE_PLUGIN_NAME ),
-				'stop'                        => __( 'Stop Reset', AI1WMUE_PLUGIN_NAME ),
-				'close'                       => __( 'Close', AI1WMUE_PLUGIN_NAME ),
-				'backup_btn'                  => __( 'Create Backup', AI1WMUE_PLUGIN_NAME ),
-				'retry'                       => __( 'Retry', AI1WMUE_PLUGIN_NAME ),
-
-				// Translations for each of a reset type
-				'plugins'                     => array(
-					'name'          => __( 'Plugin Purge', AI1WMUE_PLUGIN_NAME ),
-					'description'   => __( 'Quickly removes all installed plugins from your WordPress site. Ideal for troubleshooting conflicts or starting fresh with plugin installations.', AI1WMUE_PLUGIN_NAME ),
-					'help'          => __( 'This tool will remove all installed plugins from your site.', AI1WMUE_PLUGIN_NAME ),
-					'reset_btn'     => __( 'Purge Plugins', AI1WMUE_PLUGIN_NAME ),
-					'confirm_title' => __( 'Confirm Plugin Purge', AI1WMUE_PLUGIN_NAME ),
-					'confirm_text'  => __( 'Are you sure you want to purge your plugins? This will delete all the plugins.', AI1WMUE_PLUGIN_NAME ),
-					'confirm_btn'   => __( 'Purge Plugins', AI1WMUE_PLUGIN_NAME ),
-				),
-				'themes'                      => array(
-					'name'          => __( 'Theme Reset', AI1WMUE_PLUGIN_NAME ),
-					'description'   => __( 'Deletes all themes and reactivates the default WordPress theme. Useful for reverting to a clean state or resolving theme-related issues.', AI1WMUE_PLUGIN_NAME ),
-					'help'          => __( 'This tool will delete all themes and revert to the default WordPress theme.', AI1WMUE_PLUGIN_NAME ),
-					'reset_btn'     => __( 'Theme Reset', AI1WMUE_PLUGIN_NAME ),
-					'confirm_title' => __( 'Confirm Theme Reset', AI1WMUE_PLUGIN_NAME ),
-					'confirm_text'  => __( 'Are you sure you want to reset your themes? This will delete all your current themes and reactivate the default WordPress theme.', AI1WMUE_PLUGIN_NAME ),
-					'confirm_btn'   => __( 'Theme Reset', AI1WMUE_PLUGIN_NAME ),
-				),
-				'media'                       => array(
-					'name'          => __( 'Media Clean-Up', AI1WMUE_PLUGIN_NAME ),
-					'description'   => __( 'Erases all media files from the site\'s media library. Ideal for clearing outdated or unnecessary media to declutter your site.', AI1WMUE_PLUGIN_NAME ),
-					'help'          => __( 'This tool will delete all media files from your site\'s media library.', AI1WMUE_PLUGIN_NAME ),
-					'reset_btn'     => __( 'Media Clean-Up', AI1WMUE_PLUGIN_NAME ),
-					'confirm_title' => __( 'Confirm Media Clean-Up', AI1WMUE_PLUGIN_NAME ),
-					'confirm_text'  => __( 'Are you sure you want to erase all media files from your site media library?', AI1WMUE_PLUGIN_NAME ),
-					'confirm_btn'   => __( 'Media Clean-Up', AI1WMUE_PLUGIN_NAME ),
-				),
-				'database'                    => array(
-					'name'          => __( 'Reset Database', AI1WMUE_PLUGIN_NAME ),
-					'description'   => __( 'This action will permanently erase all existing data within your database and revert your WordPress site to its default state. This includes posts, pages, comments, settings, and user data. Useful for reverting to a clean state and starting fresh.', AI1WMUE_PLUGIN_NAME ),
-					'help'          => __( 'This tool will delete all existing data within your database and revert your WordPress site to its default state.', AI1WMUE_PLUGIN_NAME ),
-					'reset_btn'     => __( 'Reset Database', AI1WMUE_PLUGIN_NAME ),
-					'confirm_title' => __( 'Confirm Database Reset', AI1WMUE_PLUGIN_NAME ),
-					'confirm_text'  => __( 'Are you sure you want to reset your database? This action will permanently erase all existing data within your database and revert your WordPress site to its default state. This includes posts, pages, comments, settings, and user data. Once completed, this action cannot be undone.', AI1WMUE_PLUGIN_NAME ),
-					'confirm_btn'   => __( 'Reset Database', AI1WMUE_PLUGIN_NAME ),
-				),
-				'all'                         => array(
-					'name'          => __( 'Full Site Reset', AI1WMUE_PLUGIN_NAME ),
-					'description'   => __( 'Completely resets the site, restoring WordPress to its initial installation state. Best for starting entirely from scratch or for a clean slate on the site.', AI1WMUE_PLUGIN_NAME ),
-					'help'          => __( 'This tool will reset your entire WordPress site to its default installation state.', AI1WMUE_PLUGIN_NAME ),
-					'reset_btn'     => __( 'Full Site Reset', AI1WMUE_PLUGIN_NAME ),
-					'confirm_title' => __( 'Confirm Site Reset', AI1WMUE_PLUGIN_NAME ),
-					'confirm_text'  => __( 'Are you sure you want to erase all media files from your site media library? This action is ideal for clearing outdated or unnecessary media to declutter your site.', AI1WMUE_PLUGIN_NAME ),
-					'confirm_btn'   => __( 'Full Site Reset', AI1WMUE_PLUGIN_NAME ),
-				),
-			)
-		);
-
-		add_action( 'admin_print_scripts', array( $this, 'google_tag_manager' ) );
-	}
-
-	/**
-	 * Enqueue scripts and styles for Settings Controller
-	 *
-	 * @param  string $hook Hook suffix
-	 * @return void
-	 */
-	public function enqueue_settings_scripts_and_styles( $hook ) {
-		if ( stripos( 'all-in-one-wp-migration_page_ai1wmue_settings', $hook ) === false ) {
-			return;
-		}
-
-		if ( is_rtl() ) {
-			wp_enqueue_style(
-				'ai1wmue_settings',
-				Ai1wm_Template::asset_link( 'css/settings.min.rtl.css', 'AI1WMUE' ),
-				array( 'ai1wm_servmask' )
-			);
-		} else {
-			wp_enqueue_style(
-				'ai1wmue_settings',
-				Ai1wm_Template::asset_link( 'css/settings.min.css', 'AI1WMUE' ),
-				array( 'ai1wm_servmask' )
-			);
-		}
-
-		wp_enqueue_script(
-			'ai1wmue_settings',
-			Ai1wm_Template::asset_link( 'javascript/settings.min.js', 'AI1WMUE' ),
-			array( 'ai1wm_settings' )
-		);
-
-		wp_localize_script(
-			'ai1wmue_settings',
-			'ai1wm_feedback',
-			array(
-				'ajax'       => array(
-					'url' => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ) ),
-				),
-				'secret_key' => get_option( AI1WM_SECRET_KEY ),
-			)
-		);
-
-		wp_localize_script(
-			'ai1wmue_settings',
-			'ai1wmue_folder_browser',
-			array(
-				'ajax'       => array(
-					'url' => wp_make_link_relative( add_query_arg( array( 'ai1wm_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wmue_folder_browser' ) ) ),
-				),
-				'secret_key' => get_option( AI1WM_SECRET_KEY ),
-			)
-		);
-
-		wp_localize_script(
-			'ai1wmue_settings',
-			'ai1wmue_locale',
-			array(
-				'folder_browser_change' => __( 'Change', AI1WMUE_PLUGIN_NAME ),
-				'title_name'            => __( 'Name', AI1WMUE_PLUGIN_NAME ),
-				'title_date'            => __( 'Date', AI1WMUE_PLUGIN_NAME ),
-				'empty_list_message'    => __( 'No folders to list. Click on the navbar to go back.', AI1WMUE_PLUGIN_NAME ),
-				'legend_select_info'    => __( 'Select with a click', AI1WMUE_PLUGIN_NAME ),
-				'legend_open_info'      => __( 'Open with two clicks', AI1WMUE_PLUGIN_NAME ),
-				'button_close'          => __( 'Close', AI1WMUE_PLUGIN_NAME ),
-				'button_select'         => __( 'Select folder &gt;', AI1WMUE_PLUGIN_NAME ),
-				'show_more'             => __( 'more', AI1WMUE_PLUGIN_NAME ),
-				'show_less'             => __( 'less', AI1WMUE_PLUGIN_NAME ),
-			)
-		);
-
-		add_action( 'admin_print_scripts', array( $this, 'google_tag_manager' ) );
-	}
-
-	/**
-	 * Register initial router
+	 * Load WP ajax for settings and import controllers
 	 *
 	 * @return void
 	 */
-	public function router() {
+	public function load_wp_ajax() {
 		if ( current_user_can( 'ai1wm_export_site' ) ) {
-			add_action( 'wp_ajax_ai1wmue_folder_browser', 'Ai1wmue_Settings_Controller::list_folders' );
+			add_action( 'wp_ajax_ai1wmue_list_files', 'Ai1wmue_Advanced_Options_Controller::list_files' );
+			add_action( 'wp_ajax_ai1wmue_list_folders', 'Ai1wmue_Pro_Settings_Controller::list_folders' );
+			add_action( 'wp_ajax_ai1wmue_reset_tools', 'Ai1wmue_Reset_Tools_Controller::reset_tools' );
+
+			add_action( 'wp_ajax_ai1wmue_schedule_event_delete', 'Ai1wmue_Schedule_Events_Controller::delete' );
+			add_action( 'wp_ajax_ai1wmue_schedule_event_log', 'Ai1wmue_Schedule_Events_Controller::event_log' );
+			add_action( 'wp_ajax_ai1wmue_schedule_event_clean', 'Ai1wmue_Schedule_Events_Controller::event_clean' );
+			add_action( 'wp_ajax_ai1wmue_schedule_event_manual_run', 'Ai1wmue_Schedule_Events_Controller::manual_run' );
+			add_action( 'wp_ajax_ai1wmue_schedule_event_status', 'Ai1wmue_Schedule_Events_Controller::event_status' );
+		}
+	}
+
+	/**
+	 * Initializes language domain for the plugin
+	 *
+	 * @return void
+	 */
+	public function load_plugin_textdomain() {
+		load_plugin_textdomain( AI1WMUE_PLUGIN_NAME, false, false );
+	}
+
+	/**
+	 * WP CLI commands
+	 *
+	 * @return void
+	 */
+	public function cli_init() {
+		if ( defined( 'WP_CLI' ) ) {
+			WP_CLI::add_command( 'ai1wm', 'Ai1wmue_Backup_CLI_Command', array( 'shortdesc' => __( 'All-in-One WP Migration Command', AI1WMUE_PLUGIN_NAME ) ) );
+		}
+	}
+
+	/**
+	 * Load WP cron hooks
+	 *
+	 * @return void
+	 */
+	public function load_cron_hooks() {
+		remove_all_actions( 'ai1wmve_schedule_event' );
+
+		// Add cron hook runner
+		add_action( Ai1wmue_Schedule_Event::CRON_HOOK, 'Ai1wmue_Schedule_Events_Controller::run' );
+	}
+
+	/**
+	 * Load admin menu and notices
+	 *
+	 * @return void
+	 */
+	public function load_admin_menu() {
+		if ( defined( 'AI1WM_PLUGIN_NAME' ) ) {
+			add_action( 'admin_menu', array( $this, 'admin_menu' ), 60 );
+		} else {
+			add_action( 'admin_notices', array( $this, 'admin_notices' ), 60 );
+		}
+	}
+
+	/**
+	 * Load schedule buttons
+	 *
+	 * @return void
+	 */
+	public function load_schedule_buttons() {
+		add_filter( 'ai1wmue_schedule_buttons', 'Ai1wmue_Schedule_Events_Controller::buttons' );
+		add_filter( 'ai1wmue_incremental_storages', 'Ai1wmue_Schedule_Events_Controller::incremental_storages' );
+	}
+
+	/**
+	 * Load export and import commands
+	 *
+	 * @return void
+	 */
+	public function load_plugin_commands() {
+		if ( ai1wmue_is_running() ) {
+			remove_all_filters( 'ai1wm_export', 280 );
+			remove_all_filters( 'ai1wm_import', 5 );
+
+			add_filter( 'ai1wm_export', 'Ai1wmue_Export_Retention::execute', 280 );
+			add_filter( 'ai1wm_import', 'Ai1wmue_Import_Upload::execute', 5 );
+		}
+
+		add_filter( 'ai1wm_export', 'Ai1wmue_Export_Compatibility::execute', 10 );
+		add_filter( 'ai1wm_import', 'Ai1wmue_Import_Compatibility::execute', 10 );
+
+		add_filter( 'ai1wm_import', 'Ai1wmue_Import_Select_Settings::execute', 290 );
+		add_filter( 'ai1wm_import', 'Ai1wmue_Import_Update_Settings::execute', 315 );
+	}
+
+	/**
+	 * Load reset commands
+	 *
+	 * @return void
+	 */
+	public function load_reset_commands() {
+		remove_all_filters( 'ai1wm_reset' );
+
+		add_filter( 'ai1wm_reset', 'Ai1wmue_Reset_Compatibility::execute', 10 );
+		add_filter( 'ai1wm_reset', 'Ai1wmue_Reset_Init::execute', 10 );
+		add_filter( 'ai1wm_reset', 'Ai1wmue_Reset_Plugins::execute', 50 );
+		add_filter( 'ai1wm_reset', 'Ai1wmue_Reset_Themes::execute', 100 );
+		add_filter( 'ai1wm_reset', 'Ai1wmue_Reset_Media::execute', 150 );
+		add_filter( 'ai1wm_reset', 'Ai1wmue_Reset_Database::execute', 200 );
+	}
+
+	/**
+	 * Load status events
+	 *
+	 * @return void
+	 */
+	public function load_status_events() {
+		if ( ai1wmue_is_running() ) {
+			add_action( 'ai1wm_status_export_done', 'Ai1wmue_Reset_Tools_Controller::reset_labels' );
+		}
+
+		add_action( 'ai1wm_status_export_done', 'Ai1wmue_Report_Controller::on_export' );
+		add_action( 'ai1wm_status_import_done', 'Ai1wmue_Report_Controller::on_import' );
+		add_action( 'ai1wm_status_import_done', 'Ai1wmue_Report_Controller::on_restore' );
+
+		add_action( 'ai1wm_status_export_done', 'Ai1wmue_Schedule_Events_Controller::log_success' );
+		add_action( 'ai1wm_status_export_init', 'Ai1wmue_Schedule_Events_Controller::log_running' );
+		add_action( 'ai1wm_status_export_error', 'Ai1wmue_Schedule_Events_Controller::log_failed', 10, 2 );
+
+		// Library
+		remove_action( 'ai1wm_status_export_done', 'Ai1wmve_Schedules_Controller::log_success' );
+		remove_action( 'ai1wm_status_export_init', 'Ai1wmve_Schedules_Controller::log_running' );
+		remove_action( 'ai1wm_status_export_error', 'Ai1wmve_Schedules_Controller::log_failed' );
+	}
+
+	/**
+	 * Update schedule details
+	 *
+	 * @return void
+	 */
+	public function admin_post_schedules() {
+		add_action( 'admin_post_ai1wmue_schedule_event_save', 'Ai1wmue_Schedule_Events_Controller::save' );
+	}
+
+	/**
+	 * Update settings details
+	 *
+	 * @return void
+	 */
+	public function admin_post_settings() {
+		add_action( 'admin_post_ai1wmue_settings', 'Ai1wmue_Pro_Settings_Controller::settings' );
+	}
+
+	/**
+	 * Enable advanced options
+	 *
+	 * @return void
+	 */
+	public function load_advanced_options() {
+		// Add export compression types
+		if ( ! has_action( 'ai1wm_export_compression_types' ) ) {
+			add_action( 'ai1wm_export_compression_types', 'Ai1wmue_Advanced_Options_Controller::compression_types' );
+		}
+
+		// Add export inactive themes
+		if ( ! has_action( 'ai1wm_export_inactive_themes' ) ) {
+			add_action( 'ai1wm_export_inactive_themes', 'Ai1wmue_Advanced_Options_Controller::inactive_themes' );
+		}
+
+		// Add export inactive plugins
+		if ( ! has_action( 'ai1wm_export_inactive_plugins' ) ) {
+			add_action( 'ai1wm_export_inactive_plugins', 'Ai1wmue_Advanced_Options_Controller::inactive_plugins' );
+		}
+
+		// Add export cache files
+		if ( ! has_action( 'ai1wm_export_cache_files' ) ) {
+			add_action( 'ai1wm_export_cache_files', 'Ai1wmue_Advanced_Options_Controller::cache_files' );
+		}
+
+		// Add export exclude files
+		if ( ! has_action( 'ai1wm_export_advanced_settings' ) ) {
+			add_action( 'ai1wm_export_advanced_settings', 'Ai1wmue_Advanced_Options_Controller::exclude_files' );
+		}
+
+		// Add export exclude db tables
+		if ( ! has_action( 'ai1wm_export_exclude_db_tables' ) ) {
+			add_action( 'ai1wm_export_exclude_db_tables', 'Ai1wmue_Advanced_Options_Controller::exclude_db_tables' );
+		}
+
+		// Add export include db tables
+		if ( ! has_action( 'ai1wm_export_include_db_tables' ) ) {
+			add_action( 'ai1wm_export_include_db_tables', 'Ai1wmue_Advanced_Options_Controller::include_db_tables' );
 		}
 	}
 
@@ -535,11 +356,87 @@ class Ai1wmue_Main_Controller extends Ai1wmve_Main_Controller {
 		return $links;
 	}
 
-	public function google_tag_manager() {
-		Ai1wm_Template::render(
-			'common/google-tag-manager',
-			array(),
-			AI1WMUE_TEMPLATES_PATH
+	/**
+	 * Add pro text to plugin page
+	 *
+	 * @return string
+	 */
+	public function plugin_pro_text() {
+		return Ai1wm_Template::get_content( 'main/pro', array(), AI1WMUE_TEMPLATES_PATH );
+	}
+
+	/**
+	 * Register listeners for actions
+	 *
+	 * @return void
+	 */
+	protected function activate_actions() {
+		add_action( 'admin_head', array( $this, 'admin_head' ), 60 );
+
+		add_action( 'cli_init', array( $this, 'cli_init' ), 60 );
+		add_action( 'admin_init', array( $this, 'load_wp_ajax' ), 60 );
+		add_action( 'admin_init', array( $this, 'load_plugin_textdomain' ), 60 );
+		add_action( 'admin_init', array( $this, 'load_schedule_buttons' ), 60 );
+		add_action( 'admin_init', array( $this, 'load_advanced_options' ), 60 );
+
+		add_action( 'admin_init', array( $this, 'admin_post_schedules' ), 60 );
+		add_action( 'admin_init', array( $this, 'admin_post_settings' ), 60 );
+
+		add_action( 'plugins_loaded', array( $this, 'load_admin_menu' ), 60 );
+		add_action( 'plugins_loaded', array( $this, 'load_plugin_commands' ), 60 );
+		add_action( 'plugins_loaded', array( $this, 'load_reset_commands' ), 60 );
+		add_action( 'plugins_loaded', array( $this, 'load_status_events' ), 60 );
+		add_action( 'plugins_loaded', array( $this, 'load_cron_hooks' ), 60 );
+
+		if ( defined( 'WP_CLI' ) ) {
+			WP_CLI::add_hook( 'ai1wm_cli_commands', array( $this, 'load_plugin_commands' ) );
+		}
+	}
+
+	/**
+	 * Register listeners for filters
+	 *
+	 * @return void
+	 */
+	protected function activate_filters() {
+		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 5, 2 );
+		add_filter( 'ai1wm_pro', array( $this, 'plugin_pro_text' ), 60 );
+	}
+
+	/**
+	 * Register plugin menus
+	 *
+	 * @return void
+	 */
+	public function admin_menu() {
+		add_submenu_page(
+			'ai1wm_export',
+			__( 'Reset Hub', AI1WMUE_PLUGIN_NAME ),
+			__( 'Reset Hub', AI1WMUE_PLUGIN_NAME ),
+			'ai1wm_import_site',
+			'ai1wmue_reset',
+			'Ai1wmue_Reset_Tools_Controller::index'
 		);
+
+		add_submenu_page(
+			'ai1wm_export',
+			__( 'Schedules', AI1WMUE_PLUGIN_NAME ),
+			__( 'Schedules', AI1WMUE_PLUGIN_NAME ),
+			'ai1wm_export_site',
+			'ai1wmue_schedules',
+			'Ai1wmue_Schedule_Events_Controller::index'
+		);
+
+		add_submenu_page(
+			'ai1wm_export',
+			__( 'Settings', AI1WMUE_PLUGIN_NAME ),
+			__( 'Settings', AI1WMUE_PLUGIN_NAME ),
+			'ai1wm_export_site',
+			'ai1wmue_settings',
+			'Ai1wmue_Pro_Settings_Controller::index'
+		);
+
+		remove_submenu_page( 'ai1wm_export', 'ai1wmve_reset' );
+		remove_submenu_page( 'ai1wm_export', 'ai1wmve_schedules' );
 	}
 }
