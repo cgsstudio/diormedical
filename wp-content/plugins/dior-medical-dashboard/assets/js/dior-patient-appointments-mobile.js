@@ -73,11 +73,13 @@
         var originalCheckbox = cells[config.checkboxIndex] && cells[config.checkboxIndex].querySelector('input[type="checkbox"]');
         if (originalCheckbox) {
           var checkbox = originalCheckbox.cloneNode(true);
+          checkbox.classList.remove('upcoming-row-checkbox');
+          checkbox.removeAttribute('onclick');
           checkbox.classList.add('dior-appt-mobile-select');
           checkbox.checked = originalCheckbox.checked;
           checkbox.addEventListener('change', function () {
             originalCheckbox.checked = checkbox.checked;
-            originalCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+            if (typeof window.diorUpdateUpcomingSelectedCount === 'function') window.diorUpdateUpcomingSelectedCount();
           });
           head.appendChild(checkbox);
         }
