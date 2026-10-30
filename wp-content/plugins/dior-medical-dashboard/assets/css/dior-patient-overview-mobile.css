@@ -72,3 +72,20 @@
 
 /* Hide the mobile bottom navigation bar; keep the existing sidebar navigation available. */
 @media(max-width:767.98px){.dior-mobile-bottom-nav{display:none!important}}
+
+
+/* Previous consultations: show three cards at a time and scroll through all database records. */
+@media(max-width:767.98px){
+  #tab-overview .dior-mob-previous-scroll{
+    max-height:210px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+    scrollbar-color:#9bb6cc #edf2f7;
+  }
+  #tab-overview .dior-mob-previous-scroll::-webkit-scrollbar{width:5px}
+  #tab-overview .dior-mob-previous-scroll::-webkit-scrollbar-track{background:#edf2f7;border-radius:8px}
+  #tab-overview .dior-mob-previous-scroll::-webkit-scrollbar-thumb{background:#9bb6cc;border-radius:8px}
+}
