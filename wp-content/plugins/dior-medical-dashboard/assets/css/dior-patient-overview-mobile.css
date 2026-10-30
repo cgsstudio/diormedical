@@ -1,0 +1,70 @@
+/* Independent mobile-only Patient Dashboard Overview. Desktop markup/styles are not modified. */
+.dior-patient-overview-mobile{display:none}
+@media(max-width:767.98px){
+  #tab-overview.custom-patient-overview{padding:0!important;margin:0!important;background:#f3f6fb!important}
+  #tab-overview.custom-patient-overview>:not(.dior-patient-overview-mobile):not(.modal){display:none!important}
+  #tab-overview .dior-patient-overview-mobile{display:block!important;width:100%;max-width:100%;padding:2px 0 28px;color:#17243c;font-family:inherit}
+  #tab-overview .dior-patient-overview-mobile *{box-sizing:border-box}
+  #tab-overview .dior-mob-welcome{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 17px 20px;background:linear-gradient(135deg,#092c58 0%,#075b83 100%);border-radius:18px;color:#fff;box-shadow:0 10px 24px rgba(10,49,86,.16)}
+  #tab-overview .dior-mob-eyebrow{display:block;margin-bottom:5px;color:#7aa8c7;font-size:9px;font-weight:800;letter-spacing:1.35px}
+  #tab-overview .dior-mob-welcome .dior-mob-eyebrow{color:#b7d8ea}
+  #tab-overview .dior-mob-welcome h1{margin:0;color:#fff;font-size:23px;font-weight:800;line-height:1.2;letter-spacing:-.4px}
+  #tab-overview .dior-mob-welcome p{margin:6px 0 0;color:rgba(255,255,255,.78);font-size:12px}
+  #tab-overview .dior-mob-avatar{width:52px;height:52px;flex:0 0 52px;border:2px solid rgba(255,255,255,.75);border-radius:50%;object-fit:cover}
+  #tab-overview .dior-mob-primary-action{display:flex;align-items:center;gap:11px;margin:13px 0;padding:13px 14px;background:#fff;border:1px solid #e5edf5;border-radius:15px;color:#153b61;text-decoration:none;box-shadow:0 5px 16px rgba(16,45,77,.05)}
+  #tab-overview .dior-mob-action-icon{display:flex;width:40px;height:40px;flex:0 0 40px;align-items:center;justify-content:center;background:#eaf4fb;border-radius:12px;color:#0875a6;font-size:16px}
+  #tab-overview .dior-mob-primary-action>span:nth-child(2){display:flex;min-width:0;flex:1;flex-direction:column}
+  #tab-overview .dior-mob-primary-action strong{font-size:13px;font-weight:800}
+  #tab-overview .dior-mob-primary-action small{margin-top:2px;color:#77869a;font-size:10px}
+  #tab-overview .dior-mob-primary-action>i{color:#0b78a5;font-size:13px}
+  #tab-overview .dior-mob-stats{margin:0 0 20px}
+  #tab-overview .dior-mob-stat{display:flex;min-height:96px;align-items:center;justify-content:center;flex-direction:column;padding:10px 4px;background:#fff;border:1px solid #e7edf4;border-radius:14px;box-shadow:0 4px 14px rgba(16,45,77,.04)}
+  #tab-overview .dior-mob-stat-icon{display:flex;width:27px;height:27px;align-items:center;justify-content:center;margin-bottom:4px;background:#eaf4fb;border-radius:9px;color:#0875a6;font-size:12px}
+  #tab-overview .dior-mob-stat strong{color:#143b61;font-size:21px;font-weight:800;line-height:1.1}
+  #tab-overview .dior-mob-stat small{margin-top:4px;color:#77869a;font-size:9px;text-align:center}
+  #tab-overview .dior-mob-section{margin:0 0 19px}
+  #tab-overview .dior-mob-section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 1px 9px}
+  #tab-overview .dior-mob-section-heading h2{margin:0;color:#183b5c;font-size:16px;font-weight:800;line-height:1.25}
+  #tab-overview .dior-mob-heading-icon{display:flex;width:31px;height:31px;align-items:center;justify-content:center;background:#e8f2f9;border-radius:10px;color:#0875a6}
+  #tab-overview .dior-mob-next-card,#tab-overview .dior-mob-health-card,#tab-overview .dior-mob-list-card{padding:14px;background:#fff;border:1px solid #e6edf4;border-radius:15px;box-shadow:0 5px 16px rgba(16,45,77,.04)}
+  #tab-overview .dior-mob-provider{display:flex;align-items:center;gap:11px}
+  #tab-overview .dior-mob-provider img{width:47px;height:47px;flex:0 0 47px;border-radius:50%;object-fit:cover}
+  #tab-overview .dior-mob-provider>div{display:flex;min-width:0;flex-direction:column}
+  #tab-overview .dior-mob-provider strong,#tab-overview .dior-mob-patient-line strong{color:#183b5c;font-size:13px;font-weight:800}
+  #tab-overview .dior-mob-provider small,#tab-overview .dior-mob-patient-line small{margin-top:3px;color:#7a899b;font-size:10px}
+  #tab-overview .dior-mob-visit-meta{display:flex;flex-wrap:wrap;gap:8px 16px;margin:13px 0;color:#52657a;font-size:11px}
+  #tab-overview .dior-mob-visit-meta i{margin-right:5px;color:#0875a6}
+  #tab-overview .dior-mob-outline-action{display:flex;width:100%;min-height:39px;align-items:center;justify-content:center;gap:8px;padding:9px 12px;background:#edf6fb;border:1px solid #d7eaf5;border-radius:10px;color:#075f8b;font-size:11px;font-weight:800;text-decoration:none}
+  #tab-overview .dior-mob-health-card{padding:13px}
+  #tab-overview .dior-mob-patient-line{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid #edf1f5}
+  #tab-overview .dior-mob-patient-line img{width:39px;height:39px;border-radius:50%;object-fit:cover}
+  #tab-overview .dior-mob-patient-line>div{display:flex;min-width:0;flex-direction:column}
+  #tab-overview .dior-mob-vitals{padding-top:11px}
+  #tab-overview .dior-mob-vitals>div+div{border-left:1px solid #edf1f5;padding-left:15px!important}
+  #tab-overview .dior-mob-vitals span{display:block;color:#8290a0;font-size:10px}
+  #tab-overview .dior-mob-vitals strong{display:block;margin-top:3px;color:#173b5e;font-size:15px;font-weight:800}
+  #tab-overview .dior-mob-text-action{padding:5px 0;background:none;border:0;color:#0875a6;font-size:10px;font-weight:800}
+  #tab-overview .dior-mob-icon-action{display:flex;width:30px;height:30px;align-items:center;justify-content:center;background:#eaf4fb;border:0;border-radius:9px;color:#0875a6}
+  #tab-overview .dior-mob-goal{padding:2px 0 11px}
+  #tab-overview .dior-mob-goal+ .dior-mob-goal{padding-top:10px;border-top:1px solid #eff2f5}
+  #tab-overview .dior-mob-goal>div:first-child{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px}
+  #tab-overview .dior-mob-goal strong{color:#344b62;font-size:11px}
+  #tab-overview .dior-mob-goal span{color:#8391a1;font-size:10px}
+  #tab-overview .dior-mob-progress{height:6px;overflow:hidden;background:#edf1f5;border-radius:99px}
+  #tab-overview .dior-mob-progress span{display:block;height:100%;background:#0b83ad;border-radius:99px}
+  #tab-overview .dior-mob-list-link{display:flex;width:100%;align-items:center;justify-content:space-between;margin-top:4px;padding:10px 0 0;background:none;border:0;border-top:1px solid #edf1f5;color:#0875a6;font-size:10px;font-weight:800}
+  #tab-overview .dior-mob-appointment,#tab-overview .dior-mob-history,#tab-overview .dior-mob-lab,#tab-overview .dior-mob-prescription{display:flex;align-items:center;gap:10px;padding:10px 0}
+  #tab-overview .dior-mob-appointment+ .dior-mob-appointment,#tab-overview .dior-mob-history+ .dior-mob-history,#tab-overview .dior-mob-lab+ .dior-mob-lab,#tab-overview .dior-mob-prescription+ .dior-mob-prescription{border-top:1px solid #edf1f5}
+  #tab-overview .dior-mob-appointment-icon{display:flex;width:35px;height:35px;flex:0 0 35px;align-items:center;justify-content:center;background:#edf6fb;border-radius:11px;color:#0875a6}
+  #tab-overview .dior-mob-appointment>div,#tab-overview .dior-mob-history>div,#tab-overview .dior-mob-lab>div,#tab-overview .dior-mob-prescription>div{display:flex;min-width:0;flex:1;flex-direction:column}
+  #tab-overview .dior-mob-appointment strong,#tab-overview .dior-mob-history strong,#tab-overview .dior-mob-lab strong,#tab-overview .dior-mob-prescription strong{overflow:hidden;color:#314b65;font-size:11px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+  #tab-overview .dior-mob-appointment small,#tab-overview .dior-mob-history small,#tab-overview .dior-mob-lab small,#tab-overview .dior-mob-prescription small{margin-top:3px;color:#8491a0;font-size:9px}
+  #tab-overview .dior-mob-history>span{padding:4px 7px;background:#edf7f1;border-radius:20px;color:#277b4b;font-size:9px;font-weight:700}
+  #tab-overview .dior-mob-lab>a,#tab-overview .dior-mob-prescription>button{display:flex;width:30px;height:30px;flex:0 0 30px;align-items:center;justify-content:center;background:#edf6fb;border:0;border-radius:9px;color:#0875a6;text-decoration:none}
+  #tab-overview .dior-mob-empty{display:flex;align-items:center;flex-direction:column;padding:16px 8px;text-align:center}
+  #tab-overview .dior-mob-empty>span{display:flex;width:35px;height:35px;align-items:center;justify-content:center;margin-bottom:7px;background:#edf6fb;border-radius:50%;color:#0875a6}
+  #tab-overview .dior-mob-empty strong{color:#435a70;font-size:11px}
+  #tab-overview .dior-mob-empty small{max-width:240px;margin-top:4px;color:#8a97a5;font-size:9px;line-height:1.5}
+  #tab-overview .dior-mob-section button{cursor:pointer}
+}
+@media(min-width:768px){#tab-overview .dior-patient-overview-mobile{display:none!important}}
