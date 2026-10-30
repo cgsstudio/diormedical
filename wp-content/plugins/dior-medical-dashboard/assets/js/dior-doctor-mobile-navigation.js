@@ -5,6 +5,8 @@
     'use strict';
 
     var mobileQuery = window.matchMedia('(max-width: 1024px)');
+    // Preserve the original desktop submenu implementation before installing mobile handlers.
+    var desktopToggleSubmenu = window.diorToggleSubmenu;
 
     function getElements() {
         return {
@@ -53,6 +55,14 @@
 
     // Keep one submenu expanded at a time and synchronize its icon/accessibility state.
     window.diorToggleSubmenu = function (event, menuId) {
+        // Desktop must continue using the pre-existing desktop navigation logic unchanged.
+        if (!mobileQuery.matches) {
+            if (typeof desktopToggleSubmenu === 'function') {
+                return desktopToggleSubmenu(event, menuId);
+            }
+            return;
+        }
+
         if (event && event.preventDefault) event.preventDefault();
         if (event && event.stopPropagation) event.stopPropagation();
 
