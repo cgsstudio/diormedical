@@ -488,3 +488,120 @@
     cursor:not-allowed;
   }
 }
+
+
+/* Final mobile list toolbar layout: full-width search + one aligned action row. */
+@media (max-width:767.98px) {
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-header {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    justify-content:flex-start !important;
+    gap:11px !important;
+    width:100% !important;
+    padding-bottom:12px !important;
+    margin-bottom:12px !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-header > div:first-child {
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    flex-wrap:wrap !important;
+    gap:8px !important;
+    width:100% !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-header > .dior-appt-list-toolbar {
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    align-items:stretch !important;
+    gap:7px !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-toolbar > .dior-appt-list-search {
+    grid-column:1 / -1 !important;
+    display:flex !important;
+    width:100% !important;
+    min-width:0 !important;
+    min-height:42px !important;
+    margin:0 0 2px !important;
+    border:1px solid #d7e2ef !important;
+    border-radius:10px !important;
+    background:#fff !important;
+    overflow:hidden !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-search .input-group-text {
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:0 0 38px !important;
+    width:38px !important;
+    padding:0 !important;
+    border:0 !important;
+    background:#fff !important;
+    color:#2865a5 !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-search .form-control {
+    display:block !important;
+    flex:1 1 auto !important;
+    width:1% !important;
+    min-width:0 !important;
+    height:40px !important;
+    padding:7px 10px !important;
+    border:0 !important;
+    background:#fff !important;
+    box-shadow:none !important;
+    font-size:14px !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-toolbar > .btn {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    width:100% !important;
+    min-width:0 !important;
+    min-height:42px !important;
+    height:42px !important;
+    padding:6px 4px !important;
+    margin:0 !important;
+    border-radius:9px !important;
+    font-size:11px !important;
+    font-weight:700 !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-toolbar > .btn i {
+    flex:0 0 auto !important;
+    font-size:14px !important;
+    line-height:1 !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming .table-responsive,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .table-responsive {
+    display:none !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-empty {
+    display:none;
+    margin:10px 0 2px;
+    padding:20px 12px;
+    border:1px dashed #cbdced;
+    border-radius:12px;
+    background:#f8fbff;
+    color:#718096;
+    font-size:12px;
+    line-height:1.5;
+    text-align:center;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-empty.is-visible {
+    display:block !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-upcoming-pagination:empty,
+  #dior-patient-portal-app #tab-appointments #dior-past-pagination:empty {
+    display:none !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-upcoming-pagination,
+  #dior-patient-portal-app #tab-appointments #dior-past-pagination {
+    justify-content:flex-end !important;
+  }
+}
