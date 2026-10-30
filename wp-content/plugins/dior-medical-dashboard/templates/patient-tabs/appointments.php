@@ -1603,15 +1603,15 @@
         <div class="dior-subtab-panel" id="dior-subtab-upcoming" style="display: none;">
             <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white mb-5">
                 <!-- Header & Actions -->
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-3 border-bottom">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-3 border-bottom dior-appt-list-header">
                     <div class="d-flex align-items-center gap-2">
                         <h5 class="fw-bold text-dark mb-0">Upcoming Appointments</h5>
                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold">
                             Scheduled
                         </span>
                     </div>
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
-                        <div class="input-group input-group-sm rounded-3 overflow-hidden border" style="width: 240px;">
+                    <div class="dior-appt-list-toolbar">
+                        <div class="input-group input-group-sm rounded-3 overflow-hidden border dior-appt-list-search">
                             <span class="input-group-text bg-white border-0 text-muted ps-2.5"><i class="fas fa-search"></i></span>
                             <input type="text" id="dior-upcoming-search-input"
                                 class="form-control bg-white border-0 ps-1 shadow-none" placeholder="Search records..."
@@ -1784,15 +1784,15 @@
         <div class="dior-subtab-panel" id="dior-subtab-past" style="display: none;">
             <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white mb-5">
                 <!-- Header & Actions -->
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-3 border-bottom">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-3 border-bottom dior-appt-list-header">
                     <div class="d-flex align-items-center gap-2">
                         <h5 class="fw-bold text-dark mb-0">Past Appointments</h5>
                         <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1 small fw-semibold">
                             History
                         </span>
                     </div>
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
-                        <div class="input-group input-group-sm rounded-3 overflow-hidden border" style="width: 240px;">
+                    <div class="dior-appt-list-toolbar">
+                        <div class="input-group input-group-sm rounded-3 overflow-hidden border dior-appt-list-search">
                             <span class="input-group-text bg-white border-0 text-muted ps-2.5"><i class="fas fa-search"></i></span>
                             <input type="text" id="dior-past-search-input"
                                 class="form-control bg-white border-0 ps-1 shadow-none" placeholder="Search records..."
