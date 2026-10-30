@@ -628,9 +628,15 @@ let diorPastCurrentPage = 1;
 
                                 pageRows.forEach(row => row.style.display = '');
 
+                                const emptyRow = document.querySelector('#dior-past-appointments-tbody tr.dior-empty-state');
+                                if (emptyRow) emptyRow.style.display = 'none';
+
                                 const pagContainer = document.getElementById('dior-past-pagination');
                                 if (pagContainer) {
-                                    pagContainer.innerHTML = diorBuildPagerHtml(diorPastCurrentPage, totalPages, 'diorGoPastPage');
+                                    pagContainer.innerHTML = activeRows.length > diorPastRowsPerPage
+                                        ? diorBuildPagerHtml(diorPastCurrentPage, totalPages, 'diorGoPastPage')
+                                        : '';
+                                    pagContainer.style.display = activeRows.length > diorPastRowsPerPage ? '' : 'none';
                                 }
 
                                 const pageCountEl = document.getElementById('dior-past-page-count');
