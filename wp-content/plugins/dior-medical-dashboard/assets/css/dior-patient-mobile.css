@@ -44,3 +44,339 @@
 #dior-patient-portal-app .dior-msg-btn,#dior-patient-portal-app .dior-notif-btn{width:31px;min-width:31px;height:34px}
 }
 @media(min-width:768px){#dior-patient-portal-app .dior-mobile-menu-toggle{display:none}}
+
+
+/* ==========================================================
+   Patient overview mobile refresh — reference-led layout.
+   All rules are scoped to the patient overview and mobile only.
+   Bootstrap 5 remains the layout system; no JS or data hooks changed.
+   ========================================================== */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app {
+    background: #f2f8ff !important;
+    color: #0b1738;
+    padding-bottom: 76px;
+  }
+
+  #dior-patient-portal-app .dior-top-emergency-banner {
+    min-height: 28px;
+    padding: 6px 10px;
+    background: #2d70b5 !important;
+    color: #fff !important;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .01em;
+  }
+
+  #dior-patient-portal-app .dior-topbar {
+    position: sticky;
+    top: 0;
+    min-height: 58px;
+    margin: 0 -14px 18px;
+    padding: 9px 13px;
+    background: #fff !important;
+    border: 0;
+    border-bottom: 1px solid #e4edf8;
+    box-shadow: 0 3px 12px rgba(25, 67, 112, .06);
+  }
+
+  #dior-patient-portal-app .dior-mobile-menu-toggle {
+    color: #2368ad !important;
+    background: #fff !important;
+    border: 1px solid #d8e5f4 !important;
+    border-radius: 9px;
+  }
+
+  #dior-patient-portal-app .dior-top-search input {
+    height: 38px;
+    background: #fff;
+    border: 1px solid #c9d9ec;
+    color: #17365d;
+    font-size: 11px;
+  }
+
+  #dior-patient-portal-app .dior-topbar-right { gap: 5px; }
+  #dior-patient-portal-app .dior-msg-btn,
+  #dior-patient-portal-app .dior-notif-btn {
+    width: 33px;
+    min-width: 33px;
+    height: 34px;
+    color: #244f7d;
+    background: #fff;
+    border: 1px solid #dce7f4;
+    box-shadow: 0 2px 7px rgba(25, 67, 112, .05);
+  }
+  #dior-patient-portal-app .dior-pill-avatar,
+  #dior-patient-portal-app .dior-pill-avatar img {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border: 1px solid #d7e5f5;
+  }
+
+  #dior-patient-portal-app .dior-tab-container {
+    padding-top: 0 !important;
+    padding-bottom: 18px !important;
+  }
+
+  #dior-patient-portal-app #tab-overview {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  #dior-patient-portal-app #tab-overview .content-head {
+    gap: 12px !important;
+    margin: 0 0 16px !important;
+    padding: 0 1px;
+  }
+  #dior-patient-portal-app #tab-overview .content-head h1 {
+    margin: 0 0 4px !important;
+    color: #0b3768 !important;
+    font-size: clamp(21px, 6vw, 26px) !important;
+    font-weight: 750 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -.45px;
+  }
+  #dior-patient-portal-app #tab-overview .content-head p {
+    max-width: 34rem;
+    color: #536b87 !important;
+    font-size: 12px !important;
+    line-height: 1.5;
+  }
+  #dior-patient-portal-app #tab-overview .content-head > a {
+    align-self: stretch;
+    justify-content: center;
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 14px !important;
+    border-radius: 9px !important;
+    background: #c99a16 !important;
+    border-color: #c99a16 !important;
+    color: #fff !important;
+    font-size: 12px;
+    box-shadow: none !important;
+  }
+
+  #dior-patient-portal-app #tab-overview > .row {
+    --bs-gutter-x: 12px;
+    --bs-gutter-y: 12px;
+    margin-top: 0;
+  }
+  #dior-patient-portal-app #tab-overview > .row > [class*="col-"] {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Three compact KPI cards, mirroring the reference hierarchy. */
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7 > .row:first-child {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px !important;
+    margin: 0 0 12px !important;
+  }
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7 > .row:first-child > [class*="col-"] {
+    width: auto;
+    min-width: 0;
+    padding: 0;
+  }
+  #dior-patient-portal-app #tab-overview .stat-card {
+    min-height: 88px;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 11px 8px !important;
+    border: 1px solid #bfd4ed !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+  #dior-patient-portal-app #tab-overview .stat-num {
+    margin-bottom: 4px !important;
+    color: #0b1738 !important;
+    font-size: clamp(20px, 6vw, 25px) !important;
+    font-weight: 750 !important;
+    line-height: 1.1 !important;
+  }
+  #dior-patient-portal-app #tab-overview .stat-label {
+    color: #536b87 !important;
+    font-size: 9px !important;
+    font-weight: 500 !important;
+    line-height: 1.3 !important;
+    overflow-wrap: anywhere;
+  }
+
+  /* Patient profile and goals: clean, bordered white Bootstrap cards. */
+  #dior-patient-portal-app #tab-overview .patient-card,
+  #dior-patient-portal-app #tab-overview .goals-card,
+  #dior-patient-portal-app #tab-overview .table-card,
+  #dior-patient-portal-app #tab-overview .lab-card,
+  #dior-patient-portal-app #tab-overview .doctor-card,
+  #dior-patient-portal-app #tab-overview .upcoming {
+    width: 100%;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 15px !important;
+    border: 1px solid #bfd4ed !important;
+    border-radius: 13px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+  #dior-patient-portal-app #tab-overview .patient-card {
+    min-height: 0;
+  }
+  #dior-patient-portal-app #tab-overview .patient-card .patient-photo {
+    width: 68px !important;
+    height: 68px !important;
+    border: 1px solid #d8e5f4;
+  }
+  #dior-patient-portal-app #tab-overview .patient-card h2 {
+    max-width: 100%;
+    color: #1670e8 !important;
+    font-size: 19px !important;
+    line-height: 1.2;
+  }
+  #dior-patient-portal-app #tab-overview .patient-card .patient-info { min-width: 0; }
+  #dior-patient-portal-app #tab-overview .patient-card .patient-info .text-secondary {
+    font-size: 10px !important;
+  }
+  #dior-patient-portal-app #tab-overview .patient-card .patient-info strong {
+    font-size: 15px !important;
+  }
+  #dior-patient-portal-app #tab-overview .patient-card > button {
+    min-height: 40px;
+    margin-top: 14px !important;
+    border-radius: 8px !important;
+    font-size: 12px;
+  }
+  #dior-patient-portal-app #tab-overview .goals-card .section-title,
+  #dior-patient-portal-app #tab-overview .table-card .section-title,
+  #dior-patient-portal-app #tab-overview .lab-card .section-title,
+  #dior-patient-portal-app #tab-overview .upcoming .section-title {
+    color: #102849 !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+  }
+  #dior-patient-portal-app #tab-overview .goals-card .goal {
+    margin-bottom: 5px !important;
+  }
+  #dior-patient-portal-app #tab-overview .goals-card .progress {
+    height: 7px !important;
+  }
+
+  /* Overview tables retain real rows/data and become readable on narrow screens. */
+  #dior-patient-portal-app #tab-overview .table-responsive {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto !important;
+    border-radius: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  #dior-patient-portal-app #tab-overview .table {
+    min-width: 560px;
+    margin-bottom: 0 !important;
+    font-size: 11px !important;
+  }
+  #dior-patient-portal-app #tab-overview .table th {
+    padding: 9px 8px !important;
+    color: #2368ad !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    letter-spacing: .035em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  #dior-patient-portal-app #tab-overview .table td {
+    padding: 10px 8px !important;
+    color: #213b5a;
+    font-size: 10px !important;
+    vertical-align: middle;
+  }
+  #dior-patient-portal-app #tab-overview .table-card,
+  #dior-patient-portal-app #tab-overview .lab-card {
+    overflow: hidden;
+  }
+  #dior-patient-portal-app #tab-overview .table-card .dior-card-scrollable,
+  #dior-patient-portal-app #tab-overview .lab-card .dior-card-scrollable {
+    max-height: 260px;
+  }
+
+  /* Upcoming appointment and prescription summary cards use full mobile width. */
+  #dior-patient-portal-app #tab-overview #dior-overview-doctor-card {
+    min-height: 0;
+  }
+  #dior-patient-portal-app #tab-overview #dior-overview-doctor-card .text-center {
+    padding: 18px 6px !important;
+  }
+  #dior-patient-portal-app #tab-overview #dior-overview-doctor-card .btn {
+    min-height: 40px;
+    border-radius: 8px !important;
+    font-size: 11px;
+  }
+  #dior-patient-portal-app #tab-overview #dior-overview-upcoming-card {
+    min-height: 0;
+  }
+
+  /* Bottom navigation stays visible and respects device safe-area. */
+  #dior-patient-portal-app .dior-mobile-bottom-nav {
+    position: fixed !important;
+    z-index: 10020 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    display: flex !important;
+    width: 100% !important;
+    min-height: 62px;
+    justify-content: space-around;
+    gap: 2px;
+    padding: 6px 5px calc(6px + env(safe-area-inset-bottom)) !important;
+    border-top: 1px solid #dce7f4 !important;
+    background: #fff !important;
+    box-shadow: 0 -5px 18px rgba(15, 45, 82, .08);
+  }
+  #dior-patient-portal-app .dior-mobile-bottom-nav .dior-mobile-nav-item {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 46px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 4px 2px !important;
+    border: 0 !important;
+    border-radius: 8px;
+    background: transparent;
+    color: #667b95;
+    font-size: 9px;
+    line-height: 1.1;
+  }
+  #dior-patient-portal-app .dior-mobile-bottom-nav .dior-mobile-nav-item i {
+    font-size: 16px;
+  }
+  #dior-patient-portal-app .dior-mobile-bottom-nav .dior-mobile-nav-item.is-active {
+    color: #246bb0;
+    background: #edf5ff;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 390px) {
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7 > .row:first-child {
+    gap: 6px !important;
+  }
+  #dior-patient-portal-app #tab-overview .stat-card {
+    min-height: 84px;
+    padding: 9px 6px !important;
+  }
+  #dior-patient-portal-app #tab-overview .stat-label {
+    font-size: 8px !important;
+  }
+  #dior-patient-portal-app #tab-overview .patient-card,
+  #dior-patient-portal-app #tab-overview .goals-card,
+  #dior-patient-portal-app #tab-overview .table-card,
+  #dior-patient-portal-app #tab-overview .lab-card,
+  #dior-patient-portal-app #tab-overview .doctor-card,
+  #dior-patient-portal-app #tab-overview .upcoming {
+    padding: 12px !important;
+  }
+}
