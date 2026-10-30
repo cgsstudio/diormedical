@@ -646,3 +646,68 @@
     justify-self:stretch !important;
   }
 }
+
+
+/* Desktop appointment toolbar: preserve the original single-row layout.
+   Scoped above the mobile breakpoint so mobile layout rules remain independent. */
+@media (min-width: 768px) {
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 18px !important;
+    width: 100%;
+  }
+
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-header > div:first-child {
+    display: flex !important;
+    flex: 0 1 auto !important;
+    align-items: center !important;
+    min-width: 0;
+  }
+
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-toolbar {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    width: auto !important;
+    min-width: 0;
+    margin-left: auto !important;
+  }
+
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-toolbar > .dior-appt-list-search {
+    display: flex !important;
+    flex: 0 1 240px !important;
+    width: 240px !important;
+    min-width: 190px !important;
+    max-width: 240px !important;
+    margin: 0 !important;
+  }
+
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-toolbar > .btn {
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-header {
+    flex-wrap: wrap !important;
+  }
+
+  #dior-patient-portal-app #tab-appointments .dior-appt-list-toolbar {
+    flex-wrap: wrap !important;
+  }
+}
