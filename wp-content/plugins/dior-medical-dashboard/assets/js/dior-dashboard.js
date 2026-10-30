@@ -951,35 +951,50 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         const sidebar = document.getElementById('dior-sidebar');
         const drawerBackdrop = document.getElementById('dior-drawer-backdrop');
 
-        window.diorOpenMobileDrawer = function(e) {
-            if (e) e.preventDefault();
+        function setPatientDrawerState(isOpen) {
+            const app = document.getElementById('dior-patient-portal-app');
             const sb = document.getElementById('dior-sidebar');
             const bg = document.getElementById('dior-drawer-backdrop');
-            
-            // On desktop, act as a toggle
+            const toggle = document.getElementById('dior-mobile-menu-toggle');
+
+            if (sb) {
+                sb.classList.toggle('mobile-open', !!isOpen);
+                sb.classList.toggle('open', !!isOpen);
+            }
+            if (bg) {
+                bg.classList.toggle('active', !!isOpen);
+                bg.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            }
+            if (app) app.classList.toggle('dior-mobile-drawer-open', !!isOpen);
+            if (toggle) {
+                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                toggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+            }
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        }
+
+        window.diorOpenMobileDrawer = function(e) {
+            if (e) e.preventDefault();
             if (window.innerWidth > 1024) {
                 const wrap = document.querySelector('.dior-patient-portal-wrap') || document.querySelector('.dior-app');
                 if (wrap) wrap.classList.toggle('dior-sidebar-collapsed');
                 return;
             }
-
-            if (sb) {
-                sb.classList.add('mobile-open');
-                sb.classList.add('open');
-            }
-            if (bg) bg.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            setPatientDrawerState(true);
         };
 
         window.diorCloseMobileDrawer = function() {
-            const sb = document.getElementById('dior-sidebar');
-            const bg = document.getElementById('dior-drawer-backdrop');
-            if (sb) {
-                sb.classList.remove('mobile-open');
-                sb.classList.remove('open');
+            setPatientDrawerState(false);
+        };
+
+        window.diorToggleMobileDrawer = function(e) {
+            if (e) e.preventDefault();
+            if (window.innerWidth > 1024) {
+                window.diorOpenMobileDrawer();
+                return;
             }
-            if (bg) bg.classList.remove('active');
-            document.body.style.overflow = '';
+            const sb = document.getElementById('dior-sidebar');
+            setPatientDrawerState(!(sb && (sb.classList.contains('mobile-open') || sb.classList.contains('open'))));
         };
 
         function openMobileDrawer() {
@@ -992,9 +1007,17 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
             }
         }
 
-        if (mobileToggle) mobileToggle.addEventListener('click', window.diorOpenMobileDrawer);
+        if (mobileToggle) mobileToggle.addEventListener('click', window.diorToggleMobileDrawer);
         if (sideClose) sideClose.addEventListener('click', window.diorCloseMobileDrawer);
         if (drawerBackdrop) drawerBackdrop.addEventListener('click', window.diorCloseMobileDrawer);
+
+        // Close the mobile drawer with Escape and keep background scrolling locked only while open.
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && document.getElementById('dior-sidebar') &&
+                document.getElementById('dior-sidebar').classList.contains('mobile-open')) {
+                window.diorCloseMobileDrawer();
+            }
+        });
 
         // =========================================================================
         // 5. MODAL SYSTEM
