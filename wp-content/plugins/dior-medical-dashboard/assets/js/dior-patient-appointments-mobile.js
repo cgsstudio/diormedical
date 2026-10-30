@@ -103,6 +103,9 @@
         }
         list.appendChild(card);
       });
+
+      // Hide source tables on mobile only after their card views have rendered successfully.
+      root.classList.add('dior-mobile-cards-ready');
     }
 
     configs.forEach(function (config) {
