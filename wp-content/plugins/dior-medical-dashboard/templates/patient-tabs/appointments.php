@@ -1771,12 +1771,7 @@
                         <span class="text-secondary small fw-medium" id="dior-upcoming-page-count">0 selected / <?php echo count($upcoming_mock); ?> total</span>
                         <span id="dior-upcoming-selected-counter" class="d-none">0 selected / <?php echo count($upcoming_mock); ?> total</span>
                     </div>
-                    <div class="master-pagination d-flex align-items-center gap-1" id="dior-upcoming-pagination">
-                        <button type="button" class="dior-page-btn btn" disabled aria-label="Previous page"><i class="fas fa-chevron-left fa-xs"></i></button>
-                        <button type="button" class="dior-page-btn active btn" onclick="diorGoUpcomingPage(1)">1</button>
-                        <button type="button" class="dior-page-btn btn" onclick="diorGoUpcomingPage(2)">2</button>
-                        <button type="button" class="dior-page-btn btn" aria-label="Next page" onclick="diorGoUpcomingPage(2)"><i class="fas fa-chevron-right fa-xs"></i></button>
-                    </div>
+                    <div class="master-pagination dior-responsive-pagination" id="dior-upcoming-pagination" aria-label="Upcoming appointment pages"></div>
                 </div>
             </div>
         </div>
@@ -1902,12 +1897,7 @@
                 <!-- Footer Summary with Pagination -->
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 pb-2 px-1 border-top mt-3">
                     <span class="text-secondary small fw-medium" id="dior-past-page-count">0 selected / <?php echo count($past_mock); ?> total</span>
-                    <div class="master-pagination d-flex align-items-center gap-1" id="dior-past-pagination">
-                        <button type="button" class="dior-page-btn btn" disabled aria-label="Previous page"><i class="fas fa-chevron-left fa-xs"></i></button>
-                        <button type="button" class="dior-page-btn active btn" onclick="diorGoPastPage(1)">1</button>
-                        <button type="button" class="dior-page-btn btn" onclick="diorGoPastPage(2)">2</button>
-                        <button type="button" class="dior-page-btn btn" aria-label="Next page" onclick="diorGoPastPage(2)"><i class="fas fa-chevron-right fa-xs"></i></button>
-                    </div>
+                    <div class="master-pagination dior-responsive-pagination" id="dior-past-pagination" aria-label="Past appointment pages"></div>
                 </div>
             </div>
         </div>
