@@ -21,6 +21,13 @@ function diorBuildPagerHtml(currentPage, totalPages, goFunctionName) {
         ? window.matchMedia('(max-width: 767.98px)').matches
         : window.innerWidth <= 767;
 
+    // Remember the latest state so pagination can rebuild when crossing breakpoints.
+    window.__diorPagerStates = window.__diorPagerStates || {};
+    window.__diorPagerStates[goFunctionName] = {
+        currentPage: currentPage,
+        totalPages: totalPages
+    };
+
     var previousDisabled = currentPage <= 1 ? ' disabled aria-disabled="true"' : '';
     var nextDisabled = currentPage >= totalPages ? ' disabled aria-disabled="true"' : '';
     var html = '';
@@ -76,6 +83,51 @@ function diorBuildPagerHtml(currentPage, totalPages, goFunctionName) {
 
     return html;
 }
+
+// Re-render every registered pager when the viewport crosses the mobile breakpoint.
+(function () {
+    if (window.__diorPagerResizeBound) return;
+    window.__diorPagerResizeBound = true;
+
+    var lastMobileMode = window.matchMedia
+        ? window.matchMedia('(max-width: 767.98px)').matches
+        : window.innerWidth <= 767;
+    var resizeTimer = null;
+
+    window.addEventListener('resize', function () {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(function () {
+            var nextMobileMode = window.matchMedia
+                ? window.matchMedia('(max-width: 767.98px)').matches
+                : window.innerWidth <= 767;
+            if (nextMobileMode === lastMobileMode) return;
+            lastMobileMode = nextMobileMode;
+
+            var pagerMap = {
+                'dior-upcoming-pagination': 'diorGoUpcomingPage',
+                'dior-past-pagination': 'diorGoPastPage',
+                'dior-rx-pagination': 'diorGoRxPage',
+                'dior-bill-pagination': 'diorGoBillPage',
+                'dior-insurance-pagination': 'diorGoInsurancePage',
+                'dior-tele-pagination': 'diorGoTelePage',
+                'dior-docs-pagination': 'diorGoDocsPage',
+                'dior-emerg-pagination': 'diorGoEmergPage',
+                'dior-notif-pagination': 'diorGoNotifPage'
+            };
+
+            Object.keys(pagerMap).forEach(function (id) {
+                var container = document.getElementById(id);
+                var state = window.__diorPagerStates && window.__diorPagerStates[pagerMap[id]];
+                if (!container || !state) return;
+                container.innerHTML = diorBuildPagerHtml(
+                    state.currentPage,
+                    state.totalPages,
+                    pagerMap[id]
+                );
+            });
+        }, 120);
+    }, { passive: true });
+})();
 
 // --- Extracted dashboard script 1 ---
 let diorBookingState = {
