@@ -130,6 +130,8 @@
                 var w = document.getElementById('dior-appt-dropdown-wrap');
                 if (w) {
                     w.classList.remove('open');
+                    var trigger = w.querySelector(':scope > .dior-nav-btn');
+                    if (trigger) trigger.setAttribute('aria-expanded', 'false');
                     var ch = w.querySelector('.fa-chevron-down');
                     if (ch) ch.style.transform = 'rotate(0deg)';
                 }
