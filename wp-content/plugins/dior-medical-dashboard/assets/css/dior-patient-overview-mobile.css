@@ -68,3 +68,7 @@
   #tab-overview .dior-mob-section button{cursor:pointer}
 }
 @media(min-width:768px){#tab-overview .dior-patient-overview-mobile{display:none!important}}
+
+
+/* Hide the mobile bottom navigation bar; keep the existing sidebar navigation available. */
+@media(max-width:767.98px){.dior-mobile-bottom-nav{display:none!important}}
