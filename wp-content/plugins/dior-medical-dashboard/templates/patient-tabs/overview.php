@@ -727,5 +727,25 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
     </div>
   </div>
 
-  <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/overview-mobile.php'; ?>
+  
+<?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/overview-mobile.php'; ?>
+
+<!-- Prevent the legacy desktop Overview markup from appearing alongside the separate mobile layout. -->
+<style id="dior-patient-overview-single-layout">
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app #tab-overview.custom-patient-overview > :not(.dior-patient-overview-mobile) {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  #dior-patient-portal-app #tab-overview.custom-patient-overview > .dior-patient-overview-mobile {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+@media (min-width: 768px) {
+  #dior-patient-portal-app #tab-overview.custom-patient-overview > .dior-patient-overview-mobile {
+    display: none !important;
+  }
+}
+</style>
 </section>
