@@ -94,6 +94,21 @@
         });
     };
 
+    // Guard against a stale drawer backdrop capturing clicks across the dashboard.
+    function enforceBackdropState() {
+        var el = getElements();
+        if (!el.backdrop) return;
+        var drawerOpen = !!(mobileQuery.matches && el.sidebar && el.sidebar.classList.contains('mobile-open'));
+        el.backdrop.classList.toggle('active', drawerOpen);
+        el.backdrop.style.pointerEvents = drawerOpen ? 'auto' : 'none';
+        if (!mobileQuery.matches) {
+            el.backdrop.style.display = 'none';
+            document.body.style.overflow = '';
+        } else {
+            el.backdrop.style.display = drawerOpen ? 'block' : 'none';
+        }
+    }
+
     function bindMobileNavigation() {
         var el = getElements();
         if (!el.app || !el.sidebar) return;
@@ -145,6 +160,14 @@
         } else {
             el.sidebar.removeAttribute('aria-hidden');
         }
+
+        // Clear stale overlay state and keep it synchronized with the actual drawer.
+        enforceBackdropState();
+        if (el.backdrop && window.MutationObserver) {
+            var backdropObserver = new MutationObserver(enforceBackdropState);
+            backdropObserver.observe(el.backdrop, { attributes: true, attributeFilter: ['class'] });
+        }
+        window.addEventListener('resize', enforceBackdropState, { passive: true });
     }
 
     if (document.readyState === 'loading') {
