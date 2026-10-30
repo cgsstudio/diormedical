@@ -150,3 +150,25 @@
   #dior-doctor-app #dior-doc-sidebar,
   #dior-doctor-app #dior-doc-backdrop { transition:none !important; }
 }
+
+/* Fail-safe: a closed Doctor drawer must never intercept page clicks. */
+@media (max-width: 1024px) {
+  #dior-doctor-app #dior-doc-backdrop:not(.active) {
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+  #dior-doctor-app #dior-doc-backdrop.active {
+    display:block !important;
+    visibility:visible !important;
+    pointer-events:auto !important;
+  }
+}
+@media (min-width:1025px) {
+  #dior-doctor-app #dior-doc-backdrop {
+    display:none !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+  }
+}
