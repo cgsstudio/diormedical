@@ -124,6 +124,33 @@
             #tab-telemedicine .va-breadcrumb-list { flex-wrap:wrap; }
         }
 
+
+        /* Final visibility guard: exactly one Telemedicine layout per viewport. */
+        @media (max-width: 767.98px) {
+            #dior-patient-portal-app #tab-telemedicine > .docs-card > .docs-table-wrapper,
+            #dior-patient-portal-app #tab-telemedicine .docs-card > .docs-table-wrapper {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                overflow: hidden !important;
+            }
+            #dior-patient-portal-app #tab-telemedicine .dior-tele-mobile-layout {
+                display: block !important;
+                visibility: visible !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+        }
+        @media (min-width: 768px) {
+            #dior-patient-portal-app #tab-telemedicine .dior-tele-mobile-layout {
+                display: none !important;
+            }
+            #dior-patient-portal-app #tab-telemedicine .docs-table-wrapper {
+                display: block !important;
+                visibility: visible !important;
+                height: auto !important;
+            }
+        }
 </style>
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
@@ -172,7 +199,7 @@
             </div>
         </div>
         <!-- Separate mobile Telemedicine UI; desktop table remains intact. -->
-        <div class="dior-tele-mobile-layout d-none">
+        <div class="dior-tele-mobile-layout">
             <div class="dior-tele-mobile-list" id="dior-tele-mobile-list" aria-live="polite"></div>
             <div class="dior-tele-mobile-pagination" id="dior-tele-mobile-pagination"></div>
         </div>
