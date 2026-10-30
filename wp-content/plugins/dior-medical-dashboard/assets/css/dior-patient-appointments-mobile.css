@@ -307,3 +307,24 @@
 @media (min-width: 768px) {
   #dior-patient-portal-app #tab-appointments .dior-appt-mobile-cards { display:none !important; }
 }
+
+/* Reuse the same card tokens for the existing server-rendered Today mobile cards. */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app #dior-today-mobile-list > article {
+    margin-bottom:10px !important;
+    border:1px solid var(--dior-brand-soft, #e6f0fa) !important;
+    border-radius:13px !important;
+    background:#fff !important;
+    box-shadow:0 3px 10px rgba(13,43,75,.045) !important;
+  }
+  #dior-patient-portal-app #dior-today-mobile-list > article .card-body { padding:13px !important; }
+  #dior-patient-portal-app #dior-today-mobile-list > article .bg-light {
+    background:#f5f8fc !important;
+    border:1px solid #edf1f6;
+  }
+  #dior-patient-portal-app #dior-today-mobile-list > article .text-primary { color:var(--dior-brand-primary, #2865a5) !important; }
+  #dior-patient-portal-app #dior-today-mobile-list > article .fw-bold.text-dark { color:var(--dior-brand-navy, #0b1030) !important; font-size:13px; }
+  #dior-patient-portal-app #dior-today-mobile-list > article .btn { min-height:38px; border-radius:9px !important; font-size:11px !important; font-weight:700; }
+  #dior-patient-portal-app #dior-today-mobile-view > .input-group { min-height:42px; border-color:var(--dior-brand-soft, #e6f0fa) !important; }
+  #dior-patient-portal-app #dior-today-mobile-view > .btn { min-height:42px; border-radius:10px !important; font-size:12px; }
+}
