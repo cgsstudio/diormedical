@@ -1,0 +1,309 @@
+/**
+ * Patient Appointment mobile design system.
+ * Mobile-only styles; desktop appointment markup and styling remain untouched.
+ */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app #tab-appointments {
+    --dior-appt-navy: var(--dior-brand-navy, #0b1030);
+    --dior-appt-primary: var(--dior-brand-primary, #2865a5);
+    --dior-appt-accent: var(--dior-brand-accent, #0284c7);
+    --dior-appt-soft: var(--dior-brand-soft, #e6f0fa);
+    --dior-appt-border: #e2eaf3;
+    --dior-appt-muted: #718096;
+    padding: 12px 10px 28px !important;
+    min-width: 0;
+  }
+  #dior-patient-portal-app #tab-appointments,
+  #dior-patient-portal-app #tab-appointments * { box-sizing: border-box; }
+  #dior-patient-portal-app #tab-appointments .dior-subtab-nav-bar {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin: 0 0 16px !important;
+    padding: 0 !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-subtab-pill {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+    min-height: 44px !important;
+    padding: 9px 10px !important;
+    border: 1px solid var(--dior-appt-border) !important;
+    border-radius: 11px !important;
+    background: #fff !important;
+    color: var(--dior-appt-navy) !important;
+    font-family: inherit;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    text-align: left !important;
+    white-space: normal !important;
+    box-shadow: 0 2px 8px rgba(11, 35, 68, .04);
+  }
+  #dior-patient-portal-app #tab-appointments .dior-subtab-pill i {
+    flex: 0 0 auto;
+    color: var(--dior-appt-primary) !important;
+    font-size: 13px;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-subtab-pill .dior-subtab-label {
+    min-width: 0;
+    color: inherit !important;
+    overflow-wrap: anywhere;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-subtab-pill.active {
+    border-color: var(--dior-appt-primary) !important;
+    background: var(--dior-appt-primary) !important;
+    color: #fff !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-subtab-pill.active i,
+  #dior-patient-portal-app #tab-appointments .dior-subtab-pill.active .dior-subtab-label {
+    color: #fff !important;
+  }
+  #dior-patient-portal-app #tab-appointments .va-breadcrumb-list { display:none !important; }
+  #dior-patient-portal-app #tab-appointments #dior-appt-main-title {
+    color: var(--dior-appt-navy) !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+  }
+  #dior-patient-portal-app #tab-appointments .medidash-appt-wrap,
+  #dior-patient-portal-app #tab-appointments .dior-subtab-panel { min-width:0; max-width:100%; }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book > .card,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book .card,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-today > .card,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming > .card,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past > .card {
+    min-width:0;
+    max-width:100%;
+    border:1px solid var(--dior-appt-border) !important;
+    border-radius:15px !important;
+    background:#fff !important;
+    box-shadow:0 4px 14px rgba(15, 45, 78, .05) !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book > .card,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book .card { padding:13px !important; }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book h5,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book h4,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book h3 {
+    color:var(--dior-appt-navy);
+    font-size:16px;
+    font-weight:800;
+    line-height:1.3;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book label {
+    display:block;
+    margin-bottom:5px;
+    color:#43566d;
+    font-size:11px;
+    font-weight:700;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book .form-control,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book .form-select,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book input,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book select,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book textarea {
+    width:100%;
+    min-width:0;
+    min-height:43px;
+    border:1px solid #d8e2ed;
+    border-radius:10px;
+    background:#fff;
+    color:#243b53;
+    font-size:16px;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book .btn {
+    min-height:40px;
+    border-radius:10px !important;
+    font-size:12px;
+    font-weight:700;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book .dior-step2-slot-btn {
+    min-height:38px;
+    padding:8px 10px !important;
+    border-radius:9px !important;
+    font-size:11px !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book #dior-booking-stepper-card {
+    padding:12px !important;
+    border-radius:14px !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book #dior-step2-slots-grid {
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book #dior-step2-slots-grid > * { min-width:0; }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book #dior-step-pane-2 .card,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book #dior-step-pane-3 .card { padding:13px !important; }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book #dior-step-pane-2 .d-flex.border-top,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book #dior-step-pane-3 .d-flex.justify-content-center {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:9px !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book #dior-step-pane-2 .d-flex.border-top > .btn,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-book #dior-step-pane-3 .d-flex.justify-content-center > .btn {
+    width:100% !important;
+    justify-content:center !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-today > .card,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming > .card,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past > .card { padding:13px !important; }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-today > .card > .d-flex:first-child,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming > .card > .d-flex:first-child,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past > .card > .d-flex:first-child {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:10px !important;
+    padding-bottom:12px !important;
+    margin-bottom:12px !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-today h5,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming h5,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past h5 {
+    color:var(--dior-appt-navy) !important;
+    font-size:16px !important;
+    font-weight:800 !important;
+    line-height:1.3 !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-today > .card > .d-flex:first-child > div:last-child,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming > .card > .d-flex:first-child > div:last-child,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past > .card > .d-flex:first-child > div:last-child {
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:7px !important;
+    width:100%;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-today .input-group,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming .input-group,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .input-group {
+    width:100% !important;
+    min-height:40px;
+    flex:1 1 100%;
+    border:1px solid var(--dior-appt-border) !important;
+    border-radius:10px !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-today .input-group .form-control,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming .input-group .form-control,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .input-group .form-control {
+    min-width:0;
+    font-size:16px !important;
+  }
+  #dior-patient-portal-app #tab-appointments #dior-subtab-today .btn,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming .btn,
+  #dior-patient-portal-app #tab-appointments #dior-subtab-past .btn { min-height:38px; }
+  #dior-patient-portal-app #tab-appointments .dior-appointment-list-table { display:none !important; }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-cards {
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:100%;
+    margin-top:10px;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-card {
+    min-width:0;
+    padding:13px;
+    border:1px solid var(--dior-appt-border);
+    border-radius:13px;
+    background:#fff;
+    box-shadow:0 3px 10px rgba(13, 43, 75, .045);
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-card-head {
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:9px;
+    padding-bottom:10px;
+    border-bottom:1px solid #edf1f6;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-doctor {
+    min-width:0;
+    color:var(--dior-appt-navy);
+    font-size:14px;
+    font-weight:800;
+    line-height:1.35;
+    overflow-wrap:anywhere;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-select { flex:0 0 auto; }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-fields {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px 12px;
+    padding:11px 0;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-field { min-width:0; }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-label {
+    display:block;
+    margin-bottom:3px;
+    color:var(--dior-appt-muted);
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-value {
+    display:block;
+    color:#344b63;
+    font-size:11px;
+    line-height:1.4;
+    overflow-wrap:anywhere;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-status {
+    display:inline-flex;
+    align-items:center;
+    max-width:100%;
+    padding:4px 8px;
+    border-radius:30px;
+    background:var(--dior-appt-soft);
+    color:var(--dior-appt-primary);
+    font-size:10px;
+    font-weight:700;
+    overflow-wrap:anywhere;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-actions {
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    padding-top:10px;
+    border-top:1px solid #edf1f6;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-actions .action-icon-btn {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:39px;
+    min-width:39px;
+    height:38px;
+    min-height:38px;
+    padding:0 !important;
+    border:1px solid var(--dior-appt-border) !important;
+    border-radius:9px !important;
+    background:#f8fbff !important;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-actions .btn {
+    min-height:38px;
+    font-size:11px;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-empty {
+    padding:22px 12px;
+    border:1px solid var(--dior-appt-border);
+    border-radius:12px;
+    background:#f8fbff;
+    color:var(--dior-appt-muted);
+    font-size:12px;
+    text-align:center;
+  }
+  #dior-patient-portal-app #tab-appointments .dior-subtab-panel .master-pagination,
+  #dior-patient-portal-app #tab-appointments .dior-subtab-panel .pt-3.border-top {
+    flex-wrap:wrap;
+    gap:8px;
+  }
+}
+@media (min-width: 768px) {
+  #dior-patient-portal-app #tab-appointments .dior-appt-mobile-cards { display:none !important; }
+}
