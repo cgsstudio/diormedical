@@ -260,3 +260,105 @@
     white-space:nowrap;
   }
 }
+
+
+/* True responsive pagination layout: compact controls, no clipped numbered pages. */
+@media (max-width:767.98px) {
+  #dior-patient-portal-app .master-pagination,
+  #dior-patient-portal-app .dior-responsive-pagination {
+    display:inline-flex !important;
+    flex:0 0 auto !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex-wrap:nowrap !important;
+    gap:8px !important;
+    width:auto !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    overflow:visible !important;
+    white-space:nowrap !important;
+  }
+  #dior-patient-portal-app .master-pagination .dior-page-btn,
+  #dior-patient-portal-app .dior-responsive-pagination .dior-page-btn {
+    display:inline-flex !important;
+    flex:0 0 38px !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:38px !important;
+    min-width:38px !important;
+    max-width:38px !important;
+    height:38px !important;
+    min-height:38px !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:1px solid #dce6f1 !important;
+    border-radius:10px !important;
+    background:#fff !important;
+    color:#2865a5 !important;
+    box-shadow:none !important;
+    line-height:1 !important;
+  }
+  #dior-patient-portal-app .master-pagination .dior-page-btn:disabled,
+  #dior-patient-portal-app .dior-responsive-pagination .dior-page-btn:disabled {
+    opacity:.38 !important;
+    cursor:not-allowed !important;
+  }
+  #dior-patient-portal-app .master-pagination .dior-pager-mobile-status,
+  #dior-patient-portal-app .dior-responsive-pagination .dior-pager-mobile-status {
+    display:inline-flex !important;
+    flex:0 0 auto !important;
+    align-items:center !important;
+    justify-content:center !important;
+    min-width:82px !important;
+    padding:0 3px !important;
+    color:#24466b !important;
+    font-size:12px !important;
+    font-weight:700 !important;
+    line-height:1.2 !important;
+    white-space:nowrap !important;
+  }
+  #dior-patient-portal-app .master-pagination .dior-pager-gap,
+  #dior-patient-portal-app .master-pagination .dior-page-btn.active:not(.dior-page-prev):not(.dior-page-next) {
+    display:none !important;
+  }
+  #dior-patient-portal-app .dior-subtab-panel .card > .d-flex:has(> .master-pagination) {
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    flex-wrap:nowrap !important;
+    gap:10px !important;
+    width:100% !important;
+    min-width:0 !important;
+    overflow:visible !important;
+  }
+  #dior-patient-portal-app .dior-subtab-panel .card > .d-flex:has(> .master-pagination) > span,
+  #dior-patient-portal-app .dior-subtab-panel .card > .d-flex:has(> .master-pagination) > div:first-child {
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    font-size:11px !important;
+    line-height:1.3 !important;
+    white-space:normal !important;
+  }
+  #dior-patient-portal-app .dior-subtab-panel .card > .d-flex:has(> .master-pagination) > .master-pagination {
+    flex:0 0 auto !important;
+    margin-left:auto !important;
+  }
+}
+@media (max-width:380px) {
+  #dior-patient-portal-app .dior-subtab-panel .card > .d-flex:has(> .master-pagination) {
+    flex-direction:column !important;
+    align-items:stretch !important;
+    justify-content:center !important;
+    gap:10px !important;
+  }
+  #dior-patient-portal-app .dior-subtab-panel .card > .d-flex:has(> .master-pagination) > span,
+  #dior-patient-portal-app .dior-subtab-panel .card > .d-flex:has(> .master-pagination) > div:first-child {
+    width:100% !important;
+    text-align:center !important;
+  }
+  #dior-patient-portal-app .dior-subtab-panel .card > .d-flex:has(> .master-pagination) > .master-pagination {
+    align-self:center !important;
+    margin:0 auto !important;
+  }
+}
