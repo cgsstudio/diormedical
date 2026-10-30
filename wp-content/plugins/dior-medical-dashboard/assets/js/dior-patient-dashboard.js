@@ -1494,6 +1494,7 @@ let diorRxCurrentPage = 1;
                         const allRows = Array.from(document.querySelectorAll('#dior-rx-tbody tr'));
                         
                         return allRows.filter(function(row) {
+                            if (row.querySelector('.dior-empty-state')) return false;
                             const text = row.innerText.toLowerCase();
                             return text.includes(filter);
                         });
@@ -1521,7 +1522,13 @@ let diorRxCurrentPage = 1;
 
                         const pagContainer = document.getElementById('dior-rx-pagination');
                         if (pagContainer) {
-                            pagContainer.innerHTML = diorBuildPagerHtml(diorRxCurrentPage, totalPages, 'diorGoRxPage');
+                            if (activeRows.length > diorRxRowsPerPage) {
+                                pagContainer.innerHTML = diorBuildPagerHtml(diorRxCurrentPage, totalPages, 'diorGoRxPage');
+                                pagContainer.style.display = '';
+                            } else {
+                                pagContainer.innerHTML = '';
+                                pagContainer.style.display = 'none';
+                            }
                         }
 
                         const pageCountEl = document.getElementById('dior-rx-page-count');
