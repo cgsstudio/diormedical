@@ -1,0 +1,454 @@
+[
+ {
+  "id": "Display secondary button"
+ },
+ {
+  "id": "Dock to bottom of screen"
+ },
+ {
+  "id": "Failed to record report."
+ },
+ {
+  "id": "Flagship (filled layout)"
+ },
+ {
+  "id": "Icon-stack — Tile (left)"
+ },
+ {
+  "id": "Image-forward (flagship)"
+ },
+ {
+  "id": "Persist selection in URL"
+ },
+ {
+  "id": "Please enter a username."
+ },
+ {
+  "id": "Remove department filter"
+ },
+ {
+  "id": "Search by login or email"
+ },
+ {
+  "id": "Search patient / booking"
+ },
+ {
+  "id": "Secondary (ghost) button"
+ },
+ {
+  "id": "Sent the moment you book"
+ },
+ {
+  "id": "Show image / placeholder"
+ },
+ {
+  "id": "Side-by-side — Icon pill"
+ },
+ {
+  "id": "Stillwater Mental Health"
+ },
+ {
+  "id": "Timeline — Segmented bar"
+ },
+ {
+  "id": "Type to search patients…"
+ },
+ {
+  "id": "Vertical — Stacked cards"
+ },
+ {
+  "id": "e.g. 34, 480, 4.9, 9,200"
+ },
+ {
+  "id": "Accordion — Hairline list"
+ },
+ {
+  "id": "Booking journey · 6 steps"
+ },
+ {
+  "id": "Could not create patient."
+ },
+ {
+  "id": "Credential (pulse + text)"
+ },
+ {
+  "id": "Little Sprouts Pediatrics"
+ },
+ {
+  "id": "Min height (px, 0 = auto)"
+ },
+ {
+  "id": "No awards to display yet."
+ },
+ {
+  "id": "Northvale Heart Institute"
+ },
+ {
+  "id": "Payment did not complete."
+ },
+ {
+  "id": "Photo (mosaic photo-card)"
+ },
+ {
+  "id": "Request-only button label"
+ },
+ {
+  "id": "Search test items to add…"
+ },
+ {
+  "id": "Show image credit caption"
+ },
+ {
+  "id": "Showing %1$s–%2$s of %3$s"
+ },
+ {
+  "id": "Update this catalog item."
+ },
+ {
+  "id": "Your details stay private"
+ },
+ {
+  "id": "A 6-digit code was sent to"
+ },
+ {
+  "id": "Add at least one test item"
+ },
+ {
+  "id": "Allow “Pay at appointment”"
+ },
+ {
+  "id": "Booking journey · %d steps"
+ },
+ {
+  "id": "Categorized — Category nav"
+ },
+ {
+  "id": "Departments at this clinic"
+ },
+ {
+  "id": "Filter departments by name"
+ },
+ {
+  "id": "First item open by default"
+ },
+ {
+  "id": "Full wizard (split-screen)"
+ },
+ {
+  "id": "Group slots by time of day"
+ },
+ {
+  "id": "Heads up about admin users"
+ },
+ {
+  "id": "Nonce verification failed."
+ },
+ {
+  "id": "Northvale General Hospital"
+ },
+ {
+  "id": "Oops! Something went wrong"
+ },
+ {
+  "id": "Search by name or category"
+ },
+ {
+  "id": "Side-by-side — Accent rule"
+ },
+ {
+  "id": "Small pill, e.g. \"~2 min\"."
+ },
+ {
+  "id": "Two-column \"what we treat\""
+ },
+ {
+  "id": "V1 — Centered (photo hero)"
+ },
+ {
+  "id": "e.g. “doctor” → ?doctor=12"
+ },
+ {
+  "id": "“Pay at appointment” label"
+ },
+ {
+  "id": "Allow ?doctor= URL override"
+ },
+ {
+  "id": "Also show fee in the button"
+ },
+ {
+  "id": "Attending Doctor (optional)"
+ },
+ {
+  "id": "Categorized — Category tabs"
+ },
+ {
+  "id": "Categorized — Masonry cards"
+ },
+ {
+  "id": "Click or drag CSV to upload"
+ },
+ {
+  "id": "Credentials (post-nominals)"
+ },
+ {
+  "id": "No staff match your search."
+ },
+ {
+  "id": "No tests match your search."
+ },
+ {
+  "id": "Only PDF files are allowed."
+ },
+ {
+  "id": "Please choose a department."
+ },
+ {
+  "id": "Please enter a valid email."
+ },
+ {
+  "id": "Primary — text + background"
+ },
+ {
+  "id": "Show stat strip (spotlight)"
+ },
+ {
+  "id": "Show “what’s next” previews"
+ },
+ {
+  "id": "Specific clinics (optional)"
+ },
+ {
+  "id": "Specific doctors (optional)"
+ },
+ {
+  "id": "Split action (booking card)"
+ },
+ {
+  "id": "Stat (icon + value + label)"
+ },
+ {
+  "id": "Table — Compact list (dark)"
+ },
+ {
+  "id": "Use each department's color"
+ },
+ {
+  "id": "Bulk Import Test Items (CSV)"
+ },
+ {
+  "id": "Filter doctors by department"
+ },
+ {
+  "id": "Final payment now (optional)"
+ },
+ {
+  "id": "Import tests from a CSV file"
+ },
+ {
+  "id": "Meridian Imaging · Radiology"
+ },
+ {
+  "id": "Minimal editorial (no image)"
+ },
+ {
+  "id": "Name and phone are required."
+ },
+ {
+  "id": "Order is not in your clinic."
+ },
+ {
+  "id": "Payment verification failed."
+ },
+ {
+  "id": "Search patient or booking ID"
+ },
+ {
+  "id": "You cannot delete this item."
+ },
+ {
+  "id": "You cannot modify this item."
+ },
+ {
+  "id": "Centered overlay (full-bleed)"
+ },
+ {
+  "id": "For online report visit here:"
+ },
+ {
+  "id": "Icon-stack — Watermark (dark)"
+ },
+ {
+  "id": "Image must be 2MB or smaller."
+ },
+ {
+  "id": "Please choose a day and time."
+ },
+ {
+  "id": "QR code for the online report"
+ },
+ {
+  "id": "Rating (stars + score + meta)"
+ },
+ {
+  "id": "Select all staff on this page"
+ },
+ {
+  "id": "Unit accent (e.g. M, k+, yrs)"
+ },
+ {
+  "id": "Your appointment is confirmed"
+ },
+ {
+  "id": "%d active in the last 24 hours",
+  "plural": "%d active in the last 24 hours"
+ },
+ {
+  "id": "Boxed — Ocean tiles (dot-rows)"
+ },
+ {
+  "id": "BrightSmile Dental · Dentistry"
+ },
+ {
+  "id": "Clinic phone (for this doctor)"
+ },
+ {
+  "id": "Discharge Bill / Final Invoice"
+ },
+ {
+  "id": "File is empty or exceeds 10MB."
+ },
+ {
+  "id": "Icon-stack — Circle (centered)"
+ },
+ {
+  "id": "Image-led — Full-bleed overlay"
+ },
+ {
+  "id": "Overlay scrim color (centered)"
+ },
+ {
+  "id": "Show not-offered times (muted)"
+ },
+ {
+  "id": "Weekly schedule at this clinic"
+ },
+ {
+  "id": "e.g. Lab, Radiology, Pathology"
+ },
+ {
+  "id": "Apex Orthopedics · Bone & joint"
+ },
+ {
+  "id": "Card — Status band (deep ocean)"
+ },
+ {
+  "id": "File was not uploaded via HTTP."
+ },
+ {
+  "id": "Lumière Dermatology · Skin care"
+ },
+ {
+  "id": "Search name, phone, code, email"
+ },
+ {
+  "id": "Specific departments (optional)"
+ },
+ {
+  "id": "That username is already taken."
+ },
+ {
+  "id": "e.g. Complete Blood Count (CBC)"
+ },
+ {
+  "id": "%s specialist in this department",
+  "plural": "%s specialists in this department"
+ },
+ {
+  "id": "Book in a popup (no page change)"
+ },
+ {
+  "id": "Live data (real doctors & times)"
+ },
+ {
+  "id": "Mariposa Women's Health · OB-GYN"
+ },
+ {
+  "id": "More information about DocBooker"
+ },
+ {
+  "id": "Search by name, email, or clinic"
+ },
+ {
+  "id": "CSV file is empty or exceeds 5MB."
+ },
+ {
+  "id": "Choose a CSV file or drop it here"
+ },
+ {
+  "id": "Could not read the uploaded file."
+ },
+ {
+  "id": "Failed to read the template file."
+ },
+ {
+  "id": "Live fee renders on the front end"
+ },
+ {
+  "id": "That email is already registered."
+ },
+ {
+  "id": "V1 — Editorial classic (centered)"
+ },
+ {
+  "id": "…or paste raw <svg>…</svg> markup"
+ },
+ {
+  "id": "ClearView Eye Care · Ophthalmology"
+ },
+ {
+  "id": "File contents are not a valid PDF."
+ },
+ {
+  "id": "One per line (alternating layout)."
+ },
+ {
+  "id": "Only PDF files are allowed (mime)."
+ },
+ {
+  "id": "Please enter a price of 0 or more."
+ },
+ {
+  "id": "Please fix the highlighted fields."
+ },
+ {
+  "id": "Sub-label for the icon-row layout."
+ },
+ {
+  "id": "At least one test item is required."
+ },
+ {
+  "id": "Banner — Gradient band (flip-cards)"
+ },
+ {
+  "id": "Banner — Sticky strip (inline mini)"
+ },
+ {
+  "id": "Could not create attachment record."
+ },
+ {
+  "id": "Current doctor (single-doctor page)"
+ },
+ {
+  "id": "Email is invalid or already in use."
+ },
+ {
+  "id": "Name, phone and email are required."
+ },
+ {
+  "id": "Only JPG or PNG images are allowed."
+ },
+ {
+  "id": "Please enter a valid email address."
+ }
+]

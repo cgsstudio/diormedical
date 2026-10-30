@@ -1,0 +1,459 @@
+[
+ {
+  "id": "Scope"
+ },
+ {
+  "id": "Score"
+ },
+ {
+  "id": "Share"
+ },
+ {
+  "id": "Slide"
+ },
+ {
+  "id": "Slots"
+ },
+ {
+  "id": "Small"
+ },
+ {
+  "id": "Solid"
+ },
+ {
+  "id": "Split"
+ },
+ {
+  "id": "Staff"
+ },
+ {
+  "id": "Stats"
+ },
+ {
+  "id": "Steps"
+ },
+ {
+  "id": "Style"
+ },
+ {
+  "id": "Tamil"
+ },
+ {
+  "id": "Title"
+ },
+ {
+  "id": "Today"
+ },
+ {
+  "id": "Total"
+ },
+ {
+  "id": "Units"
+ },
+ {
+  "id": "Users"
+ },
+ {
+  "id": "Vimeo"
+ },
+ {
+  "id": "Visit"
+ },
+ {
+  "id": "Years"
+ },
+ {
+  "id": "items"
+ },
+ {
+  "id": "price"
+ },
+ {
+  "id": "slots"
+ },
+ {
+  "id": "staff"
+ },
+ {
+  "id": "total"
+ },
+ {
+  "id": "%d day",
+  "plural": "%d days"
+ },
+ {
+  "id": "%s yrs"
+ },
+ {
+  "id": "Accent"
+ },
+ {
+  "id": "Across"
+ },
+ {
+  "id": "Active"
+ },
+ {
+  "id": "Amount"
+ },
+ {
+  "id": "Answer"
+ },
+ {
+  "id": "Arabic"
+ },
+ {
+  "id": "Author"
+ },
+ {
+  "id": "Avatar"
+ },
+ {
+  "id": "Awards"
+ },
+ {
+  "id": "Basics"
+ },
+ {
+  "id": "Bill #"
+ },
+ {
+  "id": "Border"
+ },
+ {
+  "id": "Bottom"
+ },
+ {
+  "id": "Button"
+ },
+ {
+  "id": "Cancel"
+ },
+ {
+  "id": "Center"
+ },
+ {
+  "id": "Charge"
+ },
+ {
+  "id": "Clinic"
+ },
+ {
+  "id": "Closed"
+ },
+ {
+  "id": "Closes"
+ },
+ {
+  "id": "Create"
+ },
+ {
+  "id": "Custom"
+ },
+ {
+  "id": "Dashed"
+ },
+ {
+  "id": "Delete"
+ },
+ {
+  "id": "Disc %"
+ },
+ {
+  "id": "Doctor"
+ },
+ {
+  "id": "Dotted"
+ },
+ {
+  "id": "Double"
+ },
+ {
+  "id": "Email:"
+ },
+ {
+  "id": "Export"
+ },
+ {
+  "id": "Female"
+ },
+ {
+  "id": "Filled"
+ },
+ {
+  "id": "Filter"
+ },
+ {
+  "id": "French"
+ },
+ {
+  "id": "Friday"
+ },
+ {
+  "id": "Gender"
+ },
+ {
+  "id": "German"
+ },
+ {
+  "id": "Global"
+ },
+ {
+  "id": "Header"
+ },
+ {
+  "id": "ID No."
+ },
+ {
+  "id": "Inline"
+ },
+ {
+  "id": "Italic"
+ },
+ {
+  "id": "Kicker"
+ },
+ {
+  "id": "Korean"
+ },
+ {
+  "id": "Labels"
+ },
+ {
+  "id": "Layout"
+ },
+ {
+  "id": "Manage"
+ },
+ {
+  "id": "Margin"
+ },
+ {
+  "id": "Medium"
+ },
+ {
+  "id": "Method"
+ },
+ {
+  "id": "Middle"
+ },
+ {
+  "id": "Mobile"
+ },
+ {
+  "id": "Monday"
+ },
+ {
+  "id": "No. of"
+ },
+ {
+  "id": "Normal"
+ },
+ {
+  "id": "Number"
+ },
+ {
+  "id": "OB-GYN"
+ },
+ {
+  "id": "Pay %s"
+ },
+ {
+  "id": "Phone:"
+ },
+ {
+  "id": "Polish"
+ },
+ {
+  "id": "Random"
+ },
+ {
+  "id": "Rating"
+ },
+ {
+  "id": "Record"
+ },
+ {
+  "id": "Remove"
+ },
+ {
+  "id": "Repeat"
+ },
+ {
+  "id": "Report"
+ },
+ {
+  "id": "Reveal"
+ },
+ {
+  "id": "Scroll"
+ },
+ {
+  "id": "Select"
+ },
+ {
+  "id": "Single"
+ },
+ {
+  "id": "Slider",
+  "ctx": "block title"
+ },
+ {
+  "id": "Slides"
+ },
+ {
+  "id": "Source"
+ },
+ {
+  "id": "Spread"
+ },
+ {
+  "id": "Status"
+ },
+ {
+  "id": "Strong"
+ },
+ {
+  "id": "Styles"
+ },
+ {
+  "id": "Subtle"
+ },
+ {
+  "id": "Suffix"
+ },
+ {
+  "id": "Sunday"
+ },
+ {
+  "id": "Tablet"
+ },
+ {
+  "id": "Target"
+ },
+ {
+  "id": "Telugu"
+ },
+ {
+  "id": "Tiktok"
+ },
+ {
+  "id": "Unpaid"
+ },
+ {
+  "id": "Upload"
+ },
+ {
+  "id": "Verify"
+ },
+ {
+  "id": "Visits"
+ },
+ {
+  "id": "awards"
+ },
+ {
+  "id": "closed",
+  "ctx": "office hours state"
+ },
+ {
+  "id": "← Back"
+ },
+ {
+  "id": "%d slot",
+  "plural": "%d slots"
+ },
+ {
+  "id": "%d test",
+  "plural": "%d tests"
+ },
+ {
+  "id": "%d year",
+  "plural": "%d years"
+ },
+ {
+  "id": "24/7 ER"
+ },
+ {
+  "id": "Actions"
+ },
+ {
+  "id": "Adding…"
+ },
+ {
+  "id": "Address"
+ },
+ {
+  "id": "Age/Sex"
+ },
+ {
+  "id": "All day"
+ },
+ {
+  "id": "Balance"
+ },
+ {
+  "id": "Behance"
+ },
+ {
+  "id": "Bengali"
+ },
+ {
+  "id": "Booking"
+ },
+ {
+  "id": "Bullets"
+ },
+ {
+  "id": "Buttons"
+ },
+ {
+  "id": "Caption"
+ },
+ {
+  "id": "Charges"
+ },
+ {
+  "id": "Chevron"
+ },
+ {
+  "id": "Classic"
+ },
+ {
+  "id": "Cleared"
+ },
+ {
+  "id": "Clinics"
+ },
+ {
+  "id": "Clinics",
+  "ctx": "block title"
+ },
+ {
+  "id": "Compact"
+ },
+ {
+  "id": "Contain"
+ },
+ {
+  "id": "Content"
+ },
+ {
+  "id": "Context"
+ },
+ {
+  "id": "Default"
+ },
+ {
+  "id": "Deleted"
+ },
+ {
+  "id": "Density"
+ },
+ {
+  "id": "Desktop"
+ },
+ {
+  "id": "Discard"
+ }
+]

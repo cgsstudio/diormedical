@@ -1,0 +1,174 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/clinics",
+  "title": "Clinics",
+  "category": "doc-booker-blocks",
+  "icon": "building",
+  "description": "A clinic/location directory in 5 layouts (card / feature / gallery / map / compact), reading real clinic profiles — type, hours, services, contact, specialists, and a list↔pin map.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "card"
+    },
+    "clinicIds": {
+      "type": "array",
+      "default": []
+    },
+    "orderBy": {
+      "type": "string",
+      "default": "date"
+    },
+    "order": {
+      "type": "string",
+      "default": "DESC"
+    },
+    "limit": {
+      "type": "number",
+      "default": 0
+    },
+    "showImage": {
+      "type": "boolean",
+      "default": true
+    },
+    "showTagline": {
+      "type": "boolean",
+      "default": true
+    },
+    "showStats": {
+      "type": "boolean",
+      "default": true
+    },
+    "showAddress": {
+      "type": "boolean",
+      "default": true
+    },
+    "showContact": {
+      "type": "boolean",
+      "default": true
+    },
+    "showHours": {
+      "type": "boolean",
+      "default": true
+    },
+    "showEmergency": {
+      "type": "boolean",
+      "default": true
+    },
+    "showViewLink": {
+      "type": "boolean",
+      "default": true
+    },
+    "viewText": {
+      "type": "string",
+      "default": "View clinic"
+    },
+    "emptyText": {
+      "type": "string",
+      "default": "No clinics found."
+    },
+    "columnsLg": {
+      "type": "number",
+      "default": 3
+    },
+    "columnsMd": {
+      "type": "number",
+      "default": 2
+    },
+    "columnsSm": {
+      "type": "number",
+      "default": 1
+    },
+    "gap": {
+      "type": "object",
+      "default": {
+        "lg": 22,
+        "md": 18,
+        "sm": 16,
+        "unit": "px"
+      }
+    },
+    "cardBg": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "nameColor": {
+      "type": "string",
+      "default": ""
+    },
+    "nameTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "taglineColor": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

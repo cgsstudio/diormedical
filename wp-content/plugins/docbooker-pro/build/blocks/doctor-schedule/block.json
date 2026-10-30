@@ -1,0 +1,308 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/doctor-schedule",
+  "title": "Doctor Schedule",
+  "category": "doc-booker-blocks",
+  "icon": "calendar",
+  "description": "A single doctor's weekly timetable in 5 layouts (week-grid / day-pills / spotlight / timeline / compact-list). Reads the real wpddb_doctor_schedule meta; every offered slot deep-links into the live booking flow (Stripe / Razorpay / fallback). Supports a ?doctor= URL override.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "week-grid"
+    },
+    "density": {
+      "type": "string",
+      "default": "sidebar"
+    },
+    "source": {
+      "type": "string",
+      "default": "specific"
+    },
+    "doctorId": {
+      "type": "number",
+      "default": 0
+    },
+    "urlParamOverride": {
+      "type": "boolean",
+      "default": true
+    },
+    "urlParam": {
+      "type": "string",
+      "default": "doctor"
+    },
+    "timeFormat": {
+      "type": "string",
+      "default": "12"
+    },
+    "weekStartsOn": {
+      "type": "string",
+      "default": "monday"
+    },
+    "groupByBand": {
+      "type": "boolean",
+      "default": true
+    },
+    "showUnavailable": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDoctorStrip": {
+      "type": "boolean",
+      "default": true
+    },
+    "showAvatar": {
+      "type": "boolean",
+      "default": true
+    },
+    "showRating": {
+      "type": "boolean",
+      "default": true
+    },
+    "showExperience": {
+      "type": "boolean",
+      "default": true
+    },
+    "showCredentials": {
+      "type": "boolean",
+      "default": true
+    },
+    "showFee": {
+      "type": "boolean",
+      "default": true
+    },
+    "showClinicLegend": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDayCount": {
+      "type": "boolean",
+      "default": true
+    },
+    "showBandLabels": {
+      "type": "boolean",
+      "default": true
+    },
+    "highlightToday": {
+      "type": "boolean",
+      "default": true
+    },
+    "autoSelectToday": {
+      "type": "boolean",
+      "default": true
+    },
+    "showHolidayNote": {
+      "type": "boolean",
+      "default": true
+    },
+    "showQuote": {
+      "type": "boolean",
+      "default": true
+    },
+    "showStats": {
+      "type": "boolean",
+      "default": true
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": "This week"
+    },
+    "headingText": {
+      "type": "string",
+      "default": ""
+    },
+    "ledeText": {
+      "type": "string",
+      "default": ""
+    },
+    "ctaText": {
+      "type": "string",
+      "default": "Book an appointment"
+    },
+    "showFooterLink": {
+      "type": "boolean",
+      "default": false
+    },
+    "footerLinkText": {
+      "type": "string",
+      "default": "View full profile"
+    },
+    "footerLinkUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "footerLinkNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "emptyText": {
+      "type": "string",
+      "default": "This doctor's weekly schedule isn't available yet."
+    },
+    "offText": {
+      "type": "string",
+      "default": "Off"
+    },
+    "closedText": {
+      "type": "string",
+      "default": "Closed"
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "clinicColor1": {
+      "type": "string",
+      "default": ""
+    },
+    "clinicColor2": {
+      "type": "string",
+      "default": ""
+    },
+    "surfaceBg": {
+      "type": "string",
+      "default": ""
+    },
+    "surfaceBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "surfaceRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "surfaceBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "eyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "nameColor": {
+      "type": "string",
+      "default": ""
+    },
+    "nameTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "dayColor": {
+      "type": "string",
+      "default": ""
+    },
+    "dayTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "slotColor": {
+      "type": "string",
+      "default": ""
+    },
+    "slotBg": {
+      "type": "string",
+      "default": ""
+    },
+    "slotBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "slotRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "slotHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "slotHoverBg": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

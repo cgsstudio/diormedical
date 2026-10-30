@@ -1,0 +1,19 @@
+= 2.88 =
+* Fixed file upload imports not being recognized as manual imports
+* Improved compatibility with the export capability of All-in-One WP Migration
+
+= 2.87 =
+* Improved output escaping across the plugin's admin screens
+
+= 2.86 =
+* Added `--exclude-files` option to the WP-CLI backup command
+
+= 2.85 =
+* Fixed stored XSS vulnerability in the backups path setting
+* Fixed Restore button failing on the backups page
+
+= 2.84 =
+* Added permission check for the settings admin action to improve security
+
+= 2.83 =
+* Dependency updates

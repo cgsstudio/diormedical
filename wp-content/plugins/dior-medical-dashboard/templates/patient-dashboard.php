@@ -1,0 +1,1415 @@
+<div class="dior-wrap dior-patient-portal-wrap" id="dior-patient-portal-app">
+
+    <!-- Top Emergency Banner -->
+    <div class="dior-top-emergency-banner">
+        This is not for medical emergencies. Call <a href="tel:911">911</a> or go to the nearest ER.
+    </div>
+
+    <!-- Mobile Drawer Backdrop -->
+    <div class="dior-drawer-backdrop" id="dior-drawer-backdrop"></div>
+
+    <div class="dior-app">
+
+        <!-- ============================================================== -->
+        <!-- SIDEBAR NAVIGATION -->
+        <!-- ============================================================== -->
+        <aside class="dior-side" id="dior-sidebar">
+            <div class="dior-side-header">
+                <div class="brand">
+                    <a href="<?php echo esc_url(home_url('/')); ?>" class="brand-link">
+                        <img src="<?php echo esc_url($logo_url); ?>" alt="Dior Medical" class="brand-logo">
+                    </a>
+                </div>
+                <button type="button" class="dior-side-close btn" id="dior-side-close"
+                    aria-label="Close navigation menu">
+                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="dior-side-nav">
+                <div class="grp">
+                    <button type="button" class="dior-nav-btn active btn" data-tab="overview">
+                        <i class="fas fa-gauge-high"></i>
+                        <span class="nav-label">Dashboard</span>
+                    </button>
+                    <div class="dior-nav-item-has-children" id="dior-appt-dropdown-wrap">
+                        <button type="button" class="dior-nav-btn btn" data-tab="appointments">
+                            <i class="far fa-calendar-check"></i>
+                            <span class="nav-label">Appointments</span>
+                            <i class="fas fa-chevron-down ms-auto dior-ic-fdf55d6c0a"></i>
+                        </button>
+                        <div class="dior-nav-dropdown">
+                            <a href="#tab=appointments&subtab=book" class="dior-nav-dropdown-item"
+                                data-appt-subtab="book"><i class="fas fa-angle-right"></i> Book Appointment</a>
+                            <a href="#tab=appointments&subtab=today" class="dior-nav-dropdown-item"
+                                data-appt-subtab="today"><i class="fas fa-angle-right"></i> Today Appointments</a>
+                            <a href="#tab=appointments&subtab=upcoming" class="dior-nav-dropdown-item"
+                                data-appt-subtab="upcoming"><i class="fas fa-angle-right"></i> Upcoming Appointments</a>
+                            <a href="#tab=appointments&subtab=past" class="dior-nav-dropdown-item"
+                                data-appt-subtab="past"><i class="fas fa-angle-right"></i> Past Appointments</a>
+                        </div>
+                    </div>
+                    <button type="button" class="dior-nav-btn btn" data-tab="docs_meds">
+                        <i class="fas fa-prescription-bottle-medical"></i>
+                        <span class="nav-label">Prescriptions</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="telemedicine">
+                        <i class="fas fa-video"></i>
+                        <span class="nav-label">Telemedicine</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="medical_record">
+                        <i class="fas fa-notes-medical"></i>
+                        <span class="nav-label">Medical Record</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="payments">
+                        <i class="fas fa-wallet"></i>
+                        <span class="nav-label">Billing &amp; Payment</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="insurance">
+                        <i class="fas fa-shield-heart"></i>
+                        <span class="nav-label">Insurance Claim</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="documents">
+                        <i class="fas fa-file-lines"></i>
+                        <span class="nav-label">Documents &amp; Report</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="emergency">
+                        <i class="fas fa-kit-medical"></i>
+                        <span class="nav-label">Emergency support</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="feedback">
+                        <i class="fas fa-comments"></i>
+                        <span class="nav-label">Feedback &amp; Support</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="nav-label">Notification</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="consultation">
+                        <i class="fas fa-door-open"></i>
+                        <span class="nav-label">Consultation Room</span>
+                    </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="settings">
+                        <i class="fas fa-gear"></i>
+                        <span class="nav-label">Settings</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Bottom Sidebar User Profile Card -->
+            <div class="dior-sidebar-bottom-profile">
+                <div class="dior-sidebar-avatar-wrap" id="dior-sidebar-avatar-box">
+                    <?php if (!empty($profile['avatar_url'])): ?>
+                        <img id="dior-sidebar-avatar-img" src="<?php echo esc_url($profile['avatar_url']); ?>"
+                            alt="<?php echo esc_attr($profile['full_name']); ?>">
+                    <?php else: ?>
+                        <img id="dior-sidebar-avatar-img"
+                            src="<?php echo esc_url(get_avatar_url(get_current_user_id(), ['size' => 120])); ?>"
+                            alt="<?php echo esc_attr($profile['full_name'] ?? 'User'); ?>">
+                    <?php endif; ?>
+                </div>
+                <div class="dior-sidebar-user-info">
+                    <strong
+                        class="dior-sidebar-user-name"><?php echo esc_html(!empty($profile['full_name']) ? $profile['full_name'] : 'Patient'); ?></strong>
+                    <span class="dior-sidebar-user-status">Available</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============================================================== -->
+        <!-- MAIN CONTENT AREA -->
+        <!-- ============================================================== -->
+        <main class="dior-main-content">
+
+            <!-- Top Bar Header -->
+            <header class="dior-topbar">
+                <div class="dior-topbar-left">
+                    <button type="button" class="dior-mobile-menu-toggle btn" id="dior-mobile-menu-toggle"
+                        aria-label="Open navigation menu" aria-controls="dior-sidebar" aria-expanded="false">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <!-- Search Bar (Clean Reference UI) -->
+                    <div class="dior-top-search" id="dior-patient-top-search">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <input type="text" id="dior-patient-search"
+                            placeholder="Search appointments, prescriptions, records...">
+                    </div>
+                </div>
+
+                <div class="dior-topbar-right">
+                    <!-- Messages Icon -->
+                    <button type="button" class="dior-msg-btn dior-ic-f2136e6b50 btn" aria-label="Messages">
+                        <i class="far fa-envelope"></i>
+                    </button>
+
+                    <!-- Notification Bell Dropdown -->
+                    <div class="dior-notif-wrap" id="dior-notif-dropdown-wrap">
+                        <button type="button" class="dior-notif-btn btn" onclick="diorToggleNotifDropdown(event)"
+                            aria-label="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <?php if ($unread_count > 0): ?>
+                                <span class="dior-notif-indicator unread-badge-count"><?php echo $unread_count; ?></span>
+                            <?php endif; ?>
+                        </button>
+                        <div class="dior-notif-dropdown" id="dior-notif-dropdown">
+                            <div class="dior-notif-header">
+                                <h4>Notifications</h4>
+                                <button type="button" id="dior-quick-mark-read">Mark all read</button>
+                            </div>
+                            <div class="dior-notif-list">
+                                <?php if (empty($notifications)): ?>
+                                    <div class="dior-ic-00e4601aa1">
+                                        <i class="fas fa-bell-slash dior-ic-41fd079087"></i>
+                                        No new notifications
+                                    </div>
+                                <?php else: ?>
+                                    <?php foreach (array_slice($notifications, 0, 5) as $n):
+                                        $target_tab = !empty($n['action_url']) && strpos($n['action_url'], '#tab=') === 0 ? str_replace('#tab=', '', $n['action_url']) : 'notifications';
+                                        ?>
+                                        <div class="dior-notif-item <?php echo empty($n['is_read']) ? 'unread' : ''; ?> dior-ic-7f6191e48d"
+                                            data-notif-id="<?php echo esc_attr($n['id']); ?>"
+                                            data-switch-tab="<?php echo esc_attr($target_tab); ?>">
+                                            <div class="notif-icon"><i
+                                                    class="fas <?php echo esc_attr($n['icon'] ?? 'fa-bell'); ?>"></i></div>
+                                            <div class="notif-body">
+                                                <strong><?php echo esc_html($n['title']); ?></strong>
+                                                <p><?php echo esc_html(mb_substr($n['message'], 0, 45) . (mb_strlen($n['message']) > 45 ? '...' : '')); ?>
+                                                </p>
+                                                <span
+                                                    class="notif-time"><?php echo esc_html(dior_format_notification_time($n)); ?></span>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+                            <div class="dior-notif-footer">
+                                <button type="button" data-switch-tab="notifications">View All &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Quick Profile Pill & Dropdown -->
+                    <div class="dior-user-pill-wrap">
+                        <button type="button" class="dior-user-pill-btn btn" onclick="diorToggleProfileDropdown(event)"
+                            aria-label="User Profile">
+                            <div class="dior-user-pill-card">
+                                <div class="dior-pill-avatar" id="dior-top-pill-avatar">
+                                    <?php if (!empty($profile['avatar_url'])): ?>
+                                        <img id="dior-topbar-avatar-img"
+                                            src="<?php echo esc_url($profile['avatar_url']); ?>"
+                                            alt="<?php echo esc_attr($profile['full_name']); ?>">
+                                    <?php else: ?>
+                                        <img id="dior-topbar-avatar-img"
+                                            src="<?php echo esc_url(get_avatar_url(get_current_user_id(), ['size' => 120])); ?>"
+                                            alt="<?php echo esc_attr($profile['full_name'] ?? 'User'); ?>">
+                                    <?php endif; ?>
+                                    <span class="dior-online-dot"></span>
+                                </div>
+                                <div class="dior-pill-user-meta">
+                                    <strong
+                                        class="dior-pill-user-name"><?php echo esc_html(!empty($profile['full_name']) ? $profile['full_name'] : 'Patient'); ?></strong>
+                                    <span class="dior-pill-user-status">Available</span>
+                                </div>
+                            </div>
+                        </button>
+
+                        <div class="dior-profile-dropdown" id="dior-profile-dropdown">
+                            <div class="dior-profile-dropdown-header">
+                                HELLO <?php echo esc_html(strtoupper($profile['full_name'])); ?>..
+                            </div>
+                            <ul class="dior-profile-dropdown-menu">
+                                <li>
+                                    <button type="button" data-switch-tab="settings">
+                                        <i class="far fa-user"></i> Profile
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" data-switch-tab="settings">
+                                        <i class="far fa-envelope"></i> Email
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" data-switch-tab="settings">
+                                        <i class="fas fa-gear"></i> Settings
+                                    </button>
+                                </li>
+                                <li>
+                                    <a href="<?php echo esc_url(wp_logout_url(home_url('/dior-login/'))); ?>"
+                                        class="dior-logout-text-btn">
+                                        <i class="fas fa-arrow-right-from-bracket"></i> Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TAB PANELS CONTAINER -->
+            <div class="dior-tab-container py-3 pb-5">
+
+                <?php
+                $is_prof_complete = Dior_Patient_Portal_Data::is_profile_complete($user_id);
+                $missing_fields_list = Dior_Patient_Portal_Data::get_missing_profile_fields($user_id);
+                ?>
+                <?php if (!$is_prof_complete): ?>
+                    <!-- Action Required Alert Banner for Incomplete Profile -->
+                    <div class="dior-profile-incomplete-alert dior-ic-c03948b3c3" id="dior-profile-incomplete-banner">
+                        <div class="dior-ic-29bdac4ec4">
+                            <div class="dior-ic-3fb01cc77f">
+                                <i class="fas fa-user-pen"></i>
+                            </div>
+                            <div>
+                                <strong class="dior-ic-11190ca3a8">
+                                    Action Required: Complete Your Personal Profile
+                                </strong>
+                                <span class="dior-ic-acb9b5ec47">
+                                    Please complete your required personal information
+                                    (<strong><?php echo esc_html(implode(', ', $missing_fields_list)); ?></strong>) to
+                                    unlock appointment booking and telehealth consultations.
+                                </span>
+                            </div>
+                        </div>
+                        <button type="button" class="dior-btn-gold-primary dior-ic-4ee0445c2a btn"
+                            onclick="diorOpenHipaaPopup()">
+                            <i class="fas fa-id-card"></i> Complete Profile Now
+                        </button>
+                    </div>
+                <?php endif; ?>
+
+                <!-- ============================================================== -->
+                <!-- 0. HOME / OVERVIEW TAB (Real Functional Patient Data + Clean UI) -->
+                <!-- ============================================================== -->
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/overview.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/settings.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/appointments.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/payments.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/insurance.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/docs_meds.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/telemedicine.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/medical_record.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/documents.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/emergency.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/consultation.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/questionnaire.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/feedback.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/notifications.php'; ?>
+
+            </div> <!-- /.dior-tab-container -->
+
+        </main>
+    </div> <!-- /.dior-app -->
+
+    <!-- Mobile bottom navigation: keeps existing patient dashboard tabs and actions. -->
+    <nav class="dior-mobile-bottom-nav" aria-label="Patient dashboard navigation">
+        <button type="button" class="dior-mobile-nav-item is-active" data-switch-tab="overview" aria-current="page">
+            <i class="fas fa-house" aria-hidden="true"></i><span>Home</span>
+        </button>
+        <button type="button" class="dior-mobile-nav-item" data-switch-tab="appointments">
+            <i class="far fa-calendar-check" aria-hidden="true"></i><span>Appointments</span>
+        </button>
+        <button type="button" class="dior-mobile-nav-item" data-switch-tab="docs_meds">
+            <i class="fas fa-prescription-bottle-medical" aria-hidden="true"></i><span>Prescriptions</span>
+        </button>
+        <button type="button" class="dior-mobile-nav-item" data-switch-tab="medical_record">
+            <i class="far fa-file-lines" aria-hidden="true"></i><span>Records</span>
+        </button>
+        <button type="button" class="dior-mobile-nav-item" data-switch-tab="settings">
+            <i class="fas fa-bars" aria-hidden="true"></i><span>More</span>
+        </button>
+    </nav>
+
+
+    <!-- ============================================================== -->
+    <!-- MODALS -->
+    <!-- ============================================================== -->
+
+    <!-- 1. BOOK NEW APPOINTMENT MODAL (HIPAAtizer Form Integrated) -->
+    <div class="dior-modal-overlay" id="modal-book-appointment">
+        <div class="dior-modal-dialog dior-modal-lg dior-ic-ee0c6b0194">
+            <div class="dior-modal-header dior-ic-78529f928a">
+                <div>
+                    <h3 class="dior-ic-66a69ef8e4"><i class="fas fa-calendar-plus"></i> Book New Visit</h3>
+                    <span class="dior-ic-23927a389b"><i class="fas fa-shield-heart dior-ic-236b5f0eb0"></i>
+                        HIPAA-Compliant Medical Intake &amp; Booking</span>
+                </div>
+                <button type="button" class="dior-modal-close btn"
+                    onclick="diorCloseModal('modal-book-appointment')">&times;</button>
+            </div>
+            <div class="dior-modal-body dior-ic-1d15569872">
+                <iframe id="hipaatizer-book-visit-iframe"
+                    src="https://app.hipaatizer.com/workflow/01a11515-b491-79dc-b59b-e4be2a345a49"
+                    allow="microphone; camera; payment" title="HIPAAtizer Booking Form" class="dior-ic-a52858ae73">
+                </iframe>
+                <div class="dior-ic-44a70a0420">
+                    <?php echo do_shortcode('[hipaatizer id="01a11515-b491-79dc-b59b-e4be2a345a49"]'); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. RESCHEDULE MODAL -->
+    <div class="dior-modal-overlay" id="modal-reschedule-appointment">
+        <div class="dior-modal-dialog">
+            <div class="dior-modal-header">
+                <h3><i class="far fa-calendar"></i> Reschedule Consultation</h3>
+                <button type="button" class="dior-modal-close btn"
+                    onclick="diorCloseModal('modal-reschedule-appointment')">&times;</button>
+            </div>
+            <div class="dior-modal-body">
+                <form id="dior-form-reschedule-appt">
+                    <input type="hidden" id="resched_appt_id" name="appt_id" value="">
+
+                    <div id="resched_appt_summary" class="dior-ic-f8cd81dec3">
+                    </div>
+
+                    <p class="modal-intro-text">Select a new date and available time slot for your appointment:</p>
+
+                    <div class="dior-form-row-2">
+                        <div class="dior-form-group">
+                            <label for="resched_date">New Date <span class="req">*</span></label>
+                            <input type="date" id="resched_date" name="date" min="<?php echo current_time('Y-m-d'); ?>"
+                                value="<?php echo current_time('Y-m-d'); ?>" required>
+                        </div>
+                        <div class="dior-form-group">
+                            <label for="resched_time">New Time Slot <span class="req">*</span></label>
+                            <select id="resched_time" name="time" required>
+                                <option value="09:00 AM PST">09:00 AM PST</option>
+                                <option value="10:15 AM PST">10:15 AM PST</option>
+                                <option value="11:30 AM PST">11:30 AM PST</option>
+                                <option value="01:00 PM PST">01:00 PM PST</option>
+                                <option value="02:30 PM PST">02:30 PM PST</option>
+                                <option value="04:00 PM PST">04:00 PM PST</option>
+                                <option value="05:30 PM PST">05:30 PM PST</option>
+                                <option value="07:00 PM PST">07:00 PM PST</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="dior-form-group dior-ic-fb6bc20a7f">
+                        <label for="resched_notes">Reason for Rescheduling (Optional)</label>
+                        <input type="text" id="resched_notes" name="notes"
+                            placeholder="e.g. Schedule conflict, personal travel"
+                            class="dior-ic-3638e808c4 form-control">
+                    </div>
+
+                    <div class="dior-modal-footer dior-ic-78874ad7d4">
+                        <button type="button" class="dior-btn-gold-secondary btn"
+                            onclick="diorCloseModal('modal-reschedule-appointment')">Keep Current Time</button>
+                        <button type="submit" id="dior-btn-submit-resched" class="dior-btn-gold-primary btn">
+                            <i class="fas fa-check"></i> Save New Time Slot
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. CANCEL APPOINTMENT MODAL -->
+    <div class="dior-modal-overlay" id="modal-cancel-appointment">
+        <div class="dior-modal-dialog">
+            <div class="dior-modal-header">
+                <h3><i class="fas fa-kit-medical dior-ic-557c97e141"></i> Cancel Consultation</h3>
+                <button type="button" class="dior-modal-close btn"
+                    onclick="diorCloseModal('modal-cancel-appointment')">&times;</button>
+            </div>
+            <div class="dior-modal-body">
+                <form id="dior-form-cancel-appt">
+                    <input type="hidden" id="cancel_appt_id" name="appt_id" value="">
+
+                    <div id="cancel_appt_summary" class="dior-ic-e7416a9b55">
+                    </div>
+
+                    <p class="dior-ic-e261ffabcb">
+                        Are you sure you wish to cancel this consultation? You can reschedule to a future date at no
+                        penalty, or schedule a new visit when needed.
+                    </p>
+
+                    <div class="dior-form-group">
+                        <label for="cancel_reason">Reason for Cancellation (Optional)</label>
+                        <select id="cancel_reason" name="reason">
+                            <option value="Schedule conflict">Schedule conflict</option>
+                            <option value="Symptoms resolved">Symptoms resolved</option>
+                            <option value="Went to in-person clinic">Went to in-person clinic / ER</option>
+                            <option value="Provider preference">Provider preference</option>
+                            <option value="Other reason">Other reason</option>
+                        </select>
+                    </div>
+
+                    <div class="dior-modal-footer dior-ic-78874ad7d4">
+                        <button type="button" class="dior-btn-gold-secondary btn"
+                            onclick="diorCloseModal('modal-cancel-appointment')">Keep Appointment</button>
+                        <button type="submit" id="dior-btn-submit-cancel"
+                            class="dior-btn-danger dior-ic-02e790ac8d btn">
+                            <i class="fas fa-xmark"></i> Confirm Cancellation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3B. APPOINTMENT REMINDER MODAL -->
+    <div class="dior-modal-overlay" id="modal-appointment-reminder">
+        <div class="dior-modal-dialog">
+            <div class="dior-modal-header">
+                <h3><i class="fas fa-bell dior-ic-b2113a5eea"></i> Send Appointment Reminder</h3>
+                <button type="button" class="dior-modal-close btn"
+                    onclick="diorCloseModal('modal-appointment-reminder')">&times;</button>
+            </div>
+            <div class="dior-modal-body">
+                <form id="dior-form-send-reminder">
+                    <input type="hidden" id="reminder_appt_id" name="appt_id" value="">
+
+                    <div id="reminder_appt_summary" class="dior-ic-d8b0d6eace">
+                    </div>
+
+                    <p class="dior-ic-e261ffabcb">
+                        Send an urgent clinical consultation reminder with scheduled date/time, patient preparation
+                        checklist, and direct video consultation room link.
+                    </p>
+
+                    <div class="dior-ic-2895f37e6b">
+                        <div class="dior-ic-55132245a6">
+                            <i class="fas fa-tower-broadcast dior-ic-1dc44a1b66"></i> Active
+                            Notification Channels:
+                        </div>
+                        <div class="dior-ic-dce101ce6e">
+                            <label class="dior-ic-8b80aded64">
+                                <input type="checkbox" checked disabled class="dior-ic-ce15c82e4d form-check-input">
+                                <span><strong>Email Notification</strong> (Delivered to both patient & attending
+                                    doctor)</span>
+                            </label>
+                            <label class="dior-ic-8b80aded64">
+                                <input type="checkbox" checked disabled class="dior-ic-ce15c82e4d form-check-input">
+                                <span><strong>Dashboard In-App Alert</strong> (Added to notification inbox for patient &
+                                    doctor)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="dior-modal-footer dior-ic-78874ad7d4">
+                        <button type="button" class="dior-btn-gold-secondary btn"
+                            onclick="diorCloseModal('modal-appointment-reminder')">Close</button>
+                        <button type="submit" id="dior-btn-submit-reminder"
+                            class="dior-btn-gold-primary dior-ic-2e8ec92046 btn">
+                            <i class="fas fa-bell"></i> Send Reminder Now
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. QUESTIONNAIRE & INTAKE MODAL (With E-Sign) -->
+    <div class="dior-modal-overlay" id="modal-questionnaire-intake">
+        <div class="dior-modal-dialog dior-modal-lg">
+            <div class="dior-modal-header">
+                <h3 id="modal-qn-title"><i class="fas fa-clipboard-question"></i> Clinical Intake & E-Sign</h3>
+                <button type="button" class="dior-modal-close btn"
+                    onclick="diorCloseModal('modal-questionnaire-intake')">&times;</button>
+            </div>
+            <div class="dior-modal-body">
+                <form id="dior-form-submit-intake" class="dior-portal-form">
+                    <input type="hidden" id="qn_input_id" name="qn_id" value="">
+                    <input type="hidden" id="qn_input_condition" name="condition" value="">
+
+                    <div class="dior-form-group">
+                        <label for="qn_input_symptoms">Describe Your Symptoms & Duration <span
+                                class="req">*</span></label>
+                        <textarea id="qn_input_symptoms" name="symptoms" rows="3"
+                            placeholder="When did symptoms start? Rate severity (mild/moderate/severe)..."
+                            required></textarea>
+                    </div>
+
+                    <div class="dior-form-row-2">
+                        <div class="dior-form-group">
+                            <label for="qn_input_allergies">Known Drug Allergies</label>
+                            <input type="text" id="qn_input_allergies" name="allergies"
+                                placeholder="e.g. Penicillin, Sulfa, None known">
+                        </div>
+                        <div class="dior-form-group">
+                            <label for="qn_input_meds">Current Medications / Supplements</label>
+                            <input type="text" id="qn_input_meds" name="current_meds"
+                                placeholder="e.g. Lisinopril 10mg, Multivitamin">
+                        </div>
+                    </div>
+
+                    <div class="dior-form-group">
+                        <label for="qn_input_history">Relevant Medical Conditions</label>
+                        <input type="text" id="qn_input_history" name="medical_history"
+                            placeholder="e.g. Asthma, High Blood Pressure, Diabetes, None">
+                    </div>
+
+                    <!-- Document / Photo Upload -->
+                    <div class="dior-form-group">
+                        <label>Upload Supporting Images / Documents (e.g. Photo of Rash, Previous Lab Test)</label>
+                        <div class="dior-upload-dropzone" id="dior-upload-dropzone">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                            <span>Click to upload or drag and drop image (JPG, PNG, PDF up to 10MB)</span>
+                            <input type="file" id="qn_file_upload" name="file_upload" accept="image/*,application/pdf"
+                                class="dior-ic-44a70a0420 form-control">
+                        </div>
+                        <div id="dior-upload-preview" class="dior-ic-7287548b65"></div>
+                    </div>
+
+                    <!-- HIPAA Telemedicine Consent & E-Sign Pad -->
+                    <div class="dior-esign-section">
+                        <h4><i class="fas fa-signature"></i> Telemedicine & HIPAA Consent Agreement</h4>
+                        <div class="esign-text-box">
+                            <p>By typing your legal name or signing below, you consent to receive telehealth medical
+                                evaluations from licensed clinicians at Dior Medical, acknowledge our HIPAA Privacy
+                                Practices, and certify that all clinical information provided is true and accurate.</p>
+                        </div>
+
+                        <div class="dior-form-row-2">
+                            <div class="dior-form-group">
+                                <label for="esign_name">Type Full Legal Name (Electronic Signature) <span
+                                        class="req">*</span></label>
+                                <input type="text" id="esign_name" name="esign_name"
+                                    value="<?php echo esc_attr($profile['full_name']); ?>" required>
+                            </div>
+                            <div class="dior-form-group">
+                                <label for="esign_date">Date of Signature</label>
+                                <input type="text" id="esign_date" name="esign_date"
+                                    value="<?php echo current_time('M j, Y'); ?>" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dior-modal-footer">
+                        <button type="button" class="dior-btn-gold-secondary btn"
+                            onclick="diorCloseModal('modal-questionnaire-intake')">Cancel</button>
+                        <button type="submit" class="dior-btn-gold-primary btn" id="dior-submit-intake-btn">
+                            <i class="fas fa-paper-plane"></i> Submit Clinical Intake to Doctor &rarr;
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. CHANGE PHARMACY MODAL -->
+    <div class="dior-modal-overlay" id="modal-change-pharmacy">
+        <div class="dior-modal-dialog">
+            <div class="dior-modal-header">
+                <h3><i class="fas fa-store"></i> Update Preferred Pharmacy</h3>
+                <button type="button" class="dior-modal-close btn"
+                    onclick="diorCloseModal('modal-change-pharmacy')">&times;</button>
+            </div>
+            <div class="dior-modal-body">
+                <form id="dior-form-quick-pharmacy">
+                    <div class="dior-form-group">
+                        <label for="quick_pharmacy_select">Select Local Pharmacy or Enter Custom</label>
+                        <select id="quick_pharmacy_select" onchange="diorOnPharmacySelectChange(this)">
+                            <option value="custom">-- Enter Custom Pharmacy Details --</option>
+                            <option value="CVS Pharmacy #4829|9045 Wilshire Blvd, Beverly Hills, CA|(310) 555-0199">CVS
+                                Pharmacy #4829 - Beverly Hills</option>
+                            <option value="Walgreens Pharmacy #1034|300 N Canon Dr, Beverly Hills, CA|(310) 555-0244">
+                                Walgreens Pharmacy #1034 - Beverly Hills</option>
+                            <option
+                                value="Rite Aid Pharmacy #5411|8440 Santa Monica Blvd, West Hollywood, CA|(323) 555-0188">
+                                Rite Aid Pharmacy - West Hollywood</option>
+                            <option
+                                value="Capsule Digital Delivery Pharmacy|Direct Delivery to Doorstep|(888) 910-1212">
+                                Capsule Direct Delivery Pharmacy</option>
+                        </select>
+                    </div>
+
+                    <div class="dior-form-group">
+                        <label for="q_pharm_name">Pharmacy Name <span class="req">*</span></label>
+                        <input type="text" id="q_pharm_name" name="pharmacy_name"
+                            value="<?php echo esc_attr($profile['pharmacy_name']); ?>" required>
+                    </div>
+                    <div class="dior-form-group">
+                        <label for="q_pharm_address">Pharmacy Address <span class="req">*</span></label>
+                        <input type="text" id="q_pharm_address" name="pharmacy_address"
+                            value="<?php echo esc_attr($profile['pharmacy_address']); ?>" required>
+                    </div>
+                    <div class="dior-form-group">
+                        <label for="q_pharm_phone">Pharmacy Phone</label>
+                        <input type="tel" id="q_pharm_phone" name="pharmacy_phone"
+                            value="<?php echo esc_attr($profile['pharmacy_phone']); ?>">
+                    </div>
+
+                    <div class="dior-modal-footer">
+                        <button type="button" class="dior-btn-gold-secondary btn"
+                            onclick="diorCloseModal('modal-change-pharmacy')">Cancel</button>
+                        <button type="submit" class="dior-btn-gold-primary btn">Save Pharmacy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. VIEW RECEIPT MODAL -->
+    <div class="dior-modal-overlay dior-ic-44a70a0420" id="modal-view-receipt">
+        <div class="dior-modal-dialog dior-ic-3eca92ddc0">
+            <div class="dior-modal-header dior-ic-89e0058b3f">
+                <h3 class="dior-ic-b5eb34332b">
+                    <i class="fas fa-receipt dior-ic-5d59a9a58e"></i> Telehealth Itemized Receipt
+                </h3>
+                <button type="button" class="dior-modal-close dior-ic-926a99defe btn"
+                    onclick="diorCloseModal('modal-view-receipt')">&times;</button>
+            </div>
+
+            <div class="dior-modal-body dior-ic-95a72fdada" id="modal-receipt-content">
+                <div class="receipt-printable-box dior-ic-1fb1e87e73">
+                    <div class="receipt-logo dior-ic-edaece9d10">
+                        <img src="<?php echo esc_url($logo_url); ?>" alt="Dior Medical" class="dior-ic-a84efd2f1e">
+                    </div>
+
+                    <div class="receipt-title dior-ic-6ce126c779">
+                        Official Medical Statement &amp; Receipt
+                    </div>
+
+                    <table class="receipt-info-table dior-ic-7bae9c829a table">
+                        <tr class="dior-ic-d81e5f9193">
+                            <td class="dior-ic-b78f557455">
+                                Invoice #:</td>
+                            <td id="rec-inv-id" class="dior-ic-c39367f644">INV-8829
+                            </td>
+                        </tr>
+                        <tr class="dior-ic-d81e5f9193">
+                            <td class="dior-ic-e2ed1b531d">Date:
+                            </td>
+                            <td id="rec-date" class="dior-ic-20b442f466">Sept 4, 2026
+                            </td>
+                        </tr>
+                        <tr class="dior-ic-d81e5f9193">
+                            <td class="dior-ic-e2ed1b531d">
+                                Patient:</td>
+                            <td id="rec-patient-info" class="dior-ic-20b442f466">
+                                <?php echo esc_html($profile['full_name']); ?>
+                                (<?php echo esc_html($profile['patient_id']); ?>)
+                            </td>
+                        </tr>
+                        <tr class="dior-ic-d81e5f9193">
+                            <td class="dior-ic-e2ed1b531d">
+                                Service:</td>
+                            <td id="rec-service" class="dior-ic-20b442f466">Urgent
+                                Care Telehealth Consultation</td>
+                        </tr>
+                        <tr class="dior-ic-d81e5f9193">
+                            <td class="dior-ic-e2ed1b531d">
+                                Payment Method:</td>
+                            <td class="dior-ic-20b442f466">Stripe (Credit Card /
+                                Apple Pay)</td>
+                        </tr>
+                        <tr class="total-row dior-ic-94cd1e6e94">
+                            <td class="dior-ic-b9354c61ff">Total
+                                Paid:</td>
+                            <td id="rec-amount" class="dior-ic-9a1fcd0c50">$49.00</td>
+                        </tr>
+                    </table>
+
+                    <div class="receipt-footer-note dior-ic-8082556ec6">
+                        <i class="fas fa-shield-heart dior-ic-4418794cf4"></i>
+                        <span>Dior Medical Telehealth &amp; Urgent Care &bull; Tax ID / NPI Verified &bull; Eligible for
+                            HSA/FSA Reimbursement</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dior-modal-footer dior-ic-e61c613459">
+                <button type="button" class="dior-btn-gold-secondary dior-ic-2cc983c6d0 btn"
+                    onclick="diorCloseModal('modal-view-receipt')">Close</button>
+                <button type="button" class="dior-btn-gold-secondary dior-ic-fd09076f26 btn"
+                    onclick="diorPrintReceiptModal()">
+                    <i class="fas fa-print me-1"></i> Print
+                </button>
+                <button type="button" class="dior-btn-gold-primary dior-ic-99a13c029f btn"
+                    onclick="diorDownloadReceiptPdf()">
+                    <i class="fas fa-file-arrow-down"></i> Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. VIEW DOCUMENT MODAL -->
+    <div class="dior-modal-overlay dior-ic-44a70a0420" id="modal-view-document">
+        <div class="dior-modal-dialog dior-ic-c647d3a0d1">
+            <div class="dior-modal-header dior-ic-89e0058b3f">
+                <h3 id="doc-modal-header-title" class="dior-ic-b5eb34332b">
+                    <i class="fas fa-file-shield dior-ic-5d59a9a58e"></i> Certified Medical Document
+                </h3>
+                <button type="button" class="dior-modal-close dior-ic-926a99defe btn"
+                    onclick="diorCloseModal('modal-view-document')">&times;</button>
+            </div>
+
+            <div class="dior-modal-body dior-ic-9f59805fdf">
+                <div class="doc-preview-card dior-ic-d3b67ecf4f">
+
+                    <div class="doc-icon-large dior-ic-623e027944">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+
+                    <h4 id="doc-preview-title" class="dior-ic-b59074b5a9">
+                        Document Title</h4>
+
+                    <div class="dior-ic-6a49e78bbe">
+                        <span id="doc-preview-category" class="dior-ic-0a03b45d9b">Category</span>
+                    </div>
+
+                    <div class="doc-details-grid dior-ic-bf2153c7ca">
+                        <div>
+                            <strong class="dior-ic-b7ab6167a8">Document
+                                ID:</strong>
+                            <span id="doc-preview-id" class="dior-ic-a6562b0806">DOC-88219</span>
+                        </div>
+                        <div>
+                            <strong class="dior-ic-b7ab6167a8">Date
+                                Issued:</strong>
+                            <span id="doc-preview-date" class="dior-ic-a6562b0806">Sept
+                                4, 2026</span>
+                        </div>
+                        <div>
+                            <strong class="dior-ic-b7ab6167a8">Issued
+                                By / Provider:</strong>
+                            <span id="doc-preview-author" class="dior-ic-a6562b0806">Dior Medical Clinical
+                                Team</span>
+                        </div>
+                        <div>
+                            <strong class="dior-ic-b7ab6167a8">Patient:</strong>
+                            <span id="doc-preview-patient"
+                                class="dior-ic-a6562b0806"><?php echo esc_html($profile['full_name']); ?></span>
+                        </div>
+                    </div>
+
+                    <div class="doc-seal dior-ic-3e0fc52c0f">
+                        <i class="fas fa-shield-heart dior-ic-e3f2780fa1"></i>
+                        <span>Digitally Certified &amp; E-Signed by Dior Medical Telehealth System</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dior-modal-footer dior-ic-e90aec0c99">
+                <button type="button" class="dior-btn-gold-secondary dior-ic-2cc983c6d0 btn"
+                    onclick="diorCloseModal('modal-view-document')">Close</button>
+                <button type="button" class="dior-btn-gold-primary dior-ic-99a13c029f btn"
+                    onclick="diorDownloadCurrentDocumentPdf()">
+                    <i class="fas fa-file-arrow-down"></i> Print / Download PDF
+                </button>
+            </div>
+        </div>
+    </div> <!-- /#modal-view-document -->
+
+    <!-- 8. APPOINTMENT DETAIL MODAL (PATIENT PORTAL) -->
+    <div class="dior-modal-overlay dior-ic-44a70a0420" id="modal-view-appointment-detail">
+        <div class="dior-modal-dialog dior-ic-e9cfd8c2ad">
+            <div class="dior-modal-header dior-ic-38b9f470b9">
+                <h3 class="dior-ic-55d820b400">
+                    <i class="fas fa-calendar-check dior-ic-5d59a9a58e"></i> Appointment Details
+                </h3>
+                <button type="button" class="dior-modal-close dior-ic-f476a9f033 btn"
+                    onclick="diorCloseModal('modal-view-appointment-detail')">&times;</button>
+            </div>
+
+            <div class="dior-modal-body dior-ic-82b34f2b62">
+                <!-- Hero Info Card -->
+                <div class="dior-ic-69035811a2">
+                    <div class="dior-ic-5d08ce7ec2">
+                        <div>
+                            <span id="pat-modal-appt-id" class="dior-ic-808a4fa3c3">APPT-ID</span>
+                            <h4 id="pat-modal-appt-provider" class="dior-ic-28d0539f78">Attending Physician
+                            </h4>
+                            <span id="pat-modal-appt-spec" class="dior-ic-55709c3d5d">Telehealth Urgent
+                                Care</span>
+                        </div>
+                        <span id="pat-modal-appt-status-badge" class="dior-st ok dior-ic-70c5533809">Confirmed</span>
+                    </div>
+
+                    <div class="dior-ic-d9dafa9db0">
+                        <div>
+                            <strong class="dior-ic-3a5e03a707">Date
+                                &amp; Time</strong>
+                            <span id="pat-modal-appt-datetime" class="dior-ic-035b2e7453">—</span>
+                        </div>
+                        <div>
+                            <strong class="dior-ic-3a5e03a707">Consultation
+                                Mode</strong>
+                            <span id="pat-modal-appt-mode" class="dior-ic-035b2e7453"><i class="fas fa-video me-1"
+                                    style="color:#22c55e;"></i> Video Visit</span>
+                        </div>
+                        <div class="dior-ic-b652b6f21e">
+                            <strong class="dior-ic-3a5e03a707">Service
+                                / Clinical Reason</strong>
+                            <span id="pat-modal-appt-condition" class="dior-ic-ad42b18349">Telehealth
+                                Urgent Care</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Zoom Link Strip (if available) -->
+                <div id="pat-modal-zoom-wrap" class="dior-ic-5d5fe245c5">
+                    <div class="dior-ic-63a4b96787">
+                        <div class="dior-ic-99e83aaa9f">
+                            <i class="fas fa-video" style="color:#22c55e;font-size:18px;"></i>
+                        </div>
+                        <div>
+                            <strong class="dior-ic-08abd803b3">Live Virtual Consultation
+                                Room</strong>
+                            <span class="dior-ic-c243108e79">Join physician on secure Zoom Video</span>
+                        </div>
+                    </div>
+                    <a id="pat-modal-zoom-link" href="#" target="_blank" rel="noopener noreferrer"
+                        class="dior-ic-459d58fbd7">
+                        <i class="fas fa-video me-1" style="color:#22c55e;"></i> Join Video Call &rarr;
+                    </a>
+                </div>
+
+                <!-- Patient & Clinical Notes Card -->
+                <div class="dior-ic-a9ce782a97">
+                    <h5 class="dior-ic-8277d4959a">
+                        <i class="fas fa-notes-medical dior-ic-5d59a9a58e"></i> Clinical Notes &amp;
+                        Instructions
+                    </h5>
+                    <p id="pat-modal-appt-notes" class="dior-ic-d181656743">
+                        Standard telehealth clinical consultation scheduled. All submitted medical intake questionnaires
+                        are pre-verified.
+                    </p>
+                </div>
+
+                <div class="dior-ic-3e0fc52c0f">
+                    <i class="fas fa-shield-heart dior-ic-e3f2780fa1"></i>
+                    <span>HIPAA Compliant &bull; Verified Dior Medical Telehealth Record</span>
+                </div>
+            </div>
+
+            <div class="dior-modal-footer dior-ic-9b6b762386">
+                <button type="button" class="dior-btn-gold-secondary dior-ic-d8eb827f48 btn"
+                    onclick="diorCloseModal('modal-view-appointment-detail')">Close</button>
+            </div>
+        </div>
+    </div> <!-- /#modal-view-appointment-detail -->
+
+    <!-- 9. PRESCRIPTION DETAIL MODAL (PATIENT PORTAL) -->
+    <div class="dior-modal-overlay dior-ic-9049d9cd09" id="modal-view-rx-detail">
+        <div class="dior-modal-dialog dior-ic-e270dbf307">
+
+            <!-- Modal Top Action Header -->
+            <div class="dior-modal-header dior-ic-bf0665f2de">
+                <div class="dior-ic-2fa3fca1f7">
+                    <div>
+                        <h3 class="dior-ic-5993936b7f">
+                            Official Telehealth Prescription (e-Rx)
+                        </h3>
+                        <span class="dior-ic-25f3b27ac7">
+                            DEA &bull; NPI Registered Practice &bull; Surescripts e-Rx Certified
+                        </span>
+                    </div>
+                </div>
+                <button type="button" class="dior-modal-close dior-ic-9305d040bf btn"
+                    onclick="diorCloseModal('modal-view-rx-detail')">&times;</button>
+            </div>
+
+            <!-- Modal Body: Letterhead Sheet (Image 2, 3, 4) -->
+            <div class="dior-modal-body dior-ic-6714f5aeeb">
+
+                <div class="dior-rx-letterhead-sheet dior-ic-cc0172605f">
+
+                    <!-- Top Clinic & Doctor Header (Images 2 & 3) -->
+                    <div class="dior-ic-f9030d0190">
+                        <div>
+                            <div class="dior-rx-doc-name dior-ic-3752d6b3fd" id="pat-modal-rx-doc-header">
+                                <span id="pat-modal-rx-doc"><?php echo esc_html($appointments[0]['provider'] ?? $appointments[0]['doctor_name'] ?? 'Provider not recorded'); ?></span>
+                            </div>
+                            <div class="dior-rx-clinic-sub dior-ic-502f59757f">
+                                <strong class="dior-ic-25e0cc2c47">DIOR MEDICAL TELEHEALTH &amp; URGENT
+                                    CARE</strong><br>
+                                Clinical Telemedicine Division &bull; Surescripts e-Rx Certified
+                            </div>
+                        </div>
+
+                        <!-- Clinic Logo -->
+                        <div class="dior-ic-32c53658c7">
+                            <?php
+                            $disp_logo = !empty($logo_url) ? $logo_url : site_url('/wp-content/uploads/2026/08/logo.png');
+                            ?>
+                            <img src="<?php echo esc_url($disp_logo); ?>" alt="Dior Medical" class="dior-ic-ac19460d69">
+                        </div>
+                    </div>
+
+                    <!-- Barcode & Issuance Line (Image 3) -->
+                    <div class="dior-ic-7b94dc2c83">
+                        <div class="dior-rx-barcode-wrap">
+                            <div class="dior-rx-barcode-lines">
+                                <span class="dior-ic-8c313dc613"></span><span class="dior-ic-5375fe8cf1"></span><span
+                                    class="dior-ic-a4f6c77c37"></span><span class="dior-ic-0399ac9254"></span>
+                                <span class="dior-ic-9dc00e0931"></span><span class="dior-ic-c7fe51ade1"></span><span
+                                    class="dior-ic-8c313dc613"></span><span class="dior-ic-a4f6c77c37"></span>
+                                <span class="dior-ic-0399ac9254"></span><span class="dior-ic-9dc00e0931"></span><span
+                                    class="dior-ic-5375fe8cf1"></span><span class="dior-ic-a4f6c77c37"></span>
+                                <span class="dior-ic-8c313dc613"></span><span class="dior-ic-9dc00e0931"></span><span
+                                    class="dior-ic-0399ac9254"></span><span class="dior-ic-a4f6c77c37"></span>
+                            </div>
+                            <span class="dior-rx-barcode-txt" id="pat-modal-rx-barcode-txt">*RX-000000*</span>
+                        </div>
+                        <div class="dior-ic-5fd58752b8">
+                            <div>Prescription Date: <span id="pat-modal-rx-date" class="dior-ic-01276c62f3">—</span>
+                            </div>
+                            <div class="dior-ic-5e92856bee">
+                                Unique Rx UID: <strong id="pat-modal-rx-id" class="dior-ic-7b6e16631f">Rx
+                                    #—</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Patient Demographics: Classical Prescription Pad Underline Layout (Exact Match to User's Image 2) -->
+                    <div class="dior-rx-patient-pad-box dior-ic-4638e80c10">
+                        <!-- Row 1: Patient Name & Date -->
+                        <div class="dior-ic-06b21f47ad">
+                            <div class="dior-ic-afcc30d60e">
+                                <span class="dior-ic-0904e4e822">Patient
+                                    Name:</span>
+                                <span id="pat-modal-rx-pat-name"
+                                    class="dior-ic-b252d41b17"><?php echo esc_html(!empty($profile['full_name']) ? $profile['full_name'] : '—'); ?></span>
+                            </div>
+                            <div class="dior-ic-d866ca125a">
+                                <span class="dior-ic-0904e4e822">Date:</span>
+                                <span id="pat-modal-rx-pad-date" class="dior-ic-b252d41b17">—</span>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Age, Gender, Weight -->
+                        <div class="dior-ic-d11db2d048">
+                            <div class="dior-ic-7ac7cda799">
+                                <span class="dior-ic-0904e4e822">Age:</span>
+                                <span id="pat-modal-rx-pat-age" class="dior-ic-b252d41b17"><?php
+                                $modal_age = '—';
+                                if (!empty($profile['dob'])) {
+                                    $modal_dob_timestamp = strtotime($profile['dob']);
+                                    if ($modal_dob_timestamp) {
+                                        $modal_age_years = (new DateTime('today'))->diff(new DateTime($profile['dob']))->y;
+                                        $modal_age = $modal_age_years . ' years';
+                                    }
+                                }
+                                echo esc_html($modal_age);
+                                ?></span>
+                            </div>
+                            <div class="dior-ic-4a82ebc967">
+                                <span class="dior-ic-0904e4e822">Gender:</span>
+                                <span id="pat-modal-rx-pat-gender"
+                                    class="dior-ic-b252d41b17"><?php echo esc_html(!empty($profile['gender']) ? ucfirst($profile['gender']) : '—'); ?></span>
+                            </div>
+                            <div class="dior-ic-4a82ebc967">
+                                <span class="dior-ic-0904e4e822">Weight:</span>
+                                <span id="pat-modal-rx-pat-weight" class="dior-ic-b252d41b17"><?php
+                                $w = !empty($profile['weight']) ? trim($profile['weight']) : '';
+                                echo esc_html($w ? (is_numeric($w) ? $w . ' kg' : $w) : '—');
+                                ?></span>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Diagnosis -->
+                        <div class="dior-ic-395b20a3ba">
+                            <span class="dior-ic-0904e4e822">Diagnosis:</span>
+                            <span id="pat-modal-rx-diagnosis" class="dior-ic-956613932b">—</span>
+                        </div>
+                    </div>
+
+                    <!-- Classical ℞ Prescription Order Bar (Image 3) -->
+                    <div class="dior-rx-title-bar">
+                        <div class="dior-ic-f725034276">
+                            <span class="dior-rx-symbol">&#8478;</span>
+                            <span class="dior-ic-0a18e0c67b">
+                                Official Prescription Directive
+                            </span>
+                        </div>
+                        <span class="dior-ic-9b6818a37f">
+                            Schedule VI / Legend Non-Controlled
+                        </span>
+                    </div>
+
+                    <!-- Clean Structured Medication Table (Images 3 & 4) -->
+                    <table class="dior-rx-med-table table">
+                        <thead>
+                            <tr>
+                                <th class="dior-ic-5ad98bfc70">#</th>
+                                <th class="dior-ic-d44a12258f">Medicine Name &amp; Formulation</th>
+                                <th class="dior-ic-06e9f6de59">Dosage &amp; Usage Instructions (SIG)</th>
+                                <th class="dior-ic-a13ed7aa9b">Dispense / Refills</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pat-modal-rx-table-body">
+                            <!-- Populated dynamically via diorViewRxDetails() -->
+                        </tbody>
+                    </table>
+
+                    <!-- Advice Given / Clinical Instructions (Image 3) -->
+                    <div class="dior-rx-advice-card">
+                        <div class="dior-rx-advice-title">
+                            <i class="fas fa-notes-medical"></i> Advice Given &amp; Clinical Instructions:
+                        </div>
+                        <div class="dior-rx-advice-body" id="pat-modal-rx-advice">
+                            Prescription-specific instructions will appear here when available.
+                        </div>
+                    </div>
+
+
+
+                    <!-- Physician Digital Signature & Telehealth Legal Notice (Images 2 & 4) -->
+                    <div class="dior-rx-sig-container">
+                        <div class="dior-rx-legal-notice">
+                            <strong class="dior-ic-03cc0d21b0">TELEHEALTH LEGAL CERTIFICATION:</strong><br>
+                            This prescription was electronically reviewed, approved, and digitally signed by an
+                            authorized healthcare provider pursuant to a valid telehealth encounter under DEA 21 CFR
+                            Part 1311 and state medical practice acts.
+                        </div>
+                        <div class="dior-rx-sig-block">
+                            <div class="dior-rx-sig-line">
+                                <img id="pat-modal-rx-sig-img" src="" alt="Doctor Signature" class="dior-ic-3771746c5d">
+                                <span id="pat-modal-rx-sig-name" class="dior-rx-sig-script">
+                                    <?php echo esc_html($appointments[0]['provider'] ?? $appointments[0]['doctor_name'] ?? 'Provider not recorded'); ?>
+                                </span>
+                            </div>
+                            <div class="dior-rx-sig-lbl">
+                                Authorized Physician Signature
+                            </div>
+                            <div id="pat-modal-rx-sig-date" class="dior-rx-sig-stamp">
+                                Issued: —
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Letterhead Bottom Clinic Footer Details (Image 2) -->
+                    <div class="dior-rx-footer-line">
+                        <div>
+                            <i class="fas fa-location-dot dior-ic-9043ac3683"></i> 100
+                            Medical Plaza, Suite 400 &bull; Dior Medical Telehealth Group
+                        </div>
+                        <div>
+                            <i class="fas fa-phone dior-ic-9043ac3683"></i> (800) 555-DIOR
+                            &bull; concierge@diormedical.com
+                        </div>
+                    </div>
+
+                </div> <!-- /dior-rx-letterhead-sheet -->
+
+            </div> <!-- /dior-modal-body -->
+
+            <!-- Modal Action Footer (Permanently Pinned, Full Visibility) -->
+            <div class="dior-modal-footer dior-ic-003eb72b4a">
+                <button type="button" id="pat-modal-rx-refill-btn" class="dior-ic-aef0d9cdb6 btn">
+                    <i class="fas fa-arrows-rotate dior-ic-1a809d86ac"></i> Request Refill
+                </button>
+                <div class="dior-ic-6c5b3070b0">
+                    <button type="button" id="pat-modal-rx-pdf-btn" class="dior-ic-1d1379760d btn">
+                        <i class="fas fa-file-arrow-down"></i> Download Official PDF
+                    </button>
+                    <button type="button" onclick="diorCloseModal('modal-view-rx-detail')"
+                        class="dior-ic-a340556f29 btn">Close</button>
+                </div>
+            </div>
+        </div>
+    </div> <!-- /#modal-view-rx-detail -->
+
+
+</div> <!-- /#dior-patient-portal-app -->
+<script>
+    // Hipaatizer Popup logic
+    function diorLoadHipaaFrame() {
+        const frame = document.getElementById('dior-hipaatizer-intake-frame');
+        if (!frame) return;
+        const target = frame.getAttribute('data-src');
+        if (target && frame.getAttribute('src') === 'about:blank') {
+            frame.setAttribute('src', target);
+        }
+    }
+
+    function diorOpenHipaaPopup() {
+        const hipaatizerModal = document.getElementById('dior-custom-hipaatizer-modal');
+        if (!hipaatizerModal) {
+            console.error('HIPAAtizer modal not found!');
+            return;
+        }
+        hipaatizerModal.style.display = 'flex';
+        // Start HIPAAtizer only after the modal is visible.
+        requestAnimationFrame(function () {
+            setTimeout(diorLoadHipaaFrame, 50);
+        });
+    }
+
+    function diorCloseHipaaModal() {
+        const modal = document.getElementById('dior-custom-hipaatizer-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    // Keep the global name used by the registration/dashboard scripts.
+    window.diorOpenHipaaPopup = diorOpenHipaaPopup;
+    window.diorCloseHipaaModal = diorCloseHipaaModal;
+</script>
+
+<style>
+    .dior-hipaa-swal.swal2-popup {
+        max-width: 950px !important;
+        padding: 0 !important;
+        border-radius: 12px !important;
+        overflow: hidden;
+    }
+
+    .dior-hipaa-swal .swal2-title {
+        padding: 15px 15px 10px !important;
+        margin: 0 !important;
+    }
+
+    .dior-hipaa-swal .swal2-html-container {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .dior-hipaa-swal .swal2-close {
+        background: transparent !important;
+        background-color: transparent !important;
+        color: #666 !important;
+        font-size: 32px !important;
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50% !important;
+        position: absolute !important;
+        top: 5px !important;
+        right: 5px !important;
+    }
+
+    .dior-hipaa-swal .swal2-close:hover {
+        color: #d33 !important;
+        background-color: transparent !important;
+    }
+</style>
+
+<!-- Hidden Intake Form Overlay -->
+<div id="dior-custom-hipaatizer-modal"
+    style="display:none; position:fixed; inset:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:999999; justify-content:center; align-items:center;">
+    <div
+        style="width:min(950px, 95vw); height:90vh; background:#fff; border-radius:12px; position:relative; overflow:hidden;">
+        <button type="button" onclick="diorCloseHipaaModal();" aria-label="Close HIPAAtizer form"
+            style="position:absolute; right:15px; top:10px; font-size:32px; line-height:1; color:#666; background:#fff; border:none; cursor:pointer; z-index:10000;">&times;</button>
+        <div id="hipaatizer-inject-target" style="width:100%; height:100%; padding:20px; box-sizing:border-box;">
+            <!-- Load HIPAAtizer only after the dashboard modal becomes visible. This avoids the
+                 HIPAAtizer loader getting initialized while its parent is display:none. -->
+            <iframe id="dior-hipaatizer-intake-frame" title="HIPAAtizer Clinical Intake & Questionnaire Form"
+                src="about:blank" data-src="https://app.hipaatizer.com/workflow/01a11515-b491-79dc-b59b-e4be2a345a49"
+                allow="microphone; camera; payment"
+                style="display:block; width:100%; height:100%; min-height:700px; border:0; background:#fff;"
+                loading="eager"></iframe>
+        </div>
+    </div>
+</div>
+<!-- Hidden Intake Form Content for Dashboard Popup -->
+<?php Dior_Medical_Auth::render_docbooker_booking_modal(); ?> 
+
+<style id="dior-patient-mobile-dashboard-v1">
+/* Bootstrap-first mobile overview layout matching the approved reference. */
+.dior-mobile-bottom-nav{display:none}
+@media (max-width:767.98px){
+  #dior-patient-portal-app .stat-card,
+  #dior-patient-portal-app .dior-stat-card{min-width:0}
+  #dior-patient-portal-app .dior-profile-incomplete-alert{padding:12px 14px!important;margin-bottom:14px!important;gap:10px!important;border-radius:12px!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-29bdac4ec4{align-items:flex-start!important;gap:10px!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-3fb01cc77f{width:34px!important;height:34px!important;font-size:14px!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-11190ca3a8{font-size:13px!important;line-height:1.3!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-acb9b5ec47{font-size:11.5px!important;line-height:1.4!important;display:block!important}
+  #dior-patient-portal-app .dior-profile-incomplete-alert .dior-ic-4ee0445c2a{width:100%!important;justify-content:center!important;min-height:38px!important;font-size:12.5px!important}
+  #dior-patient-portal-app{background:#f3f7fc}
+  #dior-patient-portal-app .dior-main-content{min-width:0}
+  #dior-patient-portal-app .dior-tab-container{padding:10px 12px 100px!important}
+  #tab-overview.custom-patient-overview{width:100%;max-width:100%;overflow:visible;padding:4px 2px 16px!important}
+  #tab-overview.custom-patient-overview .content-head{gap:10px!important;margin-bottom:14px!important}
+  #tab-overview.custom-patient-overview .content-head h1{font-size:20px!important;line-height:1.25!important;letter-spacing:-.25px}
+  #tab-overview.custom-patient-overview .content-head p,
+  .dior-patient-portal-wrap #tab-overview.custom-patient-overview .content-head p{font-size:12.5px!important;line-height:1.45!important;max-width:100%!important}
+  #tab-overview.custom-patient-overview .content-head>.btn{width:100%;justify-content:center;border-radius:10px!important;padding:10px 14px!important;font-size:13px!important;min-height:42px!important}
+  #tab-overview.custom-patient-overview>.row.align-items-start{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px!important;margin:0!important;align-items:stretch!important}
+  #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-7,
+  #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-5{display:contents!important}
+  #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-7>.row,
+  #tab-overview.custom-patient-overview>.row.align-items-start>.col-xl-5>.row{display:contents!important}
+  #tab-overview.custom-patient-overview .stat-card{height:auto!important;min-height:84px!important;padding:12px 8px!important;border:1px solid #dbe7f5!important;border-radius:12px!important;box-shadow:0 2px 7px rgba(29,72,120,.04)!important;background:#fff;text-align:center;align-items:center;justify-content:center}
+  #tab-overview.custom-patient-overview .stat-card .stat-num{font-size:22px!important;line-height:1.1!important;margin-bottom:4px!important}
+  #tab-overview.custom-patient-overview .stat-card .stat-label{font-size:10px!important;line-height:1.25!important;font-weight:600!important;margin-top:0!important;letter-spacing:0!important;text-transform:capitalize!important}
+  #tab-overview.custom-patient-overview .stat-card:before{display:none}
+  #tab-overview.custom-patient-overview .row>.col-12.col-sm-4{grid-column:span 1!important;min-width:0;padding:0!important;order:1}
+  #tab-overview.custom-patient-overview .patient-card,
+  #tab-overview.custom-patient-overview .goals-card,
+  #tab-overview.custom-patient-overview .doctor-card,
+  #tab-overview.custom-patient-overview .upcoming,
+  #tab-overview.custom-patient-overview .table-card,
+  #tab-overview.custom-patient-overview .lab-card,
+  #tab-overview.custom-patient-overview .prescriptions{border:1px solid #dbe7f5!important;border-radius:14px!important;padding:14px!important;background:#fff;box-shadow:0 2px 8px rgba(29,72,120,.04)!important;margin:0!important;min-width:0;height:auto!important;min-height:0!important}
+  #tab-overview.custom-patient-overview .patient-card{order:2;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .goals-card{order:3;grid-column:1/-1!important;min-height:94px}
+  #tab-overview.custom-patient-overview #dior-overview-doctor-card{order:4;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview #dior-overview-upcoming-card{order:5;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .table-card{order:6;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .lab-card{order:7;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview #dior-overview-prescriptions-card{order:8;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .patient-card .patient-photo{width:60px!important;height:60px!important;border-radius:12px!important}
+  #tab-overview.custom-patient-overview .patient-card h2{font-size:15px!important;line-height:1.25!important;max-width:100%}
+  #tab-overview.custom-patient-overview .patient-card .text-secondary.small{font-size:11.5px!important}
+  #tab-overview.custom-patient-overview .patient-card strong{font-size:13px!important}
+  #tab-overview.custom-patient-overview .patient-card .border-start{padding-left:12px!important}
+  #tab-overview.custom-patient-overview .patient-card .btn{font-size:12.5px!important;padding:9px 12px!important;min-height:40px!important;border-radius:10px!important}
+  #tab-overview.custom-patient-overview .section-title{font-size:14px!important;line-height:1.3!important}
+  #tab-overview.custom-patient-overview .section-title i{font-size:13px!important;margin-right:6px!important}
+  #tab-overview.custom-patient-overview .view-all{font-size:11.5px!important;white-space:nowrap}
+  /* Stacked mobile cards for Overview tables (Previous Consultation & Latest Lab Results) */
+  #tab-overview.custom-patient-overview .table-card .table-responsive,
+  #tab-overview.custom-patient-overview .lab-card .table-responsive,
+  #tab-overview.custom-patient-overview .table-card .dior-card-scrollable,
+  #tab-overview.custom-patient-overview .lab-card .dior-card-scrollable{max-height:none!important;overflow:visible!important}
+  #tab-overview.custom-patient-overview .table-card table,
+  #tab-overview.custom-patient-overview .lab-card table{min-width:0!important;width:100%!important;display:block!important}
+  #tab-overview.custom-patient-overview .table-card thead,
+  #tab-overview.custom-patient-overview .lab-card thead{display:none!important}
+  #tab-overview.custom-patient-overview .table-card tbody,
+  #tab-overview.custom-patient-overview .lab-card tbody{display:flex!important;flex-direction:column!important;gap:10px!important;width:100%!important}
+  #tab-overview.custom-patient-overview .table-card tbody tr,
+  #tab-overview.custom-patient-overview .lab-card tbody tr{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;padding:12px!important;border:1px solid #e2ecf6!important;border-radius:12px!important;background:#f8fbff!important;width:100%!important}
+  #tab-overview.custom-patient-overview .table-card tbody td,
+  #tab-overview.custom-patient-overview .lab-card tbody td{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;padding:2px 0!important;border:none!important;background:transparent!important;white-space:normal!important;font-size:12.5px!important;text-align:right!important}
+  #tab-overview.custom-patient-overview .table-card tbody td::before,
+  #tab-overview.custom-patient-overview .lab-card tbody td::before{content:attr(data-label);font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.03em;text-align:left;flex-shrink:0}
+  #tab-overview.custom-patient-overview .table-card tbody td[colspan],
+  #tab-overview.custom-patient-overview .lab-card tbody td[colspan]{flex-direction:column!important;justify-content:center!important;text-align:center!important;padding:14px 8px!important;color:#64748b!important}
+  #tab-overview.custom-patient-overview .table-card tbody td[colspan]::before,
+  #tab-overview.custom-patient-overview .lab-card tbody td[colspan]::before{display:none!important}
+  #tab-overview.custom-patient-overview .doctor-card p,
+  .dior-patient-portal-wrap #tab-overview.custom-patient-overview .doctor-card p{font-size:12.5px!important;line-height:1.45!important}
+  #tab-overview.custom-patient-overview .doctor-card .btn,
+  #tab-overview.custom-patient-overview .upcoming .btn,
+  #tab-overview.custom-patient-overview .prescriptions .btn{font-size:12.5px!important;min-height:38px!important}
+  #tab-overview.custom-patient-overview .consult-list-wrap,
+  #tab-overview.custom-patient-overview .rx-list-wrap,
+  #tab-overview.custom-patient-overview .goals-list-wrap{max-height:none!important;overflow:visible!important}
+  #tab-overview.custom-patient-overview .consult{display:flex!important;flex-direction:row!important;flex-wrap: nowrap!important;align-items:center!important;gap:10px!important;padding:10px!important}
+  #tab-overview.custom-patient-overview .consult > .btn{min-height:34px!important;width:34px!important;height:34px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+  #tab-overview.custom-patient-overview .dior-fs-13{font-size:12px!important}
+  #tab-overview.custom-patient-overview .dior-fs-12{font-size:11.5px!important}
+  #tab-overview.custom-patient-overview .dior-fs-11{font-size:10.5px!important}
+  .dior-mobile-bottom-nav{position:fixed;z-index:99985;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;padding:7px 5px max(7px,env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border:1px solid #dce7f5;border-bottom:0;border-radius:14px 14px 0 0;box-shadow:0 -4px 18px rgba(22,58,99,.09);backdrop-filter:blur(12px)}
+  .dior-mobile-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:40px;padding:3px 1px;border:0;background:transparent;color:#69778b;font:inherit;font-size:9.5px;line-height:1.2;font-weight:600;white-space:nowrap}
+  .dior-mobile-nav-item i{font-size:15px;line-height:1.1}
+  .dior-mobile-nav-item.is-active{color:#1267c5}
+  .dior-mobile-nav-item:focus-visible{outline:2px solid #1267c5;outline-offset:-2px;border-radius:7px}
+  #dior-patient-portal-app .dior-top-emergency-banner{font-size:10px;padding:5px 8px;text-align:center}
+}
+@media (max-width:360px){
+  #tab-overview.custom-patient-overview .stat-card{padding:10px 6px!important}
+  #tab-overview.custom-patient-overview .stat-card .stat-label{font-size:9px!important}
+  .dior-mobile-nav-item{font-size:8.5px}
+}
+@media (min-width:768px){.dior-mobile-bottom-nav{display:none!important}}
+</style>
+ 
+<style id="dior-patient-mobile-order-fix">
+@media (max-width:767.98px){
+  #tab-overview.custom-patient-overview .col-12.col-xxl-6:has(> .patient-card){order:2;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .col-12.col-xxl-6:has(> .goals-card){order:3;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .col-12.col-md-6.col-xl-12:has(> #dior-overview-doctor-card){order:4;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .col-12.col-md-6.col-xl-12:has(> #dior-overview-upcoming-card){order:5;grid-column:1/-1!important}
+  #tab-overview.custom-patient-overview .col-12.col-md-12.col-xl-12:has(> #dior-overview-prescriptions-card){order:8;grid-column:1/-1!important}
+}
+</style>
+<script id="dior-patient-mobile-nav-state">
+(function(){
+  var nav=document.querySelector('.dior-mobile-bottom-nav');
+  if(!nav||nav.dataset.bound==='1')return;
+  nav.dataset.bound='1';
+  nav.addEventListener('click',function(event){
+    var button=event.target.closest('.dior-mobile-nav-item');
+    if(!button)return;
+    nav.querySelectorAll('.dior-mobile-nav-item').forEach(function(item){
+      item.classList.remove('is-active');
+      item.removeAttribute('aria-current');
+    });
+    button.classList.add('is-active');
+    button.setAttribute('aria-current','page');
+  });
+})();
+</script>
+
+<style id="dior-patient-bootstrap-mobile-v2">
+/* Bootstrap-style responsive foundation for every Patient Dashboard tab.
+   Scoped to this plugin so the rules do not leak into the WordPress theme. */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app,
+  #dior-patient-portal-app * { box-sizing: border-box; }
+  #dior-patient-portal-app { width:100%; max-width:100%; overflow-x:clip; }
+  #dior-patient-portal-app .dior-main-content,
+  #dior-patient-portal-app .dior-tab-container,
+  #dior-patient-portal-app .dior-tab-container > *,
+  #dior-patient-portal-app .tab-pane,
+  #dior-patient-portal-app [id^="tab-"] { min-width:0; max-width:100%; }
+  #dior-patient-portal-app .dior-tab-container { padding-left:12px!important; padding-right:12px!important; }
+  #dior-patient-portal-app .dior-content-header,
+  #dior-patient-portal-app .content-head,
+  #dior-patient-portal-app .page-header,
+  #dior-patient-portal-app .tab-header {
+    display:flex; flex-wrap:wrap; align-items:flex-start; gap:10px;
+  }
+  #dior-patient-portal-app .dior-content-header > *,
+  #dior-patient-portal-app .content-head > *,
+  #dior-patient-portal-app .page-header > *,
+  #dior-patient-portal-app .tab-header > * { min-width:0; max-width:100%; }
+  #dior-patient-portal-app h1 { font-size:clamp(1.15rem, 4.5vw, 1.45rem); line-height:1.25; overflow-wrap:anywhere; }
+  #dior-patient-portal-app h2 { font-size:clamp(1rem, 4vw, 1.2rem); line-height:1.3; overflow-wrap:anywhere; }
+  #dior-patient-portal-app h3 { font-size:1rem; line-height:1.35; overflow-wrap:anywhere; }
+  #dior-patient-portal-app p,
+  #dior-patient-portal-app label,
+  #dior-patient-portal-app .form-text { overflow-wrap:anywhere; }
+  #dior-patient-portal-app .row { --bs-gutter-x: .75rem; --bs-gutter-y: .75rem; }
+  #dior-patient-portal-app .card,
+  #dior-patient-portal-app .modal-content,
+  #dior-patient-portal-app .list-group,
+  #dior-patient-portal-app .alert { min-width:0; max-width:100%; }
+  #dior-patient-portal-app .card-body { padding: .875rem!important; min-width:0; }
+  #dior-patient-portal-app .btn,
+  #dior-patient-portal-app button,
+  #dior-patient-portal-app .action-icon-btn { max-width:100%; white-space:normal; }
+  #dior-patient-portal-app .btn-group { flex-wrap:wrap; }
+  #dior-patient-portal-app input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
+  #dior-patient-portal-app select,
+  #dior-patient-portal-app textarea,
+  #dior-patient-portal-app .form-control,
+  #dior-patient-portal-app .form-select { width:100%; max-width:100%; min-width:0; font-size:16px; }
+  #dior-patient-portal-app .input-group { display:flex!important; flex-wrap:nowrap!important; align-items:center!important; }
+  #dior-patient-portal-app .input-group > .input-group-text { flex:0 0 auto!important; width:auto!important; }
+  #dior-patient-portal-app .input-group > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
+  #dior-patient-portal-app .input-group > .form-control,
+  #dior-patient-portal-app .input-group > .form-select { flex:1 1 auto!important; width:1%!important; min-width:0!important; }
+  #dior-patient-portal-app .table-responsive,
+  #dior-patient-portal-app .dior-card-scrollable,
+  #dior-patient-portal-app .table-wrap,
+  #dior-patient-portal-app .appointments-table-wrap {
+    display:block; width:100%; max-width:100%; overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain;
+  }
+  #dior-patient-portal-app table { max-width:100%; }
+  #dior-patient-portal-app .table { font-size:.8125rem; }
+  #dior-patient-portal-app .table th,
+  #dior-patient-portal-app .table td { padding:.55rem .6rem; vertical-align:middle; }
+  #dior-patient-portal-app .modal-dialog { width:auto; max-width:calc(100% - 1rem); margin:.5rem auto; }
+  #dior-patient-portal-app .modal-body { max-height:calc(100dvh - 150px); overflow-y:auto; }
+  #dior-patient-portal-app img,
+  #dior-patient-portal-app video,
+  #dior-patient-portal-app iframe { max-width:100%; }
+  #dior-patient-portal-app iframe { width:100%; }
+  #dior-patient-portal-app .badge { white-space:normal; text-align:center; }
+  #dior-patient-portal-app .dropdown-menu { max-width:calc(100vw - 24px); }
+  #dior-patient-portal-app .dior-side { max-width:min(86vw, 320px); }
+}
+@media (max-width: 479.98px) {
+  #dior-patient-portal-app .dior-tab-container { padding:9px 10px 94px!important; }
+  #dior-patient-portal-app .card-body { padding:.75rem!important; }
+  #dior-patient-portal-app .btn { min-height:36px; }
+  #dior-patient-portal-app .btn-sm { min-height:32px; }
+  #dior-patient-portal-app .table { font-size:.75rem; }
+  #dior-patient-portal-app .table th,
+  #dior-patient-portal-app .table td { padding:.45rem .5rem; }
+}
+</style>

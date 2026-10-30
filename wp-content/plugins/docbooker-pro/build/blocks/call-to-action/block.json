@@ -1,0 +1,493 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/call-to-action",
+  "title": "Call to Action",
+  "category": "doc-booker-blocks",
+  "icon": "megaphone",
+  "description": "An editorial call-to-action with 6 layouts — centered photo hero, split, compact strip, gradient closer, pull-quote, and a 3-path card.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "v1"
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": ""
+    },
+    "titleText": {
+      "type": "string",
+      "default": ""
+    },
+    "accentText": {
+      "type": "string",
+      "default": ""
+    },
+    "descriptionText": {
+      "type": "string",
+      "default": ""
+    },
+    "trustText": {
+      "type": "string",
+      "default": ""
+    },
+    "badgeText": {
+      "type": "string",
+      "default": ""
+    },
+    "quoteAuthor": {
+      "type": "string",
+      "default": ""
+    },
+    "quoteRole": {
+      "type": "string",
+      "default": ""
+    },
+    "metaText": {
+      "type": "string",
+      "default": ""
+    },
+    "displayEyebrow": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayTitle": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayAccent": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayTrust": {
+      "type": "boolean",
+      "default": true
+    },
+    "buttonText": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonURL": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "buttonNoFollow": {
+      "type": "boolean",
+      "default": false
+    },
+    "displayButton": {
+      "type": "boolean",
+      "default": true
+    },
+    "secondaryButtonText": {
+      "type": "string",
+      "default": ""
+    },
+    "secondaryButtonURL": {
+      "type": "string",
+      "default": ""
+    },
+    "secondaryButtonNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "secondaryButtonNoFollow": {
+      "type": "boolean",
+      "default": false
+    },
+    "displaySecondaryButton": {
+      "type": "boolean",
+      "default": true
+    },
+    "splitImage": {
+      "type": "object",
+      "default": {
+        "url": "",
+        "id": 0
+      }
+    },
+    "path1Label": {
+      "type": "string",
+      "default": ""
+    },
+    "path1Context": {
+      "type": "string",
+      "default": ""
+    },
+    "path1URL": {
+      "type": "string",
+      "default": ""
+    },
+    "path2Label": {
+      "type": "string",
+      "default": ""
+    },
+    "path2Context": {
+      "type": "string",
+      "default": ""
+    },
+    "path2URL": {
+      "type": "string",
+      "default": ""
+    },
+    "path3Label": {
+      "type": "string",
+      "default": ""
+    },
+    "path3Context": {
+      "type": "string",
+      "default": ""
+    },
+    "path3URL": {
+      "type": "string",
+      "default": ""
+    },
+    "eyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "descriptionColor": {
+      "type": "string",
+      "default": ""
+    },
+    "eyebrowTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "titleTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "descriptionTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "buttonTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "eyebrowMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "titleMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "descriptionMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "buttonColor": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonHoverBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonBorderRadius": {
+      "type": "object",
+      "default": {}
+    },
+    "buttonPadding": {
+      "type": "object",
+      "default": {}
+    },
+    "secondaryButtonColor": {
+      "type": "string",
+      "default": ""
+    },
+    "secondaryButtonHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBG": {
+      "type": "object",
+      "default": {
+        "openBGColor": 0,
+        "type": "classic",
+        "classic": {
+          "color": "",
+          "img": {
+            "imgURL": "",
+            "imgID": ""
+          },
+          "imgProperty": {
+            "imgPosition": {
+              "lg": "center center"
+            },
+            "imgAttachment": {
+              "lg": ""
+            },
+            "imgRepeat": {
+              "lg": "no-repeat"
+            },
+            "imgSize": {
+              "lg": "cover"
+            }
+          }
+        },
+        "gradient": null
+      }
+    },
+    "wrapperOverlay": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        }
+      }
+    },
+    "wrapperPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        }
+      }
+    },
+    "wrapperBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

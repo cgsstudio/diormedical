@@ -1,0 +1,201 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/booking-form",
+  "title": "Booking Form",
+  "category": "doc-booker-blocks",
+  "icon": "calendar-alt",
+  "description": "A full appointment-booking wizard in 2 layouts (split-screen wizard / compact inline). Uses the REAL DocBooker booking flow + the active payment gateway (Stripe or Razorpay) unchanged — no duplicated booking logic.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "wizard"
+    },
+    "defaultClinicId": {
+      "type": "number",
+      "default": 0
+    },
+    "defaultDepartmentId": {
+      "type": "number",
+      "default": 0
+    },
+    "defaultDoctorId": {
+      "type": "number",
+      "default": 0
+    },
+    "allowUrlParamOverride": {
+      "type": "boolean",
+      "default": true
+    },
+    "enableClinicStep": {
+      "type": "boolean",
+      "default": true
+    },
+    "enableDepartmentStep": {
+      "type": "boolean",
+      "default": true
+    },
+    "enableDoctorStep": {
+      "type": "boolean",
+      "default": true
+    },
+    "hoursFormat": {
+      "type": "string",
+      "default": "12"
+    },
+    "askNotes": {
+      "type": "boolean",
+      "default": true
+    },
+    "allowPayAtAppointment": {
+      "type": "boolean",
+      "default": true
+    },
+    "payAtAppointmentLabel": {
+      "type": "string",
+      "default": "Pay at appointment"
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": "Book a visit"
+    },
+    "titleText": {
+      "type": "string",
+      "default": "Find your specialist, your way."
+    },
+    "ledeText": {
+      "type": "string",
+      "default": ""
+    },
+    "confirmationHeadline": {
+      "type": "string",
+      "default": "Your appointment is confirmed"
+    },
+    "confirmationMessage": {
+      "type": "string",
+      "default": "We've sent the details to your email and phone."
+    },
+    "requestButtonLabel": {
+      "type": "string",
+      "default": "Request appointment"
+    },
+    "showTrustStrip": {
+      "type": "boolean",
+      "default": true
+    },
+    "showWhatsNext": {
+      "type": "boolean",
+      "default": true
+    },
+    "wrapperBg": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "wrapperBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "inkColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "fieldBg": {
+      "type": "string",
+      "default": ""
+    },
+    "fieldBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "ctaColor": {
+      "type": "string",
+      "default": ""
+    },
+    "ctaBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "ctaHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "ctaHoverBackground": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

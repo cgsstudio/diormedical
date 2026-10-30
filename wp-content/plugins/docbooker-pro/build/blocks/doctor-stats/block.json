@@ -1,0 +1,198 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/doctor-stats",
+  "title": "Doctor Stats",
+  "category": "doc-booker-blocks",
+  "icon": "chart-bar",
+  "description": "Practice statistics in 2 layouts — an accent-tinted card grid or a compact strip (cream / dark / inline). Author-entered numbers with an animated count-up.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "cards"
+    },
+    "stripTone": {
+      "type": "string",
+      "default": "cream"
+    },
+    "stats": {
+      "type": "array",
+      "default": [
+        {
+          "number": "34",
+          "suffix": "",
+          "label": "Specialists",
+          "context": "across 11 departments",
+          "icon": "users",
+          "accent": "ocean"
+        },
+        {
+          "number": "480",
+          "suffix": "plus",
+          "label": "Years combined",
+          "context": "of medical experience",
+          "icon": "clock",
+          "accent": "sage"
+        },
+        {
+          "number": "4.9",
+          "suffix": "star",
+          "label": "Average review",
+          "context": "across patient feedback",
+          "icon": "star",
+          "accent": "bronze"
+        },
+        {
+          "number": "11",
+          "suffix": "",
+          "label": "Departments",
+          "context": "specialty & primary care",
+          "icon": "briefcase",
+          "accent": "plum"
+        }
+      ]
+    },
+    "columnsLg": {
+      "type": "number",
+      "default": 4
+    },
+    "columnsMd": {
+      "type": "number",
+      "default": 2
+    },
+    "columnsSm": {
+      "type": "number",
+      "default": 1
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": ""
+    },
+    "titleText": {
+      "type": "string",
+      "default": ""
+    },
+    "ledeText": {
+      "type": "string",
+      "default": ""
+    },
+    "showIcons": {
+      "type": "boolean",
+      "default": true
+    },
+    "showContext": {
+      "type": "boolean",
+      "default": true
+    },
+    "animateCount": {
+      "type": "boolean",
+      "default": true
+    },
+    "showCta": {
+      "type": "boolean",
+      "default": false
+    },
+    "ctaText": {
+      "type": "string",
+      "default": "See full stats"
+    },
+    "ctaUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "ctaNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "cardBg": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "numberColor": {
+      "type": "string",
+      "default": ""
+    },
+    "numberTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "labelColor": {
+      "type": "string",
+      "default": ""
+    },
+    "contextColor": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

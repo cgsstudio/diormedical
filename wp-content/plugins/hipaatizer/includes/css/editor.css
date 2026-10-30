@@ -1,0 +1,30 @@
+.wp-block-hipaatizer-hipaa-form {
+	background: #F5F5F5 url("../../admin/img/logo.svg") top 48px center no-repeat;
+	background-size: 150px 70px;
+	padding-top: 166px;
+}
+.hipaa-select {
+	display: block !important;
+	width: calc(100% - 48px) !important;
+	max-width: 704px !important;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 48px !important;
+}
+.hipaa-select select {
+	display: block;
+	margin-top: 10px !important;
+	width: 100%;
+	max-width: none;
+	height: 48px;
+	line-height: 48px;
+	-webkit-appearance: none;
+    background: #fff url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E') no-repeat right 5px top 55% !important;
+    background-size: 16px 16px;
+	border: 1px solid #D9D9D9;
+    border-radius: 4px;
+}
+.hipaa-form iframe {
+	margin-top: -30px;
+	height: 400px;
+}

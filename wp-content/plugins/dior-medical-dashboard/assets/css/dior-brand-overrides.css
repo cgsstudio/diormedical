@@ -1,0 +1,54 @@
+/**
+ * Dior Medical brand color overrides.
+ * Keep dashboard primary actions aligned with the existing navy/blue identity.
+ */
+:root {
+    --dior-brand-navy: #0b1030;
+    --dior-brand-primary: #2865a5;
+    --dior-brand-primary-hover: #20558f;
+    --dior-brand-accent: #0284c7;
+    --dior-brand-soft: #e6f0fa;
+}
+
+/* Standardize primary actions and active appointment tabs. */
+.dior-patient-dashboard .btn-primary,
+.dior-dashboard .btn-primary,
+#tab-appointments .btn-primary,
+#tab-appointments .dior-subtab-pill.active,
+#tab-appointments .dior-subtab-pill.is-active,
+#tab-appointments .dior-subtab-pill[aria-selected="true"],
+.dior-subtab-pill.active,
+.dior-subtab-pill.is-active,
+.dior-subtab-pill[aria-selected="true"] {
+    color: #fff !important;
+    background-color: var(--dior-brand-primary) !important;
+    border-color: var(--dior-brand-primary) !important;
+    background-image: none !important;
+}
+
+.dior-patient-dashboard .btn-primary:hover,
+.dior-dashboard .btn-primary:hover,
+#tab-appointments .btn-primary:hover,
+#tab-appointments .dior-subtab-pill.active:hover,
+#tab-appointments .dior-subtab-pill.is-active:hover,
+.dior-subtab-pill.active:hover,
+.dior-subtab-pill.is-active:hover {
+    color: #fff !important;
+    background-color: var(--dior-brand-primary-hover) !important;
+    border-color: var(--dior-brand-primary-hover) !important;
+}
+
+.dior-patient-dashboard .btn-primary:focus-visible,
+.dior-dashboard .btn-primary:focus-visible,
+#tab-appointments .btn-primary:focus-visible,
+.dior-subtab-pill:focus-visible {
+    outline: 3px solid rgba(2, 132, 199, .28);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, .12) !important;
+}
+
+#tab-appointments .dior-subtab-pill:not(.active):not(.is-active):not([aria-selected="true"]) {
+    background-color: #fff;
+    border-color: #dce5ef;
+    color: #31506f;
+}

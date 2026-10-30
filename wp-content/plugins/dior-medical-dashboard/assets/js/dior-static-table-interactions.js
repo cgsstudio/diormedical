@@ -1,0 +1,917 @@
+/**
+ * DIOR Medical Dashboard — Comprehensive Bootstrap Table Interactions
+ * Version: 17.2.0
+ * 
+ * Features:
+ * - Bootstrap Hoverable Rows (table-hover auto-enabled across all tables)
+ * - Strict 10 Entries Per Page Pagination across all tables
+ * - Column Header Sorting (Ascending / Descending with fontawesome icons)
+ * - Master Checkbox (Select All) & Row Checkboxes on every table
+ * - Bulk Action Toolbar (Selected counter badge + Bulk Delete with SweetAlert2 confirmation)
+ * - Real-time Search Filtering with dynamic 10-per-page pagination recalculation
+ * - Single-row Edit and Delete modal actions
+ * - STRICT EXEMPTION: Main dashboard overview tabs (#tab-overview, #tab-doc-overview) are completely untouched.
+ */
+(function () {
+    'use strict';
+
+    var PAGE_SIZE = 10;
+
+    function isDashboardOverview(element) {
+        if (!element) return false;
+        return !!element.closest('#tab-overview, #tab-doc-overview, #tab-doc-appointments, #tab-appointments, #tab-doc-appointments-view, .dior-bs-calendar-container, #dior-doc-cal-month-wrap, .dior-bs-cal-table');
+    }
+
+    function getTableSelector() {
+        return '.va-table, .docs-table, .dior-table, .lab-table, .master-modern-table, .dior-invoice-table, .dior-ref-table, .dior-doc-table, .dior-tab-panel:not(#tab-overview):not(#tab-doc-overview):not(#tab-doc-appointments):not(#tab-doc-appointments-view):not(#tab-appointments) table:not(.dior-bs-cal-table)';
+    }
+
+    function getAllTables() {
+        return Array.prototype.slice.call(document.querySelectorAll(getTableSelector())).filter(function (table) {
+            // Strictly exclude main overview screens, appointments view and calendars per user requirement
+            if (isDashboardOverview(table)) return false;
+            if (table.classList.contains('dior-bs-cal-table') || table.closest('.dior-bs-calendar-container, #dior-doc-cal-month-wrap, #tab-doc-appointments, #tab-doc-appointments-view, #tab-appointments')) {
+                return false;
+            }
+            // Ignore nested preview/receipt/modal small tables
+            if (table.closest('.receipt-info-table, .dior-rx-med-table, .pp-info-table, .dior-modal, #dior-static-edit-modal')) {
+                return false;
+            }
+            return table.querySelector('tbody > tr') !== null;
+        });
+    }
+
+    function getRows(table) {
+        return Array.prototype.slice.call(table.querySelectorAll('tbody > tr')).filter(function (row) {
+            var first = row.firstElementChild;
+            if (first && first.hasAttribute('colspan')) {
+                return false;
+            }
+            return true;
+        });
+    }
+
+    function getSearchInput(table) {
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+        return card ? card.querySelector('input[placeholder*="Search" i], .dior-bs-search-group input, .va-search-box input, .docs-search-box input, .dior-search-input, [type="search"]') : null;
+    }
+
+    function getActiveRows(table) {
+        var input = getSearchInput(table);
+        var query = input ? input.value.trim().toLowerCase() : '';
+
+        return getRows(table).filter(function (row) {
+            if (!query) return true;
+            return row.innerText.toLowerCase().indexOf(query) !== -1;
+        });
+    }
+
+    function standardizeBootstrapSearchFields(root) {
+        root = root || document;
+
+        // Strictly exclude and clean up any accidental search-group injected inside topbar search
+        var topSearches = [].slice.call(root.querySelectorAll('.dior-top-search'));
+        topSearches.forEach(function (topWrap) {
+            var nestedGroup = topWrap.querySelector('.dior-bs-search-group');
+            if (nestedGroup) {
+                var innerInput = nestedGroup.querySelector('input');
+                if (innerInput) {
+                    innerInput.classList.remove('form-control', 'border-start-0', 'ps-0');
+                    topWrap.appendChild(innerInput);
+                }
+                nestedGroup.remove();
+            }
+        });
+
+        var searchInputs = [].slice.call(root.querySelectorAll(
+            'input[placeholder*="Search" i], .dior-search-input, .va-search-input, [type="search"], ' +
+            '#dior-tele-search-input, #dior-bill-search-input, #dior-notif-search-input, #dior-docs-search-input, ' +
+            '#dior-rx-search-input, #dior-today-search-input, #dior-upcoming-search-input, #dior-past-search-input, ' +
+            '#va-appt-search, #ap-search, #cn-search, #rv-search'
+        )).filter(function (input) {
+            return !isDashboardOverview(input) &&
+                   input.id !== 'dior-doc-search' &&
+                   input.id !== 'dior-patient-search' &&
+                   !input.closest('.dior-top-search, .dior-topbar, header');
+        });
+
+        searchInputs.forEach(function (input) {
+            if (input._diorBsSearchStandardized) return;
+            input._diorBsSearchStandardized = true;
+
+            input.classList.add('form-control');
+            var parent = input.parentElement;
+
+            if (parent && (parent.classList.contains('va-search-box') || parent.classList.contains('docs-search-box') || parent.classList.contains('dior-search-wrap') || parent.classList.contains('dior-search-box') || parent.classList.contains('dior-search-container'))) {
+                parent.classList.add('dior-bs-search-group');
+                var oldIcon = parent.querySelector('i');
+                if (oldIcon) {
+                    oldIcon.className = 'fas fa-magnifying-glass text-muted me-2';
+                } else {
+                    var icon = document.createElement('i');
+                    icon.className = 'fas fa-magnifying-glass text-muted me-2';
+                    parent.insertBefore(icon, input);
+                }
+            } else if (parent && !parent.classList.contains('dior-bs-search-group') && !parent.classList.contains('input-group')) {
+                var group = document.createElement('div');
+                group.className = 'input-group input-group-sm dior-bs-search-group shadow-sm';
+                group.style.maxWidth = '260px';
+                group.style.borderRadius = '8px';
+                group.style.overflow = 'hidden';
+
+                var prepend = document.createElement('span');
+                prepend.className = 'input-group-text bg-white border-end-0 text-muted';
+                prepend.innerHTML = '<i class="fas fa-magnifying-glass"></i>';
+
+                input.classList.add('border-start-0', 'ps-0');
+                parent.insertBefore(group, input);
+                group.appendChild(prepend);
+                group.appendChild(input);
+            }
+        });
+    }
+
+    // =========================================================================
+    // 1. BULK ACTIONS TOOLBAR & CHECKBOX INITIALIZATION
+    // =========================================================================
+    function getBulkToolbar(table) {
+        // Center bulk toolbar removed per user requirement.
+        // Clean up any rogue center toolbar if present.
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+        if (card) {
+            var oldToolbars = card.querySelectorAll('.dior-bulk-actions-toolbar');
+            oldToolbars.forEach(function (tb) { tb.remove(); });
+        }
+        return null;
+    }
+
+    function getRightTrashBtn(table) {
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+        if (!card) return null;
+
+        // Clean up any rogue center toolbar if present
+        var oldToolbars = card.querySelectorAll('.dior-bulk-actions-toolbar');
+        oldToolbars.forEach(function (tb) { tb.remove(); });
+
+        var trashBtn = card.querySelector('.docs-actions-group .docs-btn-danger, .va-actions-group .va-btn-danger, .docs-actions-group button[title*="Delete"], .va-actions-group button[title*="Delete"], #ap-bulk-delete-btn, #va-bulk-delete-btn, #rv-bulk-delete-btn, #dior-pr-bulk-delete, #dior-upcoming-bulk-delete-btn, #dior-clinical-bulk-delete');
+
+        if (!trashBtn) {
+            var icon = card.querySelector('.docs-actions-group .fa-trash, .docs-actions-group .fa-trash-can, .va-actions-group .fa-trash, .va-actions-group .fa-trash-can');
+            if (icon) {
+                trashBtn = icon.closest('button');
+            }
+        }
+
+        // If the right-side actions group exists but doesn't have a trash button, inject one as the first icon button!
+        if (!trashBtn) {
+            var group = card.querySelector('.docs-actions-group, .va-actions-group');
+            if (group) {
+                trashBtn = document.createElement('button');
+                trashBtn.type = 'button';
+                trashBtn.className = group.classList.contains('docs-actions-group')
+                    ? 'docs-icon-btn docs-btn-danger btn'
+                    : 'va-icon-btn va-btn-danger btn';
+                trashBtn.title = 'Delete Selected';
+                trashBtn.setAttribute('aria-label', 'Delete selected items');
+                trashBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                group.insertBefore(trashBtn, group.firstChild);
+            }
+        }
+
+        if (trashBtn) {
+            trashBtn.classList.add('position-relative');
+            if (!trashBtn._diorBulkBound) {
+                trashBtn._diorBulkBound = true;
+                trashBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    executeBulkDelete(table);
+                });
+            }
+        }
+
+        return trashBtn;
+    }
+
+    function ensureCheckboxes(table) {
+        if (isDashboardOverview(table)) return;
+
+        var thead = table.querySelector('thead');
+        var tbody = table.querySelector('tbody');
+        if (!thead || !tbody) return;
+
+        var headerRow = thead.querySelector('tr');
+        if (!headerRow) return;
+
+        // Check if master checkbox exists
+        var masterCb = thead.querySelector('input[type="checkbox"]');
+        if (!masterCb) {
+            var th = document.createElement('th');
+            th.style.width = '48px';
+            th.className = 'text-center align-middle';
+            th.innerHTML = '<input type="checkbox" class="form-check-input dior-select-all" title="Select All">';
+            headerRow.insertBefore(th, headerRow.children[0]);
+        } else {
+            masterCb.classList.add('form-check-input', 'dior-select-all');
+        }
+
+        // Ensure row checkboxes exist only in valid data rows (skip colspan empty rows)
+        var rows = getRows(table);
+        rows.forEach(function (row) {
+            var first = row.firstElementChild;
+            if (first && first.hasAttribute('colspan')) return;
+
+            var rowCb = row.querySelector('input[type="checkbox"]');
+            if (!rowCb) {
+                var td = document.createElement('td');
+                td.style.width = '48px';
+                td.className = 'text-center align-middle';
+                td.innerHTML = '<input type="checkbox" class="form-check-input dior-row-select">';
+                td.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+                row.insertBefore(td, row.children[0]);
+            } else {
+                rowCb.classList.add('form-check-input', 'dior-row-select');
+                var cell = rowCb.closest('td');
+                if (cell) {
+                    cell.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                    });
+                }
+            }
+        });
+
+        // Initialize right-side bulk trash button
+        getRightTrashBtn(table);
+    }
+
+    function updateBulkToolbarState(table) {
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+        if (card) {
+            var oldToolbars = card.querySelectorAll('.dior-bulk-actions-toolbar');
+            oldToolbars.forEach(function (tb) { tb.remove(); });
+        }
+
+        var activeRows = getActiveRows(table);
+        var checkedRows = activeRows.filter(function (row) {
+            var cb = row.querySelector('input[type="checkbox"]');
+            return cb && cb.checked;
+        });
+
+        var count = checkedRows.length;
+        var masterCb = table.querySelector('thead input[type="checkbox"]');
+
+        if (masterCb) {
+            if (activeRows.length > 0 && count === activeRows.length) {
+                masterCb.checked = true;
+                masterCb.indeterminate = false;
+            } else if (count > 0) {
+                masterCb.checked = false;
+                masterCb.indeterminate = true;
+            } else {
+                masterCb.checked = false;
+                masterCb.indeterminate = false;
+            }
+        }
+
+        // Update the right-side trash icon button
+        var trashBtn = getRightTrashBtn(table);
+        if (trashBtn) {
+            trashBtn.classList.add('position-relative');
+            var existingBadge = trashBtn.querySelector('.dior-bulk-count-badge');
+
+            if (count > 0) {
+                if (!existingBadge) {
+                    existingBadge = document.createElement('span');
+                    existingBadge.className = 'dior-bulk-count-badge badge bg-danger text-white rounded-pill position-absolute top-0 start-100 translate-middle shadow-sm';
+                    existingBadge.style.fontSize = '10px';
+                    existingBadge.style.padding = '2px 6px';
+                    existingBadge.style.pointerEvents = 'none';
+                    existingBadge.style.zIndex = '5';
+                    existingBadge.style.fontWeight = '700';
+                    existingBadge.style.lineHeight = '1';
+                    trashBtn.appendChild(existingBadge);
+                }
+                existingBadge.textContent = count;
+                trashBtn.title = 'Delete ' + count + ' selected record' + (count > 1 ? 's' : '');
+                trashBtn.setAttribute('aria-label', 'Delete ' + count + ' selected records');
+            } else {
+                if (existingBadge) {
+                    existingBadge.remove();
+                }
+                trashBtn.title = 'Delete Selected';
+                trashBtn.setAttribute('aria-label', 'Delete selected items');
+            }
+        }
+    }
+
+    function executeBulkDelete(table) {
+        var activeRows = getActiveRows(table);
+        var checkedRows = activeRows.filter(function (row) {
+            var cb = row.querySelector('input[type="checkbox"]');
+            return cb && cb.checked;
+        });
+
+        if (!checkedRows.length) {
+            Swal.fire({
+                title: 'Notice',
+                text: 'Please select at least one record to delete.',
+                icon: 'info',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2500
+            });
+            return;
+        }
+
+        var count = checkedRows.length;
+
+        function performDeletion() {
+            checkedRows.forEach(function (row) {
+                row.remove();
+            });
+
+            var masterCb = table.querySelector('thead input[type="checkbox"]');
+            if (masterCb) {
+                masterCb.checked = false;
+                masterCb.indeterminate = false;
+            }
+
+            updateBulkToolbarState(table);
+
+            var remainingActive = getActiveRows(table).length;
+            var totalPages = Math.max(1, Math.ceil(remainingActive / PAGE_SIZE));
+            var currentPage = table._diorStaticPagination ? table._diorStaticPagination.page : 1;
+            renderTable(table, Math.min(currentPage, totalPages));
+
+            if (window.Swal) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: count + ' record(s) deleted successfully.',
+                    icon: 'success',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
+        }
+
+        if (window.Swal) {
+            Swal.fire({
+                title: 'Delete ' + count + ' selected record(s)?',
+                text: 'Are you sure you want to delete these records? This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: 'Yes, delete selected',
+                cancelButtonText: 'Cancel'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    performDeletion();
+                }
+            });
+        }
+    }
+
+    // =========================================================================
+    // 2. PAGINATION (STRICT 10 ENTRIES PER PAGE)
+    // =========================================================================
+    function getPaginationHost(table) {
+        var card = table.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+        if (!card) return null;
+
+        var host = card.querySelector('.va-footer, .dior-table-pagination-wrap, .dior-static-pagination');
+        if (!host) {
+            host = document.createElement('div');
+            host.className = 'dior-static-pagination dior-table-pagination-wrap';
+            table.parentElement.insertAdjacentElement('afterend', host);
+        }
+        host.classList.add('dior-static-pagination');
+        return host;
+    }
+
+    function renderTable(table, requestedPage) {
+        if (!table || !table.querySelector('tbody') || isDashboardOverview(table)) return;
+
+        // Ensure Bootstrap hoverable row styling & responsive wrapper
+        table.classList.add('table-hover');
+        if (!table.classList.contains('table')) {
+            table.classList.add('table');
+        }
+
+        if (!table.parentElement.classList.contains('table-responsive') && !table.parentElement.classList.contains('va-table-wrapper') && !table.parentElement.classList.contains('docs-table-wrapper')) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'table-responsive';
+            table.parentNode.insertBefore(wrapper, table);
+            wrapper.appendChild(table);
+        }
+
+        ensureCheckboxes(table);
+
+        var rows = getRows(table);
+        var activeRows = getActiveRows(table);
+        var total = activeRows.length;
+        var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+        var state = table._diorStaticPagination || { page: 1 };
+        state.page = Math.max(1, Math.min(parseInt(requestedPage || state.page, 10) || 1, totalPages));
+        table._diorStaticPagination = state;
+
+        // Hide all rows initially
+        rows.forEach(function (row) {
+            row.style.display = 'none';
+        });
+
+        // Show only the 10 rows for current page
+        var start = (state.page - 1) * PAGE_SIZE;
+        var end = Math.min(start + PAGE_SIZE, total);
+
+        activeRows.slice(start, end).forEach(function (row) {
+            row.style.display = '';
+        });
+
+        var host = getPaginationHost(table);
+        if (!host) return;
+
+        host.style.display = 'flex';
+        host.style.alignItems = 'center';
+        host.style.justifyContent = 'space-between';
+        host.style.flexWrap = 'wrap';
+        host.style.gap = '12px';
+        host.style.padding = '14px 20px';
+        host.style.borderTop = '1px solid #E2E8F0';
+        host.style.background = '#FFFFFF';
+
+        var selected = activeRows.filter(function (r) {
+            var cb = r.querySelector('input[type="checkbox"]');
+            return cb && cb.checked;
+        }).length;
+
+        var selectedBadge = selected > 0 ? ' <span class="badge bg-primary ms-1" style="font-size:11px;padding:3px 8px;border-radius:12px;background:#00346C !important;">' + selected + ' selected</span>' : '';
+
+        var html = '';
+        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page - 1) + '" ' + (state.page === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="fas fa-chevron-left"></i></button>';
+
+        for (var page = 1; page <= totalPages; page++) {
+            if (totalPages > 7) {
+                if (page !== 1 && page !== totalPages && Math.abs(page - state.page) > 2) {
+                    if (page === 2 || page === totalPages - 1) {
+                        html += '<span class="px-1 text-muted" style="line-height:34px;">...</span>';
+                    }
+                    continue;
+                }
+            }
+            html += '<button type="button" class="va-page-btn dior-page-btn btn ' + (page === state.page ? 'active' : '') + '" data-static-page="' + page + '">' + page + '</button>';
+        }
+
+        html += '<button type="button" class="va-page-btn dior-page-btn btn" data-static-page="' + (state.page + 1) + '" ' + (state.page === totalPages ? 'disabled' : '') + ' aria-label="Next page"><i class="fas fa-chevron-right"></i></button>';
+
+        host.innerHTML =
+            '<div class="va-pagination-text dior-pagination-count text-muted" style="font-size:13.5px;font-weight:500;">Showing <strong>' +
+            (total ? start + 1 : 0) +
+            '</strong> to <strong>' +
+            end +
+            '</strong> of <strong>' +
+            total +
+            '</strong> entries' + selectedBadge + '</div>' +
+            '<div class="va-pagination-nav dior-table-pagination-pages d-flex gap-1">' + html + '</div>';
+
+        host.querySelectorAll('[data-static-page]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                if (button.disabled) return;
+                renderTable(table, parseInt(button.getAttribute('data-static-page'), 10));
+            });
+        });
+
+        updateBulkToolbarState(table);
+    }
+
+    // =========================================================================
+    // 3. COLUMN SORTING (UNIVERSAL)
+    // =========================================================================
+    function parseCellValue(text) {
+        if (!text) return '';
+        text = text.trim();
+
+        // Check currency / numbers: "$120.00", "€50", "45", "10%"
+        var numMatch = text.replace(/[$,€£%]/g, '').trim();
+        if (numMatch !== '' && !isNaN(Number(numMatch))) {
+            return Number(numMatch);
+        }
+
+        // Check standard date
+        var parsedDate = Date.parse(text);
+        if (!isNaN(parsedDate) && text.length > 5 && isNaN(Number(text))) {
+            return parsedDate;
+        }
+
+        return text.toLowerCase();
+    }
+
+    function initTableSorting(table) {
+        if (isDashboardOverview(table)) return;
+
+        var thead = table.querySelector('thead');
+        if (!thead || table._diorSortingInitialized) return;
+        table._diorSortingInitialized = true;
+
+        var headers = thead.querySelectorAll('th');
+        headers.forEach(function (th, colIndex) {
+            // Skip checkbox and actions column
+            if (th.querySelector('input[type="checkbox"]') || /action/i.test(th.textContent.trim())) {
+                return;
+            }
+
+            th.setAttribute('data-sortable', 'true');
+            th.classList.add('dior-sortable-th');
+            th.style.cursor = 'pointer';
+            th.style.userSelect = 'none';
+
+            // Ensure sort icon exists
+            var icon = th.querySelector('i.bi-arrow-down-up, i.bi-arrow-up, i.bi-arrow-down, i.fa-sort, i.fa-sort-up, i.fa-sort-down, i.fas, i.fa-solid, i.bi');
+            if (!icon) {
+                icon = document.createElement('i');
+                icon.className = 'fas fa-sort ms-1 text-muted';
+                th.appendChild(icon);
+            }
+
+            th.addEventListener('click', function () {
+                var currentDir = th.getAttribute('data-sort-dir') || 'none';
+                var newDir = currentDir === 'asc' ? 'desc' : 'asc';
+
+                // Reset all other headers in this table
+                headers.forEach(function (otherTh) {
+                    otherTh.removeAttribute('data-sort-dir');
+                    var otherIcon = otherTh.querySelector('i');
+                    if (otherIcon) {
+                        otherIcon.className = 'fas fa-sort ms-1 text-muted';
+                    }
+                });
+
+                // Set new direction
+                th.setAttribute('data-sort-dir', newDir);
+                if (icon) {
+                    icon.className = 'fas fa-sort-' + (newDir === 'asc' ? 'up' : 'down') + ' ms-1 text-primary';
+                }
+
+                // Sort the table rows
+                var tbody = table.querySelector('tbody');
+                if (!tbody) return;
+
+                var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+                rows.sort(function (rowA, rowB) {
+                    var cellA = rowA.children[colIndex];
+                    var cellB = rowB.children[colIndex];
+                    var valA = cellA ? parseCellValue(cellA.textContent) : '';
+                    var valB = cellB ? parseCellValue(cellB.textContent) : '';
+
+                    if (valA < valB) return newDir === 'asc' ? -1 : 1;
+                    if (valA > valB) return newDir === 'asc' ? 1 : -1;
+                    return 0;
+                });
+
+                // Re-append sorted rows
+                rows.forEach(function (row) {
+                    tbody.appendChild(row);
+                });
+
+                // Re-render table on page 1 of pagination
+                renderTable(table, 1);
+            });
+        });
+    }
+
+    // =========================================================================
+    // 4. IN-PLACE EDIT MODAL & SINGLE ROW DELETE
+    // =========================================================================
+    function findEditableValueCell(cell) {
+        var target = cell.querySelector('.va-user-name, .cell-text, .status-cell-text, .notes-text');
+        return target || null;
+    }
+
+    function readCellValue(cell) {
+        var target = findEditableValueCell(cell);
+        return target ? target.textContent.trim() : cell.textContent.trim();
+    }
+
+    function writeCellValue(cell, value) {
+        var target = findEditableValueCell(cell);
+        if (target) {
+            target.textContent = value;
+            return;
+        }
+
+        var nodes = Array.prototype.slice.call(cell.childNodes);
+        var textNodes = nodes.filter(function (node) {
+            return node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '';
+        });
+
+        if (textNodes.length) {
+            textNodes[0].textContent = ' ' + value;
+            textNodes.slice(1).forEach(function (node) {
+                node.textContent = '';
+            });
+            return;
+        }
+
+        cell.textContent = value;
+    }
+
+    function createModal() {
+        var existing = document.getElementById('dior-static-edit-modal');
+        if (existing) return existing;
+
+        var modal = document.createElement('div');
+        modal.id = 'dior-static-edit-modal';
+        modal.className = 'modal fade dior-static-edit-modal';
+        modal.tabIndex = -1;
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-labelledby', 'dior-static-edit-title');
+        modal.setAttribute('aria-hidden', 'true');
+        modal.innerHTML =
+            '<div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">' +
+                '<div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden; background: #FFFFFF;">' +
+                    '<div class="modal-header border-bottom py-3 px-4">' +
+                        '<h5 class="modal-title fw-bold text-dark mb-0" id="dior-static-edit-title">Edit Record</h5>' +
+                        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+                    '</div>' +
+                    '<form id="dior-static-edit-form">' +
+                        '<div class="modal-body p-4 dior-static-edit-fields"></div>' +
+                        '<div class="modal-footer border-top py-3 px-4 gap-2">' +
+                            '<button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal" style="border-radius: 8px; font-size: 13.5px; font-weight: 600;">Close</button>' +
+                            '<button type="submit" class="btn btn-primary px-4 dior-static-submit" style="border-radius: 8px; font-size: 13.5px; font-weight: 600; background: #00346C; border-color: #00346C;">Save Changes</button>' +
+                        '</div>' +
+                    '</form>' +
+                '</div>' +
+            '</div>';
+
+        document.body.appendChild(modal);
+
+        modal.querySelector('#dior-static-edit-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var row = modal._editRow;
+            if (!row) return;
+
+            var fields = modal.querySelectorAll('[data-edit-index]');
+            fields.forEach(function (input) {
+                var index = parseInt(input.getAttribute('data-edit-index'), 10);
+                var cells = row.querySelectorAll('td');
+                if (cells[index]) writeCellValue(cells[index], input.value.trim());
+            });
+
+            closeModal();
+
+            var table = row.closest('table');
+            if (table && table._diorStaticPagination) {
+                renderTable(table, table._diorStaticPagination.page);
+            }
+
+            if (window.Swal) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Record has been updated successfully.',
+                    icon: 'success',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
+        });
+
+        return modal;
+    }
+
+    function openModal(row) {
+        var table = row.closest('table');
+        if (!table || isDashboardOverview(table)) return;
+
+        var modal = createModal();
+        var headers = Array.prototype.slice.call(table.querySelectorAll('thead th'));
+        var cells = Array.prototype.slice.call(row.querySelectorAll('td'));
+        var fieldsWrap = modal.querySelector('.dior-static-edit-fields');
+
+        fieldsWrap.innerHTML = '';
+
+        cells.forEach(function (cell, index) {
+            if (!headers[index]) return;
+            if (cell.querySelector('input[type="checkbox"]')) return;
+            if (cell.querySelector('.va-row-actions, .cell-actions, .docs-actions-group')) return;
+
+            var label = headers[index].textContent.replace(/\s+/g, ' ').trim();
+            if (!label || label.toLowerCase() === 'actions' || label.toLowerCase() === 'action') return;
+
+            var value = readCellValue(cell);
+            var field = document.createElement('div');
+            field.className = 'dior-static-edit-field mb-3';
+            field.innerHTML =
+                '<label class="form-label" style="font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">' + label + '</label>' +
+                '<input type="text" class="form-control" data-edit-index="' + index + '" value="' + value.replace(/"/g, '&quot;') + '">';
+            fieldsWrap.appendChild(field);
+        });
+
+        modal._editRow = row;
+
+        if (window.bootstrap && window.bootstrap.Modal) {
+            var bsModal = window.bootstrap.Modal.getOrCreateInstance(modal);
+            bsModal.show();
+        } else {
+            modal.classList.add('show');
+            modal.style.display = 'block';
+        }
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('dior-static-edit-modal');
+        if (modal) {
+            if (window.bootstrap && window.bootstrap.Modal) {
+                var bsModal = window.bootstrap.Modal.getInstance(modal);
+                if (bsModal) bsModal.hide();
+            } else {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+            modal._editRow = null;
+        }
+    }
+
+    function isTrashButton(button) {
+        return !!button.querySelector('.fa-trash, .fa-trash-can, .bi-trash, .bi-trash3');
+    }
+
+    // =========================================================================
+    // 5. EVENT LISTENERS: CHECKBOXES, SEARCH & DELETE
+    // =========================================================================
+    function bindAllTables() {
+        standardizeBootstrapSearchFields(document);
+        getAllTables().forEach(function (table) {
+            if (isDashboardOverview(table)) return;
+            ensureCheckboxes(table);
+            initTableSorting(table);
+            renderTable(table, table._diorStaticPagination ? table._diorStaticPagination.page : 1);
+        });
+    }
+
+    function bindSearch() {
+        document.addEventListener('input', function (event) {
+            var input = event.target;
+            if (!input.matches('input[placeholder*="Search" i], .va-search-box input, .docs-search-box input, .dior-bs-search-group input, .dior-search-input, [type="search"]')) return;
+
+            var card = input.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+            if (!card) return;
+
+            var target = card.querySelector(getTableSelector());
+            if (target && !isDashboardOverview(target)) {
+                renderTable(target, 1);
+            }
+        });
+    }
+
+    // Master & Row Checkbox change listener
+    document.addEventListener('change', function (event) {
+        var target = event.target;
+        if (!target.matches('input[type="checkbox"]')) return;
+
+        var table = target.closest('table');
+        if (!table || isDashboardOverview(table)) return;
+
+        // If master checkbox toggled
+        if (target.matches('thead input[type="checkbox"]')) {
+            var activeRows = getActiveRows(table);
+            activeRows.forEach(function (row) {
+                var cb = row.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = target.checked;
+            });
+            updateBulkToolbarState(table);
+            renderTable(table, table._diorStaticPagination ? table._diorStaticPagination.page : 1);
+            return;
+        }
+
+        // If row checkbox toggled
+        if (target.matches('tbody input[type="checkbox"]')) {
+            updateBulkToolbarState(table);
+            var host = getPaginationHost(table);
+            if (host) {
+                var total = getActiveRows(table).length;
+                var selected = table.querySelectorAll('tbody input[type="checkbox"]:checked').length;
+                var badge = selected > 0 ? ' <span class="badge bg-primary ms-1" style="font-size:11px;padding:3px 8px;border-radius:12px;background:#00346C !important;">' + selected + ' selected</span>' : '';
+                var info = host.querySelector('.dior-pagination-count, .va-pagination-text');
+                if (info) {
+                    var start = ((table._diorStaticPagination ? table._diorStaticPagination.page : 1) - 1) * PAGE_SIZE;
+                    var end = Math.min(start + PAGE_SIZE, total);
+                    info.innerHTML = 'Showing <strong>' + (total ? start + 1 : 0) + '</strong> to <strong>' + end + '</strong> of <strong>' + total + '</strong> entries' + badge;
+                }
+            }
+        }
+    });
+
+    // Global Click Delegation (Edit, Delete, Bulk)
+    document.addEventListener('click', function (event) {
+        // Edit button
+        var editButton = event.target.closest('.va-btn-edit, .action-icon-btn.edit-btn');
+        if (editButton && !editButton.matches('.dior-mark-notification-read, .rv-edit-btn, .va-edit-appt-btn') && !editButton.closest('#rv-table, #va-appointments-tbody, #doc-uploaded-tbody, #dior-docs-tbody') && editButton.querySelector('.fa-pen, .fa-pencil, .bi-vector-pen, .bi-pencil-square, .bi-pencil')) {
+            event.preventDefault();
+            event.stopPropagation();
+            var editRow = editButton.closest('tr');
+            if (editRow) openModal(editRow);
+            return;
+        }
+
+        // Single Row Delete
+        var deleteButton = event.target.closest('.va-btn-delete, .action-icon-btn.delete-btn, .docs-btn-danger:not(.docs-actions-group button):not(.va-actions-group button):not(.dior-bulk-actions-toolbar button)');
+        if (deleteButton && isTrashButton(deleteButton) && !deleteButton.closest('.va-actions-group, .docs-actions-group, .dior-bulk-actions-toolbar')) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var row = deleteButton.closest('tr');
+            if (!row) return;
+
+            var table = row.closest('table');
+            if (!table || isDashboardOverview(table)) return;
+
+            if (window.Swal) {
+                Swal.fire({
+                    title: 'Delete this record?',
+                    text: 'Are you sure you want to delete this record? This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#64748B',
+                    confirmButtonText: 'Yes, delete',
+                    cancelButtonText: 'Cancel'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        row.remove();
+                        updateBulkToolbarState(table);
+                        var remainingActive = getActiveRows(table).length;
+                        var totalPages = Math.max(1, Math.ceil(remainingActive / PAGE_SIZE));
+                        var currentPage = table._diorStaticPagination ? table._diorStaticPagination.page : 1;
+                        renderTable(table, Math.min(currentPage, totalPages));
+
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'Record has been removed.',
+                            icon: 'success',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+                    }
+                });
+            }
+            return;
+        }
+
+        // Right-side Toolbar Bulk Delete Buttons
+        var bulkDeleteBtn = event.target.closest('.dior-bulk-actions-toolbar .btn-bulk-delete, #ap-bulk-delete-btn, #va-bulk-delete-btn, #rv-bulk-delete-btn, #dior-pr-bulk-delete, #dior-upcoming-bulk-delete-btn, #dior-clinical-bulk-delete, .docs-actions-group .docs-btn-danger, .va-actions-group .va-btn-danger, [onclick*="diorBulkDelete"]');
+        if (bulkDeleteBtn) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var card = bulkDeleteBtn.closest('.view-appointment-card, .docs-card, .medidash-card, .dior-card, .dior-tab-panel, .dior-ref-card');
+            if (!card) return;
+
+            var bulkTable = card.querySelector(getTableSelector());
+            if (bulkTable && !isDashboardOverview(bulkTable)) {
+                executeBulkDelete(bulkTable);
+            }
+        }
+    });
+
+    bindSearch();
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllTables);
+    } else {
+        bindAllTables();
+    }
+
+    // Dynamically initialized tabs observer
+    if (window.MutationObserver) {
+        var observer = new MutationObserver(function () {
+            standardizeBootstrapSearchFields(document);
+            getAllTables().forEach(function (table) {
+                if (!isDashboardOverview(table) && !table._diorStaticPagination) {
+                    ensureCheckboxes(table);
+                    initTableSorting(table);
+                    renderTable(table, 1);
+                }
+            });
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    // Suppress external DataTables alerts if loaded anywhere
+    if (window.jQuery && window.jQuery.fn && window.jQuery.fn.dataTable) {
+        window.jQuery.fn.dataTable.ext.errMode = 'none';
+    }
+})();

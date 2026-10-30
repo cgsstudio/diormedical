@@ -1,0 +1,456 @@
+[
+ {
+  "id": "Dismiss"
+ },
+ {
+  "id": "Display"
+ },
+ {
+  "id": "Doctors"
+ },
+ {
+  "id": "Doctors",
+  "ctx": "block title"
+ },
+ {
+  "id": "Dribble"
+ },
+ {
+  "id": "Edit %s"
+ },
+ {
+  "id": "English"
+ },
+ {
+  "id": "Evening"
+ },
+ {
+  "id": "Excerpt"
+ },
+ {
+  "id": "Explore"
+ },
+ {
+  "id": "Eyebrow"
+ },
+ {
+  "id": "Feature"
+ },
+ {
+  "id": "Founded"
+ },
+ {
+  "id": "General"
+ },
+ {
+  "id": "Heading"
+ },
+ {
+  "id": "Honored"
+ },
+ {
+  "id": "Hotline"
+ },
+ {
+  "id": "Italian"
+ },
+ {
+  "id": "Log out"
+ },
+ {
+  "id": "Manager"
+ },
+ {
+  "id": "Masonry"
+ },
+ {
+  "id": "Morning"
+ },
+ {
+  "id": "Numbers"
+ },
+ {
+  "id": "Oblique"
+ },
+ {
+  "id": "Offline"
+ },
+ {
+  "id": "Padding"
+ },
+ {
+  "id": "Patient"
+ },
+ {
+  "id": "Payable"
+ },
+ {
+  "id": "Payment"
+ },
+ {
+  "id": "Preview"
+ },
+ {
+  "id": "Primary"
+ },
+ {
+  "id": "Printed"
+ },
+ {
+  "id": "Problem"
+ },
+ {
+  "id": "Punjabi"
+ },
+ {
+  "id": "Refd by"
+ },
+ {
+  "id": "Release"
+ },
+ {
+  "id": "Removed"
+ },
+ {
+  "id": "Reopens"
+ },
+ {
+  "id": "Reports"
+ },
+ {
+  "id": "Russian"
+ },
+ {
+  "id": "Saving…"
+ },
+ {
+  "id": "Showing"
+ },
+ {
+  "id": "Socials"
+ },
+ {
+  "id": "Spacing"
+ },
+ {
+  "id": "Spanish"
+ },
+ {
+  "id": "Step %s"
+ },
+ {
+  "id": "Surface"
+ },
+ {
+  "id": "Surgery"
+ },
+ {
+  "id": "Tagline"
+ },
+ {
+  "id": "Term ID"
+ },
+ {
+  "id": "Tuesday"
+ },
+ {
+  "id": "Turkish"
+ },
+ {
+  "id": "Twitter"
+ },
+ {
+  "id": "Urology"
+ },
+ {
+  "id": "Variant"
+ },
+ {
+  "id": "Wrapper"
+ },
+ {
+  "id": "Wrapper",
+  "ctx": "block title"
+ },
+ {
+  "id": "Youtube"
+ },
+ {
+  "id": "clinics"
+ },
+ {
+  "id": "est. %s"
+ },
+ {
+  "id": "reviews"
+ },
+ {
+  "id": "skipped"
+ },
+ {
+  "id": "updated"
+ },
+ {
+  "id": "+%d more"
+ },
+ {
+  "id": "Add card"
+ },
+ {
+  "id": "Add item"
+ },
+ {
+  "id": "Add stat"
+ },
+ {
+  "id": "Add step"
+ },
+ {
+  "id": "Add test"
+ },
+ {
+  "id": "Admitted"
+ },
+ {
+  "id": "Approved"
+ },
+ {
+  "id": "Assigned"
+ },
+ {
+  "id": "Autoplay"
+ },
+ {
+  "id": "Behavior"
+ },
+ {
+  "id": "Book Now"
+ },
+ {
+  "id": "Book now"
+ },
+ {
+  "id": "Bookable"
+ },
+ {
+  "id": "Bookings"
+ },
+ {
+  "id": "Capacity"
+ },
+ {
+  "id": "Category"
+ },
+ {
+  "id": "Continue"
+ },
+ {
+  "id": "Delivery"
+ },
+ {
+  "id": "Discount"
+ },
+ {
+  "id": "Download"
+ },
+ {
+  "id": "Due only"
+ },
+ {
+  "id": "Facebook"
+ },
+ {
+  "id": "Featured"
+ },
+ {
+  "id": "Fee from"
+ },
+ {
+  "id": "Filipino"
+ },
+ {
+  "id": "Flagship"
+ },
+ {
+  "id": "Footnote"
+ },
+ {
+  "id": "Fraction"
+ },
+ {
+  "id": "Gap (px)"
+ },
+ {
+  "id": "Gateway:"
+ },
+ {
+  "id": "Gradient"
+ },
+ {
+  "id": "Gujarati"
+ },
+ {
+  "id": "Hairline"
+ },
+ {
+  "id": "Headings"
+ },
+ {
+  "id": "Hero CTA"
+ },
+ {
+  "id": "Hospital"
+ },
+ {
+  "id": "Hotline:"
+ },
+ {
+  "id": "Info Box",
+  "ctx": "block title"
+ },
+ {
+  "id": "Japanese"
+ },
+ {
+  "id": "Latitude"
+ },
+ {
+  "id": "Left Top"
+ },
+ {
+  "id": "Link URL"
+ },
+ {
+  "id": "Linkedin"
+ },
+ {
+  "id": "Loading…"
+ },
+ {
+  "id": "Managing"
+ },
+ {
+  "id": "Mandarin"
+ },
+ {
+  "id": "Multiple"
+ },
+ {
+  "id": "New stat"
+ },
+ {
+  "id": "New test"
+ },
+ {
+  "id": "No image"
+ },
+ {
+  "id": "Offset X"
+ },
+ {
+  "id": "Offset Y"
+ },
+ {
+  "id": "Oncology"
+ },
+ {
+  "id": "Open now"
+ },
+ {
+  "id": "Order by"
+ },
+ {
+  "id": "Password"
+ },
+ {
+  "id": "Patients"
+ },
+ {
+  "id": "Pavilion"
+ },
+ {
+  "id": "Payments"
+ },
+ {
+  "id": "Pharmacy"
+ },
+ {
+  "id": "Photo %d"
+ },
+ {
+  "id": "Plus (+)"
+ },
+ {
+  "id": "Position"
+ },
+ {
+  "id": "Practice"
+ },
+ {
+  "id": "Previous"
+ },
+ {
+  "id": "Question"
+ },
+ {
+  "id": "Reassign"
+ },
+ {
+  "id": "Received"
+ },
+ {
+  "id": "Released"
+ },
+ {
+  "id": "Repeat X"
+ },
+ {
+  "id": "Repeat Y"
+ },
+ {
+  "id": "Required"
+ },
+ {
+  "id": "Saturday"
+ },
+ {
+  "id": "Schedule"
+ },
+ {
+  "id": "Selected"
+ },
+ {
+  "id": "Services"
+ },
+ {
+  "id": "Services",
+  "ctx": "block title"
+ },
+ {
+  "id": "Show fee"
+ },
+ {
+  "id": "Sign out"
+ },
+ {
+  "id": "Star (★)"
+ },
+ {
+  "id": "Subtitle"
+ },
+ {
+  "id": "Subtotal"
+ },
+ {
+  "id": "Tag text"
+ },
+ {
+  "id": "Telegram"
+ },
+ {
+  "id": "Thursday"
+ },
+ {
+  "id": "Timeline"
+ }
+]

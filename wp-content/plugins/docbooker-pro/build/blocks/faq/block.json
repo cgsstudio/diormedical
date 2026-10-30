@@ -1,0 +1,424 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/faq",
+  "title": "FAQ",
+  "category": "doc-booker-blocks",
+  "icon": "editor-help",
+  "description": "An expand/collapse FAQ with 6 layouts — accordion (hairline / carded / split) and categorized (category nav / tabs / masonry cards). Single or multi-open, accessible, grounded in real DocBooker features.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "hairline"
+    },
+    "displayEyebrow": {
+      "type": "boolean",
+      "default": true
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": "Before you book"
+    },
+    "displayHeading": {
+      "type": "boolean",
+      "default": true
+    },
+    "headingText": {
+      "type": "string",
+      "default": "Common questions, answered plainly."
+    },
+    "headingTag": {
+      "type": "string",
+      "default": "h2"
+    },
+    "displaySubheading": {
+      "type": "boolean",
+      "default": false
+    },
+    "subheadingText": {
+      "type": "string",
+      "default": "Everything you need to know before your first visit."
+    },
+    "items": {
+      "type": "array",
+      "default": [
+        {
+          "id": "faq-1",
+          "question": "How do I book an appointment?",
+          "answer": "Find a doctor by clinic or department, choose an open time slot, and confirm. You'll get your appointment details by email — no account required.",
+          "category": "Appointments",
+          "icon": "calendar"
+        },
+        {
+          "id": "faq-2",
+          "question": "Do I need an account to book?",
+          "answer": "No. Booking is guest-based — just your name, email, and phone number. Your confirmation and details arrive by email.",
+          "category": "Appointments",
+          "icon": "user"
+        },
+        {
+          "id": "faq-3",
+          "question": "How do I pay the consultation fee?",
+          "answer": "When online payment is enabled, you can pay the consultation fee securely by card while you book. Otherwise, you settle it at the clinic reception.",
+          "category": "Billing",
+          "icon": "briefcase"
+        },
+        {
+          "id": "faq-4",
+          "question": "Can I choose a specific doctor or clinic?",
+          "answer": "Yes. Search by clinic location and by department or specialty, then pick the doctor and the time that suit you best.",
+          "category": "Appointments",
+          "icon": "search"
+        },
+        {
+          "id": "faq-5",
+          "question": "How do I view my report?",
+          "answer": "Open the report lookup, enter your phone number and the invoice code from your visit, then confirm with the one-time code we text you.",
+          "category": "Reports",
+          "icon": "file"
+        },
+        {
+          "id": "faq-6",
+          "question": "How do I change or cancel an appointment?",
+          "answer": "Use the link in your confirmation email, or call the clinic directly and we'll move you to the next open slot.",
+          "category": "Appointments",
+          "icon": "clock"
+        }
+      ]
+    },
+    "openMode": {
+      "type": "string",
+      "default": "single"
+    },
+    "firstOpen": {
+      "type": "boolean",
+      "default": true
+    },
+    "iconStyle": {
+      "type": "string",
+      "default": "chevron"
+    },
+    "showItemNumbers": {
+      "type": "boolean",
+      "default": true
+    },
+    "showItemIcon": {
+      "type": "boolean",
+      "default": true
+    },
+    "navTitle": {
+      "type": "string",
+      "default": "Browse by topic"
+    },
+    "displayIntro": {
+      "type": "boolean",
+      "default": true
+    },
+    "introKicker": {
+      "type": "string",
+      "default": "Patient help"
+    },
+    "introTitle": {
+      "type": "string",
+      "default": "Questions? Start here."
+    },
+    "introText": {
+      "type": "string",
+      "default": "The things patients ask us most — about booking, choosing a doctor, fees, and getting your report."
+    },
+    "displayHelp": {
+      "type": "boolean",
+      "default": true
+    },
+    "helpPhone": {
+      "type": "string",
+      "default": "(212) 555-0142"
+    },
+    "helpPhoneNote": {
+      "type": "string",
+      "default": "Front desk · Mon–Sat"
+    },
+    "helpMessageTitle": {
+      "type": "string",
+      "default": "Visit a clinic"
+    },
+    "helpMessageNote": {
+      "type": "string",
+      "default": "Find your nearest location & hours"
+    },
+    "helpButtonText": {
+      "type": "string",
+      "default": "Contact the front desk"
+    },
+    "helpButtonURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "helpButtonNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "showCtaCard": {
+      "type": "boolean",
+      "default": true
+    },
+    "ctaTag": {
+      "type": "string",
+      "default": "Still have a question?"
+    },
+    "ctaTitle": {
+      "type": "string",
+      "default": "We're happy to help."
+    },
+    "ctaText": {
+      "type": "string",
+      "default": "Call the clinic or stop by reception — a real person will point you the right way."
+    },
+    "ctaLinkText": {
+      "type": "string",
+      "default": "Contact us"
+    },
+    "ctaLinkURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "eyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "subheadingColor": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "wrapperPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "wrapperMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "cardBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "openAccentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "dividerColor": {
+      "type": "string",
+      "default": ""
+    },
+    "questionColor": {
+      "type": "string",
+      "default": ""
+    },
+    "questionOpenColor": {
+      "type": "string",
+      "default": ""
+    },
+    "questionTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "answerColor": {
+      "type": "string",
+      "default": ""
+    },
+    "answerTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "linkColor": {
+      "type": "string",
+      "default": ""
+    },
+    "numberColor": {
+      "type": "string",
+      "default": ""
+    },
+    "iconColor": {
+      "type": "string",
+      "default": ""
+    },
+    "iconOpenColor": {
+      "type": "string",
+      "default": ""
+    },
+    "catActiveColor": {
+      "type": "string",
+      "default": ""
+    },
+    "helpBtnColor": {
+      "type": "string",
+      "default": ""
+    },
+    "helpBtnBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "helpBtnHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "helpBtnHoverBackground": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

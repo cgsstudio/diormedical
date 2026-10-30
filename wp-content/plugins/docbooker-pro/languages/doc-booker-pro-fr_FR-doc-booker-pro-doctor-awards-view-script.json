@@ -1,0 +1,1 @@
+{"translation-revision-date": "2026-10-12 11:10:56+0600", "generator": "doc-booker-pro/scripts/i18n/build-jed.py", "domain": "messages", "locale_data": {"messages": {"": {"domain": "messages", "lang": "fr_FR", "plural_forms": "nplurals=2; plural=(n > 1);"}, "Content": ["Contenu"], "Default": ["Par défaut"], "List": ["Liste"], "Stat": ["Statistique"], "awards": ["distinctions"]}}}

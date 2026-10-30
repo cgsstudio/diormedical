@@ -1,0 +1,463 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/services",
+  "title": "Services",
+  "category": "doc-booker-blocks",
+  "icon": "screenoptions",
+  "description": "An author-managed services block with 4 layouts — card grid (3 styles), alternating media rows, numbered list, and a two-column 'what we treat' grid.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "grid"
+    },
+    "cardStyle": {
+      "type": "string",
+      "default": "hairline"
+    },
+    "columnsLg": {
+      "type": "number",
+      "default": 3
+    },
+    "columnsMd": {
+      "type": "number",
+      "default": 2
+    },
+    "columnsSm": {
+      "type": "number",
+      "default": 1
+    },
+    "displayHeader": {
+      "type": "boolean",
+      "default": true
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": "What we treat"
+    },
+    "headingText": {
+      "type": "string",
+      "default": "A full slate of specialty care, under one roof."
+    },
+    "headingTag": {
+      "type": "string",
+      "default": "h2"
+    },
+    "asideText": {
+      "type": "string",
+      "default": "Same-week appointments and clear pricing across every service."
+    },
+    "items": {
+      "type": "array",
+      "default": [
+        {
+          "id": "svc-1",
+          "icon": "heart",
+          "tag": "Heart & vascular",
+          "title": "Cardiology",
+          "description": "Echocardiography, stress testing, and rhythm monitoring with a same-week path from symptom to specialist.",
+          "bullets": "On-site echocardiography & stress testing\n48-hour Holter & event monitoring\nCardiac risk screening from age 40",
+          "price": "$180",
+          "priceSuffix": "/ visit",
+          "image": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          },
+          "linkText": "Learn more",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": false
+        },
+        {
+          "id": "svc-2",
+          "icon": "target",
+          "tag": "Diagnostics",
+          "title": "Advanced Imaging",
+          "description": "On-site MRI, CT, and digital X-ray with radiologist reads returned to your physician within 24 hours.",
+          "bullets": "Low-dose CT protocols for every age\nSame-week appointments, no referral needed\nSecure online image & report access",
+          "price": "$240",
+          "priceSuffix": "/ scan",
+          "image": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          },
+          "linkText": "Learn more",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": false
+        },
+        {
+          "id": "svc-3",
+          "icon": "activity",
+          "tag": "On-site lab",
+          "title": "Clinical Laboratory",
+          "description": "Blood panels, cultures, and pathology processed in-house — most routine results posted the same day.",
+          "bullets": "Walk-in draws for routine panels\nRapid strep & flu testing\nResults delivered automatically",
+          "price": "$45",
+          "priceSuffix": "/ panel",
+          "image": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          },
+          "linkText": "Learn more",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": false
+        },
+        {
+          "id": "svc-4",
+          "icon": "dumbbell",
+          "tag": "Rehabilitation",
+          "title": "Physical Therapy",
+          "description": "One-on-one movement programs for injury recovery, post-surgical care, and chronic pain management.",
+          "bullets": "",
+          "price": "$90",
+          "priceSuffix": "/ session",
+          "image": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          },
+          "linkText": "Learn more",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": false
+        },
+        {
+          "id": "svc-5",
+          "icon": "users",
+          "tag": "Family care",
+          "title": "Pediatrics",
+          "description": "Well-child visits, immunizations, and same-day sick care in a calm, kid-friendly wing of the clinic.",
+          "bullets": "",
+          "price": "$120",
+          "priceSuffix": "/ visit",
+          "image": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          },
+          "linkText": "Learn more",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": false
+        },
+        {
+          "id": "svc-6",
+          "icon": "shield",
+          "tag": "Annual checkup",
+          "title": "Preventive Care",
+          "description": "A head-to-toe annual physical, screening labs, and a personalized wellness plan in a single visit.",
+          "bullets": "",
+          "price": "$160",
+          "priceSuffix": "/ visit",
+          "image": {
+            "url": "",
+            "id": 0,
+            "alt": ""
+          },
+          "linkText": "Learn more",
+          "linkURL": "#",
+          "linkNewTab": false,
+          "flagship": true
+        }
+      ]
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true
+    },
+    "showTag": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "showBullets": {
+      "type": "boolean",
+      "default": true
+    },
+    "showPrice": {
+      "type": "boolean",
+      "default": true
+    },
+    "showLink": {
+      "type": "boolean",
+      "default": true
+    },
+    "showNumbers": {
+      "type": "boolean",
+      "default": true
+    },
+    "showImage": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayFooter": {
+      "type": "boolean",
+      "default": true
+    },
+    "footerNote": {
+      "type": "string",
+      "default": "Don't see your concern listed? Our care team will point you to the right specialist."
+    },
+    "footerButtonText": {
+      "type": "string",
+      "default": "Book a visit"
+    },
+    "footerButtonURL": {
+      "type": "string",
+      "default": "#"
+    },
+    "footerButtonNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "eyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingColor": {
+      "type": "string",
+      "default": ""
+    },
+    "headingTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "asideColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "dividerColor": {
+      "type": "string",
+      "default": ""
+    },
+    "iconColor": {
+      "type": "string",
+      "default": ""
+    },
+    "iconBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "descriptionColor": {
+      "type": "string",
+      "default": ""
+    },
+    "descriptionTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "tagColor": {
+      "type": "string",
+      "default": ""
+    },
+    "priceColor": {
+      "type": "string",
+      "default": ""
+    },
+    "numberColor": {
+      "type": "string",
+      "default": ""
+    },
+    "bulletMarkerColor": {
+      "type": "string",
+      "default": ""
+    },
+    "linkColor": {
+      "type": "string",
+      "default": ""
+    },
+    "linkHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "footerBtnColor": {
+      "type": "string",
+      "default": ""
+    },
+    "footerBtnBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "footerBtnHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "footerBtnHoverBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "wrapperBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "wrapperPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "wrapperMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

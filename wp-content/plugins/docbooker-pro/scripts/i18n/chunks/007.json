@@ -1,0 +1,456 @@
+[
+ {
+  "id": "Display contact"
+ },
+ {
+  "id": "Display eyebrow"
+ },
+ {
+  "id": "Display heading"
+ },
+ {
+  "id": "Display toggles"
+ },
+ {
+  "id": "Doctor Schedule",
+  "ctx": "block title"
+ },
+ {
+  "id": "Doctor updated."
+ },
+ {
+  "id": "Float animation"
+ },
+ {
+  "id": "Frontend filter"
+ },
+ {
+  "id": "Highlight today"
+ },
+ {
+  "id": "Icon background"
+ },
+ {
+  "id": "Icon open color"
+ },
+ {
+  "id": "Image uploaded."
+ },
+ {
+  "id": "Incorrect code."
+ },
+ {
+  "id": "Invalid clinic."
+ },
+ {
+  "id": "Lede (optional)"
+ },
+ {
+  "id": "Limit (0 = all)"
+ },
+ {
+  "id": "Link to booking"
+ },
+ {
+  "id": "Live badge text"
+ },
+ {
+  "id": "Loading more..."
+ },
+ {
+  "id": "Lowercase only."
+ },
+ {
+  "id": "Multi-Clinic ON"
+ },
+ {
+  "id": "Multi-specialty"
+ },
+ {
+  "id": "Name typography"
+ },
+ {
+  "id": "No charges yet."
+ },
+ {
+  "id": "No doctor found"
+ },
+ {
+  "id": "No doctors yet."
+ },
+ {
+  "id": "No more doctors"
+ },
+ {
+  "id": "No payments yet"
+ },
+ {
+  "id": "No users found."
+ },
+ {
+  "id": "Node background"
+ },
+ {
+  "id": "Numbering style"
+ },
+ {
+  "id": "Open in new tab"
+ },
+ {
+  "id": "Padded (01, 02)"
+ },
+ {
+  "id": "Pagination type"
+ },
+ {
+  "id": "Patient created"
+ },
+ {
+  "id": "Patient updated"
+ },
+ {
+  "id": "Payment Status:"
+ },
+ {
+  "id": "Phone / hotline"
+ },
+ {
+  "id": "Print Statement"
+ },
+ {
+  "id": "Reassign clinic"
+ },
+ {
+  "id": "Release Patient"
+ },
+ {
+  "id": "Remove selected"
+ },
+ {
+  "id": "Request failed."
+ },
+ {
+  "id": "Secondary title"
+ },
+ {
+  "id": "Secure checkout"
+ },
+ {
+  "id": "Select HTML Tag"
+ },
+ {
+  "id": "Show department"
+ },
+ {
+  "id": "Show experience"
+ },
+ {
+  "id": "Show help block"
+ },
+ {
+  "id": "Show item icons"
+ },
+ {
+  "id": "Show pagination"
+ },
+ {
+  "id": "Show reset link"
+ },
+ {
+  "id": "Show status tag"
+ },
+ {
+  "id": "Show trust line"
+ },
+ {
+  "id": "Specific doctor"
+ },
+ {
+  "id": "Subtitle Styles"
+ },
+ {
+  "id": "Today highlight"
+ },
+ {
+  "id": "Toggle & number"
+ },
+ {
+  "id": "Top-right label"
+ },
+ {
+  "id": "Transaction ID:"
+ },
+ {
+  "id": "User not found."
+ },
+ {
+  "id": "V5 — Pull-quote"
+ },
+ {
+  "id": "Week-list title"
+ },
+ {
+  "id": "opens %1$s %2$s"
+ },
+ {
+  "id": "Accent & clinics"
+ },
+ {
+  "id": "Across %d clinic",
+  "plural": "Across %d clinics"
+ },
+ {
+  "id": "Activate License"
+ },
+ {
+  "id": "Add billing item"
+ },
+ {
+  "id": "Add payment keys"
+ },
+ {
+  "id": "Admitting Doctor"
+ },
+ {
+  "id": "Advanced Heading",
+  "ctx": "block title"
+ },
+ {
+  "id": "Animate count-up"
+ },
+ {
+  "id": "Apex Orthopedics"
+ },
+ {
+  "id": "Assign to clinic"
+ },
+ {
+  "id": "Background Color"
+ },
+ {
+  "id": "Background Image"
+ },
+ {
+  "id": "Bill — Visit #%d"
+ },
+ {
+  "id": "Book button text"
+ },
+ {
+  "id": "Booking progress"
+ },
+ {
+  "id": "Cards — Icon row"
+ },
+ {
+  "id": "Clinic Dashboard"
+ },
+ {
+  "id": "Closes in 2h 14m"
+ },
+ {
+  "id": "Columns — mobile"
+ },
+ {
+  "id": "Columns — tablet"
+ },
+ {
+  "id": "Content vertical"
+ },
+ {
+  "id": "Custom day label"
+ },
+ {
+  "id": "DocBooker Blocks"
+ },
+ {
+  "id": "Doctor Fee Badge",
+  "ctx": "block title"
+ },
+ {
+  "id": "Doctor specialty"
+ },
+ {
+  "id": "Doctors per page"
+ },
+ {
+  "id": "Dr. Example Name"
+ },
+ {
+  "id": "Email (optional)"
+ },
+ {
+  "id": "Empty-state text"
+ },
+ {
+  "id": "Exit full screen"
+ },
+ {
+  "id": "Experience label"
+ },
+ {
+  "id": "Eyebrow / kicker"
+ },
+ {
+  "id": "Fee “From” label"
+ },
+ {
+  "id": "Find Your Report"
+ },
+ {
+  "id": "Gastroenterology"
+ },
+ {
+  "id": "General Medicine"
+ },
+ {
+  "id": "Hours typography"
+ },
+ {
+  "id": "Hover Background"
+ },
+ {
+  "id": "Icon & connector"
+ },
+ {
+  "id": "Input background"
+ },
+ {
+  "id": "Keyboard control"
+ },
+ {
+  "id": "Lab Test Catalog"
+ },
+ {
+  "id": "Link hover color"
+ },
+ {
+  "id": "Load more button"
+ },
+ {
+  "id": "Loading booking…"
+ },
+ {
+  "id": "Meridian Imaging"
+ },
+ {
+  "id": "No availability."
+ },
+ {
+  "id": "No payments yet."
+ },
+ {
+  "id": "Notes (optional)"
+ },
+ {
+  "id": "Order not found."
+ },
+ {
+  "id": "Outpatient (OPD)"
+ },
+ {
+  "id": "Patient capacity"
+ },
+ {
+  "id": "Patient released"
+ },
+ {
+  "id": "Quote typography"
+ },
+ {
+  "id": "Secondary button"
+ },
+ {
+  "id": "Secured checkout"
+ },
+ {
+  "id": "Session expired."
+ },
+ {
+  "id": "Show band labels"
+ },
+ {
+  "id": "Show credentials"
+ },
+ {
+  "id": "Show description"
+ },
+ {
+  "id": "Show detail chip"
+ },
+ {
+  "id": "Show doctor chip"
+ },
+ {
+  "id": "Show fee callout"
+ },
+ {
+  "id": "Show footer link"
+ },
+ {
+  "id": "Show slot counts"
+ },
+ {
+  "id": "Show trust strip"
+ },
+ {
+  "id": "Sidebar (narrow)"
+ },
+ {
+  "id": "Specialist count"
+ },
+ {
+  "id": "Specialty Center"
+ },
+ {
+  "id": "Specific doctors"
+ },
+ {
+  "id": "Starburst colors"
+ },
+ {
+  "id": "Step %1$s · %2$s"
+ },
+ {
+  "id": "Step 03 · Doctor"
+ },
+ {
+  "id": "Sub-status color"
+ },
+ {
+  "id": "Sub-status style"
+ },
+ {
+  "id": "Subheading color"
+ },
+ {
+  "id": "Today background"
+ },
+ {
+  "id": "Today text color"
+ },
+ {
+  "id": "Untitled service"
+ },
+ {
+  "id": "Update DocBooker"
+ },
+ {
+  "id": "V2 — Split 50/50"
+ },
+ {
+  "id": "Verified patient"
+ },
+ {
+  "id": "View specialists"
+ },
+ {
+  "id": "Wrapper Settings"
+ },
+ {
+  "id": "Years experience"
+ },
+ {
+  "id": "Accent ring color"
+ }
+]

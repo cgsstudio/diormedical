@@ -1,0 +1,457 @@
+[
+ {
+  "id": "Reset clinic and department filters"
+ },
+ {
+  "id": "Search by name, email, or username."
+ },
+ {
+  "id": "Stillwater Mental Health · Wellness"
+ },
+ {
+  "id": "Banner — Cream card (hairline tiles)"
+ },
+ {
+  "id": "Could not load the secure card form."
+ },
+ {
+  "id": "Featured doctors (leave empty = all)"
+ },
+ {
+  "id": "Import session expired or not found."
+ },
+ {
+  "id": "Morning / Afternoon / Evening bands."
+ },
+ {
+  "id": "Type a name / phone / code to search"
+ },
+ {
+  "id": "Username is empty or already in use."
+ },
+ {
+  "id": "Lowercase, no spaces. Must be unique."
+ },
+ {
+  "id": "Online card payment isn’t set up yet."
+ },
+ {
+  "id": "Rendered in the accent color, italic."
+ },
+ {
+  "id": "Add a test or service to your catalog."
+ },
+ {
+  "id": "Boxed — Paper cards (colon separators)"
+ },
+ {
+  "id": "Northvale Heart Institute · Cardiology"
+ },
+ {
+  "id": "Separate paragraphs with a blank line."
+ },
+ {
+  "id": "Code expired. Please request a new one."
+ },
+ {
+  "id": "No reports uploaded yet for this order."
+ },
+ {
+  "id": "Overrides every stat’s per-item accent."
+ },
+ {
+  "id": "Password must be at least 6 characters."
+ },
+ {
+  "id": "The reports folder could not be created."
+ },
+ {
+  "id": "e.g. your doctors archive or staff page."
+ },
+ {
+  "id": "Card — Split (status + week + directions)"
+ },
+ {
+  "id": "Doctor created, but image upload failed: "
+ },
+ {
+  "id": "Full screen — hides theme header & footer"
+ },
+ {
+  "id": "No active code. Please request a new one."
+ },
+ {
+  "id": "Auto-generated. Click ↻ to roll a new one."
+ },
+ {
+  "id": "Bed days (override qty if bed item exists)"
+ },
+ {
+  "id": "Leave empty to auto-pick from the palette."
+ },
+ {
+  "id": "No openings on this day. Try another date."
+ },
+ {
+  "id": "Start typing to search and add test items…"
+ },
+ {
+  "id": "Used for password reset and notifications."
+ },
+ {
+  "id": "Choose the clinic they work at from now on."
+ },
+ {
+  "id": "PDF only, 10MB each, multiple files allowed"
+ },
+ {
+  "id": "Please wait before requesting another code."
+ },
+ {
+  "id": "Turn on to block bookings for a date range."
+ },
+ {
+  "id": "Your account is not linked to a clinic yet."
+ },
+ {
+  "id": "\"All clinics\" makes it available everywhere."
+ },
+ {
+  "id": "Northvale General Hospital · Multi-specialty"
+ },
+ {
+  "id": "Used on the compact-list / footer-strip CTA."
+ },
+ {
+  "id": "Little Sprouts Pediatrics · Children's health"
+ },
+ {
+  "id": "No doctors in this department at this clinic."
+ },
+ {
+  "id": "Small label above the title (e.g. \"Step 01\")."
+ },
+ {
+  "id": "Too many attempts. Please request a new code."
+ },
+ {
+  "id": "Imported: %1$d new, %2$d updated, %3$d skipped"
+ },
+ {
+  "id": "Move the selected staff to a different clinic."
+ },
+ {
+  "id": "Multi-Clinic management is currently disabled."
+ },
+ {
+  "id": "Overrides the day name, e.g. \"Sat — half day\"."
+ },
+ {
+  "id": "Receptionist management is currently disabled."
+ },
+ {
+  "id": "\"%1$s\" requires \"%2$s\" version %3$s or greater."
+ },
+ {
+  "id": "Add a test or service the front desk can order."
+ },
+ {
+  "id": "Allow ?clinic= / ?dept= / ?doctor= URL override"
+ },
+ {
+  "id": "Your selections stay private until you confirm."
+ },
+ {
+  "id": "The Doctor Booking & Hospital Management System."
+ },
+ {
+  "id": "Please enter a password of at least 6 characters."
+ },
+ {
+  "id": "Optional. For example Lab, Radiology or Pathology."
+ },
+ {
+  "id": "Quick Book: choose a doctor in the block settings."
+ },
+ {
+  "id": "This doctor's weekly schedule isn't available yet."
+ },
+ {
+  "id": "User will only see this clinic's data after login."
+ },
+ {
+  "id": "DocBooker: online payment is on but not configured."
+ },
+ {
+  "id": "Used by the categorized layouts to group questions."
+ },
+ {
+  "id": "Add many tests at once, or update the ones you have."
+ },
+ {
+  "id": "Adds a request-only option alongside online payment."
+ },
+ {
+  "id": "CSV header must include at least \"name\" and \"price\"."
+ },
+ {
+  "id": "You'll complete payment in a secure Razorpay window."
+ },
+ {
+  "id": "clinic(s) — the map is interactive on the front end."
+ },
+ {
+  "id": "Create a login, or give an existing user a staff role."
+ },
+ {
+  "id": "Doctor Schedule: choose a doctor in the block settings."
+ },
+ {
+  "id": "Please pay the booking fee to confirm this appointment."
+ },
+ {
+  "id": "This payment has already been used for another booking."
+ },
+ {
+  "id": "A location preference that narrows the day & time slots."
+ },
+ {
+  "id": "DocBooker Pro - Doctor Appointment & Hospital Management"
+ },
+ {
+  "id": "No awards yet — add awards to a doctor to see them here."
+ },
+ {
+  "id": "Username, email, and a password (6+ chars) are required."
+ },
+ {
+  "id": "No clinics published yet — add a clinic to see them here."
+ },
+ {
+  "id": "No doctors published yet — add a doctor to see them here."
+ },
+ {
+  "id": "No staff yet. Click Add staff to invite the first member."
+ },
+ {
+  "id": "Pick \"Global\" to make this item available to all clinics."
+ },
+ {
+  "id": "Uploads are managed by clinic admin in multi-clinic mode."
+ },
+ {
+  "id": "A test item with this name already exists for this clinic."
+ },
+ {
+  "id": "Doctor Stats: add at least one stat in the block settings."
+ },
+ {
+  "id": "Bookings at this clinic are blocked for the selected range."
+ },
+ {
+  "id": "Care that listens first — calm, supportive, judgement-free."
+ },
+ {
+  "id": "Testimonials: add at least one quote in the block settings."
+ },
+ {
+  "id": "The heart keeps its own time — I listen before I intervene."
+ },
+ {
+  "id": "They'll get the Clinic Manager role only — no admin access."
+ },
+ {
+  "id": "Pins the bar to the bottom of the viewport on the front end."
+ },
+ {
+  "id": "Too many attempts from this network. Please try again later."
+ },
+ {
+  "id": "Too many requests from this network. Please try again later."
+ },
+ {
+  "id": "department(s) — the live directory renders on the front end."
+ },
+ {
+  "id": "That code is not valid. Please check it or request a new one."
+ },
+ {
+  "id": "Move without limits — recovery journey, specialists & booking."
+ },
+ {
+  "id": "Removes the Clinic Manager role only — the user account stays."
+ },
+ {
+  "id": "Your own text — shown verbatim, not derived from availability."
+ },
+ {
+  "id": "Tests and services the front desk can order, with their prices."
+ },
+ {
+  "id": "Add the tests your clinic offers, one by one or from a CSV file."
+ },
+ {
+  "id": "Enter your mobile number and the invoice code from your receipt."
+ },
+ {
+  "id": "Add a clinic manager or receptionist to give them their own login."
+ },
+ {
+  "id": "Healthy skin, healthy you — treatments, results gallery & booking."
+ },
+ {
+  "id": "If the details match an order, a code is on its way to that phone."
+ },
+ {
+  "id": "Leave on “Select” to use the current doctor on a single-doctor page."
+ },
+ {
+  "id": "This user is an administrator — clinic scope will not restrict them."
+ },
+ {
+  "id": "%1$s is enabled but not working: it needs %2$s version %3$s or later."
+ },
+ {
+  "id": "A report with identical contents was already uploaded for this order."
+ },
+ {
+  "id": "Expert heart care when it matters most — success stories & screening."
+ },
+ {
+  "id": "See the world more clearly — technology, LASIK & screening countdown."
+ },
+ {
+  "id": "This template is coming soon — its markup has not been generated yet."
+ },
+ {
+  "id": "Uses the site timezone. Leave empty to count down to 7 days from now."
+ },
+ {
+  "id": "doctor(s) — filtering & “load more” are interactive on the front end."
+ },
+ {
+  "id": "Brighter smiles every day — treatments, smile gallery & inline booking."
+ },
+ {
+  "id": "It is removed from the catalog. Orders that already include it keep it."
+ },
+ {
+  "id": "Leave blank to auto-show the active payment gateway when checkout is on."
+ },
+ {
+  "id": "Caring for your child's tomorrow — what-to-expect, schedule & quick book."
+ },
+ {
+  "id": "We could not confirm this payment. Please try again or contact the clinic."
+ },
+ {
+  "id": "Preview — live doctor profile, fee and booking flow render on the front end."
+ },
+ {
+  "id": "Read-only — these are the departments your clinic's doctors are assigned to."
+ },
+ {
+  "id": "The tagline shown on the department page uses the \"Description\" field above."
+ },
+ {
+  "id": "Set a doctor to skip the clinic/department/doctor steps (single-doctor mode)."
+ },
+ {
+  "id": "Updates here are visible on this clinic's public page and the booking widget."
+ },
+ {
+  "id": "CSV columns: name, price, category (optional), clinic_id (optional, admin only)"
+ },
+ {
+  "id": "Header row is required. Existing items matched on (clinic_id, name) are updated."
+ },
+ {
+  "id": "%1$s requires the %2$s plugin to be active. Please activate DocBooker to continue."
+ },
+ {
+  "id": "Logins for clinic managers and the front desk, and which clinic each one works at."
+ },
+ {
+  "id": "You do not have permission to view the Clinic Dashboard. Please ask an administrator."
+ },
+ {
+  "id": "Single doctor: the doctor dropdown is hidden and visitors go straight to picking a time."
+ },
+ {
+  "id": "%1$s is enabled but not working until your license is active. Activate it on the %2$s page."
+ },
+ {
+  "id": "Preview — the doctor's real weekly schedule and live booking links render on the front end."
+ },
+ {
+  "id": "You do not have permission to view the Receptionist Dashboard. Please ask an administrator."
+ },
+ {
+  "id": "Live pulls a real doctor, clinic and next-available slot, and makes the fields real dropdowns."
+ },
+ {
+  "id": "Your account isn’t linked to a clinic. Please ask the site administrator to assign you to one."
+ },
+ {
+  "id": "%1$s requires the %2$s plugin to be installed and active. Please install DocBooker to continue."
+ },
+ {
+  "id": "An editorial info box with 9 skins across 3 families — icon-stack, side-by-side, and image-led.",
+  "ctx": "block description"
+ },
+ {
+  "id": "Block theme detected. The template renders full-bleed automatically; no template change needed."
+ },
+ {
+  "id": "Preview — the live multi-step booking (real doctors, schedule and payment) runs on the front end."
+ },
+ {
+  "id": "Interim statement — the patient is still admitted; charges may continue to accrue until discharge."
+ },
+ {
+  "id": "Pick a medical icon, or paste your own SVG below. Leave blank to auto-pick from the department name."
+ },
+ {
+  "id": "Theme detected: OceanWP. Full-width + no title are pre-applied. The \"100% Full Width\" template also works."
+ },
+ {
+  "id": "This user is also a Booking Manager — they will keep global booking access alongside the clinic dashboard."
+ },
+ {
+  "id": "An editorial section heading with 8 layout variants — eyebrow, title with accent, lede, and optional button.",
+  "ctx": "block description"
+ },
+ {
+  "id": "Care for every stage of a woman's life — services, stages of care, specialists & booking. Warm plum editorial."
+ },
+ {
+  "id": "Clarity when it matters most — modalities, technology, specialists, booking & report lookup. Ocean + sage clinical."
+ },
+ {
+  "id": "A flexible section wrapper — full-bleed background, padding, and a centered content-width cap. Nest any blocks inside.",
+  "ctx": "block description"
+ },
+ {
+  "id": "They lose their staff role and can no longer open the clinic or front-desk dashboard. Their WordPress account is kept."
+ },
+ {
+  "id": "Columns: name, price, category (optional). The first row must be the column names. A test with the same name is updated."
+ },
+ {
+  "id": "Assign WordPress users to manage individual clinics. Each user is tied to one clinic; multiple users may share the same clinic."
+ },
+ {
+  "id": "Comprehensive care, world-class facilities — departments, doctors, clinics, full booking wizard & report lookup. Deep-ocean editorial."
+ },
+ {
+  "id": "An editorial call-to-action with 6 layouts — centered photo hero, split, compact strip, gradient closer, pull-quote, and a 3-path card.",
+  "ctx": "block description"
+ },
+ {
+  "id": "A live-ticking countdown to a date with 6 skins (banner: gradient / cream / sticky · boxed: paper / tiles / rings) and an expired state.",
+  "ctx": "block description"
+ },
+ {
+  "id": "Theme detected: Neve. Full-width + no title are pre-applied via page meta. If a container remains, set the page Container to \"Full Width\"."
+ }
+]

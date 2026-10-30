@@ -1,0 +1,93 @@
+[
+ {
+  "id": "Theme detected: Kadence. Full-width (unboxed) + no title are pre-applied. If needed, set Page Attributes → Template → \"Fullwidth Stretched\"."
+ },
+ {
+  "id": "Theme detected: Hello Elementor. The page renders flush by default — keep editing in Gutenberg (not Elementor) so the DocBooker blocks render."
+ },
+ {
+  "id": "Theme detected: GeneratePress. Full-width + no title are pre-applied. For an edge-to-edge hero, the \"GeneratePress Full Width\" template also works."
+ },
+ {
+  "id": "Imported as a full-width draft page. If your theme shows a page title or a narrow container, switch this page to your theme's \"Full Width\" template."
+ },
+ {
+  "id": "An author-managed services block with 4 layouts — card grid (3 styles), alternating media rows, numbered list, and a two-column 'what we treat' grid.",
+  "ctx": "block description"
+ },
+ {
+  "id": "Columns: name, price, category (optional), clinic_id (optional). The first row must be the column names. A test with the same name and clinic is updated."
+ },
+ {
+  "id": "A small fee badge in 3 variants (pill / starburst / flat) × 3 sizes, showing a doctor's real booking fee — drop it into a card, sidebar, sentence or list.",
+  "ctx": "block description"
+ },
+ {
+  "id": "Practice statistics in 2 layouts — an accent-tinted card grid or a compact strip (cream / dark / inline). Author-entered numbers with an animated count-up.",
+  "ctx": "block description"
+ },
+ {
+  "id": "Your %1$s %2$s API keys are missing, so the booking form's payment step can't load — it currently falls back to \"Request appointment\" with no payment taken."
+ },
+ {
+  "id": "Theme detected: Astra. Full-width + no title are pre-applied. If a container still wraps the page, set Page Attributes → Template → \"Full Width / Stretched\"."
+ },
+ {
+  "id": "Adding the Clinic Manager role to an existing administrator won't restrict their access — admins always see everything. The orange badge above marks those rows."
+ },
+ {
+  "id": "Showcase doctors' awards & honors in 2 layouts — a bronze trophy-wall (practice-wide masonry) or a per-doctor credential list. Reads each doctor's real awards meta.",
+  "ctx": "block description"
+ },
+ {
+  "id": "Theme detected: Blocksy. The title is hidden and sections render full-bleed. If a max-width container remains, set the page Content Area to \"Narrow/Normal → Full Width\"."
+ },
+ {
+  "id": "A department directory in 3 layouts (grid / pill-cloud / icon-cards), reading the doctor-department taxonomy with each term's icon + accent color and live specialist counts.",
+  "ctx": "block description"
+ },
+ {
+  "id": "A Swiper-powered editorial carousel with 3 layouts — full-bleed hero, peek-next cards, and a fixed-left split — fully configurable transitions, navigation, autoplay and pagination.",
+  "ctx": "block description"
+ },
+ {
+  "id": "A clinic/location directory in 5 layouts (card / feature / gallery / map / compact), reading real clinic profiles — type, hours, services, contact, specialists, and a list↔pin map.",
+  "ctx": "block description"
+ },
+ {
+  "id": "Author-driven weekly opening hours with a live Open-now / Closed status and 6 layouts — table (ruled week / compact list / day-chip strip) and card (split / status band / stacked).",
+  "ctx": "block description"
+ },
+ {
+  "id": "A flexible page hero with 5 layouts — image-forward (floating stat/rating/credential cards + trust strip), mirror, centered overlay, split-action (booking entry card), and minimal editorial.",
+  "ctx": "block description"
+ },
+ {
+  "id": "Patient testimonials in 3 layouts — quote-cards grid, featured spotlight (hero + thumbnail rail), or a masonry wall. Author-entered quotes with rating, verified badge and an optional doctor link.",
+  "ctx": "block description"
+ },
+ {
+  "id": "A data-driven doctors directory with 5 layouts (card / hover-reveal / feature / mini / list), reading real doctor profiles — with an optional Clinic + Department AJAX filter and load-more pagination.",
+  "ctx": "block description"
+ },
+ {
+  "id": "A how-it-works / patient-journey stepper with 9 layouts — vertical (left-rail / zig-zag / stacked), timeline (node-line / icon-disc / segmented progress), and cards (big-numeral / filled / icon-row).",
+  "ctx": "block description"
+ },
+ {
+  "id": "An expand/collapse FAQ with 6 layouts — accordion (hairline / carded / split) and categorized (category nav / tabs / masonry cards). Single or multi-open, accessible, grounded in real DocBooker features.",
+  "ctx": "block description"
+ },
+ {
+  "id": "A full appointment-booking wizard in 2 layouts (split-screen wizard / compact inline). Uses the REAL DocBooker booking flow + the active payment gateway (Stripe or Razorpay) unchanged — no duplicated booking logic.",
+  "ctx": "block description"
+ },
+ {
+  "id": "A compact single-doctor \"Book Now\" widget in 3 variants (sidebar / sticky / hero). Reads a real doctor's profile + fee and routes to the live booking flow (Stripe / Razorpay / fallback). Supports a ?doctor= URL override.",
+  "ctx": "block description"
+ },
+ {
+  "id": "A single doctor's weekly timetable in 5 layouts (week-grid / day-pills / spotlight / timeline / compact-list). Reads the real wpddb_doctor_schedule meta; every offered slot deep-links into the live booking flow (Stripe / Razorpay / fallback). Supports a ?doctor= URL override.",
+  "ctx": "block description"
+ }
+]

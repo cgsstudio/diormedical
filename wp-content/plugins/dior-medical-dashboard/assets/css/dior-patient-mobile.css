@@ -1,0 +1,46 @@
+/* Dior Medical Patient Dashboard mobile styles; desktop untouched. */
+@media(max-width:767.98px){
+#dior-patient-portal-app,#dior-patient-portal-app *{box-sizing:border-box}
+#dior-patient-portal-app{width:100%;max-width:100%;overflow-x:clip;background:#f4f9ff;color:#0c183b}
+#dior-patient-portal-app .dior-top-emergency-banner{position:relative;z-index:2;padding:9px 12px;font-size:11px;line-height:1.45;text-align:center;overflow-wrap:anywhere}
+#dior-patient-portal-app .dior-app{display:block;width:100%;max-width:100%;min-width:0;margin:0;border-radius:0;overflow:visible}
+#dior-patient-portal-app .dior-side{position:fixed;z-index:10050;inset:0 auto 0 0;width:min(82vw,310px);max-width:calc(100vw - 48px);height:100dvh;min-height:0;overflow-y:auto;transform:translateX(-105%);visibility:hidden;transition:transform .25s ease,visibility .25s ease;box-shadow:12px 0 36px rgba(4,17,48,.2)}
+#dior-patient-portal-app.dior-mobile-drawer-open .dior-side,#dior-patient-portal-app .dior-side.dior-mobile-open,#dior-patient-portal-app .dior-side.mobile-open{transform:translateX(0);visibility:visible}
+#dior-patient-portal-app .dior-drawer-backdrop{position:fixed;z-index:10040;inset:0;background:rgba(5,15,43,.5);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}
+#dior-patient-portal-app.dior-mobile-drawer-open .dior-drawer-backdrop,#dior-patient-portal-app .dior-drawer-backdrop.active{opacity:1;visibility:visible}
+#dior-patient-portal-app .dior-main-content{display:block;width:100%;max-width:100%;min-width:0;margin:0;padding:0 14px 28px;overflow:visible}
+#dior-patient-portal-app .dior-topbar{position:sticky;top:0;z-index:100;display:flex;min-height:62px;align-items:center;justify-content:space-between;gap:10px;margin:0 -14px 18px;padding:10px 14px;background:#0b1231;border-bottom:1px solid rgba(255,255,255,.1);box-shadow:0 4px 14px rgba(5,17,49,.12)}
+#dior-patient-portal-app .dior-topbar-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
+#dior-patient-portal-app .dior-mobile-menu-toggle{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 38px;width:38px;height:38px;padding:0;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:10px}
+#dior-patient-portal-app .dior-top-search{width:100%;max-width:100%;min-width:0;margin:0}
+#dior-patient-portal-app .dior-top-search input{width:100%;min-width:0;height:38px;padding:8px 10px 8px 31px;font-size:12px;border-radius:9px}
+#dior-patient-portal-app .dior-topbar-right{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+#dior-patient-portal-app .dior-msg-btn,#dior-patient-portal-app .dior-notif-btn{display:inline-flex;width:34px;height:34px;min-width:34px;align-items:center;justify-content:center;padding:0;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px}
+#dior-patient-portal-app .dior-user-pill-wrap{flex:0 0 auto}
+#dior-patient-portal-app .dior-user-pill-btn{padding:0;background:transparent;border:0}
+#dior-patient-portal-app .dior-pill-avatar,#dior-patient-portal-app .dior-pill-avatar img{width:34px;height:34px;min-width:34px;border-radius:50%;object-fit:cover}
+#dior-patient-portal-app .dior-pill-user-meta{display:none!important}
+#dior-patient-portal-app .dior-overview,#dior-patient-portal-app .dior-dashboard-content,#dior-patient-portal-app .dior-tab-content,#dior-patient-portal-app .dior-content-area,#dior-patient-portal-app #tab-overview{width:100%;max-width:100%;min-width:0}
+#dior-patient-portal-app h1,#dior-patient-portal-app .dior-page-title{font-size:clamp(23px,6vw,29px);line-height:1.2;letter-spacing:-.45px;overflow-wrap:anywhere}
+#dior-patient-portal-app h2{font-size:19px;line-height:1.3}
+#dior-patient-portal-app h3{font-size:16px;line-height:1.35}
+#dior-patient-portal-app p{overflow-wrap:anywhere}
+#dior-patient-portal-app #tab-overview .row,#dior-patient-portal-app .dior-overview .row,#dior-patient-portal-app .dior-dashboard-content .row{--bs-gutter-x:12px;--bs-gutter-y:12px}
+#dior-patient-portal-app #tab-overview [class*="col-"],#dior-patient-portal-app .dior-overview [class*="col-"],#dior-patient-portal-app .dior-dashboard-content [class*="col-"]{min-width:0}
+#dior-patient-portal-app .dior-card,#dior-patient-portal-app .card,#dior-patient-portal-app .dior-stat-card,#dior-patient-portal-app .dior-dashboard-card{max-width:100%;border-radius:15px}
+#dior-patient-portal-app .dior-card,#dior-patient-portal-app .card{margin-bottom:12px}
+#dior-patient-portal-app .card-body,#dior-patient-portal-app .dior-card-body{min-width:0;padding:14px}
+#dior-patient-portal-app button,#dior-patient-portal-app .btn,#dior-patient-portal-app a.dior-btn{max-width:100%;min-height:38px;white-space:normal;overflow-wrap:anywhere}
+#dior-patient-portal-app .dior-modal-overlay{padding:12px;align-items:center}
+#dior-patient-portal-app .dior-modal-dialog{width:100%;max-width:100%;max-height:calc(100dvh - 24px);overflow-y:auto;border-radius:16px}
+#dior-patient-portal-app table{width:100%;font-size:12px}
+#dior-patient-portal-app .table-responsive,#dior-patient-portal-app .dior-table-responsive{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+#dior-patient-portal-app input,#dior-patient-portal-app select,#dior-patient-portal-app textarea{max-width:100%;font-size:16px}
+}
+@media(max-width:420px){
+#dior-patient-portal-app .dior-main-content{padding-right:11px;padding-left:11px}
+#dior-patient-portal-app .dior-topbar{margin-right:-11px;margin-left:-11px;padding-right:11px;padding-left:11px;gap:7px}
+#dior-patient-portal-app .dior-topbar-right{gap:4px}
+#dior-patient-portal-app .dior-msg-btn,#dior-patient-portal-app .dior-notif-btn{width:31px;min-width:31px;height:34px}
+}
+@media(min-width:768px){#dior-patient-portal-app .dior-mobile-menu-toggle{display:none}}

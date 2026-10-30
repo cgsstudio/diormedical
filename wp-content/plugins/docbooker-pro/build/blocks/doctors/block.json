@@ -1,0 +1,438 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/doctors",
+  "title": "Doctors",
+  "category": "doc-booker-blocks",
+  "icon": "groups",
+  "description": "A data-driven doctors directory with 5 layouts (card / hover-reveal / feature / mini / list), reading real doctor profiles — with an optional Clinic + Department AJAX filter and load-more pagination.",
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "align": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "list"
+    },
+    "doctorIds": {
+      "type": "array",
+      "default": []
+    },
+    "departmentIds": {
+      "type": "array",
+      "default": []
+    },
+    "departmentRelation": {
+      "type": "string",
+      "default": "OR"
+    },
+    "orderBy": {
+      "type": "string",
+      "default": "date"
+    },
+    "order": {
+      "type": "string",
+      "default": "DESC"
+    },
+    "perPage": {
+      "type": "number",
+      "default": 9
+    },
+    "showLoadMore": {
+      "type": "boolean",
+      "default": true
+    },
+    "loadMoreText": {
+      "type": "string",
+      "default": "Load more"
+    },
+    "loadingText": {
+      "type": "string",
+      "default": "Loading…"
+    },
+    "loadPerClick": {
+      "type": "number",
+      "default": 6
+    },
+    "enableFilter": {
+      "type": "boolean",
+      "default": false
+    },
+    "showClinicFilter": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDepartmentFilter": {
+      "type": "boolean",
+      "default": true
+    },
+    "filterPosition": {
+      "type": "string",
+      "default": "above"
+    },
+    "clinicPlaceholder": {
+      "type": "string",
+      "default": "Clinic"
+    },
+    "departmentPlaceholder": {
+      "type": "string",
+      "default": "Department"
+    },
+    "allClinicsLabel": {
+      "type": "string",
+      "default": "All clinics"
+    },
+    "allDepartmentsLabel": {
+      "type": "string",
+      "default": "All departments"
+    },
+    "showResetLink": {
+      "type": "boolean",
+      "default": true
+    },
+    "resetLabel": {
+      "type": "string",
+      "default": "Reset"
+    },
+    "persistFilterInUrl": {
+      "type": "boolean",
+      "default": true
+    },
+    "showImage": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDept": {
+      "type": "boolean",
+      "default": true
+    },
+    "showName": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDesignation": {
+      "type": "boolean",
+      "default": true
+    },
+    "showBio": {
+      "type": "boolean",
+      "default": true
+    },
+    "showRating": {
+      "type": "boolean",
+      "default": true
+    },
+    "showReviewCount": {
+      "type": "boolean",
+      "default": true
+    },
+    "showFee": {
+      "type": "boolean",
+      "default": true
+    },
+    "showSocials": {
+      "type": "boolean",
+      "default": true
+    },
+    "showProfileLink": {
+      "type": "boolean",
+      "default": true
+    },
+    "showBookButton": {
+      "type": "boolean",
+      "default": true
+    },
+    "bioSource": {
+      "type": "string",
+      "default": "excerpt"
+    },
+    "bioWordLimit": {
+      "type": "number",
+      "default": 24
+    },
+    "bookButtonText": {
+      "type": "string",
+      "default": "Book now"
+    },
+    "profileLinkText": {
+      "type": "string",
+      "default": "View profile"
+    },
+    "hoursFormat": {
+      "type": "string",
+      "default": "12h"
+    },
+    "columnsLg": {
+      "type": "number",
+      "default": 3
+    },
+    "columnsMd": {
+      "type": "number",
+      "default": 2
+    },
+    "columnsSm": {
+      "type": "number",
+      "default": 1
+    },
+    "gap": {
+      "type": "object",
+      "default": {
+        "lg": 24,
+        "md": 20,
+        "sm": 16,
+        "unit": "px"
+      }
+    },
+    "imageAspect": {
+      "type": "string",
+      "default": "auto"
+    },
+    "imageFit": {
+      "type": "string",
+      "default": "cover"
+    },
+    "imageBorderRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBg": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "cardPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {},
+        "sm": {}
+      }
+    },
+    "nameColor": {
+      "type": "string",
+      "default": ""
+    },
+    "nameTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "designationColor": {
+      "type": "string",
+      "default": ""
+    },
+    "designationTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "bioColor": {
+      "type": "string",
+      "default": ""
+    },
+    "bioTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "deptColor": {
+      "type": "string",
+      "default": ""
+    },
+    "deptBg": {
+      "type": "string",
+      "default": ""
+    },
+    "feeColor": {
+      "type": "string",
+      "default": ""
+    },
+    "socialColor": {
+      "type": "string",
+      "default": ""
+    },
+    "socialHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "btnHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnHoverBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "btnRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "loadMoreColor": {
+      "type": "string",
+      "default": ""
+    },
+    "loadMoreBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "filterBg": {
+      "type": "string",
+      "default": ""
+    },
+    "filterRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "filterLabelColor": {
+      "type": "string",
+      "default": ""
+    },
+    "filterSelectColor": {
+      "type": "string",
+      "default": ""
+    },
+    "filterSelectBg": {
+      "type": "string",
+      "default": ""
+    },
+    "filterSpinnerColor": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

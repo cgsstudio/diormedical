@@ -1,0 +1,171 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/quick-book",
+  "title": "Quick Book",
+  "category": "doc-booker-blocks",
+  "icon": "calendar-alt",
+  "description": "A compact single-doctor \"Book Now\" widget in 3 variants (sidebar / sticky / hero). Reads a real doctor's profile + fee and routes to the live booking flow (Stripe / Razorpay / fallback). Supports a ?doctor= URL override.",
+  "supports": {
+    "html": false
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "sidebar"
+    },
+    "alignment": {
+      "type": "string",
+      "default": "left"
+    },
+    "source": {
+      "type": "string",
+      "default": "specific"
+    },
+    "doctorId": {
+      "type": "number",
+      "default": 0
+    },
+    "urlParamOverride": {
+      "type": "boolean",
+      "default": true
+    },
+    "urlParam": {
+      "type": "string",
+      "default": "doctor"
+    },
+    "eyebrowText": {
+      "type": "string",
+      "default": "Quick Book"
+    },
+    "titleText": {
+      "type": "string",
+      "default": "Book your next visit."
+    },
+    "ledeText": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonText": {
+      "type": "string",
+      "default": "Book Now"
+    },
+    "showAvatar": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDept": {
+      "type": "boolean",
+      "default": true
+    },
+    "showRating": {
+      "type": "boolean",
+      "default": true
+    },
+    "showFee": {
+      "type": "boolean",
+      "default": true
+    },
+    "feeLabel": {
+      "type": "string",
+      "default": "From"
+    },
+    "showFeeInButton": {
+      "type": "boolean",
+      "default": false
+    },
+    "showTag": {
+      "type": "boolean",
+      "default": false
+    },
+    "tagText": {
+      "type": "string",
+      "default": "Accepting new patients"
+    },
+    "showTrust": {
+      "type": "boolean",
+      "default": true
+    },
+    "trustText": {
+      "type": "string",
+      "default": ""
+    },
+    "showPickLink": {
+      "type": "boolean",
+      "default": false
+    },
+    "pickLinkText": {
+      "type": "string",
+      "default": "Pick a different doctor"
+    },
+    "pickLinkUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "dockToBottom": {
+      "type": "boolean",
+      "default": false
+    },
+    "cardBg": {
+      "type": "string",
+      "default": ""
+    },
+    "cardBorderColor": {
+      "type": "string",
+      "default": ""
+    },
+    "cardRadius": {
+      "type": "object",
+      "default": {
+        "value": ""
+      }
+    },
+    "cardBoxShadow": {
+      "type": "object",
+      "default": {
+        "preset": "none"
+      }
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "nameColor": {
+      "type": "string",
+      "default": ""
+    },
+    "eyebrowColor": {
+      "type": "string",
+      "default": ""
+    },
+    "feeColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "btnHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "btnHoverBackground": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

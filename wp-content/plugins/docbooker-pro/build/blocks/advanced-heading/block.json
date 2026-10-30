@@ -1,0 +1,403 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/advanced-heading",
+  "title": "Advanced Heading",
+  "category": "doc-booker-blocks",
+  "icon": "editor-textcolor",
+  "description": "An editorial section heading with 8 layout variants — eyebrow, title with accent, lede, and optional button.",
+  "supports": {
+    "html": false
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "layoutType": {
+      "type": "string",
+      "default": "v1"
+    },
+    "titleText": {
+      "type": "string",
+      "default": ""
+    },
+    "subtitleText": {
+      "type": "string",
+      "default": ""
+    },
+    "accentText": {
+      "type": "string",
+      "default": ""
+    },
+    "contentText": {
+      "type": "string",
+      "default": ""
+    },
+    "metaText": {
+      "type": "string",
+      "default": ""
+    },
+    "numberText": {
+      "type": "string",
+      "default": ""
+    },
+    "attributionText": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonText": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonNewTab": {
+      "type": "boolean",
+      "default": false
+    },
+    "displayTitle": {
+      "type": "boolean",
+      "default": true
+    },
+    "displaySubTitle": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayAccent": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayContent": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayMeta": {
+      "type": "boolean",
+      "default": true
+    },
+    "displayButton": {
+      "type": "boolean",
+      "default": false
+    },
+    "titleTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "titleMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "titlePadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "subtitleTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "subtitleMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "subtitlePadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "contentTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "contentMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "contentPadding": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "md": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        },
+        "sm": {
+          "value": "0 0 0 0",
+          "unit": "px",
+          "isLinked": true
+        }
+      }
+    },
+    "buttonTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    },
+    "buttonMargin": {
+      "type": "object",
+      "default": {
+        "lg": {
+          "value": "24 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "md": {
+          "value": "24 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        },
+        "sm": {
+          "value": "24 0 0 0",
+          "unit": "px",
+          "isLinked": false
+        }
+      }
+    },
+    "buttonPadding": {
+      "type": "object",
+      "default": {}
+    },
+    "buttonBorderRadius": {
+      "type": "object",
+      "default": {}
+    },
+    "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "subtitleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "contentColor": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonColor": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonHoverColor": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonBackground": {
+      "type": "string",
+      "default": ""
+    },
+    "buttonHoverBackground": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

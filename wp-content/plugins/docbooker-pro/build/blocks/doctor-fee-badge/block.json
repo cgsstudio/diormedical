@@ -1,0 +1,124 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "doc-booker-pro/doctor-fee-badge",
+  "title": "Doctor Fee Badge",
+  "category": "doc-booker-blocks",
+  "icon": "money-alt",
+  "description": "A small fee badge in 3 variants (pill / starburst / flat) × 3 sizes, showing a doctor's real booking fee — drop it into a card, sidebar, sentence or list.",
+  "supports": {
+    "html": false
+  },
+  "textdomain": "doc-booker-pro",
+  "attributes": {
+    "blockId": {
+      "type": "string",
+      "default": ""
+    },
+    "badgeStyle": {
+      "type": "string",
+      "default": "pill"
+    },
+    "size": {
+      "type": "string",
+      "default": "md"
+    },
+    "alignment": {
+      "type": "string",
+      "default": "left"
+    },
+    "source": {
+      "type": "string",
+      "default": "specific"
+    },
+    "doctorId": {
+      "type": "number",
+      "default": 0
+    },
+    "manualAmount": {
+      "type": "number",
+      "default": 0
+    },
+    "showFrom": {
+      "type": "boolean",
+      "default": true
+    },
+    "fromLabel": {
+      "type": "string",
+      "default": "From"
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true
+    },
+    "linkToBooking": {
+      "type": "boolean",
+      "default": false
+    },
+    "onRequestText": {
+      "type": "string",
+      "default": "Fee on request"
+    },
+    "pillBg": {
+      "type": "string",
+      "default": ""
+    },
+    "pillColor": {
+      "type": "string",
+      "default": ""
+    },
+    "burstColor1": {
+      "type": "string",
+      "default": ""
+    },
+    "burstColor2": {
+      "type": "string",
+      "default": ""
+    },
+    "flatLabelColor": {
+      "type": "string",
+      "default": ""
+    },
+    "flatAmountColor": {
+      "type": "string",
+      "default": ""
+    },
+    "amountTypography": {
+      "type": "object",
+      "default": {
+        "family": "",
+        "size": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "weight": "",
+        "style": "",
+        "transform": "",
+        "spacing": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        },
+        "height": {
+          "lg": {
+            "unit": "px",
+            "value": ""
+          },
+          "md": {},
+          "sm": {}
+        }
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}
