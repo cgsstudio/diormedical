@@ -1,0 +1,145 @@
+/* DIOR Doctor Dashboard — mobile-only overview design.
+   Desktop styles and layout are intentionally untouched. */
+@media (max-width: 767.98px) {
+  #dior-doctor-app #tab-doc-overview {
+    padding: 16px 14px 28px !important;
+    background: #f5f8fc !important;
+    font-family: Montserrat, sans-serif !important;
+    color: #0b2b50;
+  }
+  #dior-doctor-app #tab-doc-overview,
+  #dior-doctor-app #tab-doc-overview * { box-sizing: border-box; }
+  #dior-doctor-app #tab-doc-overview .content-head {
+    display:flex !important; flex-direction:column !important; align-items:stretch !important;
+    gap:14px !important; margin:0 0 18px !important;
+  }
+  #dior-doctor-app #tab-doc-overview .content-head h1 {
+    margin:0 0 6px !important; color:#082f5b !important;
+    font-size:20px !important; line-height:1.35 !important; font-weight:800 !important;
+    overflow-wrap:anywhere;
+  }
+  #dior-doctor-app #tab-doc-overview .content-head p {
+    font-size:12px !important; line-height:1.55 !important; color:#64748b !important;
+  }
+  #dior-doctor-app #tab-doc-overview .content-head > button {
+    width:100% !important; min-height:44px !important; justify-content:center !important;
+    border-radius:10px !important; background:#2865a5 !important; border-color:#2865a5 !important;
+    font-size:13px !important; font-weight:700 !important;
+  }
+  #dior-doctor-app #tab-doc-overview > .row {
+    --bs-gutter-x: 12px; --bs-gutter-y: 12px;
+  }
+  #dior-doctor-app #tab-doc-overview .row > [class*="col-"] { min-width:0; }
+  #dior-doctor-app #tab-doc-overview .card {
+    border:1px solid #dce6f2 !important; border-radius:14px !important;
+    background:#fff !important; box-shadow:0 3px 12px rgba(15,45,80,.045) !important;
+  }
+  #dior-doctor-app #tab-doc-overview .stat-card {
+    min-height:112px !important; padding:13px !important; gap:8px !important;
+  }
+  #dior-doctor-app #tab-doc-overview .stat-card .stat-num {
+    font-size:27px !important; line-height:1.1 !important; font-weight:800 !important;
+    color:#2865a5 !important;
+  }
+  #dior-doctor-app #tab-doc-overview .stat-card .stat-label {
+    font-size:11px !important; line-height:1.35 !important; font-weight:700 !important;
+    color:#334155 !important;
+  }
+  #dior-doctor-app #tab-doc-overview .stat-card [style*="width: 38px"] {
+    width:34px !important; height:34px !important; padding:8px !important;
+    border-radius:9px !important; flex:0 0 34px;
+  }
+  #dior-doctor-app #tab-doc-overview .stat-card [style*="width: 38px"] i { font-size:14px !important; }
+  #dior-doctor-app #tab-doc-overview .schedule-card,
+  #dior-doctor-app #tab-doc-overview .table-card,
+  #dior-doctor-app #tab-doc-overview .profile,
+  #dior-doctor-app #tab-doc-overview .reviews,
+  #dior-doctor-app #tab-doc-overview .sessions {
+    padding:15px !important; margin-bottom:12px !important;
+  }
+  #dior-doctor-app #tab-doc-overview .schedule-title,
+  #dior-doctor-app #tab-doc-overview .section-title {
+    color:#0b3768 !important; font-size:15px !important; line-height:1.4 !important;
+    font-weight:800 !important; margin:0 !important;
+  }
+  #dior-doctor-app #tab-doc-overview .schedule-card > .d-flex,
+  #dior-doctor-app #tab-doc-overview .table-card > .d-flex {
+    align-items:flex-start !important; flex-wrap:wrap !important; gap:9px !important;
+  }
+  #dior-doctor-app #tab-doc-overview .schedule-card .badge,
+  #dior-doctor-app #tab-doc-overview .table-card .badge {
+    font-size:10px !important; line-height:1.3 !important;
+  }
+  #dior-doctor-app #tab-doc-overview .schedule-body,
+  #dior-doctor-app #tab-doc-overview .reviews-scroll,
+  #dior-doctor-app #tab-doc-overview .sessions-scroll {
+    max-height:none !important; overflow:visible !important; padding-right:0 !important;
+  }
+  #dior-doctor-app #tab-doc-overview .schedule-slot {
+    display:grid !important; grid-template-columns:64px 12px minmax(0,1fr) !important;
+    gap:8px !important; padding:10px 0 !important; align-items:stretch !important;
+  }
+  #dior-doctor-app #tab-doc-overview .schedule-time {
+    font-size:11px !important; color:#64748b !important; font-weight:700 !important;
+  }
+  #dior-doctor-app #tab-doc-overview .schedule-appt {
+    min-width:0; padding:10px !important; border:1px solid #e3ebf5 !important;
+    border-radius:10px !important; background:#fbfdff !important; gap:8px !important;
+    flex-wrap:wrap !important;
+  }
+  #dior-doctor-app #tab-doc-overview .s-patient-img { width:34px !important; height:34px !important; }
+  #dior-doctor-app #tab-doc-overview .s-patient-name { font-size:12px !important; font-weight:700 !important; }
+  #dior-doctor-app #tab-doc-overview .s-patient-id { font-size:10px !important; }
+  #dior-doctor-app #tab-doc-overview .s-appt-status { font-size:10px !important; }
+  #dior-doctor-app #tab-doc-overview .table-card .table-responsive {
+    overflow:visible !important; max-height:none !important;
+  }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-mobile-list {
+    display:flex; flex-direction:column; gap:10px; width:100%;
+  }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-card {
+    padding:12px !important; border:1px solid #dce6f2 !important; border-radius:12px !important;
+    background:#fff !important; box-shadow:0 2px 8px rgba(15,45,80,.035);
+  }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-card-head {
+    display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
+    padding-bottom:9px; margin-bottom:9px; border-bottom:1px solid #e8eef6;
+    color:#0b3768; font-size:13px; font-weight:800;
+  }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-fields {
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 12px;
+  }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-field { min-width:0; }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-label {
+    display:block; margin-bottom:3px; color:#718096; font-size:9px;
+    line-height:1.35; font-weight:800; letter-spacing:.045em; text-transform:uppercase;
+  }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-value {
+    display:block; color:#183b61; font-size:11px; line-height:1.45;
+    font-weight:600; overflow-wrap:anywhere;
+  }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-actions {
+    display:flex; flex-wrap:wrap; gap:7px; padding-top:10px; margin-top:10px;
+    border-top:1px solid #e8eef6;
+  }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-actions .btn {
+    min-height:34px !important; padding:6px 10px !important; border-radius:8px !important;
+    font-size:10px !important; font-weight:700 !important;
+  }
+  #dior-doctor-app #tab-doc-overview .dior-overview-mobile-ready .table-responsive { display:none !important; }
+  #dior-doctor-app #tab-doc-overview .view-all { font-size:11px !important; }
+  #dior-doctor-app #tab-doc-overview .reviews-scroll > div,
+  #dior-doctor-app #tab-doc-overview .sessions-scroll > div { padding:10px 0 !important; }
+  #dior-doctor-app #tab-doc-overview .reviews-scroll img,
+  #dior-doctor-app #tab-doc-overview .sessions-scroll img { width:34px !important; height:34px !important; }
+  #dior-doctor-app #tab-doc-overview .sessions-scroll .btn { min-height:36px; font-size:10px !important; }
+}
+@media (max-width: 380px) {
+  #dior-doctor-app #tab-doc-overview { padding-left:10px !important; padding-right:10px !important; }
+  #dior-doctor-app #tab-doc-overview .stat-card { padding:10px !important; }
+  #dior-doctor-app #tab-doc-overview .stat-card .stat-num { font-size:24px !important; }
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-fields { gap:8px; }
+}
+@media (min-width: 768px) {
+  #dior-doctor-app #tab-doc-overview .dior-doctor-overview-mobile-list { display:none !important; }
+}
