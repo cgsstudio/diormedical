@@ -26,19 +26,22 @@ function diorBuildPagerHtml(currentPage, totalPages, goFunctionName) {
     if (totalPages <= 7) {
         for (var i = 1; i <= totalPages; i++) {
             html += '<button type="button" class="dior-page-btn' + (i === currentPage ? ' active' : '') +
-                '" onclick="' + goFunctionName + '(' + i + ')">' + i + '</button>';
+                '"' + (i === currentPage ? ' aria-current="page"' : '') +
+                ' onclick="' + goFunctionName + '(' + i + ')">' + i + '</button>';
         }
     } else {
         for (var j = 1; j <= totalPages; j++) {
             if (j === 1 || j === totalPages || (j >= currentPage - 1 && j <= currentPage + 1)) {
                 html += '<button type="button" class="dior-page-btn' + (j === currentPage ? ' active' : '') +
-                    '" onclick="' + goFunctionName + '(' + j + ')">' + j + '</button>';
+                    '"' + (j === currentPage ? ' aria-current="page"' : '') +
+                    ' onclick="' + goFunctionName + '(' + j + ')">' + j + '</button>';
             } else if (j === currentPage - 2 || j === currentPage + 2) {
                 html += '<span class="dior-pager-gap">...</span>';
             }
         }
     }
 
+    html += '<span class="dior-pager-mobile-status" aria-live="polite">Page ' + currentPage + ' of ' + totalPages + '</span>';
     html += '<button type="button" class="dior-page-btn" ' + (currentPage >= totalPages ? 'disabled' : '') +
         ' onclick="' + goFunctionName + '(' + (currentPage + 1) + ')" title="Next Page" aria-label="Next Page">' +
         diorPagerChevron('right') + '</button>';
