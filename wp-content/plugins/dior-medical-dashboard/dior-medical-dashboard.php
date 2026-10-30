@@ -1326,6 +1326,17 @@ class Dior_Medical_Auth
             );
         }
 
+        // Separate mobile-only Doctor Dashboard overview design; desktop remains untouched.
+        $doctor_overview_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-doctor-overview-mobile.css';
+        if (file_exists($doctor_overview_mobile_css)) {
+            wp_enqueue_style(
+                'dior-doctor-overview-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-doctor-overview-mobile.css',
+                ['dior-doctor-css', 'dior-patient-overview-mobile-css'],
+                filemtime($doctor_overview_mobile_css)
+            );
+        }
+
         // Shared mobile pagination styling for Patient dashboard pages.
         $patient_pagination_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-pagination-mobile.css';
         if (file_exists($patient_pagination_mobile_css)) {
@@ -1514,6 +1525,18 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-dashboard-page.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-dashboard-page.js') : DIOR_PORTAL_VERSION,
             true
         );
+        // Mobile-only Doctor Dashboard overview cards, sourced from existing dynamic rows.
+        $doctor_overview_mobile_js = DIOR_PORTAL_PATH . 'assets/js/dior-doctor-overview-mobile.js';
+        if (file_exists($doctor_overview_mobile_js)) {
+            wp_enqueue_script(
+                'dior-doctor-overview-mobile-js',
+                DIOR_PORTAL_URL . 'assets/js/dior-doctor-overview-mobile.js',
+                ['dior-doctor-dashboard-page-js'],
+                filemtime($doctor_overview_mobile_js),
+                true
+            );
+        }
+
         // Note: dior-static-table-interactions CSS is now merged into dior-patient.css and dior-doctor.css
         wp_enqueue_script(
             'dior-static-table-interactions',
