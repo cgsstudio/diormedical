@@ -108,6 +108,14 @@
       root.classList.add('dior-mobile-cards-ready');
     }
 
+    // Expose a deterministic refresh hook for the existing table pagination.
+    // MutationObserver remains as a fallback for other row updates.
+    window.diorRefreshPatientAppointmentMobile = function (tableId) {
+      configs.forEach(function (config) {
+        if (!tableId || config.id === tableId) render(config);
+      });
+    };
+
     configs.forEach(function (config) {
       var table = document.getElementById(config.id);
       if (!table || !table.tBodies.length) return;
