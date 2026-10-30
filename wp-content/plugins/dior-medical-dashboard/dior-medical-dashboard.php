@@ -1326,6 +1326,17 @@ class Dior_Medical_Auth
             );
         }
 
+        // Shared mobile pagination styling for Patient dashboard pages.
+        $patient_pagination_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-pagination-mobile.css';
+        if (file_exists($patient_pagination_mobile_css)) {
+            wp_enqueue_style(
+                'dior-patient-pagination-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-patient-pagination-mobile.css',
+                ['dior-patient-appointments-mobile-css', 'dior-patient-prescriptions-mobile-css', 'dior-patient-telemedicine-mobile-css'],
+                filemtime($patient_pagination_mobile_css)
+            );
+        }
+
         // Alias handles to dior-custom-css to prevent any extra duplicate CSS downloads
         wp_register_style('dior-auth-css', false, ['dior-custom-css']);
         wp_register_style('dior-bootstrap-unify-css', false, ['dior-custom-css']);
