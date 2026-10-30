@@ -136,6 +136,16 @@
         panel.addEventListener('click', function () { window.setTimeout(update, 60); });
       }
     });
+
+    // Ensure the native five-row pager runs after mobile card initialization.
+    // This prevents an early card render from showing all source rows (for example 10)
+    // before the table pager applies its current page.
+    if (typeof window.diorRenderPastPagination === 'function') {
+      window.diorRenderPastPagination();
+    }
+    if (typeof window.diorRenderUpcomingPagination === 'function') {
+      window.diorRenderUpcomingPagination();
+    }
   }
 
   if (document.readyState === 'loading') {
