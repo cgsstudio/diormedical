@@ -293,9 +293,12 @@ $first_pid = !empty($all_patients) ? (int)$all_patients[0]['user_id'] : 0;
     <!-- Scripts for Virtual Visit dynamic controller -->
     <script>
     window.diorActiveTelePatientId = 0;
+    window.diorTelePatientController = null;
 
     window.diorLoadTelemedicinePatient = function(patientId) {
         if (!patientId) {
+            if (window.diorTelePatientController) window.diorTelePatientController.abort();
+            window.diorTelePatientController = null;
             var panel = document.getElementById('dior-tele-patient-panel');
             if (panel) panel.style.display = 'none';
             window.diorActiveTelePatientId = 0;
@@ -323,10 +326,25 @@ $first_pid = !empty($all_patients) ? (int)$all_patients[0]['user_id'] : 0;
         fd.append('nonce', nonce);
         fd.append('patient_id', patientId);
 
+        if (window.diorTelePatientController) window.diorTelePatientController.abort();
+        var requestController = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        window.diorTelePatientController = requestController;
+        var requestedPatientId = parseInt(patientId, 10);
+        var requestTimedOut = false;
+        var requestTimeoutId = requestController ? window.setTimeout(function() {
+            requestTimedOut = true;
+            requestController.abort();
+        }, 15000) : null;
+        var rxLoading = document.getElementById('tele-prescriptions-tbody');
+        var docsLoading = document.getElementById('tele-documents-tbody');
+        if (rxLoading) rxLoading.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Loading prescriptions…</td></tr>';
+        if (docsLoading) docsLoading.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Loading documents…</td></tr>';
+
         fetch(ajaxUrl, {
             method: 'POST',
             credentials: 'same-origin',
-            body: fd
+            body: fd,
+            signal: requestController ? requestController.signal : undefined
         })
         .then(function(r) { return r.json(); })
         .then(function(res) {
@@ -402,7 +420,21 @@ $first_pid = !empty($all_patients) ? (int)$all_patients[0]['user_id'] : 0;
             }
         })
         .catch(function(err) {
+            if (err && err.name === 'AbortError' && window.diorActiveTelePatientId !== requestedPatientId) return;
             console.error('Error fetching patient chart:', err);
+            var rxBody = document.getElementById('tele-prescriptions-tbody');
+            var docBody = document.getElementById('tele-documents-tbody');
+            var message = requestTimedOut
+                ? 'Loading patient records timed out. Please try again.'
+                : 'Could not load patient records. Please retry or contact support.';
+            if (rxBody) rxBody.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-danger">' + message + '</td></tr>';
+            if (docBody) docBody.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-danger">' + message + '</td></tr>';
+        })
+        .finally(function() {
+            if (requestTimeoutId) window.clearTimeout(requestTimeoutId);
+            if (window.diorTelePatientController === requestController) {
+                window.diorTelePatientController = null;
+            }
         });
     };
 

@@ -722,7 +722,7 @@
                       (window.dior_ajax_object ? window.dior_ajax_object.ajax_url : '') ||
                       (window.ajaxurl ? window.ajaxurl : '') ||
                       (typeof dior_patient_dashboard !== 'undefined' ? dior_patient_dashboard.ajax_url : null) ||
-                      (window.location.origin + '/diormedical/wp-admin/admin-ajax.php');
+                      '';
 
         fetch(ajaxUrl, {
             method: 'POST',

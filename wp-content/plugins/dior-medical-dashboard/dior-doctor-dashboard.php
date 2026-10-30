@@ -40,6 +40,7 @@ class Dior_Doctor_Dashboard
         add_action("wp_ajax_dior_doctor_remove_signature", [__CLASS__, "ajax_remove_signature"]);
         add_action("wp_ajax_dior_doctor_change_password", [__CLASS__, "ajax_change_password"]);
         add_action("wp_ajax_dior_doctor_get_patient_detail", [__CLASS__, "ajax_get_patient_detail"]);
+        add_action("wp_ajax_dior_doctor_chart_data", [__CLASS__, "ajax_get_telemedicine_chart_data"]);
         add_action("wp_ajax_dior_doctor_send_multi_prescription", [__CLASS__, "ajax_send_multi_prescription"]);
         add_action("wp_ajax_dior_doctor_add_patient", ["Dior_Doctor_Dynamic", "ajax_patient_add"]);
         add_action("wp_ajax_dior_doc_patient_add", ["Dior_Doctor_Dynamic", "ajax_patient_add"]);
@@ -341,13 +342,17 @@ class Dior_Doctor_Dashboard
         global $wpdb;
 
         $doctor_user_id = (int) $doctor_user_id;
+        static $patients_cache = [];
+        if (array_key_exists($doctor_user_id, $patients_cache)) {
+            return $patients_cache[$doctor_user_id];
+        }
         $is_admin = $doctor_user_id ? self::is_user_admin($doctor_user_id) : current_user_can('manage_options');
 
         // Doctors only need patients related to their own appointments.
         // Admins can see the full patient population, capped for dashboard performance.
         $patient_ids = [];
         if (!$is_admin && $doctor_user_id) {
-            $appointments = Dior_Appointment_Service::get_doctor_appointments($doctor_user_id);
+            $appointments = self::get_all_appointments($doctor_user_id);
             foreach ($appointments as $appointment) {
                 $pid = (int) ($appointment['patient_id'] ?? ($appointment['patient_user_id'] ?? 0));
                 if ($pid > 0) {
@@ -368,14 +373,14 @@ class Dior_Doctor_Dashboard
             $args['include'] = array_keys($patient_ids);
             $args['number'] = count($patient_ids);
         } elseif (!$is_admin && $doctor_user_id) {
-            return [];
+            return $patients_cache[$doctor_user_id] = [];
         }
 
         $users = get_users($args);
         $patients = [];
 
         // Fetch this doctor's appointment set once. Avoid N+1 appointment queries per patient.
-        $doctor_appointments = $doctor_user_id ? Dior_Appointment_Service::get_doctor_appointments($doctor_user_id) : [];
+        $doctor_appointments = $doctor_user_id ? self::get_all_appointments($doctor_user_id) : [];
         $next_by_patient = [];
         foreach ($doctor_appointments as $appointment) {
             $pid = (int) ($appointment['patient_id'] ?? ($appointment['patient_user_id'] ?? 0));
@@ -420,7 +425,7 @@ class Dior_Doctor_Dashboard
             ];
         }
 
-        return $patients;
+        return $patients_cache[$doctor_user_id] = $patients;
     }
 
     private static function get_all_appointments($doctor_user_id = 0)
@@ -581,23 +586,41 @@ class Dior_Doctor_Dashboard
 
     private static function get_all_documents($patients = [])
     {
-        $all_docs = [];
-        if (!empty($patients) && is_array($patients)) {
-            foreach ($patients as $p) {
-                $pid = $p["user_id"] ?? 0;
-                if (!$pid)
-                    continue;
-                $p_docs = Dior_Medical_Secure_Files::get_patient_documents($pid);
+        static $cache = [];
+        if (empty($patients) || !is_array($patients)) {
+            return [];
+        }
 
-                foreach ($p_docs as $d) {
-                    $d["patient_id_num"] = $p["patient_id"] ?? ("DM-" . (10000 + $pid));
-                    $d["patient_name"] = $p["full_name"] ?? "Patient";
-                    $d["patient_user_id"] = $pid;
-                    $all_docs[] = $d;
-                }
+        $patient_by_id = [];
+        foreach ($patients as $patient) {
+            $patient_id = (int) ($patient['user_id'] ?? 0);
+            if ($patient_id) {
+                $patient_by_id[$patient_id] = $patient;
             }
         }
-        return $all_docs;
+        if (!$patient_by_id) {
+            return [];
+        }
+
+        $cache_key = md5(implode(',', array_keys($patient_by_id)));
+        if (array_key_exists($cache_key, $cache)) {
+            return $cache[$cache_key];
+        }
+
+        $records = Dior_Medical_Secure_Files::get_documents_for_patients(array_keys($patient_by_id));
+        $all_docs = [];
+        foreach ($records as $document) {
+            $patient_id = (int) ($document['patient_id'] ?? 0);
+            if (empty($patient_by_id[$patient_id])) {
+                continue;
+            }
+            $patient = $patient_by_id[$patient_id];
+            $document['patient_id_num'] = $patient['patient_id'] ?? ('DM-' . (10000 + $patient_id));
+            $document['patient_name'] = $patient['full_name'] ?? 'Patient';
+            $document['patient_user_id'] = $patient_id;
+            $all_docs[] = $document;
+        }
+        return $cache[$cache_key] = $all_docs;
     }
 
     /**
@@ -627,6 +650,15 @@ class Dior_Doctor_Dashboard
         $prescriptions = [];
         $encounters = [];
         $documents = [];
+        $encounters_by_patient = [];
+        if (class_exists('Dior_Encounter_Service') && $patient_ids) {
+            foreach (Dior_Encounter_Service::get_encounters_for_patients($patient_ids) as $encounter) {
+                $encounter_patient_id = (int) ($encounter['patient_id'] ?? 0);
+                if ($encounter_patient_id) {
+                    $encounters_by_patient[$encounter_patient_id][] = $encounter;
+                }
+            }
+        }
         foreach ($patient_ids as $patient_id) {
             $rxs = get_user_meta($patient_id, 'dior_prescriptions', true);
             if (is_array($rxs)) {
@@ -636,26 +668,15 @@ class Dior_Doctor_Dashboard
                     $prescriptions[] = $rx;
                 }
             }
-            if (class_exists('Dior_Encounter_Service')) {
-                $notes = Dior_Encounter_Service::get_patient_encounters($patient_id);
-                if (is_array($notes)) {
-                    foreach ($notes as $note) {
-                        $note['patient_user_id'] = $patient_id;
-                        $note['patient_name'] = self::resolve_patient_name($patient_id);
-                        $encounters[] = $note;
-                    }
-                }
+            foreach ($encounters_by_patient[$patient_id] ?? [] as $note) {
+                $note['patient_user_id'] = $patient_id;
+                $note['patient_name'] = self::resolve_patient_name($patient_id);
+                $encounters[] = $note;
             }
-            if (class_exists('Dior_Medical_Secure_Files')) {
-                $docs = Dior_Medical_Secure_Files::get_patient_documents($patient_id);
-                if (is_array($docs)) {
-                    foreach ($docs as $doc) {
-                        $doc['patient_user_id'] = $patient_id;
-                        $doc['patient_name'] = self::resolve_patient_name($patient_id);
-                        $documents[] = $doc;
-                    }
-                }
-            }
+        }
+
+        if (class_exists('Dior_Medical_Secure_Files')) {
+            $documents = self::get_all_documents($patients);
         }
 
         return $cache[$doctor_user_id] = [
@@ -1961,9 +1982,8 @@ class Dior_Doctor_Dashboard
 
     public static function ajax_mark_notif_read()
     {
-        if (!is_user_logged_in()) {
-            wp_send_json_error(["message" => "Unauthorized"], 403);
-        }
+        Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
+        if (!self::can_access()) wp_send_json_error(["message" => "Unauthorized"], 403);
         $uid = get_current_user_id();
         $nid = sanitize_text_field($_POST["notif_id"] ?? $_POST["notification_id"] ?? "");
 
@@ -2001,9 +2021,8 @@ class Dior_Doctor_Dashboard
 
     public static function ajax_mark_all_notif_read()
     {
-        if (!is_user_logged_in()) {
-            wp_send_json_error(["message" => "Unauthorized"], 403);
-        }
+        Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
+        if (!self::can_access()) wp_send_json_error(["message" => "Unauthorized"], 403);
         $uid = get_current_user_id();
 
         global $wpdb;
@@ -2029,9 +2048,8 @@ class Dior_Doctor_Dashboard
 
     public static function ajax_delete_notification()
     {
-        if (!is_user_logged_in()) {
-            wp_send_json_error(["message" => "Unauthorized"], 403);
-        }
+        Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
+        if (!self::can_access()) wp_send_json_error(["message" => "Unauthorized"], 403);
         $uid = get_current_user_id();
         $nids = isset($_POST['notif_ids']) && is_array($_POST['notif_ids']) ? array_map('sanitize_text_field', $_POST['notif_ids']) : [];
         $nid = sanitize_text_field($_POST["notif_id"] ?? $_POST["notification_id"] ?? "");
@@ -2075,9 +2093,8 @@ class Dior_Doctor_Dashboard
 
     public static function ajax_clear_read_notifications()
     {
-        if (!is_user_logged_in()) {
-            wp_send_json_error(["message" => "Unauthorized"], 403);
-        }
+        Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
+        if (!self::can_access()) wp_send_json_error(["message" => "Unauthorized"], 403);
         $uid = get_current_user_id();
 
         global $wpdb;
@@ -2106,6 +2123,7 @@ class Dior_Doctor_Dashboard
 
     public static function ajax_get_live_notifications()
     {
+        Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
         if (!self::can_access()) {
             wp_send_json_error(["message" => "Unauthorized"], 403);
         }
@@ -2424,6 +2442,63 @@ class Dior_Doctor_Dashboard
         ob_start();
         include DIOR_PORTAL_PATH . "templates/patient-detail-modal.php";
         wp_send_json_success(["html" => ob_get_clean()]);
+    }
+
+    /** Return the data required by the Telemedicine patient chart. */
+    public static function ajax_get_telemedicine_chart_data()
+    {
+        Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
+        if (!self::can_access()) {
+            wp_send_json_error(["message" => "Unauthorized"], 403);
+        }
+
+        $patient_id = Dior_Auth_Service::validate_id($_POST["patient_id"] ?? 0);
+        $patient = get_userdata($patient_id);
+        if (!$patient) {
+            wp_send_json_error(["message" => "Patient not found."], 404);
+        }
+
+        $doctor_id = get_current_user_id();
+        if (!self::is_user_admin($doctor_id)) {
+            $assigned = false;
+            foreach (self::get_all_appointments($doctor_id) as $appointment) {
+                if ((int) ($appointment['patient_id'] ?? ($appointment['patient_user_id'] ?? 0)) === $patient_id) {
+                    $assigned = true;
+                    break;
+                }
+            }
+            if (!$assigned) {
+                wp_send_json_error(["message" => "You do not have access to this patient record."], 403);
+            }
+        }
+
+        $profile = Dior_Patient_Portal_Data::get_patient_profile($patient_id);
+        $intake = Dior_Patient_Portal_Data::get_normalized_hipaa_intake($patient_id);
+        $prescriptions = get_user_meta($patient_id, 'dior_prescriptions', true);
+        $documents = Dior_Medical_Secure_Files::get_patient_documents($patient_id);
+        $history = $profile['medical_history'] ?? ($intake['medical_history'] ?? '');
+        $allergies = $profile['allergies'] ?? ($intake['allergies'] ?? '');
+        $medications = $profile['medications'] ?? ($intake['medications'] ?? '');
+
+        wp_send_json_success([
+            'patient' => [
+                'user_id' => $patient_id,
+                'patient_uid' => $profile['patient_id'] ?? ('DM-' . (10000 + $patient_id)),
+                'first_name' => $profile['first_name'] ?? $patient->first_name,
+                'last_name' => $profile['last_name'] ?? $patient->last_name,
+                'display_name' => $patient->display_name,
+                'avatar_url' => $profile['avatar_url'] ?? '',
+                'dob' => $profile['dob'] ?? '',
+                'gender' => $profile['gender'] ?? '',
+                'phone' => $profile['phone'] ?? '',
+                'conditions' => $intake['service_condition'] ?? '',
+                'medical_history' => $history,
+                'allergies' => $allergies,
+                'medications' => $medications,
+                'prescriptions' => is_array($prescriptions) ? $prescriptions : [],
+                'documents' => is_array($documents) ? $documents : [],
+            ],
+        ]);
     }
 
     public static function ajax_add_note()

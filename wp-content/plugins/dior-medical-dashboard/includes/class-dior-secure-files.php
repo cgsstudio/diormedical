@@ -94,6 +94,43 @@ class Dior_Medical_Secure_Files
     }
 
     /**
+     * Get documents for several patients with one indexed query.
+     * The dashboard uses this to avoid one database round-trip per patient.
+     */
+    public static function get_documents_for_patients($patient_ids)
+    {
+        global $wpdb;
+
+        $patient_ids = array_values(array_unique(array_filter(array_map('intval', (array) $patient_ids))));
+        if (!$patient_ids) {
+            return [];
+        }
+
+        $table = $wpdb->prefix . 'dior_documents';
+        $placeholders = implode(',', array_fill(0, count($patient_ids), '%d'));
+        $query = $wpdb->prepare(
+            "SELECT * FROM $table WHERE patient_id IN ($placeholders) AND is_deleted = 0 ORDER BY created_at DESC",
+            ...$patient_ids
+        );
+        $results = $wpdb->get_results($query, ARRAY_A);
+        if (!$results) {
+            return [];
+        }
+
+        foreach ($results as &$row) {
+            $row['id'] = $row['doc_uid'];
+            $row['date'] = date('M j, Y', strtotime($row['created_at']));
+            $row['size'] = !empty($row['file_size_formatted']) ? $row['file_size_formatted'] : 'Size unavailable';
+            $row['letter_meta'] = !empty($row['letter_meta']) ? json_decode($row['letter_meta'], true) : [];
+            $author = get_userdata((int) $row['author_id']);
+            $row['author'] = $author ? $author->display_name : 'Staff';
+        }
+        unset($row);
+
+        return $results;
+    }
+
+    /**
      * Add a document entry to relational table and sync to legacy meta
      */
     public static function add_document($patient_id, $data)

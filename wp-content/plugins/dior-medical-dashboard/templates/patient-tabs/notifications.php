@@ -734,7 +734,7 @@ foreach ($patient_notif_rows as $row) {
         diorUpdateNotifBadgesAndStats();
 
         // Sync with WordPress backend
-        const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || '/diormedical/wp-admin/admin-ajax.php';
+        const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || (window.dior_vars && window.dior_vars.ajax_url) || window.dior_ajax_url || '';
         const nonce = (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || '';
 
         if (notifId) {
@@ -765,7 +765,7 @@ foreach ($patient_notif_rows as $row) {
         diorUpdateNotifBadgesAndStats();
 
         // Sync with WordPress backend
-        const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || '/diormedical/wp-admin/admin-ajax.php';
+        const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || (window.dior_vars && window.dior_vars.ajax_url) || window.dior_ajax_url || '';
         const nonce = (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || '';
 
         fetch(ajaxUrl, {
@@ -802,7 +802,7 @@ foreach ($patient_notif_rows as $row) {
             }, 300);
 
             // Sync with WordPress backend
-            const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || '/diormedical/wp-admin/admin-ajax.php';
+            const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || (window.dior_vars && window.dior_vars.ajax_url) || window.dior_ajax_url || '';
             const nonce = (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || '';
 
             if (notifId) {
@@ -862,7 +862,7 @@ foreach ($patient_notif_rows as $row) {
             }, 350);
 
             // Sync with backend
-            const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || '/diormedical/wp-admin/admin-ajax.php';
+            const ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || (window.dior_vars && window.dior_vars.ajax_url) || window.dior_ajax_url || '';
             const nonce = (window.dior_patient_dashboard && window.dior_patient_dashboard.portal_nonce) || '';
 
             const body = new URLSearchParams({

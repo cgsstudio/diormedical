@@ -346,6 +346,10 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : ('https://
                 </div>
 
                 <form id="dior-doc-password-form" onsubmit="diorSaveDoctorPassword(event, this)">
+                    <?php $dior_password_user = wp_get_current_user(); ?>
+                    <input type="text" name="username" autocomplete="username"
+                        value="<?php echo esc_attr($dior_password_user->user_login); ?>"
+                        class="visually-hidden" tabindex="-1" aria-hidden="true" readonly>
                     <div class="row g-4 align-items-start">
                         <!-- Left Column: Password Inputs Form -->
                         <div class="col-lg-7 col-12">

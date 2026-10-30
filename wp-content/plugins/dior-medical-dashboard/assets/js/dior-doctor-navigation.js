@@ -9,26 +9,48 @@
     // Normalize tab ID aliases
     function normalizeTabId(tabId) {
         if (!tabId) return 'doc-overview';
-        var t = String(tabId).trim();
-        if (t === 'feedback' || t === 'doc-feedback' || t === 'patient-review' || t === 'reviews') {
-            return 'doc-patient-review';
-        }
-        if (t === 'notifications' || t === 'doc-notifications') {
-            return 'doc-notifications-system';
-        }
-        if (t === 'documents' || t === 'doc-documents') {
-            return 'doc-documents-upload';
-        }
-        if (t === 'patients' || t === 'doc-patients') {
-            return 'doc-patients-all';
-        }
-        if (t === 'appointments') {
-            return 'doc-appointments';
-        }
-        if (t === 'settings') {
-            return 'doc-settings';
-        }
-        return t;
+        var t = String(tabId).trim().toLowerCase();
+        var aliases = {
+            'overview': 'doc-overview',
+            'dashboard': 'doc-overview',
+            'feedback': 'doc-patient-review',
+            'doc-feedback': 'doc-patient-review',
+            'patient-review': 'doc-patient-review',
+            'reviews': 'doc-patient-review',
+            'notifications': 'doc-notifications-system',
+            'doc-notifications': 'doc-notifications-system',
+            'documents': 'doc-documents-upload',
+            'doc-documents': 'doc-documents-upload',
+            'patients': 'doc-patients-all',
+            'all-patients': 'doc-patients-all',
+            'patient-records': 'doc-patients-records',
+            'records': 'doc-patients-records',
+            'patient-profile': 'doc-patients-profile',
+            'add-patient': 'doc-patients-add',
+            'edit-patient': 'doc-patients-edit',
+            'appointments': 'doc-appointments',
+            'appointment-calendar': 'doc-appointments',
+            'view-appointment': 'doc-appointments-view',
+            'book-appointment': 'doc-appointments-book',
+            'edit-appointment': 'doc-appointments-edit',
+            'settings': 'doc-settings',
+            'prescriptions': 'doc-e-prescriptions',
+            'digital-prescriptions': 'doc-e-prescriptions',
+            'consultation': 'doc-consultation',
+            'consultation-notes': 'doc-consultation-notes',
+            'telemedicine': 'doc-telemed-video',
+            'telemedicine-video': 'doc-telemed-video',
+            'telemedicine-records': 'doc-telemed-records',
+            'pharmacy': 'doc-pharmacy-list',
+            'income': 'doc-accounts-income',
+            'expenses': 'doc-accounts-expenses',
+            'bill-list': 'doc-accounts-bill-list',
+            'add-bill': 'doc-accounts-add-bill',
+            'invoice': 'doc-accounts-invoice',
+            'income-report': 'doc-accounts-income-report'
+        };
+        if (aliases[t]) return aliases[t];
+        return t.indexOf('tab-') === 0 ? t.substring(4) : t;
     }
 
     // Global submenu toggle
@@ -93,26 +115,41 @@
     // Main tab switcher — robustly resolves every real panel within the Doctor Dashboard.
     window.diorDocSwitchTab = function (tabId, updateUrl) {
         var app = document.getElementById('dior-doctor-app');
-        var contentRoot = app && app.querySelector('#dior-doc-content');
+        // The dashboard's canonical content wrapper is an ID, not a generic
+        // class selector. Resolve it first so a nested tab-content element can
+        // never be mistaken for the main panel container.
+        var contentRoot = document.getElementById('dior-doc-content')
+            || document.getElementById('dior-tab-content')
+            || (app && app.querySelector('.dior-tab-content'));
         if (!app || !contentRoot || !tabId) return false;
 
         var normalizedId = normalizeTabId(tabId);
         var panelId = 'tab-' + normalizedId;
-        var activePanel = Array.prototype.find.call(contentRoot.children, function (child) {
-            return child.id === panelId || child.id === normalizedId;
-        });
-
-        // Fallback for panels rendered inside a wrapper by a particular PHP template.
-        if (!activePanel) {
-            activePanel = contentRoot.querySelector('[id="' + panelId + '"], [id="' + normalizedId + '"]');
+        // Resolve the known panel by its DOM ID, then ensure it belongs to this
+        // dashboard's content wrapper. This avoids failures caused by wrappers,
+        // selector escaping, or panels nested by template markup.
+        var activePanel = document.getElementById(panelId)
+            || document.getElementById(normalizedId);
+        if (activePanel && activePanel.parentElement !== contentRoot) activePanel = null;
+        // An invalid URL hash or an outdated menu entry must never leave the
+        // dashboard with every panel hidden. Fall back to the overview panel.
+        if (!activePanel || !activePanel.classList.contains('dior-tab-panel')) {
+            if (normalizedId !== 'doc-overview') {
+                return window.diorDocSwitchTab('doc-overview', updateUrl);
+            }
         }
         if (!activePanel || !activePanel.classList.contains('dior-tab-panel')) {
-            console.error('[Dior Navigation] Dashboard panel not found:', tabId, 'expected:', panelId);
+            console.error('[Dior Navigation] Overview panel is missing; dashboard markup may not have loaded.');
             return false;
         }
 
+        // The tab template marks the active panel with display:none inline;
+        // remove that inline style so it cannot override the active state.
+        activePanel.style.display = 'block';
+
         // Hide every other dashboard panel without relying on :scope selector support.
-        Array.prototype.forEach.call(contentRoot.querySelectorAll('.dior-tab-panel'), function (panel) {
+        Array.prototype.forEach.call(contentRoot.children, function (panel) {
+            if (!panel.classList || !panel.classList.contains('dior-tab-panel')) return;
             var isActive = panel === activePanel;
             panel.classList.toggle('active', isActive);
             if (isActive) {
@@ -158,6 +195,19 @@
         var notifDropdown = app.querySelector('#dior-doc-notif-dd');
         if (notifDropdown) notifDropdown.classList.remove('open', 'active');
 
+        // Keep existing in-page subtab indicators synchronized with the sidebar.
+        app.querySelectorAll('.dior-subtab-pill[data-doc-tab]').forEach(function (pill) {
+            pill.classList.toggle('active', pill.getAttribute('data-doc-tab') === normalizedId);
+        });
+
+        // Preserve the existing notification read action when the notifications page is opened.
+        if (normalizedId === 'doc-notifications-system' && window.diorDocAjax && window.diorDocNonce) {
+            var notificationData = new FormData();
+            notificationData.append('action', 'dior_doctor_mark_all_notif_read');
+            notificationData.append('nonce', window.diorDocNonce);
+            window.fetch(window.diorDocAjax, { method: 'POST', body: notificationData }).catch(function () {});
+        }
+
         if (updateUrl !== false && window.history && window.history.replaceState) {
             try { window.history.replaceState(null, '', '#tab=' + encodeURIComponent(normalizedId)); }
             catch (error) { /* Keep navigation working when URL updates are blocked. */ }
@@ -184,27 +234,38 @@
         if (!app || app.__diorDoctorNavigationReady) return;
         app.__diorDoctorNavigationReady = true;
 
-        // Capture-phase event delegation for rock-solid click response
-        app.addEventListener('click', function (event) {
+        // Capture-phase document delegation survives dashboard content wrappers
+        // being replaced by WordPress/Elementor or another dashboard script.
+        document.addEventListener('click', function (event) {
             // Check if clicking a tab switch button
-            var tabBtn = event.target.closest('#dior-doctor-app #dior-doc-sidebar .dior-nav-btn[data-tab]');
+            var clickTarget = event.target && event.target.nodeType === 1 ? event.target : event.target && event.target.parentElement;
+            if (!clickTarget || !clickTarget.closest) return;
+            var tabBtn = clickTarget.closest('#dior-doctor-app #dior-doc-sidebar .dior-nav-btn[data-tab]');
             if (tabBtn) {
                 var tab = tabBtn.getAttribute('data-tab');
                 if (tab) {
                     // Do not stop propagation here: existing tab handlers may load dynamic data.
                     event.preventDefault();
-                    window.diorDocSwitchTab(tab, true);
+                    // This controller is the sole owner of sidebar navigation.
+                    // Stop legacy delegated/inline handlers from switching the same tab again.
+                    var switched = window.diorDocSwitchTab(tab, true);
+                    if (switched) {
+                        event.stopPropagation();
+                        if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+                    }
                     return;
                 }
             }
 
             // Check if clicking a parent submenu toggle button
-            var parentMenuBtn = event.target.closest('#dior-doctor-app #dior-doc-sidebar .dior-nav-item.has-submenu > .dior-nav-btn');
+            var parentMenuBtn = clickTarget.closest('#dior-doctor-app #dior-doc-sidebar .dior-nav-item.has-submenu > .dior-nav-btn');
             if (parentMenuBtn && !parentMenuBtn.getAttribute('data-tab')) {
                 var parentItem = parentMenuBtn.closest('.dior-nav-item.has-submenu');
                 if (parentItem && parentItem.id) {
                     event.preventDefault();
                     window.diorToggleSubmenu(event, parentItem.id);
+                    event.stopPropagation();
+                    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
                     return;
                 }
             }
@@ -212,21 +273,30 @@
 
         // Sync tab from URL hash on load
         function syncTabFromUrl(updateUrl) {
-            var hashMatch = window.location.hash.match(/^#tab=([^&]+)/);
-            var requestedTab = 'doc-overview';
-            // Malformed percent-encoding in the URL must not stop initial dashboard rendering.
+            var requestedTab = '';
+            // First support the current hash-based dashboard links.
+            var hashMatch = window.location.hash.match(/^#(?:tab=)?([^&]+)/i);
             if (hashMatch) {
-                try {
-                    requestedTab = decodeURIComponent(hashMatch[1]);
-                } catch (error) {
-                    requestedTab = 'doc-overview';
-                }
+                try { requestedTab = decodeURIComponent(hashMatch[1]); }
+                catch (error) { requestedTab = ''; }
             }
-            requestedTab = normalizeTabId(requestedTab);
+
+            // Also support legacy/direct WordPress URLs after a full page reload.
+            // These are client-side tab routes because all authorized tab templates
+            // are rendered inside the dashboard shortcode; no AJAX page renderer exists.
+            if (!requestedTab && window.URLSearchParams) {
+                var params = new URLSearchParams(window.location.search);
+                requestedTab = params.get('tab') || params.get('page_tab') || params.get('view') || '';
+            }
+            requestedTab = normalizeTabId(requestedTab || 'doc-overview');
 
             var app = document.getElementById('dior-doctor-app');
-            var contentRoot = app ? app.querySelector('#dior-doc-content') : document.getElementById('dior-doc-content');
-            var panel = contentRoot ? contentRoot.querySelector('#tab-' + requestedTab) : null;
+            var contentRoot = document.getElementById('dior-doc-content')
+                || document.getElementById('dior-tab-content')
+                || (app && app.querySelector('.dior-tab-content'));
+            var panel = document.getElementById('tab-' + requestedTab)
+                || document.getElementById(requestedTab);
+            if (panel && (!contentRoot || panel.parentElement !== contentRoot)) panel = null;
             var tabToLoad = panel ? requestedTab : 'doc-overview';
             window.diorDocSwitchTab(tabToLoad, updateUrl);
         }

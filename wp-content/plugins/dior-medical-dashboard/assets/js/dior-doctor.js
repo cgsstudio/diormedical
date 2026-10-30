@@ -36,20 +36,15 @@ function initDoctorDashboard() {
         firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initialTab) + '"]');
     }
     if (!firstTabBtn) {
-        firstTabBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="doc-overview"]') ||
-                      document.querySelector('#dior-doc-sidebar .dior-nav-btn');
+        firstTabBtn = docApp.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="doc-overview"]') ||
+                      docApp.querySelector('#dior-doc-sidebar .dior-nav-btn');
     }
 
     if (firstTabBtn) {
         diorDocSwitchTab(firstTabBtn.getAttribute('data-tab'), false);
     }
 
-    // Add click listeners to ALL nav buttons (must be inside DOMContentLoaded)
-    document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            diorDocSwitchTab(this.getAttribute('data-tab'));
-        });
-    });
+    // Sidebar tab clicks are handled once by dior-doctor-navigation.js.
 
     // Close dropdowns when clicking outside
     document.addEventListener('click', function (e) {
@@ -585,15 +580,6 @@ if (document.readyState === 'loading') {
     window.setTimeout(initDoctorDashboard, 0);
 }
 
-// Delegated navigation fallback: works even if another script has replaced a
-// direct click handler and keeps Doctor tab navigation resilient.
-document.addEventListener('click', function (event) {
-    const btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
-    if (!btn || typeof window.diorDocSwitchTab !== 'function') return;
-    event.preventDefault();
-    window.diorDocSwitchTab(btn.getAttribute('data-tab'));
-}, false);
-
 // Universal Table Pagination (5 entries per page)
 window.diorDoctorInitTablePagination = function (tableEl, pageSize) {
     if (!tableEl) return;
@@ -811,115 +797,8 @@ function diorHydrateDoctorSourceTables() {
         if (stats[2]) stats[2].textContent = String(appointments.filter(a => ['confirmed', 'scheduled', 'pending', 'in-queue'].includes(String(a.status || '').toLowerCase())).length);
     }
 }
-window.diorDocSwitchTab = function (tabId, updateUrl) {
-    if (!tabId) return;
-    if (tabId === 'feedback' || tabId === 'doc-feedback' || tabId === 'patient-review' || tabId === 'reviews') {
-        tabId = 'doc-patient-review';
-    }
-
-    if (updateUrl !== false) {
-        try {
-            history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
-        } catch (e) { }
-    }
-
-    const notifDropdown = document.getElementById('dior-doc-notif-dd');
-    if (notifDropdown) {
-        notifDropdown.classList.remove('open');
-        notifDropdown.classList.remove('active');
-    }
-
-    // Update buttons
-    const btns = document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn');
-    btns.forEach(b => b.classList.remove('active'));
-
-    // Sync subtab pills in in-page navigation bars
-    document.querySelectorAll('.dior-subtab-pill[data-doc-tab]').forEach(pill => {
-        if (pill.getAttribute('data-doc-tab') === tabId) {
-            pill.classList.add('active');
-        } else {
-            pill.classList.remove('active');
-        }
-    });
-
-    const activeBtn = document.querySelector(`#dior-doc-sidebar .dior-nav-btn[data-tab="${tabId}"]`);
-    if (activeBtn) {
-        activeBtn.classList.add('active');
-
-        // Strict Accordion: Expand parent submenu if active tab is inside one, close all others
-        const parentSubmenu = activeBtn.closest('.dior-nav-item.has-submenu');
-        document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(sub) {
-            if (parentSubmenu && sub === parentSubmenu) {
-                sub.classList.add('active', 'open');
-                const subIcon = sub.querySelector('.submenu-icon');
-                if (subIcon) {
-                    subIcon.classList.remove('fa-plus');
-                    subIcon.classList.add('fa-minus');
-                }
-            } else {
-                sub.classList.remove('active', 'open');
-                const subIcon = sub.querySelector('.submenu-icon');
-                if (subIcon) {
-                    subIcon.classList.remove('fa-minus');
-                    subIcon.classList.add('fa-plus');
-                }
-            }
-        });
-
-        // Dynamic Badge Dismissal: Hide notification/count badge once opened
-        const badge = activeBtn.querySelector('.nav-count-badge');
-        if (badge) {
-            badge.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-            badge.style.opacity = '0';
-            badge.style.transform = 'scale(0.5)';
-            setTimeout(() => {
-                badge.style.display = 'none';
-            }, 250);
-        }
-    }
-
-    // Update panels
-    const panels = document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
-    panels.forEach(p => {
-        p.classList.remove('active');
-        p.style.display = 'none';
-    });
-
-    const activePanel = document.getElementById(`tab-${tabId}`);
-    if (activePanel) {
-        activePanel.classList.add('active');
-        activePanel.removeAttribute('hidden');
-        activePanel.style.display = 'block';
-        // Refresh table pagination inside activated tab
-        activePanel.querySelectorAll('.dior-doc-table').forEach(table => {
-            if (table._diorRenderPage) {
-                table._diorRenderPage(1);
-            } else {
-                diorDoctorInitTablePagination(table, 5);
-            }
-        });
-
-        // Trigger income report chart if opened
-        if (tabId === 'doc-accounts-income-report' && typeof window.diorRenderIncomeChart === 'function') {
-            setTimeout(window.diorRenderIncomeChart, 50);
-        }
-    }
-
-    // If notifications tab opened, clear topbar bell badge and mark read in database
-    if (tabId === 'doc-notifications') {
-        document.querySelectorAll('.doc-unread-badge, .dior-notif-indicator').forEach(b => {
-            b.style.display = 'none';
-        });
-        if (window.diorDocAjax && window.diorDocNonce) {
-            const fd = new FormData();
-            fd.append('action', 'dior_doctor_mark_all_notif_read');
-            fd.append('nonce', window.diorDocNonce);
-            fetch(window.diorDocAjax, { method: 'POST', body: fd }).catch(() => { });
-        }
-    }
-
-    diorDocCloseMobile();
-};
+// Sidebar navigation is owned by the isolated dior-doctor-navigation.js controller.
+// Keeping a second global tab switcher here caused competing panel and URL state updates.
 
 // Mobile menu toggle
 window.diorDocOpenMobile = function () {
@@ -2144,7 +2023,7 @@ window.diorDocMarkAllRead = function (e) {
                 }
             } else {
                 if (typeof window.diorDocSwitchTab === 'function') {
-                    window.diorDocSwitchTab('doc-notifications');
+                    window.diorDocSwitchTab('doc-notifications-system');
                 }
             }
         };
@@ -2186,6 +2065,11 @@ window.diorDocMarkAllRead = function (e) {
         if (!ajaxUrl) return;
 
         isDoctorNotifPolling = true;
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const timeoutId = window.setTimeout(() => {
+            if (controller) controller.abort();
+            else isDoctorNotifPolling = false;
+        }, 12000);
 
         const data = new FormData();
         data.append('action', 'dior_doctor_get_live_notifications');
@@ -2194,7 +2078,7 @@ window.diorDocMarkAllRead = function (e) {
             data.append('last_notif_id', diorLastDoctorNotifId);
         }
 
-        fetch(ajaxUrl, { method: 'POST', body: data })
+        fetch(ajaxUrl, { method: 'POST', body: data, credentials: 'same-origin', signal: controller ? controller.signal : undefined })
             .then(r => r.json())
             .then(res => {
                 isDoctorNotifPolling = false;
@@ -2213,7 +2097,7 @@ window.diorDocMarkAllRead = function (e) {
                     });
 
                     // 2. Update Nav Badge if exists
-                    const navBadge = document.querySelector('.dior-nav-btn[data-tab="doc-notifications"] .nav-count-badge');
+                    const navBadge = document.querySelector('.dior-nav-btn[data-tab="doc-notifications-system"] .nav-count-badge');
                     if (navBadge) {
                         if (unreadCount > 0) {
                             navBadge.style.display = 'inline-flex';
@@ -2250,6 +2134,10 @@ window.diorDocMarkAllRead = function (e) {
                 }
             })
             .catch(() => {
+                isDoctorNotifPolling = false;
+            })
+            .finally(() => {
+                window.clearTimeout(timeoutId);
                 isDoctorNotifPolling = false;
             });
     }
@@ -2953,16 +2841,15 @@ document.addEventListener('DOMContentLoaded', function () {
             window.diorDocSwitchTab = fallbackSwitchTab;
         }
 
+        // Keep a fallback only for cases where the isolated controller failed
+        // to initialize. Once it is ready, it is the sole click owner.
         app.addEventListener('click', function (event) {
-            var btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
-            if (!btn) return;
-            var targetTab = btn.getAttribute('data-tab');
-            if (typeof window.diorDocSwitchTab === 'function') {
-                event.preventDefault();
-                event.stopPropagation();
-                window.diorDocSwitchTab(targetTab, true);
-            }
-        }, true);
+            if (app.__diorDoctorNavigationReady) return;
+            var button = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
+            if (!button || typeof window.diorDocSwitchTab !== 'function') return;
+            event.preventDefault();
+            window.diorDocSwitchTab(button.getAttribute('data-tab'), true);
+        });
 
         function syncTabFromUrl(updateUrl) {
             var hashMatch = window.location.hash.match(/^#tab=([^&]+)/);

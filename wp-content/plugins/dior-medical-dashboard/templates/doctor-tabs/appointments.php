@@ -9,26 +9,11 @@ global $wpdb;
 
 // Determine current user and whether they are an admin
 $_cal_user_id  = get_current_user_id();
-$_cal_is_admin = current_user_can('administrator') || current_user_can('manage_options');
+$_cal_is_admin = current_user_can('manage_options');
 
-// Resolve doctor post ID if current user is a doctor
-$_cal_doctor_post_id = 0;
-if (!$_cal_is_admin) {
-    // Check if user has an associated wpddb_doctor post
-    $doc_post = get_posts([
-        'post_type'   => 'wpddb_doctor',
-        'meta_key'    => 'wpddb_doctor_user_id',
-        'meta_value'  => $_cal_user_id,
-        'numberposts' => 1,
-        'fields'      => 'ids'
-    ]);
-    if (!empty($doc_post)) {
-        $_cal_doctor_post_id = (int)$doc_post[0];
-    }
-}
-
-// Fetch appointments from DB
-if ($_cal_is_admin || !$_cal_doctor_post_id) {
+// Fetch only this provider's appointments (including linked legacy provider IDs).
+// A missing DocBooker post must never turn the doctor query into an all-records query.
+if ($_cal_is_admin) {
     $raw_appts = $wpdb->get_results(
         "SELECT a.*, 
             COALESCE(p.display_name, 'Patient') AS patient_name,
@@ -43,6 +28,14 @@ if ($_cal_is_admin || !$_cal_doctor_post_id) {
         ARRAY_A
     );
 } else {
+    $_cal_doctor_ids = class_exists('Dior_Doctor_Resolver')
+        ? Dior_Doctor_Resolver::get_accessible_doctor_ids($_cal_user_id)
+        : [$_cal_user_id];
+    $_cal_doctor_ids = array_values(array_unique(array_filter(array_map('intval', (array) $_cal_doctor_ids))));
+    if (!in_array($_cal_user_id, $_cal_doctor_ids, true)) {
+        $_cal_doctor_ids[] = $_cal_user_id;
+    }
+    $_cal_doctor_placeholders = implode(',', array_fill(0, count($_cal_doctor_ids), '%d'));
     $raw_appts = $wpdb->get_results($wpdb->prepare(
         "SELECT a.*, 
             COALESCE(p.display_name, 'Patient') AS patient_name,
@@ -52,10 +45,9 @@ if ($_cal_is_admin || !$_cal_doctor_post_id) {
         LEFT JOIN {$wpdb->users} p ON p.ID = a.patient_id
         LEFT JOIN {$wpdb->posts} d ON d.ID = a.doctor_id AND d.post_type = 'wpddb_doctor'
         LEFT JOIN {$wpdb->users} u ON u.ID = a.doctor_id
-        WHERE a.is_deleted = 0 AND (a.doctor_id = %d OR a.doctor_id = %d)
+        WHERE a.is_deleted = 0 AND a.doctor_id IN ($_cal_doctor_placeholders)
         ORDER BY a.appt_date ASC, a.appt_time ASC",
-        $_cal_doctor_post_id,
-        $_cal_user_id
+        ...$_cal_doctor_ids
     ), ARRAY_A);
 }
 

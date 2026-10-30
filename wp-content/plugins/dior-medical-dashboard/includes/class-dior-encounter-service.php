@@ -162,6 +162,29 @@ class Dior_Encounter_Service
     }
 
     /**
+     * Get encounters for several patients with one indexed query.
+     */
+    public static function get_encounters_for_patients($patient_ids)
+    {
+        global $wpdb;
+
+        $patient_ids = array_values(array_unique(array_filter(array_map('intval', (array) $patient_ids))));
+        if (!$patient_ids) {
+            return [];
+        }
+
+        $table = $wpdb->prefix . 'dior_encounters';
+        $placeholders = implode(',', array_fill(0, count($patient_ids), '%d'));
+        $query = $wpdb->prepare(
+            "SELECT * FROM $table WHERE patient_id IN ($placeholders) AND is_deleted = 0 ORDER BY created_at DESC LIMIT 300",
+            ...$patient_ids
+        );
+        $results = $wpdb->get_results($query, ARRAY_A);
+
+        return $results ?: [];
+    }
+
+    /**
      * Get single encounter by UID
      */
     public static function get_encounter_by_uid($encounter_uid)

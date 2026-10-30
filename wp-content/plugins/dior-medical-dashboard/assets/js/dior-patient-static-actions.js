@@ -819,7 +819,7 @@
         var doDelete = function() {
             var cfg = window.dior_vars || window.dior_patient_dashboard || {};
             var nonceVal = window.dior_portal_nonce || cfg.nonce || cfg.portal_nonce || '';
-            var ajaxUrl = window.dior_ajax_url || cfg.ajax_url || (window.location.origin + '/diormedical/wp-admin/admin-ajax.php');
+            var ajaxUrl = window.dior_ajax_url || cfg.ajax_url || '';
 
             row.remove();
             var tbody = document.getElementById('dior-emerg-tbody');
@@ -941,7 +941,7 @@
         // Background save to server
         var cfg = window.dior_vars || window.dior_patient_dashboard || {};
         var nonceVal = window.dior_portal_nonce || cfg.nonce || cfg.portal_nonce || '';
-        var ajaxUrl = window.dior_ajax_url || cfg.ajax_url || (window.location.origin + '/diormedical/wp-admin/admin-ajax.php');
+        var ajaxUrl = window.dior_ajax_url || cfg.ajax_url || '';
 
         var fd = new FormData(form);
         fd.append('action', 'dior_patient_save_emergency_contact');

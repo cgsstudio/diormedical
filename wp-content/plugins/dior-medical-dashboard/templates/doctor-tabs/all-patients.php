@@ -249,17 +249,20 @@ $status_badges = [
             allRows = Array.from(document.querySelectorAll('#ap-patients-tbody tr[data-patient-id]'));
             renderPage(1);
             // Search
-            document.getElementById('ap-search').addEventListener('input', applyFilters);
+            var searchInput = document.getElementById('ap-search');
+            if (searchInput) searchInput.addEventListener('input', applyFilters);
             // Select all
-            document.getElementById('ap-select-all').addEventListener('change', function () {
+            var selectAll = document.getElementById('ap-select-all');
+            if (selectAll) selectAll.addEventListener('change', function () {
                 document.querySelectorAll('.ap-row-check').forEach(function (cb) { cb.checked = this.checked; }, this);
                 updateBulkBtn();
             });
-            document.getElementById('ap-patients-tbody').addEventListener('change', function (e) {
+            var patientsBody = document.getElementById('ap-patients-tbody');
+            if (patientsBody) patientsBody.addEventListener('change', function (e) {
                 if (e.target.classList.contains('ap-row-check')) updateBulkBtn();
             });
             // Edit status
-            document.getElementById('ap-patients-tbody').addEventListener('click', function (e) {
+            if (patientsBody) patientsBody.addEventListener('click', function (e) {
                 var btn = e.target.closest('.ap-edit-status-btn');
                 if (!btn) return;
                 document.getElementById('ap-edit-patient-id').value = btn.dataset.id;
@@ -268,7 +271,8 @@ $status_badges = [
                 document.getElementById('ap-edit-status-modal').style.display = 'flex';
             });
             // Save status
-            document.getElementById('ap-save-status-btn').addEventListener('click', function () {
+            var saveStatusBtn = document.getElementById('ap-save-status-btn');
+            if (saveStatusBtn) saveStatusBtn.addEventListener('click', function () {
                 var btn = this;
                 btn.disabled = true;
                 var data = new FormData();
@@ -288,7 +292,7 @@ $status_badges = [
                     }).finally(function () { btn.disabled = false; });
             });
             // Delete
-            document.getElementById('ap-patients-tbody').addEventListener('click', function (e) {
+            if (patientsBody) patientsBody.addEventListener('click', function (e) {
                 var btn = e.target.closest('.ap-delete-btn');
                 if (!btn) return;
                 var patientName = btn.dataset.name || 'this patient';
@@ -323,7 +327,8 @@ $status_badges = [
                 });
             });
             // Bulk delete
-            document.getElementById('ap-bulk-delete-btn').addEventListener('click', function () {
+            var bulkDeleteBtn = document.getElementById('ap-bulk-delete-btn');
+            if (bulkDeleteBtn) bulkDeleteBtn.addEventListener('click', function () {
                 var ids = Array.from(document.querySelectorAll('.ap-row-check:checked')).map(function (cb) { return cb.dataset.id; });
                 if (!ids.length) return;
                 Swal.fire({
@@ -353,16 +358,19 @@ $status_badges = [
                 });
             });
             // Refresh
-            document.getElementById('ap-refresh-btn').addEventListener('click', function () { location.reload(); });
+            var refreshBtn = document.getElementById('ap-refresh-btn');
+            if (refreshBtn) refreshBtn.addEventListener('click', function () { location.reload(); });
         }
 
         function updateBulkBtn() {
             var any = Array.from(document.querySelectorAll('.ap-row-check')).some(function (cb) { return cb.checked; });
-            document.getElementById('ap-bulk-delete-btn').style.display = any ? 'flex' : 'none';
+            var bulkDeleteBtn = document.getElementById('ap-bulk-delete-btn');
+            if (bulkDeleteBtn) bulkDeleteBtn.style.display = any ? 'flex' : 'none';
         }
 
         function applyFilters() {
-            var search = document.getElementById('ap-search').value.toLowerCase();
+            var searchInput = document.getElementById('ap-search');
+            var search = searchInput ? searchInput.value.toLowerCase() : '';
             allRows.forEach(function (r) {
                 r.style.display = (!search || r.textContent.toLowerCase().indexOf(search) !== -1) ? '' : 'none';
             });
@@ -372,20 +380,26 @@ $status_badges = [
         function getVisibleRows() { return allRows.filter(function (r) { return r.style.display !== 'none'; }); }
 
         function renderPage(page) {
+            page = Math.max(1, parseInt(page, 10) || 1);
             currentPage = page;
             var visible = getVisibleRows();
             var total = visible.length;
             var start = (page - 1) * perPage;
             allRows.forEach(function (r) { r.style.display = 'none'; });
             visible.slice(start, start + perPage).forEach(function (r) { r.style.display = ''; });
-            document.getElementById('ap-showing-info').textContent =
-                'Showing ' + Math.min(start + 1, total) + '–' + Math.min(start + perPage, total) + ' of ' + total + ' patient(s)';
+            var showingInfo = document.getElementById('ap-showing-info');
+            if (showingInfo) {
+                showingInfo.textContent = total === 0
+                    ? 'No patients found'
+                    : 'Showing ' + Math.min(start + 1, total) + '–' + Math.min(start + perPage, total) + ' of ' + total + ' patient(s)';
+            }
             renderPagination(total);
         }
 
         function renderPagination(total) {
             var pages = Math.ceil(total / perPage);
             var container = document.getElementById('ap-pagination');
+            if (!container) return;
             container.innerHTML = '';
             if (pages <= 1) return;
             for (var i = 1; i <= pages; i++) {

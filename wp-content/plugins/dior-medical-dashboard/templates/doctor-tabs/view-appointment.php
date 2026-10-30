@@ -1008,10 +1008,13 @@ $status_badges = [
         }
 
         function getVisibleRows() {
-            var search = (document.getElementById('va-appt-search').value || '').toLowerCase().trim();
+            var searchInput = document.getElementById('va-appt-search');
+            var statusInput = document.getElementById('va-status-filter');
+            var dateInput = document.getElementById('va-date-filter');
+            var search = (searchInput ? searchInput.value : '').toLowerCase().trim();
             var docFilter = (document.getElementById('va-doctor-filter') ? document.getElementById('va-doctor-filter').value : '').toLowerCase().trim();
-            var status = (document.getElementById('va-status-filter').value || '').toLowerCase().trim();
-            var dateFilter = (document.getElementById('va-date-filter').value || '').toLowerCase().trim();
+            var status = (statusInput ? statusInput.value : '').toLowerCase().trim();
+            var dateFilter = (dateInput ? dateInput.value : '').toLowerCase().trim();
 
             return allRows.filter(function (r) {
                 var text = r.textContent.toLowerCase();
@@ -1037,6 +1040,8 @@ $status_badges = [
         }
 
         function renderPage(page) {
+            if (!document.getElementById('va-appointments-tbody')) return;
+            page = Math.max(1, parseInt(page, 10) || 1);
             currentPage = page;
             var visible = getVisibleRows();
             var total = visible.length;
@@ -1047,11 +1052,9 @@ $status_badges = [
 
             var infoEl = document.getElementById('va-showing-info');
             if (infoEl) {
-                if (total === 0) {
-                    infoEl.textContent = 'No matching appointments found';
-                } else {
-                    infoEl.textContent = 'Showing ' + (start + 1) + '–' + Math.min(start + perPage, total) + ' of ' + total + ' appointment(s)';
-                }
+                infoEl.textContent = total === 0
+                    ? 'No matching appointments found'
+                    : 'Showing ' + (start + 1) + '–' + Math.min(start + perPage, total) + ' of ' + total + ' appointment(s)';
             }
 
             renderPagination(total);
