@@ -579,8 +579,9 @@
     font-size:14px !important;
     line-height:1 !important;
   }
-  #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming .table-responsive,
-  #dior-patient-portal-app #tab-appointments #dior-subtab-past .table-responsive {
+  /* Hide source tables only after the JavaScript card renderer has succeeded. */
+  #dior-patient-portal-app #tab-appointments.dior-mobile-cards-ready #dior-subtab-upcoming .table-responsive,
+  #dior-patient-portal-app #tab-appointments.dior-mobile-cards-ready #dior-subtab-past .table-responsive {
     display:none !important;
   }
   #dior-patient-portal-app #tab-appointments .dior-appt-list-empty {
