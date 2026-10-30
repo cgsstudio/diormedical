@@ -711,6 +711,12 @@ let diorPastCurrentPage = 1;
 
                                 pageRows.forEach(row => row.style.display = '');
 
+                                // Refresh the mobile cards immediately after the source table page changes.
+                                if (window.matchMedia && window.matchMedia('(max-width: 767.98px)').matches &&
+                                    typeof window.diorRefreshPatientAppointmentMobile === 'function') {
+                                    window.diorRefreshPatientAppointmentMobile('dior-past-appointments-table');
+                                }
+
                                 const emptyRow = document.querySelector('#dior-past-appointments-tbody tr.dior-empty-state');
                                 if (emptyRow) emptyRow.style.display = 'none';
 
