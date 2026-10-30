@@ -1282,6 +1282,17 @@ class Dior_Medical_Auth
             );
         }
 
+        // Dedicated mobile-only Patient Prescriptions design; desktop styles remain unchanged.
+        $patient_prescriptions_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-prescriptions-mobile.css';
+        if (file_exists($patient_prescriptions_mobile_css)) {
+            wp_enqueue_style(
+                'dior-patient-prescriptions-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-patient-prescriptions-mobile.css',
+                ['dior-brand-overrides-css', 'dior-mobile-layouts-css'],
+                filemtime($patient_prescriptions_mobile_css)
+            );
+        }
+
         // Dedicated Patient Appointment mobile design system; desktop assets remain unchanged.
         $patient_appointments_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-appointments-mobile.css';
         if (file_exists($patient_appointments_mobile_css)) {
