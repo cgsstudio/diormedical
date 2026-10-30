@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.68
+ * Version: 17.2.69
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.68');
+define('DIOR_PORTAL_VERSION', '17.2.69');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -1282,6 +1282,17 @@ class Dior_Medical_Auth
             );
         }
 
+        // Dedicated Patient Appointment mobile design system; desktop assets remain unchanged.
+        $patient_appointments_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-appointments-mobile.css';
+        if (file_exists($patient_appointments_mobile_css)) {
+            wp_enqueue_style(
+                'dior-patient-appointments-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-patient-appointments-mobile.css',
+                ['dior-brand-overrides-css', 'dior-mobile-layouts-css', 'dior-today-appointments-mobile-css'],
+                filemtime($patient_appointments_mobile_css)
+            );
+        }
+
         // Dedicated mobile-only Patient Overview assets. Desktop markup and assets remain unchanged.
         $patient_overview_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-overview-mobile.css';
         if (file_exists($patient_overview_mobile_css)) {
@@ -1422,6 +1433,17 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-static-actions.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-static-actions.js') : DIOR_PORTAL_VERSION,
             true
         );
+        // Separate mobile appointment cards built from existing dynamic table records.
+        $patient_appointments_mobile_js = DIOR_PORTAL_PATH . 'assets/js/dior-patient-appointments-mobile.js';
+        if (file_exists($patient_appointments_mobile_js)) {
+            wp_enqueue_script(
+                'dior-patient-appointments-mobile-js',
+                DIOR_PORTAL_URL . 'assets/js/dior-patient-appointments-mobile.js',
+                [],
+                filemtime($patient_appointments_mobile_js),
+                true
+            );
+        }
         // Dedicated mobile-only Patient Overview interactions; no desktop JS dependency.
         $patient_overview_mobile_js = DIOR_PORTAL_PATH . 'assets/js/dior-patient-overview-mobile.js';
         if (file_exists($patient_overview_mobile_js)) {
