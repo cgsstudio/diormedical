@@ -20,10 +20,7 @@
                         <img src="<?php echo esc_url($logo_url); ?>" alt="Dior Medical" class="brand-logo">
                     </a>
                 </div>
-                <button type="button" class="dior-side-close btn" id="dior-side-close"
-                    aria-label="Close navigation menu">
-                    <i class="fas fa-xmark" aria-hidden="true"></i>
-                </button>
+
             </div>
 
             <!-- Navigation Links -->
