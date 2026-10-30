@@ -7,6 +7,8 @@
     var mobileQuery = window.matchMedia('(max-width: 1024px)');
     // Preserve the original desktop submenu implementation before installing mobile handlers.
     var desktopToggleSubmenu = window.diorToggleSubmenu;
+    var desktopOpenMobile = window.diorDocOpenMobile;
+    var desktopCloseMobile = window.diorDocCloseMobile;
 
     function getElements() {
         return {
@@ -38,13 +40,20 @@
 
     // Override conflicting legacy handlers after both legacy scripts are loaded.
     window.diorDocOpenMobile = function (event) {
+        if (!mobileQuery.matches) {
+            if (typeof desktopOpenMobile === 'function') return desktopOpenMobile(event);
+            return;
+        }
         if (event && event.preventDefault) event.preventDefault();
-        if (!mobileQuery.matches) return;
         var sidebar = getElements().sidebar;
         setDrawerState(!(sidebar && sidebar.classList.contains('mobile-open')));
     };
 
     window.diorDocCloseMobile = function () {
+        if (!mobileQuery.matches) {
+            if (typeof desktopCloseMobile === 'function') return desktopCloseMobile();
+            return;
+        }
         var el = getElements();
         if (el.sidebar) el.sidebar.classList.remove('mobile-open');
         if (el.backdrop) el.backdrop.classList.remove('active');
