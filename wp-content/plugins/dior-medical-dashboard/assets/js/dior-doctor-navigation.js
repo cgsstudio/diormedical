@@ -90,118 +90,92 @@
         }
     };
 
-    // Main tab switcher
+    // Main tab switcher — robustly resolves every real panel within the Doctor Dashboard.
     window.diorDocSwitchTab = function (tabId, updateUrl) {
         var app = document.getElementById('dior-doctor-app');
-        if (!tabId) return false;
-        var normalizedId = normalizeTabId(tabId);
+        var contentRoot = app && app.querySelector('#dior-doc-content');
+        if (!app || !contentRoot || !tabId) return false;
 
-        // Find the matching panel inside Doctor Dashboard only; avoid collisions with other dashboard markup.
-        var contentRoot = app ? app.querySelector('#dior-doc-content') : document.getElementById('dior-doc-content');
-        var activePanel = contentRoot ? contentRoot.querySelector('#tab-' + normalizedId) : null;
-        if (!activePanel && contentRoot) {
-            activePanel = contentRoot.querySelector('#' + normalizedId);
-        }
-        if (!activePanel && contentRoot && normalizedId !== 'doc-overview') {
-            // Keep the desktop dashboard usable if a requested panel is missing.
-            activePanel = contentRoot.querySelector('#tab-doc-overview');
-            normalizedId = 'doc-overview';
-        }
+        var normalizedId = normalizeTabId(tabId);
+        var panelId = 'tab-' + normalizedId;
+        var activePanel = Array.prototype.find.call(contentRoot.children, function (child) {
+            return child.id === panelId || child.id === normalizedId;
+        });
+
+        // Fallback for panels rendered inside a wrapper by a particular PHP template.
         if (!activePanel) {
-            console.warn('[Dior Navigation] Panel not found for tab:', tabId, '(normalized: ' + normalizedId + ')');
+            activePanel = contentRoot.querySelector('[id="' + panelId + '"], [id="' + normalizedId + '"]');
+        }
+        if (!activePanel || !activePanel.classList.contains('dior-tab-panel')) {
+            console.error('[Dior Navigation] Dashboard panel not found:', tabId, 'expected:', panelId);
             return false;
         }
 
-        // Close notification dropdown if open
-        var notifDropdown = document.getElementById('dior-doc-notif-dd');
-        if (notifDropdown) {
-            notifDropdown.classList.remove('open', 'active');
-        }
-
-        // Update nav buttons
-        var sidebar = app ? app.querySelector('#dior-doc-sidebar') : document.getElementById('dior-doc-sidebar');
-        var buttons = sidebar ? sidebar.querySelectorAll('.dior-nav-btn') : [];
-        buttons.forEach(function (b) {
-            b.classList.remove('active');
-        });
-
-        var activeBtn = sidebar ? sidebar.querySelector('.dior-nav-btn[data-tab="' + normalizedId + '"]') : null;
-        if (activeBtn) {
-            activeBtn.classList.add('active');
-
-            // Strict Accordion: Expand parent submenu if inside one, close all others
-            var parentSubmenu = activeBtn.closest('.dior-nav-item.has-submenu');
-            document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(sub) {
-                if (parentSubmenu && sub === parentSubmenu) {
-                    sub.classList.add('active', 'open');
-                    var subIcon = sub.querySelector('.submenu-icon');
-                    if (subIcon) {
-                        subIcon.classList.remove('fa-plus');
-                        subIcon.classList.add('fa-minus');
-                    }
-                } else {
-                    sub.classList.remove('active', 'open');
-                    var subIcon = sub.querySelector('.submenu-icon');
-                    if (subIcon) {
-                        subIcon.classList.remove('fa-minus');
-                        subIcon.classList.add('fa-plus');
-                    }
-                }
-            });
-
-            // Dismiss badge with transition if present
-            var badge = activeBtn.querySelector('.nav-count-badge');
-            if (badge) {
-                badge.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-                badge.style.opacity = '0';
-                badge.style.transform = 'scale(0.5)';
-                setTimeout(function () {
-                    badge.style.display = 'none';
-                }, 250);
-            }
-        }
-
-        // Update tab panels
-        var panels = contentRoot ? contentRoot.querySelectorAll(':scope > .dior-tab-panel') : [];
-        panels.forEach(function (panel) {
-            if (panel === activePanel) {
-                panel.classList.add('active');
+        // Hide every other dashboard panel without relying on :scope selector support.
+        Array.prototype.forEach.call(contentRoot.querySelectorAll('.dior-tab-panel'), function (panel) {
+            var isActive = panel === activePanel;
+            panel.classList.toggle('active', isActive);
+            if (isActive) {
                 panel.removeAttribute('hidden');
                 panel.style.removeProperty('display');
                 panel.style.display = 'block';
+                panel.setAttribute('aria-hidden', 'false');
             } else {
-                panel.classList.remove('active');
                 panel.setAttribute('hidden', 'hidden');
                 panel.style.display = 'none';
+                panel.setAttribute('aria-hidden', 'true');
             }
         });
 
-        // Update URL hash
-        if (updateUrl !== false && window.history && window.history.replaceState) {
-            try {
-                window.history.replaceState(null, '', '#tab=' + encodeURIComponent(normalizedId));
-            } catch (e) { }
+        // Update sidebar active state and expand the active item's parent accordion.
+        var sidebar = app.querySelector('#dior-doc-sidebar');
+        if (sidebar) {
+            sidebar.querySelectorAll('.dior-nav-btn').forEach(function (button) {
+                button.classList.toggle('active', button.getAttribute('data-tab') === normalizedId);
+            });
+
+            var activeButton = sidebar.querySelector('.dior-nav-btn[data-tab="' + normalizedId + '"]');
+            var parentSubmenu = activeButton && activeButton.closest('.dior-nav-item.has-submenu');
+            sidebar.querySelectorAll('.dior-nav-item.has-submenu').forEach(function (item) {
+                var open = !!parentSubmenu && item === parentSubmenu;
+                item.classList.toggle('active', open);
+                item.classList.toggle('open', open);
+                var icon = item.querySelector('.submenu-icon');
+                if (icon) {
+                    icon.classList.toggle('fa-minus', open);
+                    icon.classList.toggle('fa-plus', !open);
+                }
+                var trigger = item.querySelector(':scope > .dior-nav-btn');
+                if (trigger) trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+
+            if (activeButton) {
+                var badge = activeButton.querySelector('.nav-count-badge');
+                if (badge) badge.style.display = 'none';
+            }
         }
 
-        // Refresh table pagination if table exists in active panel
-        if (window.diorDoctorInitTablePagination) {
+        var notifDropdown = app.querySelector('#dior-doc-notif-dd');
+        if (notifDropdown) notifDropdown.classList.remove('open', 'active');
+
+        if (updateUrl !== false && window.history && window.history.replaceState) {
+            try { window.history.replaceState(null, '', '#tab=' + encodeURIComponent(normalizedId)); }
+            catch (error) { /* Keep navigation working when URL updates are blocked. */ }
+        }
+
+        if (typeof window.diorDoctorInitTablePagination === 'function') {
             activePanel.querySelectorAll('.dior-doc-table, .dior-table, .dior-clean-table').forEach(function (table) {
-                if (table._diorRenderPage) {
-                    table._diorRenderPage(1);
-                } else {
-                    window.diorDoctorInitTablePagination(table, 5);
-                }
+                if (typeof table._diorRenderPage === 'function') table._diorRenderPage(1);
+                else window.diorDoctorInitTablePagination(table, 5);
             });
         }
 
-        // Trigger doctor appointment calendar re-render if switching to calendar tab
         if (normalizedId === 'doc-appointments' && typeof window.diorRenderDoctorCalendar === 'function') {
-            setTimeout(window.diorRenderDoctorCalendar, 40);
+            window.setTimeout(window.diorRenderDoctorCalendar, 40);
         }
 
-        // Close mobile drawer on selection
-        window.diorDocCloseMobile();
-
+        if (typeof window.diorDocCloseMobile === 'function') window.diorDocCloseMobile();
+        app.dispatchEvent(new CustomEvent('dior:doctor-tab-changed', { detail: { tab: normalizedId } }));
         return true;
     };
 
