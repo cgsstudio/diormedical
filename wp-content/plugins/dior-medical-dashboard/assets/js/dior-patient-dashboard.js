@@ -441,7 +441,9 @@ let diorUpcomingCurrentPage = 1;
                                 const allRows = Array.from(document.querySelectorAll('#dior-upcoming-appointments-tbody tr'));
                                 
                                 return allRows.filter(function(row) {
-                                    const text = row.innerText.toLowerCase();
+                                    // Empty-state placeholder rows are presentation only, not appointments.
+                                    if (row.classList.contains('dior-empty-state') || row.querySelector('.dior-empty-state')) return false;
+                                    const text = (row.innerText || '').toLowerCase();
                                     return text.includes(filter);
                                 });
                             }
@@ -471,7 +473,10 @@ let diorUpcomingCurrentPage = 1;
                                 // Build pagination HTML
                                 const pagContainer = document.getElementById('dior-upcoming-pagination');
                                 if (pagContainer) {
-                                    pagContainer.innerHTML = diorBuildPagerHtml(diorUpcomingCurrentPage, totalPages, 'diorGoUpcomingPage');
+                                    pagContainer.innerHTML = activeRows.length > diorUpcomingRowsPerPage
+                                        ? diorBuildPagerHtml(diorUpcomingCurrentPage, totalPages, 'diorGoUpcomingPage')
+                                        : '';
+                                    pagContainer.style.display = activeRows.length > diorUpcomingRowsPerPage ? '' : 'none';
                                 }
 
                                 diorUpdateUpcomingSelectedCount(activeRows.length);
@@ -591,7 +596,9 @@ let diorPastCurrentPage = 1;
                                 const allRows = Array.from(document.querySelectorAll('#dior-past-appointments-tbody tr'));
                                 
                                 return allRows.filter(function(row) {
-                                    const text = row.innerText.toLowerCase();
+                                    // Empty-state placeholder rows are presentation only, not appointments.
+                                    if (row.classList.contains('dior-empty-state') || row.querySelector('.dior-empty-state')) return false;
+                                    const text = (row.innerText || '').toLowerCase();
                                     return text.includes(filter);
                                 });
                             }
