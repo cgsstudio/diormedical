@@ -430,51 +430,67 @@
                         </tbody>
                     </table>
                 </div>
+                <div id="dior-rx-pagination" class="dior-mobile-card-pagination mx-3 mb-3" aria-label="Prescription pages"></div>
             </div>
         </div>
     </div>
 
     <script>
-        /* ── Prescriptions Table JS ── */
+        /* Prescription search, selection and five-record pagination. */
         (function () {
+            var currentPage = 1;
+            var perPage = 5;
+            var tbody = document.getElementById('dior-rx-tbody');
+            var search = document.getElementById('dior-rx-search-input');
+            var pager = document.getElementById('dior-rx-pagination');
+            if (!tbody || !pager) return;
 
-            // Search/Filter
-            window.diorFilterRxTable = function () {
-                var input = document.getElementById('dior-rx-search-input');
-                if (!input) return;
-                var filter = input.value.toLowerCase();
-                var rows = document.querySelectorAll('#dior-rx-tbody tr');
-                rows.forEach(function (row) {
-                    var text = row.innerText.toLowerCase();
-                    row.style.display = text.includes(filter) ? '' : 'none';
+            function getRows() {
+                return Array.prototype.slice.call(tbody.querySelectorAll('tr')).filter(function (row) {
+                    return !row.querySelector('.dior-empty-state');
                 });
-            };
+            }
 
-            // Select All
+            function render() {
+                var allRows = getRows();
+                var query = search ? String(search.value || '').trim().toLowerCase() : '';
+                var filtered = allRows.filter(function (row) {
+                    return !query || row.textContent.toLowerCase().indexOf(query) !== -1;
+                });
+                var totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+                currentPage = Math.min(Math.max(1, currentPage), totalPages);
+                allRows.forEach(function (row) { row.style.display = 'none'; });
+                filtered.slice((currentPage - 1) * perPage, currentPage * perPage).forEach(function (row) {
+                    row.style.display = '';
+                });
+                var emptyRow = tbody.querySelector('tr .dior-empty-state');
+                if (emptyRow) emptyRow.closest('tr').style.display = allRows.length ? 'none' : '';
+                var start = filtered.length ? ((currentPage - 1) * perPage) + 1 : 0;
+                var finish = Math.min(currentPage * perPage, filtered.length);
+                pager.innerHTML = filtered.length > perPage
+                    ? '<span class="dior-mobile-page-count">Showing ' + start + '–' + finish + ' of ' + filtered.length + '</span>' +
+                      '<div class="dior-mobile-page-controls"><button type="button" data-page="' + (currentPage - 1) + '" ' + (currentPage === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="fas fa-chevron-left"></i></button><span>' + currentPage + ' / ' + totalPages + '</span><button type="button" data-page="' + (currentPage + 1) + '" ' + (currentPage === totalPages ? 'disabled' : '') + ' aria-label="Next page"><i class="fas fa-chevron-right"></i></button></div>'
+                    : '';
+                var count = document.getElementById('dior-rx-page-count');
+                if (count) count.textContent = document.querySelectorAll('.rx-row-checkbox:checked').length + ' selected / ' + filtered.length + ' total';
+            }
+
+            window.diorFilterRxTable = function () { currentPage = 1; render(); };
             window.diorToggleSelectAllRx = function (masterCb) {
-                var checkboxes = document.querySelectorAll('.rx-row-checkbox');
-                checkboxes.forEach(function (cb) { cb.checked = masterCb.checked; });
-                diorUpdateRxSelectedCount();
+                document.querySelectorAll('.rx-row-checkbox').forEach(function (cb) { cb.checked = masterCb.checked; });
+                render();
             };
-
-            // Update count
-            window.diorUpdateRxSelectedCount = function () {
-                var total = document.querySelectorAll('#dior-rx-tbody tr').length;
-                var selected = document.querySelectorAll('.rx-row-checkbox:checked').length;
-                var el = document.getElementById('dior-rx-page-count');
-                if (el) el.textContent = selected + ' selected / ' + total + ' total';
-            };
-
-            // Bulk delete
+            window.diorUpdateRxSelectedCount = render;
             window.diorBulkDeleteRxRows = function () {
-                var checkboxes = document.querySelectorAll('.rx-row-checkbox:checked');
-                if (!checkboxes.length) {
-                    Swal.fire({ icon: 'info', title: 'Selection Required', text: 'Please select at least one row to delete.' });
+                var selected = document.querySelectorAll('.rx-row-checkbox:checked');
+                if (!selected.length) {
+                    if (window.Swal) Swal.fire({ icon: 'info', title: 'Selection Required', text: 'Please select at least one row to delete.' });
                     return;
                 }
+                if (!window.Swal) return;
                 Swal.fire({
                     title: 'Delete Prescriptions?',
-                    text: 'Are you sure you want to delete ' + checkboxes.length + ' selected record(s)?',
+                    text: 'Are you sure you want to delete ' + selected.length + ' selected record(s)?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#EF4444',
@@ -483,12 +499,21 @@
                     cancelButtonText: 'Cancel'
                 }).then(function (result) {
                     if (!result.isConfirmed) return;
-                    checkboxes.forEach(function (cb) { cb.closest('tr').remove(); });
-                    diorUpdateRxSelectedCount();
+                    Array.prototype.slice.call(document.querySelectorAll('.rx-row-checkbox:checked')).forEach(function (cb) {
+                        var row = cb.closest('tr');
+                        if (row) row.remove();
+                    });
+                    render();
                     Swal.fire({ icon: 'success', title: 'Deleted', text: 'Selected prescriptions removed.', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
                 });
             };
-
+            pager.addEventListener('click', function (event) {
+                var button = event.target.closest('button[data-page]');
+                if (!button || button.disabled) return;
+                currentPage = parseInt(button.getAttribute('data-page'), 10) || 1;
+                render();
+            });
+            render();
         })();
     </script>
 
