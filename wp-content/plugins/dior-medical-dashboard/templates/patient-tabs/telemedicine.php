@@ -1,5 +1,6 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-telemedicine">
     <style>
+
         /* Scoped alignment for Telemedicine Actions column */
         #tab-telemedicine #dior-tele-table th:last-child,
         #tab-telemedicine #dior-tele-table td:last-child {
@@ -122,6 +123,7 @@
             #tab-telemedicine .docs-table-wrapper { border-radius:0 0 14px 14px; }
             #tab-telemedicine .va-breadcrumb-list { flex-wrap:wrap; }
         }
+
 </style>
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
@@ -168,6 +170,11 @@
                     </button>
                 </div>
             </div>
+        </div>
+        <!-- Separate mobile Telemedicine UI; desktop table remains intact. -->
+        <div class="dior-tele-mobile-layout d-none">
+            <div class="dior-tele-mobile-list" id="dior-tele-mobile-list" aria-live="polite"></div>
+            <div class="dior-tele-mobile-pagination" id="dior-tele-mobile-pagination"></div>
         </div>
         <div class="docs-table-wrapper">
             <table class="docs-table table table-hover" id="dior-tele-table">
