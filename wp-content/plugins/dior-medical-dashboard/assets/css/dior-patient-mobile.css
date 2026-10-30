@@ -631,3 +631,77 @@
     justify-content: flex-start;
   }
 }
+
+
+/* HOTFIX: Keep the three KPI columns equal-width on mobile.
+   Bootstrap .col-sm-4 retains a 33.333% width; the previous grid
+   override made that width apply inside each grid track (one-third
+   of one-third). Use Bootstrap's flex row sizing explicitly. */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7.col-xxl-8 > .row:first-child {
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    gap: 8px !important;
+  }
+
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7.col-xxl-8 > .row:first-child > .col-12.col-sm-4 {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7.col-xxl-8 > .row:first-child .stat-card {
+    display: flex !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 88px !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    padding: 12px 10px !important;
+    overflow: hidden;
+  }
+
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7.col-xxl-8 > .row:first-child .stat-num {
+    width: 100%;
+    font-size: 23px !important;
+    line-height: 1.1 !important;
+    white-space: nowrap;
+  }
+
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7.col-xxl-8 > .row:first-child .stat-label {
+    width: 100%;
+    font-size: 9px !important;
+    line-height: 1.25 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  #dior-patient-portal-app #tab-overview #dior-overview-upcoming-card .consult-list-wrap {
+    max-height: 220px !important;
+  }
+
+  #dior-patient-portal-app #tab-overview #dior-overview-prescriptions-card .rx-list-wrap {
+    max-height: 280px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7.col-xxl-8 > .row:first-child {
+    gap: 6px !important;
+  }
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7.col-xxl-8 > .row:first-child .stat-card {
+    padding: 10px 7px !important;
+  }
+  #dior-patient-portal-app #tab-overview > .row > .col-12.col-xl-7.col-xxl-8 > .row:first-child .stat-label {
+    font-size: 8px !important;
+  }
+}
