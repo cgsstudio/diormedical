@@ -1326,6 +1326,17 @@ class Dior_Medical_Auth
             );
         }
 
+        // Dedicated Doctor Dashboard mobile drawer styling; desktop sidebar is unchanged.
+        $doctor_mobile_nav_css = DIOR_PORTAL_PATH . 'assets/css/dior-doctor-mobile-navigation.css';
+        if (file_exists($doctor_mobile_nav_css)) {
+            wp_enqueue_style(
+                'dior-doctor-mobile-navigation-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-doctor-mobile-navigation.css',
+                ['dior-doctor-overview-mobile-css'],
+                filemtime($doctor_mobile_nav_css)
+            );
+        }
+
         // Separate mobile-only Doctor Dashboard overview design; desktop remains untouched.
         $doctor_overview_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-doctor-overview-mobile.css';
         if (file_exists($doctor_overview_mobile_css)) {
@@ -1533,6 +1544,18 @@ class Dior_Medical_Auth
                 DIOR_PORTAL_URL . 'assets/js/dior-doctor-overview-mobile.js',
                 ['dior-doctor-dashboard-page-js'],
                 filemtime($doctor_overview_mobile_js),
+                true
+            );
+        }
+
+        // Dedicated mobile-only Doctor Dashboard drawer and submenu controller.
+        $doctor_mobile_nav_js = DIOR_PORTAL_PATH . 'assets/js/dior-doctor-mobile-navigation.js';
+        if (file_exists($doctor_mobile_nav_js)) {
+            wp_enqueue_script(
+                'dior-doctor-mobile-navigation-js',
+                DIOR_PORTAL_URL . 'assets/js/dior-doctor-mobile-navigation.js',
+                ['dior-doctor-overview-mobile-js'],
+                filemtime($doctor_mobile_nav_js),
                 true
             );
         }
