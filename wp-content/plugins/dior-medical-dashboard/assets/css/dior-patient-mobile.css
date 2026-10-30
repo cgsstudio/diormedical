@@ -141,3 +141,90 @@
 @media (min-width:1025px) {
   #dior-patient-portal-app .dior-side-close { display:flex; }
 }
+
+
+/* Unified compact mobile pagination across Patient Dashboard pages. */
+@media (max-width:767.98px) {
+  #dior-patient-portal-app .master-pagination,
+  #dior-patient-portal-app .dior-mobile-card-pagination .dior-mobile-page-controls,
+  #dior-patient-portal-app #dior-rx-pagination {
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex-wrap:nowrap !important;
+    gap:7px !important;
+    width:auto !important;
+    max-width:100% !important;
+    min-width:0 !important;
+  }
+  #dior-patient-portal-app .master-pagination .dior-page-btn,
+  #dior-patient-portal-app #dior-rx-pagination .dior-page-btn,
+  #dior-patient-portal-app #dior-rx-pagination button {
+    display:inline-flex !important;
+    flex:0 0 36px !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:36px !important;
+    min-width:36px !important;
+    max-width:36px !important;
+    height:36px !important;
+    min-height:36px !important;
+    padding:0 !important;
+    margin:0 !important;
+    border:1px solid #dce6f1 !important;
+    border-radius:10px !important;
+    background:#fff !important;
+    color:#2865a5 !important;
+    box-shadow:none !important;
+    font-size:12px !important;
+    font-weight:700 !important;
+    line-height:1 !important;
+  }
+  #dior-patient-portal-app .master-pagination .dior-page-btn.active,
+  #dior-patient-portal-app #dior-rx-pagination .dior-page-btn.active {
+    border-color:#064b87 !important;
+    background:#064b87 !important;
+    color:#fff !important;
+    box-shadow:0 3px 8px rgba(6,75,135,.18) !important;
+  }
+  #dior-patient-portal-app .master-pagination .dior-page-btn:disabled,
+  #dior-patient-portal-app #dior-rx-pagination button:disabled {
+    opacity:.4 !important;
+    cursor:not-allowed !important;
+  }
+  #dior-patient-portal-app .master-pagination .dior-pager-gap { display:none !important; }
+  #dior-patient-portal-app .master-pagination .dior-pager-mobile-status,
+  #dior-patient-portal-app #dior-rx-pagination .dior-pager-mobile-status {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    min-width:66px !important;
+    color:#52657b !important;
+    font-size:11px !important;
+    font-weight:700 !important;
+    white-space:nowrap !important;
+  }
+  /* Replace long numeric sequences with Previous / Page X of Y / Next. */
+  #dior-patient-portal-app .master-pagination .dior-page-btn:not([aria-label]):not(.active) {
+    display:none !important;
+  }
+  #dior-patient-portal-app .dior-subtab-panel > .card > .d-flex.border-top,
+  #dior-patient-portal-app .dior-subtab-panel > .card > .border-top.mt-2,
+  #dior-patient-portal-app .dior-subtab-panel > .card > .border-top.mt-3 {
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    flex-wrap:nowrap !important;
+    gap:8px !important;
+    min-width:0 !important;
+  }
+  #dior-patient-portal-app .dior-subtab-panel > .card > .d-flex.border-top > span,
+  #dior-patient-portal-app .dior-subtab-panel > .card > .border-top.mt-2 > div:first-child,
+  #dior-patient-portal-app .dior-subtab-panel > .card > .border-top.mt-3 > span {
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    font-size:11px !important;
+    white-space:nowrap !important;
+  }
+}
