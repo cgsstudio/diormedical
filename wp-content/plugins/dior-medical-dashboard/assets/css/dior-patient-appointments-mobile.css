@@ -197,7 +197,9 @@
   #dior-patient-portal-app #tab-appointments #dior-subtab-today .btn,
   #dior-patient-portal-app #tab-appointments #dior-subtab-upcoming .btn,
   #dior-patient-portal-app #tab-appointments #dior-subtab-past .btn { min-height:38px; }
-  #dior-patient-portal-app #tab-appointments .dior-appointment-list-table { display:none !important; }
+  #dior-patient-portal-app #tab-appointments.dior-mobile-cards-ready .dior-appointment-list-table { display:none !important; }
+  /* Keep the original responsive table visible if mobile card generation is unavailable. */
+  #dior-patient-portal-app #tab-appointments:not(.dior-mobile-cards-ready) .table-responsive { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   #dior-patient-portal-app #tab-appointments .dior-appt-mobile-cards {
     display:flex;
     flex-direction:column;
