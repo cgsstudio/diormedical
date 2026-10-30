@@ -382,3 +382,27 @@
     display: none !important;
   }
 }
+
+
+/* Remove the unwanted breadcrumb underline/divider on the mobile appointment screen. */
+@media (max-width: 767.98px) {
+  #dior-patient-portal-app #tab-appointments .breadcrumb,
+  #dior-patient-portal-app #tab-appointments .breadcrumb-item,
+  #dior-patient-portal-app #tab-appointments .va-breadcrumb-list,
+  #dior-patient-portal-app #tab-appointments .va-breadcrumb-list a {
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+  }
+
+  #dior-patient-portal-app #tab-appointments .breadcrumb::after,
+  #dior-patient-portal-app #tab-appointments .breadcrumb::before,
+  #dior-patient-portal-app #tab-appointments .breadcrumb-item::after,
+  #dior-patient-portal-app #tab-appointments .breadcrumb-item::before,
+  #dior-patient-portal-app #tab-appointments .va-breadcrumb-list::after,
+  #dior-patient-portal-app #tab-appointments .va-breadcrumb-list::before {
+    display: none !important;
+    content: none !important;
+    border: 0 !important;
+  }
+}
