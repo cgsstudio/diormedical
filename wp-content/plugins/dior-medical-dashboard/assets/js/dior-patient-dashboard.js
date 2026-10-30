@@ -463,12 +463,17 @@ let diorUpcomingCurrentPage = 1;
                                 // First hide all rows
                                 allRows.forEach(row => row.style.display = 'none');
 
-                                // Show rows for current page
+                                // Show only real appointment rows on the current page.
                                 const startIndex = (diorUpcomingCurrentPage - 1) * diorUpcomingRowsPerPage;
                                 const endIndex = startIndex + diorUpcomingRowsPerPage;
                                 const pageRows = activeRows.slice(startIndex, endIndex);
-
                                 pageRows.forEach(row => row.style.display = '');
+
+                                // Keep one mobile empty-state message; never count the PHP placeholder row.
+                                const emptyRow = document.querySelector('#dior-upcoming-appointments-tbody tr.dior-empty-state');
+                                if (emptyRow) emptyRow.style.display = 'none';
+                                const mobileEmpty = document.getElementById('dior-upcoming-mobile-empty');
+                                if (mobileEmpty) mobileEmpty.classList.toggle('is-visible', activeRows.length === 0);
 
                                 // Build pagination HTML
                                 const pagContainer = document.getElementById('dior-upcoming-pagination');
