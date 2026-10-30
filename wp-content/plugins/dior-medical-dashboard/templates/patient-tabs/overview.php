@@ -31,7 +31,7 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
 
       <!-- 1. Stats Row -->
       <div class="row g-3 mb-3 mb-xl-4">
-        <div class="col-12 col-sm-4">
+        <div class="col">
           <div
             class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 d-flex flex-column justify-content-between">
             <div class="stat-num fs-1 fw-bold text-primary mb-1">
