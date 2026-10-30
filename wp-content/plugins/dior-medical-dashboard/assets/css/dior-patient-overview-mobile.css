@@ -89,3 +89,62 @@
   #tab-overview .dior-mob-previous-scroll::-webkit-scrollbar-track{background:#edf2f7;border-radius:8px}
   #tab-overview .dior-mob-previous-scroll::-webkit-scrollbar-thumb{background:#9bb6cc;border-radius:8px}
 }
+
+
+/* Mobile Overview brand alignment: reuse the same Dior dashboard palette as desktop. */
+@media (max-width: 767.98px) {
+  #tab-overview .dior-patient-overview-mobile {
+    color: var(--dior-brand-navy, #0b1030);
+  }
+  #tab-overview .dior-mob-welcome {
+    background: linear-gradient(135deg, var(--dior-brand-navy, #0b1030) 0%, var(--dior-brand-primary, #2865a5) 100%);
+  }
+  #tab-overview .dior-mob-eyebrow,
+  #tab-overview .dior-mob-welcome .dior-mob-eyebrow {
+    color: var(--dior-brand-accent, #0284c7);
+  }
+  #tab-overview .dior-mob-welcome .dior-mob-eyebrow {
+    color: #d7e8f7;
+  }
+  #tab-overview .dior-mob-section-heading h2,
+  #tab-overview .dior-mob-provider strong,
+  #tab-overview .dior-mob-patient-line strong,
+  #tab-overview .dior-mob-stat strong,
+  #tab-overview .dior-mob-vitals strong {
+    color: var(--dior-brand-navy, #0b1030);
+  }
+  #tab-overview .dior-mob-action-icon,
+  #tab-overview .dior-mob-stat-icon,
+  #tab-overview .dior-mob-heading-icon,
+  #tab-overview .dior-mob-icon-action,
+  #tab-overview .dior-mob-appointment-icon,
+  #tab-overview .dior-mob-lab>a,
+  #tab-overview .dior-mob-prescription>button,
+  #tab-overview .dior-mob-empty>span {
+    background: var(--dior-brand-soft, #e6f0fa);
+    color: var(--dior-brand-primary, #2865a5);
+  }
+  #tab-overview .dior-mob-primary-action>i,
+  #tab-overview .dior-mob-visit-meta i,
+  #tab-overview .dior-mob-text-action,
+  #tab-overview .dior-mob-list-link {
+    color: var(--dior-brand-primary, #2865a5);
+  }
+  #tab-overview .dior-mob-outline-action {
+    background: var(--dior-brand-soft, #e6f0fa);
+    border-color: #cbdced;
+    color: var(--dior-brand-primary, #2865a5);
+  }
+  #tab-overview .dior-mob-progress span {
+    background: var(--dior-brand-primary, #2865a5);
+  }
+  #tab-overview .dior-mob-previous-scroll {
+    scrollbar-color: var(--dior-brand-primary, #2865a5) var(--dior-brand-soft, #e6f0fa);
+  }
+  #tab-overview .dior-mob-previous-scroll::-webkit-scrollbar-track {
+    background: var(--dior-brand-soft, #e6f0fa);
+  }
+  #tab-overview .dior-mob-previous-scroll::-webkit-scrollbar-thumb {
+    background: var(--dior-brand-primary, #2865a5);
+  }
+}
