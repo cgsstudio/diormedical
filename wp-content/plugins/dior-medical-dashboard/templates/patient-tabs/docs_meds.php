@@ -256,6 +256,52 @@
   #dior-patient-portal-app #tab-docs_meds #dior-rx-table tbody tr > td::before { content:none !important; }
 }
 
+
+/* Mobile prescription pager; desktop table layout and pager behavior stay unchanged. */
+#dior-patient-portal-app #tab-docs_meds #dior-rx-pagination { display:none; }
+@media (max-width:767.98px) {
+  #dior-patient-portal-app #tab-docs_meds #dior-rx-pagination:has(button),
+  #dior-patient-portal-app #tab-docs_meds #dior-rx-pagination:not(:empty) {
+    display:flex !important;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+    padding-top:12px;
+    border-top:1px solid #e7edf5;
+  }
+  #dior-patient-portal-app #tab-docs_meds #dior-rx-pagination .dior-mobile-page-count {
+    color:#64748b;
+    font-size:11px;
+    font-weight:600;
+  }
+  #dior-patient-portal-app #tab-docs_meds #dior-rx-pagination .dior-mobile-page-controls {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#334155;
+    font-size:11px;
+    font-weight:700;
+  }
+  #dior-patient-portal-app #tab-docs_meds #dior-rx-pagination button,
+  #dior-patient-portal-app #tab-docs_meds #dior-rx-pagination .dior-page-btn {
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    width:34px !important;
+    min-width:34px !important;
+    height:34px !important;
+    min-height:34px !important;
+    padding:0 !important;
+    border:1px solid #dbe5f0 !important;
+    border-radius:8px !important;
+    background:#fff !important;
+    color:#2865a5 !important;
+  }
+  #dior-patient-portal-app #tab-docs_meds #dior-rx-pagination button:disabled,
+  #dior-patient-portal-app #tab-docs_meds #dior-rx-pagination .dior-page-btn:disabled { opacity:.4; }
+}
+
 </style>
 
     <!-- Breadcrumb Header -->
