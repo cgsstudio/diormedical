@@ -1584,6 +1584,7 @@
 
                         <p id="dior-today-mobile-no-results" class="small text-secondary text-center py-3" hidden>No appointments match your search.</p>
                     </div>
+                    <div id="dior-today-mobile-pagination" class="dior-mobile-card-pagination" aria-label="Today's appointments pages"></div>
                 </div>
 
                 <!-- Footer Summary with Pagination -->
@@ -1917,6 +1918,47 @@
         if (typeof window.diorInitBootstrapCalendar === 'function') {
             window.diorInitBootstrapCalendar();
         }
+    </script>
+    <script>
+    /* Mobile Today cards: paginate live PHP-rendered appointments in groups of five. */
+    (function () {
+        var list = document.getElementById('dior-today-mobile-list');
+        var search = document.getElementById('dior-today-mobile-search');
+        var pager = document.getElementById('dior-today-mobile-pagination');
+        if (!list || !pager) return;
+        var currentPage = 1;
+        var perPage = 5;
+        function render() {
+            var cards = Array.prototype.slice.call(list.querySelectorAll('.card[data-appointment-id]'));
+            var query = search ? String(search.value || '').trim().toLowerCase() : '';
+            var filtered = cards.filter(function (card) {
+                var haystack = String(card.getAttribute('data-search') || card.textContent).toLowerCase();
+                return !query || haystack.indexOf(query) !== -1;
+            });
+            var pages = Math.max(1, Math.ceil(filtered.length / perPage));
+            currentPage = Math.min(Math.max(1, currentPage), pages);
+            var start = (currentPage - 1) * perPage;
+            cards.forEach(function (card) { card.hidden = true; card.style.display = 'none'; });
+            filtered.slice(start, start + perPage).forEach(function (card) {
+                card.hidden = false;
+                card.style.display = '';
+            });
+            var empty = document.getElementById('dior-today-mobile-no-results');
+            if (empty) empty.hidden = filtered.length > 0 || cards.length === 0;
+            pager.innerHTML = filtered.length > perPage
+                ? '<span class="dior-mobile-page-count">Showing ' + (start + 1) + '–' + Math.min(start + perPage, filtered.length) + ' of ' + filtered.length + '</span>' +
+                  '<div class="dior-mobile-page-controls"><button type="button" data-page="' + (currentPage - 1) + '" ' + (currentPage === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="fas fa-chevron-left"></i></button><span>' + currentPage + ' / ' + pages + '</span><button type="button" data-page="' + (currentPage + 1) + '" ' + (currentPage === pages ? 'disabled' : '') + ' aria-label="Next page"><i class="fas fa-chevron-right"></i></button></div>'
+                : '';
+        }
+        if (search) search.addEventListener('input', function () { currentPage = 1; render(); });
+        pager.addEventListener('click', function (event) {
+            var button = event.target.closest('button[data-page]');
+            if (!button || button.disabled) return;
+            currentPage = parseInt(button.getAttribute('data-page'), 10) || 1;
+            render();
+        });
+        render();
+    })();
     </script>
 
 </section>
