@@ -1293,6 +1293,17 @@ class Dior_Medical_Auth
             );
         }
 
+        // Dedicated mobile-only Patient Telemedicine design; desktop styles remain unchanged.
+        $patient_telemedicine_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-telemedicine-mobile.css';
+        if (file_exists($patient_telemedicine_mobile_css)) {
+            wp_enqueue_style(
+                'dior-patient-telemedicine-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-patient-telemedicine-mobile.css',
+                ['dior-brand-overrides-css', 'dior-mobile-layouts-css'],
+                filemtime($patient_telemedicine_mobile_css)
+            );
+        }
+
         // Dedicated Patient Appointment mobile design system; desktop assets remain unchanged.
         $patient_appointments_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-appointments-mobile.css';
         if (file_exists($patient_appointments_mobile_css)) {
@@ -1455,6 +1466,18 @@ class Dior_Medical_Auth
                 true
             );
         }
+        // Dedicated mobile-only Patient Telemedicine interactions; reuses existing session actions.
+        $patient_telemedicine_mobile_js = DIOR_PORTAL_PATH . 'assets/js/dior-patient-telemedicine-mobile.js';
+        if (file_exists($patient_telemedicine_mobile_js)) {
+            wp_enqueue_script(
+                'dior-patient-telemedicine-mobile-js',
+                DIOR_PORTAL_URL . 'assets/js/dior-patient-telemedicine-mobile.js',
+                ['dior-patient-dashboard-page-js'],
+                filemtime($patient_telemedicine_mobile_js),
+                true
+            );
+        }
+
         // Dedicated mobile-only Patient Overview interactions; no desktop JS dependency.
         $patient_overview_mobile_js = DIOR_PORTAL_PATH . 'assets/js/dior-patient-overview-mobile.js';
         if (file_exists($patient_overview_mobile_js)) {
