@@ -84,10 +84,10 @@ $mobile_next_time = !empty($next_appointment['time']) ? $next_appointment['time'
 
   <section class="dior-mob-section">
     <div class="dior-mob-section-heading"><div><span class="dior-mob-eyebrow">MEDICAL HISTORY</span><h2>Previous consultations</h2></div><button type="button" class="dior-mob-text-action" data-dior-mobile-tab="appointments">View all</button></div>
-    <div class="dior-mob-list-card">
+    <div class="dior-mob-list-card dior-mob-previous-scroll" role="region" aria-label="Previous consultation cards" tabindex="0">
       <?php if (empty($prev_apts)): ?>
         <div class="dior-mob-empty"><span><i class="fas fa-clock-rotate-left"></i></span><strong>No previous consultations</strong><small>Completed visits will appear here.</small></div>
-      <?php else: foreach (array_slice($prev_apts, 0, 3) as $mobile_prev): ?>
+      <?php else: foreach ($prev_apts as $mobile_prev): ?>
         <div class="dior-mob-history"><div><strong><?php echo esc_html($mobile_prev['condition'] ?? $mobile_prev['condition_name'] ?? 'General Consultation'); ?></strong><small><?php echo esc_html($mobile_prev['provider'] ?? $mobile_prev['doctor_name'] ?? 'Provider not recorded'); ?></small><small><?php echo esc_html($mobile_prev['date'] ?? $mobile_prev['appt_date'] ?? '—'); ?> · <?php echo esc_html($mobile_prev['time'] ?? $mobile_prev['appt_time'] ?? '—'); ?></small></div><span><?php echo esc_html(ucfirst($mobile_prev['status'] ?? 'Completed')); ?></span></div>
       <?php endforeach; endif; ?>
     </div>
