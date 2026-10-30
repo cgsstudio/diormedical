@@ -5,7 +5,7 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.63
+ * Version: 17.2.64
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 
-define('DIOR_PORTAL_VERSION', '17.2.63');
+define('DIOR_PORTAL_VERSION', '17.2.64');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -1270,6 +1270,7 @@ class Dior_Medical_Auth
             );
         }
 
+
         // Load brand color overrides after the consolidated stylesheet.
         $brand_css_path = DIOR_PORTAL_PATH . 'assets/css/dior-brand-overrides.css';
         if (file_exists($brand_css_path)) {
@@ -1278,6 +1279,17 @@ class Dior_Medical_Auth
                 DIOR_PORTAL_URL . 'assets/css/dior-brand-overrides.css',
                 ['dior-custom-css'],
                 filemtime($brand_css_path)
+            );
+        }
+
+        // Dedicated mobile-only Patient Overview assets. Desktop markup and assets remain unchanged.
+        $patient_overview_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-overview-mobile.css';
+        if (file_exists($patient_overview_mobile_css)) {
+            wp_enqueue_style(
+                'dior-patient-overview-mobile-css',
+                DIOR_PORTAL_URL . 'assets/css/dior-patient-overview-mobile.css',
+                ['dior-brand-overrides-css', 'dior-mobile-layouts-css'],
+                filemtime($patient_overview_mobile_css)
             );
         }
 
@@ -1410,6 +1422,17 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-static-actions.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-static-actions.js') : DIOR_PORTAL_VERSION,
             true
         );
+        // Dedicated mobile-only Patient Overview interactions; no desktop JS dependency.
+        $patient_overview_mobile_js = DIOR_PORTAL_PATH . 'assets/js/dior-patient-overview-mobile.js';
+        if (file_exists($patient_overview_mobile_js)) {
+            wp_enqueue_script(
+                'dior-patient-overview-mobile-js',
+                DIOR_PORTAL_URL . 'assets/js/dior-patient-overview-mobile.js',
+                [],
+                filemtime($patient_overview_mobile_js),
+                true
+            );
+        }
         wp_enqueue_script(
             'apexcharts',
             DIOR_PORTAL_URL . 'assets/js/apexcharts.min.js',
