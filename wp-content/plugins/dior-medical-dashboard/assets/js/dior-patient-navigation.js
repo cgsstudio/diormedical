@@ -169,27 +169,38 @@
         window._diorLastApptToggleTime = window._diorLastApptToggleTime || 0;
         function toggleApptDropdown(e) {
             if (e && e.preventDefault) e.preventDefault();
-            var now = Date.now();
-            if (now - (window._diorLastApptToggleTime || 0) < 300) {
-                return;
-            }
-            window._diorLastApptToggleTime = now;
+            if (e && e.stopPropagation) e.stopPropagation();
 
             var w = document.getElementById('dior-appt-dropdown-wrap');
             if (!w) return;
+
+            var isMobile = window.matchMedia && window.matchMedia('(max-width: 1024px)').matches;
             var isOpen = w.classList.contains('open');
-            var ch = w.querySelector('.fa-chevron-down');
-            if (isOpen && document.getElementById('tab-appointments').classList.contains('active')) {
+            var trigger = w.querySelector(':scope > .dior-nav-btn');
+            var chevron = w.querySelector(':scope > .dior-nav-btn .fa-chevron-down');
+
+            // Mobile: parent item is an accordion trigger. Keep the drawer open
+            // so users can select one of its child links.
+            if (isMobile) {
+                w.classList.toggle('open', !isOpen);
+                if (trigger) trigger.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+                if (chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+                return;
+            }
+
+            // Desktop retains the original tab + dropdown interaction.
+            if (isOpen) {
                 w.classList.remove('open');
-                if (ch) ch.style.transform = 'rotate(0deg)';
+                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
             } else {
                 w.classList.add('open');
-                if (ch) ch.style.transform = 'rotate(180deg)';
+                if (trigger) trigger.setAttribute('aria-expanded', 'true');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
                 activate('appointments', true);
                 if (typeof window.diorSwitchApptSubTab === 'function') {
                     var activeSub = w.querySelector('.dior-nav-dropdown-item.active');
-                    var sub = activeSub ? activeSub.getAttribute('data-appt-subtab') : 'today';
-                    window.diorSwitchApptSubTab(sub);
+                    window.diorSwitchApptSubTab(activeSub ? activeSub.getAttribute('data-appt-subtab') : 'today');
                 }
             }
         }
