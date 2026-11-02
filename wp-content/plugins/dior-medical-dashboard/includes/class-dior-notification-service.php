@@ -735,6 +735,7 @@ class Dior_Notification_Service
 
         $patient = get_userdata($pid);
         $doctor_uid = $did && class_exists('Dior_Doctor_Resolver') ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($did) : $did;
+        $doctor_uid = $doctor_uid ?: $did;
         $doctor  = $doctor_uid ? get_userdata($doctor_uid) : null;
 
         $pname = $patient ? trim($patient->first_name . ' ' . $patient->last_name) ?: $patient->display_name : 'Patient';
@@ -773,7 +774,7 @@ class Dior_Notification_Service
         // Doctor In-App
         if ($did && $doctor) {
             self::add_dashboard_notification(
-                $did,
+                (int) $doctor->ID,
                 'Call Window Active: ' . $pname,
                 'Patient ' . $pname . ' consultation window is now active.',
                 $join_url,
