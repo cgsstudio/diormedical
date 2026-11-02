@@ -16,9 +16,100 @@ if (!class_exists('Dior_Zoom_Meetings')) {
             add_action('admin_post_dior_zoom_test_connection', [__CLASS__, 'test_connection']);
         }
 
+        /**
+         * Resolve credentials saved by this integration or an earlier Zoom setup.
+         * Legacy values are copied into the canonical option without deleting the source.
+         */
+        private static function get_settings() {
+            $settings = self::get_settings();
+            if (!is_array($settings)) { $settings = []; }
+
+            $normalize = static function ($value) use (&$normalize) {
+                $found = ['account_id' => '', 'client_id' => '', 'client_secret' => ''];
+                if (!is_array($value)) { return $found; }
+                foreach ($value as $key => $item) {
+                    $key_normalized = strtolower(preg_replace('/[^a-z0-9]/i', '', (string) $key));
+                    if (is_array($item)) {
+                        $nested = $normalize($item);
+                        foreach ($found as $field => $unused) {
+                            if ($found[$field] === '' && $nested[$field] !== '') { $found[$field] = $nested[$field]; }
+                        }
+                        continue;
+                    }
+                    if (!is_scalar($item) || trim((string) $item) === '') { continue; }
+                    $value_string = trim((string) $item);
+                    if ($found['account_id'] === '' && in_array($key_normalized, ['accountid', 'zoomaccountid', 'diorzoomaccountid'], true)) {
+                        $found['account_id'] = $value_string;
+                    } elseif ($found['client_id'] === '' && in_array($key_normalized, ['clientid', 'zoomclientid', 'diorzoomclientid'], true)) {
+                        $found['client_id'] = $value_string;
+                    } elseif ($found['client_secret'] === '' && in_array($key_normalized, ['clientsecret', 'zoomclientsecret', 'diorzoomclientsecret'], true)) {
+                        $found['client_secret'] = $value_string;
+                    }
+                }
+                return $found;
+            };
+
+            $resolved = $normalize($settings);
+            $legacy_option_names = [
+                'dior_zoom_settings', 'dior_zoom_api_settings', 'dior_zoom_credentials',
+                'zoom_settings', 'zoom_api_settings', 'zoom_credentials',
+                'zoom_oauth_settings', 'zoom_api_credentials', 'zoom_meetings_settings',
+            ];
+            foreach ($legacy_option_names as $option_name) {
+                if ($resolved['account_id'] && $resolved['client_id'] && $resolved['client_secret']) { break; }
+                $legacy = get_option($option_name, []);
+                $candidate = $normalize($legacy);
+                foreach ($resolved as $field => $unused) {
+                    if ($resolved[$field] === '' && $candidate[$field] !== '') { $resolved[$field] = $candidate[$field]; }
+                }
+            }
+
+            // Also support legacy integrations that stored each credential as a separate option.
+            $separate_options = [
+                'account_id' => ['zoom_account_id', 'dior_zoom_account_id'],
+                'client_id' => ['zoom_client_id', 'dior_zoom_client_id'],
+                'client_secret' => ['zoom_client_secret', 'dior_zoom_client_secret'],
+            ];
+            foreach ($separate_options as $field => $names) {
+                if ($resolved[$field] !== '') { continue; }
+                foreach ($names as $option_name) {
+                    $candidate = get_option($option_name, '');
+                    if (is_scalar($candidate) && trim((string) $candidate) !== '') {
+                        $resolved[$field] = trim((string) $candidate);
+                        break;
+                    }
+                }
+            }
+
+            // Discover non-autoloaded legacy options whose names contain "zoom".
+            if (!$resolved['account_id'] || !$resolved['client_id'] || !$resolved['client_secret']) {
+                global $wpdb;
+                $option_names = $wpdb->get_col("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '%zoom%' LIMIT 100");
+                if (is_array($option_names)) {
+                    foreach ($option_names as $option_name) {
+                        $candidate = $normalize(get_option($option_name, []));
+                        foreach ($resolved as $field => $unused) {
+                            if ($resolved[$field] === '' && $candidate[$field] !== '') { $resolved[$field] = $candidate[$field]; }
+                        }
+                        if ($resolved['account_id'] && $resolved['client_id'] && $resolved['client_secret']) { break; }
+                    }
+                }
+            }
+
+            // Migrate discovered values once, preserving every legacy option untouched.
+            if ($resolved['account_id'] || $resolved['client_id'] || $resolved['client_secret']) {
+                $merged = array_merge($settings, $resolved);
+                if ($merged !== $settings) {
+                    update_option(self::OPTION_KEY, $merged, false);
+                }
+                return $merged;
+            }
+            return $settings;
+        }
+
         public static function is_configured() {
-            $settings = get_option(self::OPTION_KEY, []);
-            return is_array($settings) && !empty($settings['account_id']) && !empty($settings['client_id']) && !empty($settings['client_secret']);
+            $settings = self::get_settings();
+            return !empty($settings['account_id']) && !empty($settings['client_id']) && !empty($settings['client_secret']);
         }
 
         public static function admin_menu() {
@@ -30,7 +121,7 @@ if (!class_exists('Dior_Zoom_Meetings')) {
                 wp_die(esc_html__('You are not allowed to manage Zoom settings.', 'dior-medical-dashboard'), 403);
             }
             check_admin_referer('dior_zoom_save_settings');
-            $current = get_option(self::OPTION_KEY, []);
+            $current = self::get_settings();
             if (!is_array($current)) { $current = []; }
             $account_id = isset($_POST['account_id']) ? sanitize_text_field(wp_unslash($_POST['account_id'])) : '';
             $client_id = isset($_POST['client_id']) ? sanitize_text_field(wp_unslash($_POST['client_id'])) : '';
