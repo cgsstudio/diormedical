@@ -1004,6 +1004,23 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
         renderDaySchedule();
     }
 
+
+    // Track patient clicks on Join Visit / Join Telehealth Room and notify the doctor.
+    document.addEventListener('click', function (event) {
+        var link = event.target.closest('a[data-dior-meeting-join]');
+        if (!link) return;
+        var root = document.getElementById('dior-patient-portal-app');
+        var nonce = link.getAttribute('data-meeting-nonce') || (root && root.getAttribute('data-meeting-nonce')) || '';
+        var apptUid = link.getAttribute('data-appt-uid') || '';
+        if (!nonce || !apptUid) return;
+        var body = new URLSearchParams({ action: 'dior_meeting_participant_joined', appt_uid: apptUid, nonce: nonce });
+        var ajaxUrl = (window.dior_patient_dashboard && window.dior_patient_dashboard.ajax_url) || '/wp-admin/admin-ajax.php';
+        if (navigator.sendBeacon) {
+            navigator.sendBeacon(ajaxUrl, new Blob([body.toString()], { type: 'application/x-www-form-urlencoded; charset=UTF-8' }));
+        } else {
+            fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', keepalive: true, headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: body.toString() }).catch(function () {});
+        }
+    }, true);
     function renderAgendaList() {
         var agendaListEl = document.getElementById('dior-bs-cal-agenda-list');
         if (!agendaListEl) return;
