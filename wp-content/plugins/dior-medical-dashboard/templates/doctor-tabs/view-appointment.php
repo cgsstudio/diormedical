@@ -378,7 +378,7 @@ $status_badges = [
                             $patient_uid = esc_attr(!empty($a['patient_uid']) ? $a['patient_uid'] : (!empty($patient_id) ? get_user_meta($patient_id, 'patient_id', true) : ('DM-' . (10000 + $patient_id))));
                             
                             $is_video = (stripos($visit_type, 'video') !== false || stripos($visit_type, 'telehealth') !== false);
-                            $join_url = esc_url(!empty($a['join_url']) ? $a['join_url'] : 'https://zoom.us/join');
+                            $join_url = !empty($a['join_url']) ? esc_url($a['join_url']) : '';
                             $payment_status = esc_html($a['payment_status'] ?? 'Paid');
 
                             // Doctor data resolution
@@ -470,6 +470,9 @@ $status_badges = [
                                 </td>
                                 <td class="text-end text-nowrap">
                                     <div class="d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
+                                        <?php if ($is_video && !empty($join_url) && in_array(strtolower($status), ['confirmed', 'scheduled', 'in progress', 'in-queue'], true)): ?>
+                                            <a href="<?php echo $join_url; ?>" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill shadow-none" title="Join video consultation" style="padding:4px 10px!important;font-size:12px!important;font-weight:600!important;line-height:1.3!important;"><i class="fas fa-video me-1"></i>Join</a>
+                                        <?php endif; ?>
                                         <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-view-patient-btn shadow-none"
                                             data-patient-id="<?php echo $patient_id; ?>"
                                             title="View Patient Profile"
