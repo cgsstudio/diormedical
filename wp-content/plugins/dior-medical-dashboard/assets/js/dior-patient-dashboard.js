@@ -1061,8 +1061,8 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             html += '</div>';
 
             html += '<div class="d-flex flex-wrap align-items-center gap-2">';
-            if (canJoin) {
-                html += '<a href="' + (apt.join_url || 'https://zoom.us/join') + '" target="_blank" class="btn btn-success btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">';
+            if (canJoin && apt.join_url && /^https:\/\//i.test(apt.join_url)) {
+                html += '<a href="' + apt.join_url.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">';
                 html += '<i class="fas fa-video"></i> Join Visit';
                 html += '</a>';
             }
@@ -2538,11 +2538,12 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 if (condEl) condEl.textContent = found.condition || found.condition_name || 'Telehealth Consultation';
                 if (notesEl) notesEl.textContent = found.notes || 'Standard telehealth clinical consultation scheduled. All submitted medical intake questionnaires are pre-verified.';
 
-                var joinUrl = found.join_url || 'https://zoom.us/join';
-                var isLive = (found.status === 'Confirmed' || found.status === 'Scheduled' || found.status === 'In-Queue');
+                var joinUrl = found.join_url || '';
+                var isLive = ['confirmed', 'scheduled', 'in-queue'].indexOf(String(found.status || found.appt_status || '').toLowerCase()) !== -1;
+                var isValidJoinUrl = /^https:\/\//i.test(joinUrl);
                 if (zoomWrap) {
-                    zoomWrap.style.display = isLive ? 'flex' : 'none';
-                    if (zoomLink) zoomLink.href = joinUrl;
+                    zoomWrap.style.display = (isLive && isValidJoinUrl) ? 'flex' : 'none';
+                    if (zoomLink) zoomLink.href = isValidJoinUrl ? joinUrl : '#';
                 }
             } else if (idEl) {
                 idEl.textContent = 'APPT #' + apptId;
