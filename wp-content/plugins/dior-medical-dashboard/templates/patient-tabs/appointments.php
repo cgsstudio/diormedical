@@ -491,6 +491,7 @@
                                         <th>TREATMENT <i class="fas fa-sort"></i></th>
                                         <th>CONTACT <i class="fas fa-sort"></i></th>
                                         <th>STATUS <i class="fas fa-sort"></i></th>
+                                        <th>ACTIONS</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dior-today-appointments-tbody">
@@ -503,6 +504,14 @@
                                         $status = sanitize_text_field($apt_row['status'] ?? '');
                                         if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true))
                                             continue;
+                                        $today_meeting_url = !empty($apt_row['join_url']) ? esc_url_raw($apt_row['join_url']) : '';
+                                        $today_patient = wp_get_current_user();
+                                        if ($today_meeting_url && class_exists('Dior_Zoom_Meetings')) {
+                                            $today_meeting_url = Dior_Zoom_Meetings::get_personalized_join_url(
+                                                $today_meeting_url,
+                                                $today_patient ? ($today_patient->display_name ?: $today_patient->user_login) : ''
+                                            );
+                                        }
                                         $today_mock[] = [
                                             $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                                             $apt_row['provider_spec'] ?? '—',
@@ -511,7 +520,11 @@
                                             $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
                                             $apt_row['phone'] ?? ($apt_row['contact'] ?? '—'),
                                             $status ?: 'Scheduled',
-                                            ''
+                                            '',
+                                            $today_meeting_url,
+                                            sanitize_text_field($apt_row['appt_uid'] ?? ($apt_row['id'] ?? '')),
+                                            $date_ymd,
+                                            sanitize_text_field($apt_row['time'] ?? ($apt_row['appt_time'] ?? ''))
                                         ];
                                     }
                                     ;
@@ -544,8 +557,30 @@
                                                 if (strtolower($tm[6]) === 'pending')
                                                     $st_cls = 'status-pending';
                                                 ?>
-                                                <span
-                                                    class="status-cell-text <?php echo $st_cls; ?>"><?php echo esc_html($tm[6]); ?></span>
+                                                <span class="status-cell-text <?php echo esc_attr($st_cls); ?>"><?php echo esc_html($tm[6]); ?></span>
+                                            </td>
+                                            <td class="dior-ic-d5c209e67c">
+                                                <div class="cell-actions">
+                                                    <?php if (!empty($tm[8]) && wp_http_validate_url($tm[8]) && stripos($tm[8], 'https://') === 0): ?>
+                                                        <a class="action-icon-btn edit-btn btn" href="<?php echo esc_url($tm[8]); ?>"
+                                                            data-dior-meeting-join data-appt-uid="<?php echo esc_attr($tm[9]); ?>"
+                                                            data-meeting-nonce="<?php echo esc_attr(wp_create_nonce('dior_meeting_started')); ?>"
+                                                            target="_blank" rel="noopener noreferrer" title="Join Zoom Meeting"
+                                                            aria-label="Join Zoom Meeting"><i class="fas fa-video text-success"></i></a>
+                                                    <?php endif; ?>
+                                                    <button type="button" class="action-icon-btn edit-btn btn dior-today-reschedule"
+                                                        data-appt-uid="<?php echo esc_attr($tm[9]); ?>"
+                                                        data-appt-date="<?php echo esc_attr($tm[10]); ?>"
+                                                        data-appt-time="<?php echo esc_attr($tm[11]); ?>"
+                                                        title="Reschedule Appointment" aria-label="Reschedule Appointment">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </button>
+                                                    <button type="button" class="action-icon-btn delete-btn btn dior-today-cancel"
+                                                        data-appt-uid="<?php echo esc_attr($tm[9]); ?>"
+                                                        title="Cancel Appointment" aria-label="Cancel Appointment">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
