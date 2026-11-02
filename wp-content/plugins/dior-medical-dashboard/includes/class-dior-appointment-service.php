@@ -146,6 +146,14 @@ class Dior_Appointment_Service
         }
 
         $created_appt = self::get_appointment_by_uid($appt_uid);
+
+        // Create and persist the Zoom meeting immediately for new video appointments.
+        // Both patient and doctor dashboards then read the same canonical join_url.
+        if (is_array($created_appt)) {
+            self::ensure_video_meeting_link($created_appt);
+            $created_appt = self::get_appointment_by_uid($appt_uid) ?: $created_appt;
+        }
+
         self::log_history($created_appt, 'created', ['new_status' => $booking_status]);
 
         Dior_Audit_Service::log('appointment_book', 'appointment', $appt_uid, $patient_id, 'success', [
