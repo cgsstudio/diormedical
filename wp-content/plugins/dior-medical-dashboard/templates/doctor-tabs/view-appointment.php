@@ -1487,7 +1487,7 @@ $status_badges = [
             data.append('action', 'dior_doc_appointment_update');
             data.append('nonce', nonce);
             data.append('appt_uid', uid);
-            data.append('status', 'Success');
+            data.append('status', 'Confirmed');
 
             fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
                 .then(function (response) {
@@ -1506,19 +1506,19 @@ $status_badges = [
                 })
                 .then(function (res) {
                     if (row) {
-                        row.dataset.status = 'Success';
+                        row.dataset.status = 'Confirmed';
                         var badge = row.querySelector('.va-badge');
                         if (badge) {
-                            badge.className = 'va-badge ' + (statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
-                            badge.textContent = 'Success';
+                            badge.className = 'va-badge ' + (statusBadgeMap['confirmed'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
+                            badge.textContent = 'Confirmed';
                         }
                         if (confirmBtn) confirmBtn.remove();
                     }
 
                     var dtlBadge = document.getElementById('dtl-status-badge');
                     if (dtlBadge) {
-                        dtlBadge.className = statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
-                        dtlBadge.textContent = 'Success';
+                        dtlBadge.className = statusBadgeMap['confirmed'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
+                        dtlBadge.textContent = 'Confirmed';
                     }
                     var dtlConfirmBtn = document.getElementById('dtl-action-confirm-btn');
                     if (dtlConfirmBtn) {
