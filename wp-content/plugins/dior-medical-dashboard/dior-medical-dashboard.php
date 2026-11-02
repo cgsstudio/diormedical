@@ -5559,14 +5559,6 @@ function dior_sync_docbooker_appointment($booking_data)
     $spec = get_post_meta($booking_data['doctor_id'], 'wpddb_doctor_speciality', true);
     $matched_doc_uid = dior_find_doctor_user_id($booking_data['doctor_id'], $doctor_name);
 
-    // Create a dedicated Zoom meeting for this DocBooker booking; never reuse a doctor's generic room URL.
-    $docbooker_join_url = '';
-    $docbooker_date = !empty($booking_data['booking_date']) ? sanitize_text_field($booking_data['booking_date']) : '';
-    $docbooker_time = !empty($booking_data['time']) ? sanitize_text_field($booking_data['time']) : '';
-    if ($docbooker_date && $docbooker_time && class_exists('Dior_Zoom_Meetings')) {
-        $docbooker_join_url = Dior_Zoom_Meetings::create_meeting_link($docbooker_date, $docbooker_time, $doctor_name) ?: '';
-    }
-
     $new_appointment = [
         'id' => $booking_data['booking_id'],
         'date' => !empty($booking_data['booking_date']) ? date('M d, Y', strtotime($booking_data['booking_date'])) : $booking_data['day'],
@@ -5577,7 +5569,7 @@ function dior_sync_docbooker_appointment($booking_data)
         'provider_spec' => $spec ?: 'General Practice & Telehealth',
         'provider_title' => $spec ?: 'General Practice & Telehealth',
         'status' => 'Pending',
-        'join_url' => $docbooker_join_url,
+        'join_url' => '', // The canonical appointment service owns Zoom meeting creation and persistence.
         'raw_date' => !empty($booking_data['booking_date']) ? $booking_data['booking_date'] : '',
         'doctor_id' => $booking_data['doctor_id'] ?? 0,
         'doctor_name' => $doctor_name,
