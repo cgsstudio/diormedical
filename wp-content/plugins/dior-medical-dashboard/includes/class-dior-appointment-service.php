@@ -105,7 +105,7 @@ class Dior_Appointment_Service
             $appt_date = date('Y-m-d');
         }
         $appt_time = sanitize_text_field($data['appt_time'] ?? 'Today - ASAP');
-        $join_url = esc_url_raw($data['join_url'] ?? 'https://zoom.us/join');
+        $join_url = esc_url_raw($data['join_url'] ?? '');
         $payment_status = Dior_Auth_Service::validate_enum($data['payment_status'] ?? 'Paid', ['Pending', 'Paid', 'Refunded', 'Failed'], 'Paid');
         $notes = sanitize_textarea_field($data['notes'] ?? '');
 
