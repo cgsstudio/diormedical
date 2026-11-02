@@ -5,39 +5,15 @@
  * Author: Vulture Concepts
  * Author URI: https://vultureconcepts.com/
  * Description: Luxury, secure, state-of-the-art Patient Portal & Authentication System for Dior Medical Telehealth & Urgent Care.
- * Version: 17.2.76
+ * Version: 17.2.71
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// Dashboard pages are authenticated and contain private medical information.
-// Keep them out of full-page caches, including WP Rocket's advanced cache layer.
-add_action('template_redirect', function () {
-    if (!is_user_logged_in()) {
-        return;
-    }
 
-    $is_dashboard = is_page(['doctor-dashboard', 'patient-dashboard', 'doctor-portal', 'dior-doctor-dashboard']);
-    if (!$is_dashboard && is_singular('page')) {
-        global $post;
-        $is_dashboard = $post && (
-            has_shortcode($post->post_content, 'dior_doctor_dashboard') ||
-            has_shortcode($post->post_content, 'dior_patient_dashboard')
-        );
-    }
-
-    if ($is_dashboard) {
-        if (!defined('DONOTCACHEPAGE')) {
-            define('DONOTCACHEPAGE', true);
-        }
-        nocache_headers();
-    }
-}, 0);
-
-
-define('DIOR_PORTAL_VERSION', '17.2.76');
+define('DIOR_PORTAL_VERSION', '17.2.71');
 
 
 define('DIOR_PORTAL_PATH', plugin_dir_path(__FILE__));
@@ -1210,15 +1186,6 @@ class Dior_Medical_Auth
      */
     public static function enqueue_assets()
     {
-        // Authenticated medical dashboards contain private patient information.
-        // Exclude portal requests from page caching and browser back/forward cache.
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '';
-        if (is_user_logged_in() && preg_match('~/(?:doctor|patient)-dashboard(?:/|$)~i', (string) $request_uri)) {
-            if (!defined('DONOTCACHEPAGE')) {
-                define('DONOTCACHEPAGE', true);
-            }
-            nocache_headers();
-        }
 
         // Google Fonts: Montserrat & DM Sans for portal typography
         wp_enqueue_style(
@@ -1359,28 +1326,6 @@ class Dior_Medical_Auth
             );
         }
 
-        // Dedicated Doctor Dashboard mobile drawer styling; desktop sidebar is unchanged.
-        $doctor_mobile_nav_css = DIOR_PORTAL_PATH . 'assets/css/dior-doctor-mobile-navigation.css';
-        if (file_exists($doctor_mobile_nav_css)) {
-            wp_enqueue_style(
-                'dior-doctor-mobile-navigation-css',
-                DIOR_PORTAL_URL . 'assets/css/dior-doctor-mobile-navigation.css',
-                ['dior-doctor-overview-mobile-css'],
-                filemtime($doctor_mobile_nav_css)
-            );
-        }
-
-        // Separate mobile-only Doctor Dashboard overview design; desktop remains untouched.
-        $doctor_overview_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-doctor-overview-mobile.css';
-        if (file_exists($doctor_overview_mobile_css)) {
-            wp_enqueue_style(
-                'dior-doctor-overview-mobile-css',
-                DIOR_PORTAL_URL . 'assets/css/dior-doctor-overview-mobile.css',
-                ['dior-doctor-css', 'dior-patient-overview-mobile-css'],
-                filemtime($doctor_overview_mobile_css)
-            );
-        }
-
         // Shared mobile pagination styling for Patient dashboard pages.
         $patient_pagination_mobile_css = DIOR_PORTAL_PATH . 'assets/css/dior-patient-pagination-mobile.css';
         if (file_exists($patient_pagination_mobile_css)) {
@@ -1471,7 +1416,7 @@ class Dior_Medical_Auth
         wp_enqueue_script(
             'dior-doctor-navigation-js',
             DIOR_PORTAL_URL . 'assets/js/dior-doctor-navigation.js',
-            ['dior-doctor-js'],
+            [],
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-navigation.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-navigation.js') : DIOR_PORTAL_VERSION,
             true
         );
@@ -1491,7 +1436,7 @@ class Dior_Medical_Auth
             'dior-dashboard-js',
             DIOR_PORTAL_URL . 'assets/js/dior-dashboard.js',
             ['jquery', 'sweetalert2', 'html2pdf'],
-            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-dashboard.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-dashboard.js') : DIOR_PORTAL_VERSION,
+            time(),
             true
         );
 
@@ -1511,7 +1456,7 @@ class Dior_Medical_Auth
             'dior-patient-dashboard-page-js',
             DIOR_PORTAL_URL . 'assets/js/dior-patient-dashboard.js',
             ['dior-dashboard-js'],
-            file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-patient-dashboard.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-patient-dashboard.js') : DIOR_PORTAL_VERSION,
+            time(),
             true
         );
         wp_enqueue_script(
@@ -1569,30 +1514,6 @@ class Dior_Medical_Auth
             file_exists(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-dashboard-page.js') ? filemtime(DIOR_PORTAL_PATH . 'assets/js/dior-doctor-dashboard-page.js') : DIOR_PORTAL_VERSION,
             true
         );
-        // Mobile-only Doctor Dashboard overview cards, sourced from existing dynamic rows.
-        $doctor_overview_mobile_js = DIOR_PORTAL_PATH . 'assets/js/dior-doctor-overview-mobile.js';
-        if (file_exists($doctor_overview_mobile_js)) {
-            wp_enqueue_script(
-                'dior-doctor-overview-mobile-js',
-                DIOR_PORTAL_URL . 'assets/js/dior-doctor-overview-mobile.js',
-                ['dior-doctor-dashboard-page-js'],
-                filemtime($doctor_overview_mobile_js),
-                true
-            );
-        }
-
-        // Dedicated mobile-only Doctor Dashboard drawer and submenu controller.
-        $doctor_mobile_nav_js = DIOR_PORTAL_PATH . 'assets/js/dior-doctor-mobile-navigation.js';
-        if (file_exists($doctor_mobile_nav_js)) {
-            wp_enqueue_script(
-                'dior-doctor-mobile-navigation-js',
-                DIOR_PORTAL_URL . 'assets/js/dior-doctor-mobile-navigation.js',
-                ['dior-doctor-overview-mobile-js'],
-                filemtime($doctor_mobile_nav_js),
-                true
-            );
-        }
-
         // Note: dior-static-table-interactions CSS is now merged into dior-patient.css and dior-doctor.css
         wp_enqueue_script(
             'dior-static-table-interactions',
