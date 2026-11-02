@@ -152,21 +152,81 @@ class Dior_Doctor_Dynamic {
         wp_send_json_error(['message'=>'Unable to delete appointment.']);
     }
     public static function ajax_appointment_update() {
-        self::auth(); global $wpdb; $uid=sanitize_text_field($_POST['appt_uid']??''); $a=Dior_Appointment_Service::get_appointment($uid); if(!$a) wp_send_json_error(['message'=>'Appointment not found.']);
-        if(!self::doctor_can_manage_appointment($a)) wp_send_json_error(['message'=>'Access denied.'],403);
-        $date=sanitize_text_field($_POST['date']??$a['appt_date']); $time=sanitize_text_field($_POST['time']??$a['appt_time']); $status=sanitize_text_field($_POST['status']??$a['status']);
-        $patient_id=absint($_POST['patient_id']??$a['patient_id']);
-        $allowed=['Pending','Confirmed','In Progress','Completed','Cancelled','No Show']; if(!in_array($status,$allowed,true)) wp_send_json_error(['message'=>'Invalid status.']);
-        if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date) || !preg_match('/^\d{1,2}:\d{2}(\s?[AP]M)?$/i',$time)) wp_send_json_error(['message'=>'Invalid appointment date or time.']);
-        if(!$patient_id || !get_userdata($patient_id)) wp_send_json_error(['message'=>'Please select a valid patient.']);
-        if(!current_user_can('manage_options') && !self::patient_belongs_to_doctor($patient_id,self::doctor_id())) wp_send_json_error(['message'=>'Selected patient is not assigned to your account.'],403);
-        $conflict=$wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}dior_appointments WHERE patient_id=%d AND appt_date=%s AND appt_time=%s AND appt_uid<>%s AND status NOT IN('Cancelled','No Show') AND is_deleted=0 LIMIT 1",$patient_id,$date,$time,$uid));
-        if($conflict) wp_send_json_error(['message'=>'This patient already has an active appointment at that time.']);
-        $old=$a; $updated=$wpdb->update($wpdb->prefix.'dior_appointments',['patient_id'=>$patient_id,'appt_date'=>$date,'appt_time'=>$time,'status'=>$status,'updated_at'=>current_time('mysql')],['appt_uid'=>$uid]);
-        if($updated===false) wp_send_json_error(['message'=>'The appointment could not be saved. Please try again.'],500);
-        if(method_exists('Dior_Appointment_Service','log_history_public')) Dior_Appointment_Service::log_history_public($old,'doctor_update',['new_status'=>$status,'new_date'=>$date,'new_time'=>$time,'new_patient_id'=>$patient_id]);
-        if(class_exists('Dior_Notification_Service')) Dior_Notification_Service::send_appointment_rescheduled($uid,$old['appt_date'],$old['appt_time'],$date,$time,'doctor');
-        wp_send_json_success(['message'=>'Appointment updated successfully.','appointment'=>Dior_Appointment_Service::get_appointment($uid)]);
+        self::auth(); global $wpdb; 
+        $uid = sanitize_text_field($_POST['appt_uid'] ?? ''); 
+        $a = Dior_Appointment_Service::get_appointment($uid); 
+        if (!$a) wp_send_json_error(['message' => 'Appointment not found.']);
+        if (!self::doctor_can_manage_appointment($a)) wp_send_json_error(['message' => 'Access denied.'], 403);
+
+        $date = sanitize_text_field($_POST['date'] ?? ($_POST['appt_date'] ?? $a['appt_date'])); 
+        $time = sanitize_text_field($_POST['time'] ?? ($_POST['appt_time'] ?? $a['appt_time'])); 
+        $status = sanitize_text_field($_POST['status'] ?? $a['status']);
+
+        if (strtolower($status) === 'success') {
+            $status = 'Confirmed';
+        }
+        $allowed = ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show']; 
+        if (!in_array($status, $allowed, true)) {
+            $status = 'Confirmed';
+        }
+
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $date = (!empty($a['appt_date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $a['appt_date'])) ? $a['appt_date'] : current_time('Y-m-d');
+        }
+
+        if (!preg_match('/^\d{1,2}:\d{2}(\s?[AP]M)?$/i', $time)) {
+            if ($status === 'Cancelled') {
+                $time = !empty($a['appt_time']) ? $a['appt_time'] : '10:00 AM';
+            } else {
+                $time = (!empty($a['appt_time']) && strtolower($a['appt_time']) !== 'pending') ? $a['appt_time'] : '10:00 AM';
+            }
+        }
+
+        $patient_id = absint($_POST['patient_id'] ?? $a['patient_id']);
+        if (!$patient_id || !get_userdata($patient_id)) {
+            $patient_id = (int)$a['patient_id'];
+        }
+        if (!$patient_id) {
+            wp_send_json_error(['message' => 'Please select a valid patient.']);
+        }
+
+        if (!current_user_can('manage_options') && !self::patient_belongs_to_doctor($patient_id, self::doctor_id())) {
+            if ((int)($a['doctor_id'] ?? 0) !== self::doctor_id() && (int)($a['patient_id'] ?? 0) !== $patient_id) {
+                wp_send_json_error(['message' => 'Selected patient is not assigned to your account.'], 403);
+            }
+        }
+
+        if ($status !== 'Cancelled') {
+            $conflict = $wpdb->get_var($wpdb->prepare(
+                "SELECT id FROM {$wpdb->prefix}dior_appointments WHERE patient_id=%d AND appt_date=%s AND appt_time=%s AND appt_uid<>%s AND status NOT IN('Cancelled','No Show') AND is_deleted=0 LIMIT 1",
+                $patient_id, $date, $time, $uid
+            ));
+            if ($conflict) wp_send_json_error(['message' => 'This patient already has an active appointment at that time.']);
+        }
+
+        $old = $a; 
+        $update_data = [
+            'patient_id' => $patient_id,
+            'appt_date'  => $date,
+            'appt_time'  => $time,
+            'status'     => $status,
+            'updated_at' => current_time('mysql')
+        ];
+        if (isset($_POST['condition_name'])) $update_data['condition_name'] = sanitize_text_field($_POST['condition_name']);
+        if (isset($_POST['visit_type']))     $update_data['visit_type']     = sanitize_text_field($_POST['visit_type']);
+        if (isset($_POST['notes']))          $update_data['notes']          = sanitize_textarea_field($_POST['notes']);
+        if (isset($_POST['doctor_id']) && (int)$_POST['doctor_id'] > 0)    $update_data['doctor_id'] = (int)$_POST['doctor_id'];
+
+        $updated = $wpdb->update($wpdb->prefix . 'dior_appointments', $update_data, ['appt_uid' => $uid]);
+        if ($updated === false) wp_send_json_error(['message' => 'The appointment could not be saved. Please try again.'], 500);
+
+        if (method_exists('Dior_Appointment_Service', 'log_history_public')) {
+            Dior_Appointment_Service::log_history_public($old, 'doctor_update', ['new_status' => $status, 'new_date' => $date, 'new_time' => $time, 'new_patient_id' => $patient_id]);
+        }
+        if (class_exists('Dior_Notification_Service')) {
+            Dior_Notification_Service::send_appointment_rescheduled($uid, $old['appt_date'], $old['appt_time'], $date, $time, 'doctor');
+        }
+        wp_send_json_success(['message' => 'Appointment updated successfully.', 'appointment' => Dior_Appointment_Service::get_appointment($uid)]);
     }
 
     public static function ajax_patient_status(){ self::auth(); global $wpdb; $pid=(int)($_POST['patient_id']??0); self::ensure_patient_row($pid); if(!self::patient_belongs_to_doctor($pid,self::doctor_id())) wp_send_json_error(['message'=>'Access denied.'],403); self::ensure_patient_row($pid); $status=sanitize_key($_POST['status']??'active'); if(!in_array($status,['active','inactive','blocked'],true)) wp_send_json_error(['message'=>'Invalid status.']); $wpdb->update(self::table('patients'),['status'=>$status,'updated_at'=>current_time('mysql')],['user_id'=>$pid]); update_user_meta($pid,'dior_patient_status',$status); wp_send_json_success(['message'=>'Patient status updated.']); }

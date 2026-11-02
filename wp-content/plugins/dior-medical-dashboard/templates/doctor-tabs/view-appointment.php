@@ -305,7 +305,7 @@ $status_badges = [
                 <div style="width: 140px;">
                     <select id="va-status-filter" class="form-select form-select-sm shadow-none">
                         <option value="">All Statuses</option>
-                        <option value="Success">Success</option>
+                        <option value="Confirmed">Confirmed</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Completed">Completed</option>
                         <option value="Cancelled">Cancelled</option>
@@ -767,7 +767,7 @@ $status_badges = [
                     <div class="col-md-6 col-12">
                         <label for="va-edit-status" class="form-label small fw-semibold text-secondary mb-1">Appointment Status <span class="text-danger">*</span></label>
                         <select id="va-edit-status" class="form-select rounded-3">
-                            <option value="Success">Success</option>
+                            <option value="Confirmed">Confirmed</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Completed">Completed</option>
                             <option value="Cancelled">Cancelled</option>

@@ -378,14 +378,17 @@ $status_badges = [
             var start = (page - 1) * perPage;
             allRows.forEach(function (r) { r.style.display = 'none'; });
             visible.slice(start, start + perPage).forEach(function (r) { r.style.display = ''; });
-            document.getElementById('ap-showing-info').textContent =
-                'Showing ' + Math.min(start + 1, total) + '–' + Math.min(start + perPage, total) + ' of ' + total + ' patient(s)';
+            var infoEl = document.getElementById('ap-showing-info');
+            if (infoEl) {
+                infoEl.textContent = 'Showing ' + Math.min(start + 1, total) + ' - ' + Math.min(start + perPage, total) + ' of ' + total + ' patient(s)';
+            }
             renderPagination(total);
         }
 
         function renderPagination(total) {
             var pages = Math.ceil(total / perPage);
             var container = document.getElementById('ap-pagination');
+            if (!container) return;
             container.innerHTML = '';
             if (pages <= 1) return;
             for (var i = 1; i <= pages; i++) {
