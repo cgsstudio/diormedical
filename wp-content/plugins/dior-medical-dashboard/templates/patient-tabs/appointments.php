@@ -93,6 +93,11 @@
         $a_status = !empty($apt['status']) ? $apt['status'] : 'Scheduled';
         $a_type = !empty($apt['type']) ? $apt['type'] : (!empty($apt['visit_type']) ? $apt['visit_type'] : 'Video Visit');
         $a_join = !empty($apt['join_url']) ? esc_url_raw($apt['join_url']) : '';
+        $patient_user = wp_get_current_user();
+        $patient_display_name = $patient_user ? ($patient_user->display_name ?: $patient_user->user_login) : '';
+        if ($a_join && class_exists('Dior_Zoom_Meetings')) {
+            $a_join = Dior_Zoom_Meetings::get_personalized_join_url($a_join, $patient_display_name);
+        }
         $a_notes = !empty($apt['notes']) ? $apt['notes'] : '';
         $a_condition = !empty($apt['condition']) ? $apt['condition'] : (!empty($apt['condition_name']) ? $apt['condition_name'] : 'Telehealth Consultation');
         $a_ymd = dior_normalize_date($a_date_raw);
