@@ -1468,57 +1468,87 @@ $status_badges = [
         }
 
         function confirmAppointment(uid, patientName, onComplete) {
-            if (!uid) return;
+            if (!uid) {
+                Swal.fire({ icon: 'error', title: 'Unable to confirm', text: 'Appointment ID is missing.' });
+                return;
+            }
+
             var row = document.querySelector('tr[data-appt-uid="' + uid + '"]');
+            var confirmBtn = row ? row.querySelector('.va-confirm-appt-btn') : null;
+            var originalButtonHtml = confirmBtn ? confirmBtn.innerHTML : '';
+
+            if (confirmBtn) {
+                if (confirmBtn.disabled) return;
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Confirming...';
+            }
+
             var data = new FormData();
             data.append('action', 'dior_doc_appointment_update');
             data.append('nonce', nonce);
             data.append('appt_uid', uid);
             data.append('status', 'Success');
 
-            fetch(ajaxUrl, { method: 'POST', body: data })
-                .then(function (r) { return r.json(); })
-                .then(function (res) {
-                    if (res.success) {
-                        if (row) {
-                            row.dataset.status = 'Success';
-                            var badge = row.querySelector('.va-badge');
-                            if (badge) {
-                                badge.className = 'va-badge ' + (statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
-                                badge.textContent = 'Success';
-                            }
+            fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
+                .then(function (response) {
+                    return response.text().then(function (body) {
+                        var result;
+                        try {
+                            result = JSON.parse(body);
+                        } catch (error) {
+                            throw new Error('Server returned an invalid response. Please check the WordPress PHP error log.');
                         }
-                        var dtlBadge = document.getElementById('dtl-status-badge');
-                        if (dtlBadge) {
-                            dtlBadge.className = statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
-                            dtlBadge.textContent = 'Success';
+                        if (!response.ok || !result.success) {
+                            throw new Error(result && result.data && result.data.message ? result.data.message : 'Appointment could not be confirmed.');
                         }
-                        var dtlConfirmBtn = document.getElementById('dtl-action-confirm-btn');
-                        if (dtlConfirmBtn) {
-                            dtlConfirmBtn.disabled = true;
-                            dtlConfirmBtn.classList.add('disabled');
-                            dtlConfirmBtn.innerHTML = '<i class="fas fa-check me-1"></i>Confirmed';
-                        }
-                        updateKpiCounters();
-                        renderPage(currentPage);
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Confirmed',
-                            text: 'Appointment for ' + (patientName || 'patient') + ' is now Confirmed.',
-                            toast: true,
-                            position: 'top-end',
-                            timer: 2500,
-                            showConfirmButton: false
-                        });
-                        if (typeof onComplete === 'function') onComplete(true);
-                    } else {
-                        Swal.fire({ icon: 'error', title: 'Error', text: res.data && res.data.message ? res.data.message : 'Failed to confirm appointment.' });
-                        if (typeof onComplete === 'function') onComplete(false);
-                    }
+                        return result;
+                    });
                 })
-                .catch(function () {
-                    Swal.fire({ icon: 'error', title: 'Error', text: 'Network connection error.' });
+                .then(function (res) {
+                    if (row) {
+                        row.dataset.status = 'Success';
+                        var badge = row.querySelector('.va-badge');
+                        if (badge) {
+                            badge.className = 'va-badge ' + (statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
+                            badge.textContent = 'Success';
+                        }
+                        if (confirmBtn) confirmBtn.remove();
+                    }
+
+                    var dtlBadge = document.getElementById('dtl-status-badge');
+                    if (dtlBadge) {
+                        dtlBadge.className = statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
+                        dtlBadge.textContent = 'Success';
+                    }
+                    var dtlConfirmBtn = document.getElementById('dtl-action-confirm-btn');
+                    if (dtlConfirmBtn) {
+                        dtlConfirmBtn.disabled = true;
+                        dtlConfirmBtn.classList.add('disabled');
+                        dtlConfirmBtn.innerHTML = '<i class="fas fa-check me-1"></i>Confirmed';
+                    }
+
+                    updateKpiCounters();
+                    renderPage(currentPage);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Confirmed',
+                        text: 'Appointment for ' + (patientName || 'patient') + ' is now confirmed.',
+                        toast: true,
+                        position: 'top-end',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                    if (typeof onComplete === 'function') onComplete(true);
+                })
+                .catch(function (error) {
+                    Swal.fire({ icon: 'error', title: 'Confirmation failed', text: error.message || 'Network connection error. Please try again.' });
                     if (typeof onComplete === 'function') onComplete(false);
+                })
+                .finally(function () {
+                    if (confirmBtn && document.body.contains(confirmBtn)) {
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerHTML = originalButtonHtml;
+                    }
                 });
         }
 
