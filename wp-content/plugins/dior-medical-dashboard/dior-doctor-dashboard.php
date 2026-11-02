@@ -784,7 +784,7 @@ class Dior_Doctor_Dashboard
             wp_send_json_error(["message" => "Unauthorized access."], 403);
         }
 
-        $appt_uid = sanitize_text_field($_POST['appt_uid'] ?? '');
+        $appt_uid = sanitize_text_field($_POST['appt_uid'] ?? ($_POST['appointment_id'] ?? ''));
         $patient_id = (int) (!empty($_POST['patient_id']) ? $_POST['patient_id'] : 0);
 
         global $wpdb;
@@ -814,14 +814,25 @@ class Dior_Doctor_Dashboard
             ]);
             $appt = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_appts WHERE appt_uid = %s", $appt_uid), ARRAY_A);
         } else {
-            $appt = $wpdb->get_row($wpdb->prepare(
-                "SELECT * FROM $table_appts WHERE appt_uid = %s AND is_deleted = 0",
-                $appt_uid
-            ), ARRAY_A);
+            // Accept either the stable appointment UID or the numeric database ID.
+            if (ctype_digit((string) $appt_uid)) {
+                $appt = $wpdb->get_row($wpdb->prepare(
+                    "SELECT * FROM $table_appts WHERE (id = %d OR appt_uid = %s) AND is_deleted = 0",
+                    (int) $appt_uid,
+                    $appt_uid
+                ), ARRAY_A);
+            } else {
+                $appt = $wpdb->get_row($wpdb->prepare(
+                    "SELECT * FROM $table_appts WHERE appt_uid = %s AND is_deleted = 0",
+                    $appt_uid
+                ), ARRAY_A);
+            }
 
             if (!$appt) {
                 wp_send_json_error(["message" => "Appointment not found."]);
             }
+            // Use the canonical UID for every subsequent update/history operation.
+            $appt_uid = (string) $appt['appt_uid'];
         }
 
         if (!$patient_id && !empty($appt['patient_id'])) {
