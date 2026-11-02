@@ -1076,6 +1076,17 @@ class Dior_Medical_Auth
             );
         }
 
+        // Login & registration pages: mobile-only 15px horizontal page spacing.
+        $auth_mobile_spacing_css = DIOR_PORTAL_PATH . 'assets/css/auth-mobile-spacing.css';
+        if (file_exists($auth_mobile_spacing_css)) {
+            wp_enqueue_style(
+                'dior-auth-mobile-spacing',
+                DIOR_PORTAL_URL . 'assets/css/auth-mobile-spacing.css',
+                ['dior-bootstrap-css'],
+                (string) filemtime($auth_mobile_spacing_css)
+            );
+        }
+
         // ── 2. Unified Custom Stylesheet (All Custom CSS Consolidated in 1 File)
         $custom_css_ver = file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-custom.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-custom.css') : DIOR_PORTAL_VERSION;
         wp_enqueue_style(
