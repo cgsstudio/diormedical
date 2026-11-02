@@ -156,15 +156,23 @@
         }
 
         // Update tab panels
-        var panels = document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
+        // Scope panel visibility to the Doctor Dashboard content root.
+        // Include nested panels so markup wrappers cannot break navigation.
+        var contentRoot = document.getElementById('dior-doc-content');
+        if (!contentRoot || !contentRoot.contains(activePanel)) {
+            console.warn('[Dior Navigation] Panel is outside the Doctor Dashboard:', normalizedId);
+            return false;
+        }
+
+        var panels = contentRoot.querySelectorAll('.dior-tab-panel');
         panels.forEach(function (panel) {
-            if (panel === activePanel) {
-                panel.classList.add('active');
+            var isActive = panel === activePanel;
+            panel.classList.toggle('active', isActive);
+            if (isActive) {
                 panel.removeAttribute('hidden');
                 panel.style.removeProperty('display');
                 panel.style.display = 'block';
             } else {
-                panel.classList.remove('active');
                 panel.setAttribute('hidden', 'hidden');
                 panel.style.display = 'none';
             }
