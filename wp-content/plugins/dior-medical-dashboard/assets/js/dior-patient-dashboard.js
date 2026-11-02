@@ -3522,3 +3522,85 @@ document.addEventListener('click', function (event) {
     });
   });
 })();
+
+
+// Real-time patient notification sync (polls the secured existing AJAX endpoint).
+(function () {
+    if (window.__diorPatientLiveNotifPolling) return;
+    window.__diorPatientLiveNotifPolling = true;
+
+    let lastNotificationId = '';
+    let requestInFlight = false;
+
+    function pollPatientNotifications() {
+        if (requestInFlight || document.hidden) return;
+
+        const config = window.dior_patient_dashboard || window.dior_vars || {};
+        const ajaxUrl = config.ajax_url || '/wp-admin/admin-ajax.php';
+        const nonce = config.portal_nonce || config.nonce || '';
+        if (!nonce) return;
+
+        requestInFlight = true;
+        const body = new URLSearchParams({
+            action: 'dior_patient_get_live_notifications',
+            nonce: nonce,
+            last_notif_id: lastNotificationId
+        });
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            body: body.toString()
+        })
+        .then(function (response) { return response.json(); })
+        .then(function (response) {
+            if (!response || !response.success || !response.data) return;
+            const data = response.data;
+            const unread = parseInt(data.unread_count, 10) || 0;
+
+            document.querySelectorAll('.patient-unread-badge, .dior-patient-notif-indicator, .dior-notif-indicator').forEach(function (badge) {
+                badge.textContent = unread;
+                badge.style.display = unread > 0 ? 'inline-flex' : 'none';
+            });
+
+            const dropdown = document.getElementById('dior-patient-notif-dd');
+            if (dropdown && data.dropdown_html) dropdown.innerHTML = data.dropdown_html;
+
+            const tableBody = document.getElementById('dior-notif-tbody');
+            if (tableBody && data.full_html) {
+                tableBody.innerHTML = data.full_html;
+                if (typeof window.diorRenderNotifPagination === 'function') window.diorRenderNotifPagination();
+                if (typeof window.diorUpdateNotifSelectionCount === 'function') window.diorUpdateNotifSelectionCount();
+            }
+
+            (Array.isArray(data.new_alerts) ? data.new_alerts : []).forEach(function (alert) {
+                if (window.Swal && alert && alert.title) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'info',
+                        title: alert.title,
+                        text: alert.message || 'A new dashboard notification has arrived.',
+                        showConfirmButton: true,
+                        confirmButtonText: 'Open',
+                        timer: 9000,
+                        timerProgressBar: true
+                    }).then(function (result) {
+                        if (result.isConfirmed && alert.action_url) window.location.href = alert.action_url;
+                    });
+                }
+            });
+
+            if (data.latest_id) lastNotificationId = data.latest_id;
+        })
+        .catch(function () {})
+        .finally(function () { requestInFlight = false; });
+    }
+
+    window.setTimeout(pollPatientNotifications, 1800);
+    window.setInterval(pollPatientNotifications, 5000);
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) pollPatientNotifications();
+    });
+})();
