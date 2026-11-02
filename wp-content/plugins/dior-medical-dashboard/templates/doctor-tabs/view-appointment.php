@@ -491,8 +491,8 @@ $status_badges = [
                                 </td>
                                 <td class="text-end text-nowrap">
                                     <div class="d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
-                                        <?php if ($is_video && !empty($join_url) && in_array(strtolower($status), ['confirmed', 'scheduled', 'success', 'in progress', 'in-queue'], true)): ?>
-                                            <a href="<?php echo $join_url; ?>" data-dior-meeting-join data-appt-uid="<?php echo esc_attr($uid); ?>" data-meeting-nonce="<?php echo esc_attr(wp_create_nonce('dior_meeting_started')); ?>" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill shadow-none" title="Join video consultation" style="padding:4px 10px!important;font-size:12px!important;font-weight:600!important;line-height:1.3!important;"><i class="fas fa-video me-1"></i>Join</a>
+                                        <?php if ($is_video && !empty($join_url) && !in_array(strtolower($status), ['completed', 'cancelled', 'no show'], true)): ?>
+                                            <a href="<?php echo $join_url; ?>" data-dior-meeting-join data-appt-uid="<?php echo esc_attr($uid); ?>" data-meeting-nonce="<?php echo esc_attr(wp_create_nonce('dior_meeting_started')); ?>" data-status-nonce="<?php echo esc_attr($nonce); ?>" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill shadow-none va-join-meeting-btn" title="Join Zoom Meeting" style="padding:4px 10px!important;font-size:12px!important;font-weight:600!important;line-height:1.3!important;"><i class="fas fa-video me-1"></i>Join Meeting</a>
                                         <?php endif; ?>
                                         <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-view-patient-btn shadow-none"
                                             data-patient-id="<?php echo $patient_id; ?>"
@@ -500,15 +500,7 @@ $status_badges = [
                                             style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
                                             <i class="fas fa-eye me-1"></i>View
                                         </button>
-                                        <?php if (strtolower($status) === 'pending'): ?>
-                                            <button type="button" class="btn btn-success btn-sm rounded-pill text-white va-confirm-appt-btn shadow-none"
-                                                data-uid="<?php echo $uid; ?>" 
-                                                data-name="<?php echo esc_attr($fname); ?>"
-                                                title="Confirm Appointment"
-                                                style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
-                                                <i class="fas fa-check me-1"></i>Confirm
-                                            </button>
-                                        <?php endif; ?>
+
                                         <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-resched-appt-btn shadow-none"
                                             data-uid="<?php echo $uid; ?>" 
                                             data-name="<?php echo esc_attr($fname); ?>" 
@@ -841,7 +833,7 @@ $status_badges = [
             setupRowCheckboxes();
             setupBulkActions();
             setupViewDetailsBtns();
-            setupConfirmBtns();
+            setupMeetingJoinBtns();
             setupCancelBtns();
             setupReschedBtns();
             setupRescheduleForm();
@@ -1327,22 +1319,6 @@ $status_badges = [
                 };
             }
 
-            var dtlConfirmBtn = document.getElementById('dtl-action-confirm-btn');
-            if (dtlConfirmBtn) {
-                if (status.toLowerCase() === 'confirmed') {
-                    dtlConfirmBtn.disabled = true;
-                    dtlConfirmBtn.classList.add('disabled');
-                    dtlConfirmBtn.innerHTML = '<i class="fas fa-check me-1"></i>Confirmed';
-                } else {
-                    dtlConfirmBtn.disabled = false;
-                    dtlConfirmBtn.classList.remove('disabled');
-                    dtlConfirmBtn.innerHTML = '<i class="fas fa-check me-1"></i>Confirm';
-                    dtlConfirmBtn.onclick = function () {
-                        confirmAppointment(apptUid, patientName);
-                    };
-                }
-            }
-
             var dtlReschedBtn = document.getElementById('dtl-action-resched-btn');
             if (dtlReschedBtn) {
                 dtlReschedBtn.onclick = function () {
@@ -1764,15 +1740,43 @@ $status_badges = [
             });
         }
 
-        function setupConfirmBtns() {
+        // Update the appointment to In Progress and trigger the existing dual-dashboard notification workflow.
+        function setupMeetingJoinBtns() {
             var tbody = document.getElementById('va-appointments-tbody');
             if (!tbody) return;
             tbody.addEventListener('click', function (e) {
-                var btn = e.target.closest('.va-confirm-appt-btn');
+                var btn = e.target.closest('.va-join-meeting-btn');
                 if (!btn) return;
-                var uid = btn.dataset.uid;
-                var name = btn.dataset.name;
-                confirmAppointment(uid, name);
+                var uid = btn.dataset.apptUid || '';
+                if (!uid) return;
+
+                // The anchor opens Zoom normally; this request updates status and sends notifications.
+                var data = new FormData();
+                data.append('action', 'dior_doc_appointment_update');
+                data.append('nonce', nonce);
+                data.append('appt_uid', uid);
+                data.append('status', 'In Progress');
+                fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
+                    .then(function (response) { return response.json(); })
+                    .then(function (result) {
+                        if (!result || !result.success) {
+                            console.error('Dior Medical: meeting opened but appointment status update failed.', result);
+                            return;
+                        }
+                        var row = btn.closest('tr');
+                        if (row) {
+                            row.dataset.status = 'In Progress';
+                            var badge = row.querySelector('.va-badge');
+                            if (badge) {
+                                badge.className = 'va-badge ' + statusBadgeMap['in progress'];
+                                badge.textContent = 'In Progress';
+                            }
+                        }
+                        updateKpiCounters();
+                    })
+                    .catch(function (error) {
+                        console.error('Dior Medical meeting status update failed:', error);
+                    });
             });
         }
 
