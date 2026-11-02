@@ -1294,6 +1294,7 @@ class Dior_Medical_Auth
             'rest_url' => esc_url_raw(rest_url()),
             'rest_nonce' => wp_create_nonce('wp_rest'),
             'portal_nonce' => wp_create_nonce('dior_portal_nonce'),
+            'meeting_nonce' => wp_create_nonce('dior_meeting_started'),
             'dashboard_url' => home_url('/patient-dashboard/'),
             'refactor_css_url' => DIOR_PORTAL_URL . 'assets/css/dior-custom.css',
             'patient' => [
@@ -1327,6 +1328,7 @@ class Dior_Medical_Auth
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('dior_doctor_nonce'),
                 'portal_nonce' => wp_create_nonce('dior_portal_nonce'),
+                'meeting_nonce' => wp_create_nonce('dior_meeting_started'),
                 'current_user_id' => $current_user_id,
                 'is_doctor' => $is_doctor_user ? 1 : 0,
                 'is_profile_complete' => $is_doc_complete,
