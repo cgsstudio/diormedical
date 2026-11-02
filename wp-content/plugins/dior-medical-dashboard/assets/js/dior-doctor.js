@@ -921,31 +921,41 @@ window.diorDocSwitchTab = function (tabId, updateUrl) {
         }
     }
 
-    // Update panels
-    const panels = document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
-    panels.forEach(p => {
-        p.classList.remove('active');
-        p.style.display = 'none';
+    // Resolve and validate the requested panel BEFORE hiding the current panel.
+    // This prevents a wrong/legacy tab ID from leaving the entire dashboard blank.
+    const contentRoot = document.getElementById('dior-doc-content');
+    const activePanel = document.getElementById(`tab-${tabId}`);
+    if (!contentRoot || !activePanel || !contentRoot.contains(activePanel)) {
+        console.warn('[Dior Doctor] Requested tab panel was not found inside the Doctor Dashboard:', tabId);
+        return false;
+    }
+
+    // Scope panel changes to this dashboard and include nested panel markup safely.
+    const panels = contentRoot.querySelectorAll('.dior-tab-panel');
+    panels.forEach(panel => {
+        const isActive = panel === activePanel;
+        panel.classList.toggle('active', isActive);
+        if (isActive) {
+            panel.removeAttribute('hidden');
+            panel.style.display = 'block';
+        } else {
+            panel.setAttribute('hidden', 'hidden');
+            panel.style.display = 'none';
+        }
     });
 
-    const activePanel = document.getElementById(`tab-${tabId}`);
-    if (activePanel) {
-        activePanel.classList.add('active');
-        activePanel.removeAttribute('hidden');
-        activePanel.style.display = 'block';
-        // Refresh table pagination inside activated tab
-        activePanel.querySelectorAll('.dior-doc-table').forEach(table => {
-            if (table._diorRenderPage) {
-                table._diorRenderPage(1);
-            } else {
-                diorDoctorInitTablePagination(table, 5);
-            }
-        });
-
-        // Trigger income report chart if opened
-        if (tabId === 'doc-accounts-income-report' && typeof window.diorRenderIncomeChart === 'function') {
-            setTimeout(window.diorRenderIncomeChart, 50);
+    // Refresh table pagination inside activated tab.
+    activePanel.querySelectorAll('.dior-doc-table, .dior-table, .dior-clean-table').forEach(table => {
+        if (table._diorRenderPage) {
+            table._diorRenderPage(1);
+        } else {
+            diorDoctorInitTablePagination(table, 5);
         }
+    });
+
+    // Trigger income report chart if opened.
+    if (tabId === 'doc-accounts-income-report' && typeof window.diorRenderIncomeChart === 'function') {
+        setTimeout(window.diorRenderIncomeChart, 50);
     }
 
     // If notifications tab opened, clear topbar bell badge and mark read in database
