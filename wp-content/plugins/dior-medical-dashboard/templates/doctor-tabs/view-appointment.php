@@ -382,7 +382,7 @@ $status_badges = [
                             // Repair older video appointments that still have no real Zoom meeting URL.
                             if ($is_video && class_exists('Dior_Zoom_Meetings') &&
                                 (!$stored_join_url || stripos($stored_join_url, 'zoom.us/join') !== false)) {
-                                $generated_join_url = Dior_Zoom_Meetings::create_meeting_link($date_raw, $time_raw, $doc_name ?? '');
+                                $generated_join_url = Dior_Zoom_Meetings::create_meeting_link($date_raw, $time_raw, (string) ($a['doctor_name'] ?? ''));
                                 if ($generated_join_url && !empty($a['appt_uid'])) {
                                     $wpdb->update(
                                         $wpdb->prefix . 'dior_appointments',
