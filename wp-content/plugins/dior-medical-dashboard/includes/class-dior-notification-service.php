@@ -700,7 +700,9 @@ class Dior_Notification_Service
         }
         $actor_user_id = (int) $actor_user_id;
         $recipient_id = ($actor_user_id === $patient_id) ? $doctor_id : (($actor_user_id === $doctor_id) ? $patient_id : 0);
-        $join_url = esc_url_raw($appt['join_url'] ?? '');
+        $recipient_is_doctor = ($recipient_id === $doctor_id);
+        // Doctors must receive the host start URL; patients receive the participant join URL.
+        $join_url = esc_url_raw($recipient_is_doctor ? ($appt['start_url'] ?? '') : ($appt['join_url'] ?? ''));
         if (!$recipient_id || $recipient_id === $actor_user_id || !$join_url || !wp_http_validate_url($join_url) || stripos($join_url, 'https://') !== 0) {
             return false;
         }
