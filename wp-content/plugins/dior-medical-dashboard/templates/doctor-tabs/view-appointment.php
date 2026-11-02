@@ -539,6 +539,68 @@ $status_badges = [
                                     </div>
                                 </td>
                             </tr>
+                            <!-- Mobile-only Bootstrap appointment card. Desktop table above remains unchanged. -->
+                            <tr class="va-mobile-card-row d-none" data-mobile-appt-uid="<?php echo esc_attr($uid_raw); ?>">
+                                <td colspan="7" class="p-0 border-0">
+                                    <article class="card va-mobile-appt-card border-0 shadow-sm mx-2 my-2">
+                                        <div class="card-body p-3">
+                                            <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
+                                                <div class="d-flex align-items-center gap-2 min-w-0">
+                                                    <img class="rounded-circle flex-shrink-0" width="46" height="46"
+                                                        src="<?php echo $avatar ?: 'https://ui-avatars.com/api/?name=' . urlencode($fname) . '&background=00346c&color=ffffff&bold=true'; ?>"
+                                                        alt="<?php echo esc_attr($fname); ?>">
+                                                    <div class="min-w-0">
+                                                        <div class="fw-bold text-dark text-truncate"><?php echo $fname; ?></div>
+                                                        <div class="small text-secondary"><?php echo $patient_uid; ?></div>
+                                                    </div>
+                                                </div>
+                                                <span class="<?php echo $badge; ?> flex-shrink-0"><?php echo $status; ?></span>
+                                            </div>
+                                            <div class="va-mobile-info-grid mb-3">
+                                                <div class="va-mobile-info-item">
+                                                    <span class="text-secondary small"><i class="fas fa-stethoscope me-1"></i>Consultation</span>
+                                                    <strong class="text-dark small"><?php echo $condition; ?></strong>
+                                                </div>
+                                                <div class="va-mobile-info-item">
+                                                    <span class="text-secondary small"><i class="far fa-calendar me-1"></i>Date &amp; Time</span>
+                                                    <strong class="text-dark small"><?php echo esc_html($date_fmt . ' · ' . $time); ?></strong>
+                                                </div>
+                                                <div class="va-mobile-info-item">
+                                                    <span class="text-secondary small"><i class="fas fa-phone me-1"></i>Contact</span>
+                                                    <?php if ($phone !== '—'): ?>
+                                                        <a class="small fw-semibold text-decoration-none" href="tel:<?php echo esc_attr(preg_replace('/[^0-9+]/', '', $phone)); ?>"><?php echo $phone; ?></a>
+                                                    <?php else: ?><strong class="small text-dark">—</strong><?php endif; ?>
+                                                </div>
+                                                <div class="va-mobile-info-item">
+                                                    <span class="text-secondary small">Appointment ID</span>
+                                                    <strong class="small text-primary"><?php echo esc_html($uid_raw); ?></strong>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-2 va-mobile-actions">
+                                                <?php if ($is_video && !empty($join_url) && !in_array(strtolower($status), ['completed', 'cancelled', 'no show'], true)): ?>
+                                                    <a href="<?php echo $join_url; ?>" data-dior-meeting-join data-appt-uid="<?php echo esc_attr($uid_raw); ?>"
+                                                        data-meeting-nonce="<?php echo esc_attr(wp_create_nonce('dior_meeting_started')); ?>"
+                                                        data-status-nonce="<?php echo esc_attr($nonce); ?>" target="_blank" rel="noopener noreferrer"
+                                                        class="btn btn-success btn-sm rounded-3 va-join-meeting-btn"><i class="fas fa-video me-1"></i>Join Meeting</a>
+                                                <?php endif; ?>
+                                                <button type="button" class="btn btn-outline-primary btn-sm rounded-3 va-view-patient-btn"
+                                                    data-patient-id="<?php echo $patient_id; ?>"><i class="fas fa-user me-1"></i>Patient</button>
+                                                <button type="button" class="btn btn-outline-primary btn-sm rounded-3 va-view-details-btn"
+                                                    data-uid="<?php echo esc_attr($uid_raw); ?>" data-appt-uid="<?php echo esc_attr($uid_raw); ?>"><i class="fas fa-eye me-1"></i>Details</button>
+                                                <button type="button" class="btn btn-outline-primary btn-sm rounded-3 va-resched-appt-btn"
+                                                    data-uid="<?php echo esc_attr($uid_raw); ?>" data-appt-uid="<?php echo esc_attr($uid_raw); ?>"
+                                                    data-name="<?php echo esc_attr($fname); ?>" data-date="<?php echo esc_attr($date_raw); ?>"
+                                                    data-time="<?php echo esc_attr($time); ?>"><i class="fas fa-calendar-alt me-1"></i>Reschedule</button>
+                                                <?php if (strtolower($status) !== 'cancelled'): ?>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-3 va-cancel-appt-btn"
+                                                        data-uid="<?php echo esc_attr($uid_raw); ?>" data-name="<?php echo esc_attr($fname); ?>">
+                                                        <i class="fas fa-ban me-1"></i>Cancel</button>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr id="va-empty-row">
