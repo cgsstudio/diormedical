@@ -683,6 +683,53 @@ class Dior_Notification_Service
     }
 
     /**
+     * Notify the other participant when a doctor or patient opens the meeting.
+     */
+    public static function send_meeting_started_notification($appt, $actor_user_id)
+    {
+        $patient_id = (int) ($appt['patient_id'] ?? 0);
+        $doctor_id = (int) ($appt['doctor_user_id'] ?? 0);
+        if (!$doctor_id && !empty($appt['doctor_id'])) {
+            $doctor_id = class_exists('Dior_Doctor_Resolver')
+                ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id((int) $appt['doctor_id'])
+                : (int) $appt['doctor_id'];
+        }
+        $actor_user_id = (int) $actor_user_id;
+        $recipient_id = ($actor_user_id === $patient_id) ? $doctor_id : (($actor_user_id === $doctor_id) ? $patient_id : 0);
+        $join_url = esc_url_raw($appt['join_url'] ?? '');
+        if (!$recipient_id || $recipient_id === $actor_user_id || !$join_url || !wp_http_validate_url($join_url) || stripos($join_url, 'https://') !== 0) {
+            return false;
+        }
+
+        $actor = get_userdata($actor_user_id);
+        $actor_name = $actor ? $actor->display_name : 'The other participant';
+        $is_patient_actor = ($actor_user_id === $patient_id);
+        $title = $is_patient_actor ? 'Patient Joined the Video Consultation' : 'Doctor Started the Video Consultation';
+        $message = $actor_name . ' has opened the video consultation. Click to join the meeting now.';
+
+        self::add_dashboard_notification(
+            $recipient_id,
+            $title,
+            $message,
+            $join_url,
+            'fa-video',
+            ($recipient_id === $doctor_id)
+        );
+
+        $recipient = get_userdata($recipient_id);
+        if ($recipient && !empty($recipient->user_email)) {
+            $html = self::render_email_template(
+                'Video Consultation Started',
+                $actor_name . ' has opened your scheduled video consultation.',
+                '<p>Hello <strong>' . esc_html($recipient->display_name) . '</strong>,</p><p><strong>' . esc_html($actor_name) . '</strong> has opened the video consultation. Join the same secure meeting using the button below.</p>',
+                ['label' => 'Join Meeting', 'url' => $join_url]
+            );
+            self::send_email_safe($recipient->user_email, 'Video Consultation Started — Join Meeting', $html);
+        }
+        return true;
+    }
+
+    /**
      * 7. Consultation Reminders (Imminent / Live Call Readiness)
      */
     public static function send_consultation_reminder($appt_uid)
