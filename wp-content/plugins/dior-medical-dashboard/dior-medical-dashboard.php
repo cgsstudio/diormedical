@@ -4238,7 +4238,7 @@ class Dior_Medical_Auth
                     'appt_date' => $date,
                     'appt_time' => $time,
                     'status' => 'Pending',
-                    'join_url' => 'https://zoom.us/join',
+                    'join_url' => (class_exists('Dior_Zoom_Meetings') ? (Dior_Zoom_Meetings::create_meeting_link($date, $time, $doctor_name) ?: 'https://zoom.us/join') : 'https://zoom.us/join'),
                     'payment_status' => 'Paid',
                     'notes' => $notes,
                     'booking_id' => $booking_id
