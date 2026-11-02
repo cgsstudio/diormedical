@@ -785,14 +785,26 @@ class Dior_Doctor_Dashboard
             ]);
             $appt = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_appts WHERE appt_uid = %s", $appt_uid), ARRAY_A);
         } else {
-            $appt = $wpdb->get_row($wpdb->prepare(
-                "SELECT * FROM $table_appts WHERE appt_uid = %s AND is_deleted = 0",
-                $appt_uid
-            ), ARRAY_A);
+            // Accept both the stable appointment UID and legacy numeric database IDs.
+            if (ctype_digit((string) $appt_uid)) {
+                $appt = $wpdb->get_row($wpdb->prepare(
+                    "SELECT * FROM $table_appts WHERE (id = %d OR appt_uid = %s) AND is_deleted = 0 LIMIT 1",
+                    (int) $appt_uid,
+                    $appt_uid
+                ), ARRAY_A);
+            } else {
+                $appt = $wpdb->get_row($wpdb->prepare(
+                    "SELECT * FROM $table_appts WHERE appt_uid = %s AND is_deleted = 0 LIMIT 1",
+                    $appt_uid
+                ), ARRAY_A);
+            }
 
             if (!$appt) {
                 wp_send_json_error(["message" => "Appointment not found."]);
             }
+
+            // Always use the canonical UID for subsequent updates and notifications.
+            $appt_uid = (string) $appt['appt_uid'];
         }
 
         if (!$patient_id && !empty($appt['patient_id'])) {
