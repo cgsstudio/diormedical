@@ -479,7 +479,7 @@ class Dior_DB
                     'status'         => in_array($a['status'] ?? '', ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show']) ? $a['status'] : 'Confirmed',
                     'appt_date'      => $appt_date,
                     'appt_time'      => sanitize_text_field($a['time'] ?? '10:00 AM'),
-                    'join_url'       => esc_url_raw($a['join_url'] ?? 'https://zoom.us/join'),
+                    'join_url'       => esc_url_raw($a['join_url'] ?? ''),
                     'payment_status' => sanitize_text_field($a['payment_status'] ?? 'Paid'),
                     'notes'          => sanitize_textarea_field($a['notes'] ?? ''),
                     'created_at'     => $created_at,
