@@ -92,7 +92,7 @@
         $a_time = !empty($apt['time']) ? $apt['time'] : (!empty($apt['appt_time']) ? $apt['appt_time'] : '');
         $a_status = !empty($apt['status']) ? $apt['status'] : 'Scheduled';
         $a_type = !empty($apt['type']) ? $apt['type'] : (!empty($apt['visit_type']) ? $apt['visit_type'] : 'Video Visit');
-        $a_join = !empty($apt['join_url']) ? $apt['join_url'] : 'https://zoom.us/join';
+        $a_join = !empty($apt['join_url']) ? esc_url_raw($apt['join_url']) : '';
         $a_notes = !empty($apt['notes']) ? $apt['notes'] : '';
         $a_condition = !empty($apt['condition']) ? $apt['condition'] : (!empty($apt['condition_name']) ? $apt['condition_name'] : 'Telehealth Consultation');
         $a_ymd = dior_normalize_date($a_date_raw);
