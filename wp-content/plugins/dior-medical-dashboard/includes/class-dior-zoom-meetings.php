@@ -241,6 +241,44 @@ if (!class_exists('Dior_Zoom_Meetings')) {
             return esc_url_raw($body['join_url']);
         }
 
+        /**
+         * Build a Zoom Web Client URL with the participant's display name prefilled.
+         * Zoom's documented web-client pattern uses a Base64 encoded "un" parameter.
+         * The native Zoom app URL cannot reliably prefill a guest display name.
+         */
+        public static function get_personalized_join_url($join_url, $display_name) {
+            $join_url = esc_url_raw((string) $join_url);
+            $display_name = trim(sanitize_text_field((string) $display_name));
+            if (!$join_url || !$display_name || !wp_http_validate_url($join_url)) {
+                return $join_url;
+            }
+
+            $parts = wp_parse_url($join_url);
+            if (empty($parts['host']) || !preg_match('/(^|\\.)zoom\\.us$/i', $parts['host'])) {
+                return $join_url;
+            }
+
+            $meeting_id = '';
+            if (!empty($parts['path']) && preg_match('~/j/(\\d+)~', $parts['path'], $matches)) {
+                $meeting_id = $matches[1];
+            } elseif (!empty($parts['path']) && preg_match('~/wc/(\\d+)/join~', $parts['path'], $matches)) {
+                $meeting_id = $matches[1];
+            }
+            if (!$meeting_id) {
+                return $join_url;
+            }
+
+            $query = [];
+            if (!empty($parts['query'])) {
+                parse_str($parts['query'], $query);
+            }
+            $url = 'https://zoom.us/wc/' . rawurlencode($meeting_id) . '/join?prefer=1&un=' . rawurlencode(base64_encode($display_name));
+            if (!empty($query['pwd'])) {
+                $url .= '&pwd=' . rawurlencode((string) $query['pwd']);
+            }
+            return esc_url_raw($url);
+        }
+
         public static function render_settings_page() {
             if (!current_user_can('manage_options')) { return; }
             $settings = self::get_settings();
