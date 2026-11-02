@@ -803,6 +803,10 @@ class Dior_Doctor_Dashboard
         $new_date        = sanitize_text_field($_POST['appt_date'] ?? ($_POST['date'] ?? $appt['appt_date']));
         $new_time        = sanitize_text_field($_POST['appt_time'] ?? ($_POST['time'] ?? $appt['appt_time']));
         $new_status      = sanitize_text_field($_POST['status'] ?? $appt['status']);
+        // Keep status values compatible with the database ENUM; legacy clients may still send Success.
+        if ($new_status === 'Success') {
+            $new_status = 'Confirmed';
+        }
         $new_condition   = sanitize_text_field($_POST['condition_name'] ?? $appt['condition_name']);
         $new_visit_type  = sanitize_text_field($_POST['visit_type'] ?? $appt['visit_type']);
         $new_join_url    = esc_url_raw($_POST['join_url'] ?? $appt['join_url']);
@@ -810,7 +814,7 @@ class Dior_Doctor_Dashboard
         $new_notes       = sanitize_textarea_field($_POST['notes'] ?? $appt['notes']);
         $new_doctor_id   = (int)($_POST['doctor_id'] ?? $appt['doctor_id']);
 
-        $allowed_statuses = ['Pending', 'Confirmed', 'Success', 'In Progress', 'Completed', 'Cancelled', 'No Show'];
+        $allowed_statuses = ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show'];
         if (!in_array($new_status, $allowed_statuses, true)) {
             $new_status = $appt['status'];
         }
