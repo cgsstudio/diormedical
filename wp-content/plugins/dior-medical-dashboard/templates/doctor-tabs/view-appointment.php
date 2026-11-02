@@ -358,7 +358,7 @@ $status_badges = [
                             $fname = esc_html($fname);
                             // Prefer the canonical UID; use the database primary key as a backward-compatible identifier.
                             // The AJAX handler resolves numeric IDs to the canonical appointment UID.
-                            $uid_raw = $a['appt_uid'] ?? ($a['appointment_uid'] ?? ($a['id'] ?? ''));
+                            $uid_raw = $a['appt_uid'] ?? ($a['appointment_uid'] ?? ($a['appointment_id'] ?? ($a['uid'] ?? ($a['id'] ?? ''))));
                             $uid = esc_attr((string) $uid_raw);
                             $patient_id = !empty($a['patient_id']) ? (int)$a['patient_id'] : (!empty($a['patient_user_id']) ? (int)$a['patient_user_id'] : 0);
                             $status = esc_html($a['status'] ?? 'Pending');
@@ -417,7 +417,7 @@ $status_badges = [
                             $doc_avatar = $doc_info['avatar'] ?? (get_user_meta($doc_id, 'dior_profile_image', true) ?: ('https://ui-avatars.com/api/?name=' . urlencode($doc_name) . '&background=00346c&color=ffffff&bold=true'));
                             $doc_email = $doc_info['email'] ?? ($a['doctor_email'] ?? 'doctor@diormedical.com');
                             ?>
-                            <tr data-appt-uid="<?php echo $uid; ?>" data-appointment-id="<?php echo esc_attr((string)($a['id'] ?? '')); ?>" 
+                            <tr data-appt-uid="<?php echo $uid; ?>" data-appointment-id="<?php echo esc_attr((string)($a['appointment_id'] ?? ($a['id'] ?? ''))); ?>" data-appointment-uid="<?php echo esc_attr((string)($a['appointment_uid'] ?? ($a['uid'] ?? $uid_raw))); ?>" 
                                 data-patient-id="<?php echo $patient_id; ?>"
                                 data-patient-uid="<?php echo $patient_uid; ?>"
                                 data-patient-name="<?php echo $fname; ?>"
@@ -457,7 +457,7 @@ $status_badges = [
                                             <div class="d-flex align-items-center gap-1.5" style="font-size: 11px;">
                                                 <span class="text-secondary"><?php echo $patient_uid; ?></span>
                                                 <span class="text-secondary opacity-50">&bull;</span>
-                                                <a href="javascript:void(0)" class="va-view-details-btn text-primary fw-semibold text-decoration-none" data-uid="<?php echo $uid; ?>" title="View Appointment Details">
+                                                <a href="javascript:void(0)" class="va-view-details-btn text-primary fw-semibold text-decoration-none" data-uid="<?php echo $uid; ?>" data-appt-uid="<?php echo $uid; ?>" title="View Appointment Details">
                                                     <?php echo $uid; ?>
                                                 </a>
                                             </div>
@@ -1190,7 +1190,7 @@ $status_badges = [
         // VIEW APPOINTMENT DETAILS MODAL LOGIC
         // =========================================================================
         function openAppointmentDetailsModal(uid) {
-            var row = document.querySelector('tr[data-appt-uid="' + uid + '"]');
+            var row = uid ? document.querySelector('tr[data-appt-uid="' + uid + '"], tr[data-appointment-id="' + uid + '"], tr[data-appointment-uid="' + uid + '"]') : null;
             if (!row) return;
             activeViewingRow = row;
 
@@ -1534,8 +1534,12 @@ $status_badges = [
             var noteInput = document.getElementById('va-resched-reason');
 
             // Resolve the identifier from the clicked row if a legacy caller passed an empty value.
-            if (!uid && row) uid = row.dataset.apptUid || row.dataset.appointmentId || '';
-            if (uidField) uidField.value = uid || '';
+            if (!uid && row) uid = row.dataset.apptUid || row.dataset.appointmentUid || row.dataset.appointmentId || '';
+            if (uidField) {
+                uidField.value = uid || '';
+                uidField.dataset.apptUid = uid || '';
+            }
+            window.diorActiveRescheduleRow = row || null;
             if (nameEl) nameEl.textContent = patientName || 'Patient';
             if (currSchedEl) currSchedEl.textContent = (date || '—') + ' · ' + (time || '—');
             if (dateInput) dateInput.value = date || '';
@@ -1560,7 +1564,14 @@ $status_badges = [
 
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                var uid = document.getElementById('va-resched-uid').value;
+                var uidField = document.getElementById('va-resched-uid');
+                var uid = uidField ? String(uidField.value || '').trim() : '';
+                // Last-resort recovery from the active appointment row if a legacy modal caller omitted the UID.
+                if (!uid && window.diorActiveRescheduleRow) {
+                    uid = window.diorActiveRescheduleRow.dataset.apptUid ||
+                        window.diorActiveRescheduleRow.dataset.appointmentUid ||
+                        window.diorActiveRescheduleRow.dataset.appointmentId || '';
+                }
                 var date = document.getElementById('va-resched-date').value;
                 var rawTime = document.getElementById('va-resched-time').value;
                 var reason = document.getElementById('va-resched-reason').value;
@@ -1579,6 +1590,10 @@ $status_badges = [
                 data.append('action', 'dior_doc_appointment_update');
                 data.append('nonce', nonce);
                 data.append('appt_uid', uid);
+                data.append('appointment_uid', uid);
+                data.append('appointment_id', uid);
+                data.append('appt_id', uid);
+                data.append('id', uid);
                 data.append('date', date);
                 data.append('time', formattedTime);
                 data.append('status', 'Success');
@@ -1719,7 +1734,7 @@ $status_badges = [
                 var btn = e.target.closest('.va-resched-appt-btn');
                 if (!btn) return;
                 var row = btn.closest('tr');
-                var uid = btn.dataset.uid || (row ? (row.dataset.apptUid || row.dataset.appointmentId) : '');
+                var uid = btn.dataset.apptUid || btn.dataset.uid || (row ? (row.dataset.apptUid || row.dataset.appointmentUid || row.dataset.appointmentId) : '');
                 var name = btn.dataset.name || (row ? row.dataset.patientName : '');
                 var date = btn.dataset.date || (row ? row.dataset.date : '');
                 var time = btn.dataset.time || (row ? row.dataset.time : '');
