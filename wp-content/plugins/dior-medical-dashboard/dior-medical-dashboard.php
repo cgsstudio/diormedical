@@ -987,6 +987,7 @@ class Dior_Medical_Auth
         add_action('wp_ajax_dior_patient_mark_all_notifications_read', [__CLASS__, 'ajax_mark_all_notifications_read']);
         add_action('wp_ajax_dior_patient_bulk_delete_notifications', [__CLASS__, 'ajax_bulk_delete_notifications']);
         add_action('wp_ajax_dior_patient_get_live_notifications', [__CLASS__, 'ajax_get_live_notifications']);
+        add_action('wp_ajax_dior_meeting_participant_joined', [__CLASS__, 'ajax_meeting_participant_joined']);
         add_action('wp_ajax_dior_patient_update_pharmacy', [__CLASS__, 'ajax_update_pharmacy']);
         add_action('wp_ajax_dior_patient_check_intake_status', [__CLASS__, 'ajax_check_intake_status']);
         add_action('wp_ajax_dior_patient_save_emergency_contact', [__CLASS__, 'ajax_save_emergency_contact']);
@@ -3912,6 +3913,51 @@ class Dior_Medical_Auth
         wp_set_auth_cookie($user_id);
 
         wp_send_json_success(['message' => 'Password updated successfully!']);
+    }
+
+    /**
+     * Record a Join Meeting click and notify the other authorized appointment participant.
+     */
+    public static function ajax_meeting_participant_joined()
+    {
+        if (!is_user_logged_in()) {
+            wp_send_json_error(['message' => 'Please sign in to join this consultation.'], 401);
+        }
+        $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+        if (!$nonce || !wp_verify_nonce($nonce, 'dior_meeting_started')) {
+            wp_send_json_error(['message' => 'Security verification failed. Refresh the dashboard and try again.'], 403);
+        }
+        $appt_uid = isset($_POST['appt_uid']) ? sanitize_text_field(wp_unslash($_POST['appt_uid'])) : '';
+        if (!$appt_uid || !class_exists('Dior_Appointment_Service')) {
+            wp_send_json_error(['message' => 'Appointment could not be found.'], 400);
+        }
+        $appt = Dior_Appointment_Service::get_appointment($appt_uid);
+        if (!$appt || !empty($appt['is_deleted'])) {
+            wp_send_json_error(['message' => 'This appointment is no longer available.'], 404);
+        }
+        $user_id = get_current_user_id();
+        $patient_id = (int) ($appt['patient_id'] ?? 0);
+        $doctor_id = (int) ($appt['doctor_user_id'] ?? 0);
+        if (!$doctor_id && !empty($appt['doctor_id'])) {
+            $doctor_id = class_exists('Dior_Doctor_Resolver')
+                ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id((int) $appt['doctor_id'])
+                : (int) $appt['doctor_id'];
+        }
+        if ($user_id !== $patient_id && $user_id !== $doctor_id && !current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'You do not have access to this meeting.'], 403);
+        }
+        $join_url = esc_url_raw($appt['join_url'] ?? '');
+        if (!$join_url || !wp_http_validate_url($join_url) || stripos($join_url, 'https://') !== 0 || stripos($join_url, 'zoom.us') === false) {
+            wp_send_json_error(['message' => 'A valid Zoom meeting link is not available for this appointment.'], 409);
+        }
+        $event_key = 'dior_meeting_join_' . md5($appt_uid . '|' . $user_id);
+        if (!get_transient($event_key)) {
+            if (class_exists('Dior_Notification_Service')) {
+                Dior_Notification_Service::send_meeting_started_notification($appt, $user_id);
+            }
+            set_transient($event_key, 1, 5 * MINUTE_IN_SECONDS);
+        }
+        wp_send_json_success(['message' => 'Meeting event recorded.']);
     }
 
     /**
