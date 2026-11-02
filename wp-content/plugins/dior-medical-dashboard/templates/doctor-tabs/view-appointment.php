@@ -426,23 +426,9 @@ $status_badges = [
 
                             $is_video = (stripos($visit_type, 'video') !== false || stripos($visit_type, 'telehealth') !== false);
                             $stored_join_url = !empty($a['join_url']) ? esc_url_raw($a['join_url']) : '';
-                            // Repair older video appointments that still have no real Zoom meeting URL.
-                            if (
-                                $is_video && class_exists('Dior_Zoom_Meetings') &&
-                                (!$stored_join_url || stripos($stored_join_url, 'zoom.us/join') !== false)
-                            ) {
-                                $generated_join_url = Dior_Zoom_Meetings::create_meeting_link($date_raw, $time_raw, (string) ($a['doctor_name'] ?? ''));
-                                if ($generated_join_url && !empty($a['appt_uid'])) {
-                                    $wpdb->update(
-                                        $wpdb->prefix . 'dior_appointments',
-                                        ['join_url' => esc_url_raw($generated_join_url), 'updated_at' => current_time('mysql')],
-                                        ['appt_uid' => sanitize_text_field($a['appt_uid'])],
-                                        ['%s', '%s'],
-                                        ['%s']
-                                    );
-                                    $stored_join_url = $generated_join_url;
-                                }
-                            }
+                            // Meeting creation is centralized in Dior_Appointment_Service.
+                            // Never create Zoom meetings while rendering the dashboard: both roles
+                            // must use the single join_url persisted on this appointment.
                             $join_user = wp_get_current_user();
                             $doctor_join_name = $join_user ? ($join_user->display_name ?: $join_user->user_login) : '';
                             $join_url = ($stored_join_url && class_exists('Dior_Zoom_Meetings'))
