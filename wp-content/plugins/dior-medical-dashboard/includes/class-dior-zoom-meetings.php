@@ -181,8 +181,8 @@ if (!class_exists('Dior_Zoom_Meetings')) {
             return (string) $body['access_token'];
         }
 
-        /** Create a Zoom meeting and return its join URL. */
-        public static function create_meeting_link($date, $time, $doctor_name = '') {
+        /** Create a Zoom meeting and return both participant and host URLs. */
+        public static function create_meeting_details($date, $time, $doctor_name = '') {
             $token = self::get_access_token();
             if (is_wp_error($token)) {
                 error_log('[Dior Zoom] ' . $token->get_error_message());
@@ -233,12 +233,22 @@ if (!class_exists('Dior_Zoom_Meetings')) {
             }
             $status = (int) wp_remote_retrieve_response_code($response);
             $body = json_decode(wp_remote_retrieve_body($response), true);
-            if ($status < 200 || $status >= 300 || empty($body['join_url']) || !wp_http_validate_url($body['join_url'])) {
+            if ($status < 200 || $status >= 300 || empty($body['join_url']) || empty($body['start_url']) || !wp_http_validate_url($body['join_url']) || !wp_http_validate_url($body['start_url'])) {
                 $reason = !empty($body['message']) ? sanitize_text_field($body['message']) : 'Zoom returned no valid join URL.';
                 error_log('[Dior Zoom] Meeting creation failed (HTTP ' . $status . '): ' . $reason);
                 return false;
             }
-            return esc_url_raw($body['join_url']);
+            return [
+                'join_url'  => esc_url_raw($body['join_url']),
+                'start_url' => esc_url_raw($body['start_url']),
+                'meeting_id' => isset($body['id']) ? (string) $body['id'] : '',
+            ];
+        }
+
+        /** Backward-compatible helper for integrations that only need a participant URL. */
+        public static function create_meeting_link($date, $time, $doctor_name = '') {
+            $details = self::create_meeting_details($date, $time, $doctor_name);
+            return is_array($details) ? $details['join_url'] : false;
         }
 
         /**
