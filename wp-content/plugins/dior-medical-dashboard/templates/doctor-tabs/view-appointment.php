@@ -356,7 +356,7 @@ $status_badges = [
                                 $fname = !empty($a['user_display_name']) ? $a['user_display_name'] : 'Patient #' . ($a['patient_id'] ?? '');
                             }
                             $fname = esc_html($fname);
-                            $uid = esc_attr($a['appt_uid'] ?? '');
+                            $uid = esc_attr($a['appt_uid'] ?? ($a['id'] ?? ''));
                             $patient_id = !empty($a['patient_id']) ? (int)$a['patient_id'] : (!empty($a['patient_user_id']) ? (int)$a['patient_user_id'] : 0);
                             $status = esc_html($a['status'] ?? 'Pending');
                             $badge = $status_badges[$status] ?? 'badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1 small fw-semibold';
@@ -803,6 +803,7 @@ $status_badges = [
 
         var statusBadgeMap = {
             'success': 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold',
+            'confirmed': 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold',
             'in progress': 'badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2.5 py-1 small fw-semibold',
             'completed': 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold',
             'cancelled': 'badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small fw-semibold',
@@ -1450,24 +1451,24 @@ $status_badges = [
             data.append('action', 'dior_doc_appointment_update');
             data.append('nonce', nonce);
             data.append('appt_uid', uid);
-            data.append('status', 'Success');
+            data.append('status', 'Confirmed');
 
             fetch(ajaxUrl, { method: 'POST', body: data })
                 .then(function (r) { return r.json(); })
                 .then(function (res) {
                     if (res.success) {
                         if (row) {
-                            row.dataset.status = 'Success';
+                            row.dataset.status = 'Confirmed';
                             var badge = row.querySelector('.va-badge');
                             if (badge) {
                                 badge.className = 'va-badge ' + (statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
-                                badge.textContent = 'Success';
+                                badge.textContent = 'Confirmed';
                             }
                         }
                         var dtlBadge = document.getElementById('dtl-status-badge');
                         if (dtlBadge) {
                             dtlBadge.className = statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
-                            dtlBadge.textContent = 'Success';
+                            dtlBadge.textContent = 'Confirmed';
                         }
                         var dtlConfirmBtn = document.getElementById('dtl-action-confirm-btn');
                         if (dtlConfirmBtn) {
