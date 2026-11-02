@@ -524,6 +524,29 @@ class Dior_Appointment_Service
             return;
         }
 
+        // Existing appointments keep their original Meeting ID. Retrieve its host URL
+        // instead of creating a replacement meeting when only start_url is missing.
+        if ($current_url !== '' && stripos($current_url, 'zoom.us/join') === false) {
+            $existing_start_url = Dior_Zoom_Meetings::get_meeting_start_url($current_url);
+            if ($existing_start_url) {
+                global $wpdb;
+                $table = $wpdb->prefix . 'dior_appointments';
+                $wpdb->update(
+                    $table,
+                    ['start_url' => esc_url_raw($existing_start_url), 'updated_at' => current_time('mysql')],
+                    ['appt_uid' => (string) ($appointment['appt_uid'] ?? '')],
+                    ['%s', '%s'],
+                    ['%s']
+                );
+                $appointment['start_url'] = esc_url_raw($existing_start_url);
+            }
+            return;
+        }
+
+        if (!class_exists('Dior_Zoom_Meetings')) {
+            return;
+        }
+
         $doctor_name = '';
         $doctor_id = (int) ($appointment['doctor_id'] ?? 0);
         if ($doctor_id) {
