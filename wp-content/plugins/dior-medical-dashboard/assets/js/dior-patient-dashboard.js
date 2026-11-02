@@ -3725,7 +3725,15 @@ function diorShowMeetingJoinModal(alert) {
     if (window.__diorPatientLiveNotifPolling) return;
     window.__diorPatientLiveNotifPolling = true;
 
-    let lastNotificationId = '';
+    // Start from the newest notification already rendered in the dashboard.
+    // This prevents the first polling request from swallowing a meeting event
+    // that arrives immediately after the page loads.
+    const initialPatientNotification = document.querySelector(
+        '#dior-patient-notif-dd .dior-notif-item[data-notif-id], #dior-notif-tbody [data-notif-id], .dior-full-notif-item[data-notif-id]'
+    );
+    let lastNotificationId = initialPatientNotification
+        ? (initialPatientNotification.getAttribute('data-notif-id') || '')
+        : '';
     let requestInFlight = false;
 
     function pollPatientNotifications() {
