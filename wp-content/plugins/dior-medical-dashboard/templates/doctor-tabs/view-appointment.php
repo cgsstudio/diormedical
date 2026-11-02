@@ -583,7 +583,7 @@ $status_badges = [
 <!-- ========================================================================= -->
 <div class="modal fade" id="diorAppointmentDetailsModal" tabindex="-1"
     aria-labelledby="diorAppointmentDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg va-mobile-scrollable-dialog">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
             <!-- Modal Header -->
             <div
@@ -721,7 +721,7 @@ $status_badges = [
 <!-- ========================================================================= -->
 <div class="modal fade" id="diorRescheduleApptModal" tabindex="-1" aria-labelledby="diorRescheduleApptModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered va-mobile-scrollable-dialog">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
             <div
                 class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
@@ -787,7 +787,7 @@ $status_badges = [
 <!-- ========================================================================= -->
 <div class="modal fade" id="diorViewApptEditModal" tabindex="-1" aria-labelledby="diorViewApptEditModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg va-mobile-scrollable-dialog">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
             <div
                 class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
