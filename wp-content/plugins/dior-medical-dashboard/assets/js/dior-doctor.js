@@ -594,6 +594,49 @@ document.addEventListener('click', function (event) {
     window.diorDocSwitchTab(btn.getAttribute('data-tab'));
 }, false);
 
+
+
+// Notify the other appointment participant as soon as this user opens the shared Zoom room.
+// The AJAX request is sent before the browser follows the Zoom link.
+(function () {
+    if (window.__diorDoctorMeetingJoinBound) return;
+    window.__diorDoctorMeetingJoinBound = true;
+
+    document.addEventListener('click', function (event) {
+        const link = event.target.closest('a[data-dior-meeting-join][data-appt-uid]');
+        if (!link) return;
+
+        const vars = window.dior_doctor_vars || {};
+        const nonce = link.getAttribute('data-meeting-nonce') || vars.meeting_nonce || '';
+        const apptUid = (link.getAttribute('data-appt-uid') || '').trim();
+        const ajaxUrl = vars.ajax_url || getDiorDocAjax();
+
+        if (!nonce || !apptUid || !ajaxUrl) return;
+
+        const body = new URLSearchParams({
+            action: 'dior_meeting_participant_joined',
+            appt_uid: apptUid,
+            nonce: nonce
+        });
+
+        // sendBeacon preserves the navigation to Zoom while delivering the event.
+        if (navigator.sendBeacon) {
+            navigator.sendBeacon(
+                ajaxUrl,
+                new Blob([body.toString()], { type: 'application/x-www-form-urlencoded; charset=UTF-8' })
+            );
+        } else {
+            fetch(ajaxUrl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                keepalive: true,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+                body: body.toString()
+            }).catch(function () {});
+        }
+    }, true);
+})();
+
 // Universal Table Pagination (5 entries per page)
 window.diorDoctorInitTablePagination = function (tableEl, pageSize) {
     if (!tableEl) return;
