@@ -1196,7 +1196,7 @@ $status_badges = [
             var time = ds.time || '—';
             var condition = ds.condition || 'General Consultation';
             var visitType = ds.visitType || 'Video Visit (HD)';
-            var joinUrl = ds.joinUrl || 'https://zoom.us/join';
+            var joinUrl = ds.joinUrl || '';
             var paymentStatus = ds.paymentStatus || 'Paid';
             var notes = ds.notes || 'No pre-consultation notes provided. Standard intake questionnaire verified.';
 
