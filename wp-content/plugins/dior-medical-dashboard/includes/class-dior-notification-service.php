@@ -734,7 +734,8 @@ class Dior_Notification_Service
         $did = (int)$appt['doctor_id'];
 
         $patient = get_userdata($pid);
-        $doctor  = $did ? get_userdata($did) : null;
+        $doctor_uid = $did && class_exists('Dior_Doctor_Resolver') ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($did) : $did;
+        $doctor  = $doctor_uid ? get_userdata($doctor_uid) : null;
 
         $pname = $patient ? trim($patient->first_name . ' ' . $patient->last_name) ?: $patient->display_name : 'Patient';
         $dname = $doctor ? 'Dr. ' . (trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician';
@@ -775,7 +776,7 @@ class Dior_Notification_Service
                 $did,
                 'Call Window Active: ' . $pname,
                 'Patient ' . $pname . ' consultation window is now active.',
-                '#tab=doc-appointments',
+                $join_url,
                 'fa-video',
                 true
             );
