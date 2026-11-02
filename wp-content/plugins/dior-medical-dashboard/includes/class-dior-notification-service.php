@@ -153,103 +153,65 @@ class Dior_Notification_Service
     public static function render_email_template($headline, $preheader, $content_html, $button = null)
     {
         $site_name = get_bloginfo('name') ?: 'Dior Medical';
-        $site_url  = home_url();
-        $year      = date('Y');
-
+        $site_url = home_url('/');
         $button_html = '';
-        if (!empty($button) && !empty($button['url']) && !empty($button['label'])) {
-            $button_html = '
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 28px 0 10px 0;">
-                <tr>
-                    <td align="left" style="border-radius: 6px; background-color: #2C6CB1;">
-                        <a href="' . esc_url($button['url']) . '" target="_blank" style="font-family: \'Helvetica Neue\', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 600; color: #FFFFFF; text-decoration: none; display: inline-block; padding: 13px 26px; border-radius: 6px; background-color: #2C6CB1; border: 1px solid #2C6CB1;">
-                            ' . esc_html($button['label']) . ' &rarr;
-                        </a>
-                    </td>
-                </tr>
-            </table>';
+
+        if (!empty($button['url']) && !empty($button['label'])) {
+            $button_html = '<p style="margin:26px 0 8px"><a href="' . esc_url($button['url']) . '" style="display:inline-block;padding:13px 24px;background:#007eb1;color:#fff;text-decoration:none;border-radius:5px;font-weight:600">' . esc_html($button['label']) . '</a></p>';
         }
 
-        return '<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>' . esc_html($headline) . '</title>
-<style type="text/css">
-    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
-    table { border-collapse: collapse !important; }
-    body { margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #F8FAFC; }
-</style>
-</head>
-<body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: \'Helvetica Neue\', Helvetica, Arial, sans-serif; color: #1E293B;">
-<div style="display: none; font-size: 1px; color: #F8FAFC; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
-    ' . esc_html($preheader) . '
-</div>
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F8FAFC; padding: 30px 10px;">
-    <tr>
-        <td align="center">
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width: 600px; background-color: #FFFFFF; border-radius: 8px; border: 1px solid #E2E8F0; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-                <!-- Header -->
-                <tr>
-                    <td style="padding: 24px 32px; background: linear-gradient(135deg, #1A528E 0%, #2C6CB1 100%); text-align: left;">
-                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                            <tr>
-                                <td>
-                                    <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px;">
-                                        ' . esc_html($site_name) . '
-                                    </h1>
-                                    <span style="font-size: 12px; color: #E0F2FE; font-weight: 400; letter-spacing: 0.3px;">
-                                        Concierge Telehealth &amp; Clinical Medicine
-                                    </span>
-                                </td>
-                                <td align="right">
-                                    <span style="display: inline-block; padding: 4px 10px; background: rgba(255,255,255,0.15); border-radius: 12px; font-size: 11px; color: #FFFFFF; font-weight: 600;">
-                                        HIPAA Compliant
-                                    </span>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <!-- Headline Strip -->
-                <tr>
-                    <td style="padding: 20px 32px 10px; border-bottom: 1px solid #F1F5F9;">
-                        <h2 style="margin: 0; font-size: 19px; font-weight: 700; color: #1E293B;">
-                            ' . esc_html($headline) . '
-                        </h2>
-                    </td>
-                </tr>
-                <!-- Body Content -->
-                <tr>
-                    <td style="padding: 24px 32px 30px; font-size: 14.5px; line-height: 1.6; color: #334155;">
-                        ' . $content_html . '
-                        ' . $button_html . '
-                    </td>
-                </tr>
-                <!-- Clinic Footer & Anti-Spam -->
-                <tr>
-                    <td style="padding: 20px 32px; background-color: #F8FAFC; border-top: 1px solid #E2E8F0; text-align: left; font-size: 12px; line-height: 1.5; color: #64748B;">
-                        <p style="margin: 0 0 6px 0;">
-                            <strong>' . esc_html($site_name) . ' Telehealth Practice</strong> &bull; Secure Digital Health Platform
-                        </p>
-                        <p style="margin: 0 0 8px 0; color: #94A3B8;">
-                            This is an automated notification regarding your healthcare portal activity. Please do not reply directly to this automated email. For assistance, sign in to your dashboard.
-                        </p>
-                        <p style="margin: 0; color: #94A3B8; font-size: 11px;">
-                            &copy; ' . esc_html($year) . ' ' . esc_html($site_name) . '. All rights reserved. &bull; <a href="' . esc_url($site_url) . '" style="color: #2C6CB1; text-decoration: none;">Visit Website</a>
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-</body>
-</html>';
+        $template_dir = trailingslashit(DIOR_PORTAL_PATH) . 'templates/emails/';
+        $header_file = $template_dir . 'email-header.php';
+        $footer_file = $template_dir . 'email-footer.php';
+
+        ob_start();
+        if (is_readable($header_file)) {
+            include $header_file;
+        } else {
+            echo '<!doctype html><html><body style="font-family:Arial,sans-serif">';
+        }
+        echo wp_kses_post($content_html);
+        echo $button_html;
+        if (is_readable($footer_file)) {
+            include $footer_file;
+        } else {
+            echo '</body></html>';
+        }
+        return (string) ob_get_clean();
+    }
+
+    /**
+     * Render a named email body template with isolated variables.
+     * Template files receive only the supplied variables plus standard WordPress helpers.
+     *
+     * @param string $template Template filename inside templates/emails.
+     * @param array  $variables Variables available to the template.
+     * @return string|false
+     */
+    public static function render_named_email_template($template, $variables = [])
+    {
+        $allowed = [
+            'appointment-confirmation.php',
+            'appointment-rescheduled.php',
+            'appointment-cancelled.php',
+            'appointment-reminder.php',
+            'patient-activation.php',
+        ];
+        $template = sanitize_file_name($template);
+        if (!in_array($template, $allowed, true)) {
+            return false;
+        }
+
+        $file = trailingslashit(DIOR_PORTAL_PATH) . 'templates/emails/' . $template;
+        if (!is_readable($file)) {
+            return false;
+        }
+
+        if (!is_array($variables)) { $variables = []; }
+        extract($variables, EXTR_SKIP);
+        ob_start();
+        include $file;
+        return (string) ob_get_clean();
     }
 
     /**
