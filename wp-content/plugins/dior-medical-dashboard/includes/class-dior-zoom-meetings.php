@@ -98,7 +98,10 @@ if (!class_exists('Dior_Zoom_Meetings')) {
 
             // Migrate discovered values once, preserving every legacy option untouched.
             if ($resolved['account_id'] || $resolved['client_id'] || $resolved['client_secret']) {
-                $merged = array_merge($settings, $resolved);
+                $merged = $settings;
+                foreach ($resolved as $field => $value) {
+                    if ($value !== '') { $merged[$field] = $value; }
+                }
                 if ($merged !== $settings) {
                     update_option(self::OPTION_KEY, $merged, false);
                 }
