@@ -223,25 +223,7 @@ if (!empty($first_appt_uid) && isset($appts_data_map[$first_appt_uid])) {
                 </ol>
             </nav>
         </div>
-    </div>
-
-    <!-- Subtab Navigation Bar -->
-    <div class="dior-subtab-nav-bar px-1 mb-4">
-        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments" onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments');">
-            <i class="fas fa-calendar-days"></i> Appointment Calendar
-        </button>
-        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments-view" onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments-view'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-view');">
-            <i class="fas fa-calendar-check"></i> View Appointment
-        </button>
-        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments-book" onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments-book'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-book');">
-            <i class="fas fa-calendar-plus"></i> Book Appointment
-        </button>
-        <button type="button" class="dior-subtab-pill btn active" data-doc-tab="doc-appointments-edit" onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments-edit'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-edit');">
-            <i class="fas fa-pen-to-square"></i> Edit Appointment
-        </button>
-    </div>
-
-    <!-- 1. Patient & Appointment Selector Header Card -->
+    </div>\n\n<!-- 1. Patient & Appointment Selector Header Card -->
     <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 bg-light">
         <div class="row g-3 align-items-center">
             <div class="col-lg-5 col-md-6 col-12">
