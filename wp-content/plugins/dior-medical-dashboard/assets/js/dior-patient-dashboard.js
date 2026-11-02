@@ -1079,7 +1079,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
 
             html += '<div class="d-flex flex-wrap align-items-center gap-2">';
             if (canJoin && apt.join_url && /^https:\/\//i.test(apt.join_url)) {
-                html += '<a href="' + apt.join_url.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">';
+                html += '<a href="' + apt.join_url.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') + '" data-dior-meeting-join data-appt-uid="' + String(apt.id).replace(/[&<>"']/g, '') + '" data-meeting-nonce="' + ((window.dior_patient_dashboard && window.dior_patient_dashboard.meeting_nonce) || '') + '" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">';
                 html += '<i class="fas fa-video"></i> Join Visit';
                 html += '</a>';
             }
@@ -1169,7 +1169,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             html += '</div>';
 
             if (canJoin && apt.join_url && /^https:\/\//i.test(apt.join_url)) {
-                html += '<a href="' + apt.join_url.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm w-100 fw-bold mb-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5 py-1.5">';
+                html += '<a href="' + apt.join_url.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') + '" data-dior-meeting-join data-appt-uid="' + String(apt.id).replace(/[&<>"']/g, '') + '" data-meeting-nonce="' + ((window.dior_patient_dashboard && window.dior_patient_dashboard.meeting_nonce) || '') + '" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm w-100 fw-bold mb-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5 py-1.5">';
                 html += '<i class="fas fa-video"></i> Join Telehealth Room';
                 html += '</a>';
             }
