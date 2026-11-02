@@ -234,18 +234,16 @@ class Dior_Notification_Service
             'fa-user-check'
         );
 
-        // Luxury Email
-        $content = '
-        <p>Dear <strong>' . esc_html($name) . '</strong>,</p>
-        <p>Welcome to <strong>' . esc_html(get_bloginfo('name') ?: 'Dior Medical') . '</strong>. Your secure patient portal account has been successfully activated.</p>
-        <p>Through your portal, you can:</p>
-        <ul style="padding-left: 20px; margin: 12px 0; color: #475569;">
-            <li style="margin-bottom: 6px;">Book on-demand and scheduled Telehealth video consultations</li>
-            <li style="margin-bottom: 6px;">Manage, reschedule, and review all upcoming appointments</li>
-            <li style="margin-bottom: 6px;">Access digital e-prescriptions sent directly to your local pharmacy</li>
-            <li style="margin-bottom: 6px;">Complete clinical intake questionnaires with certified electronic signature</li>
-        </ul>
-        <p style="margin-top: 16px;">Please take a moment to review and complete your personal profile to ensure eligibility for your next appointment.</p>';
+        // Render the dedicated patient activation email body template.
+        $content = self::render_named_email_template('patient-activation.php', [
+            'patient_name' => $name,
+            'dashboard_url' => $login_url,
+            'site_url' => home_url('/'),
+            'site_name' => get_bloginfo('name') ?: 'Dior Medical',
+        ]);
+        if ($content === false) {
+            $content = '<p>Dear <strong>' . esc_html($name) . '</strong>,</p><p>Your Dior Medical patient portal account is ready. Please sign in to complete your profile.</p>';
+        }
 
         $html = self::render_email_template(
             'Welcome to Dior Medical Telehealth',
