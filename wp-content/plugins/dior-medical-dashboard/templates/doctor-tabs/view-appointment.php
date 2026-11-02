@@ -394,9 +394,10 @@ $status_badges = [
                                     $stored_join_url = $generated_join_url;
                                 }
                             }
-                            $patient_join_name = html_entity_decode(wp_strip_all_tags($fname), ENT_QUOTES, 'UTF-8');
+                            $join_user = wp_get_current_user();
+                            $doctor_join_name = $join_user ? ($join_user->display_name ?: $join_user->user_login) : '';
                             $join_url = ($stored_join_url && class_exists('Dior_Zoom_Meetings'))
-                                ? Dior_Zoom_Meetings::get_personalized_join_url($stored_join_url, $patient_join_name)
+                                ? Dior_Zoom_Meetings::get_personalized_join_url($stored_join_url, $doctor_join_name)
                                 : $stored_join_url;
                             $join_url = $join_url ? esc_url($join_url) : '';
                             $payment_status = esc_html($a['payment_status'] ?? 'Paid');
