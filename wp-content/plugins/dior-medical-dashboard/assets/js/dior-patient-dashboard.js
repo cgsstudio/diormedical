@@ -3524,6 +3524,170 @@ document.addEventListener('click', function (event) {
 })();
 
 
+
+/**
+ * Patient Today Appointments actions.
+ * Uses the existing secured WordPress appointment AJAX endpoints.
+ */
+(function () {
+    if (window.__diorTodayAppointmentActionsBound) return;
+    window.__diorTodayAppointmentActionsBound = true;
+
+    function getAppointmentAjaxConfig() {
+        const config = window.dior_patient_dashboard || window.dior_vars || {};
+        return {
+            url: config.ajax_url || '/wp-admin/admin-ajax.php',
+            nonce: config.portal_nonce || config.nonce || ''
+        };
+    }
+
+    function sendAppointmentAction(action, fields) {
+        const config = getAppointmentAjaxConfig();
+        const body = new URLSearchParams(Object.assign({
+            action: action,
+            nonce: config.nonce
+        }, fields || {}));
+
+        return fetch(config.url, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            body: body.toString()
+        }).then(function (response) {
+            return response.json();
+        });
+    }
+
+    function showAppointmentMessage(type, title, message) {
+        if (window.Swal) {
+            return Swal.fire({ icon: type, title: title, text: message });
+        }
+        window.alert(message || title);
+        return Promise.resolve();
+    }
+
+    function rescheduleTodayAppointment(button) {
+        const uid = (button.getAttribute('data-appt-uid') || '').trim();
+        const currentDate = button.getAttribute('data-appt-date') || '';
+        const currentTime = button.getAttribute('data-appt-time') || '';
+        if (!uid) return;
+
+        if (!window.Swal) {
+            showAppointmentMessage('error', 'Unavailable', 'Appointment rescheduling requires the dashboard dialog component.');
+            return;
+        }
+
+        const today = new Date();
+        const minDate = today.getFullYear() + '-' +
+            String(today.getMonth() + 1).padStart(2, '0') + '-' +
+            String(today.getDate()).padStart(2, '0');
+
+        Swal.fire({
+            title: 'Reschedule Appointment',
+            html:
+                '<div class="text-start">' +
+                    '<label for="dior-reschedule-date" class="form-label">New date</label>' +
+                    '<input id="dior-reschedule-date" type="date" class="swal2-input" min="' + minDate + '" value="' + currentDate + '" style="width:85%;margin:0 auto 14px;">' +
+                    '<label for="dior-reschedule-time" class="form-label">New time</label>' +
+                    '<input id="dior-reschedule-time" type="time" class="swal2-input" value="" style="width:85%;margin:0 auto;">' +
+                '</div>',
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm Reschedule',
+            cancelButtonText: 'Keep Current Time',
+            preConfirm: function () {
+                const dateInput = document.getElementById('dior-reschedule-date');
+                const timeInput = document.getElementById('dior-reschedule-time');
+                const date = dateInput ? dateInput.value : '';
+                const time = timeInput ? timeInput.value : '';
+                if (!date || !time) {
+                    Swal.showValidationMessage('Please select both a date and a time.');
+                    return false;
+                }
+                if (date < minDate) {
+                    Swal.showValidationMessage('Appointment date cannot be in the past.');
+                    return false;
+                }
+                return { date: date, time: time };
+            }
+        }).then(function (result) {
+            if (!result.isConfirmed || !result.value) return;
+            button.disabled = true;
+            return sendAppointmentAction('dior_patient_reschedule_appointment', {
+                appt_id: uid,
+                date: result.value.date,
+                time: result.value.time
+            }).then(function (response) {
+                if (!response || !response.success) {
+                    throw new Error(response && response.data && response.data.message ? response.data.message : 'Unable to reschedule this appointment.');
+                }
+                return Swal.fire({
+                    icon: 'success',
+                    title: 'Appointment Rescheduled',
+                    text: response.data.message || 'Your appointment has been rescheduled.',
+                    confirmButtonText: 'OK'
+                }).then(function () { window.location.reload(); });
+            }).catch(function (error) {
+                button.disabled = false;
+                showAppointmentMessage('error', 'Reschedule Failed', error.message || 'Please try again.');
+            });
+        });
+    }
+
+    function cancelTodayAppointment(button) {
+        const uid = (button.getAttribute('data-appt-uid') || '').trim();
+        if (!uid) return;
+
+        const confirm = window.Swal
+            ? Swal.fire({
+                icon: 'warning',
+                title: 'Cancel Appointment?',
+                text: 'Are you sure you want to cancel this appointment?',
+                input: 'text',
+                inputLabel: 'Cancellation reason (optional)',
+                inputPlaceholder: 'Enter a reason',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Cancel Appointment',
+                cancelButtonText: 'Keep Appointment',
+                confirmButtonColor: '#dc3545'
+            })
+            : Promise.resolve({ isConfirmed: window.confirm('Cancel this appointment?'), value: '' });
+
+        confirm.then(function (result) {
+            if (!result.isConfirmed) return;
+            button.disabled = true;
+            return sendAppointmentAction('dior_patient_cancel_appointment', {
+                appt_id: uid,
+                reason: (result.value || 'Cancelled by patient')
+            }).then(function (response) {
+                if (!response || !response.success) {
+                    throw new Error(response && response.data && response.data.message ? response.data.message : 'Unable to cancel this appointment.');
+                }
+                return showAppointmentMessage('success', 'Appointment Cancelled', response.data.message || 'Your appointment has been cancelled.')
+                    .then(function () { window.location.reload(); });
+            }).catch(function (error) {
+                button.disabled = false;
+                showAppointmentMessage('error', 'Cancellation Failed', error.message || 'Please try again.');
+            });
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        const rescheduleButton = event.target.closest('.dior-today-reschedule');
+        if (rescheduleButton) {
+            event.preventDefault();
+            rescheduleTodayAppointment(rescheduleButton);
+            return;
+        }
+
+        const cancelButton = event.target.closest('.dior-today-cancel');
+        if (cancelButton) {
+            event.preventDefault();
+            cancelTodayAppointment(cancelButton);
+        }
+    });
+})();
+
 // Real-time patient notification sync (polls the secured existing AJAX endpoint).
 (function () {
     if (window.__diorPatientLiveNotifPolling) return;
