@@ -181,6 +181,46 @@ if (!class_exists('Dior_Zoom_Meetings')) {
             return (string) $body['access_token'];
         }
 
+        /** Retrieve the host start URL for an existing Zoom meeting without changing its Meeting ID. */
+        public static function get_meeting_start_url($join_url) {
+            $parts = wp_parse_url(esc_url_raw((string) $join_url));
+            if (empty($parts['host']) || !preg_match('/(^|\\.)zoom\\.us$/i', $parts['host'])) {
+                return false;
+            }
+            $meeting_id = '';
+            if (!empty($parts['path']) && preg_match('~/j/([0-9]+)(?:/|$)~', $parts['path'], $matches)) {
+                $meeting_id = $matches[1];
+            } elseif (!empty($parts['path']) && preg_match('~/wc/([0-9]+)/join~', $parts['path'], $matches)) {
+                $meeting_id = $matches[1];
+            }
+            if (!$meeting_id) {
+                return false;
+            }
+            $token = self::get_access_token();
+            if (is_wp_error($token)) {
+                error_log('[Dior Zoom] ' . $token->get_error_message());
+                return false;
+            }
+            $response = wp_remote_get('https://api.zoom.us/v2/meetings/' . rawurlencode($meeting_id), [
+                'timeout' => 20,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token,
+                    'Accept' => 'application/json',
+                ],
+            ]);
+            if (is_wp_error($response)) {
+                error_log('[Dior Zoom] Existing meeting lookup failed: ' . $response->get_error_message());
+                return false;
+            }
+            $status = (int) wp_remote_retrieve_response_code($response);
+            $body = json_decode(wp_remote_retrieve_body($response), true);
+            if ($status < 200 || $status >= 300 || empty($body['start_url']) || !wp_http_validate_url($body['start_url'])) {
+                error_log('[Dior Zoom] Could not retrieve host start URL for existing meeting (HTTP ' . $status . ').');
+                return false;
+            }
+            return esc_url_raw($body['start_url']);
+        }
+
         /** Create a Zoom meeting and return both participant and host URLs. */
         public static function create_meeting_details($date, $time, $doctor_name = '') {
             $token = self::get_access_token();
