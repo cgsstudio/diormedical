@@ -356,10 +356,16 @@ $status_badges = [
                                 $fname = !empty($a['user_display_name']) ? $a['user_display_name'] : 'Patient #' . ($a['patient_id'] ?? '');
                             }
                             $fname = esc_html($fname);
-                            // Prefer the canonical UID; use the database primary key as a backward-compatible identifier.
-                            // The AJAX handler resolves numeric IDs to the canonical appointment UID.
-                            $uid_raw = $a['appt_uid'] ?? ($a['appointment_uid'] ?? ($a['appointment_id'] ?? ($a['uid'] ?? ($a['id'] ?? ''))));
-                            $uid = esc_attr((string) $uid_raw);
+                            // Resolve the first NON-EMPTY identifier. Live/legacy rows can contain an
+                            // empty appt_uid column while still having a valid numeric primary key.
+                            $uid_raw = '';
+                            foreach (['appt_uid', 'appointment_uid', 'appointment_id', 'uid', 'id'] as $uid_key) {
+                                if (isset($a[$uid_key]) && trim((string) $a[$uid_key]) !== '') {
+                                    $uid_raw = trim((string) $a[$uid_key]);
+                                    break;
+                                }
+                            }
+                            $uid = esc_attr($uid_raw);
                             $patient_id = !empty($a['patient_id']) ? (int)$a['patient_id'] : (!empty($a['patient_user_id']) ? (int)$a['patient_user_id'] : 0);
                             $status = esc_html($a['status'] ?? 'Pending');
                             $badge = $status_badges[$status] ?? 'badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1 small fw-semibold';
@@ -505,7 +511,8 @@ $status_badges = [
                                         </button>
 
                                         <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-resched-appt-btn shadow-none"
-                                            data-uid="<?php echo $uid; ?>" 
+                                            data-uid="<?php echo $uid; ?>"
+                                            data-appt-uid="<?php echo $uid; ?>" 
                                             data-name="<?php echo esc_attr($fname); ?>" 
                                             data-date="<?php echo esc_attr($date_raw); ?>" 
                                             data-time="<?php echo esc_attr($time); ?>"
