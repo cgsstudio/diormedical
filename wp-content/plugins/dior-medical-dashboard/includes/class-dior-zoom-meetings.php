@@ -21,7 +21,7 @@ if (!class_exists('Dior_Zoom_Meetings')) {
          * Legacy values are copied into the canonical option without deleting the source.
          */
         private static function get_settings() {
-            $settings = self::get_settings();
+            $settings = get_option(self::OPTION_KEY, []);
             if (!is_array($settings)) { $settings = []; }
 
             $normalize = static function ($value) use (&$normalize) {
