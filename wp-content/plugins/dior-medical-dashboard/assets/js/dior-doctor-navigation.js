@@ -10,32 +10,89 @@
     function normalizeTabId(tabId) {
         if (!tabId) return 'doc-overview';
         var t = String(tabId).trim();
-        if (t === 'feedback' || t === 'doc-feedback' || t === 'patient-review' || t === 'reviews') {
-            return 'doc-patient-review';
+        if (t.indexOf('#tab=') === 0) t = t.substring(5);
+        else if (t.indexOf('#') === 0) t = t.substring(1);
+        if (t.indexOf('tab-') === 0) t = t.substring(4);
+
+        // Overview
+        if (t === 'overview' || t === 'dashboard' || t === 'doc-dashboard') return 'doc-overview';
+
+        // Appointments
+        if (t === 'appointments-today' || t === 'today-appointments' || t === 'today' || t === 'doc-appointments-today' || t === 'doc-today-appointments') {
+            setTimeout(function () {
+                var df = document.getElementById('va-date-filter');
+                if (df) {
+                    df.value = 'today';
+                    df.dispatchEvent(new Event('change'));
+                }
+            }, 80);
+            return 'doc-appointments-view';
         }
-        if (t === 'notifications' || t === 'doc-notifications') {
-            return 'doc-notifications-system';
-        }
-        if (t === 'documents' || t === 'doc-documents') {
-            return 'doc-documents-upload';
-        }
-        if (t === 'patients' || t === 'doc-patients') {
-            return 'doc-patients-all';
-        }
-        if (t === 'appointments') {
-            return 'doc-appointments';
-        }
-        if (t === 'settings') {
-            return 'doc-settings';
-        }
+        if (t === 'appointments' || t === 'calendar' || t === 'appointment-calendar') return 'doc-appointments';
+        if (t === 'appointments-view' || t === 'view-appointment' || t === 'view-appointments') return 'doc-appointments-view';
+        if (t === 'appointments-book' || t === 'book-appointment' || t === 'book-appointments') return 'doc-appointments-book';
+        if (t === 'appointments-edit' || t === 'edit-appointment' || t === 'edit-appointments') return 'doc-appointments-edit';
+
+        // Patients
+        if (t === 'patients' || t === 'doc-patients' || t === 'patients-all' || t === 'all-patients') return 'doc-patients-all';
+        if (t === 'patients-add' || t === 'add-patient' || t === 'doc-add-patient') return 'doc-patients-add';
+        if (t === 'patients-edit' || t === 'edit-patient' || t === 'doc-edit-patient') return 'doc-patients-edit';
+        if (t === 'patients-records' || t === 'patient-records' || t === 'records' || t === 'doc-records') return 'doc-patients-records';
+        if (t === 'patients-profile' || t === 'patient-profile' || t === 'profile' || t === 'doc-profile') return 'doc-patients-profile';
+
+        // Accounts & Billing
+        if (t === 'accounts' || t === 'doc-accounts' || t === 'billing' || t === 'doc-billing' || t === 'bill-list' || t === 'accounts-bill-list') return 'doc-accounts-bill-list';
+        if (t === 'accounts-add-bill' || t === 'add-bill') return 'doc-accounts-add-bill';
+        if (t === 'accounts-income' || t === 'income' || t === 'doc-income') return 'doc-accounts-income';
+        if (t === 'accounts-expenses' || t === 'expenses' || t === 'doc-expenses') return 'doc-accounts-expenses';
+        if (t === 'accounts-income-report' || t === 'income-report' || t === 'doc-income-report') return 'doc-accounts-income-report';
+        if (t === 'accounts-invoice' || t === 'invoice' || t === 'doc-invoice') return 'doc-accounts-invoice';
+
+        // Consultation notes & Prescriptions
+        if (t === 'consultation-notes' || t === 'notes' || t === 'doc-notes') return 'doc-consultation-notes';
+        if (t === 'prescriptions' || t === 'doc-prescriptions' || t === 'e-prescriptions' || t === 'doc-e-prescriptions' || t === 'digital-prescriptions') return 'doc-e-prescriptions';
+
+        // Pharmacy
+        if (t === 'pharmacy' || t === 'doc-pharmacy' || t === 'pharmacy-list' || t === 'medicines' || t === 'doc-medicines') return 'doc-pharmacy-list';
+        if (t === 'pharmacy-add' || t === 'add-medicine' || t === 'doc-medicine-add') return 'doc-pharmacy-add';
+
+        // Documents
+        if (t === 'documents' || t === 'doc-documents' || t === 'documents-upload' || t === 'upload-documents') return 'doc-documents-upload';
+        if (t === 'documents-templates' || t === 'consent-templates' || t === 'templates') return 'doc-documents-templates';
+        if (t === 'documents-signed' || t === 'signed-consent' || t === 'signed') return 'doc-documents-signed';
+
+        // Telemedicine
+        if (t === 'telemed' || t === 'telemedicine' || t === 'doc-telemedicine' || t === 'doc-telemed-video' || t === 'telemed-video' || t === 'video-consultation') return 'doc-telemed-video';
+        if (t === 'telemed-records' || t === 'doc-telemed-records' || t === 'virtual-visits' || t === 'virtual-visit-records') return 'doc-telemed-records';
+
+        // Feedback & Reviews
+        if (t === 'feedback' || t === 'doc-feedback' || t === 'patient-review' || t === 'reviews' || t === 'doc-reviews') return 'doc-patient-review';
+
+        // Notifications
+        if (t === 'notifications' || t === 'doc-notifications' || t === 'notifications-system' || t === 'doc-notifications-system') return 'doc-notifications-system';
+        if (t === 'notifications-alerts' || t === 'doc-notifications-alerts') return 'doc-notifications-alerts';
+
+        // Consultation / Telemedicine fallback
+        if (t === 'consultation' || t === 'consultation-room' || t === 'doc-consultation' || t === 'doc-consultation-room') return 'doc-telemed-video';
+
+        // Settings
+        if (t === 'settings' || t === 'profile-settings') return 'doc-settings';
+
         return t;
     }
+    window.normalizeDoctorTabId = normalizeTabId;
 
-    // Global submenu toggle
+    // Global submenu toggle with debounce protection
     window.diorToggleSubmenu = function (e, menuId) {
         if (e && e.preventDefault) e.preventDefault();
         var targetMenu = document.getElementById(menuId);
         if (!targetMenu) return;
+
+        var now = Date.now();
+        if (targetMenu._diorLastToggle && (now - targetMenu._diorLastToggle < 200)) {
+            return;
+        }
+        targetMenu._diorLastToggle = now;
 
         var isAlreadyOpen = targetMenu.classList.contains('active') || targetMenu.classList.contains('open');
 
@@ -161,8 +218,18 @@
             }
         }
 
+        // Sync subtab pills in in-page navigation bars
+        document.querySelectorAll('.dior-subtab-pill[data-doc-tab], .dior-subtab-pill[data-tab]').forEach(function (pill) {
+            var pillTab = pill.getAttribute('data-doc-tab') || pill.getAttribute('data-tab');
+            if (normalizeTabId(pillTab) === normalizedId) {
+                pill.classList.add('active');
+            } else {
+                pill.classList.remove('active');
+            }
+        });
+
         // Update tab panels
-        var panels = contentRoot ? contentRoot.querySelectorAll(':scope > .dior-tab-panel') : [];
+        var panels = contentRoot ? contentRoot.querySelectorAll(':scope > .dior-tab-panel, .dior-tab-panel') : document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
         panels.forEach(function (panel) {
             if (panel === activePanel) {
                 panel.classList.add('active');
@@ -199,10 +266,43 @@
             setTimeout(window.diorRenderDoctorCalendar, 40);
         }
 
+        // Trigger income report chart if opened
+        if (normalizedId === 'doc-accounts-income-report' && typeof window.diorRenderIncomeChart === 'function') {
+            setTimeout(window.diorRenderIncomeChart, 50);
+        }
+
+        // If notifications tab opened, clear topbar bell badge and mark read in database
+        if (normalizedId === 'doc-notifications-system') {
+            document.querySelectorAll('.doc-unread-badge, .dior-notif-indicator').forEach(function (b) {
+                b.style.display = 'none';
+            });
+            if (window.diorDocAjax && window.diorDocNonce) {
+                try {
+                    var fd = new FormData();
+                    fd.append('action', 'dior_doctor_mark_all_notif_read');
+                    fd.append('nonce', window.diorDocNonce);
+                    fetch(window.diorDocAjax, { method: 'POST', body: fd }).catch(function () { });
+                } catch (e) { }
+            }
+        }
+
         // Close mobile drawer on selection
         window.diorDocCloseMobile();
 
         return true;
+    };
+
+    // Global navigation aliases for doctor templates
+    window.diorSwitchTab = function (tabId, updateUrl) {
+        if (document.getElementById('dior-doctor-app')) {
+            return window.diorDocSwitchTab(tabId, updateUrl);
+        }
+        if (typeof window.diorSafeSwitchPatientTab === 'function') {
+            return window.diorSafeSwitchPatientTab(tabId, updateUrl);
+        }
+    };
+    window.diorAdminSwitchTab = function (tabId, updateUrl) {
+        return window.diorDocSwitchTab(tabId, updateUrl);
     };
 
     function boot() {

@@ -3305,6 +3305,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
     'use strict';
 
     function switchPatientTab(tabId, updateHash) {
+        if (tabId === 'consultation' || tabId === 'consultation-room') tabId = 'telemedicine';
         if (typeof window.diorSafeSwitchPatientTab === 'function') {
             return window.diorSafeSwitchPatientTab(tabId, updateHash);
         }
@@ -3362,7 +3363,6 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
             emergency: 'Emergency Support',
             feedback: 'Feedback & Support',
             notifications: 'Notification Inbox',
-            consultation: 'Consultation Room',
             settings: 'Settings',
             questionnaire: 'Clinical Intake Questionnaires'
         };

@@ -1,13 +1,13 @@
 <?php
-$user_id       = !empty($user_id) ? (int)$user_id : get_current_user_id();
-$profile       = (!empty($profile) && is_array($profile)) ? $profile : [];
-$appointments  = (!empty($appointments) && is_array($appointments)) ? $appointments : [];
+$user_id = !empty($user_id) ? (int) $user_id : get_current_user_id();
+$profile = (!empty($profile) && is_array($profile)) ? $profile : [];
+$appointments = (!empty($appointments) && is_array($appointments)) ? $appointments : [];
 $prescriptions = (!empty($prescriptions) && is_array($prescriptions)) ? $prescriptions : [];
 $upcoming_list = (!empty($upcoming_list) && is_array($upcoming_list)) ? $upcoming_list : [];
-$past_list     = (!empty($past_list) && is_array($past_list)) ? $past_list : [];
-$documents     = (!empty($documents) && is_array($documents)) ? $documents : [];
-$hipaa_intake  = (!empty($hipaa_intake) && is_array($hipaa_intake)) ? $hipaa_intake : Dior_Patient_Portal_Data::get_normalized_hipaa_intake($user_id);
-$has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) || !empty($hipaa_intake['submitted_at']));
+$past_list = (!empty($past_list) && is_array($past_list)) ? $past_list : [];
+$documents = (!empty($documents) && is_array($documents)) ? $documents : [];
+$hipaa_intake = (!empty($hipaa_intake) && is_array($hipaa_intake)) ? $hipaa_intake : Dior_Patient_Portal_Data::get_normalized_hipaa_intake($user_id);
+$has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) || !empty($hipaa_intake['submitted_at']));
 ?>
 <section class="dior-tab-panel active custom-patient-overview" id="tab-overview">
   <div
@@ -17,7 +17,8 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
       <h1 class="h3 fw-bold text-dark mb-1">Welcome Back, <?php echo esc_html(strtoupper($display_first_name)); ?></h1>
       <p class="text-secondary small mb-0">Manage your telehealth visits, prescriptions, and medical records.</p>
     </div>
-    <a href="<?php echo esc_url(home_url('/patient-dashboard/#tab=appointments&subtab=book')); ?>" data-appt-subtab="book"
+    <a href="<?php echo esc_url(home_url('/patient-dashboard/#tab=appointments&subtab=book')); ?>"
+      data-appt-subtab="book"
       class="btn dior-btn-gold rounded-pill fw-semibold py-2 px-4 shadow-sm d-inline-flex align-items-center gap-2">
       <i class="fas fa-calendar-plus"></i>
       <span>Book An Appointment</span>
@@ -65,10 +66,12 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
 
         <!-- Patient Profile Card -->
         <div class="col-12 col-xxl-6">
-          <div class="card patient-card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column justify-content-between">
+          <div
+            class="card patient-card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column justify-content-between">
             <div>
               <div class="d-flex flex-wrap flex-sm-nowrap align-items-center gap-3">
-                <div class="patient-photo rounded-4 overflow-hidden flex-shrink-0" id="dior-patient-photo-box" style="width: 88px; height: 88px;">
+                <div class="patient-photo rounded-4 overflow-hidden flex-shrink-0" id="dior-patient-photo-box"
+                  style="width: 88px; height: 88px;">
                   <?php if (!empty($profile['avatar_url'])): ?>
                     <img id="dior-overview-patient-img" class="w-100 h-100 object-fit-cover"
                       src="<?php echo esc_url($profile['avatar_url']); ?>" alt="Profile"
@@ -90,7 +93,8 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                     <h2 class="h4 fw-bold mb-0 text-truncate text-primary">
                       <?php echo esc_html(!empty($profile['full_name']) ? $profile['full_name'] : 'Patient'); ?>
                     </h2>
-                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-1 small fw-medium"><?php echo esc_html($patient_identifier); ?></span>
+                    <span
+                      class="badge bg-light text-secondary border rounded-pill px-2 py-1 small fw-medium"><?php echo esc_html($patient_identifier); ?></span>
                   </div>
                   <?php
                   $dob_raw = !empty($profile['dob']) ? $profile['dob'] : '';
@@ -144,15 +148,22 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                   <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center flex-wrap gap-3 gap-sm-4">
                       <div>
-                        <strong id="dior-patient-metric-height" class="d-block text-dark fs-5 fw-bold lh-1 mb-1 text-nowrap"><?php echo esc_html($h_display); ?></strong>
+                        <strong id="dior-patient-metric-height"
+                          class="d-block text-dark fs-5 fw-bold lh-1 mb-1 text-nowrap"><?php echo esc_html($h_display); ?></strong>
                         <span class="text-secondary small">Height</span>
                       </div>
                       <div class="border-start border-secondary-subtle ps-4">
-                        <strong id="dior-patient-metric-weight" class="d-block text-dark fs-5 fw-bold lh-1 mb-1 text-nowrap"><?php echo esc_html($w_display); ?></strong>
+                        <strong id="dior-patient-metric-weight"
+                          class="d-block text-dark fs-5 fw-bold lh-1 mb-1 text-nowrap"><?php echo esc_html($w_display); ?></strong>
                         <span class="text-secondary small">Weight</span>
                       </div>
                     </div>
-                    <span role="button" tabindex="0" class="btn-sm rounded-circle d-inline-flex align-items-center justify-content-center p-0 border border-light-subtle bg-light text-secondary shadow-none" style="width: 28px; height: 28px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#diorHealthGoalsModal" onclick="if(window.bootstrap&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('diorHealthGoalsModal')).show();}" title="Edit Vitals">
+                    <span role="button" tabindex="0"
+                      class="btn-sm rounded-circle d-inline-flex align-items-center justify-content-center p-0 border border-light-subtle bg-light text-secondary shadow-none"
+                      style="width: 28px; height: 28px; cursor: pointer;" data-bs-toggle="modal"
+                      data-bs-target="#diorHealthGoalsModal"
+                      onclick="if(window.bootstrap&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('diorHealthGoalsModal')).show();}"
+                      title="Edit Vitals">
                       <i class="fas fa-pencil-alt text-secondary" style="font-size: 11px;"></i>
                     </span>
                   </div>
@@ -160,7 +171,8 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
               </div>
             </div>
             <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-3 shadow-sm w-100 mt-3"
-              data-switch-tab="settings" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('settings');">Edit Profile</button>
+              data-switch-tab="settings" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('settings');">Edit
+              Profile</button>
           </div>
         </div>
 
@@ -168,9 +180,14 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
         <div class="col-12 col-xxl-6">
           <div class="card goals-card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column"
             id="dior-patient-goals-card">
-            <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
+            <div
+              class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
               <h3 class="section-title mb-0 fs-5 fw-bold text-primary">Health Goals</h3>
-              <button type="button" class="btn btn-outline-primary btn-sm rounded-circle d-inline-flex align-items-center justify-content-center p-0 shadow-sm dior-icon-btn-32" data-bs-toggle="modal" data-bs-target="#diorHealthGoalsModal" onclick="if(window.bootstrap&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('diorHealthGoalsModal')).show();}" title="Manage Health Goals">
+              <button type="button"
+                class="btn btn-outline-primary btn-sm rounded-circle d-inline-flex align-items-center justify-content-center p-0 shadow-sm dior-icon-btn-32"
+                data-bs-toggle="modal" data-bs-target="#diorHealthGoalsModal"
+                onclick="if(window.bootstrap&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('diorHealthGoalsModal')).show();}"
+                title="Manage Health Goals">
                 <i class="fas fa-plus small"></i>
               </button>
             </div>
@@ -213,7 +230,8 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
         <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
           <h3 class="section-title mb-0 fs-5 fw-bold text-dark"><i
               class="fas fa-clock-rotate-left text-primary me-2"></i>Previous Consultation</h3>
-          <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#" data-switch-tab="appointments"
+          <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#"
+            data-switch-tab="appointments"
             onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('appointments');">View All &rarr;</a>
         </div>
         <div class="table-responsive mb-0 dior-card-scrollable dior-scroll-275">
@@ -282,8 +300,9 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
         <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
           <h3 class="section-title mb-0 fs-5 fw-bold text-dark"><i class="fas fa-flask text-primary me-2"></i>Latest Lab
             Results</h3>
-          <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#" data-switch-tab="documents"
-            onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('documents');">View All &rarr;</a>
+          <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#"
+            data-switch-tab="documents" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('documents');">View
+            All &rarr;</a>
         </div>
         <div class="table-responsive mb-0 dior-card-scrollable dior-scroll-235">
           <table class="lab-table table align-middle text-nowrap mb-0">
@@ -332,7 +351,8 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                     <td class="text-secondary" data-label="Ordered By"><?php echo esc_html($lab_by); ?></td>
                     <td class="text-end" data-label="Action">
                       <a href="<?php echo esc_url($lab_url); ?>"
-                        class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0 dior-icon-btn-30" title="Download Lab Report">
+                        class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0 dior-icon-btn-30"
+                        title="Download Lab Report">
                         <i class="fas fa-download"></i>
                       </a>
                     </td>
@@ -450,15 +470,18 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
               </div>
               <div class="d-flex flex-column gap-2 mt-3">
                 <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-3 shadow-sm w-100"
-                  data-switch-tab="consultation"
-                  onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('consultation');">Join Video Consultation Room</button>
+                  data-switch-tab="telemedicine"
+                  onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('telemedicine');">Join Video
+                  Consultation</button>
                 <button type="button" class="btn btn-outline-primary rounded-3 fw-semibold py-2 px-3 w-100"
                   data-switch-tab="appointments"
                   onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('appointments');">Reschedule</button>
               </div>
             <?php else: ?>
               <div class="text-center py-4 my-auto">
-                <div class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center mb-3" style="width: 52px; height: 52px;">
+                <div
+                  class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center mb-3"
+                  style="width: 52px; height: 52px;">
                   <i class="far fa-calendar-check fs-4"></i>
                 </div>
                 <h4 class="fs-6 fw-bold text-dark mb-1">No Upcoming Consultation</h4>
@@ -483,7 +506,8 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
               <h3 class="section-title mb-0 fs-5 fw-bold text-dark"><i
                   class="far fa-calendar-check text-primary me-2"></i>Upcoming Consultation</h3>
             </div>
-            <div class="consult-list-wrap dior-card-scrollable d-flex flex-column gap-3 flex-grow-1 dior-scroll-240 pe-1">
+            <div
+              class="consult-list-wrap dior-card-scrollable d-flex flex-column gap-3 flex-grow-1 dior-scroll-240 pe-1">
               <?php
               $display_list = !empty($upcoming_list) ? $upcoming_list : [];
               if (empty($display_list)):
@@ -534,10 +558,12 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
         <div class="col-12 col-md-12 col-xl-12">
           <div class="card prescriptions border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 d-flex flex-column"
             id="dior-overview-prescriptions-card">
-            <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
+            <div
+              class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
               <h3 class="section-title mb-0 fs-5 fw-bold text-dark"><i
                   class="fas fa-prescription-bottle-medical text-primary me-2"></i>Prescriptions</h3>
-              <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#" data-switch-tab="docs_meds"
+              <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#"
+                data-switch-tab="docs_meds"
                 onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('docs_meds');">View All &rarr;</a>
             </div>
             <div class="rx-list-wrap dior-card-scrollable d-flex flex-column gap-2 flex-grow-1 dior-scroll-290 pe-1">
@@ -605,7 +631,8 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
         <div class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
-          <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorHealthGoalsModalLabel">Health Goals &amp; Vitals</h5>
+          <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorHealthGoalsModalLabel">Health Goals &amp; Vitals
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="dior-form-add-health-goal">
@@ -653,15 +680,21 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                     </thead>
                     <tbody id="dior-modal-goals-list">
                       <?php if (empty($display_goals)): ?>
-                        <tr><td colspan="4" class="text-center py-3 text-muted small">No goals recorded yet.</td></tr>
+                        <tr>
+                          <td colspan="4" class="text-center py-3 text-muted small">No goals recorded yet.</td>
+                        </tr>
                       <?php else: ?>
                         <?php foreach ($display_goals as $g_i => $g_item): ?>
                           <tr>
-                            <td class="ps-3 py-2 fw-semibold text-dark small"><?php echo esc_html($g_item['name'] ?? ''); ?></td>
+                            <td class="ps-3 py-2 fw-semibold text-dark small"><?php echo esc_html($g_item['name'] ?? ''); ?>
+                            </td>
                             <td class="py-2 text-secondary small"><?php echo esc_html($g_item['val'] ?? ''); ?></td>
-                            <td class="py-2 text-center text-secondary small"><?php echo (int)($g_item['pct'] ?? 0); ?>%</td>
+                            <td class="py-2 text-center text-secondary small"><?php echo (int) ($g_item['pct'] ?? 0); ?>%
+                            </td>
                             <td class="pe-3 py-2 text-end">
-                              <button type="button" class="btn btn-sm btn-link text-danger p-0 border-0 text-decoration-none dior-modal-del-goal-btn fw-semibold small" data-goal-index="<?php echo esc_attr($g_i); ?>">Delete</button>
+                              <button type="button"
+                                class="btn btn-sm btn-link text-danger p-0 border-0 text-decoration-none dior-modal-del-goal-btn fw-semibold small"
+                                data-goal-index="<?php echo esc_attr($g_i); ?>">Delete</button>
                             </td>
                           </tr>
                         <?php endforeach; ?>
@@ -680,15 +713,22 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
                   <h6 class="fw-bold text-dark mb-0 small text-uppercase">Add New Goal</h6>
                   <div class="d-flex align-items-center gap-1 flex-wrap">
-                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11" data-name="Target Weight" data-val="65 kg" data-pct="70">Target Weight</button>
-                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11" data-name="Daily Steps" data-val="10,000 steps" data-pct="65">Daily Steps</button>
-                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11" data-name="Water Intake" data-val="3.0 L" data-pct="80">Water Intake</button>
+                    <button type="button"
+                      class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11"
+                      data-name="Target Weight" data-val="65 kg" data-pct="70">Target Weight</button>
+                    <button type="button"
+                      class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11"
+                      data-name="Daily Steps" data-val="10,000 steps" data-pct="65">Daily Steps</button>
+                    <button type="button"
+                      class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11"
+                      data-name="Water Intake" data-val="3.0 L" data-pct="80">Water Intake</button>
                   </div>
                 </div>
               </div>
 
               <div class="col-12">
-                <label for="goal_name" class="form-label small text-secondary fw-semibold mb-1">Goal Name / Category</label>
+                <label for="goal_name" class="form-label small text-secondary fw-semibold mb-1">Goal Name /
+                  Category</label>
                 <input type="text" class="form-control rounded-3 py-2" id="goal_name" name="goal_name"
                   list="dior-goal-suggestions" placeholder="e.g. Daily Water Intake, Target Weight">
                 <datalist id="dior-goal-suggestions">
@@ -701,7 +741,8 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
               </div>
 
               <div class="col-12 col-sm-6">
-                <label for="goal_val" class="form-label small text-secondary fw-semibold mb-1">Target / Current Value</label>
+                <label for="goal_val" class="form-label small text-secondary fw-semibold mb-1">Target / Current
+                  Value</label>
                 <input type="text" class="form-control rounded-3 py-2" id="goal_val" name="goal_val"
                   placeholder="e.g. 70 / 65 kg">
               </div>
@@ -727,25 +768,27 @@ $has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted'])
     </div>
   </div>
 
-  
-<?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/overview-mobile.php'; ?>
 
-<!-- Prevent the legacy desktop Overview markup from appearing alongside the separate mobile layout. -->
-<style id="dior-patient-overview-single-layout">
-@media (max-width: 767.98px) {
-  #dior-patient-portal-app #tab-overview.custom-patient-overview > :not(.dior-patient-overview-mobile) {
-    display: none !important;
-    visibility: hidden !important;
-  }
-  #dior-patient-portal-app #tab-overview.custom-patient-overview > .dior-patient-overview-mobile {
-    display: block !important;
-    visibility: visible !important;
-  }
-}
-@media (min-width: 768px) {
-  #dior-patient-portal-app #tab-overview.custom-patient-overview > .dior-patient-overview-mobile {
-    display: none !important;
-  }
-}
-</style>
+  <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/overview-mobile.php'; ?>
+
+  <!-- Prevent the legacy desktop Overview markup from appearing alongside the separate mobile layout. -->
+  <style id="dior-patient-overview-single-layout">
+    @media (max-width: 767.98px) {
+      #dior-patient-portal-app #tab-overview.custom-patient-overview> :not(.dior-patient-overview-mobile) {
+        display: none !important;
+        visibility: hidden !important;
+      }
+
+      #dior-patient-portal-app #tab-overview.custom-patient-overview>.dior-patient-overview-mobile {
+        display: block !important;
+        visibility: visible !important;
+      }
+    }
+
+    @media (min-width: 768px) {
+      #dior-patient-portal-app #tab-overview.custom-patient-overview>.dior-patient-overview-mobile {
+        display: none !important;
+      }
+    }
+  </style>
 </section>

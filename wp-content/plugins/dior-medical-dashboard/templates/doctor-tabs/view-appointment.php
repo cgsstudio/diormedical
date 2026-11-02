@@ -938,15 +938,29 @@ $status_badges = [
             try {
                 var params = new URLSearchParams(window.location.search);
                 var uid = params.get('appt_uid');
-                if (!uid && window.location.hash) {
-                    var hashQuery = window.location.hash.split('?')[1] || window.location.hash.substring(1);
-                    var hashParams = new URLSearchParams(hashQuery);
+                var hashStr = window.location.hash || '';
+                var hashParams = null;
+                if (hashStr) {
+                    var hashQuery = hashStr.indexOf('?') !== -1 ? hashStr.split('?')[1] : (hashStr.indexOf('&') !== -1 ? hashStr.substring(hashStr.indexOf('&') + 1) : '');
+                    if (hashQuery) hashParams = new URLSearchParams(hashQuery);
+                }
+                if (!uid && hashParams) {
                     uid = hashParams.get('appt_uid');
                 }
                 if (uid) {
                     setTimeout(function () {
                         openAppointmentDetailsModal(uid);
                     }, 200);
+                }
+                var dateParam = params.get('date') || (hashParams ? hashParams.get('date') : '');
+                if (dateParam === 'today' || hashStr.indexOf('today') !== -1) {
+                    setTimeout(function () {
+                        var dateF = document.getElementById('va-date-filter');
+                        if (dateF) {
+                            dateF.value = 'today';
+                            applyFilters();
+                        }
+                    }, 100);
                 }
             } catch (e) {}
         }

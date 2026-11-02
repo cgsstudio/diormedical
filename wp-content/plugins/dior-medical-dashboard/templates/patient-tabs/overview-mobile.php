@@ -40,7 +40,7 @@ $mobile_next_time = !empty($next_appointment['time']) ? $next_appointment['time'
           <div><strong><?php echo esc_html($mobile_next_name); ?></strong><small><?php echo esc_html($ha_spec ?? 'Telehealth consultation'); ?></small></div>
         </div>
         <div class="dior-mob-visit-meta"><span><i class="far fa-calendar"></i><?php echo esc_html($mobile_next_date); ?></span><span><i class="far fa-clock"></i><?php echo esc_html($mobile_next_time); ?></span></div>
-        <button type="button" class="dior-mob-outline-action" data-dior-mobile-tab="consultation">Open consultation room <i class="fas fa-arrow-right"></i></button>
+        <button type="button" class="dior-mob-outline-action" data-dior-mobile-tab="telemedicine">Open telemedicine visit <i class="fas fa-arrow-right"></i></button>
       <?php else: ?>
         <div class="dior-mob-empty"><span><i class="far fa-calendar-xmark"></i></span><strong>No upcoming appointment</strong><small>Book a visit with your care team when you are ready.</small></div>
         <a class="dior-mob-outline-action" href="<?php echo esc_url(home_url('/patient-dashboard/#tab=appointments&subtab=book')); ?>">Book an appointment <i class="fas fa-arrow-right"></i></a>

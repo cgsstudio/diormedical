@@ -39,9 +39,12 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'appointments-menu-item')">
                             <i class="far fa-calendar"></i><span class="nav-label">Appointments</span>
-                            <i class="fas fa-minus submenu-icon"></i>
+                            <i class="fas fa-plus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
+                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments-today">
+                                <i class="far fa-calendar-check"></i><span class="nav-label">Today's Appointments</span>
+                            </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments">
                                 <i class="fas fa-calendar-days"></i><span class="nav-label">Appointment Calendar</span>
                             </button>
@@ -60,7 +63,7 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'patients-menu-item')">
                             <i class="fas fa-users"></i><span class="nav-label">Patients</span>
-                            <i class="fas fa-minus submenu-icon"></i>
+                            <i class="fas fa-plus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-all">
@@ -85,7 +88,7 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'accounts-menu-item')">
                             <i class="fas fa-wallet"></i><span class="nav-label">Accounts</span>
-                            <i class="fas fa-minus submenu-icon"></i>
+                            <i class="fas fa-plus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-bill-list">
@@ -119,7 +122,7 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'pharmacy-menu-item')">
                             <i class="fas fa-pills"></i><span class="nav-label">Pharmacy</span>
-                            <i class="fas fa-minus submenu-icon"></i>
+                            <i class="fas fa-plus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-pharmacy-list">
@@ -134,7 +137,7 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'documents-menu-item')">
                             <i class="fas fa-file-medical"></i><span class="nav-label">Documents & Report</span>
-                            <i class="fas fa-minus submenu-icon"></i>
+                            <i class="fas fa-plus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn"
@@ -153,7 +156,7 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'telemedicine-menu-item')">
                             <i class="fas fa-video"></i><span class="nav-label">Telemedicine</span>
-                            <i class="fas fa-minus submenu-icon"></i>
+                            <i class="fas fa-plus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-telemed-video">
@@ -169,8 +172,6 @@
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-notifications-system">
                         <i class="fas fa-bell"></i><span class="nav-label">Notifications</span>
                     </button>
-                    <button type="button" class="dior-nav-btn btn" data-tab="doc-consultation"><i
-                            class="fas fa-door-open"></i><span class="nav-label">Consultation Room</span></button>
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-settings"><i
                             class="fas fa-gear"></i><span class="nav-label">Settings</span></button>
                 </div>
@@ -183,6 +184,13 @@
                     }
                     var target = document.getElementById(menuId);
                     if (!target) return;
+
+                    var now = Date.now();
+                    if (target._diorLastToggle && (now - target._diorLastToggle < 200)) {
+                        return;
+                    }
+                    target._diorLastToggle = now;
+
                     var isOpen = target.classList.contains('active') || target.classList.contains('open');
 
                     // Strict Accordion: Close ALL other submenus
@@ -334,7 +342,6 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/telemedicine-records.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-review.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/notifications-system.php'; ?>
-                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/consultation-room.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/settings.php'; ?>
             </div><!-- /tab-content -->
         </main>

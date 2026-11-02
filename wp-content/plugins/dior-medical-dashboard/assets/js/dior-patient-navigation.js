@@ -46,7 +46,6 @@
             emergency: 'Emergency Support',
             feedback: 'Feedback & Support',
             notifications: 'Notification Inbox',
-            consultation: 'Consultation Room',
             settings: 'Settings',
             questionnaire: 'Clinical Intake Questionnaires'
         };
@@ -60,6 +59,7 @@
             if (t === 'dashboard') return 'overview';
             if (t === 'prescriptions') return 'docs_meds';
             if (t === 'billing') return 'payments';
+            if (t === 'consultation' || t === 'consultation-room') return 'telemedicine';
             return t;
         }
 

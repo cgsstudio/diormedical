@@ -17,7 +17,6 @@
         emergency: 'Emergency Support',
         feedback: 'Feedback & Support',
         notifications: 'Notification Inbox',
-        consultation: 'Consultation Room',
         settings: 'Settings'
     };
 
