@@ -552,6 +552,13 @@
                                 $status = sanitize_text_field($apt_row['status'] ?? '');
                                 if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true))
                                     continue;
+                                $apt_doctor_id = (int)($apt_row['doctor_id'] ?? 0);
+                                $apt_doctor_user_id = ($apt_doctor_id && class_exists('Dior_Doctor_Resolver'))
+                                    ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($apt_doctor_id)
+                                    : $apt_doctor_id;
+                                $apt_meeting_url = !empty($apt_row['join_url'])
+                                    ? $apt_row['join_url']
+                                    : ($apt_doctor_user_id ? get_user_meta($apt_doctor_user_id, 'zoom_link', true) : '');
                                 $today_mock[] = [
                                     $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                                     $apt_row['provider_spec'] ?? 'General Practice & Internal Medicine',
@@ -562,7 +569,7 @@
                                     $status ?: 'Scheduled',
                                     $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp'),
                                     $apt_row['appt_uid'] ?? '',
-                                    $apt_row['join_url'] ?? ''
+                                    $apt_meeting_url
                                 ];
                             }
                             if (empty($today_mock)) {
@@ -731,6 +738,13 @@
                                 $status = sanitize_text_field($apt_row['status'] ?? 'Scheduled');
                                 if (!$date_ymd || $date_ymd < $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled', 'completed', 'done'], true))
                                     continue;
+                                $apt_doctor_id = (int)($apt_row['doctor_id'] ?? 0);
+                                $apt_doctor_user_id = ($apt_doctor_id && class_exists('Dior_Doctor_Resolver'))
+                                    ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($apt_doctor_id)
+                                    : $apt_doctor_id;
+                                $apt_meeting_url = !empty($apt_row['join_url'])
+                                    ? $apt_row['join_url']
+                                    : ($apt_doctor_user_id ? get_user_meta($apt_doctor_user_id, 'zoom_link', true) : '');
                                 $upcoming_mock[] = [
                                     $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                                     wp_date('M j, Y', strtotime($date_ymd)),
@@ -740,7 +754,7 @@
                                     $apt_row['notes'] ?? '—',
                                     $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp'),
                                     $apt_row['appt_uid'] ?? '',
-                                    $apt_row['join_url'] ?? ''
+                                    $apt_meeting_url
                                 ];
                             }
                             if (empty($upcoming_mock)) {
