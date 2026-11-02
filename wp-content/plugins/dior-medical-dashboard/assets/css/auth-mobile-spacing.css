@@ -1,0 +1,27 @@
+/* Dior Medical auth pages — mobile horizontal spacing only. */
+@media (max-width: 767.98px) {
+    .dior-auth-wrap {
+        box-sizing: border-box !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .dior-auth-wrap .dior-login-split-container,
+    .dior-auth-wrap .dior-reg-card-container,
+    .dior-auth-wrap .dior-login-right-panel {
+        box-sizing: border-box !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .dior-auth-wrap .dior-login-right-panel,
+    .dior-auth-wrap .dior-reg-card-container {
+        min-width: 0;
+    }
+}
