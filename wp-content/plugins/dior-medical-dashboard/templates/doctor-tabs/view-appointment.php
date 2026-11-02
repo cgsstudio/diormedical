@@ -378,7 +378,27 @@ $status_badges = [
                             $patient_uid = esc_attr(!empty($a['patient_uid']) ? $a['patient_uid'] : (!empty($patient_id) ? get_user_meta($patient_id, 'patient_id', true) : ('DM-' . (10000 + $patient_id))));
                             
                             $is_video = (stripos($visit_type, 'video') !== false || stripos($visit_type, 'telehealth') !== false);
-                            $join_url = !empty($a['join_url']) ? esc_url($a['join_url']) : '';
+                            $stored_join_url = !empty($a['join_url']) ? esc_url_raw($a['join_url']) : '';
+                            // Repair older video appointments that still have no real Zoom meeting URL.
+                            if ($is_video && class_exists('Dior_Zoom_Meetings') &&
+                                (!$stored_join_url || stripos($stored_join_url, 'zoom.us/join') !== false)) {
+                                $generated_join_url = Dior_Zoom_Meetings::create_meeting_link($date_raw, $time_raw, $doc_name ?? '');
+                                if ($generated_join_url && !empty($a['appt_uid'])) {
+                                    $wpdb->update(
+                                        $wpdb->prefix . 'dior_appointments',
+                                        ['join_url' => esc_url_raw($generated_join_url), 'updated_at' => current_time('mysql')],
+                                        ['appt_uid' => sanitize_text_field($a['appt_uid'])],
+                                        ['%s', '%s'],
+                                        ['%s']
+                                    );
+                                    $stored_join_url = $generated_join_url;
+                                }
+                            }
+                            $patient_join_name = html_entity_decode(wp_strip_all_tags($fname), ENT_QUOTES, 'UTF-8');
+                            $join_url = ($stored_join_url && class_exists('Dior_Zoom_Meetings'))
+                                ? Dior_Zoom_Meetings::get_personalized_join_url($stored_join_url, $patient_join_name)
+                                : $stored_join_url;
+                            $join_url = $join_url ? esc_url($join_url) : '';
                             $payment_status = esc_html($a['payment_status'] ?? 'Paid');
 
                             // Doctor data resolution
