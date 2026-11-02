@@ -491,7 +491,7 @@ $status_badges = [
                                 </td>
                                 <td class="text-end text-nowrap">
                                     <div class="d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
-                                        <?php if ($is_video && !empty($join_url) && in_array(strtolower($status), ['confirmed', 'scheduled', 'in progress', 'in-queue'], true)): ?>
+                                        <?php if ($is_video && !empty($join_url) && in_array(strtolower($status), ['confirmed', 'scheduled', 'success', 'in progress', 'in-queue'], true)): ?>
                                             <a href="<?php echo $join_url; ?>" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill shadow-none" title="Join video consultation" style="padding:4px 10px!important;font-size:12px!important;font-weight:600!important;line-height:1.3!important;"><i class="fas fa-video me-1"></i>Join</a>
                                         <?php endif; ?>
                                         <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-view-patient-btn shadow-none"
