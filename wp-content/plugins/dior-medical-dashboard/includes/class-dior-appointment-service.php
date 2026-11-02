@@ -736,7 +736,7 @@ class Dior_Appointment_Service
     /**
      * Dual-write / sync to legacy user meta for backwards compatibility
      */
-    private static function sync_legacy_usermeta($patient_id)
+    public static function sync_legacy_usermeta($patient_id)
     {
         $apts = self::get_patient_appointments($patient_id);
         $legacy = [];
