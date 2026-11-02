@@ -72,6 +72,12 @@ if (!class_exists('Dior_Google_Meet')) {
 }
 Dior_Google_Meet::init();
 
+// Restore the existing Zoom Server-to-Server OAuth integration.
+if (!class_exists('Dior_Zoom_Meetings')) {
+    require_once(DIOR_PORTAL_PATH . 'includes/class-dior-zoom-meetings.php');
+}
+Dior_Zoom_Meetings::init();
+
 /**
  * Universal Dynamic Relative Notification Time Formatter
  * 
@@ -4023,10 +4029,14 @@ class Dior_Medical_Auth
         if (stripos($type, 'phone') !== false) {
             $join_url = 'tel:' . preg_replace('/[^0-9+]/', '', $patient_phone ?: '+13105550100');
         } else {
-            // Use a real Google Meet URL when the site administrator has connected Google Meet.
-            // Preserve the existing Zoom fallback when Google Meet is not configured or unavailable.
-            $google_meet_url = class_exists('Dior_Google_Meet') ? Dior_Google_Meet::create_meeting_link() : false;
-            $join_url = $google_meet_url ? $google_meet_url : 'https://zoom.us/join';
+            // Create a scheduled Zoom meeting first; retain Google Meet as a safe fallback.
+            $zoom_meeting_url = class_exists('Dior_Zoom_Meetings')
+                ? Dior_Zoom_Meetings::create_meeting_link($date, $time, $doctor_name)
+                : false;
+            $google_meet_url = (!$zoom_meeting_url && class_exists('Dior_Google_Meet'))
+                ? Dior_Google_Meet::create_meeting_link()
+                : false;
+            $join_url = $zoom_meeting_url ?: ($google_meet_url ?: 'https://zoom.us/join');
         }
 
         $new_apt = Dior_Appointment_Service::book_appointment([
