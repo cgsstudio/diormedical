@@ -827,7 +827,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             var time = item.time || item.appt_time || '09:00 AM - 10:00 AM';
             var status = item.status || item.appt_status || 'Confirmed';
             var type = item.type || item.visit_type || 'Video Visit (HD)';
-            var join_url = item.join_url || 'https://zoom.us/join';
+            var join_url = item.join_url || '';
             var notes = item.notes || item.condition || 'Telehealth Consultation';
             return {
                 id: id,
@@ -1151,8 +1151,8 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             html += '</div>';
             html += '</div>';
 
-            if (canJoin) {
-                html += '<a href="' + (apt.join_url || 'https://zoom.us/join') + '" target="_blank" class="btn btn-success btn-sm w-100 fw-bold mb-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5 py-1.5">';
+            if (canJoin && apt.join_url && /^https:\/\//i.test(apt.join_url)) {
+                html += '<a href="' + apt.join_url.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm w-100 fw-bold mb-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5 py-1.5">';
                 html += '<i class="fas fa-video"></i> Join Telehealth Room';
                 html += '</a>';
             }
