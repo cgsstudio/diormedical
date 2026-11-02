@@ -403,16 +403,9 @@ $status_badges = [
                             $patient_uid = esc_attr(!empty($a['patient_uid']) ? $a['patient_uid'] : (!empty($patient_id) ? get_user_meta($patient_id, 'patient_id', true) : ('DM-' . (10000 + $patient_id))));
 
                             $is_video = (stripos($visit_type, 'video') !== false || stripos($visit_type, 'telehealth') !== false);
-                            $stored_join_url = !empty($a['join_url']) ? esc_url_raw($a['join_url']) : '';
-                            // Meeting creation is centralized in Dior_Appointment_Service.
-                            // Never create Zoom meetings while rendering the dashboard: both roles
-                            // must use the single join_url persisted on this appointment.
-                            $join_user = wp_get_current_user();
-                            $doctor_join_name = $join_user ? ($join_user->display_name ?: $join_user->user_login) : '';
-                            $join_url = ($stored_join_url && class_exists('Dior_Zoom_Meetings'))
-                                ? Dior_Zoom_Meetings::get_personalized_join_url($stored_join_url, $doctor_join_name)
-                                : $stored_join_url;
-                            $join_url = $join_url ? esc_url($join_url) : '';
+                            // Doctor starts the meeting as host. Never rewrite Zoom's signed start URL.
+                            $stored_join_url = !empty($a['start_url']) ? esc_url_raw($a['start_url']) : (!empty($a['join_url']) ? esc_url_raw($a['join_url']) : '');
+                            $join_url = $stored_join_url ? esc_url($stored_join_url) : '';
                             $payment_status = esc_html($a['payment_status'] ?? 'Paid');
 
                             // Doctor data resolution
