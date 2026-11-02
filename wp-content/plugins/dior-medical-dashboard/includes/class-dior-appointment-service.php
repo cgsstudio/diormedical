@@ -148,7 +148,7 @@ class Dior_Appointment_Service
         $created_appt = self::get_appointment_by_uid($appt_uid);
 
         // Create and persist the Zoom meeting immediately for new video appointments.
-        // Both patient and doctor dashboards then read the same canonical join_url.
+        // Patient uses join_url; Doctor uses start_url for host privileges.
         if (is_array($created_appt)) {
             self::ensure_video_meeting_link($created_appt);
             $created_appt = self::get_appointment_by_uid($appt_uid) ?: $created_appt;
@@ -494,7 +494,8 @@ class Dior_Appointment_Service
         }
 
         $current_url = trim((string) ($appointment['join_url'] ?? ''));
-        if ($current_url !== '' && stripos($current_url, 'zoom.us/join') === false) {
+        $current_start_url = trim((string) ($appointment['start_url'] ?? ''));
+        if ($current_url !== '' && $current_start_url !== '' && stripos($current_url, 'zoom.us/join') === false) {
             return;
         }
 
@@ -516,13 +517,13 @@ class Dior_Appointment_Service
             }
         }
 
-        $meeting_url = Dior_Zoom_Meetings::create_meeting_link(
+        $meeting_details = Dior_Zoom_Meetings::create_meeting_details(
             (string) ($appointment['appt_date'] ?? ''),
             (string) ($appointment['appt_time'] ?? ''),
             $doctor_name
         );
 
-        if (!$meeting_url || !wp_http_validate_url($meeting_url)) {
+        if (!is_array($meeting_details) || empty($meeting_details['join_url']) || empty($meeting_details['start_url']) || !wp_http_validate_url($meeting_details['join_url']) || !wp_http_validate_url($meeting_details['start_url'])) {
             return;
         }
 
@@ -530,14 +531,15 @@ class Dior_Appointment_Service
         $table = $wpdb->prefix . 'dior_appointments';
         $updated = $wpdb->update(
             $table,
-            ['join_url' => esc_url_raw($meeting_url), 'updated_at' => current_time('mysql')],
+            ['join_url' => esc_url_raw($meeting_details['join_url']), 'start_url' => esc_url_raw($meeting_details['start_url']), 'updated_at' => current_time('mysql')],
             ['appt_uid' => (string) ($appointment['appt_uid'] ?? '')],
             ['%s', '%s'],
             ['%s']
         );
 
         if ($updated !== false) {
-            $appointment['join_url'] = esc_url_raw($meeting_url);
+            $appointment['join_url'] = esc_url_raw($meeting_details['join_url']);
+            $appointment['start_url'] = esc_url_raw($meeting_details['start_url']);
         }
     }
 
