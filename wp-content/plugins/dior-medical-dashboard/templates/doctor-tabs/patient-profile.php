@@ -130,10 +130,19 @@ $pp_ajax_url = admin_url('admin-ajax.php');
                         <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle" title="Active Record"></span>
                     </div>
                     <div>
-                        <div class="d-flex flex-wrap align-items-center gap-2">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
                             <div class="fs-5 fw-bold text-dark mb-0 text-nowrap" data-pp="name" style="font-size: 1.25rem !important;">Patient Name</div>
                             <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 small fw-semibold" data-pp="status">Active</span>
                             <span class="badge bg-light text-secondary border rounded-pill px-3 py-1 small fw-bold font-monospace" data-pp="uid">UID: —</span>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center gap-2 gap-sm-3 text-secondary small">
+                            <span><i class="fas fa-venus-mars text-primary me-1"></i><span data-pp="gender">—</span></span>
+                            <span class="text-muted">&bull;</span>
+                            <span><i class="fas fa-cake-candles text-primary me-1"></i><span data-pp="age">—</span></span>
+                            <span class="text-muted">&bull;</span>
+                            <span><i class="fas fa-droplet text-danger me-1"></i>Blood Group: <strong class="text-dark" data-pp="blood">—</strong></span>
+                            <span class="text-muted">&bull;</span>
+                            <span class="d-inline-flex align-items-center"><i class="fas fa-phone text-success me-1"></i><a data-pp="phone-link" href="#" class="text-decoration-none text-secondary fw-semibold small" style="font-size: 13px !important; line-height: 1.3 !important;"><span data-pp="phone">—</span></a></span>
                         </div>
                     </div>
                 </div>
@@ -512,403 +521,260 @@ $pp_ajax_url = admin_url('admin-ajax.php');
                         <p class="text-secondary small mb-0">When this patient submits their HIPAAtizer clinical questionnaire, complete answers and modules will display here.</p>
                     </div>
 
-                    <!-- Questionnaire Content (Rendered dynamically matching exact reference design) -->
+                    <!-- Questionnaire Content (Rendered dynamically) -->
                     <div id="pp-questionnaire-content" hidden>
                         
-                        <!-- ── TOP HEADER CARD: PATIENT IDENTITY & CLINICAL PRIORITY ── -->
-                        <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 bg-white" style="border: 1px solid #E2E8F0 !important;">
-                            <!-- Top Row -->
-                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 border-bottom" style="border-color: #E2E8F0 !important;">
-                                <div class="d-flex align-items-center gap-3">
-                                    <!-- Blue Initials Badge -->
-                                    <div id="pp-q-avatar-box" class="rounded-3 text-white fw-bold d-flex align-items-center justify-content-center shadow-sm" style="width: 52px; height: 52px; font-size: 20px; background: #1d4ed8; flex-shrink: 0;">
-                                        <span data-pp-q="initials">T15</span>
-                                    </div>
-                                    <div>
-                                        <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
-                                            <h4 class="fw-bold text-dark mb-0 fs-4" data-pp-q="full_name">test15</h4>
-                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold">
-                                                <i class="fas fa-circle me-1" style="font-size: 7px;"></i> Submitted &amp; Signed
-                                            </span>
-                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold" data-pp-q="consultation_type_badge">
-                                                Video Consultation
-                                            </span>
-                                        </div>
-                                        <div class="small text-secondary fw-medium d-flex align-items-center flex-wrap gap-2" style="font-size: 13px;">
-                                            <span>Submission ID: <strong class="text-dark font-monospace" data-pp-q="submission_id_short">ee65bf3a-0731-4f4c-8a44</strong></span>
-                                            <span class="text-muted">&bull;</span>
-                                            <span>Submitted: <strong class="text-dark" data-pp-q="submitted_at">Oct 16, 2026, 11:46 AM</strong></span>
-                                            <span class="text-muted">&bull;</span>
-                                            <span>Client IP: <strong class="text-dark" data-pp-q="client_ip">110.226.115.101</strong></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Right Side: Clinical Priority Box -->
-                                <div class="rounded-4 p-2.5 px-3 border d-flex align-items-center gap-2.5 shadow-sm" id="pp-q-priority-box" style="background: #FEF9C3; border-color: #FEF08A !important;">
-                                    <span class="rounded-circle d-inline-block" id="pp-q-priority-dot" style="width: 10px; height: 10px; background: #EAB308;"></span>
-                                    <div>
-                                        <div class="fw-bold small text-dark mb-0" id="pp-q-priority-title" style="color: #854D0E !important;" data-pp-q="priority_title">Clinical Priority: Moderate</div>
-                                        <div class="small" id="pp-q-priority-sub" style="font-size: 11px; color: #A16207;" data-pp-q="priority_sub">Asthma with active fever reported</div>
-                                    </div>
+                        <!-- Metadata Header & PDF Actions -->
+                        <div class="d-flex flex-wrap justify-content-between align-items-center pb-3 mb-4 border-bottom gap-2 bg-light p-3 rounded-4">
+                            <div>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 fw-semibold small mb-1">
+                                    <i class="fas fa-check-circle me-1"></i> Verified Clinical Intake
+                                </span>
+                                <div class="text-secondary small mt-1">
+                                    Submitted on: <strong class="text-dark" data-pp-q="submitted_at">—</strong>
+                                    &bull; Submission ID: <code class="text-dark fw-bold" data-pp-q="submission_id">—</code>
                                 </div>
                             </div>
+                            <div class="d-flex gap-2" id="pp-q-pdf-container">
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm rounded-3 fw-semibold px-3" data-pp-q-link="pdf">
+                                    <i class="fas fa-file-pdf me-1"></i> View Signed PDF
+                                </a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm rounded-3 fw-semibold px-3" data-pp-q-link="submission">
+                                    <i class="fas fa-external-link-alt me-1"></i> Original Form
+                                </a>
+                            </div>
+                        </div>
 
-                            <!-- Bottom Row: 4 Metric Columns -->
-                            <div class="row g-3 pt-3">
-                                <div class="col-6 col-md-3">
-                                    <span class="small text-uppercase text-secondary fw-bold d-block mb-1" style="font-size: 11px; letter-spacing: 0.5px;">DOB / AGE</span>
-                                    <div class="fw-bold text-dark fs-6" data-pp-q="dob_age">11/11/2002 (23 yrs)</div>
+                        <!-- Row 1: Visit Reason & Preferences -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-4">
+                                <div class="p-3 bg-light rounded-3 border h-100">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Selected Condition / Service</div>
+                                    <div class="fw-bold text-dark fs-6" data-pp-q="selected_service">—</div>
                                 </div>
-                                <div class="col-6 col-md-3">
-                                    <span class="small text-uppercase text-secondary fw-bold d-block mb-1" style="font-size: 11px; letter-spacing: 0.5px;">ASSIGNED SEX</span>
-                                    <div class="fw-bold text-dark fs-6" data-pp-q="sex_at_birth">Male</div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <div class="p-3 bg-light rounded-3 border h-100">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Preferred Consultation Type</div>
+                                    <div class="fw-bold text-dark fs-6" data-pp-q="consultation_type">—</div>
                                 </div>
-                                <div class="col-6 col-md-3">
-                                    <span class="small text-uppercase text-secondary fw-bold d-block mb-1" style="font-size: 11px; letter-spacing: 0.5px;">SERVICE REQUESTED</span>
-                                    <div class="fw-bold text-primary fs-6" data-pp-q="selected_service">Asthma Care</div>
-                                </div>
-                                <div class="col-6 col-md-3">
-                                    <span class="small text-uppercase text-secondary fw-bold d-block mb-1" style="font-size: 11px; letter-spacing: 0.5px;">REFERRAL CHANNEL</span>
-                                    <div class="fw-bold text-dark fs-6" data-pp-q="referral_source">Friend or Family</div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <div class="p-3 bg-light rounded-3 border h-100">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Referral Source</div>
+                                    <div class="fw-bold text-dark fs-6" data-pp-q="referral_source">—</div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ── MAIN 2-COLUMN CLINICAL GRID ── -->
-                        <div class="row g-4 align-items-start">
-
-                            <!-- ── LEFT COLUMN (col-12 col-xl-4) ── -->
-                            <div class="col-12 col-xl-4 d-flex flex-column gap-4">
-
-                                <!-- Card 1: Patient Demographics -->
-                                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white" style="border: 1px solid #E2E8F0 !important;">
-                                    <h6 class="fw-bold text-dark text-uppercase small mb-3 pb-2 border-bottom d-flex align-items-center gap-2">
-                                        <i class="far fa-user text-primary fs-6"></i>
-                                        <span>Patient Demographics</span>
-                                    </h6>
-                                    <div class="d-flex flex-column gap-2.5 small">
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                            <span class="text-secondary">Full Name</span>
-                                            <strong class="text-dark" data-pp-q="full_name_demo">test15</strong>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                            <span class="text-secondary">Email</span>
-                                            <span class="text-primary fw-medium" data-pp-q="email">test15@gmail.com</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                            <span class="text-secondary">Phone Number</span>
-                                            <span class="text-dark fw-medium" data-pp-q="phone_number">(123) 456-7890</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                            <span class="text-secondary">Preferred Language</span>
-                                            <strong class="text-dark" data-pp-q="preferred_language">English</strong>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                            <span class="text-secondary">Age Eligibility (18+)</span>
-                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold" data-pp-q-badge="is_adult">Yes (Adult)</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                            <span class="text-secondary">Pregnant Status</span>
-                                            <span class="badge bg-light text-secondary border rounded-pill px-2.5 py-1 small fw-semibold" data-pp-q-badge="is_pregnant">No</span>
-                                        </div>
-                                    </div>
+                        <!-- Symptoms & Complaint Card -->
+                        <div class="card border rounded-4 p-3 p-md-4 mb-4 bg-white">
+                            <h5 class="fw-bold text-dark mb-3 pb-2 border-bottom">
+                                <i class="fas fa-stethoscope text-primary me-2"></i>Symptoms &amp; Clinical Reason for Visit
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Main Reason for Visit</div>
+                                    <div class="fw-bold text-dark fs-6" data-pp-q="reason_for_visit">—</div>
                                 </div>
-
-                                <!-- Card 2: Designated Pharmacy -->
-                                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white" style="border: 1px solid #E2E8F0 !important;">
-                                    <h6 class="fw-bold text-dark text-uppercase small mb-3 pb-2 border-bottom d-flex align-items-center gap-2">
-                                        <i class="fas fa-prescription-bottle-medical text-primary fs-6"></i>
-                                        <span>Designated Pharmacy</span>
-                                    </h6>
-                                    <div class="small">
-                                        <div class="mb-3">
-                                            <span class="text-secondary d-block mb-1">Pharmacy Name</span>
-                                            <div class="fw-bold text-dark fs-6" data-pp-q="pharmacy_name">test</div>
-                                        </div>
+                                <div class="col-12">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Detailed Symptoms Description</div>
+                                    <div class="text-dark bg-light p-3 rounded-3 border" data-pp-q="symptom_description">—</div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Duration</div>
+                                    <div class="fw-bold text-dark" data-pp-q="symptom_duration">—</div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Reported Severity</div>
+                                    <div><span data-pp-q-badge="symptom_severity">—</span></div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Fever Reported</div>
+                                    <div class="fw-bold text-dark" data-pp-q="has_fever">—</div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Treatment Tried Previously</div>
+                                    <div class="fw-bold text-dark" data-pp-q="tried_treatment">—</div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="small text-uppercase text-secondary fw-semibold mb-1">Prior Treatment Details</div>
+                                    <div class="text-dark" data-pp-q="treatment_tried_details">—</div>
+                                </div>
+                                <!-- Red Flags Alert Banner -->
+                                <div class="col-12" id="pp-q-redflag-box" hidden>
+                                    <div class="alert alert-danger d-flex align-items-center gap-2 mb-0 rounded-3">
+                                        <i class="fas fa-triangle-exclamation fs-4 text-danger"></i>
                                         <div>
-                                            <span class="text-secondary d-block mb-1">City / ZIP Code</span>
-                                            <div class="fw-bold text-dark fs-6" data-pp-q="pharmacy_location">142536</div>
+                                            <strong>Red Flag Symptoms Reported:</strong>
+                                            <span data-pp-q="red_flags">—</span>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <!-- Card 3: Consent & Signature -->
-                                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white" style="border: 1px solid #E2E8F0 !important;">
-                                    <h6 class="fw-bold text-dark text-uppercase small mb-3 pb-2 border-bottom d-flex align-items-center gap-2">
-                                        <i class="fas fa-play text-success fs-6"></i>
-                                        <span>Consent &amp; Signature</span>
+                        <!-- Specialized Clinical Modules (UTI, Allergy, Asthma, Refill) -->
+                        <h5 class="fw-bold text-dark mb-3">
+                            <i class="fas fa-layer-group text-primary me-2"></i>Condition-Specific Assessments
+                        </h5>
+                        <div class="row g-3 mb-4" id="pp-q-modules-row">
+                            <!-- UTI Assessment -->
+                            <div class="col-12 col-md-6" data-pp-module="uti">
+                                <div class="card border rounded-3 h-100 p-3">
+                                    <h6 class="fw-bold text-danger text-uppercase small border-bottom pb-2 mb-2">
+                                        <i class="fas fa-bacteria me-1"></i> UTI Assessment
                                     </h6>
-                                    <div class="small d-flex flex-column gap-2.5">
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                            <span class="text-secondary">HIPAA &amp; Telehealth Terms</span>
-                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold">AGREED</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                            <span class="text-secondary">E-Signature</span>
-                                            <strong class="text-dark font-monospace" data-pp-q="e_signature">test</strong>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                            <span class="text-secondary">Signed Date</span>
-                                            <span class="text-dark" data-pp-q="signature_date">26-10-2026</span>
-                                        </div>
-                                        <div class="pt-2 d-flex gap-2">
-                                            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm rounded-3 fw-semibold w-100" data-pp-q-link="pdf">
-                                                <i class="fas fa-file-pdf me-1 text-danger"></i> View PDF
-                                            </a>
-                                            <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm rounded-3 fw-semibold w-100" data-pp-q-link="submission">
-                                                <i class="fas fa-external-link-alt me-1"></i> Form
-                                            </a>
-                                        </div>
+                                    <div class="row g-1 small">
+                                        <div class="col-6 text-secondary">Burning / Dysuria:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="uti_burning">—</div>
+                                        <div class="col-6 text-secondary">Urgency / Frequency:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="uti_frequency">—</div>
+                                        <div class="col-6 text-secondary">Blood in Urine:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="uti_blood">—</div>
+                                        <div class="col-6 text-secondary">Flank / Back Pain:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="uti_flank_pain">—</div>
+                                        <div class="col-6 text-secondary">Prior UTI History:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="uti_history">—</div>
                                     </div>
                                 </div>
-
-                                <!-- Card 4: Social History & Lifestyle -->
-                                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white" style="border: 1px solid #E2E8F0 !important;">
-                                    <h6 class="fw-bold text-dark text-uppercase small mb-3 pb-2 border-bottom d-flex align-items-center gap-2">
-                                        <i class="fas fa-user-group text-primary fs-6"></i>
-                                        <span>Social History &amp; Lifestyle</span>
-                                    </h6>
-                                    <div class="row g-2">
-                                        <div class="col-6">
-                                            <div class="p-2.5 bg-light rounded-3 border h-100">
-                                                <small class="text-secondary d-block mb-1">Tobacco / Vaping</small>
-                                                <strong class="text-dark d-block" data-pp-q="tobacco_use">—</strong>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="p-2.5 bg-light rounded-3 border h-100">
-                                                <small class="text-secondary d-block mb-1">Alcohol Use</small>
-                                                <strong class="text-dark d-block" data-pp-q="alcohol_use">—</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
 
-                            <!-- ── RIGHT COLUMN (col-12 col-xl-8) ── -->
-                            <div class="col-12 col-xl-8 d-flex flex-column gap-4">
-
-                                <!-- Card 1: Chief Complaint & Symptoms (Exact Match) -->
-                                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white" style="border: 1px solid #E2E8F0 !important;">
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <h6 class="fw-bold text-dark text-uppercase small mb-0 d-flex align-items-center gap-2">
-                                            <i class="far fa-file-lines text-primary fs-6"></i>
-                                            <span>Chief Complaint &amp; Symptoms</span>
-                                        </h6>
-                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 small fw-semibold">
-                                            Form 2: Symptoms
-                                        </span>
-                                    </div>
-
-                                    <!-- 2 Side-by-Side Large Soft Boxes -->
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-12 col-md-6">
-                                            <div class="p-3 rounded-4 border bg-light h-100" style="background: #F8FAFC !important; border-color: #E2E8F0 !important;">
-                                                <span class="small text-secondary fw-semibold d-block mb-1">Reason for Visit</span>
-                                                <div class="fw-bold text-dark fs-5" data-pp-q="reason_for_visit">test</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <div class="p-3 rounded-4 border bg-light h-100" style="background: #F8FAFC !important; border-color: #E2E8F0 !important;">
-                                                <span class="small text-secondary fw-semibold d-block mb-1">Symptom Description</span>
-                                                <div class="fw-bold text-dark fs-5" data-pp-q="symptom_description">test</div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 4-Metric Horizontal Indicators -->
-                                    <div class="row g-3 pt-2">
-                                        <div class="col-6 col-md-3">
-                                            <span class="small text-secondary fw-semibold d-block mb-1">Duration</span>
-                                            <div class="fw-bold text-dark fs-6" data-pp-q="symptom_duration">1-3 days</div>
-                                        </div>
-                                        <div class="col-6 col-md-3">
-                                            <span class="small text-secondary fw-semibold d-block mb-1">Severity</span>
-                                            <div class="fw-bold fs-6" style="color: #D97706;" data-pp-q="symptom_severity_text">Moderate</div>
-                                        </div>
-                                        <div class="col-6 col-md-3">
-                                            <span class="small text-secondary fw-semibold d-block mb-1">Has Fever?</span>
-                                            <div class="fw-bold fs-6" data-pp-q-html="has_fever_dot">
-                                                <span class="text-danger"><i class="fas fa-circle me-1" style="font-size: 8px;"></i> Yes</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 col-md-3">
-                                            <span class="small text-secondary fw-semibold d-block mb-1">Tried Treatment?</span>
-                                            <div class="fw-semibold text-dark fs-6" data-pp-q="tried_treatment">No</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Red Flags Safe Green Banner (Exact Match) -->
-                                    <div class="p-2.5 px-3 rounded-4 border border-success-subtle d-flex align-items-center justify-content-between mt-3" id="pp-q-safe-banner" style="background: #ECFDF5; border-color: #A7F3D0 !important;">
-                                        <div class="d-flex align-items-center gap-2 small fw-semibold text-success">
-                                            <i class="fas fa-play text-success" style="font-size: 11px;"></i>
-                                            <span>No emergency red flags (Chest pain, severe dyspnea, confusion) reported.</span>
-                                        </div>
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-bold">CLEARED</span>
-                                    </div>
-
-                                    <!-- Red Flags Danger Alert Banner (if reported) -->
-                                    <div class="alert alert-danger d-flex align-items-center gap-3 mt-3 mb-0 rounded-4 border-danger p-3" id="pp-q-redflag-box" hidden>
-                                        <i class="fas fa-triangle-exclamation fs-3 text-danger"></i>
-                                        <div>
-                                            <strong class="d-block text-danger">Emergency Red Flag Symptoms Reported!</strong>
-                                            <span data-pp-q="red_flags">Trouble breathing, chest pain, or acute confusion reported.</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Card 2: ASTHMA SPECIFIC ASSESSMENT (Condition-Specific Clinical Protocol) -->
-                                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white" id="pp-q-asthma-card" data-pp-module="asthma" style="border: 1px solid #E2E8F0 !important;">
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <div class="d-flex align-items-center gap-2.5">
-                                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background: #FCE7F3; color: #DB2777;">
-                                                <i class="fas fa-lungs fs-6"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="fw-bold text-dark mb-0">ASTHMA SPECIFIC ASSESSMENT</h6>
-                                                <span class="small text-secondary" style="font-size: 12px;">Condition-specific clinical protocol fields</span>
-                                            </div>
-                                        </div>
-                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 small fw-semibold">
-                                            Active Module
-                                        </span>
-                                    </div>
-
-                                    <!-- 4 Soft Boxes Grid (2x2) -->
-                                    <div class="row g-3">
-                                        <div class="col-12 col-md-6">
-                                            <div class="p-3 rounded-4 border bg-light h-100" style="background: #F8FAFC !important; border-color: #E2E8F0 !important;">
-                                                <span class="small text-secondary fw-semibold d-block mb-1">Rescue Inhaler Frequency</span>
-                                                <div class="fw-bold text-dark fs-6" data-pp-q="asthma_rescue_use">1-2 times a week</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <div class="p-3 rounded-4 border bg-light h-100" style="background: #F8FAFC !important; border-color: #E2E8F0 !important;">
-                                                <span class="small text-secondary fw-semibold d-block mb-1">Nighttime Awakenings</span>
-                                                <div class="fw-bold text-dark fs-6" data-pp-q="asthma_night_text">No</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <div class="p-3 rounded-4 border bg-light h-100" style="background: #F8FAFC !important; border-color: #E2E8F0 !important;">
-                                                <span class="small text-secondary fw-semibold d-block mb-1">ER / Hospital Visits in Past Year</span>
-                                                <div class="fw-bold text-dark fs-6" data-pp-q="asthma_er_visit_text">No</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <div class="p-3 rounded-4 border bg-light h-100" style="background: #F8FAFC !important; border-color: #E2E8F0 !important;">
-                                                <span class="small text-secondary fw-semibold d-block mb-1">Current Wheezing or Dyspnea</span>
-                                                <div class="fw-bold text-dark fs-6" data-pp-q="asthma_wheeze_text">No</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Card 3: Other Condition Modules (Shown Dynamically If Patient Selected Other Service) -->
-                                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white d-none" id="pp-q-other-module-card" style="border: 1px solid #E2E8F0 !important;">
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                                            <i class="fas fa-layer-group text-primary"></i>
-                                            <span data-pp-q="other_module_title">Specialized Clinical Assessment</span>
-                                        </h6>
-                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 small fw-semibold">Active Module</span>
-                                    </div>
-                                    <div class="row g-3" id="pp-q-other-module-content">
-                                        <!-- Populated via JS if not asthma -->
-                                    </div>
-                                </div>
-
-                                <!-- Card 4: Past Medical History & Chronic Conditions -->
-                                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white" style="border: 1px solid #E2E8F0 !important;">
-                                    <h6 class="fw-bold text-dark text-uppercase small mb-3 pb-2 border-bottom d-flex align-items-center gap-2">
-                                        <i class="fas fa-heart-pulse text-danger fs-6"></i>
-                                        <span>Medical History &amp; Chronic Conditions</span>
+                            <!-- Allergy Assessment -->
+                            <div class="col-12 col-md-6" data-pp-module="allergy">
+                                <div class="card border rounded-3 h-100 p-3">
+                                    <h6 class="fw-bold text-warning text-uppercase small border-bottom pb-2 mb-2">
+                                        <i class="fas fa-shield-virus me-1"></i> Allergy Assessment
                                     </h6>
-                                    
-                                    <div class="row g-2 text-center mb-3">
-                                        <div class="col-6 col-md-4 col-xl-2">
-                                            <div class="p-2.5 border rounded-3 bg-light h-100 d-flex flex-column justify-content-between">
-                                                <small class="text-secondary fw-semibold d-block mb-1">Hypertension</small>
-                                                <div data-pp-q-html="hx_hypertension">
-                                                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5 small" data-pp-q="hx_hypertension">No</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 col-md-4 col-xl-2">
-                                            <div class="p-2.5 border rounded-3 bg-light h-100 d-flex flex-column justify-content-between">
-                                                <small class="text-secondary fw-semibold d-block mb-1">Diabetes</small>
-                                                <div data-pp-q-html="hx_diabetes">
-                                                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5 small" data-pp-q="hx_diabetes">No</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 col-md-4 col-xl-2">
-                                            <div class="p-2.5 border rounded-3 bg-light h-100 d-flex flex-column justify-content-between">
-                                                <small class="text-secondary fw-semibold d-block mb-1">Heart Disease</small>
-                                                <div data-pp-q-html="hx_heart">
-                                                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5 small" data-pp-q="hx_heart">No</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 col-md-4 col-xl-2">
-                                            <div class="p-2.5 border rounded-3 bg-light h-100 d-flex flex-column justify-content-between">
-                                                <small class="text-secondary fw-semibold d-block mb-1">Lung / Asthma</small>
-                                                <div data-pp-q-html="hx_lung">
-                                                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5 small" data-pp-q="hx_lung">No</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 col-md-4 col-xl-2">
-                                            <div class="p-2.5 border rounded-3 bg-light h-100 d-flex flex-column justify-content-between">
-                                                <small class="text-secondary fw-semibold d-block mb-1">Kidney / Liver</small>
-                                                <div data-pp-q-html="hx_kidney_liver">
-                                                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5 small" data-pp-q="hx_kidney_liver">No</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 col-md-4 col-xl-2">
-                                            <div class="p-2.5 border rounded-3 bg-light h-100 d-flex flex-column justify-content-between">
-                                                <small class="text-secondary fw-semibold d-block mb-1">Cancer / Immune</small>
-                                                <div data-pp-q-html="hx_cancer_immune">
-                                                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5 small" data-pp-q="hx_cancer_immune">No</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <small class="text-uppercase text-secondary fw-bold d-block mb-1">Other Medical Conditions or Past Surgeries</small>
-                                        <div class="p-2.5 bg-light rounded-3 text-dark border small" data-pp-q="hx_other">None Reported</div>
+                                    <div class="row g-1 small">
+                                        <div class="col-6 text-secondary">Main Symptoms:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="allergy_main_symptom">—</div>
+                                        <div class="col-6 text-secondary">Known Triggers:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="allergy_triggers">—</div>
+                                        <div class="col-6 text-secondary">Anaphylaxis History:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="allergy_anaphylaxis">—</div>
+                                        <div class="col-6 text-secondary">Carries EpiPen:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="allergy_epipen">—</div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Card 5: Current Medications & Drug Allergies -->
-                                <div class="row g-3">
-                                    <div class="col-12 col-md-6">
-                                        <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white" style="border: 1px solid #E2E8F0 !important;">
-                                            <h6 class="fw-bold text-dark border-bottom pb-2 mb-3 d-flex align-items-center gap-2">
-                                                <i class="fas fa-pills text-primary"></i>
-                                                <span>Reported Medications</span>
-                                            </h6>
-                                            <div data-pp-q-html="medication_list">
-                                                <div class="p-3 bg-light rounded-3 text-dark border" data-pp-q="medication_list">None Reported</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white" style="border: 1px solid #E2E8F0 !important;">
-                                            <h6 class="fw-bold text-dark border-bottom pb-2 mb-3 d-flex align-items-center gap-2">
-                                                <i class="fas fa-triangle-exclamation text-danger"></i>
-                                                <span>Reported Drug Allergies</span>
-                                            </h6>
-                                            <div data-pp-q-html="drug_allergy_list">
-                                                <div class="p-3 bg-light rounded-3 text-dark border" data-pp-q="drug_allergy_list">None Reported</div>
-                                            </div>
-                                        </div>
+                            <!-- Asthma Assessment -->
+                            <div class="col-12 col-md-6" data-pp-module="asthma">
+                                <div class="card border rounded-3 h-100 p-3">
+                                    <h6 class="fw-bold text-info text-uppercase small border-bottom pb-2 mb-2">
+                                        <i class="fas fa-lungs me-1"></i> Asthma &amp; Respiratory
+                                    </h6>
+                                    <div class="row g-1 small">
+                                        <div class="col-6 text-secondary">Rescue Inhaler Use:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="asthma_rescue_use">—</div>
+                                        <div class="col-6 text-secondary">Nighttime Waking:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="asthma_night">—</div>
+                                        <div class="col-6 text-secondary">ER Visit (12 mos):</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="asthma_er_visit">—</div>
                                     </div>
                                 </div>
+                            </div>
 
+                            <!-- Refill Request -->
+                            <div class="col-12 col-md-6" data-pp-module="refill">
+                                <div class="card border rounded-3 h-100 p-3">
+                                    <h6 class="fw-bold text-primary text-uppercase small border-bottom pb-2 mb-2">
+                                        <i class="fas fa-prescription-bottle-medical me-1"></i> Refill Request
+                                    </h6>
+                                    <div class="row g-1 small">
+                                        <div class="col-6 text-secondary">Requested Med:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="refill_med_name">—</div>
+                                        <div class="col-6 text-secondary">Dose &amp; Frequency:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="refill_med_dose">—</div>
+                                        <div class="col-6 text-secondary">Last Refill Date:</div>
+                                        <div class="col-6 fw-semibold text-dark text-end" data-pp-q="refill_last_date">—</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Past Medical History Cards -->
+                        <div class="card border rounded-4 p-3 p-md-4 mb-4 bg-white">
+                            <h5 class="fw-bold text-dark mb-3 pb-2 border-bottom">
+                                <i class="fas fa-heart-pulse text-danger me-2"></i>Medical History &amp; Chronic Conditions
+                            </h5>
+                            <div class="row g-2 text-center mb-3">
+                                <div class="col-6 col-md-2">
+                                    <div class="p-2 border rounded-3 bg-light">
+                                        <small class="text-secondary d-block">Hypertension</small>
+                                        <strong class="text-dark small" data-pp-q="hx_hypertension">—</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="p-2 border rounded-3 bg-light">
+                                        <small class="text-secondary d-block">Diabetes</small>
+                                        <strong class="text-dark small" data-pp-q="hx_diabetes">—</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="p-2 border rounded-3 bg-light">
+                                        <small class="text-secondary d-block">Heart Disease</small>
+                                        <strong class="text-dark small" data-pp-q="hx_heart">—</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="p-2 border rounded-3 bg-light">
+                                        <small class="text-secondary d-block">Lung / Asthma</small>
+                                        <strong class="text-dark small" data-pp-q="hx_lung">—</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="p-2 border rounded-3 bg-light">
+                                        <small class="text-secondary d-block">Kidney / Liver</small>
+                                        <strong class="text-dark small" data-pp-q="hx_kidney_liver">—</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <div class="p-2 border rounded-3 bg-light">
+                                        <small class="text-secondary d-block">Cancer / Immune</small>
+                                        <strong class="text-dark small" data-pp-q="hx_cancer_immune">—</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <small class="text-uppercase text-secondary fw-semibold d-block mb-1">Surgeries &amp; Other Conditions</small>
+                                <div class="p-3 bg-light rounded-3 text-dark border" data-pp-q="hx_other">—</div>
+                            </div>
+                        </div>
+
+                        <!-- Current Medications & Drug Allergies -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-md-6">
+                                <div class="card border rounded-4 p-3 h-100">
+                                    <h6 class="fw-bold text-dark border-bottom pb-2">
+                                        <i class="fas fa-pills text-primary me-2"></i>Patient-Reported Medications
+                                    </h6>
+                                    <div class="p-3 bg-light rounded-3 text-dark" data-pp-q="medication_list">—</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="card border rounded-4 p-3 h-100">
+                                    <h6 class="fw-bold text-dark border-bottom pb-2">
+                                        <i class="fas fa-triangle-exclamation text-danger me-2"></i>Patient-Reported Drug Allergies
+                                    </h6>
+                                    <div class="p-3 bg-light rounded-3 text-dark" data-pp-q="drug_allergy_list">—</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Legal Signature & Consent -->
+                        <div class="card border rounded-4 p-3 bg-light">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                                <div>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-semibold small mb-1">
+                                        <i class="fas fa-file-signature me-1"></i> E-Signature Verified
+                                    </span>
+                                    <div class="text-dark small mt-1">
+                                        Signer: <strong data-pp-q="e_signature">—</strong> &bull; Signed Date: <span data-pp-q="signature_date">—</span>
+                                    </div>
+                                </div>
+                                <span class="text-secondary small font-monospace">Legal Consent Stored</span>
                             </div>
                         </div>
 
@@ -1563,13 +1429,13 @@ $pp_ajax_url = admin_url('admin-ajax.php');
         field('consultation-count', String((p.consultations || []).length));
     }
 
-    // Questionnaire rendering matching exact user reference
+    // Questionnaire rendering
     function renderQuestionnaire(q) {
         var emptyBox = document.getElementById('pp-questionnaire-empty');
         var contentBox = document.getElementById('pp-questionnaire-content');
         if (!emptyBox || !contentBox) return;
 
-        if (!q || (!q.submitted_at && !q.reason_for_visit && !q.symptom_description && !q.submission_id && !q.id)) {
+        if (!q || (!q.submitted_at && !q.reason_for_visit && !q.symptom_description && !q.submission_id)) {
             emptyBox.hidden = false;
             contentBox.hidden = true;
             return;
@@ -1578,308 +1444,114 @@ $pp_ajax_url = admin_url('admin-ajax.php');
         emptyBox.hidden = true;
         contentBox.hidden = false;
 
-        // Helper to extract value checking direct keys, nested objects, and raw payload
-        function getQVal(key, nestedObj, nestedKey) {
-            if (nestedObj && nestedObj[nestedKey] !== undefined && nestedObj[nestedKey] !== null && nestedObj[nestedKey] !== '') {
-                return nestedObj[nestedKey];
-            }
-            if (q[key] !== undefined && q[key] !== null && q[key] !== '') {
-                return q[key];
-            }
-            var raw = q.raw || q.data || {};
-            if (raw[key] !== undefined && raw[key] !== null && raw[key] !== '') {
-                return raw[key];
-            }
-            return '';
-        }
-
-        // Helper to parse HIPAAtizer radio values (1 = Yes, 2 = No)
-        function parseBoolVal(val) {
-            if (val === undefined || val === null || val === '') return null;
-            var s = String(val).trim().toLowerCase();
-            if (s === '1' || s === 'yes' || s === 'true' || s === 'y' || s === 'positive') return true;
-            if (s === '2' || s === 'no' || s === 'false' || s === 'n' || s === 'negative' || s === 'none') return false;
-            return val;
-        }
-
         function qField(key, val, def) {
             document.querySelectorAll('[data-pp-q="' + key + '"]').forEach(function(el) {
-                el.textContent = (val !== undefined && val !== null && String(val).trim() !== '') ? String(val) : (def || '—');
+                el.textContent = val || def || '—';
             });
         }
 
-        function qHtml(key, html) {
-            document.querySelectorAll('[data-pp-q-html="' + key + '"]').forEach(function(el) {
-                el.innerHTML = html;
-            });
+        qField('submitted_at', q.submitted_at);
+        qField('submission_id', q.submission_id);
+        qField('selected_service', q.selected_service);
+        qField('consultation_type', q.consultation_type);
+        qField('referral_source', q.referral_source);
+        qField('reason_for_visit', q.reason_for_visit);
+        qField('symptom_description', q.symptom_description);
+        qField('symptom_duration', q.symptom_duration);
+        qField('has_fever', q.has_fever);
+        qField('tried_treatment', q.tried_treatment);
+        qField('treatment_tried_details', q.treatment_tried_details);
+        qField('red_flags', q.red_flags);
+
+        var redFlagBox = document.getElementById('pp-q-redflag-box');
+        if (redFlagBox) {
+            var rf = (q.red_flags || '').toString().toLowerCase();
+            var hasRf = rf && rf !== 'no' && rf !== 'none' && rf !== 'false' && rf !== '0' && rf !== '—';
+            redFlagBox.hidden = !hasRf;
         }
 
-        function formatBoolBadge(val, yesText, noText, yesClass, noClass) {
-            var b = parseBoolVal(val);
-            if (b === true) {
-                return '<span class="badge ' + (yesClass || 'bg-danger-subtle text-danger border border-danger-subtle') + ' rounded-pill px-2.5 py-1 small fw-semibold">' + (yesText || 'Yes') + '</span>';
+        var sevEl = document.querySelector('[data-pp-q-badge="symptom_severity"]');
+        if (sevEl) {
+            var sev = q.symptom_severity || '—';
+            var bClass = 'bg-light text-dark border';
+            var sLow = sev.toLowerCase();
+            if (sLow.indexOf('severe') !== -1 || sLow.indexOf('high') !== -1 || sLow.indexOf('8') !== -1 || sLow.indexOf('9') !== -1 || sLow.indexOf('10') !== -1) {
+                bClass = 'bg-danger-subtle text-danger border border-danger-subtle';
+            } else if (sLow.indexOf('moderate') !== -1 || sLow.indexOf('medium') !== -1 || sLow.indexOf('4') !== -1 || sLow.indexOf('5') !== -1 || sLow.indexOf('6') !== -1 || sLow.indexOf('7') !== -1) {
+                bClass = 'bg-warning-subtle text-warning border border-warning-subtle';
+            } else if (sLow.indexOf('mild') !== -1 || sLow.indexOf('low') !== -1 || sLow.indexOf('1') !== -1 || sLow.indexOf('2') !== -1 || sLow.indexOf('3') !== -1) {
+                bClass = 'bg-success-subtle text-success border border-success-subtle';
             }
-            if (b === false) {
-                return '<span class="badge ' + (noClass || 'bg-light text-secondary border') + ' rounded-pill px-2.5 py-1 small fw-semibold">' + (noText || 'No') + '</span>';
-            }
-            if (val && String(val).trim() !== '' && String(val) !== '—') {
-                return '<span class="badge bg-light text-dark border rounded-pill px-2.5 py-1 small fw-semibold">' + val + '</span>';
-            }
-            return '<span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5 small">—</span>';
+            sevEl.className = 'badge rounded-pill px-3 py-1 small fw-semibold ' + bClass;
+            sevEl.textContent = sev;
         }
 
-        // ── 1. Top Header: Initials, Full Name, Badges & Metadata ──
-        var patName = getQVal('full_name') || (selectedPatient ? (selectedPatient.full_name || [selectedPatient.first_name, selectedPatient.last_name].filter(Boolean).join(' ')) : '') || 'Patient';
-        qField('full_name', patName);
-        qField('full_name_demo', patName);
-
-        // Derive Initials (e.g. "test15" -> "T15", "John Doe" -> "JD")
-        var initials = 'P';
-        if (patName) {
-            var parts = patName.trim().split(/\s+/);
-            if (parts.length > 1) {
-                initials = (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
-            } else if (patName.toLowerCase().indexOf('test') === 0 && patName.length > 4) {
-                initials = 'T' + patName.substring(4);
-            } else {
-                initials = patName.substring(0, 2).toUpperCase();
-            }
-        }
-        qField('initials', initials);
-
-        // Consultation Type Badge
-        var consultType = getQVal('consultation_type') || 'Video Consultation';
-        qField('consultation_type_badge', consultType.toLowerCase().indexOf('video') !== -1 ? 'Video Consultation' : (consultType.toLowerCase().indexOf('phone') !== -1 ? 'Phone Consultation' : consultType));
-
-        // Submission ID (short & full)
-        var fullSubId = getQVal('submission_id') || getQVal('id') || 'ee65bf3a-0731-4f4c-8a44';
-        var shortSubId = fullSubId.length > 24 ? (fullSubId.substring(0, 24) + '…') : fullSubId;
-        qField('submission_id_short', shortSubId);
-        qField('submission_id', fullSubId);
-
-        // Formatted Timestamp
-        var rawTime = getQVal('submitted_at') || getQVal('createdAt');
-        var formattedDate = 'Oct 16, 2026, 11:46 AM';
-        if (rawTime) {
-            try {
-                var d = new Date(rawTime);
-                if (!isNaN(d.getTime())) {
-                    formattedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ', ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-                } else {
-                    formattedDate = rawTime;
-                }
-            } catch(e) {
-                formattedDate = rawTime;
-            }
-        }
-        qField('submitted_at', formattedDate);
-
-        // Client IP Address
-        var ip = getQVal('ip_address') || getQVal('ipAddress') || '110.226.115.101';
-        qField('client_ip', ip);
-        qField('ip_address', ip);
-
-        // ── 2. Clinical Priority Box ──
-        var feverVal = getQVal('has_fever');
-        var feverBool = parseBoolVal(feverVal);
-        var rfVal = getQVal('red_flags');
-        var rfBool = parseBoolVal(rfVal);
-        var sev = getQVal('symptom_severity') || 'Moderate';
-        var selectedSvc = getQVal('selected_service') || 'Asthma Care';
-        if (selectedSvc.toLowerCase().indexOf('care') === -1 && selectedSvc.toLowerCase().indexOf('visit') === -1) {
-            selectedSvc += ' Care';
-        }
-        qField('selected_service', selectedSvc);
-
-        var prioBox = document.getElementById('pp-q-priority-box');
-        var prioDot = document.getElementById('pp-q-priority-dot');
-        var prioTitle = document.getElementById('pp-q-priority-title');
-        var prioSub = document.getElementById('pp-q-priority-sub');
-
-        if (rfBool === true || (typeof rfBool === 'string' && rfBool !== '2' && rfBool !== 'no' && rfBool !== '')) {
-            if (prioBox) { prioBox.style.background = '#FEE2E2'; prioBox.style.borderColor = '#FECACA'; }
-            if (prioDot) { prioDot.style.background = '#DC2626'; }
-            if (prioTitle) { prioTitle.style.color = '#991B1B'; prioTitle.textContent = 'Clinical Priority: Urgent / High'; }
-            if (prioSub) { prioSub.style.color = '#B91C1C'; prioSub.textContent = 'Emergency red flag symptoms flagged'; }
-        } else if (feverBool === true) {
-            if (prioBox) { prioBox.style.background = '#FEF9C3'; prioBox.style.borderColor = '#FEF08A'; }
-            if (prioDot) { prioDot.style.background = '#EAB308'; }
-            if (prioTitle) { prioTitle.style.color = '#854D0E'; prioTitle.textContent = 'Clinical Priority: Moderate'; }
-            if (prioSub) { prioSub.style.color = '#A16207'; prioSub.textContent = (selectedSvc ? selectedSvc.replace(' Care', '') : 'Asthma') + ' with active fever reported'; }
-        } else {
-            if (prioBox) { prioBox.style.background = '#ECFDF5'; prioBox.style.borderColor = '#A7F3D0'; }
-            if (prioDot) { prioDot.style.background = '#10B981'; }
-            if (prioTitle) { prioTitle.style.color = '#065F46'; prioTitle.textContent = 'Clinical Priority: Routine'; }
-            if (prioSub) { prioSub.style.color = '#047857'; prioSub.textContent = 'Standard clinical questionnaire completed'; }
-        }
-
-        // ── 3. 4-Metrics Top Strip ──
-        var dobStr = getQVal('dob') || getQVal('date_of_birth') || (selectedPatient ? selectedPatient.dob : '') || '11/11/2002';
-        var calcAge = '';
-        if (dobStr) {
-            try {
-                var dParts = dobStr.split(/[\/\-]/);
-                var bDate = (dParts.length === 3 && dParts[2].length === 4) ? new Date(parseInt(dParts[2], 10), parseInt(dParts[0], 10) - 1, parseInt(dParts[1], 10)) : new Date(dobStr);
-                if (!isNaN(bDate.getTime())) {
-                    var now = new Date();
-                    var yrs = now.getFullYear() - bDate.getFullYear();
-                    if (now.getMonth() < bDate.getMonth() || (now.getMonth() === bDate.getMonth() && now.getDate() < bDate.getDate())) yrs--;
-                    if (yrs > 0 && yrs < 120) calcAge = ' (' + yrs + ' yrs)';
-                }
-            } catch(e) {}
-        }
-        qField('dob_age', dobStr + calcAge);
-        qField('date_of_birth', dobStr);
-
-        var sexVal = getQVal('gender') || getQVal('sex_at_birth') || (selectedPatient ? selectedPatient.gender : '') || 'Male';
-        qField('sex_at_birth', sexVal.charAt(0).toUpperCase() + sexVal.slice(1));
-
-        var refChannel = getQVal('referral_source') || 'Friend or Family';
-        qField('referral_source', refChannel);
-
-        // ── 4. Patient Demographics Card ──
-        qField('email', getQVal('email') || (selectedPatient ? selectedPatient.email : '') || 'test15@gmail.com');
-        qField('phone_number', getQVal('phone') || getQVal('phone_number') || (selectedPatient ? selectedPatient.phone : '') || '(123) 456-7890');
-        qField('preferred_language', (getQVal('preferred_language') || 'English').charAt(0).toUpperCase() + (getQVal('preferred_language') || 'English').slice(1));
-
-        var isAdultVal = parseBoolVal(getQVal('is_adult'));
-        var adultEl = document.querySelector('[data-pp-q-badge="is_adult"]');
-        if (adultEl) {
-            adultEl.textContent = (isAdultVal === true || isAdultVal === null) ? 'Yes (Adult)' : 'No (<18)';
-        }
-
-        var isPregVal = parseBoolVal(getQVal('is_pregnant'));
-        var pregEl = document.querySelector('[data-pp-q-badge="is_pregnant"]');
-        if (pregEl) {
-            pregEl.textContent = isPregVal === true ? 'Yes' : 'No';
-        }
-
-        // ── 5. Designated Pharmacy ──
-        var pharm = q.pharmacy || {};
-        qField('pharmacy_name', getQVal('pharmacy_name', pharm, 'name') || 'test');
-        qField('pharmacy_location', getQVal('pharmacy_location', pharm, 'location') || '142536');
-
-        // ── 6. Consent & Signature ──
-        qField('e_signature', getQVal('e_signature') || getQVal('signature') || 'test');
-        qField('signature_date', getQVal('signature_date') || getQVal('date') || '26-10-2026');
-
-        // PDF & Submission Links
         var pdfLink = document.querySelector('[data-pp-q-link="pdf"]');
         if (pdfLink) {
-            var pUrl = q.view_pdf_link || q.download_pdf_link || (q.raw && (q.raw.downloadPdfLink || q.raw.viewPdfLink));
+            var pUrl = q.view_pdf_link || q.download_pdf_link;
             if (pUrl && pUrl !== '—') {
                 pdfLink.href = pUrl;
                 pdfLink.classList.remove('d-none');
             } else {
-                pdfLink.href = '#';
+                pdfLink.classList.add('d-none');
             }
         }
 
         var subLink = document.querySelector('[data-pp-q-link="submission"]');
         if (subLink) {
-            var sUrl = q.view_submission_link || (q.raw && q.raw.viewSubmissionLink);
+            var sUrl = q.view_submission_link;
             if (sUrl && sUrl !== '—') {
                 subLink.href = sUrl;
                 subLink.classList.remove('d-none');
             } else {
-                subLink.href = '#';
+                subLink.classList.add('d-none');
             }
         }
 
-        // ── 7. Social History & Lifestyle ──
-        var soc = q.social_history || {};
-        qField('tobacco_use', getQVal('tobacco_use', soc, 'tobacco') || 'Former');
-        qField('alcohol_use', getQVal('alcohol_use', soc, 'alcohol') || 'Occasional');
+        var uti = q.uti || {};
+        qField('uti_burning', uti.burning);
+        qField('uti_frequency', uti.frequency);
+        qField('uti_blood', uti.blood);
+        qField('uti_flank_pain', uti.flank_pain);
+        qField('uti_history', uti.history);
 
-        // ── 8. Chief Complaint & Symptoms Card ──
-        qField('reason_for_visit', getQVal('reason_for_visit') || 'test');
-        qField('symptom_description', getQVal('symptom_description') || 'test');
-        qField('symptom_duration', getQVal('symptom_duration') || '1-3 days');
-        qField('symptom_severity_text', sev);
+        var allergy = q.allergy || {};
+        qField('allergy_main_symptom', allergy.main_symptom);
+        qField('allergy_triggers', allergy.triggers);
+        qField('allergy_anaphylaxis', allergy.anaphylaxis);
+        qField('allergy_epipen', allergy.epipen);
 
-        // Has Fever?
-        if (feverBool === true) {
-            qHtml('has_fever_dot', '<span class="text-danger fw-bold"><i class="fas fa-circle me-1" style="font-size: 8px;"></i> Yes</span>');
-        } else {
-            qHtml('has_fever_dot', '<span class="text-dark fw-bold">No</span>');
-        }
-
-        // Tried Treatment?
-        var triedVal = getQVal('tried_treatment');
-        var triedBool = parseBoolVal(triedVal);
-        qField('tried_treatment', triedBool === true ? 'Yes' : 'No');
-
-        // Red Flags Safe vs Alert Banner
-        var redFlagBox = document.getElementById('pp-q-redflag-box');
-        var safeBanner = document.getElementById('pp-q-safe-banner');
-        if (rfBool === true || (typeof rfBool === 'string' && rfBool !== '2' && rfBool !== 'no' && rfBool !== '')) {
-            if (redFlagBox) redFlagBox.hidden = false;
-            if (safeBanner) safeBanner.hidden = true;
-            qField('red_flags', typeof rfBool === 'string' ? rfBool : 'Yes - Trouble breathing, acute chest pain or confusion reported.');
-        } else {
-            if (redFlagBox) redFlagBox.hidden = true;
-            if (safeBanner) safeBanner.hidden = false;
-        }
-
-        // ── 9. Asthma Specific Assessment Module (Exact 2x2 Grid) ──
         var asthma = q.asthma || {};
-        qField('asthma_rescue_use', getQVal('asthma_rescue_use', asthma, 'rescue_use') || '1-2 times a week');
-        
-        var astNight = parseBoolVal(getQVal('asthma_night', asthma, 'night_symptoms'));
-        qField('asthma_night_text', astNight === true ? 'Yes' : 'No');
+        qField('asthma_rescue_use', asthma.rescue_use);
+        qField('asthma_night', asthma.night_symptoms);
+        qField('asthma_er_visit', asthma.er_visit);
 
-        var astEr = parseBoolVal(getQVal('asthma_er_visit', asthma, 'er_visit'));
-        qField('asthma_er_visit_text', astEr === true ? 'Yes' : 'No');
+        var refill = q.refill || {};
+        qField('refill_med_name', refill.med_name);
+        qField('refill_med_dose', refill.med_dose);
+        qField('refill_last_date', refill.last_date);
 
-        var astWheeze = parseBoolVal(getQVal('asthma_wheeze', asthma, 'wheeze'));
-        qField('asthma_wheeze_text', astWheeze === true ? 'Yes' : 'No');
-
-        // ── 10. Medical History & Chronic Conditions (Format '2' to No) ──
         var hx = q.medical_history || {};
-        var hxKeys = ['hx_hypertension', 'hx_diabetes', 'hx_heart', 'hx_lung', 'hx_kidney_liver', 'hx_cancer_immune'];
-        hxKeys.forEach(function(k) {
-            var rawK = getQVal(k, hx, k.replace('hx_', ''));
-            var b = parseBoolVal(rawK);
-            if (b === true) {
-                qHtml(k, '<span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small fw-semibold"><i class="fas fa-circle-exclamation me-1"></i> Yes</span>');
-            } else {
-                qHtml(k, '<span class="badge bg-light text-secondary border rounded-pill px-2.5 py-1 small fw-semibold">No</span>');
-            }
-        });
+        qField('hx_hypertension', hx.hypertension);
+        qField('hx_diabetes', hx.diabetes);
+        qField('hx_heart', hx.heart_disease);
+        qField('hx_lung', hx.lung_disease);
+        qField('hx_kidney_liver', hx.kidney_liver);
+        qField('hx_cancer_immune', hx.cancer_immune);
+        qField('hx_other', hx.other);
 
-        var hxOther = getQVal('hx_other', hx, 'other');
-        qField('hx_other', (hxOther && hxOther !== '2' && hxOther.toLowerCase() !== 'no') ? hxOther : 'None Reported');
-
-        // ── 11. Reported Medications & Drug Allergies ──
         var meds = q.medications || {};
-        var takesMeds = getQVal('takes_medications', meds, 'takes_medications');
-        var medList = getQVal('medication_list', meds, 'list');
-        var medParsed = parseBoolVal(takesMeds);
-        var medContainer = document.querySelector('[data-pp-q-html="medication_list"]');
-        if (medContainer) {
-            if (medList && medList !== '2' && medList !== '—' && medList.toLowerCase() !== 'no' && medList.toLowerCase() !== 'none') {
-                medContainer.innerHTML = '<div class="p-3 bg-light rounded-3 text-dark border fw-semibold lh-base"><i class="fas fa-check text-primary me-2"></i>' + escapeHtml(medList) + '</div>';
-            } else if (medParsed === false || takesMeds === '2' || (!medList && medParsed !== true)) {
-                medContainer.innerHTML = '<div class="p-3 bg-success-subtle text-success rounded-3 border border-success-subtle d-flex align-items-center gap-2 small fw-semibold"><i class="fas fa-check-circle fs-5"></i><span>None Reported</span></div>';
-            } else {
-                medContainer.innerHTML = '<div class="p-3 bg-light rounded-3 text-dark border">' + escapeHtml(medList || takesMeds || 'None Reported') + '</div>';
-            }
-        }
+        qField('medication_list', meds.list || meds.takes_medications);
 
         var algs = q.allergies || {};
-        var hasAlg = getQVal('has_drug_allergy', algs, 'has_drug_allergy');
-        var algList = getQVal('drug_allergy_list', algs, 'list');
-        var algParsed = parseBoolVal(hasAlg);
-        var algContainer = document.querySelector('[data-pp-q-html="drug_allergy_list"]');
-        if (algContainer) {
-            if (algList && algList !== '2' && algList !== '—' && algList.toLowerCase() !== 'no' && algList.toLowerCase() !== 'none') {
-                algContainer.innerHTML = '<div class="p-3 bg-danger-subtle text-danger rounded-3 border border-danger-subtle fw-semibold lh-base"><i class="fas fa-triangle-exclamation me-2"></i>' + escapeHtml(algList) + '</div>';
-            } else if (algParsed === false || hasAlg === '2' || (!algList && algParsed !== true)) {
-                algContainer.innerHTML = '<div class="p-3 bg-success-subtle text-success rounded-3 border border-success-subtle d-flex align-items-center gap-2 small fw-semibold"><i class="fas fa-shield-halved fs-5"></i><span>None Reported</span></div>';
-            } else {
-                algContainer.innerHTML = '<div class="p-3 bg-light rounded-3 text-dark border">' + escapeHtml(algList || hasAlg || 'None Reported') + '</div>';
-            }
-        }
+        qField('drug_allergy_list', algs.list || algs.has_drug_allergy);
+
+        var pharm = q.pharmacy || {};
+        qField('pharmacy_name', pharm.name);
+        qField('pharmacy_location', pharm.location);
+
+        qField('e_signature', q.signature);
+        qField('signature_date', q.signature_date);
     }
 
     // Load Patient API Request

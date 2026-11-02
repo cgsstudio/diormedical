@@ -449,21 +449,19 @@ function dior_handle_hipaatizer_data(WP_REST_Request $request) {
 
     // Validate the shared webhook token configured in HIPAAtizer.
     // Define DIOR_HIPAATIZER_WEBHOOK_SECRET in wp-config.php for production.
-    $default_secret = 'DiorHipaa2026X9K7M4P8';
     $configured_secret = defined('DIOR_HIPAATIZER_WEBHOOK_SECRET')
         ? (string) DIOR_HIPAATIZER_WEBHOOK_SECRET
-        : (string) get_option('dior_hipaatizer_webhook_secret', $default_secret);
-    if (empty($configured_secret)) {
-        $configured_secret = $default_secret;
-    }
+        : (string) get_option('dior_hipaatizer_webhook_secret', '');
     $received_token = (string) $request->get_param('token');
 
-    if ($received_token !== '' && !hash_equals($configured_secret, $received_token) && !hash_equals($default_secret, $received_token)) {
-        return new WP_Error(
-            'invalid_webhook_token',
-            'Invalid HIPAAtizer webhook token.',
-            ['status' => 401]
-        );
+    if ($configured_secret !== '') {
+        if ($received_token === '' || !hash_equals($configured_secret, $received_token)) {
+            return new WP_Error(
+                'invalid_webhook_token',
+                'Invalid HIPAAtizer webhook token.',
+                ['status' => 401]
+            );
+        }
     }
 
     $input = $request->get_json_params();

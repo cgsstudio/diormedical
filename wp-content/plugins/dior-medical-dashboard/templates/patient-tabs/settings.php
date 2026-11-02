@@ -178,65 +178,10 @@
             min-width: 0;
         }
 
-        /* Responsive Settings Grid: 2-column on screens < 1536px, converts to 3-column on >= 1536px */
-        #tab-settings .dior-form-grid-2col {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        #tab-settings .dior-pharmacy-grid-row {
-            display: flex;
-            flex-direction: column;
-        }
-
-        #tab-settings .dior-pharmacy-fields-top {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        #tab-settings .dior-pharmacy-fields-top > .dior-form-group {
-            flex: 1 1 50%;
-            min-width: 0;
-        }
-
-        @media (min-width: 1536px) {
-            #tab-settings .dior-form-grid-2col {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            #tab-settings .dior-pharmacy-grid-row {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 16px;
-                margin-bottom: 20px;
-            }
-
-            #tab-settings .dior-pharmacy-fields-top {
-                display: contents;
-            }
-
-            #tab-settings .dior-pharmacy-grid-row .dior-form-group {
-                margin-bottom: 0 !important;
-            }
-        }
-
         @media (max-width: 768px) {
 
             #tab-settings .dior-form-row-2,
             #tab-settings .dior-form-row-3 {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            #tab-settings .dior-form-grid-2col {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            #tab-settings .dior-pharmacy-fields-top {
                 flex-direction: column;
                 gap: 12px;
             }
@@ -488,7 +433,7 @@
                             <form id="dior-profile-settings-form" novalidate>
                                 <h6 style="margin: 0 0 16px; color: #2b70b8; font-size: 14px; font-weight: 700;">
                                     Personal Details</h6>
-                                <div class="dior-form-grid-2col">
+                                <div class="dior-form-row-2">
                                     <div class="dior-form-group">
                                         <label class="form-label" for="patient-settings-first-name">First name *</label>
                                         <input id="patient-settings-first-name" class="form-control" type="text"
@@ -503,6 +448,8 @@
                                             value="<?php echo esc_attr($settings_patient_profile['last_name'] ?? ''); ?>"
                                             autocomplete="family-name" required>
                                     </div>
+                                </div>
+                                <div class="dior-form-row-2">
                                     <div class="dior-form-group">
                                         <label class="form-label" for="patient-settings-email">Email address</label>
                                         <input id="patient-settings-email" class="form-control" type="email"
@@ -516,6 +463,8 @@
                                             value="<?php echo esc_attr($settings_patient_profile['phone'] ?? ''); ?>"
                                             autocomplete="tel" required>
                                     </div>
+                                </div>
+                                <div class="dior-form-row-2">
                                     <div class="dior-form-group">
                                         <label class="form-label" for="patient-settings-dob">Date of birth *</label>
                                         <input id="patient-settings-dob" class="form-control" type="date" name="dob"
@@ -559,7 +508,7 @@
                                         autocomplete="street-address"
                                         required><?php echo esc_textarea($settings_patient_profile['address'] ?? ''); ?></textarea>
                                 </div>
-                                <div class="dior-form-grid-2col">
+                                <div class="dior-form-row-2">
                                     <div class="dior-form-group">
                                         <label class="form-label" for="patient-settings-city">City</label>
                                         <input id="patient-settings-city" class="form-control" type="text" name="city"
@@ -572,6 +521,8 @@
                                             value="<?php echo esc_attr($settings_patient_profile['state'] ?? ''); ?>"
                                             autocomplete="address-level1">
                                     </div>
+                                </div>
+                                <div class="dior-form-row-2">
                                     <div class="dior-form-group">
                                         <label class="form-label" for="patient-settings-zip">ZIP / Postal code</label>
                                         <input id="patient-settings-zip" class="form-control" type="text" name="zip"
@@ -615,30 +566,28 @@
 
                                 <h6 style="margin: 24px 0 16px; color: #2b70b8; font-size: 14px; font-weight: 700;">
                                     Preferred Pharmacy</h6>
-                                <div class="dior-pharmacy-grid-row">
-                                    <div class="dior-pharmacy-fields-top">
-                                        <div class="dior-form-group">
-                                            <label class="form-label" for="patient-settings-pharmacy-name">Pharmacy
-                                                name</label>
-                                            <input id="patient-settings-pharmacy-name" class="form-control" type="text"
-                                                name="pharmacy_name"
-                                                value="<?php echo esc_attr($settings_patient_profile['pharmacy_name'] ?? ''); ?>">
-                                        </div>
-                                        <div class="dior-form-group">
-                                            <label class="form-label" for="patient-settings-pharmacy-phone">Pharmacy
-                                                phone</label>
-                                            <input id="patient-settings-pharmacy-phone" class="form-control" type="tel"
-                                                name="pharmacy_phone"
-                                                value="<?php echo esc_attr($settings_patient_profile['pharmacy_phone'] ?? ''); ?>">
-                                        </div>
+                                <div class="dior-form-row-2">
+                                    <div class="dior-form-group">
+                                        <label class="form-label" for="patient-settings-pharmacy-name">Pharmacy
+                                            name</label>
+                                        <input id="patient-settings-pharmacy-name" class="form-control" type="text"
+                                            name="pharmacy_name"
+                                            value="<?php echo esc_attr($settings_patient_profile['pharmacy_name'] ?? ''); ?>">
                                     </div>
-                                    <div class="dior-form-group dior-pharmacy-addr-group" style="margin-bottom: 20px;">
-                                        <label class="form-label" for="patient-settings-pharmacy-address">Pharmacy
-                                            address</label>
-                                        <input id="patient-settings-pharmacy-address" class="form-control" type="text"
-                                            name="pharmacy_address"
-                                            value="<?php echo esc_attr($settings_patient_profile['pharmacy_address'] ?? ''); ?>">
+                                    <div class="dior-form-group">
+                                        <label class="form-label" for="patient-settings-pharmacy-phone">Pharmacy
+                                            phone</label>
+                                        <input id="patient-settings-pharmacy-phone" class="form-control" type="tel"
+                                            name="pharmacy_phone"
+                                            value="<?php echo esc_attr($settings_patient_profile['pharmacy_phone'] ?? ''); ?>">
                                     </div>
+                                </div>
+                                <div class="dior-form-group" style="margin-bottom: 20px;">
+                                    <label class="form-label" for="patient-settings-pharmacy-address">Pharmacy
+                                        address</label>
+                                    <input id="patient-settings-pharmacy-address" class="form-control" type="text"
+                                        name="pharmacy_address"
+                                        value="<?php echo esc_attr($settings_patient_profile['pharmacy_address'] ?? ''); ?>">
                                 </div>
 
                                 <div
@@ -761,8 +710,14 @@
                 return;
             }
 
-            var settingsImg = document.getElementById('dior-avatar-display-img');
-            var originalAvatarSrc = settingsImg ? settingsImg.src : '';
+            // Show instant preview
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var previewUrl = e.target.result;
+                var settingsImg = document.getElementById('dior-avatar-display-img');
+                if (settingsImg) settingsImg.src = previewUrl;
+            };
+            reader.readAsDataURL(file);
 
             // UI Loading State
             var spinner = document.getElementById('dior-avatar-upload-spinner');
@@ -813,10 +768,11 @@
                         };
                     }
 
-                    if (response && response.success && response.data && response.data.avatar_url) {
-                        var newUrl = response.data.avatar_url;
-                        window.diorUpdateAllPatientAvatars(newUrl);
-                        input.value = '';
+                    if (response && response.success) {
+                        var newUrl = (response.data && response.data.avatar_url) ? response.data.avatar_url : '';
+                        if (newUrl) {
+                            window.diorUpdateAllPatientAvatars(newUrl);
+                        }
 
                         Swal.fire({
                             position: 'top-end',
@@ -827,12 +783,6 @@
                             timer: 2000
                         });
                     } else {
-                        // Ensure displayed image remains strictly the original image
-                        if (settingsImg && originalAvatarSrc) {
-                            settingsImg.src = originalAvatarSrc;
-                        }
-                        input.value = '';
-
                         var errMsg = (response && response.data && response.data.message) ? response.data.message : 'Failed to upload photo.';
                         Swal.fire({
                             icon: 'error',
@@ -849,11 +799,6 @@
                         actionBtn.disabled = false;
                         if (actionText) actionText.innerText = origText;
                     }
-                    if (settingsImg && originalAvatarSrc) {
-                        settingsImg.src = originalAvatarSrc;
-                    }
-                    input.value = '';
-
                     Swal.fire({
                         icon: 'error',
                         title: 'Upload Error',

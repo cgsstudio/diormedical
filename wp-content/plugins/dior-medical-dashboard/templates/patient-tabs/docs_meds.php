@@ -1,26 +1,5 @@
 <section class="dior-tab-panel" id="tab-docs_meds">
 
-<style>
-/* Step 3A: Responsive Bootstrap-inspired prescription page styling. */
-#tab-docs_meds{color:#334155}
-#tab-docs_meds h4{color:#142b4a!important;font-size:22px!important;font-weight:700!important;letter-spacing:-.025em}
-#tab-docs_meds .va-table-wrapper{width:100%;min-width:0}
-#tab-docs_meds .docs-card{border:1px solid #e7edf5!important;border-radius:18px!important;background:#fff!important;box-shadow:0 8px 28px rgba(22,52,91,.06)!important;overflow:hidden}
-#tab-docs_meds .docs-header-container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:20px 22px!important;border-bottom:1px solid #edf1f7}
-#tab-docs_meds .docs-title-box,#tab-docs_meds .docs-actions-wrapper,#tab-docs_meds .docs-actions-group{display:flex;align-items:center;flex-wrap:wrap;gap:9px}
-#tab-docs_meds .docs-table-wrapper{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
-#tab-docs_meds #dior-rx-table{min-width:720px;border-collapse:separate!important;border-spacing:0;margin-bottom:0}
-#tab-docs_meds #dior-rx-table thead th{background:#f6f9fd!important;color:#63748b!important;border-top:1px solid #e7edf5!important;border-bottom:1px solid #e7edf5!important;padding:14px 13px!important;font-size:10px!important;font-weight:700!important;letter-spacing:.05em;text-transform:uppercase}
-#tab-docs_meds #dior-rx-table tbody td{padding:14px 13px!important;border-bottom:1px solid #edf1f6!important;color:#4a5c73!important;vertical-align:middle!important;font-size:12px!important;background:#fff!important}
-#tab-docs_meds #dior-rx-table tbody tr:hover td{background:#f8fbff!important}
-#tab-docs_meds #dior-rx-search-input{min-height:38px;border:1px solid #e2e8f0!important;border-radius:10px!important;background:#f8fafc!important;box-shadow:none!important;font-size:13px}
-#tab-docs_meds .btn{border-radius:9px!important;font-weight:600}
-#tab-docs_meds .docs-icon-btn{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:34px}
-#tab-docs_meds .status-cell-text{display:inline-flex;align-items:center;border-radius:7px;padding:5px 9px;font-weight:600}
-@media(max-width:767.98px){#tab-docs_meds h4{font-size:19px!important}#tab-docs_meds .docs-card{border-radius:14px!important}#tab-docs_meds .docs-header-container{padding:15px!important;align-items:stretch}#tab-docs_meds .docs-title-box,#tab-docs_meds .docs-actions-wrapper{width:100%}#tab-docs_meds .docs-actions-wrapper{justify-content:flex-start}#tab-docs_meds .docs-actions-group{gap:7px}#tab-docs_meds #dior-rx-search-input{width:100%;max-width:100%}}
-
-</style>
-
     <!-- Breadcrumb Header -->
     <div class="mb-4" style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;">
         <div>
@@ -103,12 +82,12 @@
                             $patient_rx_rows = is_array($prescriptions ?? []) ? $prescriptions : [];
                             foreach ($patient_rx_rows as $rx):
                                 $rx_id = $rx['id'] ?? ($rx['order_id'] ?? '—');
-                                $rx_name = $rx['name'] ?? ($rx['medication'] ?? '');
-                                $rx_doctor = $rx['prescribed_by'] ?? 'Provider not recorded';
+                                $rx_name = $rx['name'] ?? ($rx['medication'] ?? 'Prescription');
+                                $rx_doctor = $rx['prescribed_by'] ?? 'Attending Physician';
                                 $rx_date = $rx['date_prescribed'] ?? ($rx['date'] ?? '—');
                                 $rx_title = !empty($rx['title']) ? $rx['title'] : '';
-                                $rx_disease = !empty($rx['condition']) ? $rx['condition'] : (!empty($rx['diagnosis']) ? $rx['diagnosis'] : (!empty($rx['title']) ? $rx['title'] : 'Condition not recorded'));
-                                $rx_status = $rx['status'] ?? 'Status unavailable';
+                                $rx_disease = !empty($rx['condition']) ? $rx['condition'] : (!empty($rx['diagnosis']) ? $rx['diagnosis'] : (!empty($rx['title']) ? $rx['title'] : 'General Care'));
+                                $rx_status = $rx['status'] ?? 'Active';
                                 $rx_status_lc = strtolower($rx_status);
                                 if ($rx_status_lc === 'active') {
                                     $rx_st_cls = 'status-confirm';
@@ -119,15 +98,15 @@
                                 }
                                 ?>
                                 <tr>
-                                    <td style="width:36px;" data-label="Select">
+                                    <td style="width:36px;">
                                         <input type="checkbox" class="master-checkbox rx-row-checkbox form-check-input"
                                             onclick="diorUpdateRxSelectedCount()">
                                     </td>
-                                    <td data-label="Prescription ID">
+                                    <td>
                                         <span class="cell-text"
                                             style="font-family:monospace;font-size:12px;color:#6366f1;"><?php echo esc_html($rx_id); ?></span>
                                     </td>
-                                    <td data-label="Medication">
+                                    <td>
                                         <div class="cell-content cell-image-name" style="align-items: flex-start;">
 
                                             <div style="display:flex;flex-direction:column;gap:3px;">
@@ -151,19 +130,19 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td data-label="Prescribed By"><span class="cell-text"><?php echo esc_html($rx_doctor); ?></span></td>
-                                    <td data-label="Date Prescribed">
+                                    <td><span class="cell-text"><?php echo esc_html($rx_doctor); ?></span></td>
+                                    <td>
                                         <div class="cell-content cell-icon-text">
                                             <i class="far fa-calendar cell-icon"></i>
                                             <span class="cell-text"><?php echo esc_html($rx_date); ?></span>
                                         </div>
                                     </td>
-                                    <td data-label="Condition"><span class="cell-text"><?php echo esc_html($rx_disease); ?></span></td>
-                                    <td data-label="Status">
+                                    <td><span class="cell-text"><?php echo esc_html($rx_disease); ?></span></td>
+                                    <td>
                                         <span
                                             class="status-cell-text <?php echo esc_attr($rx_st_cls); ?>"><?php echo esc_html(ucfirst($rx_status)); ?></span>
                                     </td>
-                                    <td data-label="Actions">
+                                    <td>
                                         <div class="cell-content action-cell" style="gap:8px;">
                                             <button type="button" class="action-icon-btn edit-btn btn"
                                                 title="View Prescription Details"
@@ -193,67 +172,51 @@
                         </tbody>
                     </table>
                 </div>
-                <div id="dior-rx-pagination" class="dior-mobile-card-pagination mx-3 mb-3" aria-label="Prescription pages"></div>
             </div>
         </div>
     </div>
 
     <script>
-        /* Prescription search, selection and five-record pagination. */
+        /* ── Prescriptions Table JS ── */
         (function () {
-            var currentPage = 1;
-            var perPage = 5;
-            var tbody = document.getElementById('dior-rx-tbody');
-            var search = document.getElementById('dior-rx-search-input');
-            var pager = document.getElementById('dior-rx-pagination');
-            if (!tbody || !pager) return;
 
-            function getRows() {
-                return Array.prototype.slice.call(tbody.querySelectorAll('tr')).filter(function (row) {
-                    return !row.querySelector('.dior-empty-state');
+            // Search/Filter
+            window.diorFilterRxTable = function () {
+                var input = document.getElementById('dior-rx-search-input');
+                if (!input) return;
+                var filter = input.value.toLowerCase();
+                var rows = document.querySelectorAll('#dior-rx-tbody tr');
+                rows.forEach(function (row) {
+                    var text = row.innerText.toLowerCase();
+                    row.style.display = text.includes(filter) ? '' : 'none';
                 });
-            }
-
-            function render() {
-                var allRows = getRows();
-                var query = search ? String(search.value || '').trim().toLowerCase() : '';
-                var filtered = allRows.filter(function (row) {
-                    return !query || row.textContent.toLowerCase().indexOf(query) !== -1;
-                });
-                var totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-                currentPage = Math.min(Math.max(1, currentPage), totalPages);
-                allRows.forEach(function (row) { row.style.display = 'none'; });
-                filtered.slice((currentPage - 1) * perPage, currentPage * perPage).forEach(function (row) {
-                    row.style.display = '';
-                });
-                var emptyRow = tbody.querySelector('tr .dior-empty-state');
-                if (emptyRow) emptyRow.closest('tr').style.display = allRows.length ? 'none' : '';
-                var start = filtered.length ? ((currentPage - 1) * perPage) + 1 : 0;
-                var finish = Math.min(currentPage * perPage, filtered.length);
-                pager.innerHTML = filtered.length > perPage
-                    ? '<span class="dior-mobile-page-count">Showing ' + start + '–' + finish + ' of ' + filtered.length + '</span>' +
-                      '<div class="dior-mobile-page-controls"><button type="button" data-page="' + (currentPage - 1) + '" ' + (currentPage === 1 ? 'disabled' : '') + ' aria-label="Previous page"><i class="fas fa-chevron-left"></i></button><span>' + currentPage + ' / ' + totalPages + '</span><button type="button" data-page="' + (currentPage + 1) + '" ' + (currentPage === totalPages ? 'disabled' : '') + ' aria-label="Next page"><i class="fas fa-chevron-right"></i></button></div>'
-                    : '';
-                var count = document.getElementById('dior-rx-page-count');
-                if (count) count.textContent = document.querySelectorAll('.rx-row-checkbox:checked').length + ' selected / ' + filtered.length + ' total';
-            }
-
-            window.diorFilterRxTable = function () { currentPage = 1; render(); };
-            window.diorToggleSelectAllRx = function (masterCb) {
-                document.querySelectorAll('.rx-row-checkbox').forEach(function (cb) { cb.checked = masterCb.checked; });
-                render();
             };
-            window.diorUpdateRxSelectedCount = render;
+
+            // Select All
+            window.diorToggleSelectAllRx = function (masterCb) {
+                var checkboxes = document.querySelectorAll('.rx-row-checkbox');
+                checkboxes.forEach(function (cb) { cb.checked = masterCb.checked; });
+                diorUpdateRxSelectedCount();
+            };
+
+            // Update count
+            window.diorUpdateRxSelectedCount = function () {
+                var total = document.querySelectorAll('#dior-rx-tbody tr').length;
+                var selected = document.querySelectorAll('.rx-row-checkbox:checked').length;
+                var el = document.getElementById('dior-rx-page-count');
+                if (el) el.textContent = selected + ' selected / ' + total + ' total';
+            };
+
+            // Bulk delete
             window.diorBulkDeleteRxRows = function () {
-                var selected = document.querySelectorAll('.rx-row-checkbox:checked');
-                if (!selected.length) {
-                    if (window.Swal) Swal.fire({ icon: 'info', title: 'Selection Required', text: 'Please select at least one row to delete.' });
+                var checkboxes = document.querySelectorAll('.rx-row-checkbox:checked');
+                if (!checkboxes.length) {
+                    Swal.fire({ icon: 'info', title: 'Selection Required', text: 'Please select at least one row to delete.' });
                     return;
                 }
-                if (!window.Swal) return;
                 Swal.fire({
                     title: 'Delete Prescriptions?',
-                    text: 'Are you sure you want to delete ' + selected.length + ' selected record(s)?',
+                    text: 'Are you sure you want to delete ' + checkboxes.length + ' selected record(s)?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#EF4444',
@@ -262,21 +225,12 @@
                     cancelButtonText: 'Cancel'
                 }).then(function (result) {
                     if (!result.isConfirmed) return;
-                    Array.prototype.slice.call(document.querySelectorAll('.rx-row-checkbox:checked')).forEach(function (cb) {
-                        var row = cb.closest('tr');
-                        if (row) row.remove();
-                    });
-                    render();
+                    checkboxes.forEach(function (cb) { cb.closest('tr').remove(); });
+                    diorUpdateRxSelectedCount();
                     Swal.fire({ icon: 'success', title: 'Deleted', text: 'Selected prescriptions removed.', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
                 });
             };
-            pager.addEventListener('click', function (event) {
-                var button = event.target.closest('button[data-page]');
-                if (!button || button.disabled) return;
-                currentPage = parseInt(button.getAttribute('data-page'), 10) || 1;
-                render();
-            });
-            render();
+
         })();
     </script>
 

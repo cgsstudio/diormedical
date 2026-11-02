@@ -15,12 +15,10 @@
 
     <!-- Subtab Navigation Bar -->
     <div class="dior-subtab-nav-bar px-3 px-md-4 mb-4">
-        <button type="button" class="dior-subtab-pill btn" data-patient-tab="payments"
-            onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('payments');">
+        <button type="button" class="dior-subtab-pill btn" data-patient-tab="payments" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('payments');">
             <i class="fas fa-wallet"></i> Billing & Payments
         </button>
-        <button type="button" class="dior-subtab-pill btn active" data-patient-tab="insurance"
-            onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('insurance');">
+        <button type="button" class="dior-subtab-pill btn active" data-patient-tab="insurance" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('insurance');">
             <i class="fas fa-shield-heart"></i> Insurance Claims
         </button>
     </div>
@@ -50,9 +48,8 @@
                                     class="docs-icon-btn docs-btn-primary btn" title="Add Insurance Policy">
                                     <i class="fas fa-plus"></i>
                                 </button>
-                                <button type="button" aria-label="Export to CSV"
-                                    class="docs-icon-btn docs-btn-success btn" title="Export to CSV"
-                                    onclick="diorDownloadInsuranceCSV()">
+                                <button type="button" aria-label="Export to CSV" class="docs-icon-btn docs-btn-success btn"
+                                    title="Export to CSV" onclick="diorDownloadInsuranceCSV()">
                                     <i class="fas fa-file-arrow-down"></i>
                                 </button>
                                 <button type="button" aria-label="Refresh data" class="docs-icon-btn docs-btn-info btn"
@@ -83,9 +80,10 @@
                         </thead>
                         <tbody id="dior-insurance-tbody">
                             <?php
-                            $user_id = !empty($user_id) ? (int) $user_id : get_current_user_id();
-                            $insurance_claims = get_user_meta($user_id, 'dior_insurance_claims', true);
-                            $insurance_claims = is_array($insurance_claims) ? $insurance_claims : [];
+                            if (empty($dior_patient_design_static)) {
+                                $insurance_claims = get_user_meta($user_id, 'dior_insurance_claims', true);
+                                $insurance_claims = is_array($insurance_claims) ? $insurance_claims : [];
+                            }
                             ?>
                             <?php if (!empty($insurance_claims)): ?>
                                 <?php foreach ($insurance_claims as $claim): ?>
@@ -110,8 +108,7 @@
                                         <td>
                                             <div class="cell-content">
                                                 <div class="badge-solid col-indigo">
-                                                    <?php echo esc_html($claim['status'] ?? 'Under Review'); ?>
-                                                </div>
+                                                    <?php echo esc_html($claim['status'] ?? 'Under Review'); ?></div>
                                             </div>
                                         </td>
                                         <td>
@@ -128,13 +125,13 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- <div class="master-table-footer">
+                <div class="master-table-footer">
                     <span class="page-count" id="dior-insurance-page-count">0 selected /
                         <?php echo count($insurance_claims); ?> total</span>
 
                     <div class="master-pagination" id="dior-insurance-pagination">
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>

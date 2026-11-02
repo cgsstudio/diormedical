@@ -1,8 +1,4 @@
 <section class="dior-tab-panel dior-ic-44a70a0420" id="tab-emergency">
-    <script>
-    window.dior_ajax_url = "<?php echo esc_url(admin_url('admin-ajax.php')); ?>";
-    window.dior_portal_nonce = "<?php echo esc_js(wp_create_nonce('dior_portal_nonce')); ?>";
-    </script>
     <?php
     $emerg_user_id = get_current_user_id();
     $emergency_contacts_list = get_user_meta($emerg_user_id, 'dior_emergency_contacts_list', true);
@@ -10,10 +6,10 @@
         $emergency_contacts_list = [];
         if (!empty($profile['emergency_name']) || !empty($profile['emergency_phone'])) {
             $emergency_contacts_list[] = [
-                'name' => $profile['emergency_name'] ?? '',
-                'relation' => $profile['emergency_relation'] ?? '—',
-                'phone' => $profile['emergency_phone'] ?? '',
-                'priority' => get_user_meta($emerg_user_id, 'emergency_priority', true) ?: '—',
+                'name' => $profile['emergency_name'] ?: 'Michael Johnson',
+                'relation' => $profile['emergency_relation'] ?: 'Spouse',
+                'phone' => $profile['emergency_phone'] ?: '+1 (555) 014-2099',
+                'priority' => get_user_meta($emerg_user_id, 'emergency_priority', true) ?: 'Emergency',
             ];
         }
     }

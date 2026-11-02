@@ -301,129 +301,94 @@ class Dior_Notification_Service
     public static function send_appointment_confirmation($appt_uid)
     {
         $appt = Dior_Appointment_Service::get_appointment($appt_uid);
-        if (!$appt) {
-            return false;
-        }
+        if (!$appt) return false;
 
-        $pid = (int) ($appt['patient_id'] ?? 0);
-        $did = (int) ($appt['doctor_id'] ?? 0);
-        $patient = $pid ? get_userdata($pid) : false;
+        $pid = (int)$appt['patient_id'];
+        $did = (int)$appt['doctor_id'];
 
-        $doctor_uid = !empty($appt['doctor_user_id']) ? (int) $appt['doctor_user_id'] : 0;
+        $patient = get_userdata($pid);
+        $doctor_uid = !empty($appt['doctor_user_id']) ? (int)$appt['doctor_user_id'] : 0;
         if (!$doctor_uid && $did) {
-            $doctor_uid = class_exists('Dior_Doctor_Resolver')
-                ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($did)
-                : $did;
+            $doctor_uid = class_exists('Dior_Doctor_Resolver') ? Dior_Doctor_Resolver::resolve_doctor_user_id($did) : $did;
         }
-        $doctor = $doctor_uid ? get_userdata($doctor_uid) : false;
+        $doctor  = $doctor_uid ? get_userdata($doctor_uid) : null;
 
-        $patient_full_name = $patient
-            ? trim((string) $patient->first_name . ' ' . (string) $patient->last_name)
-            : '';
-        $patient_name = $patient_full_name !== '' ? $patient_full_name : ($patient ? $patient->display_name : 'Patient');
+        $pname = $patient ? trim($patient->first_name . ' ' . $patient->last_name) ?: $patient->display_name : 'Patient';
+        $dname = !empty($appt['provider']) ? $appt['provider'] : (!empty($appt['doctor_name']) ? $appt['doctor_name'] : ($doctor ? 'Dr. ' . (trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician'));
 
-        $doctor_full_name = $doctor
-            ? trim((string) $doctor->first_name . ' ' . (string) $doctor->last_name)
-            : '';
-        $doctor_name = !empty($appt['provider'])
-            ? sanitize_text_field($appt['provider'])
-            : (!empty($appt['doctor_name'])
-                ? sanitize_text_field($appt['doctor_name'])
-                : ($doctor ? (($doctor_full_name !== '' ? 'Dr. ' . $doctor_full_name : $doctor->display_name)) : 'Attending Physician'));
+        $date = !empty($appt['appt_date']) ? $appt['appt_date'] : (!empty($appt['date']) ? $appt['date'] : current_time('Y-m-d'));
+        $time = !empty($appt['appt_time']) ? $appt['appt_time'] : (!empty($appt['time']) ? $appt['time'] : '');
+        $condition = !empty($appt['condition_name']) ? $appt['condition_name'] : (!empty($appt['condition']) ? $appt['condition'] : 'Telehealth Consultation');
+        $visit_type = !empty($appt['visit_type']) ? $appt['visit_type'] : (!empty($appt['type']) ? $appt['type'] : 'Video Visit (HD)');
+        $join_url = !empty($appt['join_url']) ? $appt['join_url'] : home_url('/patient-dashboard/#tab=appointments');
 
-        $raw_date = !empty($appt['appt_date']) ? $appt['appt_date'] : (!empty($appt['date']) ? $appt['date'] : '');
-        $raw_time = !empty($appt['appt_time']) ? $appt['appt_time'] : (!empty($appt['time']) ? $appt['time'] : '');
-        $appointment_date = $raw_date;
-        if ($raw_date !== '' && strtotime($raw_date) !== false) {
-            $appointment_date = wp_date(get_option('date_format') ?: 'F j, Y', strtotime($raw_date));
-        }
-        $appointment_time = $raw_time;
-        if ($raw_time !== '' && strtotime($raw_time) !== false) {
-            $appointment_time = wp_date(get_option('time_format') ?: 'g:i a', strtotime($raw_time));
-        }
+        // 1. Patient Notification
+        self::add_dashboard_notification(
+            $pid,
+            'Appointment Confirmed: ' . $dname,
+            'Your ' . $visit_type . ' with ' . $dname . ' is confirmed for ' . $date . ($time ? ' at ' . $time : '') . '.',
+            '#tab=appointments',
+            'fa-calendar-check'
+        );
 
-        $appointment_type = !empty($appt['visit_type'])
-            ? sanitize_text_field($appt['visit_type'])
-            : (!empty($appt['type']) ? sanitize_text_field($appt['type']) : 'Consultation');
-        $doctor_specialty = !empty($appt['doctor_specialty'])
-            ? sanitize_text_field($appt['doctor_specialty'])
-            : (!empty($appt['specialty']) ? sanitize_text_field($appt['specialty']) : '');
-        $appointment_reference = !empty($appt['appt_uid']) ? sanitize_text_field($appt['appt_uid']) : (string) $appt_uid;
-        $appointment_status = !empty($appt['status']) ? sanitize_text_field($appt['status']) : 'Confirmed';
-        $appointment_timezone = wp_timezone_string();
-        $site_name = get_bloginfo('name') ?: 'DIOR MEDICAL';
-        $site_url = home_url('/');
-        $dashboard_url = home_url('/patient-dashboard/#tab=appointments');
+        if ($patient && $patient->user_email) {
+            $p_content = '
+            <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
+            <p>Your telehealth consultation has been successfully booked and confirmed with <strong>' . esc_html($dname) . '</strong>.</p>
+            
+            <div style="background-color: #F1F5F9; border-radius: 8px; padding: 18px 20px; margin: 20px 0; border: 1px solid #E2E8F0;">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 14px;">
+                    <tr><td style="padding: 5px 0; color: #64748B; width: 130px;">Appointment ID:</td><td style="padding: 5px 0; font-weight: 600; color: #1E293B;">#' . esc_html($appt['appt_uid']) . '</td></tr>
+                    <tr><td style="padding: 5px 0; color: #64748B;">Date &amp; Time:</td><td style="padding: 5px 0; font-weight: 600; color: #1E293B;">' . esc_html($date . ' at ' . $time) . '</td></tr>
+                    <tr><td style="padding: 5px 0; color: #64748B;">Consultation Type:</td><td style="padding: 5px 0; font-weight: 600; color: #1E293B;">' . esc_html($appt['visit_type']) . '</td></tr>
+                    <tr><td style="padding: 5px 0; color: #64748B;">Specialty / Reason:</td><td style="padding: 5px 0; font-weight: 600; color: #1E293B;">' . esc_html($condition) . '</td></tr>
+                    <tr><td style="padding: 5px 0; color: #64748B;">Provider:</td><td style="padding: 5px 0; font-weight: 600; color: #1E293B;">' . esc_html($dname) . '</td></tr>
+                </table>
+            </div>
 
-        // Patient dashboard notification.
-        if ($pid) {
-            self::add_dashboard_notification(
-                $pid,
-                'Appointment Confirmed: ' . $doctor_name,
-                'Your appointment with ' . $doctor_name . ' is scheduled for ' . ($appointment_date ?: 'a date to be confirmed') . ($appointment_time ? ' at ' . $appointment_time : '') . '.',
-                '#tab=appointments',
-                'fa-calendar-check'
+            <p>Please log in 5 minutes prior to your scheduled time. Ensure your camera and microphone are connected and functioning.</p>';
+
+            $p_html = self::render_email_template(
+                'Appointment Confirmed',
+                'Your consultation is scheduled for ' . $date . ' at ' . $time,
+                $p_content,
+                ['label' => 'View in Patient Dashboard', 'url' => home_url('/patient-dashboard/#tab=appointments')]
             );
+            self::send_email_safe($patient->user_email, 'Appointment Confirmation: ' . $date . ' with ' . $dname, $p_html);
         }
 
-        // Render the branded patient email from the dedicated, data-driven template.
-        if ($patient && !empty($patient->user_email)) {
-            $template_path = defined('DIOR_PORTAL_PATH')
-                ? DIOR_PORTAL_PATH . 'templates/emails/appointment-confirmation.php'
-                : dirname(__DIR__) . '/templates/emails/appointment-confirmation.php';
-
-            if (is_readable($template_path)) {
-                ob_start();
-                include $template_path;
-                $patient_html = ob_get_clean();
-
-                self::send_email_safe(
-                    $patient->user_email,
-                    'Appointment Confirmation: ' . ($appointment_date ?: 'Scheduled') . ' with ' . $doctor_name,
-                    $patient_html
-                );
-            } else {
-                error_log('Dior Medical: appointment confirmation email template is missing: ' . $template_path);
-            }
-        }
-
-        // Notify the assigned doctor without exposing unnecessary clinical details in email.
+        // 2. Doctor Notification
         if ($doctor) {
             self::add_dashboard_notification(
                 $doctor->ID,
-                'New Appointment Scheduled (' . $patient_name . ')',
-                $patient_name . ' has an appointment scheduled for ' . ($appointment_date ?: 'a date to be confirmed') . ($appointment_time ? ' at ' . $appointment_time : '') . '.',
+                'New Appointment Scheduled (' . $pname . ')',
+                $pname . ' scheduled a visit for ' . $date . ' at ' . $time . ' (' . $condition . ').',
                 '#tab=doc-appointments',
                 'fa-calendar-plus',
                 true
             );
 
-            if (!empty($doctor->user_email)) {
-                $doctor_dashboard_url = home_url('/doctor-dashboard/#tab=doc-appointments');
-                $doctor_content = '
-                    <p>Hello <strong>' . esc_html($doctor_name) . '</strong>,</p>
-                    <p>A new appointment has been scheduled with patient <strong>' . esc_html($patient_name) . '</strong>.</p>
-                    <div style="background:#F1F5F9;border-radius:8px;padding:18px 20px;margin:20px 0;border:1px solid #E2E8F0;">
-                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size:14px;">
-                            <tr><td style="padding:6px 0;color:#64748B;width:130px;">Appointment ID:</td><td style="padding:6px 0;font-weight:600;color:#1E293B;">' . esc_html($appointment_reference) . '</td></tr>
-                            <tr><td style="padding:6px 0;color:#64748B;">Patient:</td><td style="padding:6px 0;font-weight:600;color:#1E293B;">' . esc_html($patient_name) . '</td></tr>
-                            <tr><td style="padding:6px 0;color:#64748B;">Date &amp; Time:</td><td style="padding:6px 0;font-weight:600;color:#1E293B;">' . esc_html(trim($appointment_date . ' ' . $appointment_time . ' ' . $appointment_timezone)) . '</td></tr>
-                            <tr><td style="padding:6px 0;color:#64748B;">Appointment Type:</td><td style="padding:6px 0;font-weight:600;color:#1E293B;">' . esc_html($appointment_type) . '</td></tr>
-                        </table>
-                    </div>
-                    <p>Sign in to the doctor dashboard to review the appointment details.</p>';
+            if ($doctor->user_email) {
+                $d_content = '
+                <p>Hello <strong>' . esc_html($dname) . '</strong>,</p>
+                <p>A new consultation has been booked with you by patient <strong>' . esc_html($pname) . '</strong>.</p>
+                <div style="background-color: #F1F5F9; border-radius: 8px; padding: 18px 20px; margin: 20px 0; border: 1px solid #E2E8F0;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 14px;">
+                        <tr><td style="padding: 5px 0; color: #64748B; width: 130px;">Patient Name:</td><td style="padding: 5px 0; font-weight: 600; color: #1E293B;">' . esc_html($pname) . '</td></tr>
+                        <tr><td style="padding: 5px 0; color: #64748B;">Date &amp; Time:</td><td style="padding: 5px 0; font-weight: 600; color: #1E293B;">' . esc_html($date . ' at ' . $time) . '</td></tr>
+                        <tr><td style="padding: 5px 0; color: #64748B;">Condition:</td><td style="padding: 5px 0; font-weight: 600; color: #1E293B;">' . esc_html($condition) . '</td></tr>
+                        <tr><td style="padding: 5px 0; color: #64748B;">Notes:</td><td style="padding: 5px 0; font-weight: 600; color: #1E293B;">' . esc_html($appt['notes'] ?: 'None provided') . '</td></tr>
+                    </table>
+                </div>
+                <p>You can review clinical intake questionnaires and start the session directly from your provider portal.</p>';
 
-                $doctor_html = self::render_email_template(
+                $d_html = self::render_email_template(
                     'New Appointment Scheduled',
-                    'A new appointment has been scheduled for ' . $appointment_date . ' ' . $appointment_time,
-                    $doctor_content,
-                    ['label' => 'Open Doctor Dashboard', 'url' => $doctor_dashboard_url]
+                    'Patient ' . $pname . ' scheduled for ' . $date . ' at ' . $time,
+                    $d_content,
+                    ['label' => 'Open Doctor Dashboard', 'url' => home_url('/doctor-dashboard/#tab=doc-appointments')]
                 );
-                self::send_email_safe(
-                    $doctor->user_email,
-                    'New Appointment: ' . $patient_name . ' (' . ($appointment_date ?: 'Scheduled') . ')',
-                    $doctor_html
-                );
+                self::send_email_safe($doctor->user_email, 'New Patient Appointment: ' . $pname . ' (' . $date . ')', $d_html);
             }
         }
 
@@ -441,22 +406,11 @@ class Dior_Notification_Service
         $pid = (int)$appt['patient_id'];
         $did = (int)$appt['doctor_id'];
 
-        $patient = $pid ? get_userdata($pid) : false;
+        $patient = get_userdata($pid);
+        $doctor  = $did ? get_userdata($did) : null;
 
-        $doctor_uid = !empty($appt['doctor_user_id']) ? (int) $appt['doctor_user_id'] : 0;
-        if (!$doctor_uid && $did) {
-            $doctor_uid = class_exists('Dior_Doctor_Resolver')
-                ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($did)
-                : $did;
-        }
-        $doctor = $doctor_uid ? get_userdata($doctor_uid) : false;
-
-        $pname = $patient ? (trim((string) $patient->first_name . ' ' . (string) $patient->last_name) ?: $patient->display_name) : 'Patient';
-        $dname = !empty($appt['provider'])
-            ? sanitize_text_field($appt['provider'])
-            : (!empty($appt['doctor_name'])
-                ? sanitize_text_field($appt['doctor_name'])
-                : ($doctor ? 'Dr. ' . (trim((string) $doctor->first_name . ' ' . (string) $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician'));
+        $pname = $patient ? trim($patient->first_name . ' ' . $patient->last_name) ?: $patient->display_name : 'Patient';
+        $dname = $doctor ? 'Dr. ' . (trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician';
 
         // Patient Dashboard Notification
         self::add_dashboard_notification(
@@ -467,75 +421,26 @@ class Dior_Notification_Service
             'fa-calendar-days'
         );
 
-        // Patient Email: render the dedicated dynamic reschedule design.
+        // Patient Email
         if ($patient && $patient->user_email) {
-            $format_date = static function ($value) {
-                $value = (string) $value;
-                $timestamp = $value !== '' ? strtotime($value) : false;
-                return $timestamp ? wp_date(get_option('date_format') ?: 'F j, Y', $timestamp) : $value;
-            };
-            $format_time = static function ($value) {
-                $value = (string) $value;
-                $timestamp = $value !== '' ? strtotime($value) : false;
-                return $timestamp ? wp_date(get_option('time_format') ?: 'g:i a', $timestamp) : $value;
-            };
+            $p_content = '
+            <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
+            <p>Your appointment has been updated to a new time slot.</p>
+            <div style="background-color: #EFF6FF; border-left: 4px solid #2C6CB1; border-radius: 4px; padding: 16px 20px; margin: 20px 0;">
+                <p style="margin: 0 0 6px 0; color: #1E40AF; font-weight: 600;">NEW Schedule:</p>
+                <p style="margin: 0; font-size: 16px; font-weight: 700; color: #1E3A8A;">' . esc_html($new_date . ' at ' . $new_time) . '</p>
+                <p style="margin: 10px 0 0 0; font-size: 13px; color: #64748B;">Previous Time: <strike>' . esc_html($old_date . ' ' . $old_time) . '</strike></p>
+            </div>
+            <p>Provider: <strong>' . esc_html($dname) . '</strong> &bull; Reason: <strong>' . esc_html($appt['condition_name'] ?: 'Urgent Care') . '</strong></p>
+            <p>If this new time does not work for you, you may adjust it at any time in your patient portal.</p>';
 
-            $patient_full_name = trim((string) $patient->first_name . ' ' . (string) $patient->last_name);
-            $patient_name = $patient_full_name !== '' ? $patient_full_name : $patient->display_name;
-            $doctor_uid = !empty($appt['doctor_user_id']) ? (int) $appt['doctor_user_id'] : 0;
-            if (!$doctor_uid && $did) {
-                $doctor_uid = class_exists('Dior_Doctor_Resolver')
-                    ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($did)
-                    : $did;
-            }
-            $doctor_user = $doctor_uid ? get_userdata($doctor_uid) : false;
-            $doctor_full_name = $doctor_user
-                ? trim((string) $doctor_user->first_name . ' ' . (string) $doctor_user->last_name)
-                : '';
-            $doctor_name = !empty($appt['provider'])
-                ? sanitize_text_field($appt['provider'])
-                : (!empty($appt['doctor_name'])
-                    ? sanitize_text_field($appt['doctor_name'])
-                    : ($doctor_full_name !== '' ? 'Dr. ' . $doctor_full_name : $dname));
-
-            $doctor_specialty = !empty($appt['doctor_specialty'])
-                ? sanitize_text_field($appt['doctor_specialty'])
-                : (!empty($appt['specialty']) ? sanitize_text_field($appt['specialty']) : '');
-            $appointment_type = !empty($appt['visit_type'])
-                ? sanitize_text_field($appt['visit_type'])
-                : (!empty($appt['type']) ? sanitize_text_field($appt['type']) : 'Consultation');
-            $appointment_reference = !empty($appt['appt_uid'])
-                ? sanitize_text_field($appt['appt_uid'])
-                : sanitize_text_field($appt_uid);
-            $appointment_status = !empty($appt['status'])
-                ? sanitize_text_field($appt['status'])
-                : 'Rescheduled';
-            $appointment_timezone = wp_timezone_string();
-            $old_appointment_date = $format_date($old_date);
-            $old_appointment_time = $format_time($old_time);
-            $new_appointment_date = $format_date($new_date);
-            $new_appointment_time = $format_time($new_time);
-            $updated_appointment_url = home_url('/patient-dashboard/#tab=appointments');
-            $site_url = home_url('/');
-            $site_name = get_bloginfo('name') ?: 'DIOR MEDICAL';
-
-            $template_path = defined('DIOR_PORTAL_PATH')
-                ? DIOR_PORTAL_PATH . 'templates/emails/appointment-rescheduled.php'
-                : dirname(__DIR__) . '/templates/emails/appointment-rescheduled.php';
-
-            if (is_readable($template_path)) {
-                ob_start();
-                include $template_path;
-                $patient_html = ob_get_clean();
-
-                self::send_email_safe(
-                    $patient->user_email,
-                    'Appointment Rescheduled: ' . ($new_appointment_date ?: 'Updated Schedule') . ($new_appointment_time ? ' at ' . $new_appointment_time : ''),
-                    $patient_html
-                );
-            } else {
-                error_log('Dior Medical: appointment rescheduled email template is missing: ' . $template_path);
-            }
+            $p_html = self::render_email_template(
+                'Appointment Schedule Changed',
+                'Your visit has been rescheduled to ' . $new_date . ' at ' . $new_time,
+                $p_content,
+                ['label' => 'View Updated Appointment', 'url' => home_url('/patient-dashboard/#tab=appointments')]
+            );
+            self::send_email_safe($patient->user_email, 'Appointment Rescheduled: ' . $new_date . ' at ' . $new_time, $p_html);
         }
 
         // Doctor Dashboard Notification
@@ -579,135 +484,77 @@ class Dior_Notification_Service
     public static function send_appointment_cancelled($appt_uid, $reason = '', $cancelled_by = 'patient')
     {
         $appt = Dior_Appointment_Service::get_appointment($appt_uid);
-        if (!$appt) {
-            return false;
-        }
+        if (!$appt) return false;
 
-        $pid = (int) ($appt['patient_id'] ?? 0);
-        $did = (int) ($appt['doctor_id'] ?? 0);
-        $patient = $pid ? get_userdata($pid) : false;
-        $doctor = $did ? get_userdata($did) : false;
+        $pid = (int)$appt['patient_id'];
+        $did = (int)$appt['doctor_id'];
 
-        $patient_full_name = $patient ? trim((string) $patient->first_name . ' ' . (string) $patient->last_name) : '';
-        $patient_name = $patient_full_name !== '' ? $patient_full_name : ($patient ? $patient->display_name : 'Patient');
-        $doctor_full_name = $doctor ? trim((string) $doctor->first_name . ' ' . (string) $doctor->last_name) : '';
-        $fallback_doctor_name = $doctor_full_name !== '' ? 'Dr. ' . $doctor_full_name : ($doctor ? $doctor->display_name : 'Attending Physician');
+        $patient = get_userdata($pid);
+        $doctor  = $did ? get_userdata($did) : null;
 
-        $doctor_uid = !empty($appt['doctor_user_id']) ? (int) $appt['doctor_user_id'] : 0;
-        if (!$doctor_uid && $did) {
-            $doctor_uid = class_exists('Dior_Doctor_Resolver')
-                ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($did)
-                : $did;
-        }
-        $doctor_user = $doctor_uid ? get_userdata($doctor_uid) : false;
-        $resolved_doctor_name = $doctor_user
-            ? trim((string) $doctor_user->first_name . ' ' . (string) $doctor_user->last_name)
-            : '';
-        $doctor_name = !empty($appt['provider'])
-            ? sanitize_text_field($appt['provider'])
-            : (!empty($appt['doctor_name'])
-                ? sanitize_text_field($appt['doctor_name'])
-                : ($resolved_doctor_name !== '' ? 'Dr. ' . $resolved_doctor_name : $fallback_doctor_name));
+        $pname = $patient ? trim($patient->first_name . ' ' . $patient->last_name) ?: $patient->display_name : 'Patient';
+        $dname = $doctor ? 'Dr. ' . (trim($doctor->first_name . ' ' . $doctor->last_name) ?: $doctor->display_name) : 'Attending Physician';
 
-        $raw_date = (string) ($appt['appt_date'] ?? $appt['date'] ?? '');
-        $raw_time = (string) ($appt['appt_time'] ?? $appt['time'] ?? '');
-        $format_date = static function ($value) {
-            $value = (string) $value;
-            $timestamp = $value !== '' ? strtotime($value) : false;
-            return $timestamp ? wp_date(get_option('date_format') ?: 'F j, Y', $timestamp) : $value;
-        };
-        $format_time = static function ($value) {
-            $value = (string) $value;
-            $timestamp = $value !== '' ? strtotime($value) : false;
-            return $timestamp ? wp_date(get_option('time_format') ?: 'g:i a', $timestamp) : $value;
-        };
+        $date = $appt['appt_date'];
+        $time = $appt['appt_time'];
+        $reason_text = $reason ?: 'Not specified';
 
-        $appointment_date = $format_date($raw_date);
-        $appointment_time = $format_time($raw_time);
-        $appointment_type = !empty($appt['visit_type'])
-            ? sanitize_text_field($appt['visit_type'])
-            : (!empty($appt['type']) ? sanitize_text_field($appt['type']) : 'Consultation');
-        $doctor_specialty = !empty($appt['doctor_specialty'])
-            ? sanitize_text_field($appt['doctor_specialty'])
-            : (!empty($appt['specialty'])
-                ? sanitize_text_field($appt['specialty'])
-                : (!empty($appt['provider_spec']) ? sanitize_text_field($appt['provider_spec']) : ''));
-        $appointment_reference = !empty($appt['appt_uid'])
-            ? sanitize_text_field($appt['appt_uid'])
-            : sanitize_text_field($appt_uid);
-        // The cancellation event is authoritative even if a caller invokes this
-        // notification before the appointment row's status has finished updating.
-        $appointment_status = 'Cancelled';
-        $cancellation_reason = sanitize_textarea_field((string) $reason);
-        $appointment_timezone = wp_timezone_string();
-        $site_name = get_bloginfo('name') ?: 'DIOR MEDICAL';
-        $site_url = home_url('/');
-        $book_appointment_url = home_url('/patient-dashboard/#tab=appointments');
+        // Patient In-App
+        self::add_dashboard_notification(
+            $pid,
+            'Consultation Cancelled: #' . $appt['appt_uid'],
+            'Your appointment scheduled for ' . $date . ' at ' . $time . ' has been cancelled (' . $reason_text . ').',
+            '#tab=appointments',
+            'fa-calendar-xmark'
+        );
 
-        // Patient in-app notification.
-        if ($pid) {
-            self::add_dashboard_notification(
-                $pid,
-                'Appointment Cancelled: #' . $appointment_reference,
-                'Your appointment scheduled for ' . ($appointment_date ?: 'the scheduled date') . ($appointment_time ? ' at ' . $appointment_time : '') . ' has been cancelled.',
-                '#tab=appointments',
-                'fa-calendar-xmark'
+        // Patient Email
+        if ($patient && $patient->user_email) {
+            $p_content = '
+            <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
+            <p>This email confirms that your telehealth consultation scheduled for <strong>' . esc_html($date . ' at ' . $time) . '</strong> with <strong>' . esc_html($dname) . '</strong> has been cancelled.</p>
+            <div style="background-color: #FEF2F2; border-left: 4px solid #EF4444; border-radius: 4px; padding: 14px 18px; margin: 18px 0; color: #991B1B;">
+                <strong>Reason:</strong> ' . esc_html($reason_text) . '
+            </div>
+            <p>If you still require medical attention, you are welcome to schedule a new consultation at your convenience.</p>';
+
+            $p_html = self::render_email_template(
+                'Appointment Cancelled',
+                'Your consultation on ' . $date . ' has been cancelled.',
+                $p_content,
+                ['label' => 'Book Another Visit', 'url' => home_url('/patient-dashboard/#tab=questionnaire')]
             );
+            self::send_email_safe($patient->user_email, 'Appointment Cancelled: #' . $appt['appt_uid'], $p_html);
         }
 
-        // Patient email: use the dedicated branded, data-driven cancellation template.
-        if ($patient && !empty($patient->user_email)) {
-            $template_path = defined('DIOR_PORTAL_PATH')
-                ? DIOR_PORTAL_PATH . 'templates/emails/appointment-cancelled.php'
-                : dirname(__DIR__) . '/templates/emails/appointment-cancelled.php';
-
-            if (is_readable($template_path)) {
-                ob_start();
-                include $template_path;
-                $patient_html = ob_get_clean();
-
-                self::send_email_safe(
-                    $patient->user_email,
-                    'Appointment Cancelled: ' . ($appointment_date ?: $appointment_reference),
-                    $patient_html
-                );
-            } else {
-                error_log('Dior Medical: appointment cancelled email template is missing: ' . $template_path);
-            }
-        }
-
-        // Preserve the existing doctor dashboard notification and email workflow.
+        // Doctor In-App
         if ($did && $doctor) {
             self::add_dashboard_notification(
                 $did,
-                'Appointment Cancelled (' . $patient_name . ')',
-                $patient_name . ' has an appointment cancelled for ' . ($appointment_date ?: 'the scheduled date') . ($appointment_time ? ' at ' . $appointment_time : '') . '.',
+                'Appointment Cancelled (' . $pname . ')',
+                $pname . ' cancelled their appointment for ' . $date . ' at ' . $time . ' (Reason: ' . $reason_text . ').',
                 '#tab=doc-appointments',
                 'fa-calendar-xmark',
                 true
             );
 
-            if (!empty($doctor->user_email)) {
-                $reason_for_doctor = $cancellation_reason !== '' ? $cancellation_reason : 'Not specified';
-                $doctor_content = '
-                    <p>Hello <strong>' . esc_html($fallback_doctor_name) . '</strong>,</p>
-                    <p>The appointment with patient <strong>' . esc_html($patient_name) . '</strong> scheduled for <strong>' . esc_html(trim($appointment_date . ' ' . $appointment_time)) . '</strong> has been cancelled.</p>
-                    <div style="background:#F1F5F9;border-left:4px solid #64748B;border-radius:4px;padding:14px 18px;margin:18px 0;color:#334155;">
-                        <strong>Reason:</strong> ' . esc_html($reason_for_doctor) . '
-                    </div>
-                    <p>This time slot has been freed up on your calendar.</p>';
+            // Doctor Email
+            if ($doctor->user_email) {
+                $d_content = '
+                <p>Hello <strong>' . esc_html($dname) . '</strong>,</p>
+                <p>The appointment with patient <strong>' . esc_html($pname) . '</strong> scheduled for <strong>' . esc_html($date . ' at ' . $time) . '</strong> has been cancelled.</p>
+                <div style="background-color: #FEF2F2; border-left: 4px solid #EF4444; border-radius: 4px; padding: 14px 18px; margin: 18px 0; color: #991B1B;">
+                    <strong>Reason:</strong> ' . esc_html($reason_text) . '
+                </div>
+                <p>This time slot has been freed up on your calendar.</p>';
 
-                $doctor_html = self::render_email_template(
+                $d_html = self::render_email_template(
                     'Appointment Cancelled',
-                    'Appointment with ' . $patient_name . ' on ' . $appointment_date . ' has been cancelled.',
-                    $doctor_content,
-                    ['label' => 'View Doctor Schedule', 'url' => home_url('/doctor-dashboard/#tab=doc-appointments')]
+                    'Appointment with ' . $pname . ' on ' . $date . ' has been cancelled.',
+                    $d_content,
+                    ['label' => 'View Doctor Dashboard', 'url' => home_url('/doctor-dashboard/#tab=doc-appointments')]
                 );
-                self::send_email_safe(
-                    $doctor->user_email,
-                    'Cancellation Notice: ' . $patient_name . ' (' . $appointment_date . ')',
-                    $doctor_html
-                );
+                self::send_email_safe($doctor->user_email, 'Cancellation Notice: ' . $pname . ' (' . $date . ')', $d_html);
             }
         }
 
@@ -812,85 +659,31 @@ class Dior_Notification_Service
             );
         }
 
-        // 2. Patient Email Reminder (dedicated dynamic branded template)
+        // 2. Patient Email Reminder
         if ($p_send_email && $patient && $patient->user_email) {
-            $raw_date = !empty($appt['appt_date']) ? (string) $appt['appt_date'] : (string) $date;
-            $raw_time = !empty($appt['appt_time']) ? (string) $appt['appt_time'] : (string) $time;
-            $date_timestamp = $raw_date !== '' ? strtotime($raw_date) : false;
+            $p_content = '
+            <p>Dear <strong>' . esc_html($pname) . '</strong>,</p>
+            <p>This is a friendly reminder for your upcoming telehealth consultation with <strong>' . esc_html($dname) . '</strong>.</p>
+            <div style="background-color: #FEF3C7; border-left: 4px solid #D97706; border-radius: 4px; padding: 16px 20px; margin: 20px 0; color: #92400E;">
+                <p style="margin: 0 0 6px 0; font-size: 15px; font-weight: 700;">Scheduled Consultation:</p>
+                <p style="margin: 0; font-size: 16px; font-weight: 700; color: #78350F;">' . esc_html($date . ' at ' . $time) . '</p>
+                <p style="margin: 6px 0 0 0; font-size: 13px;">Reason: ' . esc_html($cond) . '</p>
+            </div>
+            <p><strong>Preparation Checklist:</strong></p>
+            <ul style="padding-left: 20px; margin: 10px 0; color: #475569;">
+                <li>Ensure you are in a quiet, well-lit private space</li>
+                <li>Verify your internet, camera, and microphone before the visit</li>
+                <li>Have a list of your current medications and symptoms ready</li>
+            </ul>
+            <p>Click below to join the video room when your consultation time arrives:</p>';
 
-            $appointment_date = ($date_timestamp !== false)
-                ? wp_date(get_option('date_format') ?: 'F j, Y', $date_timestamp)
-                : $raw_date;
-            $time_timestamp = ($raw_date !== '' && $raw_time !== '')
-                ? strtotime($raw_date . ' ' . $raw_time)
-                : false;
-            $appointment_time = ($time_timestamp !== false)
-                ? wp_date(get_option('time_format') ?: 'g:i a', $time_timestamp)
-                : $raw_time;
-
-            $doctor_specialty = !empty($appt['provider_spec'])
-                ? sanitize_text_field($appt['provider_spec'])
-                : (!empty($appt['doctor_specialty'])
-                    ? sanitize_text_field($appt['doctor_specialty'])
-                    : (!empty($appt['specialty']) ? sanitize_text_field($appt['specialty']) : ''));
-
-            $appointment_timezone = wp_timezone_string();
-            $appointment_location = !empty($appt['location'])
-                ? sanitize_text_field($appt['location'])
-                : (!empty($appt['clinic_name'])
-                    ? sanitize_text_field($appt['clinic_name'])
-                    : (!empty($appt['address']) ? sanitize_text_field($appt['address']) : ''));
-            $appointment_type = !empty($appt['visit_type'])
-                ? sanitize_text_field($appt['visit_type'])
-                : (!empty($appt['type']) ? sanitize_text_field($appt['type']) : 'Telehealth Consultation');
-            $appointment_reference = !empty($appt['appt_uid'])
-                ? sanitize_text_field($appt['appt_uid'])
-                : sanitize_text_field($appt_uid);
-            $appointment_status = !empty($appt['status'])
-                ? sanitize_text_field($appt['status'])
-                : 'Scheduled';
-
-            $appointment_url = !empty($appt['join_url'])
-                ? esc_url_raw($appt['join_url'])
-                : home_url('/patient-dashboard/#tab=appointments');
-            $manage_appointment_url = home_url('/patient-dashboard/#tab=appointments');
-            $site_url = home_url('/');
-            $site_name = get_bloginfo('name') ?: 'DIOR MEDICAL';
-
-            $normalized_type = strtolower(str_replace(array('-', '_'), ' ', $appointment_type));
-            $is_telehealth = (strpos($normalized_type, 'tele') !== false)
-                || (strpos($normalized_type, 'video') !== false)
-                || (strpos($normalized_type, 'virtual') !== false)
-                || (strpos($normalized_type, 'online') !== false);
-
-            $instruction_heading = $is_telehealth
-                ? 'Prepare for Your Telehealth Visit'
-                : 'Prepare for Your Appointment';
-            $appointment_instructions = $is_telehealth
-                ? 'Please sign in a few minutes early, choose a private and quiet space, and check your internet connection, camera, and microphone before your consultation.'
-                : 'Please review your appointment details in the patient portal and arrive at the scheduled time. Contact the practice through your portal if you need assistance.';
-
-            // The email template uses explicit patient/doctor variable names.
-            $patient_name = $pname;
-            $doctor_name = $dname;
-
-            $template_path = defined('DIOR_PORTAL_PATH')
-                ? DIOR_PORTAL_PATH . 'templates/emails/appointment-reminder.php'
-                : dirname(__DIR__) . '/templates/emails/appointment-reminder.php';
-
-            if (is_readable($template_path)) {
-                ob_start();
-                include $template_path;
-                $patient_html = ob_get_clean();
-
-                self::send_email_safe(
-                    $patient->user_email,
-                    'Appointment Reminder: ' . ($appointment_date ?: 'Upcoming Visit') . ' with ' . $dname,
-                    $patient_html
-                );
-            } else {
-                error_log('Dior Medical: appointment reminder email template is missing: ' . $template_path);
-            }
+            $p_html = self::render_email_template(
+                'Upcoming Consultation Reminder',
+                'Reminder: Your appointment is on ' . $date . ' at ' . $time,
+                $p_content,
+                ['label' => 'Join Video Room', 'url' => $join_url]
+            );
+            self::send_email_safe($patient->user_email, 'Appointment Reminder: ' . $date . ' at ' . $time . ' with ' . $dname, $p_html);
         }
 
         // 3. Doctor In-App Dashboard Reminder
@@ -1002,82 +795,30 @@ class Dior_Notification_Service
     {
         global $wpdb;
         $table = $wpdb->prefix . 'dior_appointments';
-
-        // Only inspect appointments scheduled for today or tomorrow in the WordPress site timezone.
         $today = current_time('Y-m-d');
-        $tomorrow = wp_date('Y-m-d', current_datetime()->modify('+1 day')->getTimestamp());
+        $tomorrow = date('Y-m-d', strtotime('+1 day', current_time('timestamp')));
 
         $upcoming = $wpdb->get_results($wpdb->prepare(
-            "SELECT * FROM $table
-             WHERE appt_date IN (%s, %s)
-             AND status IN ('Confirmed', 'Scheduled', 'In-Queue', 'Success')
+            "SELECT * FROM $table 
+             WHERE (appt_date = %s OR appt_date = %s) 
+             AND status IN ('Confirmed', 'Scheduled', 'In-Queue') 
+             AND (notes NOT LIKE '%[Auto-Reminder sent%') 
              AND is_deleted = 0",
-            $today,
-            $tomorrow
+            $today, $tomorrow
         ), ARRAY_A);
 
         if (empty($upcoming)) {
             return 0;
         }
 
-        $now = current_datetime();
-        $window_end = $now->modify('+24 hours');
         $count = 0;
-
         foreach ($upcoming as $apt) {
-            $appt_uid = sanitize_text_field($apt['appt_uid'] ?? '');
-            $appt_date = sanitize_text_field($apt['appt_date'] ?? '');
-            $appt_time = sanitize_text_field($apt['appt_time'] ?? '');
-            // Respect legacy markers so deploying this fix does not resend reminders already sent.
-            if (strpos((string) ($apt['notes'] ?? ''), '[Auto-Reminder sent') !== false) {
-                continue;
-            }
-            if ($appt_uid === '' || $appt_date === '' || $appt_time === '') {
-                continue;
-            }
+            self::send_appointment_reminder($apt['appt_uid'], 'system');
 
-            try {
-                $appointment_start = new DateTimeImmutable($appt_date . ' ' . $appt_time, wp_timezone());
-            } catch (\Throwable $e) {
-                error_log('[Dior Medical] Skipping reminder for invalid appointment date/time: ' . $appt_uid);
-                continue;
-            }
-
-            // Send reminders only for future appointments within the next 24 hours.
-            if ($appointment_start <= $now || $appointment_start > $window_end) {
-                continue;
-            }
-
-            // Include the scheduled slot in the key: a rescheduled appointment can receive a
-            // reminder for its new date/time, while repeated hourly cron runs cannot resend it.
-            $reminder_key = 'dior_appt_reminder_sent_' . md5($appt_uid . '|' . $appt_date . '|' . $appt_time);
-            if (get_option($reminder_key, false)) {
-                continue;
-            }
-
-            // Atomic short lock prevents overlapping cron requests from sending duplicates.
-            $lock_key = $reminder_key . '_lock';
-            if (!add_option($lock_key, time(), '', false)) {
-                $lock_time = (int) get_option($lock_key, 0);
-                if ($lock_time > 0 && (time() - $lock_time) < 10 * MINUTE_IN_SECONDS) {
-                    continue;
-                }
-                delete_option($lock_key);
-                if (!add_option($lock_key, time(), '', false)) {
-                    continue;
-                }
-            }
-
-            try {
-                self::send_appointment_reminder($appt_uid, 'system');
-                // Keep a permanent idempotency marker for this exact appointment slot.
-                update_option($reminder_key, current_time('mysql'), false);
-                $count++;
-            } catch (\Throwable $e) {
-                error_log('[Dior Medical] Appointment reminder failed for ' . $appt_uid . ': ' . $e->getMessage());
-            } finally {
-                delete_option($lock_key);
-            }
+            $tag = " [Auto-Reminder sent on " . current_time('Y-m-d H:i:s') . "]";
+            $new_notes = trim(($apt['notes'] ?? '') . $tag);
+            $wpdb->update($table, ['notes' => $new_notes], ['appt_uid' => $apt['appt_uid']]);
+            $count++;
         }
 
         return $count;

@@ -78,7 +78,7 @@ $current_patient = wp_get_current_user();
     <div class="container" style="max-width: 900px;">
 
         <!-- Top Navigation / Back Bar -->
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
             <a href="<?php echo esc_url($dashboard_url); ?>" class="btn btn-outline-secondary rounded-3 fw-semibold py-2 px-3 shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 14px !important; text-decoration: none;">
                 <i class="fas fa-arrow-left"></i>
                 <span>Back to Dashboard</span>
@@ -91,7 +91,7 @@ $current_patient = wp_get_current_user();
         </div>
 
         <!-- Main Booking Card -->
-        <div class="card border-0 shadow-sm rounded-4 p-3 p-sm-4 p-md-5 bg-white">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
             
             <!-- Header Section -->
             <div class="border-bottom pb-4 mb-4">
@@ -100,57 +100,21 @@ $current_patient = wp_get_current_user();
                 <p class="text-secondary small mb-0">Select your preferred physician and secure your video or phone consultation in minutes.</p>
             </div>
 
-            <!-- Appointment booking progress -->
-            <style>
-                .dior-booking-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;margin-bottom:1.5rem;overflow:hidden;border:1px solid #dfe7f1;border-radius:14px;background:#fff;box-shadow:0 5px 18px rgba(26,54,93,.045)}
-                .dior-booking-step{position:relative;display:flex;align-items:center;min-width:0;padding:18px 20px;color:#718096;background:#fff;transition:background-color .2s ease,color .2s ease}
-                .dior-booking-step:not(:last-child){border-right:1px solid #e2eaf3}
-                .dior-booking-step-main{display:flex;align-items:center;gap:12px;min-width:0}
-                .dior-step-number{display:inline-flex;flex:0 0 38px;align-items:center;justify-content:center;width:38px;height:38px;padding:0;border:1px solid #dfe6ef;border-radius:50%;background:#e8edf4;color:#60738c;font-size:14px;font-weight:700;box-shadow:none}
-                .dior-step-copy{min-width:0}
-                .dior-step-meta{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:3px;color:#718096;font-size:10px;line-height:1.3;font-weight:700;letter-spacing:.065em}
-                .dior-step-status{display:none;padding:3px 9px;border-radius:999px;background:#e5efff;color:#2865a5;font-size:10px;font-weight:700;letter-spacing:0}
-                .dior-step-title{margin:0;color:#586a80;font-size:14px;line-height:1.35;font-weight:700}
-                .dior-step-description{margin-top:2px;color:#8290a3;font-size:11px;line-height:1.4}
-                .dior-booking-step.is-active .dior-step-number{border-color:#2865a5;background:#2865a5;color:#fff;box-shadow:0 3px 8px rgba(40,101,165,.18)}
-                .dior-booking-step.is-active .dior-step-meta{color:#2865a5}
-                .dior-booking-step.is-active .dior-step-status{display:inline-flex}
-                .dior-booking-step.is-active .dior-step-title{color:#172b49}
-                .dior-booking-step.is-complete .dior-step-number{border-color:#d4e8dc;background:#e5f5eb;color:#23804b}
-                .dior-booking-step.is-complete .dior-step-title{color:#344b64}
-                @media(max-width:767.98px){.dior-booking-progress{grid-template-columns:1fr}.dior-booking-step{padding:14px 16px}.dior-booking-step:not(:last-child){border-right:0;border-bottom:1px solid #e2eaf3}.dior-step-number{flex-basis:34px;width:34px;height:34px}.dior-step-title{font-size:13px}}
-                @media(prefers-reduced-motion:reduce){.dior-booking-step{transition:none}}
-            </style>
-            <div class="dior-booking-progress" aria-label="Appointment booking progress">
-                <div class="dior-booking-step is-active" id="step-nav-1" data-step="1" aria-current="step">
-                    <div class="dior-booking-step-main">
-                        <span class="dior-step-number badge">1</span>
-                        <div class="dior-step-copy">
-                            <div class="dior-step-meta">STEP 1 <span class="dior-step-status">Current</span></div>
-                            <div class="dior-step-title">Choose Specialist</div>
-                            <div class="dior-step-description">Select your preferred physician</div>
-                        </div>
-                    </div>
+            <!-- Step Indicators -->
+            <div class="d-flex align-items-center justify-content-center gap-2 gap-md-4 mb-4 pb-2">
+                <div class="d-flex align-items-center gap-2 text-primary fw-semibold small" id="step-nav-1">
+                    <span class="badge bg-primary text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">1</span>
+                    <span>Choose Specialist</span>
                 </div>
-                <div class="dior-booking-step" id="step-nav-2" data-step="2">
-                    <div class="dior-booking-step-main">
-                        <span class="dior-step-number badge">2</span>
-                        <div class="dior-step-copy">
-                            <div class="dior-step-meta">STEP 2 <span class="dior-step-status">Current</span></div>
-                            <div class="dior-step-title">Date &amp; Time</div>
-                            <div class="dior-step-description">Choose an available time slot</div>
-                        </div>
-                    </div>
+                <div class="text-secondary opacity-50">&rarr;</div>
+                <div class="d-flex align-items-center gap-2 text-secondary fw-semibold small" id="step-nav-2">
+                    <span class="badge bg-light text-secondary border rounded-circle p-2 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">2</span>
+                    <span>Date &amp; Time</span>
                 </div>
-                <div class="dior-booking-step" id="step-nav-3" data-step="3">
-                    <div class="dior-booking-step-main">
-                        <span class="dior-step-number badge">3</span>
-                        <div class="dior-step-copy">
-                            <div class="dior-step-meta">STEP 3 <span class="dior-step-status">Current</span></div>
-                            <div class="dior-step-title">Review &amp; Confirm</div>
-                            <div class="dior-step-description">Verify your appointment details</div>
-                        </div>
-                    </div>
+                <div class="text-secondary opacity-50">&rarr;</div>
+                <div class="d-flex align-items-center gap-2 text-secondary fw-semibold small" id="step-nav-3">
+                    <span class="badge bg-light text-secondary border rounded-circle p-2 d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">3</span>
+                    <span>Review &amp; Confirm</span>
                 </div>
             </div>
 
@@ -212,7 +176,7 @@ $current_patient = wp_get_current_user();
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3 border-top">
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                     <button type="button" class="btn btn-outline-secondary rounded-3 fw-semibold py-2 px-4" onclick="diorGoBackToStep1()">
                         &larr; Back
                     </button>
@@ -226,7 +190,7 @@ $current_patient = wp_get_current_user();
             <div id="dior-step-3" style="display: none;">
                 <h4 class="h5 fw-bold text-dark mb-3"><i class="far fa-circle-check text-primary me-2"></i>Review Appointment Details</h4>
                 
-                <div class="card bg-light-subtle border rounded-4 p-3 p-sm-4 mb-4">
+                <div class="card bg-light-subtle border rounded-4 p-4 mb-4">
                     <div class="row g-3">
                         <div class="col-12 col-sm-6">
                             <span class="small text-uppercase text-secondary fw-semibold d-block mb-1">Attending Physician</span>
@@ -252,11 +216,11 @@ $current_patient = wp_get_current_user();
                     <textarea id="dior_appointment_reason" class="form-control rounded-3 p-3" rows="3" placeholder="Briefly describe any symptoms, medication refill requests, or concerns..."></textarea>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3 border-top">
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                     <button type="button" class="btn btn-outline-secondary rounded-3 fw-semibold py-2 px-4" onclick="diorGoBackToStep2()">
                         &larr; Back
                     </button>
-                    <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" id="btn-confirm-booking" onclick="diorSubmitBooking()">
+                    <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-4 shadow-sm d-inline-flex align-items-center gap-2" id="btn-confirm-booking" onclick="diorSubmitBooking()">
                         <i class="fas fa-check"></i>
                         <span>Confirm &amp; Book Appointment</span>
                     </button>
@@ -288,22 +252,6 @@ var diorSelectedDoctorSpec = '';
 var diorSelectedDoctorAvatar = '';
 var diorSelectedTime = null;
 
-function diorUpdateBookingProgress(activeStep) {
-    document.querySelectorAll('.dior-booking-step').forEach(function (step) {
-        var stepNumber = parseInt(step.getAttribute('data-step'), 10);
-        var status = step.querySelector('.dior-step-status');
-        step.classList.toggle('is-active', stepNumber === activeStep);
-        step.classList.toggle('is-complete', stepNumber < activeStep);
-        if (stepNumber === activeStep) {
-            step.setAttribute('aria-current', 'step');
-            if (status) status.textContent = 'Current';
-        } else {
-            step.removeAttribute('aria-current');
-            if (status) status.textContent = stepNumber < activeStep ? 'Complete' : 'Upcoming';
-        }
-    });
-}
-
 function diorSelectDoctor(id, name, specialty, avatar) {
     diorSelectedDoctorId = id;
     diorSelectedDoctorName = name;
@@ -315,7 +263,17 @@ function diorSelectDoctor(id, name, specialty, avatar) {
     document.getElementById('summary-doc-spec').textContent = specialty;
     document.getElementById('confirm-doc-name').textContent = name;
 
-    diorUpdateBookingProgress(2);
+    // Update Indicators
+    var step1 = document.getElementById('step-nav-1');
+    var step2 = document.getElementById('step-nav-2');
+    if (step1 && step2) {
+        step1.classList.remove('text-primary');
+        step1.classList.add('text-success');
+        step1.querySelector('.badge').className = 'badge bg-success text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center';
+        step2.classList.remove('text-secondary');
+        step2.classList.add('text-primary');
+        step2.querySelector('.badge').className = 'badge bg-primary text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center';
+    }
 
     document.getElementById('dior-step-1').style.display = 'none';
     document.getElementById('dior-step-2').style.display = 'block';
@@ -325,13 +283,31 @@ function diorSelectDoctor(id, name, specialty, avatar) {
 }
 
 function diorGoBackToStep1() {
-    diorUpdateBookingProgress(1);
+    var step1 = document.getElementById('step-nav-1');
+    var step2 = document.getElementById('step-nav-2');
+    if (step1 && step2) {
+        step1.classList.remove('text-success');
+        step1.classList.add('text-primary');
+        step1.querySelector('.badge').className = 'badge bg-primary text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center';
+        step2.classList.remove('text-primary');
+        step2.classList.add('text-secondary');
+        step2.querySelector('.badge').className = 'badge bg-light text-secondary border rounded-circle p-2 d-inline-flex align-items-center justify-content-center';
+    }
     document.getElementById('dior-step-2').style.display = 'none';
     document.getElementById('dior-step-1').style.display = 'block';
 }
 
 function diorGoBackToStep2() {
-    diorUpdateBookingProgress(2);
+    var step2 = document.getElementById('step-nav-2');
+    var step3 = document.getElementById('step-nav-3');
+    if (step2 && step3) {
+        step2.classList.remove('text-success');
+        step2.classList.add('text-primary');
+        step2.querySelector('.badge').className = 'badge bg-primary text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center';
+        step3.classList.remove('text-primary');
+        step3.classList.add('text-secondary');
+        step3.querySelector('.badge').className = 'badge bg-light text-secondary border rounded-circle p-2 d-inline-flex align-items-center justify-content-center';
+    }
     document.getElementById('dior-step-3').style.display = 'none';
     document.getElementById('dior-step-2').style.display = 'block';
 }
@@ -373,7 +349,16 @@ function diorProceedToStep3() {
     document.getElementById('confirm-date').textContent = dateInput.value;
     document.getElementById('confirm-time').textContent = diorSelectedTime;
 
-    diorUpdateBookingProgress(3);
+    var step2 = document.getElementById('step-nav-2');
+    var step3 = document.getElementById('step-nav-3');
+    if (step2 && step3) {
+        step2.classList.remove('text-primary');
+        step2.classList.add('text-success');
+        step2.querySelector('.badge').className = 'badge bg-success text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center';
+        step3.classList.remove('text-secondary');
+        step3.classList.add('text-primary');
+        step3.querySelector('.badge').className = 'badge bg-primary text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center';
+    }
 
     document.getElementById('dior-step-2').style.display = 'none';
     document.getElementById('dior-step-3').style.display = 'block';

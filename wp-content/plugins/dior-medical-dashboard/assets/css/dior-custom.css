@@ -1,191 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('../bootstrap/css/bootstrap-icons.min.css');
-
-/* ==========================================================================
-   DIOR MEDICAL — CORE TYPOGRAPHY (Montserrat & DM Sans)
-   Both Local WOFF2 & Google Fonts CDN with display=swap
-   ========================================================================== */
-@font-face {
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 300;
-    font-display: swap;
-    src: local('Montserrat Light'), local('Montserrat-Light'),
-         url('../fonts/montserrat/Montserrat-Light.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/Montserrat-Light.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: local('Montserrat Regular'), local('Montserrat-Regular'), local('Montserrat'),
-         url('../fonts/montserrat/Montserrat-Regular.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/Montserrat-Regular.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 500;
-    font-display: swap;
-    src: local('Montserrat Medium'), local('Montserrat-Medium'),
-         url('../fonts/montserrat/Montserrat-Medium.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/Montserrat-Medium.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 600;
-    font-display: swap;
-    src: local('Montserrat SemiBold'), local('Montserrat-SemiBold'),
-         url('../fonts/montserrat/Montserrat-SemiBold.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/Montserrat-SemiBold.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: local('Montserrat Bold'), local('Montserrat-Bold'),
-         url('../fonts/montserrat/Montserrat-Bold.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/Montserrat-Bold.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 800;
-    font-display: swap;
-    src: local('Montserrat ExtraBold'), local('Montserrat-ExtraBold'),
-         url('../fonts/montserrat/Montserrat-ExtraBold.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/Montserrat-ExtraBold.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'DMSans';
-    font-style: normal;
-    font-weight: 300;
-    font-display: swap;
-    src: local('DM Sans Light'), local('DMSans-Light'),
-         url('../fonts/dmsans/DMSans-Light.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/DMSans-Light.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'DMSans';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: local('DM Sans Regular'), local('DMSans-Regular'), local('DM Sans'),
-         url('../fonts/dmsans/DMSans-Regular.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'DMSans';
-    font-style: normal;
-    font-weight: 500;
-    font-display: swap;
-    src: local('DM Sans Medium'), local('DMSans-Medium'),
-         url('../fonts/dmsans/DMSans-Medium.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'DMSans';
-    font-style: normal;
-    font-weight: 600;
-    font-display: swap;
-    src: local('DM Sans SemiBold'), local('DMSans-SemiBold'),
-         url('../fonts/dmsans/DMSans-SemiBold.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'DMSans';
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: local('DM Sans Bold'), local('DMSans-Bold'),
-         url('../fonts/dmsans/DMSans-Bold.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'DMSans';
-    font-style: normal;
-    font-weight: 800;
-    font-display: swap;
-    src: local('DM Sans ExtraBold'), local('DMSans-ExtraBold'),
-         url('../fonts/dmsans/DMSans-ExtraBold.woff2') format('woff2'),
-         url('/wp-content/uploads/2026/08/DMSans-ExtraBold.woff2') format('woff2');
-}
-
-/* Also alias DM Sans with space so both font-family: 'DM Sans' and 'DMSans' work locally */
-@font-face {
-    font-family: 'DM Sans';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: local('DM Sans Regular'), local('DMSans-Regular'), local('DM Sans'),
-         url('../fonts/dmsans/DMSans-Regular.woff2') format('woff2');
-}
-@font-face {
-    font-family: 'DM Sans';
-    font-style: normal;
-    font-weight: 500;
-    font-display: swap;
-    src: local('DM Sans Medium'), local('DMSans-Medium'),
-         url('../fonts/dmsans/DMSans-Medium.woff2') format('woff2');
-}
-@font-face {
-    font-family: 'DM Sans';
-    font-style: normal;
-    font-weight: 600;
-    font-display: swap;
-    src: local('DM Sans SemiBold'), local('DMSans-SemiBold'),
-         url('../fonts/dmsans/DMSans-SemiBold.woff2') format('woff2');
-}
-@font-face {
-    font-family: 'DM Sans';
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: local('DM Sans Bold'), local('DMSans-Bold'),
-         url('../fonts/dmsans/DMSans-Bold.woff2') format('woff2');
-}
-
-/* ── Global Typography & Root Bootstrap 5 Font Family ─────────────── */
-:root {
-    --bs-body-font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-    --bs-font-sans-serif: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-}
-
-body,
-body.dior-patient-portal-wrap,
-body.dior-doctor-wrap,
-body.dior-admin-wrap,
-.dior-patient-portal-wrap,
-.dior-doctor-wrap,
-.dior-admin-wrap,
-.dior-auth-wrap,
-.dior-app,
-.modal,
-.modal-content {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-}
-
 /**
  * DIOR Medical Dashboard — Unified Custom Stylesheet
  * Version: 17.2.0
  * Combined single custom CSS file for Bootstrap 5 integration
  */
 
-
+/* ── 0. Native Bootstrap Icons & Standardized Components ────────────── */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
 
 .bi,
 [class^="bi-"],
@@ -2362,15 +2182,6 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     transition: border-color 0.2s, box-shadow 0.2s !important;
 }
 
-.dior-auth-wrap .dior-form-group .dior-input-pwd-wrap input,
-.entry-content .dior-auth-wrap .dior-form-group .dior-input-pwd-wrap input {
-    padding-right: 44px !important;
-}
-
-.dior-login-mobile-brand {
-    display: none;
-}
-
 .dior-auth-wrap .dior-form-group input:focus,
 .entry-content .dior-auth-wrap .dior-form-group input:focus,
 .dior-auth-wrap .dior-form-group select:focus,
@@ -2786,25 +2597,20 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     .dior-auth-wrap,
     .entry-content .dior-auth-wrap,
     body .dior-auth-wrap {
-        align-items: center !important;
-        justify-content: center !important;
-        min-height: auto !important;
-        padding: 20px 14px 32px !important;
+        align-items: flex-start !important;
+        min-height: 100vh !important;
     }
 
     .dior-auth-wrap .dior-login-split-container,
     .entry-content .dior-auth-wrap .dior-login-split-container {
         flex-direction: column !important;
         gap: 0 !important;
-        border-radius: 18px !important;
-        border: 1px solid rgba(44, 108, 177, 0.28) !important;
-        min-height: auto !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        min-height: 100vh !important;
         width: 100% !important;
-        max-width: 480px !important;
-        margin: 0 auto !important;
-        box-shadow: 0 12px 32px rgba(15, 36, 66, 0.08) !important;
-        overflow: hidden !important;
-        background: #FFFFFF !important;
+        max-width: 100% !important;
     }
 
     /* Hide left image panel on mobile */
@@ -2813,110 +2619,29 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
         display: none !important;
     }
 
-    .dior-auth-wrap .dior-login-mobile-brand,
-    .entry-content .dior-auth-wrap .dior-login-mobile-brand {
-        display: flex !important;
-        align-items: center !important;
-        margin-bottom: 14px !important;
-    }
-
-    .dior-auth-wrap .dior-login-mobile-badge,
-    .entry-content .dior-auth-wrap .dior-login-mobile-badge {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        padding: 5px 12px !important;
-        border-radius: 999px !important;
-        background: #EFF6FF !important;
-        border: 1px solid #BFDBFE !important;
-        color: #1E40AF !important;
-        font-size: 11.5px !important;
-        font-weight: 600 !important;
-        line-height: 1.3 !important;
-    }
-
     /* Right form panel takes full width */
     .dior-auth-wrap .dior-login-right-panel,
     .entry-content .dior-auth-wrap .dior-login-right-panel {
-        flex: 1 1 auto !important;
-        padding: 28px 22px !important;
+        flex: 1 !important;
+        padding: 40px 24px !important;
         width: 100% !important;
         justify-content: flex-start !important;
     }
 
     .dior-auth-wrap .dior-login-title,
     .entry-content .dior-auth-wrap .dior-login-title {
-        font-size: 26px !important;
-        line-height: 1.25 !important;
-        margin-bottom: 6px !important;
+        font-size: 30px !important;
+        line-height: 38px !important;
     }
 
     .dior-auth-wrap .dior-login-subtitle,
     .entry-content .dior-auth-wrap .dior-login-subtitle {
-        font-size: 13.5px !important;
-        line-height: 1.5 !important;
+        font-size: 14px !important;
     }
 
     .dior-auth-wrap .dior-login-header,
     .entry-content .dior-auth-wrap .dior-login-header {
-        margin-bottom: 18px !important;
-    }
-
-    /* Prevent iOS Safari zoom on input focus and ensure touch-friendly height */
-    .dior-auth-wrap .dior-form-group input,
-    .entry-content .dior-auth-wrap .dior-form-group input,
-    .dior-auth-wrap .dior-form-group select,
-    .entry-content .dior-auth-wrap .dior-form-group select,
-    .dior-auth-wrap .dior-login-input,
-    .entry-content .dior-auth-wrap .dior-login-input {
-        height: 46px !important;
-        min-height: 46px !important;
-        font-size: 16px !important;
-        border-radius: 10px !important;
-    }
-
-    .dior-auth-wrap .dior-form-group .dior-input-pwd-wrap input,
-    .entry-content .dior-auth-wrap .dior-form-group .dior-input-pwd-wrap input {
-        padding-right: 44px !important;
-    }
-
-    .dior-auth-wrap .dior-form-check-row,
-    .entry-content .dior-auth-wrap .dior-form-check-row {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 8px 12px !important;
-        margin-top: 6px !important;
-        margin-bottom: 16px !important;
-    }
-
-    .dior-auth-wrap .dior-btn-login-submit,
-    .entry-content .dior-auth-wrap .dior-btn-login-submit {
-        min-height: 48px !important;
-        padding: 12px 18px !important;
-        font-size: 15.5px !important;
-        border-radius: 10px !important;
-    }
-
-    .dior-auth-wrap .dior-btn-google,
-    .entry-content .dior-auth-wrap .dior-btn-google {
-        min-height: 46px !important;
-        padding: 11px 16px !important;
-        font-size: 14px !important;
-        border-radius: 10px !important;
-    }
-
-    .dior-auth-wrap .dior-logged-in-box,
-    .entry-content .dior-auth-wrap .dior-logged-in-box {
-        padding: 14px 16px !important;
-        gap: 12px !important;
-    }
-
-    .dior-auth-wrap .dior-user-info-text,
-    .entry-content .dior-auth-wrap .dior-user-info-text {
-        min-width: 0 !important;
-        overflow-wrap: anywhere !important;
+        margin-bottom: 20px !important;
     }
 
     /* Full width buttons on mobile */
@@ -2931,21 +2656,15 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
 /* Small Mobile (max 480px) */
 @media (max-width: 480px) {
 
-    .dior-auth-wrap,
-    .entry-content .dior-auth-wrap,
-    body .dior-auth-wrap {
-        padding: 14px 12px 24px !important;
-    }
-
     .dior-auth-wrap .dior-login-right-panel,
     .entry-content .dior-auth-wrap .dior-login-right-panel {
-        padding: 22px 18px !important;
+        padding: 30px 16px !important;
     }
 
     .dior-auth-wrap .dior-login-title,
     .entry-content .dior-auth-wrap .dior-login-title {
-        font-size: 24px !important;
-        line-height: 1.25 !important;
+        font-size: 26px !important;
+        line-height: 34px !important;
     }
 }
 
@@ -2994,7 +2713,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
 .dior-db-modal-dialog {
     position: relative !important;
     width: 100% !important;
-    max-width: 720px !important;
+    max-width: 580px !important;
     max-height: 92vh !important;
     background: #FFFFFF !important;
     border-radius: 16px !important;
@@ -3635,8 +3354,8 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
 /* ── Modal Header (Clean Luxury Bar) ─────────────────────────────────────── */
 .dior-fda-header {
     padding: 16px 24px !important;
-    background: #FFFFFF !important;
-    border-bottom: 1px solid #E2E8F0 !important;
+    background: linear-gradient(135deg, #0b1120 0%, #00346C 100%) !important;
+    border-bottom: 2px solid #D4AF37 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
@@ -3651,23 +3370,23 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
 }
 
 .dior-fda-brand-icon {
-    width: 38px !important;
-    height: 38px !important;
+    width: 40px !important;
+    height: 40px !important;
     border-radius: 8px !important;
-    background: #EFF6FF !important;
-    border: 1px solid #BFDBFE !important;
+    background: rgba(212, 175, 55, 0.15) !important;
+    border: 1px solid rgba(212, 175, 55, 0.4) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 17px !important;
-    color: #2563EB !important;
+    font-size: 18px !important;
+    color: #D4AF37 !important;
     flex-shrink: 0 !important;
 }
 
 .dior-fda-header-title {
     font-size: 17px !important;
     font-weight: 700 !important;
-    color: #0F172A !important;
+    color: #ffffff !important;
     margin: 0 !important;
     letter-spacing: 0.2px !important;
     line-height: 1.25 !important;
@@ -4014,7 +3733,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
 /* ── Modal Footer ────────────────────────────────────────────────────────── */
 .dior-fda-footer {
     padding: 14px 24px !important;
-    background: #FFFFFF !important;
+    background: #F8FAFC !important;
     border-top: 1px solid #E2E8F0 !important;
     display: flex !important;
     align-items: center !important;
@@ -4046,8 +3765,8 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-size: 13px !important;
     font-weight: 700 !important;
     color: #FFFFFF !important;
-    background: #2563EB !important;
-    border: 1px solid #2563EB !important;
+    background: linear-gradient(135deg, #0B1120 0%, #00346C 100%) !important;
+    border: 1px solid #D4AF37 !important;
     border-radius: 7px !important;
     cursor: pointer !important;
     box-shadow: 0 4px 12px rgba(11, 17, 32, 0.15) !important;
@@ -4057,7 +3776,12 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     gap: 6px !important;
 }
 
-.dior-btn-reg-submit:hover { background: #1D4ED8 !important; }
+.dior-btn-reg-submit:hover {
+    background: #D4AF37 !important;
+    color: #0B1120 !important;
+    border-color: #B89628 !important;
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3) !important;
+}
 
 /* ── VIEW PRESCRIPTION DETAILS MODAL STYLING ─────────────────────────────── */
 .dior-view-rx-dialog {
@@ -4892,7 +4616,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
    Patient Dashboard Redesign - Theme & Overrides
    ============================================================== */
 
-/* @import removed from here (moved to top of file) */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
 /* -----------------------------------------------------------
    1. GLOBAL & TYPOGRAPHY
@@ -7715,14 +7439,13 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
 
     /* Sidebar */
     :is(.dior-patient-portal-wrap, .dior-doctor-wrap, .dior-admin-wrap) .dior-side {
-        width: 300px !important;
-        min-width: 300px !important;
-        max-width: 300px !important;
+        width: 210px !important;
+        min-width: 210px !important;
     }
 
     :is(.dior-patient-portal-wrap, .dior-doctor-wrap, .dior-admin-wrap) .dior-main-content {
-        margin-left: 300px !important;
-        width: calc(100% - 300px) !important;
+        margin-left: 210px !important;
+        width: calc(100% - 210px) !important;
     }
 
     :is(.dior-patient-portal-wrap, .dior-doctor-wrap, .dior-admin-wrap) .dior-side-header .brand-logo {
@@ -7904,26 +7627,6 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     #dior-patient-portal-app .dior-dash-table-card,
     :is(.dior-patient-portal-wrap, .dior-doctor-wrap, .dior-admin-wrap) .dior-dash-table-card {
         padding: 12px 16px 10px 16px !important;
-    }
-
-    /* Patient Settings Form: 3-column layout on 1536px+ */
-    #tab-settings .dior-form-grid-2col {
-        grid-template-columns: repeat(3, 1fr) !important;
-    }
-
-    #tab-settings .dior-pharmacy-grid-row {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 16px !important;
-        margin-bottom: 20px !important;
-    }
-
-    #tab-settings .dior-pharmacy-fields-top {
-        display: contents !important;
-    }
-
-    #tab-settings .dior-pharmacy-grid-row .dior-form-group {
-        margin-bottom: 0 !important;
     }
 }
 
@@ -10816,15 +10519,13 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
 /* Fix Doctor Dashboard Spacing */
 @media (min-width: 1025px) {
     .dior-doctor-wrap .dior-side {
-        width: 300px !important;
-        min-width: 300px !important;
-        max-width: 300px !important;
+        width: 260px !important;
     }
 
     .dior-doctor-wrap .dior-main-content {
-        margin-left: 300px !important;
-        width: calc(100% - 300px) !important;
-        max-width: calc(100% - 300px) !important;
+        margin-left: 260px !important;
+        width: calc(100% - 260px) !important;
+        max-width: calc(100% - 260px) !important;
     }
 }
 
@@ -10942,7 +10643,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
  * Strictly using Elementor Global Kit Colors & Clean Typography (Montserrat & DM Sans)
  */
 
-/* @import removed from here (moved to top of file) */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
 /* ==========================================================================
    LOCAL CUSTOM FONTS
@@ -10952,7 +10653,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 300;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-Light.woff2'), url('/wp-content/uploads/2026/08/Montserrat-Light.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-Light.woff2') format('woff2');
 }
 
 @font-face {
@@ -10960,7 +10661,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-Regular.woff2'), url('/wp-content/uploads/2026/08/Montserrat-Regular.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -10968,7 +10669,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 500;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-Medium.woff2'), url('/wp-content/uploads/2026/08/Montserrat-Medium.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-Medium.woff2') format('woff2');
 }
 
 @font-face {
@@ -10976,7 +10677,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-SemiBold.woff2'), url('/wp-content/uploads/2026/08/Montserrat-SemiBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -10984,7 +10685,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-Bold.woff2'), url('/wp-content/uploads/2026/08/Montserrat-Bold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-Bold.woff2') format('woff2');
 }
 
 @font-face {
@@ -10992,7 +10693,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 800;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-ExtraBold.woff2'), url('/wp-content/uploads/2026/08/Montserrat-ExtraBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-ExtraBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -11000,7 +10701,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 300;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Light.woff2'), url('/wp-content/uploads/2026/08/DMSans-Light.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Light.woff2') format('woff2');
 }
 
 @font-face {
@@ -11008,7 +10709,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Regular.woff2'), url('/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -11016,7 +10717,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 500;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Medium.woff2'), url('/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
 }
 
 @font-face {
@@ -11024,7 +10725,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-SemiBold.woff2'), url('/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -11032,7 +10733,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Bold.woff2'), url('/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
 }
 
 @font-face {
@@ -11040,7 +10741,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 800;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-ExtraBold.woff2'), url('/wp-content/uploads/2026/08/DMSans-ExtraBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-ExtraBold.woff2') format('woff2');
 }
 
 /* Also alias 'DM Sans' to DMSans */
@@ -11049,7 +10750,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Regular.woff2'), url('/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -11057,7 +10758,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 500;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Medium.woff2'), url('/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
 }
 
 @font-face {
@@ -11065,7 +10766,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-SemiBold.woff2'), url('/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -11073,7 +10774,7 @@ body .dior-auth-wrap .dior-btn-auth-secondary:hover {
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Bold.woff2'), url('/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
 }
 
 :root {
@@ -28892,7 +28593,7 @@ body .media-modal .media-modal-close .media-modal-icon::before {
  * SOURCE: patient-overview-custom.css
  * ============================================================ */
 
-/* @import removed from here (moved to top of file) */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
 #tab-overview.custom-patient-overview {
     font-family: 'Montserrat', Arial, sans-serif;
@@ -32247,7 +31948,7 @@ body,
  * Strictly using Elementor Global Kit Colors & Clean Typography (Montserrat & DM Sans)
  */
 
-/* @import removed from here (moved to top of file) */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
 /* ==========================================================================
    LOCAL CUSTOM FONTS
@@ -32257,7 +31958,7 @@ body,
     font-style: normal;
     font-weight: 300;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-Light.woff2'), url('/wp-content/uploads/2026/08/Montserrat-Light.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-Light.woff2') format('woff2');
 }
 
 @font-face {
@@ -32265,7 +31966,7 @@ body,
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-Regular.woff2'), url('/wp-content/uploads/2026/08/Montserrat-Regular.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -32273,7 +31974,7 @@ body,
     font-style: normal;
     font-weight: 500;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-Medium.woff2'), url('/wp-content/uploads/2026/08/Montserrat-Medium.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-Medium.woff2') format('woff2');
 }
 
 @font-face {
@@ -32281,7 +31982,7 @@ body,
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-SemiBold.woff2'), url('/wp-content/uploads/2026/08/Montserrat-SemiBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -32289,7 +31990,7 @@ body,
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-Bold.woff2'), url('/wp-content/uploads/2026/08/Montserrat-Bold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-Bold.woff2') format('woff2');
 }
 
 @font-face {
@@ -32297,7 +31998,7 @@ body,
     font-style: normal;
     font-weight: 800;
     font-display: swap;
-    src: url('../fonts/montserrat/Montserrat-ExtraBold.woff2'), url('/wp-content/uploads/2026/08/Montserrat-ExtraBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/Montserrat-ExtraBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -32305,7 +32006,7 @@ body,
     font-style: normal;
     font-weight: 300;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Light.woff2'), url('/wp-content/uploads/2026/08/DMSans-Light.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Light.woff2') format('woff2');
 }
 
 @font-face {
@@ -32313,7 +32014,7 @@ body,
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Regular.woff2'), url('/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -32321,7 +32022,7 @@ body,
     font-style: normal;
     font-weight: 500;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Medium.woff2'), url('/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
 }
 
 @font-face {
@@ -32329,7 +32030,7 @@ body,
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-SemiBold.woff2'), url('/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -32337,7 +32038,7 @@ body,
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Bold.woff2'), url('/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
 }
 
 @font-face {
@@ -32345,7 +32046,7 @@ body,
     font-style: normal;
     font-weight: 800;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-ExtraBold.woff2'), url('/wp-content/uploads/2026/08/DMSans-ExtraBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-ExtraBold.woff2') format('woff2');
 }
 
 /* Also alias 'DM Sans' to DMSans */
@@ -32354,7 +32055,7 @@ body,
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Regular.woff2'), url('/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -32362,7 +32063,7 @@ body,
     font-style: normal;
     font-weight: 500;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Medium.woff2'), url('/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Medium.woff2') format('woff2');
 }
 
 @font-face {
@@ -32370,7 +32071,7 @@ body,
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-SemiBold.woff2'), url('/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
@@ -32378,7 +32079,7 @@ body,
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url('../fonts/dmsans/DMSans-Bold.woff2'), url('/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
+    src: url('/wp-content/uploads/2026/08/DMSans-Bold.woff2') format('woff2');
 }
 
 :root {
@@ -52408,10 +52109,8 @@ a.va-btn-primary:hover {
 }
 
 .dior-patient-portal-wrap .dior-nav-item.has-submenu.active .dior-submenu,
-.dior-patient-portal-wrap .dior-nav-item.has-submenu.open .dior-submenu,
-.dior-app .dior-nav-item.has-submenu.active .dior-submenu,
-.dior-app .dior-nav-item.has-submenu.open .dior-submenu {
-    display: block !important;
+.dior-app .dior-nav-item.has-submenu.active .dior-submenu {
+    display: block;
 }
 
 /* v17.2.3: Prevent Feedback & Support table columns from overlapping. */
@@ -53139,9 +52838,9 @@ a.va-btn-primary:hover {
 /* 2. Desktop Screens (1400px - 1536px and above: xxl) */
 @media (min-width: 1400px) {
     :is(.dior-patient-portal-wrap, .dior-doctor-wrap, .dior-admin-wrap) .dior-side {
-        width: 300px !important;
-        min-width: 300px !important;
-        max-width: 300px !important;
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
@@ -53151,9 +52850,9 @@ a.va-btn-primary:hover {
     }
 
     :is(.dior-patient-portal-wrap, .dior-doctor-wrap, .dior-admin-wrap) .dior-main-content {
-        margin-left: 300px !important;
-        width: calc(100% - 300px) !important;
-        max-width: calc(100% - 300px) !important;
+        margin-left: 260px !important;
+        width: calc(100% - 260px) !important;
+        max-width: calc(100% - 260px) !important;
         min-width: 0 !important;
         box-sizing: border-box !important;
     }
@@ -53409,9 +53108,7 @@ a.va-btn-primary:hover {
         padding-bottom: env(safe-area-inset-bottom, 0px) !important;
         overflow-y: auto !important;
         overscroll-behavior: contain !important;
-        background: linear-gradient(180deg, #00346C 0%, #0b2548 100%) !important;
-        background-color: #00346C !important;
-        z-index: 99999 !important;
+        background: #fff !important;
         transition: transform .25s ease !important;
     }
 
@@ -53433,7 +53130,7 @@ a.va-btn-primary:hover {
     .dior-patient-portal-wrap .dior-side-header {
         min-height: 72px !important;
         padding: 16px 20px !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+        border-bottom: 1px solid #edf1f7 !important;
     }
 
     .dior-patient-portal-wrap .dior-side-nav {
@@ -53453,7 +53150,7 @@ a.va-btn-primary:hover {
         margin: 12px !important;
         padding: 14px !important;
         border-radius: 12px !important;
-        background: rgba(255, 255, 255, 0.12) !important;
+        background: #f6f8fc !important;
     }
 
     .dior-patient-portal-wrap .dior-main-content {
@@ -53867,21 +53564,6 @@ a.va-btn-primary:hover {
         overflow-wrap: anywhere;
     }
 
-    .dior-patient-portal-wrap .dior-tab-panel p,
-    .dior-patient-portal-wrap #tab-overview .subtitle,
-    .dior-patient-portal-wrap .dior-tab-panel .text-secondary.small {
-        font-size: 13.5px !important;
-        line-height: 1.5 !important;
-    }
-
-    .dior-patient-portal-wrap .dior-profile-dropdown {
-        right: 0 !important;
-        left: auto !important;
-        width: min(230px, calc(100vw - 24px)) !important;
-        max-width: calc(100vw - 24px) !important;
-        z-index: 10010 !important;
-    }
-
     #dior-patient-portal-app .card,
     #dior-patient-portal-app .dior-card,
     #dior-patient-portal-app .stat-card,
@@ -53915,25 +53597,6 @@ a.va-btn-primary:hover {
         font-size: 16px !important;
     }
 
-    #dior-patient-portal-app .input-group {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        align-items: center !important;
-    }
-
-    #dior-patient-portal-app .input-group > .input-group-text {
-        flex: 0 0 auto !important;
-        width: auto !important;
-    }
-
-    #dior-patient-portal-app .input-group > input:not([type=checkbox]):not([type=radio]),
-    #dior-patient-portal-app .input-group > .form-control,
-    #dior-patient-portal-app .input-group > .form-select {
-        flex: 1 1 auto !important;
-        width: 1% !important;
-        min-width: 0 !important;
-    }
-
     #dior-patient-portal-app .nav-tabs,
     #dior-patient-portal-app .dior-subtabs,
     #dior-patient-portal-app .appointment-tabs,
@@ -53964,7 +53627,122 @@ a.va-btn-primary:hover {
         -webkit-overflow-scrolling: touch;
     }
 
-    /* Appointment tables retain their real column headers on small screens. */
+    #dior-patient-portal-app .docs-table-wrapper:has(#dior-today-appointments-table),
+    #dior-patient-portal-app .docs-table-wrapper:has(#dior-upcoming-appointments-table),
+    #dior-patient-portal-app .docs-table-wrapper:has(#dior-past-appointments-table) {
+        overflow: visible !important;
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table,
+    #dior-patient-portal-app #dior-upcoming-appointments-table,
+    #dior-patient-portal-app #dior-past-appointments-table {
+        display: block !important;
+        width: 100% !important;
+        border: 0 !important;
+        border-collapse: separate !important;
+        border-spacing: 0 10px !important;
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table thead,
+    #dior-patient-portal-app #dior-upcoming-appointments-table thead,
+    #dior-patient-portal-app #dior-past-appointments-table thead {
+        display: none !important;
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table tbody,
+    #dior-patient-portal-app #dior-upcoming-appointments-table tbody,
+    #dior-patient-portal-app #dior-past-appointments-table tbody {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table tr,
+    #dior-patient-portal-app #dior-upcoming-appointments-table tr,
+    #dior-patient-portal-app #dior-past-appointments-table tr {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 0 12px;
+        padding: 12px !important;
+        background: #fff !important;
+        border: 1px solid #e1e8f1 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 2px 8px rgba(25, 55, 90, .04);
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td,
+    #dior-patient-portal-app #dior-past-appointments-table td {
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        min-width: 0;
+        padding: 9px 0 !important;
+        border: 0 !important;
+        border-bottom: 1px solid #eef2f7 !important;
+        font-size: 13px !important;
+        overflow-wrap: anywhere;
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td:first-child,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td:first-child,
+    #dior-patient-portal-app #dior-past-appointments-table td:first-child {
+        grid-column: 1/-1;
+        font-size: 15px !important;
+        font-weight: 700;
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(1)::before,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(1)::before,
+    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(1)::before {
+        content: 'DOCTOR';
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(2)::before,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(2)::before,
+    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(2)::before {
+        content: 'SPECIALIZATION';
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(3)::before,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(3)::before,
+    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(3)::before {
+        content: 'DATE';
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(4)::before,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(4)::before,
+    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(4)::before {
+        content: 'TIME';
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(5)::before,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(5)::before,
+    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(5)::before {
+        content: 'TREATMENT';
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(6)::before,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(6)::before,
+    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(6)::before {
+        content: 'CONTACT';
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td:nth-child(7)::before,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td:nth-child(7)::before,
+    #dior-patient-portal-app #dior-past-appointments-table td:nth-child(7)::before {
+        content: 'STATUS';
+    }
+
+    #dior-patient-portal-app #dior-today-appointments-table td::before,
+    #dior-patient-portal-app #dior-upcoming-appointments-table td::before,
+    #dior-patient-portal-app #dior-past-appointments-table td::before {
+        color: #718198;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .055em;
+    }
 
     #dior-patient-portal-app .cell-content {
         min-width: 0;
@@ -54200,13 +53978,6 @@ a.va-btn-primary:hover {
     overflow: hidden !important;
 }
 
-@media (max-width: 576px) {
-    .dior-patient-avatar-circle {
-        width: 84px !important;
-        height: 84px !important;
-    }
-}
-
 .dior-patient-avatar-circle img {
     border-radius: 50% !important;
     width: 100% !important;
@@ -54233,61 +54004,4 @@ a.va-btn-primary:hover {
     background-color: #af8920 !important;
     border-color: #af8920 !important;
     color: #ffffff !important;
-}
-/* The booking dialog is removed from the focus order while closed. */
-.dior-db-modal[hidden] { display: none !important; }
-
-/* Shared mobile/tablet corrections. Desktop layout is intentionally unchanged. */
-@media (min-width: 1025px) {
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-side-close { display: none !important; }
-}
-@media (max-width: 1024px) {
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-side-close {
-        display: flex !important;
-        width: 44px !important;
-        height: 44px !important;
-        z-index: 1;
-    }
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-main-content,
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel,
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .row > [class*="col-"] {
-        min-width: 0;
-        max-width: 100%;
-    }
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-responsive-table {
-        display: block;
-        max-width: 100%;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-    }
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-responsive-table:focus-visible,
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) :focus-visible {
-        outline: 2px solid #2c6cb1;
-        outline-offset: 2px;
-    }
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel img,
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel iframe {
-        max-width: 100%;
-    }
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel input:not([type="checkbox"]):not([type="radio"]),
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel select,
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-tab-panel textarea {
-        max-width: 100%;
-        min-width: 0;
-    }
-    #tab-consultation .dior-ic-2b25452d99,
-    #tab-consultation .dior-ic-f6cf83e34f {
-        flex: 1 1 100% !important;
-        min-width: 0 !important;
-        max-width: 100%;
-    }
-}
-@media (max-width: 767.98px) {
-    #tab-consultation .dior-ic-2b25452d99 { height: 360px !important; }
-    #tab-consultation .dior-ic-f6cf83e34f { height: 440px !important; }
-    #tab-consultation .dior-ic-5c4ccb1aea { flex-wrap: wrap; }
-    #tab-overview .patient-info { min-width: 0; }
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-topbar-left { min-width: 0; }
-    :is(.dior-patient-portal-wrap, .dior-doctor-wrap) .dior-top-search { min-width: 0; }
 }

@@ -194,37 +194,16 @@ class Dior_Questionnaire_Service
         $consent_all = $get(['Consent & Acknowledgements', 'Consent & Acknowledgements (Labels)', 'Consent & Acknowledgements (Values)', 'consent_all']);
         $e_signature = $get(['Type Your Full Legal Name', 'e_signature']);
         $signature_date = $get(['Date', 'signature_date']);
-        // Prefer immutable metadata returned by HIPAAtizer over generated fallbacks.
-        $submission_id = $get(['Submission Id', 'submissionId', 'submission_id', 'id']);
-        if ($submission_id === '' && !empty($payload['id']) && is_scalar($payload['id'])) {
-            $submission_id = sanitize_text_field((string) $payload['id']);
-        }
+        $submission_id = $get(['Submission Id', 'submissionId', 'submission_id']);
         $form_id = $get(['Form Id', 'workflowId', 'form_id']);
-        if ($form_id === '' && !empty($payload['workflowId']) && is_scalar($payload['workflowId'])) {
-            $form_id = sanitize_text_field((string) $payload['workflowId']);
-        }
-        $hipaatizer_created_at = $payload['createdAt'] ?? ($data['createdAt'] ?? ($fields['createdAt'] ?? ''));
-        $submitted_at = '';
-        if (is_string($hipaatizer_created_at) && $hipaatizer_created_at !== '') {
-            $timestamp = strtotime($hipaatizer_created_at);
-            if ($timestamp !== false) {
-                $submitted_at = function_exists('wp_date') ? wp_date('Y-m-d H:i:s', $timestamp) : date('Y-m-d H:i:s', $timestamp);
-            }
-        }
-        if ($submitted_at === '') {
-            $submitted_at = current_time('mysql');
-        }
-        $ip_address = $get(['ipAddress', 'ip_address', 'ip']);
-        if ($ip_address === '' && !empty($payload['ipAddress']) && is_scalar($payload['ipAddress'])) {
-            $ip_address = sanitize_text_field((string) $payload['ipAddress']);
-        }
+        $view_submission_link = $get(['View Submission Link', 'viewSubmissionLink']);
+        $download_pdf_link = $get(['Download PDF Link', 'downloadPdfLink']);
 
         // Build structured questionnaire object
         $questionnaire = [
             'submission_id'         => $submission_id ?: ('SUB-' . time()),
             'form_id'               => $form_id ?: 'medical_questionnaire',
-            'submitted_at'          => $submitted_at,
-            'ip_address'            => $ip_address,
+            'submitted_at'          => current_time('mysql'),
             'view_submission_link'  => $view_submission_link,
             'download_pdf_link'     => $download_pdf_link,
             'view_pdf_link'         => $download_pdf_link ?: $view_submission_link,
@@ -380,17 +359,13 @@ class Dior_Questionnaire_Service
             // Save latest questionnaire to user meta
             update_user_meta($user_id, 'dior_medical_questionnaire', $questionnaire);
 
-            // Upsert history by immutable HIPAAtizer submission ID to avoid duplicate rows on retries.
+            // Append to questionnaire history
             $history = get_user_meta($user_id, 'dior_medical_questionnaires', true);
-            if (!is_array($history)) { $history = []; }
-            $history = array_values(array_filter($history, static function ($entry) use ($questionnaire) {
-                if (!is_array($entry)) { return false; }
-                $existing_id = (string) ($entry['submission_id'] ?? '');
-                $incoming_id = (string) ($questionnaire['submission_id'] ?? '');
-                return $incoming_id === '' || $existing_id !== $incoming_id;
-            }));
+            if (!is_array($history)) {
+                $history = [];
+            }
             array_unshift($history, $questionnaire);
-            // Cap history at 20 submissions.
+            // Cap history at 20 submissions
             $history = array_slice($history, 0, 20);
             update_user_meta($user_id, 'dior_medical_questionnaires', $history);
 

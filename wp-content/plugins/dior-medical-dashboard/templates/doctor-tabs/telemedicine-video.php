@@ -461,7 +461,7 @@ $first_pid = !empty($all_patients) ? (int)$all_patients[0]['user_id'] : 0;
 
     window.diorTeleWritePrescription = function() {
         if (typeof window.diorDocSwitchTab === 'function') {
-            window.diorDocSwitchTab('doc-e-prescriptions');
+            window.diorDocSwitchTab('doc-prescriptions');
         }
     };
 

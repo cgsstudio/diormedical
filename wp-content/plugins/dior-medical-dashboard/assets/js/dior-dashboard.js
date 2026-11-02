@@ -754,9 +754,9 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         window.diorPromptCompleteProfile = promptCompleteProfile;
 
         function switchTab(tabId) {
-            if (document.getElementById('dior-patient-portal-app') && typeof window.diorSafeSwitchPatientTab === 'function') {
-                return window.diorSafeSwitchPatientTab(tabId);
-            }
+            // Navigation must always work. Profile completeness is validated when the
+            // patient actually submits an appointment/intake action, not when opening a tab.
+            // This keeps every dashboard section accessible and preserves the existing UI.
 
             if (!document.getElementById('tab-' + tabId)) {
                 tabId = 'overview';
@@ -781,16 +781,8 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
             tabPanels.forEach(panel => {
                 if (panel.id === 'tab-' + tabId) {
                     panel.classList.add('active');
-                    panel.removeAttribute('hidden');
-                    panel.style.setProperty('display', 'block', 'important');
-                    panel.style.setProperty('visibility', 'visible', 'important');
-                    panel.style.setProperty('opacity', '1', 'important');
                 } else {
                     panel.classList.remove('active');
-                    panel.setAttribute('hidden', 'hidden');
-                    panel.style.setProperty('display', 'none', 'important');
-                    panel.style.setProperty('visibility', 'hidden', 'important');
-                    panel.style.setProperty('opacity', '0', 'important');
                 }
             });
 
@@ -888,8 +880,6 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
         // Deep linking via URL hash & hashchange listener
         function handleUrlHash() {
-            // The patient safety controller restores both the tab and subtab.
-            if (document.getElementById('dior-patient-portal-app') && typeof window.diorSafeSwitchPatientTab === 'function') return;
             if (window.location.hash && window.location.hash.startsWith('#tab=')) {
                 const hashTab = window.location.hash.replace('#tab=', '');
                 if (typeof window.diorSwitchTab === 'function') {
@@ -951,50 +941,29 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
         const sidebar = document.getElementById('dior-sidebar');
         const drawerBackdrop = document.getElementById('dior-drawer-backdrop');
 
-        function setPatientDrawerState(isOpen) {
-            const app = document.getElementById('dior-patient-portal-app');
-            const sb = document.getElementById('dior-sidebar');
-            const bg = document.getElementById('dior-drawer-backdrop');
-            const toggle = document.getElementById('dior-mobile-menu-toggle');
-
-            if (sb) {
-                sb.classList.toggle('mobile-open', !!isOpen);
-                sb.classList.toggle('open', !!isOpen);
-            }
-            if (bg) {
-                bg.classList.toggle('active', !!isOpen);
-                bg.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-            }
-            if (app) app.classList.toggle('dior-mobile-drawer-open', !!isOpen);
-            if (toggle) {
-                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                toggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
-            }
-            document.body.style.overflow = isOpen ? 'hidden' : '';
-        }
-
         window.diorOpenMobileDrawer = function(e) {
             if (e) e.preventDefault();
+            const sb = document.getElementById('dior-sidebar');
+            const bg = document.getElementById('dior-drawer-backdrop');
+            
+            // On desktop, act as a toggle
             if (window.innerWidth > 1024) {
                 const wrap = document.querySelector('.dior-patient-portal-wrap') || document.querySelector('.dior-app');
                 if (wrap) wrap.classList.toggle('dior-sidebar-collapsed');
                 return;
             }
-            setPatientDrawerState(true);
+
+            if (sb) sb.classList.add('mobile-open');
+            if (bg) bg.classList.add('active');
+            document.body.style.overflow = 'hidden';
         };
 
         window.diorCloseMobileDrawer = function() {
-            setPatientDrawerState(false);
-        };
-
-        window.diorToggleMobileDrawer = function(e) {
-            if (e) e.preventDefault();
-            if (window.innerWidth > 1024) {
-                window.diorOpenMobileDrawer();
-                return;
-            }
             const sb = document.getElementById('dior-sidebar');
-            setPatientDrawerState(!(sb && (sb.classList.contains('mobile-open') || sb.classList.contains('open'))));
+            const bg = document.getElementById('dior-drawer-backdrop');
+            if (sb) sb.classList.remove('mobile-open');
+            if (bg) bg.classList.remove('active');
+            document.body.style.overflow = '';
         };
 
         function openMobileDrawer() {
@@ -1007,17 +976,9 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
             }
         }
 
-        if (mobileToggle) mobileToggle.addEventListener('click', window.diorToggleMobileDrawer);
+        if (mobileToggle) mobileToggle.addEventListener('click', window.diorOpenMobileDrawer);
         if (sideClose) sideClose.addEventListener('click', window.diorCloseMobileDrawer);
         if (drawerBackdrop) drawerBackdrop.addEventListener('click', window.diorCloseMobileDrawer);
-
-        // Close the mobile drawer with Escape and keep background scrolling locked only while open.
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && document.getElementById('dior-sidebar') &&
-                document.getElementById('dior-sidebar').classList.contains('mobile-open')) {
-                window.diorCloseMobileDrawer();
-            }
-        });
 
         // =========================================================================
         // 5. MODAL SYSTEM
@@ -3529,74 +3490,93 @@ window.diorInitTablePagination = function(tableEl, pageSize) {
 
 })(jQuery);
 
-window.diorDownloadRxPdf = function (rxId) {
-    if (!rxId) return;
-
-    var cleanId = String(rxId).trim();
-    var baseUrl = window.location.origin;
-    if (window.location.pathname.indexOf('/diormedical') !== -1) {
-        baseUrl += '/diormedical';
-    }
-    if (window.dior_ajax_object && window.dior_ajax_object.site_url) {
-        baseUrl = window.dior_ajax_object.site_url;
-    }
-    var pdfUrl = baseUrl + '/?dior_action=view_rx_pdf&rx_id=' + encodeURIComponent(cleanId);
-
-    if (typeof Swal !== 'undefined') {
-        Swal.fire({
-            title: 'Generating Prescription PDF',
-            html: '<div class="py-2"><div class="spinner-border text-primary" role="status"></div><div class="mt-2 text-muted small">Loading high-resolution e-prescription...</div></div>',
-            showConfirmButton: false,
-            allowOutsideClick: false
-        });
-    }
-
-    var iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.left = '-9999px';
-    iframe.style.top = '-9999px';
-    iframe.style.width = '794px';
-    iframe.style.height = '1123px';
-    iframe.style.border = 'none';
-    iframe.style.visibility = 'hidden';
-
-    var fallbackDownload = function () {
-        if (typeof Swal !== 'undefined') Swal.close();
-        if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-        window.open(pdfUrl + '&download=1', '_blank');
-    };
-
-    var timer = setTimeout(fallbackDownload, 10000);
-
-    iframe.onload = function () {
-        try {
-            setTimeout(function () {
-                try {
-                    clearTimeout(timer);
-                    if (iframe.contentWindow && typeof iframe.contentWindow.downloadAsPdf === 'function') {
-                        iframe.contentWindow.downloadAsPdf().then(function () {
-                            if (typeof Swal !== 'undefined') Swal.close();
-                            setTimeout(function () { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); }, 1500);
-                        }).catch(function (err) {
-                            console.error('PDF error in iframe:', err);
-                            fallbackDownload();
-                        });
-                    } else {
-                        fallbackDownload();
-                    }
-                } catch (ex) {
-                    console.error('Iframe access failed:', ex);
-                    fallbackDownload();
+window.diorDownloadRxPdf = function(rxId) {
+    var element = document.getElementById('rx-pdf-template-' + rxId);
+    if (!element) {
+        var allTemplates = document.querySelectorAll('[id^="rx-pdf-template-"]');
+        if (allTemplates && allTemplates.length > 0) {
+            for (var k = 0; k < allTemplates.length; k++) {
+                var rawIds = (allTemplates[k].getAttribute('data-raw-ids') || '').split(',');
+                if (allTemplates[k].id.indexOf(rxId) !== -1 || rawIds.indexOf(String(rxId)) !== -1) {
+                    element = allTemplates[k];
+                    break;
                 }
-            }, 800);
-        } catch (e) {
-            clearTimeout(timer);
-            fallbackDownload();
+            }
         }
-    };
+    }
+    if (!element) { Swal.fire({ title: 'Not Found', text: 'Prescription details not found for Rx #' + rxId, icon: 'warning' }); return; }
+    
+    var cleanFileName = 'Dior-Prescription-' + String(rxId).replace(/[^a-zA-Z0-9]/g, '-') + '.pdf';
+    var innerContent = element.innerHTML;
 
-    iframe.src = pdfUrl;
-    document.body.appendChild(iframe);
+    var tempContainer = document.createElement('div');
+    tempContainer.style.position = 'fixed';
+    tempContainer.style.left = '0';
+    tempContainer.style.top = '0';
+    tempContainer.style.width = '750px';
+    tempContainer.style.background = '#FFFFFF';
+    tempContainer.style.zIndex = '-999999';
+    tempContainer.style.opacity = '1';
+    tempContainer.style.pointerEvents = 'none';
+    tempContainer.style.margin = '0';
+    tempContainer.style.padding = '0';
+    tempContainer.innerHTML = innerContent;
+    document.body.appendChild(tempContainer);
+
+    if (typeof html2pdf !== 'undefined' && html2pdf) {
+        var opt = {
+            margin:       [6, 6, 6, 6],
+            filename:     cleanFileName,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                scrollY: 0,
+                scrollX: 0,
+                windowWidth: 794
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+        try {
+            html2pdf().set(opt).from(tempContainer.firstElementChild || tempContainer).save().then(function() {
+                if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
+            }).catch(function(err) {
+                console.error('PDF export error:', err);
+                if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
+                if (typeof fallbackPrintWindow === 'function') {
+                    fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
+                } else {
+                    window.print();
+                }
+            });
+        } catch(e) {
+            console.error('PDF generation error:', e);
+            if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
+            if (typeof fallbackPrintWindow === 'function') {
+                fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
+            } else {
+                window.print();
+            }
+        }
+    } else {
+        console.warn('html2pdf library not loaded, falling back to print');
+        if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
+        if (typeof fallbackPrintWindow === 'function') {
+            fallbackPrintWindow(innerContent, 'Prescription #' + rxId);
+        } else {
+            var printWindow = window.open('', '_blank');
+            if (printWindow) {
+                printWindow.document.write('<html><head><title>Prescription #' + rxId + '</title></head><body style="margin:20px;background:#fff;font-family:Arial,sans-serif;">' + innerContent + '</body></html>');
+                printWindow.document.close();
+                printWindow.focus();
+                setTimeout(function() { printWindow.print(); }, 250);
+            } else {
+                window.print();
+            }
+        }
+    }
 };
 
 /**

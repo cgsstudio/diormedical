@@ -1,13 +1,13 @@
 <?php
-$user_id = !empty($user_id) ? (int) $user_id : get_current_user_id();
-$profile = (!empty($profile) && is_array($profile)) ? $profile : [];
-$appointments = (!empty($appointments) && is_array($appointments)) ? $appointments : [];
+$user_id       = !empty($user_id) ? (int)$user_id : get_current_user_id();
+$profile       = (!empty($profile) && is_array($profile)) ? $profile : [];
+$appointments  = (!empty($appointments) && is_array($appointments)) ? $appointments : [];
 $prescriptions = (!empty($prescriptions) && is_array($prescriptions)) ? $prescriptions : [];
 $upcoming_list = (!empty($upcoming_list) && is_array($upcoming_list)) ? $upcoming_list : [];
-$past_list = (!empty($past_list) && is_array($past_list)) ? $past_list : [];
-$documents = (!empty($documents) && is_array($documents)) ? $documents : [];
-$hipaa_intake = (!empty($hipaa_intake) && is_array($hipaa_intake)) ? $hipaa_intake : Dior_Patient_Portal_Data::get_normalized_hipaa_intake($user_id);
-$has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) || !empty($hipaa_intake['submitted_at']));
+$past_list     = (!empty($past_list) && is_array($past_list)) ? $past_list : [];
+$documents     = (!empty($documents) && is_array($documents)) ? $documents : [];
+$hipaa_intake  = (!empty($hipaa_intake) && is_array($hipaa_intake)) ? $hipaa_intake : Dior_Patient_Portal_Data::get_normalized_hipaa_intake($user_id);
+$has_intake    = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) || !empty($hipaa_intake['submitted_at']));
 ?>
 <section class="dior-tab-panel active custom-patient-overview" id="tab-overview">
   <div
@@ -17,8 +17,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
       <h1 class="h3 fw-bold text-dark mb-1">Welcome Back, <?php echo esc_html(strtoupper($display_first_name)); ?></h1>
       <p class="text-secondary small mb-0">Manage your telehealth visits, prescriptions, and medical records.</p>
     </div>
-    <a href="<?php echo esc_url(home_url('/patient-dashboard/#tab=appointments&subtab=book')); ?>"
-      data-appt-subtab="book"
+    <a href="https://bagheeraventures.com/diormedical/patient-dashboard/#tab=appointments&subtab=book" data-appt-subtab="book"
       class="btn dior-btn-gold rounded-pill fw-semibold py-2 px-4 shadow-sm d-inline-flex align-items-center gap-2">
       <i class="fas fa-calendar-plus"></i>
       <span>Book An Appointment</span>
@@ -66,12 +65,10 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
 
         <!-- Patient Profile Card -->
         <div class="col-12 col-xxl-6">
-          <div
-            class="card patient-card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column justify-content-between">
+          <div class="card patient-card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column justify-content-between">
             <div>
-              <div class="d-flex flex-wrap flex-sm-nowrap align-items-center gap-3">
-                <div class="patient-photo rounded-4 overflow-hidden flex-shrink-0" id="dior-patient-photo-box"
-                  style="width: 88px; height: 88px;">
+              <div class="d-flex align-items-center gap-3">
+                <div class="patient-photo rounded-4 overflow-hidden flex-shrink-0" id="dior-patient-photo-box" style="width: 88px; height: 88px;">
                   <?php if (!empty($profile['avatar_url'])): ?>
                     <img id="dior-overview-patient-img" class="w-100 h-100 object-fit-cover"
                       src="<?php echo esc_url($profile['avatar_url']); ?>" alt="Profile"
@@ -93,8 +90,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
                     <h2 class="h4 fw-bold mb-0 text-truncate text-primary">
                       <?php echo esc_html(!empty($profile['full_name']) ? $profile['full_name'] : 'Patient'); ?>
                     </h2>
-                    <span
-                      class="badge bg-light text-secondary border rounded-pill px-2 py-1 small fw-medium"><?php echo esc_html($patient_identifier); ?></span>
+                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-1 small fw-medium"><?php echo esc_html($patient_identifier); ?></span>
                   </div>
                   <?php
                   $dob_raw = !empty($profile['dob']) ? $profile['dob'] : '';
@@ -146,24 +142,17 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
                   $w_display = !empty($p_weight_num) ? $p_weight_num . ' kg' : (!empty($p_weight) ? $p_weight : '—');
                   ?>
                   <div class="d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center flex-wrap gap-3 gap-sm-4">
+                    <div class="d-flex align-items-center gap-4">
                       <div>
-                        <strong id="dior-patient-metric-height"
-                          class="d-block text-dark fs-5 fw-bold lh-1 mb-1 text-nowrap"><?php echo esc_html($h_display); ?></strong>
+                        <strong id="dior-patient-metric-height" class="d-block text-dark fs-5 fw-bold lh-1 mb-1 text-nowrap"><?php echo esc_html($h_display); ?></strong>
                         <span class="text-secondary small">Height</span>
                       </div>
                       <div class="border-start border-secondary-subtle ps-4">
-                        <strong id="dior-patient-metric-weight"
-                          class="d-block text-dark fs-5 fw-bold lh-1 mb-1 text-nowrap"><?php echo esc_html($w_display); ?></strong>
+                        <strong id="dior-patient-metric-weight" class="d-block text-dark fs-5 fw-bold lh-1 mb-1 text-nowrap"><?php echo esc_html($w_display); ?></strong>
                         <span class="text-secondary small">Weight</span>
                       </div>
                     </div>
-                    <span role="button" tabindex="0"
-                      class="btn-sm rounded-circle d-inline-flex align-items-center justify-content-center p-0 border border-light-subtle bg-light text-secondary shadow-none"
-                      style="width: 28px; height: 28px; cursor: pointer;" data-bs-toggle="modal"
-                      data-bs-target="#diorHealthGoalsModal"
-                      onclick="if(window.bootstrap&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('diorHealthGoalsModal')).show();}"
-                      title="Edit Vitals">
+                    <span role="button" tabindex="0" class="btn-sm rounded-circle d-inline-flex align-items-center justify-content-center p-0 border border-light-subtle bg-light text-secondary shadow-none" style="width: 28px; height: 28px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#diorHealthGoalsModal" onclick="if(window.bootstrap&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('diorHealthGoalsModal')).show();}" title="Edit Vitals">
                       <i class="fas fa-pencil-alt text-secondary" style="font-size: 11px;"></i>
                     </span>
                   </div>
@@ -171,8 +160,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
               </div>
             </div>
             <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-3 shadow-sm w-100 mt-3"
-              data-switch-tab="settings" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('settings');">Edit
-              Profile</button>
+              data-switch-tab="settings" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('settings');">Edit Profile</button>
           </div>
         </div>
 
@@ -180,45 +168,38 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
         <div class="col-12 col-xxl-6">
           <div class="card goals-card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column"
             id="dior-patient-goals-card">
-            <div
-              class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
+            <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
               <h3 class="section-title mb-0 fs-5 fw-bold text-primary">Health Goals</h3>
-              <button type="button"
-                class="btn btn-outline-primary btn-sm rounded-circle d-inline-flex align-items-center justify-content-center p-0 shadow-sm dior-icon-btn-32"
-                data-bs-toggle="modal" data-bs-target="#diorHealthGoalsModal"
-                onclick="if(window.bootstrap&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('diorHealthGoalsModal')).show();}"
-                title="Manage Health Goals">
+              <button type="button" class="btn btn-outline-primary btn-sm rounded-circle d-inline-flex align-items-center justify-content-center p-0 shadow-sm dior-icon-btn-32" data-bs-toggle="modal" data-bs-target="#diorHealthGoalsModal" onclick="if(window.bootstrap&&bootstrap.Modal){bootstrap.Modal.getOrCreateInstance(document.getElementById('diorHealthGoalsModal')).show();}" title="Manage Health Goals">
                 <i class="fas fa-plus small"></i>
               </button>
             </div>
             <?php
             $health_goals = get_user_meta($user_id, 'dior_health_goals', true);
-            $display_goals = !empty($health_goals) && is_array($health_goals) ? $health_goals : [];
+            $default_goals = [
+              ['name' => 'Weight Loss', 'val' => '75.5 / 60 Kg', 'pct' => 45],
+              ['name' => 'Water Intake', 'val' => '1500 / 2500 ml', 'pct' => 55],
+              ['name' => 'Sleep', 'val' => '7 / 8 hrs', 'pct' => 85],
+            ];
+            $display_goals = !empty($health_goals) && is_array($health_goals) ? $health_goals : $default_goals;
             ?>
             <div id="dior-goals-card-body"
-              class="goals-list-wrap dior-card-scrollable d-flex flex-column gap-3 flex-grow-1 dior-scroll-200 pe-1 justify-content-center">
-              <?php if (empty($display_goals)): ?>
-                <div class="text-center py-4 text-muted small my-auto">
-                  <i class="fas fa-bullseye fs-4 text-secondary opacity-50 mb-2 d-block"></i>
-                  No health goals set yet. Click <strong><i class="fas fa-plus"></i></strong> above to add your goals.
-                </div>
-              <?php else: ?>
-                <?php foreach ($display_goals as $g_idx => $goal):
-                  $pct = min(100, max(0, (int) ($goal['pct'] ?? 50)));
-                  ?>
-                  <div class="goal mb-2" data-goal-index="<?php echo esc_attr($g_idx); ?>">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                      <span class="fw-bold text-dark small"><?php echo esc_html($goal['name']); ?></span>
-                      <span class="text-secondary small"><?php echo esc_html($goal['val']); ?></span>
-                    </div>
-                    <div class="progress dior-progress-sm rounded-pill bg-light">
-                      <div class="progress-bar rounded-pill dior-progress-orange" role="progressbar"
-                        style="width: <?php echo esc_attr($pct); ?>%;" aria-valuenow="<?php echo esc_attr($pct); ?>"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
+              class="goals-list-wrap dior-card-scrollable d-flex flex-column gap-3 flex-grow-1 dior-scroll-200 pe-1">
+              <?php foreach ($display_goals as $g_idx => $goal):
+                $pct = min(100, max(0, (int) ($goal['pct'] ?? 50)));
+                ?>
+                <div class="goal mb-2" data-goal-index="<?php echo esc_attr($g_idx); ?>">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold text-dark small"><?php echo esc_html($goal['name']); ?></span>
+                    <span class="text-secondary small"><?php echo esc_html($goal['val']); ?></span>
                   </div>
-                <?php endforeach; ?>
-              <?php endif; ?>
+                  <div class="progress dior-progress-sm rounded-pill bg-light">
+                    <div class="progress-bar rounded-pill dior-progress-orange" role="progressbar"
+                      style="width: <?php echo esc_attr($pct); ?>%;" aria-valuenow="<?php echo esc_attr($pct); ?>"
+                      aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
             </div>
           </div>
         </div>
@@ -230,8 +211,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
         <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
           <h3 class="section-title mb-0 fs-5 fw-bold text-dark"><i
               class="fas fa-clock-rotate-left text-primary me-2"></i>Previous Consultation</h3>
-          <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#"
-            data-switch-tab="appointments"
+          <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#" data-switch-tab="appointments"
             onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('appointments');">View All &rarr;</a>
         </div>
         <div class="table-responsive mb-0 dior-card-scrollable dior-scroll-275">
@@ -260,7 +240,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
               else:
                 foreach ($prev_apts as $prev_apt):
                   $pa_cond = !empty($prev_apt['condition']) ? $prev_apt['condition'] : (!empty($prev_apt['condition_name']) ? $prev_apt['condition_name'] : 'General Consultation');
-                  $pa_doc = !empty($prev_apt['provider']) ? $prev_apt['provider'] : (!empty($prev_apt['doctor_name']) ? $prev_apt['doctor_name'] : 'Provider not recorded');
+                  $pa_doc = !empty($prev_apt['provider']) ? $prev_apt['provider'] : (!empty($prev_apt['doctor_name']) ? $prev_apt['doctor_name'] : 'Dr. Diorca Aquino de la Cruz');
                   $pa_date_raw = !empty($prev_apt['date']) ? $prev_apt['date'] : (!empty($prev_apt['appt_date']) ? $prev_apt['appt_date'] : '');
                   $pa_date = $pa_date_raw;
                   if (!empty($pa_date_raw)) {
@@ -268,7 +248,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
                     if ($ts)
                       $pa_date = date('M d, Y', $ts);
                   }
-                  $pa_time = !empty($prev_apt['time']) ? $prev_apt['time'] : (!empty($prev_apt['appt_time']) ? $prev_apt['appt_time'] : '—');
+                  $pa_time = !empty($prev_apt['time']) ? $prev_apt['time'] : (!empty($prev_apt['appt_time']) ? $prev_apt['appt_time'] : '03:00 PM');
                   $pa_status = !empty($prev_apt['status']) ? strtolower($prev_apt['status']) : 'completed';
                   if ($pa_status === 'confirmed')
                     $pa_status = 'completed';
@@ -279,11 +259,11 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
                     $s_badge = 'bg-warning-subtle text-warning border border-warning-subtle';
                   ?>
                   <tr>
-                    <td class="fw-semibold text-dark" data-label="Consultation"><?php echo esc_html($pa_cond); ?></td>
-                    <td class="text-secondary" data-label="Doctor"><?php echo esc_html($pa_doc); ?></td>
-                    <td class="text-secondary" data-label="Date"><?php echo esc_html($pa_date); ?></td>
-                    <td class="text-secondary" data-label="Time"><?php echo esc_html($pa_time); ?></td>
-                    <td class="text-end" data-label="Status"><span
+                    <td class="fw-semibold text-dark"><?php echo esc_html($pa_cond); ?></td>
+                    <td class="text-secondary"><?php echo esc_html($pa_doc); ?></td>
+                    <td class="text-secondary"><?php echo esc_html($pa_date); ?></td>
+                    <td class="text-secondary"><?php echo esc_html($pa_time); ?></td>
+                    <td class="text-end"><span
                         class="badge <?php echo esc_attr($s_badge); ?> rounded-pill px-2 py-1 small"><?php echo esc_html(ucfirst($pa_status)); ?></span>
                     </td>
                   </tr>
@@ -300,9 +280,8 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
         <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
           <h3 class="section-title mb-0 fs-5 fw-bold text-dark"><i class="fas fa-flask text-primary me-2"></i>Latest Lab
             Results</h3>
-          <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#"
-            data-switch-tab="documents" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('documents');">View
-            All &rarr;</a>
+          <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#" data-switch-tab="documents"
+            onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('documents');">View All &rarr;</a>
         </div>
         <div class="table-responsive mb-0 dior-card-scrollable dior-scroll-235">
           <table class="lab-table table align-middle text-nowrap mb-0">
@@ -336,23 +315,22 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
               else:
                 foreach ($lab_docs as $lab):
                   $lab_name = !empty($lab['title']) ? $lab['title'] : (!empty($lab['name']) ? $lab['name'] : 'Lab Test');
-                  $lab_date = !empty($lab['date']) ? $lab['date'] : '—';
-                  $lab_status = !empty($lab['status']) ? $lab['status'] : 'Completed';
-                  $lab_by = !empty($lab['ordered_by']) ? $lab['ordered_by'] : (!empty($lab['doctor_name']) ? $lab['doctor_name'] : 'Physician');
+                  $lab_date = !empty($lab['date']) ? $lab['date'] : 'Sep 10, 2026';
+                  $lab_status = !empty($lab['status']) ? $lab['status'] : 'Normal';
+                  $lab_by = !empty($lab['ordered_by']) ? $lab['ordered_by'] : (!empty($lab['doctor_name']) ? $lab['doctor_name'] : 'Dr. Diorca Aquino de la Cruz');
                   $lab_url = !empty($lab['file_url']) ? $lab['file_url'] : '#';
                   $s_badge = (strtolower($lab_status) === 'abnormal') ? 'bg-danger-subtle text-danger border border-danger-subtle' : 'bg-success-subtle text-success border border-success-subtle';
                   ?>
                   <tr>
-                    <td class="fw-semibold text-dark" data-label="Test Name"><?php echo esc_html($lab_name); ?></td>
-                    <td class="text-secondary" data-label="Date"><?php echo esc_html($lab_date); ?></td>
-                    <td data-label="Status"><span
+                    <td class="fw-semibold text-dark"><?php echo esc_html($lab_name); ?></td>
+                    <td class="text-secondary"><?php echo esc_html($lab_date); ?></td>
+                    <td><span
                         class="badge <?php echo esc_attr($s_badge); ?> rounded-pill px-2 py-1 small"><?php echo esc_html($lab_status); ?></span>
                     </td>
-                    <td class="text-secondary" data-label="Ordered By"><?php echo esc_html($lab_by); ?></td>
-                    <td class="text-end" data-label="Action">
+                    <td class="text-secondary"><?php echo esc_html($lab_by); ?></td>
+                    <td class="text-end">
                       <a href="<?php echo esc_url($lab_url); ?>"
-                        class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0 dior-icon-btn-30"
-                        title="Download Lab Report">
+                        class="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center p-0 dior-icon-btn-30" title="Download Lab Report">
                         <i class="fas fa-download"></i>
                       </a>
                     </td>
@@ -375,51 +353,76 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
           function dior_get_doctor_avatar_url($doc_id = 0, $doc_name = '')
           {
             $avatar = '';
-            $doc_id = absint($doc_id);
-            $doc_post = $doc_id ? get_post($doc_id) : null;
-            $doctor_user_id = 0;
 
-            // Resolve the avatar from the exact provider record first. Do not treat a
-            // provider post ID as a WordPress user ID or borrow another provider's image.
-            if ($doc_post && $doc_post->post_type === 'wpddb_doctor') {
-              $avatar = get_post_meta($doc_id, '_wpddb_doctor_avatar', true)
-                ?: get_post_meta($doc_id, 'wpddb_doctor_avatar', true)
-                ?: get_the_post_thumbnail_url($doc_id, 'full');
+            // 1. If doc_id is provided, check if it's a WP User ID
+            if (!empty($doc_id) && is_numeric($doc_id)) {
+              $user = get_userdata((int) $doc_id);
+              if ($user) {
+                $avatar = get_user_meta($user->ID, 'dior_profile_image', true)
+                  ?: get_user_meta($user->ID, 'doctor_avatar', true)
+                  ?: get_user_meta($user->ID, 'profile_picture', true)
+                  ?: get_user_meta($user->ID, 'profile_image', true)
+                  ?: get_user_meta($user->ID, 'avatar_url', true);
+              }
 
-              $doctor_user_id = (int) (
-                get_post_meta($doc_id, '_doctor_user_id', true)
-                ?: get_post_meta($doc_id, '_wpddb_doctor_user_id', true)
-              );
-              if (!$doctor_user_id && $doc_post->post_author) {
-                $author = get_userdata((int) $doc_post->post_author);
-                if ($author && (in_array('doctor', (array) $author->roles, true) || in_array('administrator', (array) $author->roles, true))) {
-                  $doctor_user_id = (int) $author->ID;
+              // 2. If doc_id is a post ID (e.g. wpddb_doctor post 1957)
+              if (empty($avatar)) {
+                $avatar = get_post_meta((int) $doc_id, '_wpddb_doctor_avatar', true)
+                  ?: get_post_meta((int) $doc_id, 'wpddb_doctor_avatar', true)
+                  ?: get_the_post_thumbnail_url((int) $doc_id, 'full');
+
+                if (empty($avatar)) {
+                  $linked_uid = get_post_meta((int) $doc_id, '_wpddb_doctor_user_id', true);
+                  if ($linked_uid) {
+                    $avatar = get_user_meta((int) $linked_uid, 'dior_profile_image', true)
+                      ?: get_user_meta((int) $linked_uid, 'doctor_avatar', true)
+                      ?: get_user_meta((int) $linked_uid, 'profile_picture', true)
+                      ?: get_user_meta((int) $linked_uid, 'profile_image', true)
+                      ?: get_user_meta((int) $linked_uid, 'avatar_url', true);
+                  }
                 }
               }
-            } else {
-              $candidate = $doc_id ? get_userdata($doc_id) : null;
-              if ($candidate && (in_array('doctor', (array) $candidate->roles, true) || in_array('administrator', (array) $candidate->roles, true))) {
-                $doctor_user_id = (int) $candidate->ID;
+            }
+
+            // 3. Get doctor image directly from doctor dashboard profile (active doctor user)
+            if (empty($avatar)) {
+              $doctor_users = get_users(['role' => 'doctor', 'number' => 1]);
+              if (!empty($doctor_users)) {
+                $du_id = $doctor_users[0]->ID;
+                $avatar = get_user_meta($du_id, 'dior_profile_image', true)
+                  ?: get_user_meta($du_id, 'doctor_avatar', true)
+                  ?: get_user_meta($du_id, 'profile_picture', true)
+                  ?: get_user_meta($du_id, 'profile_image', true)
+                  ?: get_user_meta($du_id, 'avatar_url', true);
               }
             }
 
-            if (!$avatar && $doctor_user_id) {
-              $avatar = get_user_meta($doctor_user_id, 'dior_profile_image', true)
-                ?: get_user_meta($doctor_user_id, 'doctor_avatar', true)
-                ?: get_user_meta($doctor_user_id, 'profile_picture', true)
-                ?: get_user_meta($doctor_user_id, 'profile_image', true)
-                ?: get_user_meta($doctor_user_id, 'avatar_url', true)
-                ?: get_avatar_url($doctor_user_id, ['size' => 160]);
+            // 4. Check if wpddb_doctor post has avatar
+            if (empty($avatar)) {
+              $doc_posts = get_posts(['post_type' => 'wpddb_doctor', 'numberposts' => 1]);
+              if (!empty($doc_posts)) {
+                $avatar = get_post_meta($doc_posts[0]->ID, '_wpddb_doctor_avatar', true)
+                  ?: get_the_post_thumbnail_url($doc_posts[0]->ID, 'full');
+              }
             }
 
-            if ($avatar) {
-              return esc_url($avatar);
+            // 5. Final fallback to site doctor photo or clean UI avatar
+            if (empty($avatar)) {
+              $fallback = home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp');
+              $upload_dir = wp_upload_dir();
+              if (file_exists($upload_dir['basedir'] . '/2026/10/diormedical-experts-6.webp')) {
+                $avatar = $fallback;
+              } else {
+                $clean_name = preg_replace('/^(?:dr\.?\s*)+/i', '', trim($doc_name ?: 'Doctor'));
+                $avatar = 'https://ui-avatars.com/api/?name=' . rawurlencode($clean_name) . '&background=eef2ff&color=2C6CB1';
+              }
             }
 
-            $clean_name = preg_replace('/^(?:dr\\.?\\s*)+/i', '', trim((string) $doc_name));
-            return 'https://ui-avatars.com/api/?name=' . rawurlencode($clean_name ?: 'Provider') . '&background=eef2ff&color=2C6CB1';
+            return $avatar;
           }
         }
+
+        // 1. Doctor Consultation Card
         ?>
         <div class="col-12 col-md-6 col-xl-12">
           <div
@@ -447,54 +450,36 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
             if (empty($ha_avatar)) {
               $ha_avatar = dior_get_doctor_avatar_url(0, $ha_name);
             }
-            if (!empty($next_appointment)): ?>
-              <div>
-                <div class="d-flex align-items-start gap-3 mb-3">
-                  <div class="doctor-photo rounded-circle overflow-hidden flex-shrink-0 dior-doctor-photo-md">
-                    <img class="w-100 h-100 object-fit-cover" src="<?php echo esc_url($ha_avatar); ?>"
-                      alt="<?php echo esc_attr($ha_name); ?>"
-                      onerror="this.onerror=null;this.src='<?php echo esc_url(dior_get_doctor_avatar_url(0, $ha_name)); ?>';">
-                  </div>
-                  <div class="doctor-copy flex-grow-1 min-w-0">
-                    <span
-                      class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1 small mb-1">Telehealth
-                      Medical Care</span>
-                    <h4 class="fs-6 fw-bold text-dark mb-0 text-truncate"><?php echo esc_html($ha_name); ?></h4>
-                    <div class="text-secondary small text-truncate mb-2"><?php echo esc_html($ha_spec); ?></div>
-                    <div class="d-flex align-items-center gap-3 text-secondary small flex-wrap">
-                      <span><i class="far fa-calendar me-1 text-primary"></i><?php echo esc_html($ha_date); ?></span>
-                      <span><i class="far fa-clock me-1 text-primary"></i><?php echo esc_html($ha_time); ?></span>
-                    </div>
+            ?>
+            <div>
+              <div class="d-flex align-items-start gap-3 mb-3">
+                <div class="doctor-photo rounded-circle overflow-hidden flex-shrink-0 dior-doctor-photo-md">
+                  <img class="w-100 h-100 object-fit-cover" src="<?php echo esc_url($ha_avatar); ?>"
+                    alt="<?php echo esc_attr($ha_name); ?>"
+                    onerror="this.onerror=null;this.src='<?php echo esc_url(dior_get_doctor_avatar_url(0, $ha_name)); ?>';">
+                </div>
+                <div class="doctor-copy flex-grow-1 min-w-0">
+                  <span
+                    class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1 small mb-1">Telehealth
+                    Medical Care</span>
+                  <h4 class="fs-6 fw-bold text-dark mb-0 text-truncate"><?php echo esc_html($ha_name); ?></h4>
+                  <div class="text-secondary small text-truncate mb-2"><?php echo esc_html($ha_spec); ?></div>
+                  <div class="d-flex align-items-center gap-3 text-secondary small flex-wrap">
+                    <span><i class="far fa-calendar me-1 text-primary"></i><?php echo esc_html($ha_date); ?></span>
+                    <span><i class="far fa-clock me-1 text-primary"></i><?php echo esc_html($ha_time); ?></span>
                   </div>
                 </div>
               </div>
-              <div class="d-flex flex-column gap-2 mt-3">
-                <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-3 shadow-sm w-100"
-                  data-switch-tab="telemedicine"
-                  onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('telemedicine');">Join Video
-                  Consultation</button>
-                <button type="button" class="btn btn-outline-primary rounded-3 fw-semibold py-2 px-3 w-100"
-                  data-switch-tab="appointments"
-                  onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('appointments');">Reschedule</button>
-              </div>
-            <?php else: ?>
-              <div class="text-center py-4 my-auto">
-                <div
-                  class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center mb-3"
-                  style="width: 52px; height: 52px;">
-                  <i class="far fa-calendar-check fs-4"></i>
-                </div>
-                <h4 class="fs-6 fw-bold text-dark mb-1">No Upcoming Consultation</h4>
-                <p class="text-secondary small mb-3">Schedule a telehealth consultation with a certified doctor.</p>
-                <a href="<?php echo esc_url(home_url('/patient-dashboard/#tab=appointments&subtab=book')); ?>"
-                  class="btn btn-primary rounded-3 fw-semibold py-2 px-3 shadow-sm w-100 d-inline-flex align-items-center justify-content-center gap-2"
-                  data-switch-tab="appointments"
-                  onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('appointments');">
-                  <i class="fas fa-calendar-plus"></i>
-                  <span>Book An Appointment</span>
-                </a>
-              </div>
-            <?php endif; ?>
+            </div>
+            <div class="d-flex flex-column gap-2 mt-3">
+              <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-3 shadow-sm w-100"
+                data-switch-tab="consultation"
+                onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('consultation');">Join Video Consultation
+                Room</button>
+              <button type="button" class="btn btn-outline-primary rounded-3 fw-semibold py-2 px-3 w-100"
+                data-switch-tab="appointments"
+                onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('appointments');">Reschedule</button>
+            </div>
           </div>
         </div>
 
@@ -506,8 +491,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
               <h3 class="section-title mb-0 fs-5 fw-bold text-dark"><i
                   class="far fa-calendar-check text-primary me-2"></i>Upcoming Consultation</h3>
             </div>
-            <div
-              class="consult-list-wrap dior-card-scrollable d-flex flex-column gap-3 flex-grow-1 dior-scroll-240 pe-1">
+            <div class="consult-list-wrap dior-card-scrollable d-flex flex-column gap-3 flex-grow-1 dior-scroll-240 pe-1">
               <?php
               $display_list = !empty($upcoming_list) ? $upcoming_list : [];
               if (empty($display_list)):
@@ -558,12 +542,10 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
         <div class="col-12 col-md-12 col-xl-12">
           <div class="card prescriptions border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 d-flex flex-column"
             id="dior-overview-prescriptions-card">
-            <div
-              class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
+            <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3 border-secondary-subtle">
               <h3 class="section-title mb-0 fs-5 fw-bold text-dark"><i
                   class="fas fa-prescription-bottle-medical text-primary me-2"></i>Prescriptions</h3>
-              <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#"
-                data-switch-tab="docs_meds"
+              <a class="view-all text-primary text-decoration-none fw-semibold small dior-fs-13" href="#" data-switch-tab="docs_meds"
                 onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('docs_meds');">View All &rarr;</a>
             </div>
             <div class="rx-list-wrap dior-card-scrollable d-flex flex-column gap-2 flex-grow-1 dior-scroll-290 pe-1">
@@ -582,7 +564,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
                   $rx_name = !empty($rx['title']) && $rx['title'] !== 'General Medical Prescription' ? $rx['title'] : (!empty($rx['name']) ? $rx['name'] : (!empty($rx['medication']) ? $rx['medication'] : 'Medication'));
                   $rx_sub = !empty($rx['medication']) && $rx['medication'] !== $rx_name ? $rx['medication'] : (!empty($rx['instructions']) ? $rx['instructions'] : '');
                   $rx_by = !empty($rx['prescribed_by']) ? $rx['prescribed_by'] : 'Provider';
-                  $rx_status = !empty($rx['status']) ? $rx['status'] : 'Status unavailable';
+                  $rx_status = !empty($rx['status']) ? $rx['status'] : 'Active';
                   $is_active = (strtolower($rx_status) === 'active');
                   $rx_badge_cls = $is_active ? 'badge bg-success-subtle text-success border border-success-subtle' : 'badge bg-secondary-subtle text-secondary border';
                   ?>
@@ -616,6 +598,48 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
           </div>
         </div>
 
+        <!-- Clinical Intake & Medical Questionnaire Card -->
+        <div class="col-12 col-md-6 col-xl-12" id="dior-overview-intake-card">
+          <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="small text-uppercase text-secondary fw-semibold">Clinical Intake</span>
+                <?php if ($has_intake): ?>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small">
+                    <i class="fas fa-check-circle me-1"></i> Completed
+                  </span>
+                <?php else: ?>
+                  <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-1 small">
+                    <i class="fas fa-clock me-1"></i> Action Required
+                  </span>
+                <?php endif; ?>
+              </div>
+              <h3 class="fs-6 fw-bold text-dark mb-1">
+                <?php echo esc_html(!empty($hipaa_intake['service_condition']) ? $hipaa_intake['service_condition'] : 'Medical Intake Questionnaire'); ?>
+              </h3>
+              <p class="small text-secondary mb-3">
+                <?php if ($has_intake): ?>
+                  Submitted on <?php echo esc_html(date('M j, Y', strtotime($hipaa_intake['submitted_at'] ?? 'now'))); ?> &bull; Data verified for physician review
+                <?php else: ?>
+                  Please complete your clinical questionnaire prior to your appointment.
+                <?php endif; ?>
+              </p>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <button type="button" class="btn btn-primary rounded-3 fw-semibold py-2 px-3 shadow-sm flex-grow-1"
+                onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('questionnaire');">
+                <i class="fas fa-clipboard-check me-1"></i> <?php echo $has_intake ? 'View Intake Answers' : 'Complete Intake'; ?>
+              </button>
+              <?php if (!empty($hipaa_intake['download_pdf_link'])): ?>
+                <a href="<?php echo esc_url($hipaa_intake['download_pdf_link']); ?>" target="_blank" rel="noopener noreferrer"
+                  class="btn btn-outline-primary rounded-3 fw-semibold py-2 px-3" title="Download Official Completed PDF">
+                  <i class="fas fa-file-pdf"></i>
+                </a>
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -631,8 +655,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
         <div class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
-          <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorHealthGoalsModalLabel">Health Goals &amp; Vitals
-          </h5>
+          <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorHealthGoalsModalLabel">Health Goals &amp; Vitals</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="dior-form-add-health-goal">
@@ -680,21 +703,15 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
                     </thead>
                     <tbody id="dior-modal-goals-list">
                       <?php if (empty($display_goals)): ?>
-                        <tr>
-                          <td colspan="4" class="text-center py-3 text-muted small">No goals recorded yet.</td>
-                        </tr>
+                        <tr><td colspan="4" class="text-center py-3 text-muted small">No goals recorded yet.</td></tr>
                       <?php else: ?>
                         <?php foreach ($display_goals as $g_i => $g_item): ?>
                           <tr>
-                            <td class="ps-3 py-2 fw-semibold text-dark small"><?php echo esc_html($g_item['name'] ?? ''); ?>
-                            </td>
+                            <td class="ps-3 py-2 fw-semibold text-dark small"><?php echo esc_html($g_item['name'] ?? ''); ?></td>
                             <td class="py-2 text-secondary small"><?php echo esc_html($g_item['val'] ?? ''); ?></td>
-                            <td class="py-2 text-center text-secondary small"><?php echo (int) ($g_item['pct'] ?? 0); ?>%
-                            </td>
+                            <td class="py-2 text-center text-secondary small"><?php echo (int)($g_item['pct'] ?? 0); ?>%</td>
                             <td class="pe-3 py-2 text-end">
-                              <button type="button"
-                                class="btn btn-sm btn-link text-danger p-0 border-0 text-decoration-none dior-modal-del-goal-btn fw-semibold small"
-                                data-goal-index="<?php echo esc_attr($g_i); ?>">Delete</button>
+                              <button type="button" class="btn btn-sm btn-link text-danger p-0 border-0 text-decoration-none dior-modal-del-goal-btn fw-semibold small" data-goal-index="<?php echo esc_attr($g_i); ?>">Delete</button>
                             </td>
                           </tr>
                         <?php endforeach; ?>
@@ -713,22 +730,15 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
                   <h6 class="fw-bold text-dark mb-0 small text-uppercase">Add New Goal</h6>
                   <div class="d-flex align-items-center gap-1 flex-wrap">
-                    <button type="button"
-                      class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11"
-                      data-name="Target Weight" data-val="65 kg" data-pct="70">Target Weight</button>
-                    <button type="button"
-                      class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11"
-                      data-name="Daily Steps" data-val="10,000 steps" data-pct="65">Daily Steps</button>
-                    <button type="button"
-                      class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11"
-                      data-name="Water Intake" data-val="3.0 L" data-pct="80">Water Intake</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11" data-name="Target Weight" data-val="65 kg" data-pct="70">Target Weight</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11" data-name="Daily Steps" data-val="10,000 steps" data-pct="65">Daily Steps</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dior-quick-goal dior-fs-11" data-name="Water Intake" data-val="3.0 L" data-pct="80">Water Intake</button>
                   </div>
                 </div>
               </div>
 
               <div class="col-12">
-                <label for="goal_name" class="form-label small text-secondary fw-semibold mb-1">Goal Name /
-                  Category</label>
+                <label for="goal_name" class="form-label small text-secondary fw-semibold mb-1">Goal Name / Category</label>
                 <input type="text" class="form-control rounded-3 py-2" id="goal_name" name="goal_name"
                   list="dior-goal-suggestions" placeholder="e.g. Daily Water Intake, Target Weight">
                 <datalist id="dior-goal-suggestions">
@@ -741,8 +751,7 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
               </div>
 
               <div class="col-12 col-sm-6">
-                <label for="goal_val" class="form-label small text-secondary fw-semibold mb-1">Target / Current
-                  Value</label>
+                <label for="goal_val" class="form-label small text-secondary fw-semibold mb-1">Target / Current Value</label>
                 <input type="text" class="form-control rounded-3 py-2" id="goal_val" name="goal_val"
                   placeholder="e.g. 70 / 65 kg">
               </div>
@@ -768,27 +777,4 @@ $has_intake = !empty($hipaa_intake) && (!empty($hipaa_intake['is_submitted']) ||
     </div>
   </div>
 
-
-  <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/overview-mobile.php'; ?>
-
-  <!-- Prevent the legacy desktop Overview markup from appearing alongside the separate mobile layout. -->
-  <style id="dior-patient-overview-single-layout">
-    @media (max-width: 767.98px) {
-      #dior-patient-portal-app #tab-overview.custom-patient-overview> :not(.dior-patient-overview-mobile) {
-        display: none !important;
-        visibility: hidden !important;
-      }
-
-      #dior-patient-portal-app #tab-overview.custom-patient-overview>.dior-patient-overview-mobile {
-        display: block !important;
-        visibility: visible !important;
-      }
-    }
-
-    @media (min-width: 768px) {
-      #dior-patient-portal-app #tab-overview.custom-patient-overview>.dior-patient-overview-mobile {
-        display: none !important;
-      }
-    }
-  </style>
 </section>

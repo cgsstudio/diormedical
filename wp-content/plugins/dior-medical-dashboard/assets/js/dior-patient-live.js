@@ -17,17 +17,14 @@
         emergency: 'Emergency Support',
         feedback: 'Feedback & Support',
         notifications: 'Notification Inbox',
+        consultation: 'Consultation Room',
         settings: 'Settings'
     };
 
     function switchTab(tabId, updateHash) {
-        if (typeof window.diorSafeSwitchPatientTab === 'function') {
-            return window.diorSafeSwitchPatientTab(tabId, updateHash);
-        }
         var app = document.getElementById('dior-patient-portal-app');
         if (!app || !tabId) return false;
         var panel = document.getElementById('tab-' + tabId);
-        if (!panel && app) panel = document.getElementById(tabId);
         if (!panel || !app.contains(panel)) return false;
 
         app.querySelectorAll('.dior-nav-btn[data-tab]').forEach(function (button) {
@@ -37,17 +34,9 @@
         app.querySelectorAll('.dior-tab-panel').forEach(function (item) {
             var active = item === panel;
             item.classList.toggle('active', active);
-            if (active) {
-                item.removeAttribute('hidden');
-                item.style.setProperty('display', 'block', 'important');
-                item.style.setProperty('visibility', 'visible', 'important');
-                item.style.setProperty('opacity', '1', 'important');
-            } else {
-                item.setAttribute('hidden', 'hidden');
-                item.style.setProperty('display', 'none', 'important');
-                item.style.setProperty('visibility', 'hidden', 'important');
-                item.style.setProperty('opacity', '0', 'important');
-            }
+            item.style.display = active ? 'block' : 'none';
+            item.style.visibility = active ? 'visible' : 'hidden';
+            item.style.opacity = active ? '1' : '0';
         });
 
         var title = document.getElementById('dior-current-page-title');
@@ -70,22 +59,10 @@
         return true;
     }
 
-    window._diorLastApptToggleTime = window._diorLastApptToggleTime || 0;
-
     function toggleApptDropdown(e) {
-        if (typeof window.diorToggleApptDropdown === 'function' && window.diorToggleApptDropdown !== toggleApptDropdown) {
-            return window.diorToggleApptDropdown(e);
+        if (e && typeof e.preventDefault === 'function') {
+            e.preventDefault();
         }
-        if (e) {
-            if (typeof e.preventDefault === 'function') e.preventDefault();
-            if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
-        }
-        var now = Date.now();
-        if (now - (window._diorLastApptToggleTime || 0) < 300) {
-            return;
-        }
-        window._diorLastApptToggleTime = now;
-
         var w = document.getElementById('dior-appt-dropdown-wrap');
         if (!w) return;
         var isOpen = w.classList.contains('open');
@@ -100,15 +77,15 @@
             switchTab('appointments', true);
             if (typeof window.diorSwitchApptSubTab === 'function') {
                 var activeSub = w.querySelector('.dior-nav-dropdown-item.active');
-                var sub = activeSub ? activeSub.getAttribute('data-appt-subtab') : 'today';
+                var sub = activeSub ? activeSub.getAttribute('data-appt-subtab') : 'calendar';
                 window.diorSwitchApptSubTab(sub);
             }
         }
     }
-    if (!window.diorToggleApptDropdown) window.diorToggleApptDropdown = toggleApptDropdown;
+    window.diorToggleApptDropdown = toggleApptDropdown;
 
-    if (!window.diorSwitchTab) window.diorSwitchTab = switchTab;
-    if (!window.diorSafeSwitchPatientTab) window.diorSafeSwitchPatientTab = switchTab;
+    window.diorSwitchTab = switchTab;
+    window.diorSafeSwitchPatientTab = switchTab;
 
     function bindNavigation() {
         var app = document.getElementById('dior-patient-portal-app');
@@ -245,92 +222,9 @@
         });
     }
 
-    function bootConsultationAlerts() {
-        var cfg = window.dior_patient_dashboard || {};
-        var ajaxUrl = cfg.ajax_url || '';
-        if (!ajaxUrl || window.__diorConsultationAlertPolling) return;
-        window.__diorConsultationAlertPolling = true;
-
-        var lastId = '';
-        var firstItem = document.querySelector('#dior-notif-dropdown .dior-notif-item[data-notif-id]');
-        if (firstItem) lastId = firstItem.getAttribute('data-notif-id') || '';
-
-        function poll() {
-            var data = new FormData();
-            data.append('action', 'dior_patient_get_live_notifications');
-            data.append('last_notif_id', lastId);
-
-            fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
-                .then(function (response) {
-                    if (!response.ok) throw new Error('Notification refresh failed');
-                    return response.json();
-                })
-                .then(function (result) {
-                    if (!result || !result.success || !result.data) return;
-                    var payload = result.data;
-                    if (payload.dropdown_html) {
-                        var dropdown = document.querySelector('#dior-notif-dropdown .dior-notif-list');
-                        if (dropdown) dropdown.innerHTML = payload.dropdown_html;
-                    }
-                    var badge = document.querySelector('#dior-notif-dropdown-wrap .unread-badge-count, #dior-notif-dropdown-wrap [data-notification-count]');
-                    if (typeof payload.unread_count !== 'undefined') {
-                        var badgeHost = document.querySelector('#dior-notif-dropdown-wrap .dior-notif-btn');
-                        if (!badge && badgeHost && Number(payload.unread_count) > 0) {
-                            badge = document.createElement('span');
-                            badge.className = 'dior-notif-indicator unread-badge-count';
-                            badgeHost.appendChild(badge);
-                        }
-                        if (badge) {
-                            badge.textContent = payload.unread_count;
-                            badge.style.display = Number(payload.unread_count) > 0 ? '' : 'none';
-                        }
-                    }
-                    var notifTbody = document.querySelector('#tab-notifications #dior-notif-tbody');
-                    if (notifTbody && payload.full_html) notifTbody.innerHTML = payload.full_html;
-                    if (payload.latest_id) lastId = payload.latest_id;
-
-                    (payload.new_alerts || []).forEach(function (alert) {
-                        var url = alert.action_url || '';
-                        var isMeetingReady = /consultation is ready to join|video consultation/i.test((alert.title || '') + ' ' + (alert.message || ''));
-                        if (isMeetingReady && /^https:\/\//i.test(url) && window.Swal && typeof window.Swal.fire === 'function') {
-                            window.Swal.fire({
-                                icon: 'info',
-                                title: alert.title || 'Consultation is ready',
-                                text: alert.message || 'Your doctor has started the consultation.',
-                                showCancelButton: true,
-                                confirmButtonText: 'Join Consultation',
-                                cancelButtonText: 'Later',
-                                confirmButtonColor: '#0d6efd'
-                            }).then(function (choice) {
-                                if (choice.isConfirmed) window.open(url, '_blank', 'noopener,noreferrer');
-                            });
-                        } else if (window.Swal && typeof window.Swal.fire === 'function') {
-                            window.Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'info',
-                                title: alert.title || 'New notification',
-                                text: alert.message || '',
-                                timer: 5000,
-                                showConfirmButton: false
-                            });
-                        }
-                    });
-                })
-                .catch(function () {
-                    // Keep polling silently; transient network failures should not break the dashboard.
-                });
-        }
-
-        // Fetch immediately to establish the current latest notification, then poll for updates.
-        poll();
-        window.setInterval(poll, 15000);
-    }
-
     function boot() {
         bindNavigation();
         bindProfileSave();
-        bootConsultationAlerts();
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });

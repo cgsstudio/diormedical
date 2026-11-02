@@ -94,104 +94,29 @@ if ($_va_is_admin) {
     ), ARRAY_A);
 }
 
-// Fallback: build from usermeta if table is empty, and migrate entries into DB so appt_uid is always set.
+// Fallback: build from usermeta if table is empty
 if (empty($appointments)) {
     $patients = get_users(['role__in' => ['patient', 'subscriber', 'customer'], 'number' => 50]);
     $appointments = [];
-    $_va_appt_table = $wpdb->prefix . 'dior_appointments';
     foreach ($patients as $u) {
         $raw = get_user_meta($u->ID, 'dior_appointments', true);
         $list = is_array($raw) ? $raw : (is_string($raw) ? maybe_unserialize($raw) : []);
         if (!is_array($list)) continue;
         foreach ($list as $a) {
-            // Build a stable UID from usermeta entry: migrate into DB if not yet there.
-            $_meta_uid = !empty($a['id']) ? (string)$a['id'] : (!empty($a['appt_uid']) ? $a['appt_uid'] : '');
-            $_db_uid   = '';
-            if (!empty($_meta_uid)) {
-                $_db_uid = $wpdb->get_var($wpdb->prepare(
-                    "SELECT appt_uid FROM {$_va_appt_table} WHERE appt_uid = %s AND is_deleted = 0 LIMIT 1",
-                    $_meta_uid
-                ));
-            }
-            if (empty($_db_uid)) {
-                // Insert into DB so actions (confirm/cancel) can find the row by appt_uid.
-                $_new_uid  = 'APT-' . strtoupper(wp_generate_password(8, false, false));
-                $_date_val = !empty($a['date']) ? $a['date'] : (!empty($a['appt_date']) ? $a['appt_date'] : current_time('Y-m-d'));
-                $_time_val = !empty($a['time']) ? $a['time'] : (!empty($a['appt_time']) ? $a['appt_time'] : '10:00 AM');
-                $_status_val = !empty($a['status']) ? $a['status'] : 'Pending';
-                $wpdb->insert($_va_appt_table, [
-                    'appt_uid'       => $_new_uid,
-                    'patient_id'     => $u->ID,
-                    'doctor_id'      => get_current_user_id(),
-                    'condition_name' => !empty($a['condition']) ? $a['condition'] : 'General Consultation',
-                    'visit_type'     => !empty($a['type']) ? $a['type'] : 'Video Visit (HD)',
-                    'status'         => in_array($_status_val, ['Pending','Confirmed','In Progress','Completed','Cancelled','No Show'], true) ? $_status_val : 'Pending',
-                    'appt_date'      => $_date_val,
-                    'appt_time'      => $_time_val,
-                    'join_url'       => !empty($a['join_url']) ? $a['join_url'] : '',
-                    'payment_status' => !empty($a['payment_status']) ? $a['payment_status'] : 'Paid',
-                    'notes'          => !empty($a['notes']) ? $a['notes'] : '',
-                    'is_deleted'     => 0,
-                    'created_at'     => current_time('mysql'),
-                    'updated_at'     => current_time('mysql'),
-                ]);
-                $_db_uid = $_new_uid;
-            }
-            $a['appt_uid'] = $_db_uid;
             $appointments[] = array_merge($a, [
-                'appt_uid'       => $_db_uid,
-                'first_name'     => $u->first_name ?: $u->display_name,
-                'last_name'      => $u->last_name,
-                'phone'          => get_user_meta($u->ID, 'phone', true),
-                'gender'         => get_user_meta($u->ID, 'gender', true),
-                'avatar_url'     => get_user_meta($u->ID, 'dior_profile_image', true),
-                'patient_uid'    => get_user_meta($u->ID, 'patient_id', true) ?: 'DM-' . (10000 + $u->ID),
-                'patient_user_id'=> $u->ID,
-                'patient_id'     => $u->ID,
-                'doctor_id'      => get_current_user_id(),
-                'doctor_name'    => 'Dr. Evelyn Vance, MD',
-                'doctor_email'   => 'doctor@gmail.com',
+                'first_name' => $u->first_name ?: $u->display_name,
+                'last_name' => $u->last_name,
+                'phone' => get_user_meta($u->ID, 'phone', true),
+                'gender' => get_user_meta($u->ID, 'gender', true),
+                'avatar_url' => get_user_meta($u->ID, 'dior_profile_image', true),
+                'patient_uid' => get_user_meta($u->ID, 'patient_id', true) ?: 'DM-' . (10000 + $u->ID),
+                'patient_user_id' => $u->ID,
+                'patient_id' => $u->ID,
+                'doctor_id' => 35,
+                'doctor_name' => 'Dr. Marcus Sterling',
+                'doctor_email' => 'marcus.sterling@diormedical.com'
             ]);
         }
-    }
-}
-
-// Repair legacy appointment rows that have a database ID but no public appointment UID.
-// Action handlers consistently identify appointments by appt_uid, so backfill a stable UID
-// once and use it for all buttons instead of sending an empty ID.
-if (!empty($appointments) && is_array($appointments)) {
-    foreach ($appointments as $index => $appointment_row) {
-        if (!empty($appointment_row['appt_uid'])) {
-            continue;
-        }
-        $legacy_id = isset($appointment_row['id']) ? absint($appointment_row['id']) : 0;
-        if (!$legacy_id) {
-            continue;
-        }
-
-        $generated_uid = 'APT-' . strtoupper(wp_generate_password(8, false, false));
-        $updated_uid = $wpdb->query($wpdb->prepare(
-            "UPDATE {$wpdb->prefix}dior_appointments
-             SET appt_uid = %s, updated_at = %s
-             WHERE id = %d AND (appt_uid IS NULL OR appt_uid = '')",
-            $generated_uid,
-            current_time('mysql'),
-            $legacy_id
-        ));
-
-        // Re-read the saved value if another request updated the same row concurrently.
-        if ($updated_uid === false || $updated_uid === 0) {
-            $saved_uid = $wpdb->get_var($wpdb->prepare(
-                "SELECT appt_uid FROM {$wpdb->prefix}dior_appointments WHERE id = %d",
-                $legacy_id
-            ));
-            if (!empty($saved_uid)) {
-                $generated_uid = $saved_uid;
-            } else {
-                continue;
-            }
-        }
-        $appointments[$index]['appt_uid'] = $generated_uid;
     }
 }
 
@@ -458,14 +383,6 @@ $status_badges = [
 
                             // Doctor data resolution
                             $doc_id = (int)($a['doctor_id'] ?? 0);
-                            // Prefer the appointment's own Zoom invite. If it is still the generic
-                            // Zoom landing page, fall back to the assigned doctor's saved Zoom link.
-                            if (rtrim($join_url, '/') === 'https://zoom.us/join') {
-                                $doctor_saved_zoom = trim((string) get_user_meta($doc_id, 'doctor_zoom_link', true));
-                                if (!empty($doctor_saved_zoom) && wp_http_validate_url($doctor_saved_zoom)) {
-                                    $join_url = esc_url($doctor_saved_zoom);
-                                }
-                            }
                             $doc_info = $doctor_list[$doc_id] ?? null;
                             $doc_name = $doc_info['name'] ?? (!empty($a['doctor_name']) ? $a['doctor_name'] : 'Dr. Marcus Sterling');
                             if (stripos($doc_name, 'Dr.') !== 0 && stripos($doc_name, 'Dr ') !== 0) {
@@ -561,32 +478,13 @@ $status_badges = [
                                         </button>
                                         <?php if (strtolower($status) === 'pending'): ?>
                                             <button type="button" class="btn btn-success btn-sm rounded-pill text-white va-confirm-appt-btn shadow-none"
-                                                data-uid="<?php echo $uid; ?>"
+                                                data-uid="<?php echo $uid; ?>" 
                                                 data-name="<?php echo esc_attr($fname); ?>"
                                                 title="Confirm Appointment"
                                                 style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
                                                 <i class="fas fa-check me-1"></i>Confirm
                                             </button>
                                         <?php endif; ?>
-
-                                        <?php if ($is_video && in_array(strtolower($status), ['confirmed', 'success', 'scheduled', 'in progress', 'in-queue'], true)): ?>
-                                            <button type="button" class="btn btn-primary btn-sm rounded-pill text-white va-start-appt-btn shadow-none"
-                                                data-uid="<?php echo esc_attr($uid); ?>"
-                                                data-name="<?php echo esc_attr($fname); ?>"
-                                                title="<?php echo strtolower($status) === 'in progress' ? 'Consultation is already in progress' : 'Start Consultation'; ?>"
-                                                <?php echo strtolower($status) === 'in progress' ? 'disabled' : ''; ?>
-                                                style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
-                                                <i class="fas fa-play me-1"></i><?php echo strtolower($status) === 'in progress' ? 'In Progress' : 'Start'; ?>
-                                            </button>
-                                            <a href="<?php echo esc_url($join_url); ?>" target="_blank" rel="noopener noreferrer"
-                                                class="btn btn-outline-success btn-sm rounded-pill va-join-zoom-btn shadow-none"
-                                                data-uid="<?php echo esc_attr($uid); ?>"
-                                                title="Open the saved Zoom/telehealth meeting link"
-                                                style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
-                                                <i class="fas fa-video me-1"></i>Join Zoom
-                                            </a>
-                                        <?php endif; ?>
-
                                         <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-resched-appt-btn shadow-none"
                                             data-uid="<?php echo $uid; ?>" 
                                             data-name="<?php echo esc_attr($fname); ?>" 
@@ -905,7 +803,6 @@ $status_badges = [
 
         var statusBadgeMap = {
             'success': 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold',
-            'confirmed': 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold',
             'in progress': 'badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2.5 py-1 small fw-semibold',
             'completed': 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold',
             'cancelled': 'badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small fw-semibold',
@@ -919,8 +816,10 @@ $status_badges = [
             setupSelectAll();
             setupRowCheckboxes();
             setupBulkActions();
-            setupAppointmentActionDelegation();
-
+            setupViewDetailsBtns();
+            setupConfirmBtns();
+            setupCancelBtns();
+            setupReschedBtns();
             setupRescheduleForm();
             setupEditBtns();
             setupDeleteBtns();
@@ -938,29 +837,15 @@ $status_badges = [
             try {
                 var params = new URLSearchParams(window.location.search);
                 var uid = params.get('appt_uid');
-                var hashStr = window.location.hash || '';
-                var hashParams = null;
-                if (hashStr) {
-                    var hashQuery = hashStr.indexOf('?') !== -1 ? hashStr.split('?')[1] : (hashStr.indexOf('&') !== -1 ? hashStr.substring(hashStr.indexOf('&') + 1) : '');
-                    if (hashQuery) hashParams = new URLSearchParams(hashQuery);
-                }
-                if (!uid && hashParams) {
+                if (!uid && window.location.hash) {
+                    var hashQuery = window.location.hash.split('?')[1] || window.location.hash.substring(1);
+                    var hashParams = new URLSearchParams(hashQuery);
                     uid = hashParams.get('appt_uid');
                 }
                 if (uid) {
                     setTimeout(function () {
                         openAppointmentDetailsModal(uid);
                     }, 200);
-                }
-                var dateParam = params.get('date') || (hashParams ? hashParams.get('date') : '');
-                if (dateParam === 'today' || hashStr.indexOf('today') !== -1) {
-                    setTimeout(function () {
-                        var dateF = document.getElementById('va-date-filter');
-                        if (dateF) {
-                            dateF.value = 'today';
-                            applyFilters();
-                        }
-                    }, 100);
                 }
             } catch (e) {}
         }
@@ -1562,27 +1447,27 @@ $status_badges = [
             if (!uid) return;
             var row = document.querySelector('tr[data-appt-uid="' + uid + '"]');
             var data = new FormData();
-            data.append('action', 'dior_doctor_update_appt_status');
+            data.append('action', 'dior_doc_appointment_update');
             data.append('nonce', nonce);
             data.append('appt_uid', uid);
-            data.append('status', 'Confirmed');
+            data.append('status', 'Success');
 
             fetch(ajaxUrl, { method: 'POST', body: data })
                 .then(function (r) { return r.json(); })
                 .then(function (res) {
                     if (res.success) {
                         if (row) {
-                            row.dataset.status = 'Confirmed';
+                            row.dataset.status = 'Success';
                             var badge = row.querySelector('.va-badge');
                             if (badge) {
-                                badge.className = 'va-badge ' + (statusBadgeMap['confirmed'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
-                                badge.textContent = 'Confirmed';
+                                badge.className = 'va-badge ' + (statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
+                                badge.textContent = 'Success';
                             }
                         }
                         var dtlBadge = document.getElementById('dtl-status-badge');
                         if (dtlBadge) {
-                            dtlBadge.className = statusBadgeMap['confirmed'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
-                            dtlBadge.textContent = 'Confirmed';
+                            dtlBadge.className = statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
+                            dtlBadge.textContent = 'Success';
                         }
                         var dtlConfirmBtn = document.getElementById('dtl-action-confirm-btn');
                         if (dtlConfirmBtn) {
@@ -1595,7 +1480,7 @@ $status_badges = [
                         Swal.fire({
                             icon: 'success',
                             title: 'Confirmed',
-                            text: 'Appointment for ' + (patientName || 'patient') + ' is now confirmed.',
+                            text: 'Appointment for ' + (patientName || 'patient') + ' is now Confirmed.',
                             toast: true,
                             position: 'top-end',
                             timer: 2500,
@@ -1746,7 +1631,7 @@ $status_badges = [
                 data.append('appt_uid', uid);
                 data.append('date', date);
                 data.append('time', formattedTime);
-                data.append('status', 'Confirmed');
+                data.append('status', 'Success');
                 if (reason) {
                     data.append('notes', reason);
                 }
@@ -1805,7 +1690,7 @@ $status_badges = [
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Rescheduled',
-                                text: 'Appointment rescheduled to ' + date + ' at ' + formattedTime + '.',
+                                text: 'Appointment rescheduled to ' + date + ' at ' + formattedTime + ' and set to Confirmed.',
                                 toast: true,
                                 position: 'top-end',
                                 timer: 3000,
@@ -1823,136 +1708,6 @@ $status_badges = [
                         btn.innerHTML = '<i class="fas fa-check me-1"></i>Confirm Reschedule';
                     });
             });
-        }
-
-        function startAppointment(uid, patientName, button) {
-            if (!uid) {
-                Swal.fire({ icon: 'error', title: 'Missing appointment ID', text: 'Refresh the page and try again.' });
-                return;
-            }
-
-            Swal.fire({
-                title: 'Start consultation?',
-                text: 'A Zoom meeting will be created if one is not already saved, and the appointment will be marked In Progress.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Start & Join Zoom',
-                cancelButtonText: 'Not yet',
-                confirmButtonColor: '#0d6efd'
-            }).then(function (choice) {
-                if (!choice.isConfirmed) return;
-
-                // Open a blank tab during the click gesture so the browser does not block
-                // the meeting tab after the asynchronous AJAX response.
-                var meetingWindow = window.open('about:blank', '_blank');
-                if (meetingWindow) {
-                    meetingWindow.document.title = 'Connecting to consultation…';
-                    meetingWindow.document.body.innerHTML = '<p style="font-family:Arial,sans-serif;padding:24px">Connecting to your secure consultation…</p>';
-                }
-
-                var data = new FormData();
-                data.append('action', 'dior_doctor_start_consultation');
-                data.append('nonce', nonce);
-                data.append('appt_uid', uid);
-
-                if (button) {
-                    button.disabled = true;
-                    button.dataset.originalText = button.innerHTML;
-                    button.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Starting...';
-                }
-
-                fetch(ajaxUrl, { method: 'POST', body: data, credentials: 'same-origin' })
-                    .then(function (response) {
-                        return response.json().catch(function () {
-                            throw new Error('The server returned an invalid response. Check the WordPress PHP error log.');
-                        }).then(function (res) {
-                            if (!response.ok || !res.success) {
-                                throw new Error(res.data && res.data.message ? res.data.message : 'Could not create or start the Zoom consultation.');
-                            }
-                            return res;
-                        });
-                    })
-                    .then(function (res) {
-                        var payload = res.data || {};
-                        var joinUrl = payload.join_url || '';
-                        if (!joinUrl || !/^https:\/\//i.test(joinUrl)) {
-                            throw new Error('The server did not return a valid Zoom meeting URL.');
-                        }
-
-                        var row = document.querySelector('#va-appointments-tbody tr[data-appt-uid="' + uid.replace(/"/g, '\\"') + '"]');
-                        if (row) {
-                            row.dataset.status = 'In Progress';
-                            var badge = row.querySelector('.va-badge');
-                            if (badge) {
-                                badge.textContent = 'In Progress';
-                                badge.className = 'va-badge ' + (statusBadgeMap['in progress'] || 'badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2.5 py-1 small fw-semibold');
-                            }
-                        }
-
-                        if (meetingWindow && !meetingWindow.closed) {
-                            meetingWindow.location.href = joinUrl;
-                        } else {
-                            window.location.href = joinUrl;
-                        }
-
-                        updateKpiCounters();
-                        renderPage(currentPage);
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Consultation started',
-                            text: 'Opening the Zoom meeting for ' + (patientName || 'the patient') + '.',
-                            toast: true,
-                            position: 'top-end',
-                            timer: 2500,
-                            showConfirmButton: false
-                        });
-                    })
-                    .catch(function (error) {
-                        if (meetingWindow && !meetingWindow.closed) meetingWindow.close();
-                        Swal.fire({ icon: 'error', title: 'Could not start Zoom meeting', text: error.message || 'Please try again.' });
-                        if (button) {
-                            button.disabled = false;
-                            button.innerHTML = button.dataset.originalText || '<i class="fas fa-play me-1"></i>Start';
-                        }
-                    });
-            });
-        }
-
-        // Use one delegated handler for row actions. Rows are re-rendered by search,
-        // filters and pagination, so document-level delegation keeps actions reliable.
-        function setupAppointmentActionDelegation() {
-            if (document.documentElement.dataset.diorAppointmentActionsBound === '1') return;
-            document.documentElement.dataset.diorAppointmentActionsBound = '1';
-
-            document.addEventListener('click', function (e) {
-                var btn = e.target.closest('#va-appointments-tbody .va-view-details-btn, #va-appointments-tbody .va-confirm-appt-btn, #va-appointments-tbody .va-cancel-appt-btn, #va-appointments-tbody .va-resched-appt-btn, #va-appointments-tbody .va-start-appt-btn');
-                if (!btn) return;
-                e.preventDefault();
-                e.stopPropagation();
-
-                if (btn.classList.contains('va-view-details-btn')) {
-                    var viewUid = btn.dataset.uid || (btn.closest('tr') && btn.closest('tr').dataset.apptUid);
-                    if (viewUid) openAppointmentDetailsModal(viewUid);
-                    return;
-                }
-
-                var uid = btn.dataset.uid || '';
-                var name = btn.dataset.name || 'Patient';
-                if (!uid) {
-                    if (window.Swal) Swal.fire({icon:'error', title:'Missing appointment ID', text:'Please refresh the page and try again.'});
-                    return;
-                }
-
-                if (btn.classList.contains('va-start-appt-btn')) {
-                    startAppointment(uid, name, btn);
-                } else if (btn.classList.contains('va-confirm-appt-btn')) {
-                    confirmAppointment(uid, name);
-                } else if (btn.classList.contains('va-cancel-appt-btn')) {
-                    cancelAppointment(uid, name);
-                } else if (btn.classList.contains('va-resched-appt-btn')) {
-                    openRescheduleModal(uid, name, btn.dataset.date || '', btn.dataset.time || '');
-                }
-            }, true);
         }
 
         function setupConfirmBtns() {

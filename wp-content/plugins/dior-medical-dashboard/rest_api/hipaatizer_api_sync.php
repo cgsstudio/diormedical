@@ -491,13 +491,7 @@ final class Dior_HIPAAtizer_API_Sync {
                     if (empty($fields['workflowId'])) {
                         $fields['workflowId'] = $settings['workflow_id'];
                     }
-                    // Preserve HIPAAtizer envelope metadata for accurate IDs and submission timestamps.
-                    $detail_payload = [
-                        'id' => $id,
-                        'workflowId' => (string) ($detail['workflowId'] ?? $settings['workflow_id']),
-                        'createdAt' => (string) ($detail['createdAt'] ?? ($item['createdAt'] ?? '')),
-                        'data' => $fields,
-                    ];
+                    $detail_payload = ['data' => $fields];
 
                     // Keep the existing legacy intake import path for current dashboard features.
                     if (function_exists('dior_fallback_save_hipaa_intake')) {
@@ -513,24 +507,23 @@ final class Dior_HIPAAtizer_API_Sync {
                     // user_meta `dior_medical_questionnaire`, not only `dior_hipaa_intake`.
                     // Import through the central questionnaire service as well so both views
                     // use the same mapped, structured record.
-                    $questionnaire_result = ['success' => false];
                     if (class_exists('Dior_Questionnaire_Service') && method_exists('Dior_Questionnaire_Service', 'process_hipaatizer_questionnaire')) {
-                        $questionnaire_result = Dior_Questionnaire_Service::process_hipaatizer_questionnaire($detail_payload);
+                        Dior_Questionnaire_Service::process_hipaatizer_questionnaire($detail_payload);
                     }
 
-                    // Confirm the exact submission was persisted before marking it synced.
-                    // Matching email alone is insufficient: it can incorrectly accept stale data.
+                    // Confirm the data required by the profile was persisted before marking
+                    // the submission as synced. This also permits a retry if mapping fails.
                     $saved_questionnaire = get_user_meta((int) $user->ID, 'dior_medical_questionnaire', true);
+                    $saved_q_email = is_array($saved_questionnaire) ? sanitize_email((string) ($saved_questionnaire['email'] ?? '')) : '';
                     $saved_q_id = is_array($saved_questionnaire) ? sanitize_text_field((string) ($saved_questionnaire['submission_id'] ?? '')) : '';
-                    $questionnaire_saved = !empty($questionnaire_result['success'])
-                        && is_array($saved_questionnaire)
-                        && $saved_q_id === $id;
+                    $questionnaire_saved = is_array($saved_questionnaire)
+                        && ($saved_q_id === $id || ($saved_q_email !== '' && strtolower($saved_q_email) === strtolower($email)));
 
                     $saved_intake = get_user_meta((int) $user->ID, 'dior_hipaa_intake', true);
                     $saved_email = is_array($saved_intake) ? sanitize_email((string) ($saved_intake['email'] ?? '')) : '';
                     $intake_saved = is_array($saved_intake) && $saved_email !== '' && strtolower($saved_email) === strtolower($email);
 
-                    if ($questionnaire_saved && $intake_saved) {
+                    if ($questionnaire_saved || $intake_saved) {
                         $new_seen[] = $id;
                         $seen_lookup[$id] = true;
                         $summary['imported']++;

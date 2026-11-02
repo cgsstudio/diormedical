@@ -67,56 +67,51 @@
                 </thead>
                 <tbody id="dior-bill-tbody">
                     <?php
-                    $payments = is_array($payments ?? null) ? $payments : Dior_Patient_Portal_Data::get_patient_payments(get_current_user_id());
-                    $payments = is_array($payments) ? $payments : [];
-                    if (empty($payments)):
-                    ?>
-                        <tr>
-                            <td colspan="8" class="text-center py-4 text-muted small">
-                                <i class="fas fa-receipt fs-4 text-secondary opacity-50 mb-2 d-block"></i>
-                                No billing records found.
-                            </td>
-                        </tr>
-                    <?php
-                    else:
-                        foreach ($payments as $p):
-                            $p_inv = $p['invoice_id'] ?? ($p['id'] ?? '—');
-                            $p_doc = $p['doctor_name'] ?? ($p['provider'] ?? 'Provider not recorded');
-                            $p_date = !empty($p['date']) ? $p['date'] : (!empty($p['created_at']) ? wp_date('M j, Y', strtotime($p['created_at'])) : '—');
-                            $p_amt = !empty($p['amount']) ? ((strpos($p['amount'], '$') === false ? '$' : '') . $p['amount']) : '—';
-                            $p_tax = !empty($p['tax']) ? ((strpos($p['tax'], '$') === false && strpos($p['tax'], '%') === false ? '$' : '') . $p['tax']) : '—';
-                            $p_disc = !empty($p['discount']) ? ((strpos($p['discount'], '$') === false && strpos($p['discount'], '%') === false ? '$' : '') . $p['discount']) : '—';
-                            $p_tot = !empty($p['total']) ? ((strpos($p['total'], '$') === false ? '$' : '') . $p['total']) : $p_amt;
+                    $billing_mock = [
+                        ['#A348', 'Dr.Jacob Ryan', 'Mar 4, 2016', '$40', '10%', '$5', '$39'],
+                        ['#A645', 'Dr.Rajesh', 'Apr 11, 2016', '$25', '10%', '$5', '$22'],
+                        ['#A873', 'Dr.Jay Soni', 'Apr 18, 2016', '$50', '10%', '$5', '$47'],
+                        ['#A927', 'Dr.John Deo', 'May 22, 2016', '$45', '10%', '$5', '$42'],
+                        ['#A228', 'Dr.Megha Trivedi', 'Jul 9, 2016', '$62', '10%', '$5', '$57'],
+                        ['#A345', 'Dr.Sarah Smith', 'Jul 14, 2016', '$60', '10%', '$5', '$56'],
+                        ['#A765', 'Dr.Jacob Ryan', 'Jun 22, 2016', '$40', '10%', '$5', '$39'],
+                        ['#A125', 'Dr.Rajesh', 'Jun 23, 2016', '$30', '10%', '$5', '$29']
+                        ,
+                        ['#A905', 'Dr.Sarah Smith', 'Aug 2, 2016', '$72', '8%', '$4', '$74']
+                        ,
+                        ['#A981', 'Dr.James Chen', 'Aug 16, 2016', '$95', '8%', '$0', '$103']
+                    ];
+                    foreach ($billing_mock as $bm):
                         ?>
-                        <tr onclick="diorOpenBillingModal('<?php echo esc_js($p_inv); ?>', '<?php echo esc_js($p_doc); ?>', '<?php echo esc_js($p_date); ?>', '<?php echo esc_js($p_amt); ?>', '<?php echo esc_js($p_tax); ?>', '<?php echo esc_js($p_disc); ?>', '<?php echo esc_js($p_tot); ?>')"
+                        <tr onclick="diorOpenBillingModal('<?php echo esc_js($bm[0]); ?>', '<?php echo esc_js($bm[1]); ?>', '<?php echo esc_js($bm[2]); ?>', '<?php echo esc_js($bm[3]); ?>', '<?php echo esc_js($bm[4]); ?>', '<?php echo esc_js($bm[5]); ?>', '<?php echo esc_js($bm[6]); ?>')"
                             class="dior-ic-8e7e606bc6">
-                            <td><span class="cell-text"><?php echo esc_html($p_inv); ?></span></td>
-                            <td><span class="cell-text"><?php echo esc_html($p_doc); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[0]); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[1]); ?></span></td>
                             <td>
                                 <div class="cell-content cell-icon-text">
                                     <i class="far fa-calendar cell-icon dior-ic-d53ea48df0"></i>
-                                    <span class="cell-text"><?php echo esc_html($p_date); ?></span>
+                                    <span class="cell-text"><?php echo esc_html($bm[2]); ?></span>
                                 </div>
                             </td>
-                            <td><span class="cell-text"><?php echo esc_html($p_amt); ?></span></td>
-                            <td><span class="cell-text"><?php echo esc_html($p_tax); ?></span></td>
-                            <td><span class="cell-text"><?php echo esc_html($p_disc); ?></span></td>
-                            <td><span class="cell-text"><?php echo esc_html($p_tot); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[3]); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[4]); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[5]); ?></span></td>
+                            <td><span class="cell-text"><?php echo esc_html($bm[6]); ?></span></td>
                             <td>
                                 <div class="cell-content action-cell" style="gap:8px;">
-                                    <button type="button" class="btn btn-sm btn-success" title="Download Bill" onclick="event.stopPropagation(); if(typeof diorDownloadInvoicePdf==='function') diorDownloadInvoicePdf('<?php echo esc_js($p_inv); ?>');">
+                                    <button type="button" class="btn btn-sm btn-success" title="Download Bill">
                                         <i class="fas fa-download"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-info" title="View Bill" onclick="event.stopPropagation(); if(typeof diorViewInvoicePdf==='function') diorViewInvoicePdf('<?php echo esc_js($p_inv); ?>');">
+                                    <button type="button" class="btn btn-sm btn-info" title="View Bill">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-secondary" title="Print Bill" onclick="event.stopPropagation(); if(typeof diorPrintInvoicePdf==='function') diorPrintInvoicePdf('<?php echo esc_js($p_inv); ?>');">
+                                    <button type="button" class="btn btn-sm btn-secondary" title="Print Bill">
                                         <i class="fas fa-print"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                    <?php endforeach; endif; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

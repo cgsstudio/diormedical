@@ -442,7 +442,8 @@
                                 style="display: inline-block; padding: 2px 8px; background: rgba(212, 175, 55, 0.2); color: #d4af37; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">DocBooker
                                 Live</span>
                             <span
-                                style="display: inline-block; padding: 2px 8px; background: rgba(16, 185, 129, 0.2); color: #10b981; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Choose a provider</span>
+                                style="display: inline-block; padding: 2px 8px; background: rgba(16, 185, 129, 0.2); color: #10b981; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Dr.
+                                Marcus Sterling, DO</span>
                         </div>
                         <h4 style="margin: 0 0 4px 0; color: #ffffff; font-size: 17px; font-weight: 700;">Schedule
                             Telehealth Consultation</h4>
@@ -593,9 +594,25 @@
                                 endforeach;
                             else:
                                 ?>
-                                <div class="dior-empty-state text-center py-4" role="status">
-                                    <i class="fas fa-user-doctor mb-2" aria-hidden="true"></i>
-                                    <p class="mb-0">No telehealth providers are currently available. Please contact the care team for assistance.</p>
+                                <div class="dior-doc-select-card dior-ic-5c149fb4c3" data-doc-id="1695"
+                                    data-doc-name="Dr. James Chen, DO" data-doc-spec="Primary Care &amp; Urgent Care"
+                                    onclick="diorInSelectDoctor(1695, 'Dr. James Chen, DO', 'Primary Care &amp; Urgent Care')">
+                                    <div class="dior-ic-b4deef6f98">
+                                        <div class="dior-ic-7bd92c469d">
+                                            <i class="fas fa-user-md"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="dior-ic-b8390d3bcb">
+                                                Dr. James Chen, DO</h5>
+                                            <span class="dior-ic-56fdd6b556">Primary
+                                                Care &amp; Urgent Care</span>
+                                        </div>
+                                    </div>
+                                    <div class="dior-ic-181e1087c6">
+                                        <span><i class="far fa-clock"></i> Next Available:
+                                            Today</span>
+                                        <span class="dior-ic-a669b3acb9">Select &rarr;</span>
+                                    </div>
                                 </div>
                             <?php endif; ?>
                         </div>

@@ -229,7 +229,7 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : ('https://
                                     <td class="text-secondary"><?php echo esc_html($date ? wp_date('M j, Y', strtotime($date)) : '—'); ?></td>
                                     <td class="text-secondary"><?php echo esc_html($condition); ?></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-primary rounded-3 fw-semibold py-1 px-2 me-1" type="button" onclick="if(typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-e-prescriptions'); }">Prescription</button>
+                                        <button class="btn btn-sm btn-outline-primary rounded-3 fw-semibold py-1 px-2 me-1" type="button" onclick="if(typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-prescriptions'); }">Prescription</button>
                                         <button class="btn btn-sm btn-primary rounded-3 fw-semibold py-1 px-2" type="button" onclick="if(typeof diorOpenFullAppointmentEdit === 'function') { diorOpenFullAppointmentEdit('<?php echo esc_js($appointment_id); ?>'); } else if(typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-appointments-edit'); }">Details</button>
                                     </td>
                                 </tr>

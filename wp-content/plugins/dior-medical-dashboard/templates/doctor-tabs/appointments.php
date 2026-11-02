@@ -1,7 +1,7 @@
 <?php
 /**
  * Dior Medical — Doctor Appointment Calendar (Doctor Dashboard Design Matching)
- * 100% Native Bootstrap 5 + Dynamic Realtime Appointment Engine
+ * 100% Native Bootstrap 5 + FullCalendar Standard
  */
 if (!defined('ABSPATH')) { exit; }
 
@@ -11,50 +11,20 @@ global $wpdb;
 $_cal_user_id  = get_current_user_id();
 $_cal_is_admin = current_user_can('administrator') || current_user_can('manage_options');
 
-// Resolve doctor post ID if current user is a doctor
-$_cal_doctor_post_id = 0;
-if (!$_cal_is_admin) {
-    // Check if user has an associated wpddb_doctor post
-    $doc_post = get_posts([
-        'post_type'   => 'wpddb_doctor',
-        'meta_key'    => 'wpddb_doctor_user_id',
-        'meta_value'  => $_cal_user_id,
-        'numberposts' => 1,
-        'fields'      => 'ids'
-    ]);
-    if (!empty($doc_post)) {
-        $_cal_doctor_post_id = (int)$doc_post[0];
-    }
-}
-
-// Fetch appointments from DB
-if ($_cal_is_admin || !$_cal_doctor_post_id) {
-    $raw_appts = $wpdb->get_results(
-        "SELECT a.*, 
-            COALESCE(p.display_name, 'Patient') AS patient_name,
-            COALESCE(p.user_email, '') AS patient_email,
-            COALESCE(d.post_title, u.display_name, 'Dr. Attending Physician') AS doc_name
-        FROM {$wpdb->prefix}dior_appointments a
-        LEFT JOIN {$wpdb->users} p ON p.ID = a.patient_id
-        LEFT JOIN {$wpdb->posts} d ON d.ID = a.doctor_id AND d.post_type = 'wpddb_doctor'
-        LEFT JOIN {$wpdb->users} u ON u.ID = a.doctor_id
-        WHERE a.is_deleted = 0
-        ORDER BY a.appt_date ASC, a.appt_time ASC",
-        ARRAY_A
-    );
+// Fetch appointments: admins see all, doctors see only their own
+if ($_cal_is_admin) {
+    $raw_appts = $wpdb->get_results("SELECT a.*, u.display_name AS doc_name, u.user_email AS doc_email 
+        FROM {$wpdb->prefix}dior_appointments a 
+        LEFT JOIN {$wpdb->users} u ON u.ID = a.doctor_id 
+        WHERE a.is_deleted = 0 
+        ORDER BY a.appt_date ASC", ARRAY_A);
 } else {
     $raw_appts = $wpdb->get_results($wpdb->prepare(
-        "SELECT a.*, 
-            COALESCE(p.display_name, 'Patient') AS patient_name,
-            COALESCE(p.user_email, '') AS patient_email,
-            COALESCE(d.post_title, u.display_name, 'Dr. Attending Physician') AS doc_name
-        FROM {$wpdb->prefix}dior_appointments a
-        LEFT JOIN {$wpdb->users} p ON p.ID = a.patient_id
-        LEFT JOIN {$wpdb->posts} d ON d.ID = a.doctor_id AND d.post_type = 'wpddb_doctor'
-        LEFT JOIN {$wpdb->users} u ON u.ID = a.doctor_id
-        WHERE a.is_deleted = 0 AND (a.doctor_id = %d OR a.doctor_id = %d)
-        ORDER BY a.appt_date ASC, a.appt_time ASC",
-        $_cal_doctor_post_id,
+        "SELECT a.*, u.display_name AS doc_name, u.user_email AS doc_email 
+        FROM {$wpdb->prefix}dior_appointments a 
+        LEFT JOIN {$wpdb->users} u ON u.ID = a.doctor_id 
+        WHERE a.is_deleted = 0 AND a.doctor_id = %d
+        ORDER BY a.appt_date ASC",
         $_cal_user_id
     ), ARRAY_A);
 }
@@ -63,81 +33,82 @@ if (empty($raw_appts)) {
     $raw_appts = [];
 }
 
-// Fetch active doctors for filter from wpddb_doctor posts
-$all_doc_posts = get_posts([
-    'post_type'   => 'wpddb_doctor',
-    'numberposts' => 50,
-    'post_status' => 'publish',
-    'orderby'     => 'title',
-    'order'       => 'ASC'
-]);
+// Fetch active doctors for filter
+$all_doctors = get_users(['role' => 'doctor', 'number' => 50, 'orderby' => 'ID', 'order' => 'ASC']);
 
-// If no wpddb_doctor posts, fallback to users with doctor role
-$all_doc_users = [];
-if (empty($all_doc_posts)) {
-    $all_doc_users = get_users(['role' => 'doctor', 'number' => 50, 'orderby' => 'display_name', 'order' => 'ASC']);
-}
-
-// Compute Dynamic KPIs
-$today_ymd = current_time('Y-m-d');
-$kpi_total = count($raw_appts);
-$kpi_upcoming = 0;
-$kpi_video = 0;
-$kpi_completed = 0;
-
-$calendar_cards = [];
-foreach ($raw_appts as $idx => $app) {
-    $status_raw = !empty($app['status']) ? $app['status'] : 'Confirmed';
-    $status_lc = strtolower($status_raw);
+// Format appointments into FullCalendar events
+$events_for_js = [];
+foreach ($raw_appts as $app) {
+    $status_raw = $app['status'] ?? 'Success';
+    $status = strtolower($status_raw);
     $pname = !empty($app['patient_name']) ? $app['patient_name'] : 'Patient';
-    $pemail = !empty($app['patient_email']) ? $app['patient_email'] : '';
-    $cond = !empty($app['condition_name']) ? $app['condition_name'] : 'Telehealth Consultation';
+    $cond = !empty($app['condition_name']) ? $app['condition_name'] : (!empty($app['department']) ? $app['department'] : 'Clinical Visit');
     $dname = !empty($app['doc_name']) ? $app['doc_name'] : 'Dr. Attending Physician';
     if (stripos($dname, 'Dr.') === false && stripos($dname, 'Dr ') === false) {
         $dname = 'Dr. ' . $dname;
     }
-    $vtype = !empty($app['visit_type']) ? $app['visit_type'] : 'Video Visit (HD)';
+    $vtype = !empty($app['visit_type']) ? $app['visit_type'] : (!empty($app['type']) ? $app['type'] : 'In-Clinic');
     $time_raw = !empty($app['appt_time']) ? $app['appt_time'] : '09:00 AM';
-    $date_raw = !empty($app['appt_date']) ? $app['appt_date'] : $today_ymd;
-    $join_url = !empty($app['join_url']) ? $app['join_url'] : '';
-    $notes = !empty($app['notes']) ? $app['notes'] : '';
+    $date_raw = !empty($app['appt_date']) ? $app['appt_date'] : current_time('Y-m-d');
+    $clean_time = trim(explode('-', $time_raw)[0]);
+    $time_ts = strtotime($clean_time);
+    $time_iso = $time_ts ? date('H:i:s', $time_ts) : '09:00:00';
+
+    // Color code matching Doctor Dashboard palette
+    $bg_color = '#2563EB'; // Blue (Success)
+    if (stripos($vtype, 'video') !== false || stripos($vtype, 'telehealth') !== false) {
+        $bg_color = '#0284C7'; // Cyan (Telehealth)
+    } elseif ($status === 'completed') {
+        $bg_color = '#10B981'; // Green (Completed)
+    } elseif ($status === 'pending') {
+        $bg_color = '#F59E0B'; // Amber (Pending)
+    } elseif ($status === 'cancelled') {
+        $bg_color = '#EF4444'; // Red (Cancelled)
+    }
+
+    // Category mapping for left calendar filter
+    $cat = 'Work';
     $doc_id = (int)($app['doctor_id'] ?? 0);
-    $uid = !empty($app['appt_uid']) ? $app['appt_uid'] : ('APT-' . ($app['id'] ?? (1000 + $idx)));
-
-    $is_video = (stripos($vtype, 'video') !== false || stripos($vtype, 'telehealth') !== false || !empty($join_url));
-    if ($is_video) {
-        $kpi_video++;
+    if ($doc_id === 36) {
+        $cat = 'Important';
+    } elseif ($doc_id === 37) {
+        $cat = 'Travel';
+    } elseif ($doc_id === 38) {
+        $cat = 'Personal';
+    } elseif (stripos($vtype, 'video') !== false) {
+        $cat = 'Work';
+    } else {
+        $cat = 'Friends';
     }
 
-    if (in_array($status_lc, ['confirmed', 'scheduled', 'in-queue', 'pending', 'in progress'])) {
-        $kpi_upcoming++;
-    } elseif (in_array($status_lc, ['completed', 'done', 'past'])) {
-        $kpi_completed++;
-    }
-
-    $calendar_cards[] = [
-        'id'           => $uid,
-        'patient_name' => $pname,
-        'patient_email'=> $pemail,
-        'doctor_id'    => $doc_id,
-        'doctor_name'  => $dname,
-        'condition'    => $cond,
-        'visit_type'   => $vtype,
-        'time'         => $time_raw,
-        'date'         => $date_raw,
-        'status'       => ucfirst($status_raw),
-        'join_url'     => $join_url,
-        'notes'        => $notes,
-        'is_video'     => $is_video
+    $events_for_js[] = [
+        'id'              => $app['appt_uid'] ?? ($app['id'] ?? uniqid('APT-')),
+        'title'           => $pname . ' - ' . $cond,
+        'start'           => $date_raw . 'T' . $time_iso,
+        'backgroundColor' => $bg_color,
+        'borderColor'     => 'transparent',
+        'textColor'       => '#ffffff',
+        'extendedProps'   => [
+            'doctor_id'    => $doc_id,
+            'doctor_name'  => $dname,
+            'patient_name' => $pname,
+            'condition'    => $cond,
+            'visit_type'   => $vtype,
+            'time'         => $time_raw,
+            'date'         => $date_raw,
+            'status'       => ucfirst($status_raw),
+            'category'     => $cat,
+            'join_url'     => $app['join_url'] ?? '',
+        ]
     ];
 }
 
-$calendar_json = json_encode($calendar_cards);
+$events_json = json_encode($events_for_js);
 ?>
 
 <section class="dior-tab-panel" id="tab-doc-appointments" style="display: none;">
 
-    <!-- Breadcrumb & Page Header (100% Bootstrap 5) -->
+    <!-- Breadcrumb & Page Header -->
     <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
             <h4 class="mb-1 text-dark fw-bold fs-4 d-flex align-items-center gap-2">
@@ -174,673 +145,305 @@ $calendar_json = json_encode($calendar_cards);
         </button>
     </div>
 
-    <!-- Quick Stat KPI Bar (100% Bootstrap 5 Standard Cards) -->
-    <div class="row g-3 mb-4">
-        <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
-                <div class="d-flex align-items-start justify-content-between">
-                    <div>
-                        <span class="text-secondary small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Total Bookings</span>
-                        <div class="stat-num fs-1 fw-bold text-dark mt-1" id="dior-doc-kpi-total"><?php echo esc_html($kpi_total); ?></div>
-                    </div>
-                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-3 p-2.5">
-                        <i class="fas fa-calendar-days fs-5"></i>
-                    </span>
-                </div>
-                <div class="mt-2 text-secondary small">
-                    <span class="text-primary fw-semibold"><i class="fas fa-chart-line me-1"></i>All records</span> across clinic
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
-                <div class="d-flex align-items-start justify-content-between">
-                    <div>
-                        <span class="text-secondary small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Upcoming Visits</span>
-                        <div class="stat-num fs-1 fw-bold text-primary mt-1" id="dior-doc-kpi-upcoming"><?php echo esc_html($kpi_upcoming); ?></div>
-                    </div>
-                    <span class="badge bg-info-subtle text-info border border-info-subtle rounded-3 p-2.5">
-                        <i class="fas fa-clock fs-5"></i>
-                    </span>
-                </div>
-                <div class="mt-2 text-secondary small">
-                    <span class="text-info fw-semibold"><i class="fas fa-calendar-check me-1"></i>Active</span> scheduled visits
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
-                <div class="d-flex align-items-start justify-content-between">
-                    <div>
-                        <span class="text-secondary small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Telehealth Video</span>
-                        <div class="stat-num fs-1 fw-bold text-success mt-1" id="dior-doc-kpi-video"><?php echo esc_html($kpi_video); ?></div>
-                    </div>
-                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-3 p-2.5">
-                        <i class="fas fa-video fs-5"></i>
-                    </span>
-                </div>
-                <div class="mt-2 text-secondary small">
-                    <span class="text-success fw-semibold"><i class="fas fa-satellite-dish me-1"></i>HD Room</span> consultations
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
-                <div class="d-flex align-items-start justify-content-between">
-                    <div>
-                        <span class="text-secondary small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Completed Visits</span>
-                        <div class="stat-num fs-1 fw-bold text-secondary mt-1" id="dior-doc-kpi-completed"><?php echo esc_html($kpi_completed); ?></div>
-                    </div>
-                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-3 p-2.5">
-                        <i class="fas fa-circle-check fs-5"></i>
-                    </span>
-                </div>
-                <div class="mt-2 text-secondary small">
-                    <span class="text-secondary fw-semibold"><i class="fas fa-clipboard-check me-1"></i>Finalized</span> medical notes
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Doctor Dashboard Calendar Structure -->
+    <div class="section-body">
+        <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white">
+            <div class="row g-4 align-items-start m-0">
 
-    <!-- Calendar Container Card (100% Bootstrap 5) -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white overflow-hidden">
-        
-        <!-- Toolbar Header -->
-        <div class="card-header bg-white border-bottom py-3 px-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <!-- Left Sidebar Controls (Doctor Dashboard Design) -->
+                <div class="col-12 col-lg-3 col-xl-2 p-0 pe-lg-3">
+                    
+                    <button type="button" class="btn btn-primary w-100 fw-semibold rounded-3 py-2 px-3 shadow-sm d-inline-flex align-items-center justify-content-center gap-2 mb-4"
+                        onclick="if (typeof diorOpenDocBookerModal === 'function') { diorOpenDocBookerModal(); } else if (typeof diorAdminSwitchTab === 'function') { diorAdminSwitchTab('doc-appointments-book'); } else if (typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-appointments-book'); }">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Event</span>
+                    </button>
+                    
+                    <h5 class="fs-6 fw-bold text-dark mb-3">My Calendars</h5>
+                    
+                    <div class="filter-container mb-4">
+                        <ul class="filterCheck list-unstyled d-flex flex-column gap-2 p-0 m-0">
+                            <li class="d-flex align-items-center gap-2 small text-secondary fw-semibold">
+                                <input type="checkbox" checked value="Work" id="cal-filter-work" onchange="diorFilterCalEvents()">
+                                <span>Work (Clinic Visits)</span>
+                            </li>
+                            <li class="d-flex align-items-center gap-2 small text-secondary fw-semibold">
+                                <input type="checkbox" checked value="Personal" id="cal-filter-personal" onchange="diorFilterCalEvents()">
+                                <span>Personal</span>
+                            </li>
+                            <li class="d-flex align-items-center gap-2 small text-secondary fw-semibold">
+                                <input type="checkbox" checked value="Important" id="cal-filter-important" onchange="diorFilterCalEvents()">
+                                <span>Important (Surgeries)</span>
+                            </li>
+                            <li class="d-flex align-items-center gap-2 small text-secondary fw-semibold">
+                                <input type="checkbox" checked value="Travel" id="cal-filter-travel" onchange="diorFilterCalEvents()">
+                                <span>Travel (Consults)</span>
+                            </li>
+                            <li class="d-flex align-items-center gap-2 small text-secondary fw-semibold">
+                                <input type="checkbox" checked value="Friends" id="cal-filter-friends" onchange="diorFilterCalEvents()">
+                                <span>Friends / Routine</span>
+                            </li>
+                        </ul>
+                    </div>
 
-                <!-- Navigation Controls (Prev, Month Title, Next, Today) -->
-                <div class="d-flex align-items-center gap-2">
-                    <button type="button"
-                        class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center"
-                        id="dior-doc-cal-prev" style="width: 36px; height: 36px;" title="Previous Month">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <h3 class="mb-0 fw-bold text-dark fs-5 px-2 text-center" id="dior-doc-cal-title"
-                        style="min-width: 170px;">
-                        October 2026
-                    </h3>
-                    <button type="button"
-                        class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center"
-                        id="dior-doc-cal-next" style="width: 36px; height: 36px;" title="Next Month">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    <button type="button"
-                        class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold ms-1"
-                        id="dior-doc-cal-today">
-                        Today
-                    </button>
-                </div>
-
-                <!-- Filters & View Toggles -->
-                <div class="d-flex flex-wrap align-items-center gap-2">
                     <!-- Filter by Doctor -->
-                    <div class="d-none d-sm-block">
-                        <select class="form-select form-select-sm rounded-pill border-secondary-subtle"
-                            id="dior-doc-cal-doctor-filter" style="min-width: 160px;">
-                            <option value="all">All Healthcare Providers</option>
-                            <?php if (!empty($all_doc_posts)): ?>
-                                <?php foreach ($all_doc_posts as $dp): ?>
-                                    <option value="<?php echo esc_attr($dp->ID); ?>"><?php echo esc_html($dp->post_title); ?></option>
-                                <?php endforeach; ?>
-                            <?php elseif (!empty($all_doc_users)): ?>
-                                <?php foreach ($all_doc_users as $du): ?>
-                                    <option value="<?php echo esc_attr($du->ID); ?>"><?php echo esc_html($du->display_name); ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
+                    <h5 class="fs-6 fw-bold text-dark mb-2">Filter Provider</h5>
+                    <select class="form-select form-select-sm rounded-3 shadow-sm text-dark fw-semibold mb-4" id="dior-cal-doc-filter" onchange="diorFilterCalByDoctor(this.value)">
+                        <option value="all">All Healthcare Providers</option>
+                        <?php if (!empty($all_doctors)): ?>
+                            <?php foreach ($all_doctors as $doc): ?>
+                                <option value="<?php echo esc_attr($doc->ID); ?>">
+                                    <?php 
+                                    $n = $doc->display_name;
+                                    if (stripos($n, 'Dr.') === false && stripos($n, 'Dr ') === false) $n = 'Dr. ' . $n;
+                                    echo esc_html($n);
+                                    ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
 
-                    <!-- Filter by Visit Type -->
-                    <div class="d-none d-md-block">
-                        <select class="form-select form-select-sm rounded-pill border-secondary-subtle"
-                            id="dior-doc-cal-type-filter" style="min-width: 140px;">
-                            <option value="all">All Visit Types</option>
-                            <option value="video">Telehealth Video (HD)</option>
-                            <option value="clinic">In-Clinic Visit</option>
-                            <option value="phone">Phone Consultation</option>
-                        </select>
-                    </div>
-
-                    <!-- Filter by Status -->
-                    <div class="d-none d-md-block">
-                        <select class="form-select form-select-sm rounded-pill border-secondary-subtle"
-                            id="dior-doc-cal-status-filter" style="min-width: 130px;">
-                            <option value="all">All Statuses</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="pending">In Queue / Pending</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </div>
-
-                    <!-- View Mode Toggle (Month vs Agenda) -->
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-primary active fw-semibold"
-                            id="dior-doc-cal-view-month">
-                            <i class="fas fa-calendar-days me-1"></i> Month
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary fw-semibold"
-                            id="dior-doc-cal-view-agenda">
-                            <i class="fas fa-list-ul me-1"></i> Agenda
-                        </button>
-                    </div>
-
-                    <!-- Add Event / Book Visit Button -->
-                    <button type="button" onclick="if (typeof diorOpenDocBookerModal === 'function') { diorOpenDocBookerModal(); } else if (typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-appointments-book'); }"
-                        class="btn btn-primary btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm ms-2">
-                        <i class="fas fa-plus"></i> New Event
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Main Content Area: 2 Columns Grid -->
-        <div class="card-body p-3 p-lg-4">
-            <div class="row g-4 align-items-stretch">
-
-                <!-- Left Column: Calendar Grid / Agenda List (8 Cols) -->
-                <div class="col-lg-8 col-12">
-
-                    <!-- 1. Month View (100% Bootstrap 5 Table Grid) -->
-                    <div id="dior-doc-cal-month-wrap" class="dior-bs-calendar-container">
-                        <div class="table-responsive rounded-3 border">
-                            <table class="table table-bordered mb-0 align-top">
-                                <thead>
-                                    <tr class="text-center text-uppercase text-secondary bg-light"
-                                        style="font-size: 11px; letter-spacing: 0.8px;">
-                                        <th style="width: 14.28%; padding: 10px 4px;">Sun</th>
-                                        <th style="width: 14.28%; padding: 10px 4px;">Mon</th>
-                                        <th style="width: 14.28%; padding: 10px 4px;">Tue</th>
-                                        <th style="width: 14.28%; padding: 10px 4px;">Wed</th>
-                                        <th style="width: 14.28%; padding: 10px 4px;">Thu</th>
-                                        <th style="width: 14.28%; padding: 10px 4px;">Fri</th>
-                                        <th style="width: 14.28%; padding: 10px 4px;">Sat</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dior-doc-cal-grid-body">
-                                    <!-- Populated dynamically via JS -->
-                                </tbody>
-                            </table>
+                    <!-- Legend -->
+                    <h5 class="fs-6 fw-bold text-dark mb-2">Status Legend</h5>
+                    <div class="d-flex flex-column gap-2 small">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="rounded-circle d-inline-block" style="width: 10px; height: 10px; background: #2563EB;"></span>
+                            <span class="text-secondary">Success</span>
                         </div>
-                    </div>
-
-                    <!-- 2. Agenda View (Initially Hidden) -->
-                    <div id="dior-doc-cal-agenda-wrap" style="display: none;">
-                        <div id="dior-doc-cal-agenda-list" class="d-flex flex-column gap-3">
-                            <!-- Populated dynamically via JS -->
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="rounded-circle d-inline-block" style="width: 10px; height: 10px; background: #0284C7;"></span>
+                            <span class="text-secondary">Telehealth (HD Video)</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="rounded-circle d-inline-block" style="width: 10px; height: 10px; background: #10B981;"></span>
+                            <span class="text-secondary">Completed</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="rounded-circle d-inline-block" style="width: 10px; height: 10px; background: #F59E0B;"></span>
+                            <span class="text-secondary">In Queue</span>
                         </div>
                     </div>
 
                 </div>
 
-                <!-- Right Column: Selected Day Schedule Card (4 Cols) -->
-                <div class="col-lg-4 col-12">
-                    <div class="card border border-light-subtle rounded-4 shadow-none bg-light h-100 d-flex flex-column">
+                <!-- Right Calendar Content (Doctor Dashboard FullCalendar Matrix) -->
+                <div class="col-12 col-lg-9 col-xl-10 p-0 ps-lg-3">
+                    
+                    <!-- Calendar Toolbar -->
+                    <div class="cal-toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
                         
-                        <!-- Day Schedule Header -->
-                        <div class="card-header bg-white border-bottom py-3 px-3 rounded-top-4 d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-bold text-uppercase" style="font-size: 11px;">Selected Date</span>
-                                <h5 class="mb-0 fw-bold text-dark fs-6 mt-1" id="dior-doc-cal-selected-header">
-                                    Today's Schedule
-                                </h5>
-                            </div>
-                            <span class="badge bg-primary-subtle text-primary rounded-pill px-2.5 py-1 fw-bold"
-                                id="dior-doc-cal-selected-count">
-                                0 Visits
-                            </span>
-                        </div>
-
-                        <!-- Day Schedule Body -->
-                        <div class="card-body p-3 flex-grow-1 overflow-auto" id="dior-doc-cal-selected-body"
-                            style="max-height: 480px; min-height: 250px;">
-                            <!-- Populated dynamically via JS -->
-                        </div>
-
-                        <!-- Day Schedule Footer: Legend & Actions -->
-                        <div class="card-footer bg-white border-top py-3 px-3 rounded-bottom-4">
-                            <!-- Legend -->
-                            <div class="d-flex flex-wrap gap-2 text-muted mb-3" style="font-size: 11px;">
-                                <span class="d-inline-flex align-items-center gap-1">
-                                    <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background: #2563eb;"></span>
-                                    Confirmed
-                                </span>
-                                <span class="d-inline-flex align-items-center gap-1">
-                                    <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background: #0284c7;"></span>
-                                    Video HD
-                                </span>
-                                <span class="d-inline-flex align-items-center gap-1">
-                                    <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background: #10b981;"></span>
-                                    Completed
-                                </span>
-                                <span class="d-inline-flex align-items-center gap-1">
-                                    <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background: #f59e0b;"></span>
-                                    In Queue
-                                </span>
-                            </div>
-
-                            <button type="button" onclick="if (typeof diorOpenDocBookerModal === 'function') { diorOpenDocBookerModal(); } else if (typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-appointments-book'); }"
-                                class="btn btn-outline-primary btn-sm w-100 rounded-3 fw-semibold py-2">
-                                <i class="fas fa-calendar-plus me-1"></i> Add Appointment on this Date
+                        <!-- Left Navigation: Prev, Next, Today -->
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="cal-nav-btn btn" id="dior-cal-prev-btn" title="Previous Month">
+                                <i class="fas fa-chevron-left"></i>
                             </button>
+                            <button type="button" class="cal-nav-btn btn" id="dior-cal-next-btn" title="Next Month">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button type="button" class="cal-today-btn btn fw-semibold" id="dior-cal-today-btn">today</button>
+                        </div>
+
+                        <!-- Center Month Title -->
+                        <h3 class="mb-0 fw-bold text-dark fs-5 text-center" id="dior-cal-month-title">
+                            October 2026
+                        </h3>
+
+                        <!-- Right View Toggles (month, week, day, list) -->
+                        <div class="cal-view-toggles d-flex align-items-center gap-1">
+                            <button type="button" class="cal-view-btn active btn fw-semibold" data-view="dayGridMonth">month</button>
+                            <button type="button" class="cal-view-btn btn fw-semibold" data-view="timeGridWeek">week</button>
+                            <button type="button" class="cal-view-btn btn fw-semibold" data-view="timeGridDay">day</button>
+                            <button type="button" class="cal-view-btn btn fw-semibold" data-view="listWeek">list</button>
                         </div>
 
                     </div>
+
+                    <!-- Calendar Grid Matrix -->
+                    <div class="dior-cal-grid-wrapper rounded-3 overflow-hidden border bg-white shadow-sm">
+                        <div id="dior-calendar-container" style="width: 100%; min-height: 600px;"></div>
+                    </div>
+
                 </div>
 
             </div>
         </div>
-
     </div>
 
 </section>
 
-<!-- Self-Contained Native Bootstrap 5 Doctor Calendar Script -->
+<!-- FullCalendar Engine & Controllers -->
 <script>
-window.dior_doc_calendar_data = <?php echo $calendar_json; ?>;
+window.diorRawEvents = <?php echo $events_json; ?>;
 
 (function() {
     'use strict';
 
-    var calDate = new Date();
-    var selectedYmd = calDate.getFullYear() + '-' + String(calDate.getMonth() + 1).padStart(2, '0') + '-' + String(calDate.getDate()).padStart(2, '0');
-    var viewMode = 'month';
-    var doctorFilter = 'all';
-    var typeFilter = 'all';
-    var statusFilter = 'all';
-
-    var monthNames = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-    function getFilteredEvents() {
-        var data = window.dior_doc_calendar_data || [];
-        return data.filter(function(item) {
-            if (doctorFilter !== 'all' && String(item.doctor_id) !== String(doctorFilter)) {
-                return false;
-            }
-            if (typeFilter !== 'all') {
-                var t = (item.visit_type || '').toLowerCase();
-                if (typeFilter === 'video' && t.indexOf('video') === -1 && t.indexOf('telehealth') === -1) return false;
-                if (typeFilter === 'clinic' && t.indexOf('clinic') === -1 && t.indexOf('in-person') === -1) return false;
-                if (typeFilter === 'phone' && t.indexOf('phone') === -1) return false;
-            }
-            if (statusFilter !== 'all') {
-                var s = (item.status || '').toLowerCase();
-                if (statusFilter === 'confirmed' && s !== 'confirmed') return false;
-                if (statusFilter === 'pending' && s !== 'pending' && s !== 'in queue') return false;
-                if (statusFilter === 'completed' && s !== 'completed') return false;
-                if (statusFilter === 'cancelled' && s !== 'cancelled' && s !== 'canceled') return false;
-            }
-            return true;
-        });
+    // Inject FullCalendar CSS if missing
+    if (!document.getElementById('fullcalendar-css')) {
+        var link = document.createElement('link');
+        link.id = 'fullcalendar-css';
+        link.rel = 'stylesheet';
+        link.href = 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css';
+        document.head.appendChild(link);
     }
 
-    function renderMonthGrid() {
-        var tbody = document.getElementById('dior-doc-cal-grid-body');
-        var titleEl = document.getElementById('dior-doc-cal-title');
-        if (!tbody || !titleEl) return;
+    // Load FullCalendar JS
+    if (typeof FullCalendar === 'undefined' && !window.fcLoadingDior) {
+        window.fcLoadingDior = true;
+        var script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js';
+        script.onload = function() {
+            initDiorCalendar();
+        };
+        document.head.appendChild(script);
+    } else {
+        initDiorCalendar();
+    }
 
-        var year = calDate.getFullYear();
-        var month = calDate.getMonth();
-        titleEl.textContent = monthNames[month] + ' ' + year;
+    function initDiorCalendar() {
+        if (typeof FullCalendar === 'undefined') {
+            setTimeout(initDiorCalendar, 100);
+            return;
+        }
 
-        var firstDayIdx = new Date(year, month, 1).getDay();
-        var totalDays = new Date(year, month + 1, 0).getDate();
-        var prevMonthTotalDays = new Date(year, month, 0).getDate();
+        var calEl = document.getElementById('dior-calendar-container');
+        if (!calEl || calEl.dataset.inited === 'true') return;
+        calEl.dataset.inited = 'true';
 
-        var today = new Date();
-        var todayYmd = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        var calendar = new FullCalendar.Calendar(calEl, {
+            initialView: 'dayGridMonth',
+            initialDate: '2026-10-21',
+            firstDay: 0,
+            dayMaxEvents: 3,
+            headerToolbar: false,
+            height: 'auto',
+            eventTimeFormat: {
+                hour: 'numeric',
+                minute: '2-digit',
+                meridiem: 'short'
+            },
+            events: window.diorRawEvents,
+            datesSet: function(info) {
+                var titleEl = document.getElementById('dior-cal-month-title');
+                if (titleEl) {
+                    titleEl.textContent = info.view.title;
+                }
+            },
+            eventClick: function(info) {
+                var p = info.event.extendedProps || {};
+                var isVideo = (p.visit_type && p.visit_type.toLowerCase().indexOf('video') !== -1) || (p.join_url && p.join_url.length > 5);
+                
+                var joinBtnHtml = isVideo 
+                    ? `<a href="${p.join_url || '#'}" target="_blank" class="btn btn-primary rounded-3 w-100 fw-semibold mt-3 py-2 shadow-sm"><i class="fas fa-video me-1"></i> Join Video Consultation</a>`
+                    : '';
 
-        var events = getFilteredEvents();
-        var eventsByDate = {};
-        events.forEach(function(ev) {
-            var d = ev.date;
-            if (!eventsByDate[d]) eventsByDate[d] = [];
-            eventsByDate[d].push(ev);
-        });
-
-        tbody.innerHTML = '';
-        var dayCounter = 1;
-        var nextMonthDay = 1;
-
-        for (var row = 0; row < 6; row++) {
-            var tr = document.createElement('tr');
-            var rowHasDays = false;
-
-            for (var col = 0; col < 7; col++) {
-                var td = document.createElement('td');
-                td.style.height = '85px';
-                td.style.verticalAlign = 'top';
-                td.style.padding = '6px';
-                td.style.position = 'relative';
-                td.style.cursor = 'pointer';
-
-                var currentYmd = '';
-
-                if (row === 0 && col < firstDayIdx) {
-                    var prevDayNum = prevMonthTotalDays - (firstDayIdx - col - 1);
-                    td.className = 'text-muted bg-light opacity-50';
-                    td.innerHTML = '<span class="small fw-semibold">' + prevDayNum + '</span>';
-                    td.style.cursor = 'default';
-                } else if (dayCounter > totalDays) {
-                    td.className = 'text-muted bg-light opacity-50';
-                    td.innerHTML = '<span class="small fw-semibold">' + nextMonthDay + '</span>';
-                    td.style.cursor = 'default';
-                    nextMonthDay++;
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: info.event.title,
+                        html: `
+                            <div class="text-start p-2">
+                                <div class="mb-2"><strong class="text-secondary small text-uppercase">Patient:</strong> <span class="fw-bold text-dark">${p.patient_name || 'Patient'}</span></div>
+                                <div class="mb-2"><strong class="text-secondary small text-uppercase">Attending Physician:</strong> <span class="fw-bold text-dark">${p.doctor_name || 'Doctor'}</span></div>
+                                <div class="mb-2"><strong class="text-secondary small text-uppercase">Condition:</strong> <span class="fw-bold text-dark">${p.condition || 'General Visit'}</span></div>
+                                <div class="mb-2"><strong class="text-secondary small text-uppercase">Date & Time:</strong> <span class="fw-bold text-dark">${p.date || ''} at ${p.time || ''}</span></div>
+                                <div class="mb-2"><strong class="text-secondary small text-uppercase">Visit Format:</strong> <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill">${p.visit_type || 'In-Clinic'}</span></div>
+                                <div class="mb-2"><strong class="text-secondary small text-uppercase">Status:</strong> <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">${p.status || 'Success'}</span></div>
+                                ${joinBtnHtml}
+                            </div>
+                        `,
+                        showCloseButton: true,
+                        confirmButtonText: 'Close',
+                        confirmButtonColor: '#2D6EB4',
+                        customClass: { popup: 'rounded-4 border-0 shadow-lg' }
+                    });
                 } else {
-                    rowHasDays = true;
-                    currentYmd = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(dayCounter).padStart(2, '0');
-                    var isToday = (currentYmd === todayYmd);
-                    var isSelected = (currentYmd === selectedYmd);
-
-                    if (isSelected) {
-                        td.className = 'bg-primary-subtle border-primary';
-                    } else if (isToday) {
-                        td.className = 'bg-light-subtle';
-                    }
-
-                    var dayEvents = eventsByDate[currentYmd] || [];
-                    var badgeHtml = '';
-                    if (dayEvents.length > 0) {
-                        var pillClass = 'bg-primary';
-                        if (dayEvents[0].is_video) pillClass = 'bg-info text-white';
-                        badgeHtml = '<div class="mt-1 d-flex flex-column gap-1">' +
-                            '<span class="badge ' + pillClass + ' rounded-pill px-1.5 py-0.5 text-truncate" style="font-size: 10px; max-width: 100%;">' +
-                            dayEvents.length + ' Visit' + (dayEvents.length > 1 ? 's' : '') +
-                            '</span></div>';
-                    }
-
-                    var dayHeaderBadge = isToday
-                        ? '<span class="badge bg-primary text-white rounded-circle p-1" style="width: 22px; height: 22px; line-height: 14px;">' + dayCounter + '</span>'
-                        : '<span class="fw-bold ' + (isSelected ? 'text-primary' : 'text-dark') + '" style="font-size: 13px;">' + dayCounter + '</span>';
-
-                    td.innerHTML = '<div class="d-flex justify-content-between align-items-center">' +
-                        dayHeaderBadge +
-                        (dayEvents.length > 0 ? '<span class="rounded-circle d-inline-block bg-primary" style="width: 6px; height: 6px;"></span>' : '') +
-                        '</div>' + badgeHtml;
-
-                    (function(ymd) {
-                        td.addEventListener('click', function() {
-                            selectedYmd = ymd;
-                            renderMonthGrid();
-                            renderSelectedDaySchedule();
-                        });
-                    })(currentYmd);
-
-                    dayCounter++;
+                    alert(`${info.event.title}\nDoctor: ${p.doctor_name}\nTime: ${p.time}\nStatus: ${p.status}`);
                 }
-
-                tr.appendChild(td);
             }
-
-            if (rowHasDays || row === 0) {
-                tbody.appendChild(tr);
-            }
-        }
-
-        renderSelectedDaySchedule();
-    }
-
-    function renderSelectedDaySchedule() {
-        var headerEl = document.getElementById('dior-doc-cal-selected-header');
-        var countEl = document.getElementById('dior-doc-cal-selected-count');
-        var bodyEl = document.getElementById('dior-doc-cal-selected-body');
-        if (!headerEl || !countEl || !bodyEl) return;
-
-        var parts = selectedYmd.split('-');
-        if (parts.length === 3) {
-            var dt = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-            var dayName = dayNames[dt.getDay()];
-            var monthName = monthNames[dt.getMonth()];
-            headerEl.textContent = dayName + ', ' + monthName + ' ' + parseInt(parts[2]) + ', ' + parts[0];
-        }
-
-        var events = getFilteredEvents().filter(function(item) {
-            return item.date === selectedYmd;
         });
 
-        countEl.textContent = events.length + ' Visit' + (events.length !== 1 ? 's' : '');
+        calendar.render();
+        window.diorGlobalFullCalendar = calendar;
 
-        if (events.length === 0) {
-            bodyEl.innerHTML = '<div class="text-center py-5 text-secondary">' +
-                '<i class="far fa-calendar-check fs-2 d-block mb-2 opacity-25"></i>' +
-                '<div class="fw-semibold small">No appointments scheduled</div>' +
-                '<div class="text-muted" style="font-size: 11px;">Select another date or click "Add Appointment" above.</div>' +
-                '</div>';
-            return;
+        // Toolbar Buttons
+        var prevBtn = document.getElementById('dior-cal-prev-btn');
+        if (prevBtn) {
+            prevBtn.onclick = function() { calendar.prev(); };
         }
 
-        var html = '<div class="d-flex flex-column gap-3">';
-        events.forEach(function(ev) {
-            var statusBadge = 'bg-primary-subtle text-primary border-primary-subtle';
-            var s = ev.status.toLowerCase();
-            if (s === 'completed') statusBadge = 'bg-success-subtle text-success border-success-subtle';
-            else if (s === 'pending') statusBadge = 'bg-warning-subtle text-warning border-warning-subtle';
-            else if (s === 'cancelled') statusBadge = 'bg-danger-subtle text-danger border-danger-subtle';
+        var nextBtn = document.getElementById('dior-cal-next-btn');
+        if (nextBtn) {
+            nextBtn.onclick = function() { calendar.next(); };
+        }
 
-            var formatBadge = ev.is_video ? 'bg-info-subtle text-info border-info-subtle' : 'bg-light text-secondary border-light-subtle';
+        var todayBtn = document.getElementById('dior-cal-today-btn');
+        if (todayBtn) {
+            todayBtn.onclick = function() { calendar.today(); };
+        }
 
-            var joinBtn = '';
-            if (ev.is_video && ev.join_url) {
-                joinBtn = '<a href="' + ev.join_url + '" target="_blank" class="btn btn-sm btn-primary rounded-3 fw-semibold py-1 px-2.5 shadow-sm d-inline-flex align-items-center gap-1.5 mt-2">' +
-                    '<i class="fas fa-video"></i> Join HD Consultation' +
-                    '</a>';
+        // View Toggles
+        var viewBtns = document.querySelectorAll('.cal-view-toggles .cal-view-btn');
+        viewBtns.forEach(function(btn) {
+            btn.onclick = function() {
+                viewBtns.forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                var v = this.getAttribute('data-view') || 'dayGridMonth';
+                calendar.changeView(v);
+            };
+        });
+
+        // Resize on tab display change
+        var tabPanels = [
+            document.getElementById('tab-doc-appointments'),
+            document.getElementById('tab-appointment-calendar')
+        ];
+        tabPanels.forEach(function(panel) {
+            if (panel) {
+                new MutationObserver(function(mutations) {
+                    mutations.forEach(function(m) {
+                        if (m.target.style.display !== 'none' && window.diorGlobalFullCalendar) {
+                            setTimeout(function() {
+                                window.diorGlobalFullCalendar.updateSize();
+                            }, 60);
+                        }
+                    });
+                }).observe(panel, { attributes: true, attributeFilter: ['style', 'class'] });
             }
-
-            html += '<div class="card border border-light-subtle rounded-3 p-3 bg-white shadow-none">' +
-                '<div class="d-flex align-items-start justify-content-between gap-2 mb-2">' +
-                '<div>' +
-                '<div class="fw-bold text-dark fs-6">' + ev.patient_name + '</div>' +
-                '<div class="text-secondary small">' + ev.condition + '</div>' +
-                '</div>' +
-                '<span class="badge border rounded-pill px-2 py-0.5 small ' + statusBadge + '">' + ev.status + '</span>' +
-                '</div>' +
-                '<div class="d-flex align-items-center gap-2 small text-secondary mb-1">' +
-                '<i class="far fa-clock text-primary"></i> <span>' + ev.time + '</span>' +
-                '</div>' +
-                '<div class="d-flex align-items-center gap-2 small text-secondary mb-2">' +
-                '<i class="fas fa-user-doctor text-secondary"></i> <span>' + ev.doctor_name + '</span>' +
-                '</div>' +
-                '<div class="d-flex align-items-center justify-content-between flex-wrap gap-2">' +
-                '<span class="badge border rounded-pill px-2 py-0.5 ' + formatBadge + '">' + ev.visit_type + '</span>' +
-                '<button type="button" class="btn btn-sm btn-outline-secondary rounded-3 py-0.5 px-2 small" onclick="if(typeof diorDocSwitchTab===\'function\'){diorDocSwitchTab(\'doc-appointments-view\');}">' +
-                'View' +
-                '</button>' +
-                '</div>' +
-                joinBtn +
-                '</div>';
         });
-        html += '</div>';
-
-        bodyEl.innerHTML = html;
     }
 
-    function renderAgendaList() {
-        var agendaListEl = document.getElementById('dior-doc-cal-agenda-list');
-        if (!agendaListEl) return;
+    // Filter functions
+    window.diorFilterCalEvents = function() {
+        if (!window.diorGlobalFullCalendar) return;
+        var checkedCats = [];
+        if (document.getElementById('cal-filter-work')?.checked) checkedCats.push('Work');
+        if (document.getElementById('cal-filter-personal')?.checked) checkedCats.push('Personal');
+        if (document.getElementById('cal-filter-important')?.checked) checkedCats.push('Important');
+        if (document.getElementById('cal-filter-travel')?.checked) checkedCats.push('Travel');
+        if (document.getElementById('cal-filter-friends')?.checked) checkedCats.push('Friends');
 
-        var events = getFilteredEvents();
-        if (events.length === 0) {
-            agendaListEl.innerHTML = '<div class="text-center py-5 text-secondary card border-0 bg-light rounded-4">' +
-                '<i class="fas fa-calendar-xmark fs-2 d-block mb-2 opacity-50"></i>' +
-                '<div class="fw-semibold">No appointments match the selected filters.</div>' +
-                '</div>';
-            return;
-        }
+        var docFilter = document.getElementById('dior-cal-doc-filter')?.value || 'all';
 
-        // Group by date
-        var grouped = {};
-        events.forEach(function(ev) {
-            if (!grouped[ev.date]) grouped[ev.date] = [];
-            grouped[ev.date].push(ev);
+        var filtered = window.diorRawEvents.filter(function(ev) {
+            var cat = (ev.extendedProps && ev.extendedProps.category) || 'Work';
+            var catMatch = checkedCats.indexOf(cat) !== -1;
+            var docId = (ev.extendedProps && ev.extendedProps.doctor_id) || 0;
+            var docMatch = (docFilter === 'all') || (String(docId) === String(docFilter));
+            return catMatch && docMatch;
         });
 
-        var dates = Object.keys(grouped).sort();
-        var html = '';
+        window.diorGlobalFullCalendar.removeAllEvents();
+        window.diorGlobalFullCalendar.addEventSource(filtered);
+    };
 
-        dates.forEach(function(d) {
-            var parts = d.split('-');
-            var dtStr = d;
-            if (parts.length === 3) {
-                var dt = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-                dtStr = dayNames[dt.getDay()] + ', ' + monthNames[dt.getMonth()] + ' ' + parseInt(parts[2]) + ', ' + parts[0];
-            }
-
-            html += '<div class="card border-0 shadow-sm rounded-4 p-3 bg-white mb-2">' +
-                '<div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3">' +
-                '<h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">' +
-                '<i class="far fa-calendar text-primary"></i> ' + dtStr +
-                '</h6>' +
-                '<span class="badge bg-primary-subtle text-primary rounded-pill px-2 py-1 small">' + grouped[d].length + ' Visits</span>' +
-                '</div>' +
-                '<div class="d-flex flex-column gap-2">';
-
-            grouped[d].forEach(function(ev) {
-                var statusBadge = 'bg-primary-subtle text-primary border-primary-subtle';
-                var s = ev.status.toLowerCase();
-                if (s === 'completed') statusBadge = 'bg-success-subtle text-success border-success-subtle';
-                else if (s === 'pending') statusBadge = 'bg-warning-subtle text-warning border-warning-subtle';
-                else if (s === 'cancelled') statusBadge = 'bg-danger-subtle text-danger border-danger-subtle';
-
-                html += '<div class="d-flex align-items-center justify-content-between p-2.5 rounded-3 border bg-light-subtle flex-wrap gap-2">' +
-                    '<div class="d-flex align-items-center gap-3">' +
-                    '<div class="rounded-3 bg-white border p-2 text-center" style="min-width: 90px;">' +
-                    '<div class="fw-bold text-dark small">' + ev.time + '</div>' +
-                    '<div class="text-secondary opacity-75" style="font-size: 10px;">' + ev.visit_type + '</div>' +
-                    '</div>' +
-                    '<div>' +
-                    '<div class="fw-bold text-dark">' + ev.patient_name + '</div>' +
-                    '<div class="text-secondary small">' + ev.condition + ' • ' + ev.doctor_name + '</div>' +
-                    '</div>' +
-                    '</div>' +
-                    '<div class="d-flex align-items-center gap-2">' +
-                    '<span class="badge border rounded-pill px-2 py-1 small ' + statusBadge + '">' + ev.status + '</span>' +
-                    (ev.is_video && ev.join_url ? '<a href="' + ev.join_url + '" target="_blank" class="btn btn-sm btn-primary rounded-3 py-1 px-2.5"><i class="fas fa-video"></i></a>' : '') +
-                    '</div>' +
-                    '</div>';
-            });
-
-            html += '</div></div>';
-        });
-
-        agendaListEl.innerHTML = html;
-    }
-
-    function initDoctorCalendar() {
-        var prevBtn = document.getElementById('dior-doc-cal-prev');
-        if (prevBtn && !prevBtn.__diorBound) {
-            prevBtn.__diorBound = true;
-            prevBtn.addEventListener('click', function() {
-                calDate.setMonth(calDate.getMonth() - 1);
-                renderMonthGrid();
-            });
-        }
-
-        var nextBtn = document.getElementById('dior-doc-cal-next');
-        if (nextBtn && !nextBtn.__diorBound) {
-            nextBtn.__diorBound = true;
-            nextBtn.addEventListener('click', function() {
-                calDate.setMonth(calDate.getMonth() + 1);
-                renderMonthGrid();
-            });
-        }
-
-        var todayBtn = document.getElementById('dior-doc-cal-today');
-        if (todayBtn && !todayBtn.__diorBound) {
-            todayBtn.__diorBound = true;
-            todayBtn.addEventListener('click', function() {
-                calDate = new Date();
-                var today = new Date();
-                selectedYmd = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-                renderMonthGrid();
-            });
-        }
-
-        var docSelect = document.getElementById('dior-doc-cal-doctor-filter');
-        if (docSelect && !docSelect.__diorBound) {
-            docSelect.__diorBound = true;
-            docSelect.addEventListener('change', function() {
-                doctorFilter = this.value;
-                if (viewMode === 'month') renderMonthGrid();
-                else renderAgendaList();
-            });
-        }
-
-        var typeSelect = document.getElementById('dior-doc-cal-type-filter');
-        if (typeSelect && !typeSelect.__diorBound) {
-            typeSelect.__diorBound = true;
-            typeSelect.addEventListener('change', function() {
-                typeFilter = this.value;
-                if (viewMode === 'month') renderMonthGrid();
-                else renderAgendaList();
-            });
-        }
-
-        var statusSelect = document.getElementById('dior-doc-cal-status-filter');
-        if (statusSelect && !statusSelect.__diorBound) {
-            statusSelect.__diorBound = true;
-            statusSelect.addEventListener('change', function() {
-                statusFilter = this.value;
-                if (viewMode === 'month') renderMonthGrid();
-                else renderAgendaList();
-            });
-        }
-
-        var viewMonthBtn = document.getElementById('dior-doc-cal-view-month');
-        var viewAgendaBtn = document.getElementById('dior-doc-cal-view-agenda');
-        var monthWrap = document.getElementById('dior-doc-cal-month-wrap');
-        var agendaWrap = document.getElementById('dior-doc-cal-agenda-wrap');
-
-        if (viewMonthBtn && !viewMonthBtn.__diorBound) {
-            viewMonthBtn.__diorBound = true;
-            viewMonthBtn.addEventListener('click', function() {
-                viewMode = 'month';
-                viewMonthBtn.classList.add('btn-primary', 'active');
-                viewMonthBtn.classList.remove('btn-outline-secondary');
-                if (viewAgendaBtn) {
-                    viewAgendaBtn.classList.remove('btn-primary', 'active');
-                    viewAgendaBtn.classList.add('btn-outline-secondary');
-                }
-                if (monthWrap) monthWrap.style.display = 'block';
-                if (agendaWrap) agendaWrap.style.display = 'none';
-                renderMonthGrid();
-            });
-        }
-
-        if (viewAgendaBtn && !viewAgendaBtn.__diorBound) {
-            viewAgendaBtn.__diorBound = true;
-            viewAgendaBtn.addEventListener('click', function() {
-                viewMode = 'agenda';
-                viewAgendaBtn.classList.add('btn-primary', 'active');
-                viewAgendaBtn.classList.remove('btn-outline-secondary');
-                if (viewMonthBtn) {
-                    viewMonthBtn.classList.remove('btn-primary', 'active');
-                    viewMonthBtn.classList.add('btn-outline-secondary');
-                }
-                if (monthWrap) monthWrap.style.display = 'none';
-                if (agendaWrap) agendaWrap.style.display = 'block';
-                renderAgendaList();
-            });
-        }
-
-        renderMonthGrid();
-    }
-
-    window.diorRenderDoctorCalendar = function() {
-        initDoctorCalendar();
-        if (viewMode === 'month') renderMonthGrid();
-        else renderAgendaList();
+    window.diorFilterCalByDoctor = function(docId) {
+        window.diorFilterCalEvents();
     };
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initDoctorCalendar);
+        document.addEventListener('DOMContentLoaded', initDiorCalendar);
     } else {
-        setTimeout(initDoctorCalendar, 80);
+        initDiorCalendar();
     }
 })();
 </script>

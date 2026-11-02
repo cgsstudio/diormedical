@@ -44,6 +44,13 @@ function initDoctorDashboard() {
         diorDocSwitchTab(firstTabBtn.getAttribute('data-tab'), false);
     }
 
+    // Add click listeners to ALL nav buttons (must be inside DOMContentLoaded)
+    document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            diorDocSwitchTab(this.getAttribute('data-tab'));
+        });
+    });
+
     // Close dropdowns when clicking outside
     document.addEventListener('click', function (e) {
         const notifWrap = document.querySelector('.dior-notif-wrap');
@@ -578,7 +585,14 @@ if (document.readyState === 'loading') {
     window.setTimeout(initDoctorDashboard, 0);
 }
 
-// Sidebar navigation is owned by dior-doctor-navigation.js only.
+// Delegated navigation fallback: works even if another script has replaced a
+// direct click handler and keeps Doctor tab navigation resilient.
+document.addEventListener('click', function (event) {
+    const btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
+    if (!btn || typeof window.diorDocSwitchTab !== 'function') return;
+    event.preventDefault();
+    window.diorDocSwitchTab(btn.getAttribute('data-tab'));
+}, false);
 
 // Universal Table Pagination (5 entries per page)
 window.diorDoctorInitTablePagination = function (tableEl, pageSize) {
@@ -798,117 +812,53 @@ function diorHydrateDoctorSourceTables() {
     }
 }
 window.diorDocSwitchTab = function (tabId, updateUrl) {
-    if (!tabId) return false;
-
-    var normalizedId = (typeof window.normalizeDoctorTabId === 'function')
-        ? window.normalizeDoctorTabId(tabId)
-        : (function (t) {
-            t = String(t).trim();
-            if (t.indexOf('#tab=') === 0) t = t.substring(5);
-            else if (t.indexOf('#') === 0) t = t.substring(1);
-            if (t.indexOf('tab-') === 0) t = t.substring(4);
-            if (t === 'overview' || t === 'dashboard' || t === 'doc-dashboard') return 'doc-overview';
-            if (t === 'appointments-today' || t === 'today-appointments' || t === 'today' || t === 'doc-appointments-today' || t === 'doc-today-appointments') {
-                setTimeout(function () {
-                    var df = document.getElementById('va-date-filter');
-                    if (df) {
-                        df.value = 'today';
-                        df.dispatchEvent(new Event('change'));
-                    }
-                }, 80);
-                return 'doc-appointments-view';
-            }
-            if (t === 'appointments' || t === 'calendar') return 'doc-appointments';
-            if (t === 'appointments-view' || t === 'view-appointment') return 'doc-appointments-view';
-            if (t === 'appointments-book' || t === 'book-appointment') return 'doc-appointments-book';
-            if (t === 'appointments-edit' || t === 'edit-appointment') return 'doc-appointments-edit';
-            if (t === 'patients' || t === 'doc-patients' || t === 'patients-all' || t === 'all-patients') return 'doc-patients-all';
-            if (t === 'patients-add' || t === 'add-patient') return 'doc-patients-add';
-            if (t === 'patients-edit' || t === 'edit-patient') return 'doc-patients-edit';
-            if (t === 'patients-records' || t === 'patient-records') return 'doc-patients-records';
-            if (t === 'patients-profile' || t === 'patient-profile') return 'doc-patients-profile';
-            if (t === 'accounts' || t === 'doc-accounts' || t === 'billing' || t === 'doc-billing' || t === 'bill-list') return 'doc-accounts-bill-list';
-            if (t === 'accounts-add-bill' || t === 'add-bill') return 'doc-accounts-add-bill';
-            if (t === 'accounts-income' || t === 'income') return 'doc-accounts-income';
-            if (t === 'accounts-expenses' || t === 'expenses') return 'doc-accounts-expenses';
-            if (t === 'accounts-income-report' || t === 'income-report') return 'doc-accounts-income-report';
-            if (t === 'accounts-invoice' || t === 'invoice') return 'doc-accounts-invoice';
-            if (t === 'consultation-notes' || t === 'notes' || t === 'doc-notes') return 'doc-consultation-notes';
-            if (t === 'prescriptions' || t === 'doc-prescriptions' || t === 'e-prescriptions' || t === 'doc-e-prescriptions' || t === 'digital-prescriptions') return 'doc-e-prescriptions';
-            if (t === 'pharmacy' || t === 'doc-pharmacy' || t === 'pharmacy-list' || t === 'medicines') return 'doc-pharmacy-list';
-            if (t === 'pharmacy-add' || t === 'add-medicine') return 'doc-pharmacy-add';
-            if (t === 'documents' || t === 'doc-documents' || t === 'documents-upload' || t === 'upload-documents') return 'doc-documents-upload';
-            if (t === 'documents-templates' || t === 'consent-templates') return 'doc-documents-templates';
-            if (t === 'documents-signed' || t === 'signed-consent') return 'doc-documents-signed';
-            if (t === 'telemed' || t === 'telemedicine' || t === 'doc-telemedicine' || t === 'doc-telemed-video' || t === 'telemed-video') return 'doc-telemed-video';
-            if (t === 'telemed-records' || t === 'doc-telemed-records' || t === 'virtual-visits') return 'doc-telemed-records';
-            if (t === 'feedback' || t === 'doc-feedback' || t === 'patient-review' || t === 'reviews' || t === 'doc-reviews') return 'doc-patient-review';
-            if (t === 'notifications' || t === 'doc-notifications' || t === 'notifications-system' || t === 'doc-notifications-system') return 'doc-notifications-system';
-            if (t === 'consultation' || t === 'consultation-room' || t === 'doc-consultation') return 'doc-telemed-video';
-            if (t === 'settings' || t === 'profile-settings') return 'doc-settings';
-            return t;
-        })(tabId);
-
-    var app = document.getElementById('dior-doctor-app');
-    var contentRoot = app ? app.querySelector('#dior-doc-content') : document.getElementById('dior-doc-content');
-    var activePanel = document.getElementById('tab-' + normalizedId) || (contentRoot ? contentRoot.querySelector('#' + normalizedId) : null);
-    if (!activePanel && normalizedId !== 'doc-overview') {
-        activePanel = document.getElementById('tab-doc-overview');
-        normalizedId = 'doc-overview';
-    }
-    if (!activePanel) {
-        console.warn('[Dior Doctor] Panel not found for tab:', tabId);
-        return false;
+    if (!tabId) return;
+    if (tabId === 'feedback' || tabId === 'doc-feedback' || tabId === 'patient-review' || tabId === 'reviews') {
+        tabId = 'doc-patient-review';
     }
 
     if (updateUrl !== false) {
         try {
-            history.replaceState(null, '', '#tab=' + encodeURIComponent(normalizedId));
+            history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
         } catch (e) { }
     }
 
-    var notifDropdown = document.getElementById('dior-doc-notif-dd');
+    const notifDropdown = document.getElementById('dior-doc-notif-dd');
     if (notifDropdown) {
         notifDropdown.classList.remove('open');
         notifDropdown.classList.remove('active');
     }
 
     // Update buttons
-    var btns = document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn');
-    btns.forEach(function (b) { b.classList.remove('active'); });
+    const btns = document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn');
+    btns.forEach(b => b.classList.remove('active'));
 
     // Sync subtab pills in in-page navigation bars
-    document.querySelectorAll('.dior-subtab-pill[data-doc-tab], .dior-subtab-pill[data-tab]').forEach(function (pill) {
-        var pillTab = pill.getAttribute('data-doc-tab') || pill.getAttribute('data-tab');
-        var pillNorm = (typeof window.normalizeDoctorTabId === 'function') ? window.normalizeDoctorTabId(pillTab) : pillTab;
-        if (pillNorm === normalizedId) {
+    document.querySelectorAll('.dior-subtab-pill[data-doc-tab]').forEach(pill => {
+        if (pill.getAttribute('data-doc-tab') === tabId) {
             pill.classList.add('active');
         } else {
             pill.classList.remove('active');
         }
     });
 
-    var activeBtn = document.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + normalizedId + '"]');
+    const activeBtn = document.querySelector(`#dior-doc-sidebar .dior-nav-btn[data-tab="${tabId}"]`);
     if (activeBtn) {
         activeBtn.classList.add('active');
 
         // Strict Accordion: Expand parent submenu if active tab is inside one, close all others
-        var parentSubmenu = activeBtn.closest('.dior-nav-item.has-submenu');
-        document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function (sub) {
+        const parentSubmenu = activeBtn.closest('.dior-nav-item.has-submenu');
+        document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(sub) {
             if (parentSubmenu && sub === parentSubmenu) {
                 sub.classList.add('active', 'open');
-                var subEl = sub.querySelector('.dior-submenu');
-                if (subEl) subEl.style.setProperty('display', 'flex', 'important');
-                var subIcon = sub.querySelector('.submenu-icon');
+                const subIcon = sub.querySelector('.submenu-icon');
                 if (subIcon) {
                     subIcon.classList.remove('fa-plus');
                     subIcon.classList.add('fa-minus');
                 }
             } else {
                 sub.classList.remove('active', 'open');
-                var subEl = sub.querySelector('.dior-submenu');
-                if (subEl) subEl.style.setProperty('display', 'none', 'important');
-                var subIcon = sub.querySelector('.submenu-icon');
+                const subIcon = sub.querySelector('.submenu-icon');
                 if (subIcon) {
                     subIcon.classList.remove('fa-minus');
                     subIcon.classList.add('fa-plus');
@@ -917,85 +867,58 @@ window.diorDocSwitchTab = function (tabId, updateUrl) {
         });
 
         // Dynamic Badge Dismissal: Hide notification/count badge once opened
-        var badge = activeBtn.querySelector('.nav-count-badge');
+        const badge = activeBtn.querySelector('.nav-count-badge');
         if (badge) {
             badge.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
             badge.style.opacity = '0';
             badge.style.transform = 'scale(0.5)';
-            setTimeout(function () {
+            setTimeout(() => {
                 badge.style.display = 'none';
             }, 250);
         }
     }
 
     // Update panels
-    var panels = contentRoot ? contentRoot.querySelectorAll(':scope > .dior-tab-panel, .dior-tab-panel') : document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
-    panels.forEach(function (p) {
-        if (p === activePanel) {
-            p.classList.add('active');
-            p.removeAttribute('hidden');
-            p.style.setProperty('display', 'block', 'important');
-        } else {
-            p.classList.remove('active');
-            p.setAttribute('hidden', 'hidden');
-            p.style.setProperty('display', 'none', 'important');
-        }
+    const panels = document.querySelectorAll('#dior-doc-content > .dior-tab-panel');
+    panels.forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none';
     });
 
-    // Refresh table pagination inside activated tab
-    if (typeof diorDoctorInitTablePagination === 'function') {
-        activePanel.querySelectorAll('.dior-doc-table, .dior-table, .dior-clean-table').forEach(function (table) {
+    const activePanel = document.getElementById(`tab-${tabId}`);
+    if (activePanel) {
+        activePanel.classList.add('active');
+        activePanel.removeAttribute('hidden');
+        activePanel.style.display = 'block';
+        // Refresh table pagination inside activated tab
+        activePanel.querySelectorAll('.dior-doc-table').forEach(table => {
             if (table._diorRenderPage) {
                 table._diorRenderPage(1);
             } else {
                 diorDoctorInitTablePagination(table, 5);
             }
         });
-    }
 
-    // Trigger doctor appointment calendar re-render if switching to calendar tab
-    if (normalizedId === 'doc-appointments' && typeof window.diorRenderDoctorCalendar === 'function') {
-        setTimeout(window.diorRenderDoctorCalendar, 40);
-    }
-
-    // Trigger income report chart if opened
-    if (normalizedId === 'doc-accounts-income-report' && typeof window.diorRenderIncomeChart === 'function') {
-        setTimeout(window.diorRenderIncomeChart, 50);
-    }
-
-    // If notifications tab opened, clear topbar bell badge and mark read in database
-    if (normalizedId === 'doc-notifications-system') {
-        document.querySelectorAll('.doc-unread-badge, .dior-notif-indicator').forEach(function (b) {
-            b.style.display = 'none';
-        });
-        if (window.diorDocAjax && window.diorDocNonce) {
-            try {
-                var fd = new FormData();
-                fd.append('action', 'dior_doctor_mark_all_notif_read');
-                fd.append('nonce', window.diorDocNonce);
-                fetch(window.diorDocAjax, { method: 'POST', body: fd }).catch(function () { });
-            } catch (e) { }
+        // Trigger income report chart if opened
+        if (tabId === 'doc-accounts-income-report' && typeof window.diorRenderIncomeChart === 'function') {
+            setTimeout(window.diorRenderIncomeChart, 50);
         }
     }
 
-    if (typeof diorDocCloseMobile === 'function') {
-        diorDocCloseMobile();
+    // If notifications tab opened, clear topbar bell badge and mark read in database
+    if (tabId === 'doc-notifications') {
+        document.querySelectorAll('.doc-unread-badge, .dior-notif-indicator').forEach(b => {
+            b.style.display = 'none';
+        });
+        if (window.diorDocAjax && window.diorDocNonce) {
+            const fd = new FormData();
+            fd.append('action', 'dior_doctor_mark_all_notif_read');
+            fd.append('nonce', window.diorDocNonce);
+            fetch(window.diorDocAjax, { method: 'POST', body: fd }).catch(() => { });
+        }
     }
 
-    return true;
-};
-
-// Global aliases for all doctor templates
-window.diorSwitchTab = function (tabId, updateUrl) {
-    if (document.getElementById('dior-doctor-app')) {
-        return window.diorDocSwitchTab(tabId, updateUrl);
-    }
-    if (typeof window.diorSafeSwitchPatientTab === 'function') {
-        return window.diorSafeSwitchPatientTab(tabId, updateUrl);
-    }
-};
-window.diorAdminSwitchTab = function (tabId, updateUrl) {
-    return window.diorDocSwitchTab(tabId, updateUrl);
+    diorDocCloseMobile();
 };
 
 // Mobile menu toggle
@@ -1018,7 +941,6 @@ window.diorDocCloseMobile = function () {
     const backdrop = document.getElementById('dior-doc-backdrop');
     if (sidebar) sidebar.classList.remove('mobile-open');
     if (backdrop) backdrop.classList.remove('active');
-    document.body.style.overflow = '';
 };
 
 // Search patients with pagination reset
@@ -2255,7 +2177,7 @@ window.diorDocMarkAllRead = function (e) {
     }
 
     function pollDoctorLiveNotifications() {
-        if (!document.getElementById('dior-doctor-app') || isDoctorNotifPolling) return;
+        if (isDoctorNotifPolling) return;
         if (document.hidden) return;
 
         const ajaxUrl = getDiorDocAjax();
@@ -2965,13 +2887,122 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+/* -------------------------------------------------------------------------
+ * Static dashboard navigation safety layer.
+ * Keeps Doctor Dashboard tabs usable even if an optional widget script fails.
+ * ------------------------------------------------------------------------- */
+(function () {
+    function bootStaticDoctorNavigation() {
+        var app = document.getElementById('dior-doctor-app');
+        if (!app) return;
+
+        function fallbackSwitchTab(tabId, updateUrl) {
+            if (!tabId) return;
+            if (tabId === 'feedback' || tabId === 'doc-feedback' || tabId === 'patient-review' || tabId === 'reviews') {
+                tabId = 'doc-patient-review';
+            }
+
+            var buttons = app.querySelectorAll('#dior-doc-sidebar .dior-nav-btn[data-tab]');
+            buttons.forEach(function (btn) {
+                var isActive = btn.getAttribute('data-tab') === tabId;
+                btn.classList.toggle('active', isActive);
+                if (isActive) {
+                    var parentSubmenu = btn.closest('.dior-nav-item.has-submenu');
+                    app.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(sub) {
+                        if (parentSubmenu && sub === parentSubmenu) {
+                            sub.classList.add('active', 'open');
+                            var subIcon = sub.querySelector('.submenu-icon');
+                            if (subIcon) {
+                                subIcon.classList.remove('fa-plus');
+                                subIcon.classList.add('fa-minus');
+                            }
+                        } else {
+                            sub.classList.remove('active', 'open');
+                            var subIcon = sub.querySelector('.submenu-icon');
+                            if (subIcon) {
+                                subIcon.classList.remove('fa-minus');
+                                subIcon.classList.add('fa-plus');
+                            }
+                        }
+                    });
+                }
+            });
+
+            var panels = app.querySelectorAll('#dior-doc-content > .dior-tab-panel');
+            panels.forEach(function (panel) {
+                var active = panel.id === 'tab-' + tabId;
+                panel.classList.toggle('active', active);
+                if (active) {
+                    panel.removeAttribute('hidden');
+                    panel.style.display = 'block';
+                } else {
+                    panel.setAttribute('hidden', 'hidden');
+                    panel.style.display = 'none';
+                }
+            });
+
+            if (updateUrl === true) {
+                try {
+                    history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
+                } catch (e) { }
+            }
+        }
+
+        if (typeof window.diorDocSwitchTab !== 'function') {
+            window.diorDocSwitchTab = fallbackSwitchTab;
+        }
+
+        app.addEventListener('click', function (event) {
+            var btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
+            if (!btn) return;
+            var targetTab = btn.getAttribute('data-tab');
+            if (typeof window.diorDocSwitchTab === 'function') {
+                event.preventDefault();
+                event.stopPropagation();
+                window.diorDocSwitchTab(targetTab, true);
+            }
+        }, true);
+
+        function syncTabFromUrl(updateUrl) {
+            var hashMatch = window.location.hash.match(/^#tab=([^&]+)/);
+            var initial = hashMatch ? decodeURIComponent(hashMatch[1]) : 'doc-overview';
+            if (initial === 'feedback' || initial === 'doc-feedback' || initial === 'patient-review' || initial === 'reviews') {
+                initial = 'doc-patient-review';
+            }
+
+            var btn = app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initial) + '"]');
+            var tabToLoad = btn ? initial : 'doc-overview';
+
+            if (typeof window.diorDocSwitchTab === 'function') {
+                window.diorDocSwitchTab(tabToLoad, updateUrl);
+            } else {
+                fallbackSwitchTab(tabToLoad, updateUrl);
+            }
+        }
+
+        window.addEventListener('hashchange', function () {
+            syncTabFromUrl(false);
+        });
+
+        // Initial setup: strictly preserve current URL, do not add hash if opening bare page
+        syncTabFromUrl(false);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootStaticDoctorNavigation, { once: true });
+    } else {
+        bootStaticDoctorNavigation();
+    }
+})();
+
+
 /* v17.2.1: desktop and mobile share the same sidebar toggle entry point. */
 (function(){
   if (typeof window === 'undefined') return;
   window.diorDocOpenMobile = function(e) {
     if (e && e.preventDefault) e.preventDefault();
     var sidebar = document.querySelector('#dior-doc-sidebar, #dior-sidebar, .dior-sidebar, .dior-side-nav, .dior-sidebar-wrap');
-    var backdrop = document.getElementById('dior-doc-backdrop');
+    var backdrop = document.getElementById('dior-drawer-backdrop');
     if (window.innerWidth > 1024) {
       var wrap = document.querySelector('.dior-patient-portal-wrap') || document.querySelector('.dior-app') || document.querySelector('.dior-doctor-dashboard-wrap');
       if (wrap) wrap.classList.toggle('dior-sidebar-collapsed');

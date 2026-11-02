@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 class Dior_DB
 {
-    const DB_VERSION = '4.0.5';
+    const DB_VERSION = '4.0.4';
     const DB_VERSION_OPTION = 'dior_medical_db_version';
 
     /**
@@ -37,14 +37,6 @@ class Dior_DB
             self::install_schema();
             self::migrate_legacy_data();
             update_option(self::DB_VERSION_OPTION, self::DB_VERSION);
-        }
-
-        // One-time, validated sync for legacy appointment metadata created after
-        // the original schema migration. Invalid/mock entries are intentionally skipped.
-        $appointment_sync_version = get_option('dior_patient_appointment_sync_version', '0.0.0');
-        if (version_compare($appointment_sync_version, '1.0.0', '<')) {
-            self::migrate_legacy_appointments_safely();
-            update_option('dior_patient_appointment_sync_version', '1.0.0');
         }
     }
 
@@ -135,11 +127,11 @@ class Dior_DB
             doctor_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             condition_name VARCHAR(255) NOT NULL,
             visit_type VARCHAR(100) NOT NULL DEFAULT 'Video Visit (HD)',
-            status ENUM('Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show') NOT NULL DEFAULT 'Pending',
+            status ENUM('Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show') NOT NULL DEFAULT 'Confirmed',
             appt_date DATE NOT NULL,
             appt_time VARCHAR(50) NOT NULL,
             join_url VARCHAR(500) NULL,
-            payment_status ENUM('Pending', 'Paid', 'Refunded', 'Failed') NOT NULL DEFAULT 'Pending',
+            payment_status ENUM('Pending', 'Paid', 'Refunded', 'Failed') NOT NULL DEFAULT 'Paid',
             notes TEXT NULL,
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
@@ -368,130 +360,6 @@ class Dior_DB
     }
 
     /**
-     * Safely migrate valid legacy appointment records into the canonical relational table.
-     * Intake-only placeholders and records without a real provider/date/time are ignored.
-     */
-    public static function migrate_legacy_appointments_safely()
-    {
-        global $wpdb;
-
-        $table = $wpdb->prefix . 'dior_appointments';
-        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
-            return;
-        }
-
-        // Hide previously generated intake placeholders that were never real bookings.
-        $wpdb->query($wpdb->prepare(
-            "UPDATE {$table} SET is_deleted = 1, updated_at = %s WHERE is_deleted = 0 AND appt_uid LIKE %s AND notes = %s",
-            current_time('mysql'),
-            'APT-HIPAA-%',
-            'Appointment created from HIPAAtizer intake form.'
-        ));
-
-        $rows = $wpdb->get_results(
-            "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'dior_appointments' AND meta_value != ''"
-        );
-
-        foreach ((array) $rows as $row) {
-            $patient_id = absint($row->user_id);
-            $appointments = maybe_unserialize($row->meta_value);
-            if (!$patient_id || !is_array($appointments)) {
-                continue;
-            }
-
-            $clean_appointments = array_values(array_filter($appointments, function ($item) {
-                return !(is_array($item) && !empty($item['from_hipaa']));
-            }));
-            if (count($clean_appointments) !== count($appointments)) {
-                update_user_meta($patient_id, 'dior_appointments', $clean_appointments);
-            }
-            $appointments = $clean_appointments;
-
-            foreach ($appointments as $appointment) {
-                if (!is_array($appointment) || !empty($appointment['from_hipaa'])) {
-                    continue;
-                }
-
-                $uid = sanitize_text_field($appointment['appt_uid'] ?? ($appointment['id'] ?? ''));
-                $raw_date = $appointment['raw_date'] ?? ($appointment['appt_date'] ?? ($appointment['date'] ?? ''));
-                $raw_time = sanitize_text_field($appointment['appt_time'] ?? ($appointment['time'] ?? ''));
-                $date_timestamp = $raw_date !== '' ? strtotime((string) $raw_date) : false;
-                if ($uid === '' || !$date_timestamp || $raw_time === '' || in_array(strtolower($raw_time), ['pending', 'asap', '—', '-'], true)) {
-                    continue;
-                }
-
-                $doctor_id = absint($appointment['doctor_id'] ?? ($appointment['doctor_user_id'] ?? 0));
-                if (!$doctor_id) {
-                    continue;
-                }
-
-                $doctor_post = get_post($doctor_id);
-                $doctor_user = get_userdata($doctor_id);
-                $is_provider_post = $doctor_post && $doctor_post->post_type === 'wpddb_doctor' && $doctor_post->post_status === 'publish';
-                $is_provider_user = $doctor_user && (
-                    in_array('doctor', (array) $doctor_user->roles, true)
-                    || in_array('administrator', (array) $doctor_user->roles, true)
-                );
-                if (!$is_provider_post && !$is_provider_user) {
-                    continue;
-                }
-
-                $existing_uid = $wpdb->get_var($wpdb->prepare(
-                    "SELECT id FROM {$table} WHERE appt_uid = %s LIMIT 1",
-                    $uid
-                ));
-                if ($existing_uid) {
-                    continue;
-                }
-
-                $appt_date = wp_date('Y-m-d', $date_timestamp);
-                $existing_slot = $wpdb->get_var($wpdb->prepare(
-                    "SELECT id FROM {$table} WHERE patient_id = %d AND appt_date = %s AND appt_time = %s AND status NOT IN ('Cancelled', 'No Show') AND is_deleted = 0 LIMIT 1",
-                    $patient_id,
-                    $appt_date,
-                    $raw_time
-                ));
-                if ($existing_slot) {
-                    continue;
-                }
-
-                $allowed_statuses = ['Pending', 'Confirmed', 'Scheduled', 'Success', 'In Progress', 'Completed', 'Cancelled', 'No Show', 'In-Queue'];
-                $status = sanitize_text_field($appointment['status'] ?? 'Pending');
-                if (!in_array($status, $allowed_statuses, true)) {
-                    $status = 'Pending';
-                }
-
-                $allowed_payment_statuses = ['Pending', 'Paid', 'Refunded', 'Failed'];
-                $payment_status = sanitize_text_field($appointment['payment_status'] ?? 'Pending');
-                if (!in_array($payment_status, $allowed_payment_statuses, true)) {
-                    $payment_status = 'Pending';
-                }
-
-                $created_at = !empty($appointment['created_at']) && strtotime($appointment['created_at'])
-                    ? wp_date('Y-m-d H:i:s', strtotime($appointment['created_at']))
-                    : current_time('mysql');
-
-                $wpdb->insert($table, [
-                    'appt_uid' => $uid,
-                    'patient_id' => $patient_id,
-                    'doctor_id' => $doctor_id,
-                    'condition_name' => sanitize_text_field($appointment['condition'] ?? 'Telehealth Consultation'),
-                    'visit_type' => sanitize_text_field($appointment['type'] ?? ($appointment['visit_type'] ?? 'Video Visit')),
-                    'status' => $status,
-                    'appt_date' => $appt_date,
-                    'appt_time' => $raw_time,
-                    'join_url' => !empty($appointment['join_url']) ? esc_url_raw($appointment['join_url']) : '',
-                    'payment_status' => $payment_status,
-                    'notes' => sanitize_textarea_field($appointment['notes'] ?? ''),
-                    'created_at' => $created_at,
-                    'updated_at' => current_time('mysql'),
-                    'is_deleted' => 0,
-                ]);
-            }
-        }
-    }
-
-    /**
      * Idempotent migration from legacy wp_usermeta serialized arrays to relational tables
      */
     public static function migrate_legacy_data()
@@ -503,63 +371,43 @@ class Dior_DB
         $tbl_encounters = $wpdb->prefix . 'dior_encounters';
 
         foreach ($meta_notes as $row) {
-            $patient_id = absint($row->user_id);
+            $patient_id = (int)$row->user_id;
             $notes = maybe_unserialize($row->meta_value);
-            if (!$patient_id || !is_array($notes)) {
-                continue;
-            }
+            if (!is_array($notes)) continue;
 
-            foreach ($notes as $note) {
-                if (!is_array($note)) {
-                    continue;
-                }
-
-                $uid = sanitize_text_field($note['encounter_uid'] ?? ($note['id'] ?? ''));
-                $raw_created_at = $note['timestamp'] ?? ($note['created_at'] ?? ($note['date'] ?? ''));
-                $created_ts = $raw_created_at !== '' ? strtotime((string) $raw_created_at) : false;
-                $has_content = !empty($note['subjective']) || !empty($note['note']) || !empty($note['objective'])
-                    || !empty($note['assessment']) || !empty($note['plan']) || !empty($note['diagnosis']);
-                if ($uid === '' || !$created_ts || !$has_content) {
-                    continue;
-                }
-
+            foreach ($notes as $n) {
+                $uid = $n['id'] ?? ('SOAP-' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 6)));
                 $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tbl_encounters WHERE encounter_uid = %s", $uid));
-                if ($exists) {
-                    continue;
-                }
+                if ($exists) continue;
 
-                $created_at = wp_date('Y-m-d H:i:s', $created_ts);
-                $doc_id = absint($note['doctor_id'] ?? 0);
-                $doc_name = sanitize_text_field($note['doctor_name'] ?? 'Provider not recorded');
-                $status = sanitize_text_field($note['status'] ?? 'finalized');
-                if (!in_array($status, ['draft', 'finalized', 'amended', 'archived'], true)) {
-                    $status = 'finalized';
-                }
+                $created_at = !empty($n['timestamp']) ? date('Y-m-d H:i:s', strtotime($n['timestamp'])) : current_time('mysql');
+                $doc_id = (int)($n['doctor_id'] ?? ($n['doctor'] ?? 1));
+                $doc_name = sanitize_text_field($n['doctor_name'] ?? 'Doctor');
                 $hash = hash('sha256', $uid . '|' . $patient_id . '|' . $doc_id . '|' . $created_at);
 
                 $wpdb->insert($tbl_encounters, [
-                    'encounter_uid'         => $uid,
-                    'patient_id'            => $patient_id,
-                    'doctor_id'             => $doc_id,
-                    'appointment_id'        => sanitize_text_field($note['appointment_id'] ?? ''),
-                    'encounter_type'        => sanitize_text_field($note['encounter_type'] ?? 'Telehealth Consultation'),
-                    'status'                => $status,
-                    'subjective'            => $note['subjective'] ?? ($note['note'] ?? ''),
-                    'objective'             => $note['objective'] ?? '',
-                    'assessment'            => $note['assessment'] ?? '',
-                    'plan'                  => $note['plan'] ?? '',
-                    'diagnosis'             => sanitize_text_field($note['diagnosis'] ?? ''),
-                    'follow_up'             => sanitize_text_field($note['follow_up'] ?? ''),
-                    'vitals_bp'             => sanitize_text_field($note['vitals']['bp'] ?? ''),
-                    'vitals_hr'             => sanitize_text_field($note['vitals']['hr'] ?? ''),
-                    'vitals_temp'           => sanitize_text_field($note['vitals']['temp'] ?? ''),
-                    'vitals_weight'         => sanitize_text_field($note['vitals']['weight'] ?? ''),
-                    'attestation_hash'      => $hash,
-                    'attestation_author'    => $doc_name,
-                    'attestation_timestamp' => $created_at,
-                    'created_at'            => $created_at,
-                    'updated_at'            => $created_at,
-                    'is_deleted'            => 0
+                    'encounter_uid'        => $uid,
+                    'patient_id'           => $patient_id,
+                    'doctor_id'            => $doc_id,
+                    'appointment_id'       => sanitize_text_field($n['appointment_id'] ?? ''),
+                    'encounter_type'       => sanitize_text_field($n['encounter_type'] ?? 'Telehealth Consultation'),
+                    'status'               => 'finalized',
+                    'subjective'           => $n['subjective'] ?? ($n['note'] ?? ''),
+                    'objective'            => $n['objective'] ?? '',
+                    'assessment'           => $n['assessment'] ?? '',
+                    'plan'                 => $n['plan'] ?? '',
+                    'diagnosis'            => sanitize_text_field($n['diagnosis'] ?? ''),
+                    'follow_up'            => sanitize_text_field($n['follow_up'] ?? 'As needed / 7-10 days'),
+                    'vitals_bp'            => sanitize_text_field($n['vitals']['bp'] ?? ''),
+                    'vitals_hr'            => sanitize_text_field($n['vitals']['hr'] ?? ''),
+                    'vitals_temp'          => sanitize_text_field($n['vitals']['temp'] ?? ''),
+                    'vitals_weight'        => sanitize_text_field($n['vitals']['weight'] ?? ''),
+                    'attestation_hash'     => $hash,
+                    'attestation_author'   => $doc_name,
+                    'attestation_timestamp'=> $created_at,
+                    'created_at'           => $created_at,
+                    'updated_at'           => $created_at,
+                    'is_deleted'           => 0
                 ]);
             }
         }
@@ -569,52 +417,32 @@ class Dior_DB
         $tbl_docs = $wpdb->prefix . 'dior_documents';
 
         foreach ($meta_docs as $row) {
-            $patient_id = absint($row->user_id);
+            $patient_id = (int)$row->user_id;
             $docs = maybe_unserialize($row->meta_value);
-            if (!$patient_id || !is_array($docs)) {
-                continue;
-            }
+            if (!is_array($docs)) continue;
 
-            foreach ($docs as $document) {
-                if (!is_array($document)) {
-                    continue;
-                }
-
-                $uid = sanitize_text_field($document['doc_uid'] ?? ($document['id'] ?? ''));
-                $raw_created_at = $document['timestamp'] ?? ($document['created_at'] ?? ($document['date'] ?? ''));
-                $created_ts = $raw_created_at !== '' ? strtotime((string) $raw_created_at) : false;
-                $file_path = sanitize_text_field($document['file_path'] ?? ($document['file_url'] ?? ($document['url'] ?? '')));
-                $content_html = $document['content_html'] ?? null;
-                if ($uid === '' || !$created_ts || ($file_path === '' && empty($content_html))) {
-                    continue;
-                }
-
+            foreach ($docs as $d) {
+                $uid = $d['id'] ?? ('DOC-' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 7)));
                 $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tbl_docs WHERE doc_uid = %s", $uid));
-                if ($exists) {
-                    continue;
-                }
+                if ($exists) continue;
 
-                $created_at = wp_date('Y-m-d H:i:s', $created_ts);
-                $is_letter = !empty($document['is_letter']) ? 1 : 0;
-                $letter_meta = !empty($document['letter_meta']) ? wp_json_encode($document['letter_meta']) : null;
+                $created_at = !empty($d['timestamp']) ? date('Y-m-d H:i:s', strtotime($d['timestamp'])) : current_time('mysql');
+                $is_letter = !empty($d['is_letter']) ? 1 : 0;
+                $letter_meta = !empty($d['letter_meta']) ? json_encode($d['letter_meta']) : null;
                 $hash = hash('sha256', $uid . '|' . $patient_id . '|' . $created_at);
-                $file_name = sanitize_file_name($document['file_name'] ?? basename((string) parse_url($file_path, PHP_URL_PATH)));
-                if ($file_name === '') {
-                    $file_name = $uid . '.pdf';
-                }
 
                 $wpdb->insert($tbl_docs, [
                     'doc_uid'             => $uid,
                     'patient_id'          => $patient_id,
-                    'author_id'            => absint($document['author_id'] ?? 0),
-                    'title'               => sanitize_text_field($document['title'] ?? 'Medical Document'),
-                    'category'            => sanitize_text_field($document['category'] ?? 'Clinical Record'),
-                    'file_name'           => $file_name,
-                    'file_path'           => $file_path,
-                    'file_type'           => sanitize_text_field($document['file_type'] ?? ($document['type'] ?? 'Unknown')),
-                    'file_size'           => absint($document['file_size'] ?? 0),
-                    'file_size_formatted' => sanitize_text_field($document['size'] ?? ''),
-                    'content_html'        => $content_html,
+                    'author_id'           => (int)($d['author_id'] ?? 1),
+                    'title'               => sanitize_text_field($d['title'] ?? 'Medical Document'),
+                    'category'            => sanitize_text_field($d['category'] ?? 'Clinical Record'),
+                    'file_name'           => sanitize_file_name($d['file_name'] ?? ($uid . '.pdf')),
+                    'file_path'           => sanitize_text_field($d['file_path'] ?? ''),
+                    'file_type'           => sanitize_text_field($d['file_type'] ?? 'PDF'),
+                    'file_size'           => 0,
+                    'file_size_formatted' => sanitize_text_field($d['size'] ?? '150 KB'),
+                    'content_html'        => $d['content_html'] ?? null,
                     'letter_meta'         => $letter_meta,
                     'is_letter'           => $is_letter,
                     'attestation_hash'    => $hash,
@@ -635,65 +463,27 @@ class Dior_DB
             if (!is_array($apts)) continue;
 
             foreach ($apts as $a) {
-                if (!is_array($a) || !empty($a['from_hipaa'])) {
-                    continue;
-                }
-
-                $uid = sanitize_text_field($a['appt_uid'] ?? ($a['id'] ?? ''));
-                $raw_date = $a['raw_date'] ?? ($a['appt_date'] ?? ($a['date'] ?? ''));
-                $date_timestamp = $raw_date !== '' ? strtotime((string) $raw_date) : false;
-                $appt_time = sanitize_text_field($a['appt_time'] ?? ($a['time'] ?? ''));
-                $doctor_id = absint($a['doctor_id'] ?? ($a['doctor_user_id'] ?? 0));
-
-                if ($uid === '' || !$date_timestamp || $appt_time === '' || in_array(strtolower($appt_time), ['pending', 'asap', '—', '-'], true) || !$doctor_id) {
-                    continue;
-                }
-
-                $doctor_post = get_post($doctor_id);
-                $doctor_user = get_userdata($doctor_id);
-                $is_provider_post = $doctor_post && $doctor_post->post_type === 'wpddb_doctor' && $doctor_post->post_status === 'publish';
-                $is_provider_user = $doctor_user && (
-                    in_array('doctor', (array) $doctor_user->roles, true)
-                    || in_array('administrator', (array) $doctor_user->roles, true)
-                );
-                if (!$is_provider_post && !$is_provider_user) {
-                    continue;
-                }
-
+                $uid = $a['id'] ?? ('APT-' . rand(1000, 9999));
                 $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM $tbl_apts WHERE appt_uid = %s", $uid));
-                if ($exists) {
-                    continue;
-                }
+                if ($exists) continue;
 
-                $appt_date = wp_date('Y-m-d', $date_timestamp);
-                $created_at = !empty($a['created_at']) && strtotime($a['created_at'])
-                    ? wp_date('Y-m-d H:i:s', strtotime($a['created_at']))
-                    : current_time('mysql');
-                $allowed_statuses = ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show'];
-                $status = sanitize_text_field($a['status'] ?? 'Pending');
-                if (!in_array($status, $allowed_statuses, true)) {
-                    $status = 'Pending';
-                }
-                $allowed_payment_statuses = ['Pending', 'Paid', 'Refunded', 'Failed'];
-                $payment_status = sanitize_text_field($a['payment_status'] ?? 'Pending');
-                if (!in_array($payment_status, $allowed_payment_statuses, true)) {
-                    $payment_status = 'Pending';
-                }
+                $appt_date = !empty($a['date']) ? date('Y-m-d', strtotime($a['date'])) : date('Y-m-d');
+                $created_at = current_time('mysql');
 
                 $wpdb->insert($tbl_apts, [
                     'appt_uid'       => $uid,
                     'patient_id'     => $patient_id,
-                    'doctor_id'      => $doctor_id,
+                    'doctor_id'      => (int)($a['doctor_user_id'] ?? ($a['doctor_id'] ?? 1)),
                     'condition_name' => sanitize_text_field($a['condition'] ?? 'Telehealth Consultation'),
-                    'visit_type'     => sanitize_text_field($a['type'] ?? ($a['visit_type'] ?? 'Video Visit')),
-                    'status'         => $status,
+                    'visit_type'     => sanitize_text_field($a['type'] ?? 'Video Visit (HD)'),
+                    'status'         => in_array($a['status'] ?? '', ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show']) ? $a['status'] : 'Confirmed',
                     'appt_date'      => $appt_date,
-                    'appt_time'      => $appt_time,
-                    'join_url'       => !empty($a['join_url']) ? esc_url_raw($a['join_url']) : '',
-                    'payment_status' => $payment_status,
+                    'appt_time'      => sanitize_text_field($a['time'] ?? '10:00 AM'),
+                    'join_url'       => esc_url_raw($a['join_url'] ?? 'https://zoom.us/join'),
+                    'payment_status' => sanitize_text_field($a['payment_status'] ?? 'Paid'),
                     'notes'          => sanitize_textarea_field($a['notes'] ?? ''),
                     'created_at'     => $created_at,
-                    'updated_at'     => current_time('mysql'),
+                    'updated_at'     => $created_at,
                     'is_deleted'     => 0
                 ]);
             }

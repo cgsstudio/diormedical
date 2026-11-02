@@ -20,9 +20,6 @@
                         <?php endif; ?>
                     </a>
                 </div>
-                <button type="button" class="dior-side-close btn" onclick="diorDocCloseMobile()" aria-label="Close navigation menu">
-                    <i class="fas fa-xmark" aria-hidden="true"></i>
-                </button>
             </div>
 
             <!-- Doctor Identity Card Removed -->
@@ -39,12 +36,9 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'appointments-menu-item')">
                             <i class="far fa-calendar"></i><span class="nav-label">Appointments</span>
-                            <i class="fas fa-plus submenu-icon"></i>
+                            <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
-                            <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments-today">
-                                <i class="far fa-calendar-check"></i><span class="nav-label">Today's Appointments</span>
-                            </button>
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-appointments">
                                 <i class="fas fa-calendar-days"></i><span class="nav-label">Appointment Calendar</span>
                             </button>
@@ -63,7 +57,7 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'patients-menu-item')">
                             <i class="fas fa-users"></i><span class="nav-label">Patients</span>
-                            <i class="fas fa-plus submenu-icon"></i>
+                            <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-patients-all">
@@ -84,11 +78,13 @@
                         </div>
                     </div>
                     
+                    <button type="button" class="dior-nav-btn btn" data-tab="doc-analytics"><i
+                            class="fas fa-chart-line"></i><span class="nav-label">Analytics</span></button>
                     <div class="dior-nav-item has-submenu" id="accounts-menu-item">
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'accounts-menu-item')">
                             <i class="fas fa-wallet"></i><span class="nav-label">Accounts</span>
-                            <i class="fas fa-plus submenu-icon"></i>
+                            <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-accounts-bill-list">
@@ -122,7 +118,7 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'pharmacy-menu-item')">
                             <i class="fas fa-pills"></i><span class="nav-label">Pharmacy</span>
-                            <i class="fas fa-plus submenu-icon"></i>
+                            <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-pharmacy-list">
@@ -137,7 +133,7 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'documents-menu-item')">
                             <i class="fas fa-file-medical"></i><span class="nav-label">Documents & Report</span>
-                            <i class="fas fa-plus submenu-icon"></i>
+                            <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn"
@@ -156,7 +152,7 @@
                         <button type="button" class="dior-nav-btn btn"
                             onclick="diorToggleSubmenu(event, 'telemedicine-menu-item')">
                             <i class="fas fa-video"></i><span class="nav-label">Telemedicine</span>
-                            <i class="fas fa-plus submenu-icon"></i>
+                            <i class="fas fa-minus submenu-icon"></i>
                         </button>
                         <div class="dior-submenu">
                             <button type="button" class="dior-nav-btn submenu-btn btn" data-tab="doc-telemed-video">
@@ -172,56 +168,42 @@
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-notifications-system">
                         <i class="fas fa-bell"></i><span class="nav-label">Notifications</span>
                     </button>
+                    <button type="button" class="dior-nav-btn btn" data-tab="doc-consultation"><i
+                            class="fas fa-door-open"></i><span class="nav-label">Consultation Room</span></button>
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-settings"><i
                             class="fas fa-gear"></i><span class="nav-label">Settings</span></button>
                 </div>
             </nav>
             <script>
-                window.diorToggleSubmenu = function (e, menuId) {
-                    if (typeof e === 'string' && !menuId) {
-                        menuId = e;
-                        e = null;
-                    }
+                function diorToggleSubmenu(e, menuId) {
                     if (e) {
                         if (e.preventDefault) e.preventDefault();
                         if (e.stopPropagation) e.stopPropagation();
                     }
                     var target = document.getElementById(menuId);
                     if (!target) return;
-                    var isOpen = target.classList.contains('active') && target.classList.contains('open');
-                    document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(item) {
-                        if (item !== target) {
-                            item.classList.remove('active', 'open');
-                            var subEl = item.querySelector('.dior-submenu');
-                            if (subEl) subEl.style.setProperty('display', 'none', 'important');
-                            var icon = item.querySelector('.submenu-icon');
-                            if (icon) {
-                                icon.classList.remove('fa-minus');
-                                icon.classList.add('fa-plus');
-                            }
-                        }
-                    });
-                    if (isOpen) {
-                        target.classList.remove('active', 'open');
-                        var subEl = target.querySelector('.dior-submenu');
-                        if (subEl) subEl.style.setProperty('display', 'none', 'important');
-                        var icon = target.querySelector('.submenu-icon');
+                    var isOpen = target.classList.contains('active') || target.classList.contains('open');
+
+                    // Strict Accordion: Close ALL other submenus
+                    document.querySelectorAll('.dior-nav-item.has-submenu').forEach(function(item) {
+                        item.classList.remove('active', 'open');
+                        var icon = item.querySelector('.submenu-icon');
                         if (icon) {
                             icon.classList.remove('fa-minus');
                             icon.classList.add('fa-plus');
                         }
-                    } else {
+                    });
+
+                    // If it was closed, open ONLY this one
+                    if (!isOpen) {
                         target.classList.add('active', 'open');
-                        var subEl = target.querySelector('.dior-submenu');
-                        if (subEl) subEl.style.setProperty('display', 'flex', 'important');
                         var icon = target.querySelector('.submenu-icon');
                         if (icon) {
                             icon.classList.remove('fa-plus');
                             icon.classList.add('fa-minus');
                         }
                     }
-                };
-                var diorToggleSubmenu = window.diorToggleSubmenu;
+                }
             </script>
         </aside>
 
@@ -233,7 +215,7 @@
             <!-- Topbar -->
             <header class="dior-topbar">
                 <div class="dior-topbar-left">
-                    <button type="button" class="dior-mobile-menu-toggle btn" onclick="diorDocOpenMobile()" aria-label="Open navigation menu" aria-controls="dior-doc-sidebar" aria-expanded="false">
+                    <button type="button" class="dior-mobile-menu-toggle btn" onclick="diorDocOpenMobile()">
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="dior-top-search">
@@ -244,11 +226,11 @@
                     </div>
                 </div>
                 <div class="dior-topbar-right">
-                    <button type="button" class="dior-msg-btn dior-ic-fa44d4cb47 btn" aria-label="Messages">
+                    <button type="button" class="dior-msg-btn dior-ic-fa44d4cb47 btn">
                         <i class="far fa-envelope"></i>
                     </button>
                     <div class="dior-notif-wrap">
-                        <button type="button" class="dior-notif-btn btn" onclick="diorDocToggleNotif(event)" aria-label="Notifications">
+                        <button type="button" class="dior-notif-btn btn" onclick="diorDocToggleNotif(event)">
                             <i class="far fa-bell"></i>
                             <?php if ($unread_count > 0): ?>
                                 <span class="dior-notif-indicator doc-unread-badge"><?php echo $unread_count; ?></span>
@@ -337,6 +319,7 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/edit-patient.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-records.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-profile.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/analytics.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/bill-list.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/add-bill.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/income.php'; ?>
@@ -351,6 +334,7 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/telemedicine-records.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-review.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/notifications-system.php'; ?>
+                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/consultation-room.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/settings.php'; ?>
             </div><!-- /tab-content -->
         </main>
