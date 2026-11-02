@@ -196,7 +196,10 @@ class Dior_Doctor_Dynamic {
             }
         }
 
-        if ($status !== 'Cancelled') {
+        // Only check slot conflicts when date or time is actively being changed to a new slot (i.e. rescheduling)
+        $is_rescheduling = (isset($_POST['date']) && $_POST['date'] !== $a['appt_date']) || 
+                           (isset($_POST['time']) && $_POST['time'] !== $a['appt_time'] && $a['appt_time'] !== 'Pending');
+        if ($is_rescheduling && $status !== 'Cancelled') {
             $conflict = $wpdb->get_var($wpdb->prepare(
                 "SELECT id FROM {$wpdb->prefix}dior_appointments WHERE patient_id=%d AND appt_date=%s AND appt_time=%s AND appt_uid<>%s AND status NOT IN('Cancelled','No Show') AND is_deleted=0 LIMIT 1",
                 $patient_id, $date, $time, $uid

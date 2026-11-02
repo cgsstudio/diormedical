@@ -3,7 +3,9 @@
  * View Appointment Tab — Dynamic, DB-connected
  * 100% Native Bootstrap 5 Components & Utilities (Zero Custom CSS)
  */
-if (!defined('ABSPATH')) { exit; }
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 global $wpdb;
 $doctor_id = get_current_user_id();
@@ -16,7 +18,7 @@ $edit_patients = $wpdb->get_results(
      FROM {$wpdb->prefix}dior_patients 
      WHERE status <> 'deleted' 
      ORDER BY first_name ASC 
-     LIMIT 500", 
+     LIMIT 500",
     ARRAY_A
 );
 
@@ -24,7 +26,7 @@ $edit_patients = $wpdb->get_results(
 $all_doc_users = get_users(['role__in' => ['doctor', 'dior_doctor', 'administrator'], 'orderby' => 'display_name', 'order' => 'ASC']);
 $doctor_list = [];
 foreach ($all_doc_users as $du) {
-    if (in_array('administrator', (array)$du->roles, true) && !in_array('doctor', (array)$du->roles, true)) {
+    if (in_array('administrator', (array) $du->roles, true) && !in_array('doctor', (array) $du->roles, true)) {
         continue;
     }
     $d_name = trim($du->first_name . ' ' . $du->last_name) ?: $du->display_name;
@@ -33,29 +35,29 @@ foreach ($all_doc_users as $du) {
     }
     $d_spec = get_user_meta($du->ID, 'doctor_specialty', true) ?: (get_user_meta($du->ID, 'dior_specialty', true) ?: 'General Practice & Internal Medicine');
     $d_dept = get_user_meta($du->ID, 'doctor_department', true) ?: 'Outpatient Care';
-    $d_avatar = get_user_meta($du->ID, 'dior_profile_image', true) 
+    $d_avatar = get_user_meta($du->ID, 'dior_profile_image', true)
         ?: get_user_meta($du->ID, 'doctor_avatar', true)
         ?: ('https://ui-avatars.com/api/?name=' . urlencode($d_name) . '&background=00346c&color=ffffff&bold=true');
-    
+
     $doctor_list[$du->ID] = [
-        'id'         => $du->ID,
-        'name'       => $d_name,
-        'email'      => $du->user_email,
-        'specialty'  => $d_spec,
+        'id' => $du->ID,
+        'name' => $d_name,
+        'email' => $du->user_email,
+        'specialty' => $d_spec,
         'department' => $d_dept,
-        'avatar'     => $d_avatar,
+        'avatar' => $d_avatar,
     ];
 }
 
 // Fallback if doctor_list is empty
 if (empty($doctor_list)) {
     $doctor_list[35] = [
-        'id'         => 35,
-        'name'       => 'Dr. Marcus Sterling',
-        'email'      => 'marcus.sterling@diormedical.com',
-        'specialty'  => 'Cardiology & Cardiovascular Surgery',
+        'id' => 35,
+        'name' => 'Dr. Marcus Sterling',
+        'email' => 'marcus.sterling@diormedical.com',
+        'specialty' => 'Cardiology & Cardiovascular Surgery',
         'department' => 'Cardiology Department',
-        'avatar'     => 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
+        'avatar' => 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
     ];
 }
 
@@ -101,7 +103,8 @@ if (empty($appointments)) {
     foreach ($patients as $u) {
         $raw = get_user_meta($u->ID, 'dior_appointments', true);
         $list = is_array($raw) ? $raw : (is_string($raw) ? maybe_unserialize($raw) : []);
-        if (!is_array($list)) continue;
+        if (!is_array($list))
+            continue;
         foreach ($list as $a) {
             $appointments[] = array_merge($a, [
                 'first_name' => $u->first_name ?: $u->display_name,
@@ -142,22 +145,24 @@ foreach ($appointments as $item) {
 
 // 100% Native Bootstrap 5 status badges
 $status_badges = [
-    'Pending'     => 'badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2.5 py-1 small fw-semibold',
-    'Confirmed'   => 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold',
+    'Pending' => 'badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2.5 py-1 small fw-semibold',
+    'Confirmed' => 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold',
     'In Progress' => 'badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2.5 py-1 small fw-semibold',
-    'Completed'   => 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold',
-    'Cancelled'   => 'badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small fw-semibold',
-    'No Show'     => 'badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1 small fw-semibold',
+    'Completed' => 'badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 small fw-semibold',
+    'Cancelled' => 'badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small fw-semibold',
+    'No Show' => 'badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1 small fw-semibold',
 ];
 ?>
 
 <section class="dior-tab-panel" id="tab-doc-appointments-view" style="display: none;">
-    
+
     <!-- Hero Header (100% Native Bootstrap 5) -->
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
             <h4 class="mb-1 text-dark fw-bold fs-5 d-flex align-items-center gap-2">
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-circle p-2 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                <span
+                    class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-circle p-2 d-inline-flex align-items-center justify-content-center"
+                    style="width: 38px; height: 38px;">
                     <i class="fas fa-calendar-check fs-6"></i>
                 </span>
                 View Appointments
@@ -166,15 +171,18 @@ $status_badges = [
                 <ol class="breadcrumb mb-0 small text-secondary">
                     <li class="breadcrumb-item"><i class="fas fa-house me-1"></i> Dashboard</li>
                     <li class="breadcrumb-item">Appointments</li>
-                    <li class="breadcrumb-item active fw-semibold text-primary" aria-current="page">View Appointments</li>
+                    <li class="breadcrumb-item active fw-semibold text-primary" aria-current="page">View Appointments
+                    </li>
                 </ol>
             </nav>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <button type="button" class="btn btn-outline-primary rounded-3 px-3 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-2" id="va-export-csv-btn">
+            <button type="button"
+                class="btn btn-outline-primary rounded-3 px-3 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-2"
+                id="va-export-csv-btn">
                 <i class="fas fa-file-export"></i> Export CSV
             </button>
-            <button type="button" 
+            <button type="button"
                 onclick="if (typeof diorOpenDocBookerModal === 'function') { diorOpenDocBookerModal(); } else if (typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-appointments-book'); } else if (typeof diorAdminSwitchTab === 'function') { diorAdminSwitchTab('doc-appointments-book'); } else if (typeof diorSwitchTab === 'function') { diorSwitchTab('doc-appointments-book'); }"
                 class="btn btn-primary rounded-3 px-3 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-2">
                 <i class="fas fa-plus"></i> Book Appointment
@@ -184,16 +192,20 @@ $status_badges = [
 
     <!-- Subtab Navigation Bar -->
     <div class="dior-subtab-nav-bar px-1 mb-4">
-        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments" onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments');">
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments"
+            onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments');">
             <i class="fas fa-calendar-days"></i> Appointment Calendar
         </button>
-        <button type="button" class="dior-subtab-pill btn active" data-doc-tab="doc-appointments-view" onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments-view'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-view');">
+        <button type="button" class="dior-subtab-pill btn active" data-doc-tab="doc-appointments-view"
+            onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments-view'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-view');">
             <i class="fas fa-calendar-check"></i> View Appointment
         </button>
-        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments-book" onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments-book'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-book');">
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments-book"
+            onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments-book'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-book');">
             <i class="fas fa-calendar-plus"></i> Book Appointment
         </button>
-        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments-edit" onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments-edit'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-edit');">
+        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments-edit"
+            onclick="if(typeof diorAdminSwitchTab==='function') diorAdminSwitchTab('doc-appointments-edit'); else if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-edit');">
             <i class="fas fa-pen-to-square"></i> Edit Appointment
         </button>
     </div>
@@ -201,66 +213,85 @@ $status_badges = [
     <!-- Quick Stat KPI Bar (100% Bootstrap 5 Cards) -->
     <div class="row g-3 mb-4">
         <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
+            <div
+                class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start justify-content-between">
                     <div>
-                        <span class="text-secondary small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Total Bookings</span>
-                        <div class="stat-num fs-1 fw-bold text-dark mt-1" id="va-kpi-total"><?php echo esc_html($total_appts); ?></div>
+                        <span class="text-secondary small fw-semibold text-uppercase"
+                            style="letter-spacing: 0.5px; font-size: 11px;">Total Bookings</span>
+                        <div class="stat-num fs-1 fw-bold text-dark mt-1" id="va-kpi-total">
+                            <?php echo esc_html($total_appts); ?></div>
                     </div>
                     <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-3 p-2.5">
                         <i class="fas fa-calendar-days fs-5"></i>
                     </span>
                 </div>
                 <div class="mt-2 text-secondary small">
-                    <span class="text-primary fw-semibold"><i class="fas fa-chart-line me-1"></i>All records</span> across clinic
+                    <span class="text-primary fw-semibold"><i class="fas fa-chart-line me-1"></i>All records</span>
+                    across clinic
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
+            <div
+                class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start justify-content-between">
                     <div>
-                        <span class="text-secondary small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Upcoming Visits</span>
-                        <div class="stat-num fs-1 fw-bold text-primary mt-1" id="va-kpi-upcoming"><?php echo esc_html($upcoming_appts); ?></div>
+                        <span class="text-secondary small fw-semibold text-uppercase"
+                            style="letter-spacing: 0.5px; font-size: 11px;">Upcoming Visits</span>
+                        <div class="stat-num fs-1 fw-bold text-primary mt-1" id="va-kpi-upcoming">
+                            <?php echo esc_html($upcoming_appts); ?></div>
                     </div>
                     <span class="badge bg-info-subtle text-info border border-info-subtle rounded-3 p-2.5">
                         <i class="fas fa-clock fs-5"></i>
                     </span>
                 </div>
                 <div class="mt-2 text-secondary small">
-                    <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2 py-0.5 fw-semibold">Scheduled ahead</span>
+                    <span
+                        class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2 py-0.5 fw-semibold">Scheduled
+                        ahead</span>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
+            <div
+                class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start justify-content-between">
                     <div>
-                        <span class="text-secondary small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Completed</span>
-                        <div class="stat-num fs-1 fw-bold text-success mt-1" id="va-kpi-completed"><?php echo esc_html($completed_appts); ?></div>
+                        <span class="text-secondary small fw-semibold text-uppercase"
+                            style="letter-spacing: 0.5px; font-size: 11px;">Completed</span>
+                        <div class="stat-num fs-1 fw-bold text-success mt-1" id="va-kpi-completed">
+                            <?php echo esc_html($completed_appts); ?></div>
                     </div>
                     <span class="badge bg-success-subtle text-success border border-success-subtle rounded-3 p-2.5">
                         <i class="fas fa-circle-check fs-5"></i>
                     </span>
                 </div>
                 <div class="mt-2 text-secondary small">
-                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5 fw-semibold">Consultations done</span>
+                    <span
+                        class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5 fw-semibold">Consultations
+                        done</span>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
+            <div
+                class="card stat-card border-0 shadow-sm rounded-4 p-3 p-md-4 h-100 bg-white d-flex flex-column justify-content-between">
                 <div class="d-flex align-items-start justify-content-between">
                     <div>
-                        <span class="text-secondary small fw-semibold text-uppercase" style="letter-spacing: 0.5px; font-size: 11px;">Pending Action</span>
-                        <div class="stat-num fs-1 fw-bold text-warning mt-1" id="va-kpi-pending"><?php echo esc_html($pending_appts); ?></div>
+                        <span class="text-secondary small fw-semibold text-uppercase"
+                            style="letter-spacing: 0.5px; font-size: 11px;">Pending Action</span>
+                        <div class="stat-num fs-1 fw-bold text-warning mt-1" id="va-kpi-pending">
+                            <?php echo esc_html($pending_appts); ?></div>
                     </div>
                     <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-3 p-2.5">
                         <i class="fas fa-hourglass-half fs-5"></i>
                     </span>
                 </div>
                 <div class="mt-2 text-secondary small">
-                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-0.5 fw-semibold">Needs review</span>
+                    <span
+                        class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-0.5 fw-semibold">Needs
+                        review</span>
                 </div>
             </div>
         </div>
@@ -268,7 +299,7 @@ $status_badges = [
 
     <!-- Main Table Card (Standard View Appointment Card) -->
     <div class="view-appointment-card">
-        
+
         <!-- Controls Header Bar -->
         <div class="va-header-container">
             <div class="va-title-box">
@@ -280,15 +311,19 @@ $status_badges = [
             <div class="va-actions-wrapper">
                 <!-- Bulk Selection Toolbar (reveals when items checked) -->
                 <div id="va-bulk-bar" class="d-none align-items-center gap-2">
-                    <span class="badge bg-primary text-white rounded-pill px-2.5 py-1 small fw-semibold" id="va-selected-count">0 Selected</span>
-                    <button type="button" class="btn btn-outline-success btn-sm rounded-3 px-2.5 py-1 shadow-none fw-semibold" id="va-bulk-complete-btn" title="Mark as Completed">
+                    <span class="badge bg-primary text-white rounded-pill px-2.5 py-1 small fw-semibold"
+                        id="va-selected-count">0 Selected</span>
+                    <button type="button"
+                        class="btn btn-outline-success btn-sm rounded-3 px-2.5 py-1 shadow-none fw-semibold"
+                        id="va-bulk-complete-btn" title="Mark as Completed">
                         <i class="fas fa-check me-1"></i>Complete
                     </button>
                 </div>
 
                 <!-- Search, Filters & Actions -->
                 <div class="input-group input-group-sm dior-bs-search-group" style="width: 220px;">
-                    <input type="text" id="va-appt-search" class="form-control border-start-0 ps-0 shadow-none" placeholder="Search patient, doctor, UID...">
+                    <input type="text" id="va-appt-search" class="form-control border-start-0 ps-0 shadow-none"
+                        placeholder="Search patient, doctor, UID...">
                 </div>
 
                 <!-- Doctor / Physician Filter -->
@@ -296,7 +331,8 @@ $status_badges = [
                     <select id="va-doctor-filter" class="form-select form-select-sm shadow-none">
                         <option value="">All Doctors</option>
                         <?php foreach ($doctor_list as $doc_item): ?>
-                            <option value="<?php echo esc_attr($doc_item['name']); ?>"><?php echo esc_html($doc_item['name']); ?></option>
+                            <option value="<?php echo esc_attr($doc_item['name']); ?>">
+                                <?php echo esc_html($doc_item['name']); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -324,7 +360,8 @@ $status_badges = [
                 </div>
 
                 <div class="va-actions-group">
-                    <button class="va-icon-btn va-btn-info btn" id="va-refresh-btn" aria-label="Refresh" title="Reset Filters & Refresh">
+                    <button class="va-icon-btn va-btn-info btn" id="va-refresh-btn" aria-label="Refresh"
+                        title="Reset Filters & Refresh">
                         <i class="fas fa-rotate-right"></i>
                     </button>
                 </div>
@@ -337,7 +374,8 @@ $status_badges = [
                 <thead>
                     <tr>
                         <th style="width: 45px;" class="text-center">
-                            <input type="checkbox" class="va-checkbox form-check-input" id="va-select-all" aria-label="Select all rows">
+                            <input type="checkbox" class="va-checkbox form-check-input" id="va-select-all"
+                                aria-label="Select all rows">
                         </th>
                         <th>PATIENT NAME <i class="fas fa-sort"></i></th>
 
@@ -366,7 +404,7 @@ $status_badges = [
                                 }
                             }
                             $uid = esc_attr($uid_raw);
-                            $patient_id = !empty($a['patient_id']) ? (int)$a['patient_id'] : (!empty($a['patient_user_id']) ? (int)$a['patient_user_id'] : 0);
+                            $patient_id = !empty($a['patient_id']) ? (int) $a['patient_id'] : (!empty($a['patient_user_id']) ? (int) $a['patient_user_id'] : 0);
                             $status = esc_html($a['status'] ?? 'Pending');
                             $badge = $status_badges[$status] ?? 'badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1 small fw-semibold';
                             $date_raw = !empty($a['appt_date']) ? $a['appt_date'] : (!empty($a['date']) ? $a['date'] : '');
@@ -374,7 +412,7 @@ $status_badges = [
                             if (empty($date_raw) && !empty($a['created_at'])) {
                                 $date_raw = date('Y-m-d', strtotime($a['created_at']));
                             }
-                            $date_ts  = !empty($date_raw) ? strtotime($date_raw) : 0;
+                            $date_ts = !empty($date_raw) ? strtotime($date_raw) : 0;
                             $date_fmt = $date_ts ? date('M d, Y', $date_ts) : 'N/A';
                             $time_raw = !empty($a['appt_time']) ? $a['appt_time'] : (!empty($a['time']) ? $a['time'] : '');
                             $time = esc_html($time_raw ?: 'Not set');
@@ -385,12 +423,14 @@ $status_badges = [
                             $notes = esc_attr($a['notes'] ?? '');
                             $avatar = esc_url(!empty($a['avatar_url']) ? $a['avatar_url'] : (!empty($patient_id) ? get_user_meta($patient_id, 'dior_profile_image', true) : ''));
                             $patient_uid = esc_attr(!empty($a['patient_uid']) ? $a['patient_uid'] : (!empty($patient_id) ? get_user_meta($patient_id, 'patient_id', true) : ('DM-' . (10000 + $patient_id))));
-                            
+
                             $is_video = (stripos($visit_type, 'video') !== false || stripos($visit_type, 'telehealth') !== false);
                             $stored_join_url = !empty($a['join_url']) ? esc_url_raw($a['join_url']) : '';
                             // Repair older video appointments that still have no real Zoom meeting URL.
-                            if ($is_video && class_exists('Dior_Zoom_Meetings') &&
-                                (!$stored_join_url || stripos($stored_join_url, 'zoom.us/join') !== false)) {
+                            if (
+                                $is_video && class_exists('Dior_Zoom_Meetings') &&
+                                (!$stored_join_url || stripos($stored_join_url, 'zoom.us/join') !== false)
+                            ) {
                                 $generated_join_url = Dior_Zoom_Meetings::create_meeting_link($date_raw, $time_raw, (string) ($a['doctor_name'] ?? ''));
                                 if ($generated_join_url && !empty($a['appt_uid'])) {
                                     $wpdb->update(
@@ -412,7 +452,7 @@ $status_badges = [
                             $payment_status = esc_html($a['payment_status'] ?? 'Paid');
 
                             // Doctor data resolution
-                            $doc_id = (int)($a['doctor_id'] ?? 0);
+                            $doc_id = (int) ($a['doctor_id'] ?? 0);
                             $doc_info = $doctor_list[$doc_id] ?? null;
                             $doc_name = $doc_info['name'] ?? (!empty($a['doctor_name']) ? $a['doctor_name'] : 'Dr. Marcus Sterling');
                             if (stripos($doc_name, 'Dr.') !== 0 && stripos($doc_name, 'Dr ') !== 0) {
@@ -423,31 +463,28 @@ $status_badges = [
                             $doc_avatar = $doc_info['avatar'] ?? (get_user_meta($doc_id, 'dior_profile_image', true) ?: ('https://ui-avatars.com/api/?name=' . urlencode($doc_name) . '&background=00346c&color=ffffff&bold=true'));
                             $doc_email = $doc_info['email'] ?? ($a['doctor_email'] ?? 'doctor@diormedical.com');
                             ?>
-                            <tr data-appt-uid="<?php echo $uid; ?>" data-appointment-id="<?php echo esc_attr((string)($a['appointment_id'] ?? ($a['id'] ?? ''))); ?>" data-appointment-uid="<?php echo esc_attr((string)($a['appointment_uid'] ?? ($a['uid'] ?? $uid_raw))); ?>" 
-                                data-patient-id="<?php echo $patient_id; ?>"
-                                data-patient-uid="<?php echo $patient_uid; ?>"
-                                data-patient-name="<?php echo $fname; ?>"
-                                data-patient-avatar="<?php echo $avatar; ?>"
+                            <tr data-appt-uid="<?php echo $uid; ?>"
+                                data-appointment-id="<?php echo esc_attr((string) ($a['appointment_id'] ?? ($a['id'] ?? ''))); ?>"
+                                data-appointment-uid="<?php echo esc_attr((string) ($a['appointment_uid'] ?? ($a['uid'] ?? $uid_raw))); ?>"
+                                data-patient-id="<?php echo $patient_id; ?>" data-patient-uid="<?php echo $patient_uid; ?>"
+                                data-patient-name="<?php echo $fname; ?>" data-patient-avatar="<?php echo $avatar; ?>"
                                 data-patient-phone="<?php echo esc_attr($phone); ?>"
-                                data-patient-email="<?php echo esc_attr($email); ?>"
-                                data-doctor-id="<?php echo $doc_id; ?>"
+                                data-patient-email="<?php echo esc_attr($email); ?>" data-doctor-id="<?php echo $doc_id; ?>"
                                 data-doctor-name="<?php echo esc_attr($doc_name); ?>"
                                 data-doctor-specialty="<?php echo esc_attr($doc_spec); ?>"
                                 data-doctor-department="<?php echo esc_attr($doc_dept); ?>"
                                 data-doctor-avatar="<?php echo esc_url($doc_avatar); ?>"
                                 data-doctor-email="<?php echo esc_attr($doc_email); ?>"
                                 data-date="<?php echo esc_attr($date_raw); ?>"
-                                data-date-fmt="<?php echo esc_attr($date_fmt); ?>"
-                                data-time="<?php echo esc_attr($time); ?>"
+                                data-date-fmt="<?php echo esc_attr($date_fmt); ?>" data-time="<?php echo esc_attr($time); ?>"
                                 data-status="<?php echo esc_attr($status); ?>"
                                 data-condition="<?php echo esc_attr($condition); ?>"
-                                data-visit-type="<?php echo esc_attr($visit_type); ?>"
-                                data-join-url="<?php echo $join_url; ?>"
+                                data-visit-type="<?php echo esc_attr($visit_type); ?>" data-join-url="<?php echo $join_url; ?>"
                                 data-payment-status="<?php echo esc_attr($payment_status); ?>"
-                                data-notes="<?php echo $notes; ?>"
-                                data-phone="<?php echo esc_attr($phone); ?>">
+                                data-notes="<?php echo $notes; ?>" data-phone="<?php echo esc_attr($phone); ?>">
                                 <td class="text-center">
-                                    <input type="checkbox" class="va-checkbox form-check-input va-row-check" aria-label="Select appointment">
+                                    <input type="checkbox" class="va-checkbox form-check-input va-row-check"
+                                        aria-label="Select appointment">
                                 </td>
                                 <td>
                                     <div class="va-user-profile">
@@ -455,15 +492,19 @@ $status_badges = [
                                             onerror="this.src='https://ui-avatars.com/api/?name=<?php echo urlencode($fname); ?>&background=00346c&color=ffffff&bold=true'"
                                             class="va-user-avatar" alt="<?php echo $fname; ?>">
                                         <div>
-                                            <span class="va-user-name va-view-patient-btn d-block text-decoration-none role-button"
-                                                role="button"
-                                                data-patient-id="<?php echo $patient_id; ?>" title="View Patient Profile">
+                                            <span
+                                                class="va-user-name va-view-patient-btn d-block text-decoration-none role-button"
+                                                role="button" data-patient-id="<?php echo $patient_id; ?>"
+                                                title="View Patient Profile">
                                                 <?php echo $fname; ?>
                                             </span>
                                             <div class="d-flex align-items-center gap-1.5" style="font-size: 11px;">
                                                 <span class="text-secondary"><?php echo $patient_uid; ?></span>
                                                 <span class="text-secondary opacity-50">&bull;</span>
-                                                <a href="javascript:void(0)" class="va-view-details-btn text-primary fw-semibold text-decoration-none" data-uid="<?php echo $uid; ?>" data-appt-uid="<?php echo $uid; ?>" title="View Appointment Details">
+                                                <a href="javascript:void(0)"
+                                                    class="va-view-details-btn text-primary fw-semibold text-decoration-none"
+                                                    data-uid="<?php echo $uid; ?>" data-appt-uid="<?php echo $uid; ?>"
+                                                    title="View Appointment Details">
                                                     <?php echo $uid; ?>
                                                 </a>
                                             </div>
@@ -473,7 +514,8 @@ $status_badges = [
 
                                 <td>
                                     <div class="d-flex flex-column" style="max-width: 240px;">
-                                        <span class="text-dark small fw-semibold text-truncate d-block" title="<?php echo esc_attr($condition); ?>"><?php echo $condition; ?></span>
+                                        <span class="text-dark small fw-semibold text-truncate d-block"
+                                            title="<?php echo esc_attr($condition); ?>"><?php echo $condition; ?></span>
                                     </div>
                                 </td>
                                 <td>
@@ -488,7 +530,8 @@ $status_badges = [
                                 </td>
                                 <td>
                                     <?php if ($phone !== '—'): ?>
-                                        <a href="tel:<?php echo esc_attr(preg_replace('/[^0-9+]/', '', $phone)); ?>" class="text-secondary small text-decoration-none text-nowrap">
+                                        <a href="tel:<?php echo esc_attr(preg_replace('/[^0-9+]/', '', $phone)); ?>"
+                                            class="text-secondary small text-decoration-none text-nowrap">
                                             <i class="fas fa-phone text-success me-1"></i><?php echo $phone; ?>
                                         </a>
                                     <?php else: ?>
@@ -501,29 +544,36 @@ $status_badges = [
                                 <td class="text-end text-nowrap">
                                     <div class="d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
                                         <?php if ($is_video && !empty($join_url) && !in_array(strtolower($status), ['completed', 'cancelled', 'no show'], true)): ?>
-                                            <a href="<?php echo $join_url; ?>" data-dior-meeting-join data-appt-uid="<?php echo esc_attr($uid); ?>" data-meeting-nonce="<?php echo esc_attr(wp_create_nonce('dior_meeting_started')); ?>" data-status-nonce="<?php echo esc_attr($nonce); ?>" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm rounded-pill shadow-none va-join-meeting-btn" title="Join Zoom Meeting" style="padding:4px 10px!important;font-size:12px!important;font-weight:600!important;line-height:1.3!important;"><i class="fas fa-video me-1"></i>Join Meeting</a>
+                                            <a href="<?php echo $join_url; ?>" data-dior-meeting-join
+                                                data-appt-uid="<?php echo esc_attr($uid); ?>"
+                                                data-meeting-nonce="<?php echo esc_attr(wp_create_nonce('dior_meeting_started')); ?>"
+                                                data-status-nonce="<?php echo esc_attr($nonce); ?>" target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="btn btn-success btn-sm rounded-pill shadow-none va-join-meeting-btn"
+                                                title="Join Zoom Meeting"
+                                                style="padding:4px 10px!important;font-size:12px!important;font-weight:600!important;line-height:1.3!important;"><i
+                                                    class="fas fa-video me-1"></i>Join Meeting</a>
                                         <?php endif; ?>
-                                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-view-patient-btn shadow-none"
-                                            data-patient-id="<?php echo $patient_id; ?>"
-                                            title="View Patient Profile"
+                                        <button type="button"
+                                            class="btn btn-outline-primary btn-sm rounded-pill va-view-patient-btn shadow-none"
+                                            data-patient-id="<?php echo $patient_id; ?>" title="View Patient Profile"
                                             style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
                                             <i class="fas fa-eye me-1"></i>View
                                         </button>
 
-                                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-resched-appt-btn shadow-none"
-                                            data-uid="<?php echo $uid; ?>"
-                                            data-appt-uid="<?php echo $uid; ?>" 
-                                            data-name="<?php echo esc_attr($fname); ?>" 
-                                            data-date="<?php echo esc_attr($date_raw); ?>" 
-                                            data-time="<?php echo esc_attr($time); ?>"
-                                            title="Reschedule Appointment"
+                                        <button type="button"
+                                            class="btn btn-outline-primary btn-sm rounded-pill va-resched-appt-btn shadow-none"
+                                            data-uid="<?php echo $uid; ?>" data-appt-uid="<?php echo $uid; ?>"
+                                            data-name="<?php echo esc_attr($fname); ?>"
+                                            data-date="<?php echo esc_attr($date_raw); ?>"
+                                            data-time="<?php echo esc_attr($time); ?>" title="Reschedule Appointment"
                                             style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
                                             <i class="fas fa-calendar-alt me-1"></i>Reschedule
                                         </button>
                                         <?php if (strtolower($status) !== 'cancelled'): ?>
-                                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill va-cancel-appt-btn shadow-none"
-                                                data-uid="<?php echo $uid; ?>" 
-                                                data-name="<?php echo esc_attr($fname); ?>"
+                                            <button type="button"
+                                                class="btn btn-outline-danger btn-sm rounded-pill va-cancel-appt-btn shadow-none"
+                                                data-uid="<?php echo $uid; ?>" data-name="<?php echo esc_attr($fname); ?>"
                                                 title="Cancel Appointment"
                                                 style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
                                                 <i class="fas fa-ban me-1"></i>Cancel
@@ -557,39 +607,49 @@ $status_badges = [
 <!-- ========================================================================= -->
 <!-- 1. VIEW APPOINTMENT DETAILS MODAL (100% Native Bootstrap 5 Minimalist Standard - Rule 3.F) -->
 <!-- ========================================================================= -->
-<div class="modal fade" id="diorAppointmentDetailsModal" tabindex="-1" aria-labelledby="diorAppointmentDetailsModalLabel" aria-hidden="true">
+<div class="modal fade" id="diorAppointmentDetailsModal" tabindex="-1"
+    aria-labelledby="diorAppointmentDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
             <!-- Modal Header -->
-            <div class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
+            <div
+                class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-circle p-2 d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                    <span
+                        class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-circle p-2 d-inline-flex align-items-center justify-content-center"
+                        style="width: 36px; height: 36px;">
                         <i class="fas fa-calendar-check"></i>
                     </span>
                     <div>
-                        <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorAppointmentDetailsModalLabel">Appointment Details</h5>
-                        <div class="text-secondary small">UID: <span id="dtl-appt-uid" class="fw-bold text-primary font-monospace">—</span></div>
+                        <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorAppointmentDetailsModalLabel">
+                            Appointment Details</h5>
+                        <div class="text-secondary small">UID: <span id="dtl-appt-uid"
+                                class="fw-bold text-primary font-monospace">—</span></div>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <span id="dtl-status-badge" class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold">Success</span>
+                    <span id="dtl-status-badge"
+                        class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold">Success</span>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             </div>
 
             <!-- Modal Body (Clean Simple Layout - Rule 3.F) -->
             <div class="modal-body p-4 bg-white">
-                
+
                 <!-- Telehealth Video Alert (Clean, subtle banner) -->
-                <div id="dtl-video-banner" class="alert alert-info border border-info-subtle rounded-3 p-3 mb-4 d-flex align-items-center justify-content-between">
+                <div id="dtl-video-banner"
+                    class="alert alert-info border border-info-subtle rounded-3 p-3 mb-4 d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fas fa-video text-info fs-5"></i>
                         <div>
                             <div class="fw-bold text-dark">Live Video Consultation Room</div>
-                            <div class="text-secondary small">Telehealth consultation room is active for this visit.</div>
+                            <div class="text-secondary small">Telehealth consultation room is active for this visit.
+                            </div>
                         </div>
                     </div>
-                    <a id="dtl-join-video-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm rounded-pill px-3 py-1.5 fw-semibold shadow-sm">
+                    <a id="dtl-join-video-btn" href="#" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-primary btn-sm rounded-pill px-3 py-1.5 fw-semibold shadow-sm">
                         <i class="fas fa-video me-1"></i>Join Video Call
                     </a>
                 </div>
@@ -597,7 +657,8 @@ $status_badges = [
                 <!-- Patient & Attending Doctor Info (Clean 2-Column Minimalist Layout) -->
                 <div class="row g-4 pb-3 border-bottom mb-3">
                     <div class="col-md-6 col-12">
-                        <div class="small text-uppercase text-secondary fw-semibold mb-1" style="font-size: 11px; letter-spacing: 0.5px;">
+                        <div class="small text-uppercase text-secondary fw-semibold mb-1"
+                            style="font-size: 11px; letter-spacing: 0.5px;">
                             <i class="fas fa-hospital-user text-primary me-1"></i> Patient Information
                         </div>
                         <div class="fw-bold text-dark fs-6" id="dtl-patient-name">—</div>
@@ -614,7 +675,8 @@ $status_badges = [
                     </div>
 
                     <div class="col-md-6 col-12">
-                        <div class="small text-uppercase text-secondary fw-semibold mb-1" style="font-size: 11px; letter-spacing: 0.5px;">
+                        <div class="small text-uppercase text-secondary fw-semibold mb-1"
+                            style="font-size: 11px; letter-spacing: 0.5px;">
                             <i class="fas fa-user-doctor text-primary me-1"></i> Attending Physician
                         </div>
                         <div class="fw-bold text-dark fs-6" id="dtl-doctor-name">—</div>
@@ -624,26 +686,33 @@ $status_badges = [
                 </div>
 
                 <!-- Consultation & Scheduling Details (Clean 4-col Definition Grid) -->
-                <div class="small text-uppercase text-secondary fw-semibold mb-2" style="font-size: 11px; letter-spacing: 0.5px;">
+                <div class="small text-uppercase text-secondary fw-semibold mb-2"
+                    style="font-size: 11px; letter-spacing: 0.5px;">
                     <i class="fas fa-notes-medical text-primary me-1"></i> Consultation &amp; Scheduling
                 </div>
                 <div class="row g-3 pb-3 border-bottom mb-3">
                     <div class="col-sm-3 col-6">
-                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Appointment Date</div>
+                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">
+                            Appointment Date</div>
                         <div class="fw-bold text-dark mt-1" id="dtl-date">—</div>
                     </div>
                     <div class="col-sm-3 col-6">
-                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Time Slot</div>
+                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Time Slot
+                        </div>
                         <div class="fw-bold text-dark mt-1" id="dtl-time">—</div>
                     </div>
                     <div class="col-sm-3 col-6">
-                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Visit Mode</div>
+                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Visit Mode
+                        </div>
                         <div class="fw-bold text-dark mt-1" id="dtl-visit-type">—</div>
                     </div>
                     <div class="col-sm-3 col-6">
-                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Payment Status</div>
+                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Payment
+                            Status</div>
                         <div class="mt-1" id="dtl-payment-wrap">
-                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold" id="dtl-payment-status">Paid</span>
+                            <span
+                                class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold"
+                                id="dtl-payment-status">Paid</span>
                         </div>
                     </div>
                 </div>
@@ -651,11 +720,13 @@ $status_badges = [
                 <!-- Reason & Clinical Notes (Clean Minimalist Text) -->
                 <div class="row g-3">
                     <div class="col-12">
-                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Reason / Chief Complaint</div>
+                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Reason /
+                            Chief Complaint</div>
                         <div class="text-dark fw-semibold mt-1" id="dtl-condition">—</div>
                     </div>
                     <div class="col-12">
-                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Clinical Notes &amp; Intake Remarks</div>
+                        <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Clinical
+                            Notes &amp; Intake Remarks</div>
                         <div class="text-secondary small mt-1" id="dtl-notes">—</div>
                     </div>
                 </div>
@@ -664,7 +735,8 @@ $status_badges = [
 
             <!-- Modal Footer (Clean Standard Single Close Button - Rule 3.F) -->
             <div class="modal-footer border-top py-3 px-4 bg-white d-flex align-items-center justify-content-end">
-                <button type="button" class="btn btn-outline-secondary rounded-3 px-4 py-2 fw-semibold" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-secondary rounded-3 px-4 py-2 fw-semibold"
+                    data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -673,10 +745,12 @@ $status_badges = [
 <!-- ========================================================================= -->
 <!-- 1.5 RESCHEDULE APPOINTMENT MODAL (100% Native Bootstrap 5 Minimalist Standard) -->
 <!-- ========================================================================= -->
-<div class="modal fade" id="diorRescheduleApptModal" tabindex="-1" aria-labelledby="diorRescheduleApptModalLabel" aria-hidden="true">
+<div class="modal fade" id="diorRescheduleApptModal" tabindex="-1" aria-labelledby="diorRescheduleApptModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-            <div class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
+            <div
+                class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
                 <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorRescheduleApptModalLabel">
                     <i class="fas fa-calendar-alt text-primary me-2"></i>Reschedule Appointment
                 </h5>
@@ -689,32 +763,43 @@ $status_badges = [
                         <div class="col-12">
                             <div class="p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
                                 <div>
-                                    <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Patient</div>
+                                    <div class="small text-uppercase text-secondary fw-semibold"
+                                        style="font-size: 11px;">Patient</div>
                                     <div class="fw-bold text-dark fs-6" id="va-resched-patient-name">—</div>
                                 </div>
                                 <div class="text-end">
-                                    <div class="small text-uppercase text-secondary fw-semibold" style="font-size: 11px;">Current Schedule</div>
-                                    <div class="badge bg-light text-secondary border rounded-pill px-2 py-1 small" id="va-resched-current-time">—</div>
+                                    <div class="small text-uppercase text-secondary fw-semibold"
+                                        style="font-size: 11px;">Current Schedule</div>
+                                    <div class="badge bg-light text-secondary border rounded-pill px-2 py-1 small"
+                                        id="va-resched-current-time">—</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6">
-                            <label class="form-label small text-secondary fw-semibold mb-1" for="va-resched-date">New Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control rounded-3" id="va-resched-date" required min="<?php echo esc_attr(current_time('Y-m-d')); ?>">
+                            <label class="form-label small text-secondary fw-semibold mb-1" for="va-resched-date">New
+                                Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control rounded-3" id="va-resched-date" required>
                         </div>
                         <div class="col-12 col-sm-6">
-                            <label class="form-label small text-secondary fw-semibold mb-1" for="va-resched-time">New Time <span class="text-danger">*</span></label>
-                            <input type="time" class="form-control rounded-3" id="va-resched-time" required>
+                            <label class="form-label small text-secondary fw-semibold mb-1" for="va-resched-time">New
+                                Time <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control rounded-3" id="va-resched-time" required
+                                value="10:00">
                         </div>
                         <div class="col-12">
-                            <label class="form-label small text-secondary fw-semibold mb-1" for="va-resched-reason">Reschedule Note (Optional)</label>
-                            <textarea class="form-control rounded-3" id="va-resched-reason" rows="2" placeholder="Reason for rescheduling or note for patient..."></textarea>
+                            <label class="form-label small text-secondary fw-semibold mb-1"
+                                for="va-resched-reason">Reschedule Note (Optional)</label>
+                            <textarea class="form-control rounded-3" id="va-resched-reason" rows="2"
+                                placeholder="Reason for rescheduling or note for patient..."></textarea>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-top py-3 px-4 bg-white d-flex align-items-center justify-content-between">
-                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4 fw-semibold" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary rounded-3 px-4 fw-semibold shadow-sm" id="va-resched-submit-btn">
+                <div
+                    class="modal-footer border-top py-3 px-4 bg-white d-flex align-items-center justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4 fw-semibold"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4 fw-semibold shadow-sm"
+                        id="va-resched-submit-btn">
                         <i class="fas fa-check me-1"></i>Confirm Reschedule
                     </button>
                 </div>
@@ -726,10 +811,12 @@ $status_badges = [
 <!-- ========================================================================= -->
 <!-- 2. EDIT APPOINTMENT MODAL (100% Native Bootstrap 5 Minimalist Standard) -->
 <!-- ========================================================================= -->
-<div class="modal fade" id="diorViewApptEditModal" tabindex="-1" aria-labelledby="diorViewApptEditModalLabel" aria-hidden="true">
+<div class="modal fade" id="diorViewApptEditModal" tabindex="-1" aria-labelledby="diorViewApptEditModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-            <div class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
+            <div
+                class="modal-header border-bottom py-3 px-4 bg-white d-flex align-items-center justify-content-between">
                 <h5 class="modal-title fw-bold text-dark fs-5 mb-0" id="diorViewApptEditModalLabel">
                     <i class="fas fa-pen-to-square text-primary me-2"></i>Edit Appointment
                 </h5>
@@ -740,8 +827,11 @@ $status_badges = [
                 <div class="row g-3">
                     <div class="col-md-6 col-12">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label for="va-edit-patient" class="form-label small fw-semibold text-secondary mb-0">Patient <span class="text-danger">*</span></label>
-                            <button type="button" id="va-modal-jump-profile-btn" class="btn btn-link btn-sm p-0 text-decoration-none small text-primary fw-semibold">
+                            <label for="va-edit-patient"
+                                class="form-label small fw-semibold text-secondary mb-0">Patient <span
+                                    class="text-danger">*</span></label>
+                            <button type="button" id="va-modal-jump-profile-btn"
+                                class="btn btn-link btn-sm p-0 text-decoration-none small text-primary fw-semibold">
                                 <i class="fas fa-id-card me-1"></i>View Profile
                             </button>
                         </div>
@@ -756,7 +846,8 @@ $status_badges = [
                     </div>
 
                     <div class="col-md-6 col-12">
-                        <label for="va-edit-doctor" class="form-label small fw-semibold text-secondary mb-1">Attending Doctor <span class="text-danger">*</span></label>
+                        <label for="va-edit-doctor" class="form-label small fw-semibold text-secondary mb-1">Attending
+                            Doctor <span class="text-danger">*</span></label>
                         <select id="va-edit-doctor" class="form-select rounded-3">
                             <?php foreach ($doctor_list as $d_id => $doc_item): ?>
                                 <option value="<?php echo (int) $d_id; ?>">
@@ -767,7 +858,8 @@ $status_badges = [
                     </div>
 
                     <div class="col-md-6 col-12">
-                        <label for="va-edit-status" class="form-label small fw-semibold text-secondary mb-1">Appointment Status <span class="text-danger">*</span></label>
+                        <label for="va-edit-status" class="form-label small fw-semibold text-secondary mb-1">Appointment
+                            Status <span class="text-danger">*</span></label>
                         <select id="va-edit-status" class="form-select rounded-3">
                             <option value="Confirmed">Confirmed</option>
                             <option value="In Progress">In Progress</option>
@@ -777,7 +869,8 @@ $status_badges = [
                         </select>
                     </div>
                     <div class="col-md-6 col-12">
-                        <label for="va-edit-visittype" class="form-label small fw-semibold text-secondary mb-1">Visit Type</label>
+                        <label for="va-edit-visittype" class="form-label small fw-semibold text-secondary mb-1">Visit
+                            Type</label>
                         <select id="va-edit-visittype" class="form-select rounded-3">
                             <option value="Video Visit (HD)">Video Visit (HD)</option>
                             <option value="In-Clinic">In-Clinic</option>
@@ -785,30 +878,40 @@ $status_badges = [
                         </select>
                     </div>
                     <div class="col-md-6 col-12">
-                        <label for="va-edit-date" class="form-label small fw-semibold text-secondary mb-1">Appointment Date <span class="text-danger">*</span></label>
+                        <label for="va-edit-date" class="form-label small fw-semibold text-secondary mb-1">Appointment
+                            Date <span class="text-danger">*</span></label>
                         <input type="date" id="va-edit-date" class="form-control rounded-3">
                     </div>
                     <div class="col-md-6 col-12">
-                        <label for="va-edit-time" class="form-label small fw-semibold text-secondary mb-1">Appointment Time <span class="text-danger">*</span></label>
+                        <label for="va-edit-time" class="form-label small fw-semibold text-secondary mb-1">Appointment
+                            Time <span class="text-danger">*</span></label>
                         <input type="time" id="va-edit-time" class="form-control rounded-3">
                     </div>
                     <div class="col-12">
-                        <label for="va-edit-condition" class="form-label small fw-semibold text-secondary mb-1">Condition / Purpose</label>
-                        <input type="text" id="va-edit-condition" class="form-control rounded-3" placeholder="e.g. General Consultation">
+                        <label for="va-edit-condition"
+                            class="form-label small fw-semibold text-secondary mb-1">Condition / Purpose</label>
+                        <input type="text" id="va-edit-condition" class="form-control rounded-3"
+                            placeholder="e.g. General Consultation">
                     </div>
                     <div class="col-12">
-                        <label for="va-edit-notes" class="form-label small fw-semibold text-secondary mb-1">Clinical Notes</label>
-                        <textarea id="va-edit-notes" class="form-control rounded-3" rows="3" placeholder="Enter notes or consultation summary..."></textarea>
+                        <label for="va-edit-notes" class="form-label small fw-semibold text-secondary mb-1">Clinical
+                            Notes</label>
+                        <textarea id="va-edit-notes" class="form-control rounded-3" rows="3"
+                            placeholder="Enter notes or consultation summary..."></textarea>
                     </div>
                 </div>
             </div>
             <div class="modal-footer border-top py-3 px-4 bg-white d-flex justify-content-between align-items-center">
-                <button type="button" class="btn btn-link text-primary p-0 fw-semibold text-decoration-none small" id="va-full-edit-link" onclick="var uid = document.getElementById('va-edit-uid').value; var m = bootstrap.Modal.getInstance(document.getElementById('diorViewApptEditModal')); if(m) m.hide(); if(typeof window.diorOpenFullAppointmentEdit === 'function') { window.diorOpenFullAppointmentEdit(uid); }">
+                <button type="button" class="btn btn-link text-primary p-0 fw-semibold text-decoration-none small"
+                    id="va-full-edit-link"
+                    onclick="var uid = document.getElementById('va-edit-uid').value; var m = bootstrap.Modal.getInstance(document.getElementById('diorViewApptEditModal')); if(m) m.hide(); if(typeof window.diorOpenFullAppointmentEdit === 'function') { window.diorOpenFullAppointmentEdit(uid); }">
                     <i class="fas fa-external-link-alt me-1"></i>Open Full Edit Page
                 </button>
                 <div class="d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-outline-secondary rounded-3 px-3 fw-semibold" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary rounded-3 px-4 fw-semibold shadow-sm" id="va-save-appt-btn">
+                    <button type="button" class="btn btn-outline-secondary rounded-3 px-3 fw-semibold"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary rounded-3 px-4 fw-semibold shadow-sm"
+                        id="va-save-appt-btn">
                         <i class="fas fa-check me-1"></i>Save Changes
                     </button>
                 </div>
@@ -873,7 +976,7 @@ $status_badges = [
                         openAppointmentDetailsModal(uid);
                     }, 200);
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function updateKpiCounters() {
@@ -920,7 +1023,7 @@ $status_badges = [
                 if (doctorFilter) doctorFilter.value = '';
                 if (status) status.value = '';
                 if (dateFilter) dateFilter.value = '';
-                
+
                 var selectAll = document.getElementById('va-select-all');
                 if (selectAll) selectAll.checked = false;
                 document.querySelectorAll('#va-appointments-tbody .va-row-check').forEach(function (cb) {
@@ -1284,13 +1387,13 @@ $status_badges = [
             if (elTime) elTime.textContent = time;
             if (elVType) {
                 var isVid = (visitType.toLowerCase().indexOf('video') !== -1 || visitType.toLowerCase().indexOf('telehealth') !== -1);
-                elVType.innerHTML = isVid 
+                elVType.innerHTML = isVid
                     ? '<span class="text-info"><i class="fas fa-video me-1"></i>' + visitType + '</span>'
                     : '<span class="text-secondary"><i class="fas fa-hospital me-1"></i>' + visitType + '</span>';
             }
             if (elPayStatus) {
                 elPayStatus.textContent = paymentStatus;
-                elPayStatus.className = 'badge rounded-pill px-2.5 py-1 small fw-semibold ' + 
+                elPayStatus.className = 'badge rounded-pill px-2.5 py-1 small fw-semibold ' +
                     (paymentStatus.toLowerCase() === 'paid' ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-warning-subtle text-warning border border-warning-subtle');
             }
             if (elCond) elCond.textContent = condition;
@@ -1429,10 +1532,12 @@ $status_badges = [
         };
 
         function timeTo12h(timeStr) {
-            if (!timeStr) return '';
+            if (!timeStr) return '10:00 AM';
             if (/am|pm/i.test(timeStr)) return timeStr;
             var parts = timeStr.split(':');
+            if (parts.length < 2) return '10:00 AM';
             var h = parseInt(parts[0], 10);
+            if (isNaN(h)) return '10:00 AM';
             var m = parts[1] ? parts[1].substring(0, 2) : '00';
             var ampm = h >= 12 ? 'PM' : 'AM';
             h = h % 12;
@@ -1442,9 +1547,9 @@ $status_badges = [
         }
 
         function timeTo24h(timeStr) {
-            if (!timeStr) return '';
-            var match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
-            if (!match) return timeStr;
+            if (!timeStr) return '10:00';
+            var match = String(timeStr).match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+            if (!match) return '10:00';
             var h = parseInt(match[1], 10);
             var m = match[2];
             var ampm = (match[3] || '').toUpperCase();
@@ -1548,9 +1653,19 @@ $status_badges = [
             }
             window.diorActiveRescheduleRow = row || null;
             if (nameEl) nameEl.textContent = patientName || 'Patient';
-            if (currSchedEl) currSchedEl.textContent = (date || '—') + ' · ' + (time || '—');
-            if (dateInput) dateInput.value = date || '';
-            if (timeInput) timeInput.value = timeTo24h(time) || '10:00';
+            if (currSchedEl) currSchedEl.textContent = (date || '—') + ' • ' + (time || '—');
+
+            // Set valid date: if empty or invalid, default to today
+            if (dateInput) {
+                if (date && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    dateInput.value = date;
+                } else {
+                    dateInput.value = todayStr;
+                }
+            }
+            if (timeInput) {
+                timeInput.value = timeTo24h(time) || '10:00';
+            }
             if (noteInput) noteInput.value = '';
 
             var dtlModalEl = document.getElementById('diorAppointmentDetailsModal');
@@ -1571,21 +1686,28 @@ $status_badges = [
 
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                var uidField = document.getElementById('va-resched-uid');
-                var uid = uidField ? String(uidField.value || '').trim() : '';
-                // Last-resort recovery from the active appointment row if a legacy modal caller omitted the UID.
-                if (!uid && window.diorActiveRescheduleRow) {
-                    uid = window.diorActiveRescheduleRow.dataset.apptUid ||
-                        window.diorActiveRescheduleRow.dataset.appointmentUid ||
-                        window.diorActiveRescheduleRow.dataset.appointmentId || '';
-                }
+                var uid = document.getElementById('va-resched-uid').value;
                 var date = document.getElementById('va-resched-date').value;
                 var rawTime = document.getElementById('va-resched-time').value;
                 var reason = document.getElementById('va-resched-reason').value;
                 var btn = document.getElementById('va-resched-submit-btn');
 
-                if (!uid || !date || !rawTime) {
-                    Swal.fire({ icon: 'warning', title: 'Missing Info', text: 'Please select both date and time.' });
+                // Fallbacks so user is never blocked by empty inputs
+                if (!uid) {
+                    var openBtn = document.querySelector('.va-resched-appt-btn[data-uid]');
+                    uid = openBtn ? openBtn.dataset.uid : '';
+                }
+                if (!date) {
+                    date = todayStr;
+                    document.getElementById('va-resched-date').value = date;
+                }
+                if (!rawTime) {
+                    rawTime = '10:00';
+                    document.getElementById('va-resched-time').value = rawTime;
+                }
+
+                if (!uid) {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Appointment UID missing. Please refresh and try again.' });
                     return;
                 }
 
@@ -1603,7 +1725,7 @@ $status_badges = [
                 data.append('id', uid);
                 data.append('date', date);
                 data.append('time', formattedTime);
-                data.append('status', 'Success');
+                data.append('status', 'Confirmed');
                 if (reason) {
                     data.append('notes', reason);
                 }
@@ -1635,9 +1757,11 @@ $status_badges = [
 
                                 var badge = row.querySelector('.va-badge');
                                 if (badge) {
-                                    badge.className = 'va-badge ' + (statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
-                                    badge.textContent = 'Success';
+                                    badge.className = 'va-badge ' + (statusBadgeMap['confirmed'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
+                                    badge.textContent = 'Confirmed';
                                 }
+                                var cfBtn = row.querySelector('.va-confirm-appt-btn');
+                                if (cfBtn) cfBtn.remove();
                             }
 
                             var dtlDate = document.getElementById('dtl-date');
@@ -1646,8 +1770,8 @@ $status_badges = [
                             if (dtlTime) dtlTime.textContent = formattedTime;
                             var dtlBadge = document.getElementById('dtl-status-badge');
                             if (dtlBadge) {
-                                dtlBadge.className = statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
-                                dtlBadge.textContent = 'Success';
+                                dtlBadge.className = statusBadgeMap['confirmed'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
+                                dtlBadge.textContent = 'Confirmed';
                             }
 
                             var modalEl = document.getElementById('diorRescheduleApptModal');
@@ -1839,7 +1963,7 @@ $status_badges = [
 
             try {
                 history.replaceState(null, '', '#tab=doc-patients-profile&patient_id=' + encodeURIComponent(pid));
-            } catch (e) {}
+            } catch (e) { }
 
             if (typeof window.diorAdminSwitchTab === 'function') {
                 window.diorAdminSwitchTab('doc-patients-profile');
@@ -1871,7 +1995,7 @@ $status_badges = [
             if (!row) return;
 
             document.getElementById('va-edit-uid').value = row.dataset.apptUid || '';
-            
+
             var patientSelect = document.getElementById('va-edit-patient');
             var pid = row.dataset.patientId || '';
             if (patientSelect && pid) {
@@ -1891,7 +2015,7 @@ $status_badges = [
             if (docSelect && docId) {
                 docSelect.value = docId;
             }
-            
+
             var statusSelect = document.getElementById('va-edit-status');
             if (statusSelect) {
                 var rawStatus = (row.dataset.status || '').trim().toLowerCase().replace(/-/g, ' ');
@@ -1920,9 +2044,9 @@ $status_badges = [
                     }
                 }
             }
-            
+
             document.getElementById('va-edit-date').value = row.dataset.date || '';
-            
+
             // Parse time to HH:MM format if needed
             var rawTime = row.dataset.time || '';
             var timeInput = document.getElementById('va-edit-time');
@@ -1984,7 +2108,7 @@ $status_badges = [
                     var btn = this;
                     btn.disabled = true;
                     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>Saving...';
-                    
+
                     var apptUid = document.getElementById('va-edit-uid').value;
                     var patientId = document.getElementById('va-edit-patient').value;
                     var doctorId = document.getElementById('va-edit-doctor') ? document.getElementById('va-edit-doctor').value : '';
@@ -2026,7 +2150,7 @@ $status_badges = [
                                     targetRow.dataset.notes = notes;
                                     targetRow.dataset.time = time;
                                     if (doctorId) targetRow.dataset.doctorId = doctorId;
-                                    
+
                                     var badge = targetRow.querySelector('.va-badge');
                                     if (badge) {
                                         var badgeClass = statusBadgeMap[status.toLowerCase()] || 'badge bg-secondary-subtle text-secondary rounded-pill px-2.5 py-1 small fw-semibold';
