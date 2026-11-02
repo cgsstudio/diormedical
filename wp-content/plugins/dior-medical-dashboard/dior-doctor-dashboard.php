@@ -729,7 +729,11 @@ class Dior_Doctor_Dashboard
     {
         Dior_Auth_Service::verify_ajax_nonce("dior_doctor_nonce");
         if (!self::can_access()) wp_send_json_error(["message" => "Unauthorized"], 403);
-        $aid      = sanitize_text_field($_POST["appt_id"] ?? "");
+        // Accept all known appointment identifier names from legacy and current frontends.
+        $aid = sanitize_text_field(
+            $_POST["appt_id"] ??
+            ($_POST["appt_uid"] ?? ($_POST["appointment_uid"] ?? ($_POST["appointment_id"] ?? ($_POST["id"] ?? ""))))
+        );
         $new_date = sanitize_text_field($_POST["date"] ?? "");
         $new_time = sanitize_text_field($_POST["time"] ?? "");
         $notes    = sanitize_textarea_field($_POST["notes"] ?? "");
@@ -755,7 +759,11 @@ class Dior_Doctor_Dashboard
             wp_send_json_error(["message" => "Unauthorized access."], 403);
         }
 
-        $appt_uid   = sanitize_text_field($_POST['appt_uid'] ?? '');
+        // Accept canonical UID plus IDs sent by legacy appointment table/modal versions.
+        $appt_uid = sanitize_text_field(
+            $_POST['appt_uid'] ??
+            ($_POST['appointment_uid'] ?? ($_POST['appointment_id'] ?? ($_POST['appt_id'] ?? ($_POST['id'] ?? ''))))
+        );
         $patient_id = (int)(!empty($_POST['patient_id']) ? $_POST['patient_id'] : 0);
 
         global $wpdb;
