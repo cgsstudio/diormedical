@@ -475,6 +475,65 @@ class Dior_Appointment_Service
     }
 
     /**
+     * Create and persist a real meeting URL for legacy video appointments that
+     * still contain the generic Zoom landing page instead of a meeting link.
+     */
+    private static function ensure_video_meeting_link(array &$appointment)
+    {
+        $visit_type = strtolower((string) ($appointment['visit_type'] ?? ''));
+        if (strpos($visit_type, 'video') === false && strpos($visit_type, 'telehealth') === false) {
+            return;
+        }
+
+        $current_url = trim((string) ($appointment['join_url'] ?? ''));
+        if ($current_url !== '' && stripos($current_url, 'zoom.us/join') === false) {
+            return;
+        }
+
+        if (!class_exists('Dior_Zoom_Meetings')) {
+            return;
+        }
+
+        $doctor_name = '';
+        $doctor_id = (int) ($appointment['doctor_id'] ?? 0);
+        if ($doctor_id) {
+            $doctor = get_userdata($doctor_id);
+            if ($doctor) {
+                $doctor_name = $doctor->display_name;
+            } else {
+                $doctor_post = get_post($doctor_id);
+                if ($doctor_post && $doctor_post->post_type === 'wpddb_doctor') {
+                    $doctor_name = $doctor_post->post_title;
+                }
+            }
+        }
+
+        $meeting_url = Dior_Zoom_Meetings::create_meeting_link(
+            (string) ($appointment['appt_date'] ?? ''),
+            (string) ($appointment['appt_time'] ?? ''),
+            $doctor_name
+        );
+
+        if (!$meeting_url || !wp_http_validate_url($meeting_url)) {
+            return;
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'dior_appointments';
+        $updated = $wpdb->update(
+            $table,
+            ['join_url' => esc_url_raw($meeting_url), 'updated_at' => current_time('mysql')],
+            ['appt_uid' => (string) ($appointment['appt_uid'] ?? '')],
+            ['%s', '%s'],
+            ['%s']
+        );
+
+        if ($updated !== false) {
+            $appointment['join_url'] = esc_url_raw($meeting_url);
+        }
+    }
+
+    /**
      * Get appointments for a patient (Normalized for consistent portal access)
      */
     public static function get_patient_appointments($patient_id)
@@ -493,6 +552,7 @@ class Dior_Appointment_Service
         }
 
         foreach ($results as &$r) {
+            self::ensure_video_meeting_link($r);
             $r['id'] = $r['appt_uid'];
             $r['date'] = $r['appt_date'];
             $r['time'] = $r['appt_time'];
@@ -645,6 +705,7 @@ class Dior_Appointment_Service
 
         // Attach resolved metadata
         foreach ($results as &$r) {
+            self::ensure_video_meeting_link($r);
             $pid = (int)$r['patient_id'];
             $fn = get_user_meta($pid, 'first_name', true);
             $ln = get_user_meta($pid, 'last_name', true);
