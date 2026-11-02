@@ -28,3 +28,20 @@
 @media (min-width: 768px) {
     #tab-doc-appointments-view .va-mobile-appointments-list { display: none !important; }
 }
+
+@media (max-width: 767.98px) {
+    #tab-doc-appointments-view .va-mobile-scrollable-dialog {
+        max-height: calc(100% - 1rem);
+        margin: .5rem auto;
+    }
+    #tab-doc-appointments-view .va-mobile-scrollable-dialog .modal-content {
+        max-height: calc(100dvh - 1rem);
+        overflow: hidden;
+    }
+    #tab-doc-appointments-view .va-mobile-scrollable-dialog .modal-body {
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+}
