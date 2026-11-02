@@ -259,13 +259,13 @@ if (!class_exists('Dior_Zoom_Meetings')) {
             }
 
             $meeting_id = '';
-            if (!empty($parts['path']) && preg_match('~/j/(\\d+)~', $parts['path'], $matches)) {
+            if (!empty($parts['path']) && preg_match('~/j/([0-9]+)(?:/|$)~', $parts['path'], $matches)) {
                 $meeting_id = $matches[1];
-            } elseif (!empty($parts['path']) && preg_match('~/wc/(\\d+)/join~', $parts['path'], $matches)) {
+            } elseif (!empty($parts['path']) && preg_match('~/wc/([0-9]+)/join~', $parts['path'], $matches)) {
                 $meeting_id = $matches[1];
             }
             if (!$meeting_id) {
-                return $join_url;
+                return ''; // Do not expose Zoom's generic join landing page.
             }
 
             $query = [];
