@@ -168,8 +168,6 @@
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-notifications-system">
                         <i class="fas fa-bell"></i><span class="nav-label">Notifications</span>
                     </button>
-                    <button type="button" class="dior-nav-btn btn" data-tab="doc-consultation"><i
-                            class="fas fa-door-open"></i><span class="nav-label">Consultation Room</span></button>
                     <button type="button" class="dior-nav-btn btn" data-tab="doc-settings"><i
                             class="fas fa-gear"></i><span class="nav-label">Settings</span></button>
                 </div>
@@ -334,7 +332,6 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/telemedicine-records.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/patient-review.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/notifications-system.php'; ?>
-                <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/consultation-room.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/doctor-tabs/settings.php'; ?>
             </div><!-- /tab-content -->
         </main>
