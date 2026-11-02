@@ -3014,3 +3014,21 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.style.overflow = sidebar && sidebar.classList.contains('mobile-open') ? 'hidden' : '';
   };
 })();
+
+
+/* Notify the patient when the doctor opens a Zoom consultation. */
+(function () {
+  'use strict';
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest('a[data-dior-meeting-join]');
+    if (!link) return;
+    var cfg = window.dior_doctor_vars || {};
+    var nonce = link.getAttribute('data-meeting-nonce') || cfg.meeting_nonce || '';
+    var uid = link.getAttribute('data-appt-uid') || '';
+    if (!nonce || !uid) return;
+    var body = new URLSearchParams({ action: 'dior_meeting_participant_joined', appt_uid: uid, nonce: nonce });
+    var url = cfg.ajax_url || '/wp-admin/admin-ajax.php';
+    if (navigator.sendBeacon) navigator.sendBeacon(url, new Blob([body.toString()], { type: 'application/x-www-form-urlencoded; charset=UTF-8' }));
+    else fetch(url, { method: 'POST', credentials: 'same-origin', keepalive: true, headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: body.toString() }).catch(function () {});
+  }, true);
+})();
