@@ -155,7 +155,7 @@ if (!class_exists('Dior_Zoom_Meetings')) {
             }
             $cached = get_transient('dior_zoom_oauth_access_token');
             if (is_string($cached) && $cached !== '') { return $cached; }
-            $settings = get_option(self::OPTION_KEY, []);
+            $settings = self::get_settings();
             $response = wp_remote_post('https://zoom.us/oauth/token', [
                 'timeout' => 20,
                 'headers' => [
@@ -240,7 +240,7 @@ if (!class_exists('Dior_Zoom_Meetings')) {
 
         public static function render_settings_page() {
             if (!current_user_can('manage_options')) { return; }
-            $settings = get_option(self::OPTION_KEY, []);
+            $settings = self::get_settings();
             if (!is_array($settings)) { $settings = []; }
             $saved = isset($_GET['saved']) && sanitize_text_field(wp_unslash($_GET['saved'])) === '1';
             $test_result = get_transient('dior_zoom_connection_test_result');
