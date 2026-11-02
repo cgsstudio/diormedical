@@ -560,7 +560,9 @@
                                     $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
                                     $apt_row['phone'] ?? ($apt_row['contact'] ?? '+1 (800) 555-0199'),
                                     $status ?: 'Scheduled',
-                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp'),
+                                    $apt_row['appt_uid'] ?? '',
+                                    $apt_row['join_url'] ?? ''
                                 ];
                             }
                             if (empty($today_mock)) {
@@ -627,9 +629,15 @@
                                 </td>
                                 <td class="text-end pe-3 py-3">
                                     <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
-                                        <button type="button" class="action-icon-btn edit-btn btn" title="Join Video Consultation" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('consultation');">
-                                            <i class="fas fa-video text-primary"></i>
-                                        </button>
+                                        <?php if (!empty($tm[9]) && filter_var($tm[9], FILTER_VALIDATE_URL) && $tm[9] !== 'https://zoom.us/join'): ?>
+                                            <a class="action-icon-btn edit-btn btn" title="Join Zoom Meeting" href="<?php echo esc_url($tm[9]); ?>" target="_blank" rel="noopener noreferrer">
+                                                <i class="fas fa-video text-success"></i>
+                                            </a>
+                                        <?php else: ?>
+                                            <button type="button" class="action-icon-btn edit-btn btn" title="Meeting link not available" disabled>
+                                                <i class="fas fa-video text-muted"></i>
+                                            </button>
+                                        <?php endif; ?>
                                         <button type="button" class="action-icon-btn edit-btn btn" title="View Details" onclick="if(typeof diorOpenAppointmentDetail==='function') diorOpenAppointmentDetail('APT-100');">
                                             <i class="fas fa-eye text-secondary"></i>
                                         </button>
