@@ -3688,6 +3688,38 @@ document.addEventListener('click', function (event) {
     });
 })();
 
+
+
+/* Bootstrap popup for the other participant joining a Zoom consultation. */
+function diorShowMeetingJoinModal(alert) {
+    if (!alert || !alert.action_url) return false;
+    let joinUrl;
+    try {
+        joinUrl = new URL(alert.action_url, window.location.origin);
+        if (joinUrl.protocol !== 'https:' || !/(^|\\.)zoom\\.us$/i.test(joinUrl.hostname)) return false;
+    } catch (e) { return false; }
+    const modalId = 'dior-meeting-incoming-modal';
+    let modalEl = document.getElementById(modalId);
+    if (!modalEl) {
+        modalEl = document.createElement('div');
+        modalEl.id = modalId;
+        modalEl.className = 'modal fade';
+        modalEl.tabIndex = -1;
+        modalEl.setAttribute('aria-labelledby', modalId + '-title');
+        modalEl.setAttribute('aria-hidden', 'true');
+        modalEl.innerHTML = '<div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header"><h5 class="modal-title" id="' + modalId + '-title">Video Consultation Ready</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><p class="mb-0" data-dior-meeting-message></p></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Later</button><a class="btn btn-primary" data-dior-meeting-link target="_blank" rel="noopener noreferrer"><i class="fas fa-video me-1"></i> Join Meeting</a></div></div></div>';
+        document.body.appendChild(modalEl);
+    }
+    const message = modalEl.querySelector('[data-dior-meeting-message]');
+    const link = modalEl.querySelector('[data-dior-meeting-link]');
+    if (message) message.textContent = alert.message || 'The other participant has joined the consultation. Join the same Zoom meeting now.';
+    if (link) link.href = joinUrl.href;
+    if (window.bootstrap && window.bootstrap.Modal) window.bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    else if (window.Swal) window.Swal.fire({ icon: 'info', title: 'Video Consultation Ready', text: alert.message || 'The other participant has joined.', showCancelButton: true, confirmButtonText: 'Join Meeting' }).then(function (result) { if (result.isConfirmed) window.open(joinUrl.href, '_blank', 'noopener'); });
+    else window.open(joinUrl.href, '_blank', 'noopener');
+    return true;
+}
+
 // Real-time patient notification sync (polls the secured existing AJAX endpoint).
 (function () {
     if (window.__diorPatientLiveNotifPolling) return;
@@ -3739,6 +3771,8 @@ document.addEventListener('click', function (event) {
             }
 
             (Array.isArray(data.new_alerts) ? data.new_alerts : []).forEach(function (alert) {
+                const isMeetingAlert = alert && /video consultation|patient joined|doctor started/i.test((alert.title || '') + ' ' + (alert.message || ''));
+                if (isMeetingAlert && diorShowMeetingJoinModal(alert)) return;
                 if (window.Swal && alert && alert.title) {
                     Swal.fire({
                         toast: true,
