@@ -578,14 +578,7 @@ if (document.readyState === 'loading') {
     window.setTimeout(initDoctorDashboard, 0);
 }
 
-// Delegated navigation fallback: works even if another script has replaced a
-// direct click handler and keeps Doctor tab navigation resilient.
-document.addEventListener('click', function (event) {
-    const btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
-    if (!btn || typeof window.diorDocSwitchTab !== 'function') return;
-    event.preventDefault();
-    window.diorDocSwitchTab(btn.getAttribute('data-tab'));
-}, false);
+// Sidebar navigation is owned by dior-doctor-navigation.js only.
 
 // Universal Table Pagination (5 entries per page)
 window.diorDoctorInitTablePagination = function (tableEl, pageSize) {
@@ -2971,112 +2964,6 @@ document.addEventListener('DOMContentLoaded', function () {
         diorHydrateDoctorSourceTables();
     }
 });
-
-/* -------------------------------------------------------------------------
- * Static dashboard navigation safety layer.
- * Keeps Doctor Dashboard tabs usable even if an optional widget script fails.
- * ------------------------------------------------------------------------- */
-(function () {
-    function bootStaticDoctorNavigation() {
-        var app = document.getElementById('dior-doctor-app');
-        if (!app) return;
-
-        function fallbackSwitchTab(tabId, updateUrl) {
-            if (!tabId) return;
-            if (tabId === 'feedback' || tabId === 'doc-feedback' || tabId === 'patient-review' || tabId === 'reviews') {
-                tabId = 'doc-patient-review';
-            }
-
-            var buttons = app.querySelectorAll('#dior-doc-sidebar .dior-nav-btn[data-tab]');
-            buttons.forEach(function (btn) {
-                var isActive = btn.getAttribute('data-tab') === tabId;
-                btn.classList.toggle('active', isActive);
-                if (isActive) {
-                    var parentSubmenu = btn.closest('.dior-nav-item.has-submenu');
-                    app.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(sub) {
-                        if (parentSubmenu && sub === parentSubmenu) {
-                            sub.classList.add('active', 'open');
-                            var subIcon = sub.querySelector('.submenu-icon');
-                            if (subIcon) {
-                                subIcon.classList.remove('fa-plus');
-                                subIcon.classList.add('fa-minus');
-                            }
-                        } else {
-                            sub.classList.remove('active', 'open');
-                            var subIcon = sub.querySelector('.submenu-icon');
-                            if (subIcon) {
-                                subIcon.classList.remove('fa-minus');
-                                subIcon.classList.add('fa-plus');
-                            }
-                        }
-                    });
-                }
-            });
-
-            var panels = app.querySelectorAll('#dior-doc-content > .dior-tab-panel');
-            panels.forEach(function (panel) {
-                var active = panel.id === 'tab-' + tabId;
-                panel.classList.toggle('active', active);
-                if (active) {
-                    panel.removeAttribute('hidden');
-                    panel.style.display = 'block';
-                } else {
-                    panel.setAttribute('hidden', 'hidden');
-                    panel.style.display = 'none';
-                }
-            });
-
-            if (updateUrl === true) {
-                try {
-                    history.replaceState(null, '', '#tab=' + encodeURIComponent(tabId));
-                } catch (e) { }
-            }
-        }
-
-        if (typeof window.diorDocSwitchTab !== 'function') {
-            window.diorDocSwitchTab = fallbackSwitchTab;
-        }
-
-        app.addEventListener('click', function (event) {
-            var btn = event.target.closest('#dior-doc-sidebar .dior-nav-btn[data-tab]');
-            if (!btn) return;
-            var targetTab = btn.getAttribute('data-tab');
-            if (typeof window.diorDocSwitchTab === 'function') {
-                event.preventDefault();
-                window.diorDocSwitchTab(targetTab, true);
-            }
-        }, true);
-
-        function syncTabFromUrl(updateUrl) {
-            var hashMatch = window.location.hash.match(/^#tab=([^&]+)/);
-            var initial = hashMatch ? decodeURIComponent(hashMatch[1]) : 'doc-overview';
-            initial = (typeof window.normalizeDoctorTabId === 'function') ? window.normalizeDoctorTabId(initial) : initial;
-
-            var btn = app.querySelector('#dior-doc-sidebar .dior-nav-btn[data-tab="' + CSS.escape(initial) + '"]');
-            var tabToLoad = btn ? initial : 'doc-overview';
-
-            if (typeof window.diorDocSwitchTab === 'function') {
-                window.diorDocSwitchTab(tabToLoad, updateUrl);
-            } else {
-                fallbackSwitchTab(tabToLoad, updateUrl);
-            }
-        }
-
-        window.addEventListener('hashchange', function () {
-            syncTabFromUrl(false);
-        });
-
-        // Initial setup: strictly preserve current URL, do not add hash if opening bare page
-        syncTabFromUrl(false);
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', bootStaticDoctorNavigation, { once: true });
-    } else {
-        bootStaticDoctorNavigation();
-    }
-})();
-
 
 /* v17.2.1: desktop and mobile share the same sidebar toggle entry point. */
 (function(){
