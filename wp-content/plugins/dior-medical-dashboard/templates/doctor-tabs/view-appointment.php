@@ -2165,5 +2165,15 @@ $status_badges = [
         } else {
             initViewAppt();
         }
+
+        // Keep the appointment list current without requiring a manual page refresh.
+        // Avoid refreshing while a modal is open or the doctor is editing a field.
+        window.setInterval(function () {
+            if (document.visibilityState !== 'visible') return;
+            if (document.querySelector('.modal.show')) return;
+            var active = document.activeElement;
+            if (active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) return;
+            window.location.reload();
+        }, 45000);
     })();
 </script>
