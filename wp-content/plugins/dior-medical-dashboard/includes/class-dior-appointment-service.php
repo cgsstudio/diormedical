@@ -190,7 +190,28 @@ class Dior_Appointment_Service
             ), ARRAY_A);
         }
 
-        return $appt ?: null;
+        if (!$appt) {
+            return null;
+        }
+
+        // Repair legacy video appointments that have a participant URL but no host URL.
+        // This runs once per appointment because both URLs are persisted together.
+        $visit_type = strtolower((string) ($appt['visit_type'] ?? ''));
+        if (
+            (strpos($visit_type, 'video') !== false || strpos($visit_type, 'telehealth') !== false) &&
+            empty($appt['start_url']) &&
+            class_exists('Dior_Zoom_Meetings')
+        ) {
+            self::ensure_video_meeting_link($appt);
+            if (!empty($appt['start_url'])) {
+                $appt = $wpdb->get_row($wpdb->prepare(
+                    "SELECT * FROM $table WHERE appt_uid = %s AND is_deleted = 0",
+                    (string) ($appt['appt_uid'] ?? '')
+                ), ARRAY_A) ?: $appt;
+            }
+        }
+
+        return $appt;
     }
 
     /**
