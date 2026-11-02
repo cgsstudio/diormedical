@@ -378,7 +378,13 @@ $status_badges = [
                             $patient_uid = esc_attr(!empty($a['patient_uid']) ? $a['patient_uid'] : (!empty($patient_id) ? get_user_meta($patient_id, 'patient_id', true) : ('DM-' . (10000 + $patient_id))));
                             
                             $is_video = (stripos($visit_type, 'video') !== false || stripos($visit_type, 'telehealth') !== false);
-                            $join_url = esc_url(!empty($a['join_url']) ? $a['join_url'] : 'https://zoom.us/join');
+                            $doc_id = (int)($a['doctor_id'] ?? 0);
+                            $doc_user_id = ($doc_id && class_exists('Dior_Doctor_Resolver'))
+                                ? (int) Dior_Doctor_Resolver::resolve_doctor_user_id($doc_id)
+                                : $doc_id;
+                            $stored_join_url = !empty($a['join_url']) ? $a['join_url'] : ($doc_user_id ? get_user_meta($doc_user_id, 'zoom_link', true) : '');
+                            $join_url = esc_url($stored_join_url);
+                            $has_join_url = !empty($join_url) && $join_url !== 'https://zoom.us/join';
                             $payment_status = esc_html($a['payment_status'] ?? 'Paid');
 
                             // Doctor data resolution
@@ -476,14 +482,23 @@ $status_badges = [
                                             style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
                                             <i class="fas fa-eye me-1"></i>View
                                         </button>
-                                        <?php if (strtolower($status) === 'pending'): ?>
-                                            <button type="button" class="btn btn-success btn-sm rounded-pill text-white va-confirm-appt-btn shadow-none"
-                                                data-uid="<?php echo $uid; ?>" 
-                                                data-name="<?php echo esc_attr($fname); ?>"
-                                                title="Confirm Appointment"
-                                                style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
-                                                <i class="fas fa-check me-1"></i>Confirm
-                                            </button>
+                                        <?php if ($is_video): ?>
+                                            <?php if ($has_join_url && !in_array(strtolower($status), ['completed', 'cancelled', 'no show'], true)): ?>
+                                                <button type="button" class="btn btn-success btn-sm rounded-pill text-white va-join-appt-btn shadow-none"
+                                                    data-uid="<?php echo $uid; ?>"
+                                                    data-name="<?php echo esc_attr($fname); ?>"
+                                                    data-join-url="<?php echo esc_url($join_url); ?>"
+                                                    title="Join Zoom Meeting"
+                                                    style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
+                                                    <i class="fas fa-video me-1"></i>Join Meeting
+                                                </button>
+                                            <?php else: ?>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill shadow-none" disabled
+                                                    title="A meeting link has not been configured"
+                                                    style="padding: 4px 10px !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.3 !important;">
+                                                    <i class="fas fa-video me-1"></i>Join Meeting
+                                                </button>
+                                            <?php endif; ?>
                                         <?php endif; ?>
                                         <button type="button" class="btn btn-outline-primary btn-sm rounded-pill va-resched-appt-btn shadow-none"
                                             data-uid="<?php echo $uid; ?>" 
@@ -818,7 +833,7 @@ $status_badges = [
             setupRowCheckboxes();
             setupBulkActions();
             setupViewDetailsBtns();
-            setupConfirmBtns();
+            setupJoinBtns();
             setupCancelBtns();
             setupReschedBtns();
             setupRescheduleForm();
@@ -1304,22 +1319,6 @@ $status_badges = [
                 };
             }
 
-            var dtlConfirmBtn = document.getElementById('dtl-action-confirm-btn');
-            if (dtlConfirmBtn) {
-                if (status.toLowerCase() === 'confirmed') {
-                    dtlConfirmBtn.disabled = true;
-                    dtlConfirmBtn.classList.add('disabled');
-                    dtlConfirmBtn.innerHTML = '<i class="fas fa-check me-1"></i>Confirmed';
-                } else {
-                    dtlConfirmBtn.disabled = false;
-                    dtlConfirmBtn.classList.remove('disabled');
-                    dtlConfirmBtn.innerHTML = '<i class="fas fa-check me-1"></i>Confirm';
-                    dtlConfirmBtn.onclick = function () {
-                        confirmAppointment(apptUid, patientName);
-                    };
-                }
-            }
-
             var dtlReschedBtn = document.getElementById('dtl-action-resched-btn');
             if (dtlReschedBtn) {
                 dtlReschedBtn.onclick = function () {
@@ -1442,61 +1441,6 @@ $status_badges = [
             if (ampm === 'PM' && h < 12) h += 12;
             if (ampm === 'AM' && h === 12) h = 0;
             return (h < 10 ? '0' + h : '' + h) + ':' + m;
-        }
-
-        function confirmAppointment(uid, patientName, onComplete) {
-            if (!uid) return;
-            var row = document.querySelector('tr[data-appt-uid="' + uid + '"]');
-            var data = new FormData();
-            data.append('action', 'dior_doc_appointment_update');
-            data.append('nonce', nonce);
-            data.append('appt_uid', uid);
-            data.append('status', 'Confirmed');
-
-            fetch(ajaxUrl, { method: 'POST', body: data })
-                .then(function (r) { return r.json(); })
-                .then(function (res) {
-                    if (res.success) {
-                        if (row) {
-                            row.dataset.status = 'Confirmed';
-                            var badge = row.querySelector('.va-badge');
-                            if (badge) {
-                                badge.className = 'va-badge ' + (statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 small fw-semibold');
-                                badge.textContent = 'Confirmed';
-                            }
-                        }
-                        var dtlBadge = document.getElementById('dtl-status-badge');
-                        if (dtlBadge) {
-                            dtlBadge.className = statusBadgeMap['success'] || 'badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold';
-                            dtlBadge.textContent = 'Confirmed';
-                        }
-                        var dtlConfirmBtn = document.getElementById('dtl-action-confirm-btn');
-                        if (dtlConfirmBtn) {
-                            dtlConfirmBtn.disabled = true;
-                            dtlConfirmBtn.classList.add('disabled');
-                            dtlConfirmBtn.innerHTML = '<i class="fas fa-check me-1"></i>Confirmed';
-                        }
-                        updateKpiCounters();
-                        renderPage(currentPage);
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Confirmed',
-                            text: 'Appointment for ' + (patientName || 'patient') + ' is now Confirmed.',
-                            toast: true,
-                            position: 'top-end',
-                            timer: 2500,
-                            showConfirmButton: false
-                        });
-                        if (typeof onComplete === 'function') onComplete(true);
-                    } else {
-                        Swal.fire({ icon: 'error', title: 'Error', text: res.data && res.data.message ? res.data.message : 'Failed to confirm appointment.' });
-                        if (typeof onComplete === 'function') onComplete(false);
-                    }
-                })
-                .catch(function () {
-                    Swal.fire({ icon: 'error', title: 'Error', text: 'Network connection error.' });
-                    if (typeof onComplete === 'function') onComplete(false);
-                });
         }
 
         function cancelAppointment(uid, patientName, onComplete) {
@@ -1711,15 +1655,62 @@ $status_badges = [
             });
         }
 
-        function setupConfirmBtns() {
+        // Open the existing meeting URL immediately, then mark the consultation In Progress.
+        // The status update dispatches the existing patient + doctor notification workflow.
+        function setupJoinBtns() {
             var tbody = document.getElementById('va-appointments-tbody');
             if (!tbody) return;
+
             tbody.addEventListener('click', function (e) {
-                var btn = e.target.closest('.va-confirm-appt-btn');
+                var btn = e.target.closest('.va-join-appt-btn');
                 if (!btn) return;
-                var uid = btn.dataset.uid;
-                var name = btn.dataset.name;
-                confirmAppointment(uid, name);
+
+                var uid = btn.dataset.uid || '';
+                var meetingUrl = btn.dataset.joinUrl || '';
+                if (!uid || !meetingUrl) {
+                    Swal.fire({ icon: 'warning', title: 'Meeting link unavailable', text: 'Please add a valid Zoom meeting link to this appointment.' });
+                    return;
+                }
+
+                // Open synchronously from the click to avoid browser popup blockers.
+                window.open(meetingUrl, '_blank', 'noopener,noreferrer');
+
+                var originalHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Joining...';
+
+                var data = new FormData();
+                data.append('action', 'dior_doc_appointment_update');
+                data.append('nonce', nonce);
+                data.append('appt_uid', uid);
+                data.append('status', 'In Progress');
+
+                fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
+                    .then(function (response) { return response.json(); })
+                    .then(function (result) {
+                        if (!result || !result.success) {
+                            throw new Error(result && result.data && result.data.message ? result.data.message : 'Unable to start the consultation.');
+                        }
+                        var row = btn.closest('tr');
+                        if (row) {
+                            row.dataset.status = 'In Progress';
+                            var badge = row.querySelector('.va-badge');
+                            if (badge) {
+                                badge.className = 'va-badge ' + statusBadgeMap['in progress'];
+                                badge.textContent = 'In Progress';
+                            }
+                        }
+                        updateKpiCounters();
+                        btn.innerHTML = '<i class="fas fa-video me-1"></i>Join Meeting';
+                    })
+                    .catch(function (error) {
+                        console.error('Dior Medical meeting start failed:', error);
+                        btn.innerHTML = originalHtml;
+                        Swal.fire({ icon: 'warning', title: 'Meeting opened', text: 'The meeting was opened, but the appointment status or notifications could not be updated. Please refresh and check the appointment.' });
+                    })
+                    .finally(function () {
+                        btn.disabled = false;
+                    });
             });
         }
 
