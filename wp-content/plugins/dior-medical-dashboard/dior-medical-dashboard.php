@@ -3092,7 +3092,7 @@ class Dior_Medical_Auth
             'status'         => 'Pending',
             'appt_date'      => $date,
             'appt_time'      => $time,
-            'join_url'       => 'https://zoom.us/join',
+            'join_url'       => '',
             'payment_status' => 'Paid',
             'notes'          => $reason,
             'created_at'     => $now,
@@ -4036,7 +4036,7 @@ class Dior_Medical_Auth
             $google_meet_url = (!$zoom_meeting_url && class_exists('Dior_Google_Meet'))
                 ? Dior_Google_Meet::create_meeting_link()
                 : false;
-            $join_url = $zoom_meeting_url ?: ($google_meet_url ?: 'https://zoom.us/join');
+            $join_url = $zoom_meeting_url ?: ($google_meet_url ?: '');
         }
 
         $new_apt = Dior_Appointment_Service::book_appointment([
@@ -4238,7 +4238,7 @@ class Dior_Medical_Auth
                     'appt_date' => $date,
                     'appt_time' => $time,
                     'status' => 'Pending',
-                    'join_url' => (class_exists('Dior_Zoom_Meetings') ? (Dior_Zoom_Meetings::create_meeting_link($date, $time, $doctor_name) ?: 'https://zoom.us/join') : 'https://zoom.us/join'),
+                    'join_url' => (class_exists('Dior_Zoom_Meetings') ? (Dior_Zoom_Meetings::create_meeting_link($date, $time, $doctor_name) ?: '') : ''),
                     'payment_status' => 'Paid',
                     'notes' => $notes,
                     'booking_id' => $booking_id
@@ -5569,7 +5569,7 @@ function dior_sync_docbooker_appointment($booking_data)
         'provider_spec' => $spec ?: 'General Practice & Telehealth',
         'provider_title' => $spec ?: 'General Practice & Telehealth',
         'status' => 'Pending',
-        'join_url' => (!empty($matched_doc_uid) && ($doc_zoom = get_user_meta($matched_doc_uid, 'doctor_zoom_link', true))) ? $doc_zoom : 'https://zoom.us/join',
+        'join_url' => (!empty($matched_doc_uid) && ($doc_zoom = get_user_meta($matched_doc_uid, 'doctor_zoom_link', true))) ? $doc_zoom : '',
         'raw_date' => !empty($booking_data['booking_date']) ? $booking_data['booking_date'] : '',
         'doctor_id' => $booking_data['doctor_id'] ?? 0,
         'doctor_name' => $doctor_name,
