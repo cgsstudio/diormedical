@@ -1,0 +1,96 @@
+[1mdiff --cc wp-content/plugins/dior-medical-dashboard/templates/doctor-tabs/view-appointment.php[m
+[1mindex aba2cda0,d428e767..00000000[m
+[1m--- a/wp-content/plugins/dior-medical-dashboard/templates/doctor-tabs/view-appointment.php[m
+[1m+++ b/wp-content/plugins/dior-medical-dashboard/templates/doctor-tabs/view-appointment.php[m
+[36m@@@ -1540,17 -1641,21 +1542,27 @@@[m [m$status_badges = [m
+              var timeInput = document.getElementById('va-resched-time');[m
+              var noteInput = document.getElementById('va-resched-reason');[m
+  [m
+[31m -            if (uidField) uidField.value = uid;[m
+[32m +            // Resolve the identifier from the clicked row if a legacy caller passed an empty value.[m
+[32m +            if (!uid && row) uid = row.dataset.apptUid || row.dataset.appointmentUid || row.dataset.appointmentId || '';[m
+[32m +            if (uidField) {[m
+[32m +                uidField.value = uid || '';[m
+[32m +                uidField.dataset.apptUid = uid || '';[m
+[32m +            }[m
+[32m +            window.diorActiveRescheduleRow = row || null;[m
+              if (nameEl) nameEl.textContent = patientName || 'Patient';[m
+[31m-             if (currSchedEl) currSchedEl.textContent = (date || '—') + ' · ' + (time || '—');[m
+[31m-             if (dateInput) dateInput.value = date || '';[m
+[31m-             if (timeInput) timeInput.value = timeTo24h(time) || '10:00';[m
+[32m+             if (currSchedEl) currSchedEl.textContent = (date || '—') + ' • ' + (time || '—');[m
+[32m+             [m
+[32m+             // Set valid date: if empty or invalid, default to today[m
+[32m+             if (dateInput) {[m
+[32m+                 if (date && date.match(/^\d{4}-\d{2}-\d{2}$/)) {[m
+[32m+                     dateInput.value = date;[m
+[32m+                 } else {[m
+[32m+                     dateInput.value = todayStr;[m
+[32m+                 }[m
+[32m+             }[m
+[32m+             if (timeInput) {[m
+[32m+                 timeInput.value = timeTo24h(time) || '10:00';[m
+[32m+             }[m
+              if (noteInput) noteInput.value = '';[m
+  [m
+              var dtlModalEl = document.getElementById('diorAppointmentDetailsModal');[m
+[36m@@@ -1571,21 -1676,28 +1583,42 @@@[m
+  [m
+              form.addEventListener('submit', function (e) {[m
+                  e.preventDefault();[m
+[32m++<<<<<<< Updated upstream[m
+[32m +                var uidField = document.getElementById('va-resched-uid');[m
+[32m +                var uid = uidField ? String(uidField.value || '').trim() : '';[m
+[32m +                // Last-resort recovery from the active appointment row if a legacy modal caller omitted the UID.[m
+[32m +                if (!uid && window.diorActiveRescheduleRow) {[m
+[32m +                    uid = window.diorActiveRescheduleRow.dataset.apptUid ||[m
+[32m +                        window.diorActiveRescheduleRow.dataset.appointmentUid ||[m
+[32m +                        window.diorActiveRescheduleRow.dataset.appointmentId || '';[m
+[32m +                }[m
+[32m +                var date = document.getElementById('va-resched-date').value;[m
+[32m +                var rawTime = document.getElementById('va-resched-time').value;[m
+[32m +                var reason = document.getElementById('va-resched-reason').value;[m
+[32m++=======[m
+[32m+                 var uid = (document.getElementById('va-resched-uid').value || '').trim();[m
+[32m+                 var date = (document.getElementById('va-resched-date').value || '').trim();[m
+[32m+                 var rawTime = (document.getElementById('va-resched-time').value || '').trim();[m
+[32m+                 var reason = (document.getElementById('va-resched-reason').value || '').trim();[m
+[32m++>>>>>>> Stashed changes[m
+                  var btn = document.getElementById('va-resched-submit-btn');[m
+  [m
+[31m-                 if (!uid || !date || !rawTime) {[m
+[31m-                     Swal.fire({ icon: 'warning', title: 'Missing Info', text: 'Please select both date and time.' });[m
+[32m+                 // Fallbacks so user is never blocked by empty inputs[m
+[32m+                 if (!uid) {[m
+[32m+                     var openBtn = document.querySelector('.va-resched-appt-btn[data-uid]');[m
+[32m+                     uid = openBtn ? openBtn.dataset.uid : '';[m
+[32m+                 }[m
+[32m+                 if (!date) {[m
+[32m+                     date = todayStr;[m
+[32m+                     document.getElementById('va-resched-date').value = date;[m
+[32m+                 }[m
+[32m+                 if (!rawTime) {[m
+[32m+                     rawTime = '10:00';[m
+[32m+                     document.getElementById('va-resched-time').value = rawTime;[m
+[32m+                 }[m
+[32m+ [m
+[32m+                 if (!uid) {[m
+[32m+                     Swal.fire({ icon: 'error', title: 'Error', text: 'Appointment UID missing. Please refresh and try again.' });[m
+                      return;[m
+                  }[m
+  [m
+[36m@@@ -1597,13 -1709,9 +1630,13 @@@[m
+                  data.append('action', 'dior_doc_appointment_update');[m
+                  data.append('nonce', nonce);[m
+                  data.append('appt_uid', uid);[m
+[32m +                data.append('appointment_uid', uid);[m
+[32m +                data.append('appointment_id', uid);[m
+[32m +                data.append('appt_id', uid);[m
+[32m +                data.append('id', uid);[m
+                  data.append('date', date);[m
+                  data.append('time', formattedTime);[m
+[31m-                 data.append('status', 'Success');[m
+[32m+                 data.append('status', 'Confirmed');[m
+                  if (reason) {[m
+                      data.append('notes', reason);[m
+                  }[m
