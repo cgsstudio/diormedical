@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 class Dior_DB
 {
-    const DB_VERSION = '4.0.4';
+    const DB_VERSION = '4.0.5';
     const DB_VERSION_OPTION = 'dior_medical_db_version';
 
     /**
@@ -131,6 +131,7 @@ class Dior_DB
             appt_date DATE NOT NULL,
             appt_time VARCHAR(50) NOT NULL,
             join_url VARCHAR(500) NULL,
+            start_url VARCHAR(1000) NULL,
             payment_status ENUM('Pending', 'Paid', 'Refunded', 'Failed') NOT NULL DEFAULT 'Paid',
             notes TEXT NULL,
             created_at DATETIME NOT NULL,
