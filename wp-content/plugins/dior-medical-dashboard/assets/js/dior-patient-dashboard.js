@@ -1010,7 +1010,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
         var link = event.target.closest('a[data-dior-meeting-join]');
         if (!link) return;
         var root = document.getElementById('dior-patient-portal-app');
-        var nonce = link.getAttribute('data-meeting-nonce') || (root && root.getAttribute('data-meeting-nonce')) || '';
+        var nonce = link.getAttribute('data-meeting-nonce') || (root && root.getAttribute('data-meeting-nonce')) || (window.dior_patient_dashboard && window.dior_patient_dashboard.meeting_nonce) || '';
         var apptUid = link.getAttribute('data-appt-uid') || '';
         if (!nonce || !apptUid) return;
         var body = new URLSearchParams({ action: 'dior_meeting_participant_joined', appt_uid: apptUid, nonce: nonce });
