@@ -16,25 +16,7 @@
                 </ol>
             </nav>
         </div>
-    </div>
-
-    <!-- Subtab Navigation Bar -->
-    <div class="dior-subtab-nav-bar px-1 mb-4">
-        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments');">
-            <i class="fas fa-calendar-days"></i> Appointment Calendar
-        </button>
-        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments-view" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-view');">
-            <i class="fas fa-calendar-check"></i> View Appointment
-        </button>
-        <button type="button" class="dior-subtab-pill btn active" data-doc-tab="doc-appointments-book" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-book');">
-            <i class="fas fa-calendar-plus"></i> Book Appointment
-        </button>
-        <button type="button" class="dior-subtab-pill btn" data-doc-tab="doc-appointments-edit" onclick="if(typeof diorDocSwitchTab==='function') diorDocSwitchTab('doc-appointments-edit');">
-            <i class="fas fa-pen-to-square"></i> Edit Appointment
-        </button>
-    </div>
-
-    <!-- Main Content -->
+    </div>\n\n<!-- Main Content -->
     <div class="section-body">
         <div class="row">
             <div class="col-12">
