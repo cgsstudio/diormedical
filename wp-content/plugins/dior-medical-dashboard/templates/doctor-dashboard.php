@@ -177,42 +177,51 @@
                 </div>
             </nav>
             <script>
-                function diorToggleSubmenu(e, menuId) {
+                window.diorToggleSubmenu = function (e, menuId) {
+                    if (typeof e === 'string' && !menuId) {
+                        menuId = e;
+                        e = null;
+                    }
                     if (e) {
                         if (e.preventDefault) e.preventDefault();
                         if (e.stopPropagation) e.stopPropagation();
                     }
                     var target = document.getElementById(menuId);
                     if (!target) return;
-
-                    var now = Date.now();
-                    if (target._diorLastToggle && (now - target._diorLastToggle < 200)) {
-                        return;
-                    }
-                    target._diorLastToggle = now;
-
-                    var isOpen = target.classList.contains('active') || target.classList.contains('open');
-
-                    // Strict Accordion: Close ALL other submenus
-                    document.querySelectorAll('.dior-nav-item.has-submenu').forEach(function(item) {
-                        item.classList.remove('active', 'open');
-                        var icon = item.querySelector('.submenu-icon');
+                    var isOpen = target.classList.contains('active') && target.classList.contains('open');
+                    document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(item) {
+                        if (item !== target) {
+                            item.classList.remove('active', 'open');
+                            var subEl = item.querySelector('.dior-submenu');
+                            if (subEl) subEl.style.setProperty('display', 'none', 'important');
+                            var icon = item.querySelector('.submenu-icon');
+                            if (icon) {
+                                icon.classList.remove('fa-minus');
+                                icon.classList.add('fa-plus');
+                            }
+                        }
+                    });
+                    if (isOpen) {
+                        target.classList.remove('active', 'open');
+                        var subEl = target.querySelector('.dior-submenu');
+                        if (subEl) subEl.style.setProperty('display', 'none', 'important');
+                        var icon = target.querySelector('.submenu-icon');
                         if (icon) {
                             icon.classList.remove('fa-minus');
                             icon.classList.add('fa-plus');
                         }
-                    });
-
-                    // If it was closed, open ONLY this one
-                    if (!isOpen) {
+                    } else {
                         target.classList.add('active', 'open');
+                        var subEl = target.querySelector('.dior-submenu');
+                        if (subEl) subEl.style.setProperty('display', 'flex', 'important');
                         var icon = target.querySelector('.submenu-icon');
                         if (icon) {
                             icon.classList.remove('fa-plus');
                             icon.classList.add('fa-minus');
                         }
                     }
-                }
+                };
+                var diorToggleSubmenu = window.diorToggleSubmenu;
             </script>
         </aside>
 

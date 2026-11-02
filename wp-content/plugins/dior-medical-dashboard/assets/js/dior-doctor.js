@@ -912,6 +912,8 @@ window.diorDocSwitchTab = function (tabId, updateUrl) {
         document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function (sub) {
             if (parentSubmenu && sub === parentSubmenu) {
                 sub.classList.add('active', 'open');
+                var subEl = sub.querySelector('.dior-submenu');
+                if (subEl) subEl.style.setProperty('display', 'flex', 'important');
                 var subIcon = sub.querySelector('.submenu-icon');
                 if (subIcon) {
                     subIcon.classList.remove('fa-plus');
@@ -919,6 +921,8 @@ window.diorDocSwitchTab = function (tabId, updateUrl) {
                 }
             } else {
                 sub.classList.remove('active', 'open');
+                var subEl = sub.querySelector('.dior-submenu');
+                if (subEl) subEl.style.setProperty('display', 'none', 'important');
                 var subIcon = sub.querySelector('.submenu-icon');
                 if (subIcon) {
                     subIcon.classList.remove('fa-minus');
@@ -945,12 +949,11 @@ window.diorDocSwitchTab = function (tabId, updateUrl) {
         if (p === activePanel) {
             p.classList.add('active');
             p.removeAttribute('hidden');
-            p.style.removeProperty('display');
-            p.style.display = 'block';
+            p.style.setProperty('display', 'block', 'important');
         } else {
             p.classList.remove('active');
             p.setAttribute('hidden', 'hidden');
-            p.style.display = 'none';
+            p.style.setProperty('display', 'none', 'important');
         }
     });
 

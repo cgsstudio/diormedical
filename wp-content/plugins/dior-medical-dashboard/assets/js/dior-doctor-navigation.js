@@ -82,23 +82,27 @@
     }
     window.normalizeDoctorTabId = normalizeTabId;
 
-    // Global submenu toggle with debounce protection
+    // Global submenu toggle function
     window.diorToggleSubmenu = function (e, menuId) {
-        if (e && e.preventDefault) e.preventDefault();
+        if (typeof e === 'string' && !menuId) {
+            menuId = e;
+            e = null;
+        }
+        if (e) {
+            if (e.preventDefault) e.preventDefault();
+            if (e.stopPropagation) e.stopPropagation();
+        }
         var targetMenu = document.getElementById(menuId);
         if (!targetMenu) return;
 
-        var now = Date.now();
-        if (targetMenu._diorLastToggle && (now - targetMenu._diorLastToggle < 200)) {
-            return;
-        }
-        targetMenu._diorLastToggle = now;
+        var isAlreadyOpen = targetMenu.classList.contains('active') && targetMenu.classList.contains('open');
 
-        var isAlreadyOpen = targetMenu.classList.contains('active') || targetMenu.classList.contains('open');
-
+        // Strict Accordion: Close ALL other submenus
         document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function (item) {
-            if (item.id !== menuId) {
+            if (item !== targetMenu) {
                 item.classList.remove('active', 'open');
+                var subEl = item.querySelector('.dior-submenu');
+                if (subEl) subEl.style.setProperty('display', 'none', 'important');
                 var icon = item.querySelector('.submenu-icon');
                 if (icon) {
                     icon.classList.remove('fa-minus');
@@ -107,8 +111,11 @@
             }
         });
 
+        // Toggle target
         if (isAlreadyOpen) {
             targetMenu.classList.remove('active', 'open');
+            var subEl = targetMenu.querySelector('.dior-submenu');
+            if (subEl) subEl.style.setProperty('display', 'none', 'important');
             var icon = targetMenu.querySelector('.submenu-icon');
             if (icon) {
                 icon.classList.remove('fa-minus');
@@ -116,6 +123,8 @@
             }
         } else {
             targetMenu.classList.add('active', 'open');
+            var subEl = targetMenu.querySelector('.dior-submenu');
+            if (subEl) subEl.style.setProperty('display', 'flex', 'important');
             var icon = targetMenu.querySelector('.submenu-icon');
             if (icon) {
                 icon.classList.remove('fa-plus');
@@ -191,6 +200,8 @@
             document.querySelectorAll('#dior-doc-sidebar .dior-nav-item.has-submenu').forEach(function(sub) {
                 if (parentSubmenu && sub === parentSubmenu) {
                     sub.classList.add('active', 'open');
+                    var subEl = sub.querySelector('.dior-submenu');
+                    if (subEl) subEl.style.setProperty('display', 'flex', 'important');
                     var subIcon = sub.querySelector('.submenu-icon');
                     if (subIcon) {
                         subIcon.classList.remove('fa-plus');
@@ -198,6 +209,8 @@
                     }
                 } else {
                     sub.classList.remove('active', 'open');
+                    var subEl = sub.querySelector('.dior-submenu');
+                    if (subEl) subEl.style.setProperty('display', 'none', 'important');
                     var subIcon = sub.querySelector('.submenu-icon');
                     if (subIcon) {
                         subIcon.classList.remove('fa-minus');
@@ -234,12 +247,11 @@
             if (panel === activePanel) {
                 panel.classList.add('active');
                 panel.removeAttribute('hidden');
-                panel.style.removeProperty('display');
-                panel.style.display = 'block';
+                panel.style.setProperty('display', 'block', 'important');
             } else {
                 panel.classList.remove('active');
                 panel.setAttribute('hidden', 'hidden');
-                panel.style.display = 'none';
+                panel.style.setProperty('display', 'none', 'important');
             }
         });
 
@@ -324,16 +336,7 @@
                 }
             }
 
-            // Check if clicking a parent submenu toggle button
-            var parentMenuBtn = event.target.closest('#dior-doctor-app #dior-doc-sidebar .dior-nav-item.has-submenu > .dior-nav-btn');
-            if (parentMenuBtn && !parentMenuBtn.getAttribute('data-tab')) {
-                var parentItem = parentMenuBtn.closest('.dior-nav-item.has-submenu');
-                if (parentItem && parentItem.id) {
-                    event.preventDefault();
-                    window.diorToggleSubmenu(event, parentItem.id);
-                    return;
-                }
-            }
+            // Note: Parent submenu toggle buttons are handled directly by their onclick/native event handlers.
         }, true);
 
         // Sync tab from URL hash on load

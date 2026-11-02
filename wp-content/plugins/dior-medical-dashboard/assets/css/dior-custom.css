@@ -52408,8 +52408,10 @@ a.va-btn-primary:hover {
 }
 
 .dior-patient-portal-wrap .dior-nav-item.has-submenu.active .dior-submenu,
-.dior-app .dior-nav-item.has-submenu.active .dior-submenu {
-    display: block;
+.dior-patient-portal-wrap .dior-nav-item.has-submenu.open .dior-submenu,
+.dior-app .dior-nav-item.has-submenu.active .dior-submenu,
+.dior-app .dior-nav-item.has-submenu.open .dior-submenu {
+    display: block !important;
 }
 
 /* v17.2.3: Prevent Feedback & Support table columns from overlapping. */

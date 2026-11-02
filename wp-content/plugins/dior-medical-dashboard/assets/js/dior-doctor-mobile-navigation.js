@@ -64,12 +64,9 @@
 
     // Keep one submenu expanded at a time and synchronize its icon/accessibility state.
     window.diorToggleSubmenu = function (event, menuId) {
-        // Desktop must continue using the pre-existing desktop navigation logic unchanged.
-        if (!mobileQuery.matches) {
-            if (typeof desktopToggleSubmenu === 'function') {
-                return desktopToggleSubmenu(event, menuId);
-            }
-            return;
+        if (typeof event === 'string' && !menuId) {
+            menuId = event;
+            event = null;
         }
 
         if (event && event.preventDefault) event.preventDefault();
