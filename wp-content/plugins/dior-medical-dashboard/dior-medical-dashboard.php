@@ -1065,6 +1065,17 @@ class Dior_Medical_Auth
             $bs_css_ver
         );
 
+        // Doctor View Appointments: enqueue before wp_head so its dedicated mobile layout is actually applied.
+        $doctor_appointments_mobile_css = DIOR_PORTAL_PATH . 'assets/css/doctor-view-appointments-mobile.css';
+        if (file_exists($doctor_appointments_mobile_css)) {
+            wp_enqueue_style(
+                'dior-doctor-view-appointments-mobile',
+                DIOR_PORTAL_URL . 'assets/css/doctor-view-appointments-mobile.css',
+                ['dior-bootstrap-css'],
+                (string) filemtime($doctor_appointments_mobile_css)
+            );
+        }
+
         // ── 2. Unified Custom Stylesheet (All Custom CSS Consolidated in 1 File)
         $custom_css_ver = file_exists(DIOR_PORTAL_PATH . 'assets/css/dior-custom.css') ? filemtime(DIOR_PORTAL_PATH . 'assets/css/dior-custom.css') : DIOR_PORTAL_VERSION;
         wp_enqueue_style(
