@@ -964,26 +964,37 @@ window.diorDocSwitchTab = function (tabId, updateUrl) {
     diorDocCloseMobile();
 };
 
-// Mobile menu toggle
-window.diorDocOpenMobile = function () {
+// Mobile menu drawer: keep sidebar, backdrop and page scroll in one synchronized state.
+window.diorDocOpenMobile = function (event) {
+    if (event && typeof event.preventDefault === 'function') event.preventDefault();
+
     const sidebar = document.getElementById('dior-doc-sidebar');
     const backdrop = document.getElementById('dior-doc-backdrop');
-    const isMobile = window.innerWidth <= 1024;
+    if (!sidebar) return false;
 
-    if (sidebar.classList.contains('mobile-open')) {
-        sidebar.classList.remove('mobile-open');
-        if (isMobile && backdrop) backdrop.classList.remove('active');
-    } else {
-        sidebar.classList.add('mobile-open');
-        if (isMobile && backdrop) backdrop.classList.add('active');
+    const shouldOpen = !sidebar.classList.contains('mobile-open');
+    sidebar.classList.toggle('mobile-open', shouldOpen);
+
+    if (backdrop) {
+        backdrop.classList.toggle('active', shouldOpen);
+        backdrop.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
     }
+
+    // Prevent background scrolling only while the mobile drawer is open.
+    document.body.style.overflow = shouldOpen && window.matchMedia('(max-width: 1024px)').matches ? 'hidden' : '';
+    return shouldOpen;
 };
 
 window.diorDocCloseMobile = function () {
     const sidebar = document.getElementById('dior-doc-sidebar');
     const backdrop = document.getElementById('dior-doc-backdrop');
+
     if (sidebar) sidebar.classList.remove('mobile-open');
-    if (backdrop) backdrop.classList.remove('active');
+    if (backdrop) {
+        backdrop.classList.remove('active');
+        backdrop.setAttribute('aria-hidden', 'true');
+    }
+    document.body.style.overflow = '';
 };
 
 // Search patients with pagination reset
