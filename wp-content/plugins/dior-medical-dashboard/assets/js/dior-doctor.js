@@ -3040,23 +3040,36 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 
-/* v17.2.1: desktop and mobile share the same sidebar toggle entry point. */
-(function(){
-  if (typeof window === 'undefined') return;
-  window.diorDocOpenMobile = function(e) {
-    if (e && e.preventDefault) e.preventDefault();
-    var sidebar = document.querySelector('#dior-doc-sidebar, #dior-sidebar, .dior-sidebar, .dior-side-nav, .dior-sidebar-wrap');
-    var backdrop = document.getElementById('dior-drawer-backdrop');
-    if (window.innerWidth > 1024) {
-      var wrap = document.querySelector('.dior-patient-portal-wrap') || document.querySelector('.dior-app') || document.querySelector('.dior-doctor-dashboard-wrap');
-      if (wrap) wrap.classList.toggle('dior-sidebar-collapsed');
-      else if (sidebar) sidebar.classList.toggle('collapsed');
-      return;
-    }
-    if (sidebar) sidebar.classList.toggle('mobile-open');
-    if (backdrop) backdrop.classList.toggle('active');
-    document.body.style.overflow = sidebar && sidebar.classList.contains('mobile-open') ? 'hidden' : '';
-  };
+/* v17.2.2: use the actual Doctor Dashboard drawer elements and keep overlay state in sync. */
+(function () {
+    if (typeof window === 'undefined') return;
+
+    window.diorDocOpenMobile = function (event) {
+        if (event && event.preventDefault) event.preventDefault();
+
+        var sidebar = document.getElementById('dior-doc-sidebar');
+        var backdrop = document.getElementById('dior-doc-backdrop');
+        if (!sidebar) return;
+
+        if (window.innerWidth > 1024) {
+            var app = document.querySelector('#dior-doctor-app .dior-app');
+            if (app) app.classList.toggle('dior-sidebar-collapsed');
+            return;
+        }
+
+        var shouldOpen = !sidebar.classList.contains('mobile-open');
+        sidebar.classList.toggle('mobile-open', shouldOpen);
+        if (backdrop) backdrop.classList.toggle('active', shouldOpen);
+        document.body.style.overflow = shouldOpen ? 'hidden' : '';
+    };
+
+    window.diorDocCloseMobile = function () {
+        var sidebar = document.getElementById('dior-doc-sidebar');
+        var backdrop = document.getElementById('dior-doc-backdrop');
+        if (sidebar) sidebar.classList.remove('mobile-open');
+        if (backdrop) backdrop.classList.remove('active');
+        document.body.style.overflow = '';
+    };
 })();
 
 
