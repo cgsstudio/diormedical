@@ -627,13 +627,19 @@
                                         $status = sanitize_text_field($apt_row['status'] ?? 'Scheduled');
                                         if (!$date_ymd || $date_ymd < $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled', 'completed', 'done'], true))
                                             continue;
+                                        $patient_meeting_url = !empty($apt_row['join_url']) ? esc_url_raw($apt_row['join_url']) : '';
+                                        $patient_user = wp_get_current_user();
+                                        if ($patient_meeting_url && class_exists('Dior_Zoom_Meetings')) {
+                                            $patient_meeting_url = Dior_Zoom_Meetings::get_personalized_join_url($patient_meeting_url, $patient_user ? ($patient_user->display_name ?: $patient_user->user_login) : '');
+                                        }
                                         $upcoming_mock[] = [
                                             $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                                             wp_date('M j, Y', strtotime($date_ymd)),
                                             $apt_row['time'] ?? ($apt_row['appt_time'] ?? '—'),
                                             $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
                                             $status,
-                                            $apt_row['notes'] ?? '—'
+                                            $apt_row['notes'] ?? '—',
+                                            $patient_meeting_url
                                         ];
                                     }
                                     ;
@@ -671,10 +677,12 @@
                                             </td>
                                             <td class="dior-ic-d5c209e67c">
                                                 <div class="cell-actions">
-                                                    <button type="button" class="action-icon-btn edit-btn btn"
-                                                        title="Edit Record"><i class="fas fa-pen"></i></button>
-                                                    <button type="button" class="action-icon-btn delete-btn btn"
-                                                        title="Delete Record"><i class="fas fa-trash"></i></button>
+                                                    <?php if (!empty($um[6]) && wp_http_validate_url($um[6]) && stripos($um[6], 'https://') === 0): ?>
+                                                        <a class="action-icon-btn edit-btn btn" href="<?php echo esc_url($um[6]); ?>" target="_blank" rel="noopener noreferrer" title="Join Zoom Meeting"><i class="fas fa-video text-success"></i></a>
+                                                    <?php else: ?>
+                                                        <button type="button" class="action-icon-btn edit-btn btn" disabled title="Meeting link unavailable"><i class="fas fa-video text-muted"></i></button>
+                                                    <?php endif; ?>
+                                                    <button type="button" class="action-icon-btn delete-btn btn" title="Delete Record"><i class="fas fa-trash"></i></button>
                                                 </div>
                                             </td>
                                         </tr>
