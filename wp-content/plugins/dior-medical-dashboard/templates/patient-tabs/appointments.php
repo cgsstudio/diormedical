@@ -92,12 +92,8 @@
         $a_time = !empty($apt['time']) ? $apt['time'] : (!empty($apt['appt_time']) ? $apt['appt_time'] : '');
         $a_status = !empty($apt['status']) ? $apt['status'] : 'Scheduled';
         $a_type = !empty($apt['type']) ? $apt['type'] : (!empty($apt['visit_type']) ? $apt['visit_type'] : 'Video Visit');
+        // Keep Zoom's original participant join URL intact, including its embedded passcode.
         $a_join = !empty($apt['join_url']) ? esc_url_raw($apt['join_url']) : '';
-        $patient_user = wp_get_current_user();
-        $patient_display_name = $patient_user ? ($patient_user->display_name ?: $patient_user->user_login) : '';
-        if ($a_join && class_exists('Dior_Zoom_Meetings')) {
-            $a_join = Dior_Zoom_Meetings::get_personalized_join_url($a_join, $patient_display_name);
-        }
         $a_notes = !empty($apt['notes']) ? $apt['notes'] : '';
         $a_condition = !empty($apt['condition']) ? $apt['condition'] : (!empty($apt['condition_name']) ? $apt['condition_name'] : 'Telehealth Consultation');
         $a_ymd = dior_normalize_date($a_date_raw);
@@ -504,14 +500,8 @@
                                         $status = sanitize_text_field($apt_row['status'] ?? '');
                                         if ($date_ymd !== $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled'], true))
                                             continue;
+                                        // Use the original Zoom participant URL returned by Zoom API.
                                         $today_meeting_url = !empty($apt_row['join_url']) ? esc_url_raw($apt_row['join_url']) : '';
-                                        $today_patient = wp_get_current_user();
-                                        if ($today_meeting_url && class_exists('Dior_Zoom_Meetings')) {
-                                            $today_meeting_url = Dior_Zoom_Meetings::get_personalized_join_url(
-                                                $today_meeting_url,
-                                                $today_patient ? ($today_patient->display_name ?: $today_patient->user_login) : ''
-                                            );
-                                        }
                                         $today_mock[] = [
                                             $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                                             $apt_row['provider_spec'] ?? '—',
@@ -662,11 +652,8 @@
                                         $status = sanitize_text_field($apt_row['status'] ?? 'Scheduled');
                                         if (!$date_ymd || $date_ymd < $today_ymd || in_array(strtolower($status), ['cancelled', 'canceled', 'completed', 'done'], true))
                                             continue;
+                                        // Use the original Zoom participant URL returned by Zoom API.
                                         $patient_meeting_url = !empty($apt_row['join_url']) ? esc_url_raw($apt_row['join_url']) : '';
-                                        $patient_user = wp_get_current_user();
-                                        if ($patient_meeting_url && class_exists('Dior_Zoom_Meetings')) {
-                                            $patient_meeting_url = Dior_Zoom_Meetings::get_personalized_join_url($patient_meeting_url, $patient_user ? ($patient_user->display_name ?: $patient_user->user_login) : '');
-                                        }
                                         $upcoming_mock[] = [
                                             $apt_row['provider'] ?? ($apt_row['doctor_name'] ?? '—'),
                                             wp_date('M j, Y', strtotime($date_ymd)),
