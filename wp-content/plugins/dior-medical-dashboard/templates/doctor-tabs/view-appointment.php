@@ -7,6 +7,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Page-scoped mobile stylesheet; desktop markup and styling remain unchanged.
+$va_mobile_css = DIOR_PORTAL_PATH . 'assets/css/doctor-view-appointments-mobile.css';
+if (file_exists($va_mobile_css)) {
+    wp_enqueue_style(
+        'dior-doctor-view-appointments-mobile',
+        DIOR_PORTAL_URL . 'assets/css/doctor-view-appointments-mobile.css',
+        ['dior-bootstrap-css'],
+        (string) filemtime($va_mobile_css)
+    );
+}
+
 global $wpdb;
 $doctor_id = get_current_user_id();
 $nonce = wp_create_nonce('dior_doctor_nonce');
@@ -1149,7 +1160,7 @@ $status_badges = [
         }
 
         function setupRowCheckboxes() {
-            var tbody = document.getElementById('va-appointments-tbody');
+            var tbody = document.getElementById('tab-doc-appointments-view');
             if (!tbody) return;
             tbody.addEventListener('change', function (e) {
                 if (e.target && e.target.classList.contains('va-row-check')) {
