@@ -738,7 +738,9 @@
                                     $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
                                     $status,
                                     $apt_row['notes'] ?? '—',
-                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp')
+                                    $apt_row['avatar'] ?? home_url('/wp-content/uploads/2026/10/diormedical-experts-6.webp'),
+                                    $apt_row['appt_uid'] ?? '',
+                                    $apt_row['join_url'] ?? ''
                                 ];
                             }
                             if (empty($upcoming_mock)) {
@@ -845,10 +847,15 @@
                                 <td><span class="text-secondary small text-truncate d-inline-block" style="max-width: 250px;"><?php echo esc_html($um[5]); ?></span></td>
                                 <td class="text-end pe-3">
                                     <div class="cell-actions d-inline-flex align-items-center justify-content-end gap-1.5 flex-nowrap">
-                                        <button type="button" class="action-icon-btn edit-btn btn"
-                                            title="Join Video Consultation" onclick="if(typeof diorSwitchTab==='function') diorSwitchTab('consultation');">
-                                            <i class="fas fa-video text-primary"></i>
-                                        </button>
+                                        <?php if (!empty($um[8]) && filter_var($um[8], FILTER_VALIDATE_URL) && $um[8] !== 'https://zoom.us/join'): ?>
+                                            <a class="action-icon-btn edit-btn btn" title="Join Zoom Meeting" href="<?php echo esc_url($um[8]); ?>" target="_blank" rel="noopener noreferrer">
+                                                <i class="fas fa-video text-success"></i>
+                                            </a>
+                                        <?php else: ?>
+                                            <button type="button" class="action-icon-btn edit-btn btn" title="Meeting link not available" disabled>
+                                                <i class="fas fa-video text-muted"></i>
+                                            </button>
+                                        <?php endif; ?>
                                         <button type="button" class="action-icon-btn edit-btn btn"
                                             title="Reschedule Appointment" onclick="if(typeof diorOpenRescheduleModal==='function') diorOpenRescheduleModal('APT-101', '<?php echo esc_js($um[0]); ?>');">
                                             <i class="fas fa-calendar-days text-info"></i>
