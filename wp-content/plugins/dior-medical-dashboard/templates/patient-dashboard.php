@@ -89,10 +89,6 @@
                         <i class="fas fa-bell"></i>
                         <span class="nav-label">Notification</span>
                     </button>
-                    <button type="button" class="dior-nav-btn btn" data-tab="consultation">
-                        <i class="fas fa-door-open"></i>
-                        <span class="nav-label">Consultation Room</span>
-                    </button>
                     <button type="button" class="dior-nav-btn btn" data-tab="settings">
                         <i class="fas fa-gear"></i>
                         <span class="nav-label">Settings</span>
@@ -296,7 +292,6 @@
                 <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/medical_record.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/documents.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/emergency.php'; ?>
-                <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/consultation.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/questionnaire.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/feedback.php'; ?>
                 <?php include DIOR_PORTAL_PATH . 'templates/patient-tabs/notifications.php'; ?>
