@@ -1791,7 +1791,7 @@ $status_badges = [
 
         // Update the appointment to In Progress and trigger the existing dual-dashboard notification workflow.
         function setupMeetingJoinBtns() {
-            var tbody = document.getElementById('va-appointments-tbody');
+            var tbody = document.getElementById('tab-doc-appointments-view');
             if (!tbody) return;
             tbody.addEventListener('click', function (e) {
                 var btn = e.target.closest('.va-join-meeting-btn');
@@ -1830,7 +1830,7 @@ $status_badges = [
         }
 
         function setupCancelBtns() {
-            var tbody = document.getElementById('va-appointments-tbody');
+            var tbody = document.getElementById('tab-doc-appointments-view');
             if (!tbody) return;
             tbody.addEventListener('click', function (e) {
                 var btn = e.target.closest('.va-cancel-appt-btn');
@@ -1842,7 +1842,7 @@ $status_badges = [
         }
 
         function setupReschedBtns() {
-            var tbody = document.getElementById('va-appointments-tbody');
+            var tbody = document.getElementById('tab-doc-appointments-view');
             if (!tbody) return;
             tbody.addEventListener('click', function (e) {
                 var btn = e.target.closest('.va-resched-appt-btn');
@@ -1861,7 +1861,7 @@ $status_badges = [
         }
 
         function setupViewDetailsBtns() {
-            var tbody = document.getElementById('va-appointments-tbody');
+            var tbody = document.getElementById('tab-doc-appointments-view');
             if (!tbody) return;
 
             tbody.addEventListener('click', function (e) {
@@ -2073,7 +2073,7 @@ $status_badges = [
         }
 
         function setupEditBtns() {
-            var tbody = document.getElementById('va-appointments-tbody');
+            var tbody = document.getElementById('tab-doc-appointments-view');
             if (!tbody) return;
 
             tbody.addEventListener('click', function (e) {
@@ -2175,7 +2175,7 @@ $status_badges = [
         }
 
         function setupDeleteBtns() {
-            var tbody = document.getElementById('va-appointments-tbody');
+            var tbody = document.getElementById('tab-doc-appointments-view');
             if (!tbody) return;
 
             tbody.addEventListener('click', function (e) {
@@ -2233,7 +2233,7 @@ $status_badges = [
         }
 
         function setupViewPatientBtns() {
-            var tbody = document.getElementById('va-appointments-tbody');
+            var tbody = document.getElementById('tab-doc-appointments-view');
             if (!tbody) return;
 
             tbody.addEventListener('click', function (e) {
