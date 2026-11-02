@@ -810,7 +810,7 @@ class Dior_Doctor_Dashboard
         $new_notes       = sanitize_textarea_field($_POST['notes'] ?? $appt['notes']);
         $new_doctor_id   = (int)($_POST['doctor_id'] ?? $appt['doctor_id']);
 
-        $allowed_statuses = ['Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled', 'No Show'];
+        $allowed_statuses = ['Pending', 'Confirmed', 'Success', 'In Progress', 'Completed', 'Cancelled', 'No Show'];
         if (!in_array($new_status, $allowed_statuses, true)) {
             $new_status = $appt['status'];
         }
