@@ -561,7 +561,7 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : ('https://
                                 </div>
                                 <div class="d-flex gap-2">
                                     <button type="button" class="btn btn-sm btn-outline-primary rounded-3 flex-fill py-1 small fw-semibold" onclick="if(typeof diorOpenFullAppointmentEdit === 'function') { diorOpenFullAppointmentEdit('<?php echo esc_js($sess_uid); ?>'); } else if(typeof diorDocSwitchTab === 'function') { diorDocSwitchTab('doc-appointments-edit'); }">Reschedule</button>
-                                    <button type="button" class="btn btn-sm btn-primary rounded-3 flex-fill py-1 small fw-semibold shadow-sm" onclick="window.open('<?php echo esc_url($sess_join); ?>', '_blank')">Join Now</button>
+                                    <button type="button" class="btn btn-sm btn-primary rounded-3 flex-fill py-1 small fw-semibold shadow-sm" onclick="diorStartAppointmentMeeting('<?php echo esc_js($sess_uid); ?>', '<?php echo esc_url($sess_join); ?>')">Join Now</button>
                                 </div>
                             </div>
                             <?php endforeach; endif; ?>
@@ -575,3 +575,38 @@ $doc_avatar = !empty($doctor['avatar_url']) ? $doctor['avatar_url'] : ('https://
     </div>
 
 </section>
+
+<script>
+/* Start the consultation through the existing appointment status workflow before opening Zoom. */
+window.diorStartAppointmentMeeting = function (appointmentUid, meetingUrl) {
+    var safeUrl = meetingUrl || 'https://zoom.us/join';
+    var meetingWindow = window.open(safeUrl, '_blank', 'noopener,noreferrer');
+
+    if (!appointmentUid) {
+        return meetingWindow;
+    }
+
+    var data = new FormData();
+    data.append('action', 'dior_doc_appointment_update');
+    data.append('nonce', '<?php echo esc_js($nonce); ?>');
+    data.append('appt_uid', appointmentUid);
+    data.append('status', 'In Progress');
+
+    fetch('<?php echo esc_url(admin_url('admin-ajax.php')); ?>', {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: data
+    }).then(function (response) {
+        return response.json();
+    }).then(function (result) {
+        if (!result || !result.success) {
+            console.error('Dior Medical: unable to update appointment start status.', result && result.data ? result.data : result);
+        }
+    }).catch(function (error) {
+        console.error('Dior Medical: appointment start notification request failed.', error);
+    });
+
+    return meetingWindow;
+};
+</script>
+
