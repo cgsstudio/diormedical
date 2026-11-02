@@ -639,7 +639,8 @@
                                             $apt_row['condition'] ?? ($apt_row['type'] ?? ($apt_row['visit_type'] ?? '—')),
                                             $status,
                                             $apt_row['notes'] ?? '—',
-                                            $patient_meeting_url
+                                            $patient_meeting_url,
+                                            sanitize_text_field($apt_row['appt_uid'] ?? ($apt_row['id'] ?? ''))
                                         ];
                                     }
                                     ;
@@ -678,7 +679,7 @@
                                             <td class="dior-ic-d5c209e67c">
                                                 <div class="cell-actions">
                                                     <?php if (!empty($um[6]) && wp_http_validate_url($um[6]) && stripos($um[6], 'https://') === 0): ?>
-                                                        <a class="action-icon-btn edit-btn btn" href="<?php echo esc_url($um[6]); ?>" target="_blank" rel="noopener noreferrer" title="Join Zoom Meeting"><i class="fas fa-video text-success"></i></a>
+                                                        <a class="action-icon-btn edit-btn btn" href="<?php echo esc_url($um[6]); ?>" data-dior-meeting-join data-appt-uid="<?php echo esc_attr($um[7] ?? ''); ?>" data-meeting-nonce="<?php echo esc_attr(wp_create_nonce('dior_meeting_started')); ?>" target="_blank" rel="noopener noreferrer" title="Join Zoom Meeting"><i class="fas fa-video text-success"></i></a>
                                                     <?php else: ?>
                                                         <button type="button" class="action-icon-btn edit-btn btn" disabled title="Meeting link unavailable"><i class="fas fa-video text-muted"></i></button>
                                                     <?php endif; ?>
