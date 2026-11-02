@@ -1041,7 +1041,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             else if (statusLc === 'cancelled') statusBadge = 'bg-danger-subtle text-danger';
 
             var isVideo = (apt.type || '').toLowerCase().indexOf('video') !== -1;
-            var canJoin = isVideo && (statusLc === 'confirmed' || statusLc === 'scheduled' || statusLc === 'in-queue');
+            var canJoin = isVideo && (statusLc === 'confirmed' || statusLc === 'scheduled' || statusLc === 'success' || statusLc === 'in progress' || statusLc === 'in-queue');
 
             html += '<div class="card border-0 shadow-sm rounded-3 p-3 bg-white">';
             html += '<div class="d-flex flex-wrap align-items-center justify-content-between gap-3">';
@@ -1121,7 +1121,7 @@ window.diorSwitchApptSubTab = function(targetSubTab) {
             else if (statusLc === 'cancelled') statusBadge = 'bg-danger-subtle text-danger';
 
             var isVideo = (apt.type || '').toLowerCase().indexOf('video') !== -1;
-            var canJoin = isVideo && (statusLc === 'confirmed' || statusLc === 'scheduled' || statusLc === 'in-queue');
+            var canJoin = isVideo && (statusLc === 'confirmed' || statusLc === 'scheduled' || statusLc === 'success' || statusLc === 'in progress' || statusLc === 'in-queue');
 
             html += '<div class="card border border-light-subtle rounded-3 p-3 bg-white shadow-sm">';
             
@@ -2539,7 +2539,7 @@ window.dior_patient_appts_data = (window.dior_patient_dashboard && window.dior_p
                 if (notesEl) notesEl.textContent = found.notes || 'Standard telehealth clinical consultation scheduled. All submitted medical intake questionnaires are pre-verified.';
 
                 var joinUrl = found.join_url || '';
-                var isLive = ['confirmed', 'scheduled', 'in-queue'].indexOf(String(found.status || found.appt_status || '').toLowerCase()) !== -1;
+                var isLive = ['confirmed', 'scheduled', 'success', 'in progress', 'in-queue'].indexOf(String(found.status || found.appt_status || '').toLowerCase()) !== -1;
                 var isValidJoinUrl = /^https:\/\//i.test(joinUrl);
                 if (zoomWrap) {
                     zoomWrap.style.display = (isLive && isValidJoinUrl) ? 'flex' : 'none';
