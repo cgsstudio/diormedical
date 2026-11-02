@@ -356,7 +356,10 @@ $status_badges = [
                                 $fname = !empty($a['user_display_name']) ? $a['user_display_name'] : 'Patient #' . ($a['patient_id'] ?? '');
                             }
                             $fname = esc_html($fname);
-                            $uid = esc_attr($a['appt_uid'] ?? '');
+                            // Prefer the canonical UID; use the database primary key as a backward-compatible identifier.
+                            // The AJAX handler resolves numeric IDs to the canonical appointment UID.
+                            $uid_raw = $a['appt_uid'] ?? ($a['appointment_uid'] ?? ($a['id'] ?? ''));
+                            $uid = esc_attr((string) $uid_raw);
                             $patient_id = !empty($a['patient_id']) ? (int)$a['patient_id'] : (!empty($a['patient_user_id']) ? (int)$a['patient_user_id'] : 0);
                             $status = esc_html($a['status'] ?? 'Pending');
                             $badge = $status_badges[$status] ?? 'badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1 small fw-semibold';
@@ -414,7 +417,7 @@ $status_badges = [
                             $doc_avatar = $doc_info['avatar'] ?? (get_user_meta($doc_id, 'dior_profile_image', true) ?: ('https://ui-avatars.com/api/?name=' . urlencode($doc_name) . '&background=00346c&color=ffffff&bold=true'));
                             $doc_email = $doc_info['email'] ?? ($a['doctor_email'] ?? 'doctor@diormedical.com');
                             ?>
-                            <tr data-appt-uid="<?php echo $uid; ?>" 
+                            <tr data-appt-uid="<?php echo $uid; ?>" data-appointment-id="<?php echo esc_attr((string)($a['id'] ?? '')); ?>" 
                                 data-patient-id="<?php echo $patient_id; ?>"
                                 data-patient-uid="<?php echo $patient_uid; ?>"
                                 data-patient-name="<?php echo $fname; ?>"
@@ -1530,7 +1533,9 @@ $status_badges = [
             var timeInput = document.getElementById('va-resched-time');
             var noteInput = document.getElementById('va-resched-reason');
 
-            if (uidField) uidField.value = uid;
+            // Resolve the identifier from the clicked row if a legacy caller passed an empty value.
+            if (!uid && row) uid = row.dataset.apptUid || row.dataset.appointmentId || '';
+            if (uidField) uidField.value = uid || '';
             if (nameEl) nameEl.textContent = patientName || 'Patient';
             if (currSchedEl) currSchedEl.textContent = (date || '—') + ' · ' + (time || '—');
             if (dateInput) dateInput.value = date || '';
@@ -1713,10 +1718,15 @@ $status_badges = [
             tbody.addEventListener('click', function (e) {
                 var btn = e.target.closest('.va-resched-appt-btn');
                 if (!btn) return;
-                var uid = btn.dataset.uid;
-                var name = btn.dataset.name;
-                var date = btn.dataset.date;
-                var time = btn.dataset.time;
+                var row = btn.closest('tr');
+                var uid = btn.dataset.uid || (row ? (row.dataset.apptUid || row.dataset.appointmentId) : '');
+                var name = btn.dataset.name || (row ? row.dataset.patientName : '');
+                var date = btn.dataset.date || (row ? row.dataset.date : '');
+                var time = btn.dataset.time || (row ? row.dataset.time : '');
+                if (!uid) {
+                    Swal.fire({ icon: 'error', title: 'Unable to reschedule', text: 'This appointment has no database ID. Refresh the page and contact support if it continues.' });
+                    return;
+                }
                 openRescheduleModal(uid, name, date, time);
             });
         }
