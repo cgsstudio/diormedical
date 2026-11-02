@@ -254,7 +254,7 @@ if (!class_exists('Dior_Zoom_Meetings')) {
             }
 
             $parts = wp_parse_url($join_url);
-            if (empty($parts['host']) || !preg_match('/(^|\\.)zoom\\.us$/i', $parts['host'])) {
+            if (empty($parts['host']) || !preg_match('/(^|\.)zoom\.us$/i', $parts['host'])) {
                 return $join_url;
             }
 
