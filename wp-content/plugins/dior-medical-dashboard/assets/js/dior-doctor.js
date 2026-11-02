@@ -44,14 +44,6 @@ function initDoctorDashboard() {
         diorDocSwitchTab(firstTabBtn.getAttribute('data-tab'), false);
     }
 
-    // Add click listeners to ALL nav buttons with data-tab (must be inside DOMContentLoaded)
-    document.querySelectorAll('#dior-doc-sidebar .dior-nav-btn[data-tab]').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            diorDocSwitchTab(this.getAttribute('data-tab'));
-        });
-    });
-
     // Close dropdowns when clicking outside
     document.addEventListener('click', function (e) {
         const notifWrap = document.querySelector('.dior-notif-wrap');
