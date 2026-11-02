@@ -1435,6 +1435,18 @@ class Dior_Medical_Auth
             true
         );
 
+        // Doctor mobile drawer controller; load after the desktop navigation and dashboard handlers.
+        $doctor_mobile_navigation_js = DIOR_PORTAL_PATH . 'assets/js/dior-doctor-mobile-navigation.js';
+        if (file_exists($doctor_mobile_navigation_js)) {
+            wp_enqueue_script(
+                'dior-doctor-mobile-navigation-js',
+                DIOR_PORTAL_URL . 'assets/js/dior-doctor-mobile-navigation.js',
+                ['dior-doctor-navigation-js', 'dior-doctor-js'],
+                filemtime($doctor_mobile_navigation_js),
+                true
+            );
+        }
+
         wp_enqueue_script(
             'dior-patient-live',
             DIOR_PORTAL_URL . 'assets/js/dior-patient-live.js',
